@@ -1,0 +1,11 @@
+Enzymes	Etot Conc	kcat (1/s)	Vmax	Keq	SGFE (kJ/mol)	"Vss,net"	Reaction	Activators	Inhibitors	Rxn Mechanism	Substrate Km (mM)	Regulator Km (mM)	Metab	Mclow (mM)	Mchigh (mM)
+EI	0	0			-0.5	10	PEP + HPr <==> Pyr + P_HPr				"100,100,200,200"		PEP	0.184	0.184
+Enzyme1	0	0			-0.5	5	P_HPr + EIIA <==> HPr + P_EIIA				"300,300,500,500"		HPr	0.001	100
+EIICB	0	0			-0.5	5	P_EIIA + GLCxt <==> G6P + EIIA		G6P		"80,80,270,270"		Pyr	0.1	100
+Protein5	0	0			-0.5	7.5	G6P + NADP ---> NADPH + D6PGDL				"20,20,50,50"		P_HPr	0.01	100
+Protein7	0	0			-0.5	5	D6PGDL --->						EIIA	0.001	0.0001
+Protein8	0	0			-0.5	5	G6P ---> Biomass						P_EIIA	0.01	100
+EIIA	0	0			-0.5	5							G6P	8.75	8.75
+HPr	0	0			-0.5	5							NADP	0.00208	0.00208
+													NADPH	0.121	0.121
+													D6PGDL	0.221	0.221

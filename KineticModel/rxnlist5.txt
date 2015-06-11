@@ -1,0 +1,60 @@
+Enzymes	Etot Conc	kcat (1/s)	Vmax	Keq	SGFE (kJ/mol)	"Vss,net"	Reaction	Activators	Inhibitors	Rxn Mechanism	Substrate Km (mM)	Regulator Km (mM)	Metab	Mclow (mM)	Mchigh (mM)
+EI	0	0			-0.5	10	PEP + HPr <==> Pyr + P_HPr				"100,100,200,200"		2PG	8.75	8.75
+Enzyme1	0	0			-0.5	5	P_HPr + EIIA <==> HPr + P_EIIA				"300,300,500,500"		3pDGP	1	100
+EIICB	0	0			-0.5	5	P_EIIA + GLCxt <==> G6P + EIIA		G6P				3PG	8.75	8.75
+PGI	1	120	0		3.132	4.8609	[c] : G6P ---> F6P		"PEP, 6PG"		"0.28,0.171"	"2,2"	6PG	8.75	8.75
+PFK	1	167	0		-21.27	7.4774	[c] : ATP + F6P ---> FbP + ADP	ADP	"PEP, ATP "		"0.2, 0.124,0.16,0.2"	"2,2,2,2"	AC	1	100
+G6PDH	1	174	0	1.12E+01	-5.978	4.96	[c] : G6P + NADP ---> NADPH + D6PGDL		NADPH		"0.174,0.007,0.007,0.174"		ACA	7	7
+FBP	1	0	0	1.12E+02	-11.7	0	[c] : FbP ---> F6P + P1	PEP			"0.0006,1"	2	ACCOA	0.606	0.606
+FBA	1	10.5	0	9.96E-05	22.83	7.4774	[c] : FbP <==> GA3P + DHAP				"0.175,0.13,0.23"		ACTP	1.07	1.07
+GAPDH(phosphorylating)	1	268	0		1.356	16.0235	[c] : P1 + GA3P + NAD <==>  NADH + 3pDGP				"0.53,0.21,0.045,0.045,0.89"		Acxt	1	100
+GAPDH_2 (non-phosphorylating)	1	23.3	0	3.22E+07	-42.83		[c] : GA3P + NAD <==> 3PG + NADH				"0.51,0.09,0.51,0.09"		ADP	0.555	0.555
+PGM	1	530	0		6.229	14.7161	[c] : 3PG <==> 2PG				"0.65,0.041"		AKG	0.443	0.443
+ENO	1	78	0	6.06E+00	-4.462	14.7161	[c] : 2PG <==> PEP 				"0.3,0.3"		AMP	1	100
+PYK	1	232	0		-31.12	1.7582	[c] : PEP + ADP ---> PYR + ATP	"G6P, R5P, FbP(A), AMP(A)"	ATP	Allosteric	"0.31,0.25,0.31,0.25"	"2,2,2,2,2"	ATP	9.63	9.63
+PPS	1	0	0		-5	0	[c] : PYR + ATP ---> AMP + PEP + P1		"PEP(C), ATP(C), OAA "		"0.083,0.028,1,1,10.5"		BIOMASS	1	100
+PDH	1	0	0		-34.7	9.2825	[c] : PYR + CoA + NAD ---> ACCOA + NADH + CO2		"GLX(A), NADH, NAD, PYR"	Allosteric 			CIT	9.63	9.63
+ACADH	1	20.9	0		18.4	0	[c] : ACCOA + NADH <==> ACA + CoA + NAD	NAD			"0.007,0.025,10,0.08"		CO2	1	100
+PCK	1	39	0		0.8	0	[c] : OAA + ATP ---> ADP + PEP + CO2		"ATP, PEP"		"0.06,0.05,1,1,1"		CO2xt	1	100
+PPC	1	0	0		-28.5	2.5043	[c] : PEP + CO2 ---> OAA + P1	"FbP(A), ACCOA(A)"	MAL(A)	Allosteric (negative cooperativity)	"0.19,0.19"		CoA	1.37	1.37
+CS	1	0	0		-36	6.0072	[c] : OAA + ACCOA ---> CIT + CoA	ACCOA(A)	"ATP(C), AKG(C), NAD(A), NADH(A), OAA(A)"	Allosteric 	"1, 0.216,1"		D6PGDL	1	100
+CAN	1	0	0		5.5	6.0072	[c] : CIT <==> ICIT						DHAP	0.374	0.374
+ICDH	1	0	0		14.2	6.0072	[c] : ICIT + NADP ---> NADPH + AKG + CO2		"GLX(C), OAA(C), PEP(A)"	Allosteric(negative cooperativity)			E4P	1	100
+KGDH	1	0	0		-34.7	5.0644	[c] : AKG + CoA + NAD ---> SUCCOA + NADH + CO2						ETOH	1	100
+SCS	1	0	0		4.2	5.0644	[c] : SUCCOA + ADP + P1 <==> SUCC + CoA + ATP 	ADP					ETOHxt	1	100
+SDH	1	0	0		-8.8	5.0644	[c] : SUCC ---> FUM				"1, 0.42"		F6P	8.75	8.75
+succ_out	1	0	0	1.50E+00	-1	0	[c] : SUCC ---> 						FbP	15.2	15.2
+FUMH	11	0	0	2.74E+00	-2.5	5.0644	[c] : FUM <==> MAL				"0.494, 0.424"		FOR	1	100
+MAE	1	0	0		5.4	0	[c] : MAL + NAD ---> NADH + PYR + CO2		"ACCOA(A), MAL(U), NAD(U), OAA, ATP"	Allosteric 	"2.6,1,1,1,1"		FORxt	1	100
+MDH	1	0	0		26.8	5.0644	[c] : MAL + NAD <==> NADH + OAA						FUM	0.115	0.115
+co2_out	1	0	0	1.50E+00	-1	22.8098	[c] : CO2 <==> 						G6P	8.75	8.75
+NH3_ex	1	0	0	1.50E+00	-1		[c] : NH3xt ---> NH3						GA3P	1	100
+O2_out						-21.7995	[c] : O2 <==> O2xt						GAL	1	100
+Biomass	0	0			-0.5	5	G6P + F6P + AKG + OAA + GA3P + 3PG + PEP + PYR + ACCOA + NH3 ---> BIOMASS						GALxt	1	100
+EIIA	0	0			-0.5	5							GLCxt	1	100
+HPr	0	0			-0.5	5							GLX	11	100
+													H2	1	100
+													ICIT	1	100
+													KDPG	1	100
+													LAC	1	100
+													LACxt	1	100
+													MAL	1.68	1.68
+													NAD	53.5	53.5
+													NADH	0.473	0.473
+													NADP	0.00208	0.00208
+													NADPH	0.121	0.121
+													NH3	1	100
+													NH3xt	1	100
+													O2	1	100
+													OAA	1	100
+													P1	1	100
+													PEP	0.184	0.184
+													PYR	1	100
+													R5P	1.32	1.32
+													RU5P	1.32	1.32
+													S7P	1	100
+													SUCC	0.569	0.569
+													SUCCOA	0.233	0.233
+													SUCCxt	1	100
+													X5P	1	100
+													Xu5P	1	100

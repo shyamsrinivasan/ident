@@ -1,0 +1,63 @@
+Enzymes	Etot Conc	kcat (1/s)	Vmax	Keq	delrG (kJ/mol)	"Vss,net"	Reaction	Activators	Inhibitors	Rxn Mechanism	Substrate Km (mM)	Regulator Km (mM)	Metab	Mclow (mM)	Mchigh (mM)
+6PGL	11	1900	0		-27.92		[c] : D6PGDL ---> 6PG				"0.02,0.02"		2PG	1	100
+ac_out	1	0	0	1.50E+00	-1		[c] : AC ---> Acxt						3pDGP	1	100
+ACADH	1	20.9	0		18.4	0	[c] : ACCOA + NADH <==> ACA + CoA + NAD	NAD			"0.007,0.025,10,0.08"		3PG	1	100
+ACK	1	1000	0		-18	0	[c] : ACTP + ADP <==> AC + ATP				"0.894,0.24,38.5,0.3"	0.257	6PG	1	100
+ADH	1	3450	0		-21.29	0	[c] : ACA + NADH <==> NAD + ETOH				"0.086,0.027,1,1"		AC	1	100
+ADK	1	0	0		-0.4	0	[c] : AMP + ATP ---> 2 ADP						ACA	1	100
+BIOMASS	1	1	1	1.50E+00	-1		[c] : G6P + F6P + R5P + AKG + OAA + E4P + GA3P + 3PG + PEP + PYR + ACCOA + NH3 ---> BIOMASS						ACCOA	0.606	0.606
+CAN	1	0	0		5.5	6.0072	[c] : CIT <==> ICIT						ACTP	1.07	1.07
+co2_out	1	0	0	1.50E+00	-1	22.8098	[c] : CO2 <==> CO2xt						Acxt	1	100
+CS	1	0	0		-36	6.0072	[c] : OAA + ACCOA ---> CIT + CoA	ACCOA(A)	"ATP(C), AKG(C), NAD(A), NADH(A), OAA(A)"	Allosteric 	"1, 0.216,1"		ADP	0.555	0.555
+EDA	1	83	0		16.3		[c] : KDPG ---> GA3P + PYR				"0.1,0.1,0.1"		AKG	0.443	0.443
+EDD	1	257	0	6.99E+07	-44.75		[c] : 6PG ---> KDPG				"0.04,0.04"		AMP	1	100
+ENO	1	78	0	6.06E+00	-4.462	14.7161	[c] : 2PG <==> PEP 				"0.3,0.3"		ATP	9.63	9.63
+enz_1	1	0	0	1.50E+00	-1		[c] : NADH + 2 ADP ---> NAD + 2 ATP						BIOMASS	1	100
+enz_3	1	0	0	1.50E+00	-1	0	[c] : FOR ---> CO2 + H2						CIT	9.63	9.63
+enz_4	1	0	0	1.50E+00	-1	0	[c] : GAL + ATP ---> G6P + ADP						CO2	1	100
+etoh_out	1	0	0	1.50E+00	-1	0	[c] : ETOH ---> ETOHxt						CO2xt	1	100
+FBA	1	10.5	0	9.96E-05	22.83	7.4774	[c] : FbP <==> GA3P + DHAP				"0.175,0.13,0.23"		CoA	1.37	1.37
+FBP	1	0	0	1.12E+02	-11.7	0	[c] : FbP ---> F6P + P1	PEP			"0.0006,1"	2	D6PGDL	1	100
+for_out	1	0	0	0	-1	0	[c] : FOR ---> FORxt						DHAP	0.374	0.374
+FRD	1	0	0	4.68E-05	24.7	0	[c] : FUM ---> SUCC		OAA				E4P	1	100
+FUMH	11	0	0	2.74E+00	-2.5	5.0644	[c] : FUM <==> MAL				"0.494, 0.424"		ETOH	1	100
+G6PDH	1	174	0	1.12E+01	-5.978	4.96	[c] : G6P + NADP ---> NADPH + D6PGDL		NADPH		"0.174,0.007,0.007,0.174"		ETOHxt	1	100
+gal_ex	1	0	0	0	-1	0	[c] : GALxt + ATP ---> GAL + ADP						F6P	8.75	8.75
+GAPDH(phosphorylating)	1	268	0		1.356	16.0235	[c] : P1 + GA3P + NAD <==>  NADH + 3pDGP				"0.53,0.21,0.045,0.045,0.89"		FbP	15.2	15.2
+GAPDH_2 (non-phosphorylating)	1	23.3	0	3.22E+07	-42.83		[c] : GA3P + NAD <==> 3PG + NADH				"0.51,0.09,0.51,0.09"		FOR	1	100
+GLK	1	410	0	8.38E+03	-22.38		[c] : GLCxt + ATP ---> ADP + G6P		PEP		"0.076,0.26,0.26,0.076"	2	FORxt	1	100
+ICDH	1	0	0		14.2	6.0072	[c] : ICIT + NADP ---> NADPH + AKG + CO2		"GLX(C), OAA(C), PEP(A)"	Allosteric(negative cooperativity)			FUM	0.115	0.115
+ICL	1	0	0		20.5	0	[c]: ICIT <==> GLX + SUCC		"PEP(C), 3PG(C), SUCC(U)"				G6P	8.75	8.75
+KGDH	1	0	0		-34.7	5.0644	[c] : AKG + CoA + NAD ---> SUCCOA + NADH + CO2						GA3P	1	100
+lac_out	1	0	0	1.50E+00	-1	0	[c] : LAC ---> LACxt						GAL	1	100
+LDH	1	186	0		-23.1	0	[c] : PYR + NADH ---> LAC + NAD 	PYR(A)	ATP	Allosteric 	"0.33,0.15,20,2.9"		GALxt	1	100
+MAE	1	0	0		5.4	0	[c] : MAL + NAD ---> NADH + PYR + CO2		"ACCOA(A), MAL(U), NAD(U), OAA, ATP"	Allosteric 	"2.6,1,1,1,1"		GLCxt	1	100
+MDH	1	0	0		26.8	5.0644	[c] : MAL + NAD <==> NADH + OAA						GLX	11	100
+MS	1	0	0		-36.4	0	[c] : GLX + ACCOA ---> MAL + CoA				"1,0.009,1"		H2	1	100
+NADTH	1	0	0		-1.3	0	[c] : NAD + NADPH <==> NADH + NADP						ICIT	1	100
+NH3_ex	1	0	0	1.50E+00	-1		[c] : NH3xt ---> NH3						KDPG	1	100
+PCK	1	39	0		0.8	0	[c] : OAA + ATP ---> ADP + PEP + CO2		"ATP, PEP"		"0.06,0.05,1,1,1"		LAC	1	100
+PDC	1	113	0		-16.45	0	[c] : PYR ---> ACA + CO2				"0.66,1,1"		LACxt	1	100
+PDH	1	0	0		-34.7	9.2825	[c] : PYR + CoA + NAD ---> ACCOA + NADH + CO2		"GLX(A), NADH, NAD, PYR"	Allosteric 			MAL	1.68	1.68
+PFK	1	167	0		-21.27	7.4774	[c] : ATP + F6P ---> FbP + ADP	ADP(A) 	"PEP(A), ATP(A) "	Allosteric 	"0.2, 0.124,0.16,0.2"	"2,2,2,2"	NAD	53.5	53.5
+PFL	1	770	0		-21.3	0	[c] : PYR + CoA ---> ACCOA + FOR				"2.05,0.041,24.5"		NADH	0.473	0.473
+PGDH	1	0	0		3.8	4.96	[c] : 6PG + NADP ---> RU5P + NADPH + CO2		"NADP(C), ATP(C), RU5P"				NADP	0.00208	0.00208
+PGI	1	120	0		3.132	4.8609	[c] : G6P ---> F6P		"PEP(C),6PG"		"0.28,0.171"	"2,2"	NADPH	0.121	0.121
+PGK	1	654	0		-10.51	16.0235	[c] : 3pDGP + ADP ---> ATP + 3PG	"ATP, 3PG"			"0.0018,0.2,0.48,0.69"	"2,2"	NH3	1	100
+PGM	1	530	0		6.229	14.7161	[c] : 3PG <==> 2PG				"0.65,0.041"		NH3xt	1	100
+PPC	1	0	0		-28.5	2.5043	[c] : PEP + CO2 ---> OAA + P1	"FbP(A), ACCOA(A)"	MAL(A)	Allosteric (negative cooperativity)	"0.19,0.19"		O2	1	100
+PPS	1	0	0		-5	0	[c] : PYR + ATP ---> AMP + PEP + P1		"PEP(C), ATP(C), OAA "		"0.083,0.028,1,1,10.5"		OAA	1	100
+PTA	1	83.1	0		15.9	0	[c] : ACCOA + P1 <==> ACTP + CoA	"PEP, PYR"	"ATP(N), ADP(N), NADPH(N), NADH(N)"		"0.3293,1"		P1	1	100
+PTS	1	0	0		-53.5	10	[c] : GLCxt + PEP ---> PYR + G6P		G6P			2	PEP	0.184	0.184
+PYK	1	232	0		-31.12	1.7582	[c] : PEP + ADP ---> PYR + ATP	"G6P, R5P, FbP(A), AMP(A)"	ATP	Allosteric	"0.31,0.25,0.31,0.25"	"2,2,2,2,2"	PYR	1	100
+pyr_r2	1	0	0	1.50E+00	-1	0	[c] : PYR ---> AC + CO2						R5P	1.32	1.32
+RPI	1	0	0		-2.1	2.2815	[c] : RU5P <==> R5P						RU5P	1.32	1.32
+RuPE	1	0	0	1.50E+00	-1	2.6785	[c] : RU5P <==> Xu5P						S7P	1	100
+SCS	1	0	0		4.2	5.0644	[c] : SUCCOA + ADP + P1 <==> SUCC + CoA + ATP 	ADP					SUCC	0.569	0.569
+SDH	1	0	0		-8.8	5.0644	[c] : SUCC ---> FUM				"1, 0.42"		SUCCOA	0.233	0.233
+succ_out	1	0	0	1.50E+00	-1	0	[c] : SUCC ---> SUCCxt						SUCCxt	1	100
+TA	1	0	0		-7.1	1.497	[c] : GA3P + S7P <==> E4P + F6P				"1,1,1,1.11"		X5P	1	100
+TKI	1	0	0		-7.1	1.1815	[c] : E4P + X5P <==> GA3P + F6P				"1,1,1,1.10"		Xu5P	1	100
+TKII	1	0	0		7.9	1.497	[c] : R5P + X5P <==> GA3P + S7P								
+TPI	1	9000	0		7.598	7.4774	[c] : DHAP <==> GA3P				"1,1"				
+O2_out						-21.7995	[c] : O2 <==> O2xt								

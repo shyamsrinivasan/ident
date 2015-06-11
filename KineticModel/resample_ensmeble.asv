@@ -1,0 +1,20 @@
+function ensb = resample_ensmeble(ensb,model,variable)
+nmodels = length(fieldnames(ensb));
+for isample = 1:nmodels
+    mname = sprintf('model%d',isample);
+    set = ensb.(mname);
+    nrxn = size(set.K,2);
+    for irxn = 1:nrxn
+        rpind = model.S(:,irxn)~=0;
+        rpK = set.K(rpind,irxn);
+        rpC = variable.MC(rpind);
+        %order of magnitude for Km based on C
+        %concentration +/- 100
+        if any(log10(rpK)-log10(rpC))
+            respl = rpK(
+            %resample these Ks
+            while log
+        
+    end
+end
+return

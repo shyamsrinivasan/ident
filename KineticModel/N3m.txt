@@ -1,0 +1,13 @@
+Enzymes	Etot Conc	kcat (1/s)	Vmax	Keq	SGFE (kJ/mol)	"Vss,net"	Reaction	Activators	Inhibitors	Rxn Mechanism	Substrate Km (mM)	Regulator Km (mM)	Metab	Mlow	Mhigh
+P1	0	0			-0.5	0.25	S ---> B				"1,1"		S	10	20
+P2	0	0			-0.5	0.25	S ---> P				"1,1"		A	10	20
+P3	0	0			-0.5	0.25	S ---> A				"1,1"		M	10	20
+P4	0	0			-0.5	0.25	S ---> M				"1,1"		N	10	20
+Pin	0	0			-0.5	1	---> S						K	10	20
+P6	0	0			-0.5	0.125	M ---> N				"1,1"		B	10	20
+P5	0	0			-0.5	0.125	M + N ---> A + K				"1,1,1,1"		P	10	20
+P7	0	0			-0.5	0.001	N ---> K				"1,1"				
+P8	0	0			-0.5	0.001	K ---> B + P				"1,1,1"				
+P9	0	0			-0.5	0.25	B --->								
+P10	0	0			-0.5	0.25	P --->								
+P11	0	0			-0.5	0.375	A --->								

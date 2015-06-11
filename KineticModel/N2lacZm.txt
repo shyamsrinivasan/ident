@@ -1,0 +1,10 @@
+Enzymes	Etot Conc	kcat (1/s)	Vmax	Keq	SGFE (kJ/mol)	"Vss,net"	Reaction	Activators	Inhibitors	Rxn Mechanism	Substrate Km (mM)	Regulator Km (mM)	Metab	Mlow	Mhigh
+Lacp	0	0			-0.5	1	---> lac[c]						Lac	10	100
+glcperm	0	0			-0.5	0.33	---> g6p[c]						Glc	10	100
+bgalac	0	0			-0.5	0.33	allolac[c] ---> g6p[c]				"1,1"		Allolac	10	100
+P4_noenz	0	0			-0.5	0.33	lac[c] ---> allolac[c]				"1,1"				
+P5_noenz	0	0			0	0	LacI + allolac ---> LacI-allolac				"1,1,1"				
+cAMP	0	0													
+CRP	0	0													
+LacI	0	0													
+P3	0	0													

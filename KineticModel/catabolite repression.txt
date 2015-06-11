@@ -1,0 +1,38 @@
+%function [] = uptake_flux()
+%catabolite repression by PTS
+
+%Metabolites external
+Cglcx %glucose
+Clacx %lactose
+
+%Metabolites internal
+Cglc
+Clac
+Cpep %PEP
+Cpyr %Pyruvate
+%Enzymes
+EI
+EIIA
+HPr
+P
+P_EI
+P_EIIA
+P_HPr
+%Proteins/genes
+
+%crp, cAMP system - gene+protein
+crp %basal+activated by crp.cAMP + activated by (crp.cAMP)^2
+cya %basal 
+CrpA %protein from crp
+cAMP %protein from cya
+
+%PTS genes+proteins
+ptsG %produces enzyme EIICB
+ptsHI %operon produces enzyme EI, HPr, EIIA (minimal induction due to regulation)
+%above operon/gene regulated by Mlc and CRP.cAMP and EIICB (through inducer exclusion)
+
+%PTS flux
+Vpts %kinetic rate laws for PTS using enzyme & metabolite concentrations
+
+%uptake flux
+dGlcdt = Vpts; %obtained from above
