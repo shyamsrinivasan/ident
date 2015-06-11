@@ -1,0 +1,10 @@
+Genes	Ecocyc	Enzymes	Protein regulator	Metabolite Regulator	Coefficients	Basal Rate	Rel. mRNA	Rel. Protein	Protein/mRNA	uM/g DCW (SS Protein	Protein Inducer	Metabolite Inducer	Kbinding	Kunbinding
+lacY		Lacp	(LacI-&cAMP-CRP+)		1e-4(-)1e-4(+)	5.00E+03	0.9	0.9	1000	1.90E-05	CRP		1.00E-05	1.00E-05
+ptsG		glcperm				5.00E+02	0.5	0.5	1000	1.90E-05				
+lacZ		bgalac	(LacI-&cAMP-CRP+)		1e-4(-)1e-4(+)	5.00E+03	0.5	0.5	1000	1.90E-05	CRP		1.00E-05	1.00E-05
+GcAMP		cAMP		(g6p[c]-)	2e1(-)	5.00E+02	0.6	0.6	1000	1.90E-05				
+Gcrp		CRP				5.00E+02	0.5	0.5	1000	1.90E-05				
+GlacI		LacI				5.00E+02	0.5	0.5	1000	1.90E-05				
+G3		P3	(LacI-&cAMP-CRP+)		1e-4(-)1e-4(+)	5.00E+03	0.5	0.5	1000	1.90E-05	CRP		1.00E-05	1.00E-05
+G4		P4_noenz				5.00E+03	0.5	0.5	1000	1.90E-05				
+G5		P5_noenz				5.00E+03	0.5	0.5	1000	1.90E-05				

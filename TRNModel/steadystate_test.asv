@@ -1,0 +1,34 @@
+trnmodel.nvar = sum(ng)-ng(4);%%[mRNA,Protein,Metabolite,Biomass]'
+initval = zeros(trnmodel.nvar,1);
+% initval(end) = 1.31;%gDCW Non-zero Biomass
+initval(1:ng(1)) = trnmodel.SSmRNA;%mRNA umole
+initval(ng(1)+1:ng(1)+ng(2)) = trnmodel.SSreg(1:ng(2));%Protein umole
+initval(ng(1)+ng(2)+1:sum(ng)-ng(4)) = trnmodel.SSreg(ng(2)+1:ng(2)+ng(3));
+
+trnmodel.ext_MC = [1e3;10];
+trnmodel.Yref = ones(trnmodel.nvar,1);
+
+data.par = trnmodel.allpar;
+data.ng = ng;%[ngene;nprot;nregp;nrecp;nmetab];
+data.pdecay = 1.17e-3;
+data.mdecay = 0.00767;
+dat
+data.rephill = defparval.rephill;
+data.ext_MC = trnmodel.ext_MC;
+data.MC = initval(ng(1)+ng(2)+1:ng(1)+ng(2)+ng(3));
+data.Yref = trnmodel.Yref;
+
+callsystem = @(Y)algebraicSystem(Y,data,trnmodel,FBAmodel);
+options = optimset('Display','iter',...
+                   'FunValCheck','on',...
+                   'PlotFcns',...
+                   {@optimplotfval,@optimplotfirstorderopt},...
+                   'MaxFunEvals',100000,...
+                   'MaxIter',10000,...
+                   'TolFun',1e-6,...
+                   'TolX',1e-6);
+
+[Y,fval] = fsolve(callsystem,initval,options);
+Yres = Y;
+[Y,fval] = fsolve(callsystem,Yres,options);
+

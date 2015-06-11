@@ -1,0 +1,42 @@
+function J = jacobian_(ng,eq_pt,data,model,FBAmodel)
+Mxt = eq_pt(ng(1)+ng(2)+ng(3)+1:sum(ng));
+V_ind = [FBAmodel.Vin_ind,FBAmodel.Vout_ind];
+pdecay = data.pdecay;
+mdecay = data.mdecay;
+trate = 1;
+b = 20;
+Rmax = 1e-5;
+Km = 50;
+nvar = sum(ng)+1;
+intS = FBAmodel.S(1:ng(3),:);
+uptakeS = FBAmodel.M*FBAmodel.S(1:ng(3),V_ind);
+
+
+J = zeros(nvar,nvar);
+J(1:ng(1),1:ng(1)) = sparse(1:ng(1),1:ng(1),-mdecay,ng(1),ng(1));
+JPrel1 = eye(ng(2),ng(1));
+JPrel2 = eye(ng(2),ng(2));
+JPrel1(JPrel1==1) = trate;
+JPrel2(JPrel2==1) = -pdecay;
+J(ng(1)+1:ng(1)+ng(2),1:ng(1)+ng(2)) = [JPrel1, JPrel2];
+[m_ind,reg_ind] = find(intS);
+l_ind = sub2ind(size(intS),m_ind,reg_ind);
+Jl_ind = sub2ind(size(J),m_ind+ng(1)+ng(2),reg_ind+ng(1));
+J(Jl_in) = intS(l_ind)*model.maxReg(reg_ind);
+[mx_ind,regx_ind] = find(uptakeS);
+J(mx_ind+ng(1)+ng(2)+ng(3),regx_ind+ng(1)) = uptakeS(mx_ind,regx_ind)*model.maxReg(regx_ind+FBAmodel.n_rxn);
+J(end,ng(1)+ng(2)+ng(3)+1:sum(ng)) = Rmax./(Km+Mxt)-Rmax.*Mxt./(Km+Mxt);
+J(1:ng(1),end) = (1+b)/b;
+
+% J(ng(1)+ng(2)+1:ng(1)+ng(2)+ng(3),ng(1)+1:ng(1)+ng(2)) = FBAmodel.S(1:ng(3),:)*model.maxReg(1:ng(2));
+% J(ng(1)+ng(2)+ng(3)+1:sum(ng),ng(1)+1:ng(1)+ng(2)) = -FBAmodel.M*FBAmodel.S(1:ng(3),V_ind)*model.maxReg(V_ind);
+ 
+
+return
+
+
+
+
+
+
+

@@ -1,0 +1,41 @@
+Genes	Ecocyc	Enzymes	Protein regulator	Metabolite Regulator	Coefficients	Basal Rate	Rel. mRNA	Rel. Protein	Protein/mRNA	uM/g DCW (SS Protein	Protein Inducer	Metabolite Inducer	Kbinding	Kunbinding
+lacY		lacp	(LacI-&cAMP-CRP+)		1e-4(-)1e-3(+)	5.00E+03	0.9	0.9	1000	1.90E-05	CRP		1.00E-05	1.00E-05
+lacZ		bgalac	(LacI-&cAMP-CRP+)		1e-4(-)1e-3(+)	5.00E+03	0.5	0.5	1000	1.90E-05	CRP		1.00E-05	1.00E-05
+GcAMP		cAMP		(glc[e]-)	1e-2(-)	5.00E+02	0.6	0.6	1000	1.90E-05				
+crpA		CRP	(CRP+|cAMP+)		1e-4(+)1e-4(+)	5.00E+02	0.5	0.5	1000	1.90E-05				
+GlacI		LacI				5.00E+01	0.5	0.5	1000	1.90E-05				
+lacA		LacA	(LacI-&cAMP-CRP+)		1e-4(-)1e-3(+)	5.00E+03	0.5	0.5	1000	1.90E-05	CRP		1.00E-05	1.00E-05
+G5		P5_noenz				5.00E+02	0.5	0.5	1000	1.90E-05				
+ptsI		EI				5.00E+02	0.5	0.5	1000	1.90E-05				
+GEIIA		EIIA_noenz				5.00E+02	0.5	0.5	1000	1.90E-05				
+ptsG		EIICB	(cAMP-CRP+|Mlc-)	(glc[e]+)	1e-3(+)1e-4(-)2e0(+)	5.00E+03	0.5	0.5	1000	1.90E-05	CRP		1.00E-05	1.00E-05
+Gglc		glc_conv				5.00E+02	0.5	0.5	1000	1.90E-05				
+Gg6p		g6p_conv				5.00E+02	0.5	0.5	1000	1.90E-05				
+pyk		PYK				5.00E+02	0.5	0.5	1000	1.90E-05				
+ppsA		PPS				5.00E+02	0.5	0.5	1000	1.90E-05				
+crr		EIIA				5.00E+02	0.5	0.5	1000	1.90E-05				
+ptsH		HPr				5.00E+02	0.5	0.5	1000	1.90E-05				
+dgsA		Mlc		(glc[e]-)	1e-2(-)	5.00E+03	0.5	0.5	1000	1.90E-05				
+GEI		EI_noenz				5.00E+02	0.5	0.5	1000	1.90E-05				
+GHPr		HPr_noenz				5.00E+02	0.5	0.5	1000	1.90E-05				
+														
+														
+														
+														
+														
+														
+														
+														
+														
+														
+														
+														
+														
+														
+														
+														
+														
+														
+														
+														
+														

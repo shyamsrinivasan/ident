@@ -1,0 +1,10 @@
+Genes	Ecocyc	Enzymes	Protein regulator	Metabolite Regulator	Coefficients	Basal Rate	Rel. mRNA	Rel. Protein	Protein/mRNA	uM/g DCW (SS Protein
+G1		Protein1				5.00E+02	0.9	0.9	1000	1.90E-05
+G2		Protein2				5.00E+02	0.5	0.5	1000	1.90E-05
+G3		Protein3	(Protein3[-])		1e-6(-)	5.00E+02	0.5	0.5	1000	1.90E-05
+G4		Protein4				5.00E+02	0.6	0.6	1000	1.90E-05
+G5		Protein5				5.00E+02	0.5	0.5	1000	1.90E-05
+G6		Protein6				5.00E+02	0.5	0.5	1000	1.90E-05
+G7		Protein7				5.00E+02	0.5	0.5	1000	1.90E-05
+G8		Protein8				5.00E+02	0.5	0.5	1000	1.90E-05
+rpoA		RNAp				5.00E+02	0.5	0.5	1000	1.90E-05

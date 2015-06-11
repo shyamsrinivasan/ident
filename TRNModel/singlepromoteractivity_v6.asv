@@ -1,0 +1,120 @@
+function [pact] = singlepromoteractivity_v6(Protein,srate,brate,RS,...
+                  GeneRules,bindaff,igene,defparval)
+pact = zeros(1,1);
+nrules = length(GeneRules);
+irule = 1;
+tfcount = 1;
+connectlogic = cell(nrules,1);
+pactnr = zeros(nrules,1);
+pactdr = zeros(nrules,1);
+pactsr = zeros(nrules,1);
+
+if nrules > 0    
+    nxtlogic = cell(nrules,1);    
+    while irule <= nrules
+        orpos = strfind(GeneRules{irule},'|');
+        andpos = strfind(GeneRules{irule},'&');        
+        [terms,xterms] = regexp(GeneRules{irule},'(\w+.?)(\W+?)+','tokens','split');
+        %terms = terms{1}; d
+        %xterms = xterms{1};
+        if ~isemptyr(xterms)
+            terms = [terms,cell(1,1)];
+            terms{end}{1} = xterms{end};
+        end
+        nprots = length(terms);       
+        if nprots == length(orpos) + length(andpos);
+            if ~isempty(orpos) && isemptyr(connectlogic{irule})
+                connectlogic{irule} = GeneRules{irule}(orpos(end));
+                terms{end}{2} = {};
+            elseif ~isempty(andpos) && isemptyr(connectlogic{irule})
+                connectlogic{irule} = GeneRules{irule}(andpos(end));
+                terms{end}{2} = {};
+            else
+                connectlogic{irule} = {};
+            end        
+        end
+        terms{end} = terms{end}(~cellfun('isempty',terms{end}));    
+         
+        iprot = 1;
+        nr_term = zeros(nprots,1);
+        dr_term = zeros(nprots,1);
+        sr_term = zeros(nprots,1);
+        effect = zeros(nprots,1);
+        
+        while iprot <= nprots          
+            if length(terms{iprot}) > 1
+                nxtlogic{irule}(iprot) = terms{iprot}{2};%Try this in Debug mode!
+            end
+            tf = strcmp(terms{iprot}{1},Protein);
+            switch RS(1,tf)
+                case 1
+                    nr_term(iprot) = bindaff(tfcount);
+                    dr_term(iprot) = bindaff(tfcount);  
+                case -1
+                    nr_term(iprot) = 1;
+                    dr_term(iprot) = (bindaff(tfcount))^defparval.rephill;
+                case 2
+            end
+            effect(iprot) = RS(1,tf);
+            sr_term(iprot) = srate(1,tf);
+            tfcount = tfcount + 1;
+            iprot = iprot + 1;
+        end
+        
+        %Check to see if all logic are the same in nxtlogic
+        logic_flag = 0;
+        if length(nxtlogic{irule}(nxtlogic{irule} == '|')) == length(nxtlogic{irule}) 
+            rule_logic = '|';
+            logic_flag = 1;
+        elseif length(nxtlogic{irule}(nxtlogic{irule} == '&')) == length(nxtlogic{irule})
+            rule_logic = '&';
+            logic_flag = 1;
+        else
+            fprintf('All Logical Conditions within a Rule should be similar \n');
+            fprintf('Split Clusters with similar conditions into separate rules \n');
+            %Determine separate clusters?
+            %Then proceed with the usual method?      
+        end
+        
+        if ~isemptyr(connectlogic)
+            if connectlogic{irule} == '&'
+                if logic_flag && rule_logic == '|'
+                    pactnr(irule) = prod(nr_term(effect == -1))*sum(nr_term(effect == 1));
+                elseif logic_flag && rule_logic == '&'
+                    pactnr(irule) = prod(nr_term);
+                end                    
+                pactsr(irule) = sum(sr_term)/length(sr_term);
+            elseif connectlogic{irule} == '|'
+                if logic_flag && rule_logic == '|'
+                    pactnr(irule) = prod(nr_term(effect == -1))*sum(sr_term(effect == -1))/length(sr_term(effect == -1)) +...
+                        sum(nr_term(effect == 1).*sr_term(effect == 1));
+                elseif logic_flag && rule_logic == '&'
+                    pactnr(irule) = prod(nr_term)*sum(sr_term)/length(sr_term);
+                end 
+            end
+        else %No connectlogic or connectlogic isempty = true
+            if logic_flag && rule_logic == '|'
+                pactnr(irule) = prod(nr_term(effect==-1))*sum(sr_term(effect == -1))/length(sr_term(effect == -1)) +...
+                        sum(nr_term(effect == 1).*sr_term(effect == 1));
+            elseif logic_flag && rule_logic == '&'
+                pactnr(irule) = prod(nr_term)*sum(sr_term)/length(sr_term);
+            end
+        end
+        pactdr(irule) = sum(dr_term);        
+        irule = irule + 1;
+    end
+    
+    if ~isemptyr(connectlogic)
+        for iconnect = 1:length(connectlogic)
+            if connectlogic{iconnect} == '&'
+                pact = prod(pactnr)*sum(pactsr)/(length(pactsr)*(1 + sum(pactdr)));
+            elseif connectlogic{iconnect} == '|'
+                pact = sum(pactnr)/(1 + sum(pactdr));
+            end
+        end
+    else
+        pact = pactnr/(1 + pactdr);
+    end
+end
+         
+end

@@ -1,0 +1,65 @@
+Genes	EcoCyc	Proteins	Protein Regulator	Metabolite Regulator	Coefficients	Basal Rate	Rel. mRNA	Rel. Protein	uM (max Protein)
+adhE	b0080	adhE	(FIS[+])|(FruR[-]|NarL[-]|RpoS[+])	(Oxygen[-])	1e-05(+)1e-05(-)1e-05(-)1e-05(+)	2.00E+01	0.796	0.965	0.000000711
+pdhR	b0113	pdhR	(ArcA[-]|CRP[+]|FIS[+]|PdhR[-])	(exPYR[-])	1e-05(+)1e-05(-)1e-05(-)1e-05(+)	2.00E+01	0.403	0.631	0.000000301
+aceEF	"b0114,b0115"	aceEF	(ArcA[-]|CRP[+]|FIS[+]|PdhR[-])		1e-05(+)1e-05(-)1e-05(-)1e-05(+)	2.00E+01	0.323	0.920	0.00000636
+lpdA	b0116	lpdA	(ArcA[-]|CRP[-]|FIS[+]|PdhR[-])		1e-05(+)1e-05(-)1e-05(-)1e-05(+)	2.00E+01	0.401	0.626	0.00001997
+acnB	b0118	acnB	(ArcA[-]|FruR[-]|CRP[+]|FIS[-])		1e-05(+)1e-05(-)1e-05(-)1e-05(+)	2.00E+01	0.705	0.787	0.0000197
+lacY	b0343	lacY	(CRP[+]&LacI[-])		1e-05(+)1e-05(-)	2.00E+01	0.000	0.000	0
+lacZ	b0344	lacZ	(CRP[+]&LacI[-])		1e-05(+)1e-05(-)	2.00E+01	0.000	0.000	0
+lacI	b0345	lacI	(CRP[+]&LacI[-])	(LCTSxt[-])	1e-05(+)1e-05(-)	2.00E+01	0.000	0.000	0
+cyoABCD	"b0432, b0431, b0430, b0429"	cyoABCD	(ArcA[-]|FNR[-])		1e-05(+)1e-05(-)	2.00E+01	0.171	0.408	0.00000309
+sdhABCD	"b0723,b0724,b0721,b0722"	sdhABCD	(ArcA[-]|CRP[+]|FIS[-]|FNR[-])			2.00E+01	0.320	0.482	0.00000106
+sucAB	"b0726,b0277"	sucAB	(ArcA[-]|CRP[+]|FIS[-]|FNR[-])			2.00E+01	0.281	0.642	0.00000528
+cydAB	"b0733, b0734"	cydAB	(ArcA[+]|FNR[-])			2.00E+01	0.564	0.957	0.00000116
+galM	b0756	galM	(CRP[+/-])&(GalR[-]|Rob[-])			2.00E+01	0.527	1.000	0.00000143
+galETK	"b0759,b0758,b0757"	galETK	(CRP[+/-])&(GalR[-]|Rob[-])			2.00E+01	0.000	1.000	0.000000539
+pflA	b0902	pflA	(FruR[-])			2.00E+01	0.448	1.000	0.000000546
+pflB	b0903	pflB	(ArcA[+]|CRP[+]|FNR[+]|IHF[+]|NarL[-])			2.00E+01	1.000	1.000	0.0000183
+focA	b0904	focA	(ArcA[+]|FNR[+])|(CRP[+]|IHF[+]|NarL[-])			2.00E+01	0.930	0.000	0
+ptsG	b1101	ptsG	(Mlc[-])			2.00E+01	0.212	0.520	0.000005101
+ndh	b1109	ndh	(FNR[-])			2.00E+01	0.286	0.841	0.000000697
+fadR	b1187	fadR	(CRP[-]|FadR[-]|OmpR[-])	(GLCxt[+]|Acxt[-])		2.00E+01	0.551	0.922	0.000000459
+fruR	b1241	fruR	(CpxR[+]|RpoS[+])	(exFDP[-]|exF6P[-])		2.00E+01	0.720	0.985	0.00001279
+acnA	b1276	acnA	(ArcA[-]|FNR[-]|CRP[+]|SoxS[+]|RpoS[+])			2.00E+01	0.682	1.000	0.00000333
+fnr	b1334	fnr	(FNR[-])	(Oxygen[-])		2.00E+01	0.617	0.726	0.0000019
+fdnGHI	"b1474,b1475,b1476"	fdnGHI	(FNR[+]|NarL[+])			2.00E+01	0.146	0.000	0
+dgsA	b1594	Mlc	(CRP[+/-]|CytR[-]|DeoR[-])	(GLCxt[-])		2.00E+01	0.661	0.486	0.000000174
+fumA	b1612	fumA	(ArcA[-]|FNR[-])			2.00E+01	0.548	0.484	0.00000405
+pykF	b1676	pykF	(FruR[-])			2.00E+01	0.523	0.128	0.00000989
+galS	b2151	galS	(CRP[+]&GalR[-]&GalS[-])			2.00E+01	0.628	0.000	0
+glpABC	"b2241,b2242,b2243"	glpABC	(ArcA[-]&CRP[+]&FNR[+]&GlpR[-])			2.00E+01	0.023	0.000	0
+ptsHI	"b2415,b2416"	ptsHI	(CRP[+/-])&(FruR[+/-]|Mlc[-])			2.00E+01	0.327	0.620	0.00000878
+galR	b2837	galR	(CRP[+/-])&(GalR[-]|Rob[-])	(GLAC[-])		2.00E+01	0.558	0.000	0
+pgk	b2926	pgk	(CRP[+]|FruR[+])			2.00E+01	0.494	1.000	0.0000236
+galP	b2943	galP	(CRP[+/-])&(GalR[-]|Rob[-])			2.00E+01	0.341	0.000	0
+mdh	b3236	mdh	(ArcA[-]|CRP[+])			2.00E+01	0.543	0.840	0.0000537
+ppiA	b3363	ppiA	(CRP[+/-]|CytR[-])			2.00E+01	0.451	0.962	0.00000292
+glpR	b3423	glpR	(CRP[+]&GlpR[-])			2.00E+01	0.413	0.987	0.000000447
+glpD	b3426	glpD	(CRP[+]&GlpR[-])			2.00E+01	0.754	0.000	0
+dctA	b3528	dctA	(CRP[-]&ArcA[-]&DcuR[+])|(RpoN[+])			2.00E+01	1.000	1.000	0.000000841
+rbsABCDK	"b3749,b3751,b3750,b3748,b3752"	rbsABCDK	(RbsR[-]&CRP[+])	(RIBxt[-])		2.00E+01	0.067	0.844	0.000000243
+rbsR	b3753	rbsR		(RIBxt[-])		2.00E+01	0.067	0.844	0.000000243
+glpFK	"b3927,b3926"	glpFK	(CRP[+]&GlpR[-])			2.00E+01	0.564	1.000	0.00000232
+pflCD	"b3952,b3951"	pflCD	(ArcA[+]|CRP[+]|FNR[+]|IHF[+]|NarL[-])			2.00E+01	0.632	0.000	0
+aceAB	"b4015, b4014"	aceAB	(ArcA[-]|FruR[-]|IclR[-]|IHF[+])			2.00E+01	0.679	0.973	0.0000146
+iclR	b4018	iclR	FadR[+]|IclR[-]			2.00E+01	0.500	0.000	0
+acs	b4069	acs	(CRP[+])&(FNR[+]|IclR[+]|RpoS[+])			2.00E+01	1.000	1.000	0.0000178
+rpiR	b4089	rpiR	(RpiR[-])	(RIBxt[-])		2.00E+01	0.598	0.000	0
+rpiB	b4090	rpiB	(RpiR[-])			2.00E+01	0.480	0.000	0
+fumB	b4122	fumB	(FNR[+])|(CRP[+]|DcuR[+]|NarL[-])			2.00E+01	0.579	0.000	0
+dcuBC	"b4123, b0621"	dcuBC	(CRP[+]&DcuR[+]&FNR[+])|(NarL[-])			2.00E+01	0.716	0.000	0
+dcuR	b4124	dcuR	(CRP[+]&DcuR[+]&FNR[+])|(NarL[-]|DcuS[+])	(SUCCxt[+])		2.00E+01	0.675	0.000	0
+dcuS	b4125	dcuS		(SUCCxt[+])		2.00E+01	0.675	0.000	0
+frdABCD	"b4154,b4153,b4152,b4151"	frdABCD	(DcuR[+]|FNR[+]|NarL[-])			2.00E+01	0.283	1.000	0.000000544
+arcA	b4401	arcA	(ArcA[+]|FNR[+])	(Oxygen[-])		2.00E+01	1.000	1.000	0.0000117
+crp		crp		(GLCxt[-])					
+cpxR		cpxR							
+cytR		cytR							
+DeoR		DeoR							
+FIS		FIS							
+ihf		ihf							
+ompR		ompR							
+rob		rob							
+rpoN		rpoN							
+soxS		soxS							
+narL		narL							

@@ -1,0 +1,21 @@
+load('C:\Users\shyam\Documents\Courses\CHE 1125 Project\TRN Model\integrated_space.mat');
+load('C:\Users\shyam\Documents\Courses\CHE 1125 Project\TRN Model\Solution_intmodel.mat');
+Y = Solution.initSS.y(:,end);
+
+trnmodel.nvar = size(Y,1);
+data = struct();
+data.par = trnmodel.allpar;
+data.ng = ng;%[ngene;nprot;nregp;nrecp;nmetab];
+data.pdecay = defparval.pdecay;
+data.mdecay = defparval.mdecay;
+data.rephill = defparval.rephill;
+data.MC = Y(ng(1)+ng(2)+1:ng(1)+ng(2)+ng(3));
+data.ext_MC = variable.MC(1:2);
+%trnmodel = rmfield(trnmodel,'SSval');
+
+obj = deriv(Y,eye(trnmodel.nvar));
+y_ADMAT = integrated_ODEmodel(0,obj,data,trnmodel,FBAmodel);
+J_ADMAT = getydot(y_ADMAT);
+
+
+

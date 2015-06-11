@@ -1,0 +1,13 @@
+nexpt = length(fieldnames(allSolution));
+x = zeros(nexpt,1);
+y = zeros(nexpt,1);
+for iexpt = 1:nexpt
+    sim_name = sprintf('sim_%d',iexpt);
+    x(iexpt) = allfinalSS.(sim_name).y(3);  
+    y(iexpt) = allfinalSS.(sim_name).y(11);    
+end
+% function nonlin_newtons()
+% %Newtons method to determine roots of Nonlinear vector valued function
+% %x(t+1) = x(t) - J(x(t))\F(x(t))
+% 
+% return
