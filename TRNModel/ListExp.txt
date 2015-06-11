@@ -1,2 +1,0 @@
-Expt #	Model Name	Plot variables	P Name	P Val	P app	Colors
-1	N2trn_dnf2	"A,D,E,P,P2,P5,P6,C"	10			

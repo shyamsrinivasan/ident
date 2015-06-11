@@ -1,3 +1,0 @@
-Experiment #	Input Metabolites	Input Metab Concentration	Perturbation Metabolites	Pertb Metab Conc	Gene Plots 	Additional Conditions
-1	(Oxygen,GLCxt)	(0e0,1e-3)	(Oxygen);(GLCxt,ACxt);(Oxygen,GLCxt,ACxt)	(1e-3);(0e0,1e-3);(1e-3,0e0,1e-3)	arcA,fnr,sdhA,aceA	RepCoeff = 1e-6
-
