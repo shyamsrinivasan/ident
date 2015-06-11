@@ -1,0 +1,3 @@
+[submodule "TRNModel"]
+	path = TRNModel
+	url = https://github.com/shyamsrinivasan/TRNModel.git
