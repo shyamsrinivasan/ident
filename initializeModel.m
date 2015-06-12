@@ -5,12 +5,12 @@ end
 batch = struct();
 solverP = struct();
 if ~isfield(model,'gmax')
-    model.gmax = 0.01;%h-1
+    model.gmax = 0.05;%h-1
 end
 if ~isfield(model,'Vuptake')
     nuprxns = length(model.Vupind);
     model.Vuptake = zeros(nuprxns,1);
-    model.Vuptake(model.Vuptake==0) = 2;%mmole/gDCW.s
+    model.Vuptake(model.Vuptake==0) = 1;%mmole/gDCW.s
 end
 if ~isfield(model,'Vefflux')
     model.Vefflux = 0;
@@ -50,7 +50,7 @@ solverP.tout = 0.01;
 %File save location/folder
 saveData.filename = '';%sprintf('ExptCondition_%d',exptnum);
 saveData.dirname =...
-'C:\Users\shyam\Documents\Courses\CHE 1125 Project\Results\KModel';
+'C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KModel';
 
 %Assigning Indices
 ivec = 1;

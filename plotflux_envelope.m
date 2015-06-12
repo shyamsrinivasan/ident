@@ -16,17 +16,7 @@ else
 end
 
 %Randomly choose colors
-load('C:\Users\shyam\Documents\Courses\CHE 1125 Project\Colors.mat');
-Clrnd = floor(1 + (76-1)*rand(nflux,1));
-ColorSpec = cell(length(Clrnd),1);
-for j = 1:length(Clrnd)
-    try 
-%         ColorSpec{j} = rgb(Colors{Clrnd(j)});
-        ColorSpec{j} = rgb('Red');
-    catch
-        ColorSpec{j} = rgb('Black');
-    end
-end
+ColorSpec = chooseColors(nflux,{'Red'});
 
 % hline = zeros(nflux,1);
 %Scatter Plot all Fluxes

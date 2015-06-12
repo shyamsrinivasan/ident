@@ -20,9 +20,9 @@ MC_sampl = zeros(nmetab,1);
 %Methodology (Directly load a pre-sampled file)
 ism = 10;
 %Model
-load('C:\Users\shyam\Documents\Courses\CHE 1125 Project\Kinetic Model\Samples\centralIshiiModel.mat');
+load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\Samples\centralIshiiModel.mat');
 %Samples
-load('C:\Users\shyam\Documents\Courses\CHE 1125 Project\Kinetic Model\Samples\CentralIshii_1.mat');
+load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\Samples\CentralIshii_1.mat');
 mets = cellfun(@changeN,lower(model.mets),'UniformOutput',0);
 MCsample = zeros(length(FBAmodel.Metabolites),1000);
 for im = 1:length(FBAmodel.Metabolites)

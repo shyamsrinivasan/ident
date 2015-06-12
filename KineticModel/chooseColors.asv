@@ -4,11 +4,11 @@ if nargin < 2
 else
     yc = 1;
 end
-load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\Colors.mat');
-if ~yc    
+if ~yc
+    load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\Colors.mat');
     Clrnd = floor(1 + (76-1)*rand(ncolor,1));
 else
-    Clrnd = repmat(find(strcmpi(Colors,color)),ncolor,1);
+    Clrnd = find(strcmpi(Colors,color
 end
 ColorSpec = cell(length(Clrnd),1);
 for j = 1:length(Clrnd)
