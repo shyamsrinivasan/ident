@@ -31,12 +31,13 @@ dXdt = zeros(nr(1),1);%[Metabolites;Biomass]
 flux = zeros(nr(3),1);
 %% %Biomass flux
 % gr_flux = 0.8*prod(Y(Mbio_ind)./([.8;.1]+Y(Mbio_ind)));
-gr_flux = model.gmax;%0.8;%h-1
+gr_flux = 0;%model.gmax;%0.8;%h-1
 %% Fluxes 
 %Fixed Uptake Fluxes
 flux(model.Vupind) = model.Vuptake;%[20];
 %Transporters
 flux = ExFlux(model,Y,flux,model.Vex);
+flux = ExFlux(model,Y,flux,model.V2rct);
 %Intracellular(Cytosolic)
 %flux(Vind) = ConvinienceKinetics();
 flux(Vind) = ConvinienceKinetics(model,pmeter,Y,bm_ind,Vind);
@@ -48,32 +49,32 @@ flux(bm_ind) = gr_flux;
 %% %Intracellular Metabolites
 %Cytosolic
 %ATP, AMP, ADP
-ec = 0.8;
-ATP = strcmpi('atp[c]',model.Metabolites);
-ADP = strcmpi('adp[c]',model.Metabolites);
-AMP = strcmpi('amp[c]',model.Metabolites);
-AdID = [find(ATP),find(ADP),find(AMP)];
+% ec = 0.8;
+% ATP = strcmpi('atp[c]',model.Metabolites);
+% ADP = strcmpi('adp[c]',model.Metabolites);
+% AMP = strcmpi('amp[c]',model.Metabolites);
+% AdID = [find(ATP),find(ADP),find(AMP)];
+% 
+% dXdt(AMP) = model.S(AMP,:)*flux - Y(AMP)*gr_flux;
+% dXdt(ATP) = model.S(ATP,:)*flux - Y(ATP)*gr_flux;
+% dXdt(ADP) = model.S(ADP,:)*flux - Y(ADP)*gr_flux;
+% 
+% % Y(AMP) = Y(ATP)*(1/ec-1)+Y(ADP)*(1/(2*ec)-1);
+% %NAD+, NADH, NADP, NADPH
+% NAD = strcmpi('nad[c]',model.Metabolites);
+% NADH = strcmpi('nadh[c]',model.Metabolites);
+% NADP = strcmpi('nadp[c]',model.Metabolites);
+% NADPH = strcmpi('nadph[c]',model.Metabolites);
+% NaID = [find(NAD) find(NADH),find(NADP),find(NADPH)];
+% 
+% dXdt(NAD) = model.S(NAD,:)*flux - Y(NAD)*gr_flux;
+% dXdt(NADH) = model.S(NAD,:)*flux - Y(NADH)*gr_flux;
+% dXdt(NADP) = model.S(NAD,:)*flux - Y(NADP)*gr_flux;
+% dXdt(NADPH) = model.S(NAD,:)*flux - Y(NADPH)*gr_flux;
 
-dXdt(AMP) = 0;
-dXdt(ATP) = model.S(ATP,:)*flux - Y(ATP)*gr_flux;
-dXdt(ADP) = model.S(ADP,:)*flux - Y(ADP)*gr_flux;
+% mind = setdiff(1:nr(2),[AdID,NaID]);
 
-Y(AMP) = Y(ATP)*(1/ec-1)+Y(ADP)*(1/(2*ec)-1);
-%NAD+, NADH, NADP, NADPH
-NAD = strcmpi('nad[c]',model.Metabolites);
-NADH = strcmpi('nadh[c]',model.Metabolites);
-NADP = strcmpi('nadp[c]',model.Metabolites);
-NADPH = strcmpi('nadph[c]',model.Metabolites);
-NaID = [find(NAD) find(NADH),find(NADP),find(NADPH)];
-
-dXdt(NAD) = model.S(NAD,:)*flux - Y(NAD)*gr_flux;
-dXdt(NADH) = model.S(NAD,:)*flux - Y(NADH)*gr_flux;
-dXdt(NADP) = model.S(NAD,:)*flux - Y(NADP)*gr_flux;
-dXdt(NADPH) = model.S(NAD,:)*flux - Y(NADPH)*gr_flux;
-
-mind = setdiff(1:nr(2),[AdID,NaID]);
-
-dXdt(mind) = model.S(mind,:)*flux - Y(mind)*gr_flux;
+dXdt(1:nr(2)) = model.S(1:nr(2),:)*flux - Y(1:nr(2))*gr_flux;
 
 %Biomass
 dXdt(Mbio) = 0;
@@ -87,11 +88,11 @@ dXdt(Mbio) = 0;
 %Biomass 
 % dXdt(end) = data.S(end,:)*flux;
 
-if any(Y(Y<0))
-    flag = -1;
-else
+% if any(Y(Y<0))
+%     flag = -1;
+% else
     flag = 0;
-end
+% end
 newdata = [];
 end
 

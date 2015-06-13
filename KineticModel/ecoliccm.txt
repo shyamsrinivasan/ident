@@ -1,33 +1,15 @@
 Enzymes	Etot Conc	kcat (1/s)	Vmax	Keq	delta G (pH 7.2)	"vss (Gur = -10, O2ur = -1000)"	 equation	Activators	Inhibitors	Rxn Mechanism	Substrate Km (mM)	Regulator Km (mM)	Metab	Mclow (mM)	Mchigh (mM)
-EX_glc(e)						-10	[c] : glc <==>						glc[e]	0	20
-GLCpts				4.5812E+06	-9.1	10	glc[e] + pep[c] --> g6p[c] + pyr[c]						pyr[c]	0.128	0.128
-PGI				3.8511E+00	-0.8	4.8609	[c] : g6p <==> f6p						glc[c]	0	0.5
-PFK				6.0465E+02	-3.8	7.4774	[c] : atp + f6p --> adp + fdp + h						pep[c]	0.5	0.5
-FBP				1.1208E+02	-7.0	0	[c] : fdp + h2o --> f6p + pi						nadp[c]	0.00208	0.00208
-FBA				8.4276E-04	4.2	7.4774	[c] : fdp <==> dhap + g3p						nadh[c]	0.473	0.473
-GAPD				1.1836E+00	-0.1	16.0235	[c] : g3p + nad + pi <==> 13pdg + h + nadh						pi[c]	0.0001	0.01
-PGK				8.9221E-03	-2.8	16.0235	[c] : 13pdg + adp <==> 3pg + atp 						nad[c]	0	0.05
-PGM				1.0000E+00	0.0	14.7161	[c] : 3pg <==> 2pg						nadph[c]	0	0.05
-ENO				4.5580E+00	-0.9	14.7161	[c] : 2pg <==> h2o + pep						coa[c]	1.37	1.37
-PPC				9.4936E+04	-6.8	2.5043	[c] : co2 + h2o + pep --> h + oa + pi						g6p[c]	0	0.5
-PPCK				7.1385E-01	0.2	0	[c] : atp + oa --> adp + co2 + pep						f6p[c]	0	0.5
-PYK				7.5765E+03	-5.3	1.7582	[c] : adp + h + pep --> atp + pyr						dhap[c]	0	0.5
-PPS				7.5574E+00	-1.2	0	[c] : atp + h2o + pyr --> amp + 2 h + pep + pi						adp[c]	0	0.5
-PDH				1.1896E+06	-8.3	9.2825	[c] : coa + nad + pyr --> accoa + co2 + nadh						amp[c]	0	0.5
-NADH16				5.45E+12	-17.4	38.5346	4 h[c] + nadh[c] + q8[c] --> 3 h[e] + nad[c] + q8h2[c]						fdp[c]	0	0.5
-THD2				6.0313E-01	0.3	0	2 h[e] + nadh[c] + nadp[c] --> 2 h[c] + nad[c] + nadph[c]						h[c]	0	0.5
-NADTRHD				1.6580E+00	-0.3	0	[c] : nad + nadph --> nadh + nadp						g3p[c]	0	0.5
-Biomass						0.8739	[c] : 1.496 3pg + 3.7478 accoa + 59.8100 atp + 0.0709 f6p + 0.1290 g3p + 0.2050 g6p + 59.8100 h2o + 3.5470 nad + 13.0279 nadph + 1.7867 oa + 0.5191 pep + 2.8328 pyr ---> Biomass + 59.8100 adp + 4.1182 akg + 3.7478 coa + 59.8100 h + 3.5470 nadh + 13.0279 nadp + 59.8100 pi						3pg[c]	0	0.5
-													atp[c]	9.63	9.63
-													2pg[c]	0	0.5
-													13pdg[c]	0	0.5
-													oa[c]	0	0.5
-													co2[c]	0	0.5
-													co2[e]	0	0.5
-													h2o[c]	0	0.5
-													h2o[e]	0	0.5
-													accoa[c]	0	0.5
-													oa[e]	0	0.5
-													accoa[e]	0	0.5
-													q8[c]	0	0.5
-													q8h2[c]	0	0.5
+GLCpts				4.5812E+06	-9.1	10	glc[e] + pep[c] --> g6p[c] + pyr[c]						glc[e]	1	20
+PGI				3.8511E+00	-0.8	4.8609	[c] : g6p <==> f6p						g6p[c]	1	10
+PFK				6.0465E+02	-3.8	7.4774	[c] : atp + f6p --> adp + fdp + h						pep[c]	1	10
+FBA				8.4276E-04	4.2	7.4774	[c] : fdp <==> g3p						pyr[c]	1	10
+G3P_ex				1.1836E+00	-0.1	16.0235	[c] : g3p + pi + adp <==> pep + atp						f6p[c]	1	10
+PYK				7.5765E+03	-5.3	1.7582	[c] : adp + h + pep --> atp + pyr						fdp[c]	1	10
+Biomass				0.0000E+00	0.0		[c] : 59.8001 atp + 0.0709 f6p + 0.1290 g3p + 0.2050 g6p + 7.5496 pep + 2.8328 pyr ---> Biomass + 59.8001 adp + 59.8001 pi + 59.8001 h						g3p[c]	1	10
+EX_h							h[c] <==> h[e]						adp[c]	1	10
+EX_pi							pi[c] <==> pi[e]						atp[c]	1	10
+EX_pyr							pyr[c] <==> pyr[e]						pi[c]	1	10
+													h[c]	0.0001	0.0001
+													pi[e]	1	10
+													h[e]	1	0.002
+													pyr[e]	0	0

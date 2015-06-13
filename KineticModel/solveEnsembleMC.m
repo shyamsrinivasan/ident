@@ -17,7 +17,7 @@ for imodel = 1:nmodels
     fprintf('%s\n',mname);
 %     saveData.filename = mname;
     %Model initialization
-    [model,batch,solverP,saveData] = initializeModel(model,100);
+    [model,batch,solverP,saveData] = initializeModel(model,25);
     if nmodels > 1
         if isempty(inSolution.(mname))
             %simulate models first to get initial SS
@@ -51,13 +51,17 @@ for imodel = 1:nmodels
             %Plot Initial Solution
             [hfig,hsubfig] =...
             printMetResults(model,allSolution,[],[],[],varname);
+        
+            %Plot Initial Fluxes
+            printvar = {'glcpts','pfk','pgi','g3p_ex','ex_h','ex_pi','ex_pyr'};
+            plotflux_bar(model,inSolution.flux,printvar);
         end
     end
     close all
 end
 
 %Call MCsmulation for inital value MC on FBAmodel
-nsamples = 500; %# samples
+nsamples = 1; %# samples
 lb = [1e-4];
 ub = [1000];
 pvar = {'C[c]'};

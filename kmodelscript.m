@@ -2,7 +2,7 @@ clc
 % clear all
 addpath(genpath('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel'));
 % load('C:\Users\shyam\Documents\Courses\CHE 1125 Project\Kinetic Model\kmodel_pname.mat');
-rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\N2m.txt';
+rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\ecoliccm.txt';
 [FBAmodel,parameter,variable,nrxn,nmetab] = modelgen(rxfname);
 % % % sample metabolites 
 % variable.MC = sampleMetabolites(FBAmodel);
@@ -34,14 +34,15 @@ variable.MC = sampleMet(FBAmodel);
 %     fprintf('Sample #%d of 1000\n',i);
 %     sam_name = sprintf('samp_%d',i);
 %     variable = data.(sam_name).variable;
-    load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\N2MC_5');
+%     load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\ecoliT1_MC_1.mat');
     nmodels = 1;
     [ensb] = build_ensemble(nmodels,FBAmodel,parameter,variable.MC);
     %Resample Kms
     ensb = resample_ensemble(ensb,FBAmodel,variable);
 
     inSolution = [];
-    varname = {'A[c]','B[c]','C[c]','D[c]','E[c]','P[c]'};
+    varname = {'g6p[c]','atp[c]','adp[c]','pep[c]','pyr[c]','pi[c]',...
+               'h[c]','f6p[c]','fdp[c]','g3p[c]'};
     [allSolution,allfinalSS,ySample] =...
     solveEnsembleMC(FBAmodel,ensb,variable,inSolution,varname,'MC');
     

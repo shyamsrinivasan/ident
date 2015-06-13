@@ -19,12 +19,19 @@ end
 Vex = model.Vex;
 bm_ind = model.bmrxn;
 flux = zeros(nt_rxn,1);
-
+%Uptake
 flux(Vupind) = model.Vuptake;
 if useVmax
+    
+    %Intracellular Reactions
     flux(Vind) = ConvinienceKinetics(model,pmeter,MC,bm_ind,Vind);
+    
+    %Exchange
     flux(Vexind) = pmeter.Vmax(Vexind).*MC(int_ind);
+    
+    %Exchange - Mass Action
     flux = ExFlux(model,MC,flux,Vex);
+    flux = ExFlux(model,MC,flux,model.V2rct);
 else
     flux(Vind) = ConvinienceKinetics(model,pmeter,MC,bm_ind,Vind,EC);
     if ~isempty(Vexind) && ~isempty(int_ind)

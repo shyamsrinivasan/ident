@@ -5,9 +5,8 @@ MClow = FBAmodel.MClow(1:nmetab);
 MChigh = FBAmodel.MChigh(1:nmetab);
 mSample = MClow + (MChigh - MClow).*random(pd,nmetab,1);
 MC_sampl = zeros(nmetab,1);
-% if any(MClow == MChigh)
-%     MC_sampl(MClow == MChigh) = MClow(MClow == MChigh);   
-% end
+MC_sampl = mSample;
+
 % MC_sampl(MClow ~= MChigh) = mSample(MClow ~= MChigh);
 % %ATP AMP ADP
 % ec = 0.8;
@@ -18,28 +17,35 @@ MC_sampl = zeros(nmetab,1);
 
 %Sample Metabolites based on Lsawrence's Noisy Metabolomics Sampling
 %Methodology (Directly load a pre-sampled file)
-ism = 10;
-%Model
-load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\Samples\centralIshiiModel.mat');
-%Samples
-load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\Samples\CentralIshii_1.mat');
-mets = cellfun(@changeN,lower(model.mets),'UniformOutput',0);
-MCsample = zeros(length(FBAmodel.Metabolites),1000);
-for im = 1:length(FBAmodel.Metabolites)
-    tfm = strcmpi(FBAmodel.Metabolites{im},mets);
-    if any(tfm)
-        fprintf('%d Metabolite:%s\n',im,FBAmodel.Metabolites{im});
-        MCsample(im,:) = exp(points(tfm,:));%points from loading mat file #2
-        MC_sampl(im) = MCsample(im,ism);  
-    else
-        MCsample(im,:) = MClow(im) + (MChigh(im) - MClow(im)).*random(pd,1,1000);
-        MC_sampl(im) = MCsample(im,ism); 
-    end    
-end
+% ism = 10;
+% %Model
+% load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\Samples\centralIshiiModel.mat');
+% %Samples
+% load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\Samples\CentralIshii_1.mat');
+% mets = cellfun(@changeN,lower(model.mets),'UniformOutput',0);
+% MCsample = zeros(length(FBAmodel.Metabolites),1000);
+% for im = 1:length(FBAmodel.Metabolites)
+%     tfm = strcmpi(FBAmodel.Metabolites{im},mets);
+%     if any(tfm)
+%         fprintf('%d Metabolite:%s\n',im,FBAmodel.Metabolites{im});
+%         MCsample(im,:) = exp(points(tfm,:));%points from loading mat file #2
+%         MC_sampl(im) = MCsample(im,ism);  
+%     else
+%         MCsample(im,:) = MClow(im) + (MChigh(im) - MClow(im)).*random(pd,1,1000);
+%         MC_sampl(im) = MCsample(im,ism); 
+%     end    
+% end
 H2o = find(strcmpi('h2o[c]',FBAmodel.Metabolites));
 Hion = find(strcmpi('h[c]',FBAmodel.Metabolites));
 H2oe = find(strcmpi('h2o[e]',FBAmodel.Metabolites));
 Hione = find(strcmpi('h[e]',FBAmodel.Metabolites));
+
+if any(MClow == MChigh)
+    MC_sampl(MClow == MChigh) = MClow(MClow == MChigh);   
+end
+if ~isempty(H2oe)
+    MC_sampl(H2oe) = 1000;
+end
 % MC = MC_sampl;
 % [nm,nr] = size(FBAmodel.S);
 % for irxn = 1:nr

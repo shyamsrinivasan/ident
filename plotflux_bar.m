@@ -40,7 +40,8 @@ for i = 1:nflux
 %         xticklabel{i} = sprintf('%s Flux',fluxind{i});
         if isempty(findobj('type','figure','Name','Fluxes'))
             hfig = figure('Name','Fluxes'); 
-            figure(hfig);
+        else
+            hfig = findobj('type','figure','Name','Fluxes');
         end 
         figure(hfig);
         hsubfig(i) = subplot(nflux,1,i);
