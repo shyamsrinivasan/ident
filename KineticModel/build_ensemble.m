@@ -76,3 +76,11 @@ for isample = 1:nsamples
     ensb.(mname).Vmax(Vind) = model.Vss(Vind)./vflux(Vind);
     ensb.(mname).Vmax(setdiff(1:nt_rxn,Vind)) = 1;    
 end
+
+%Select models from ensemble
+for is = 1:nsamples
+     mname = sprintf('model%d',is);  
+    if any(ensb.(mname).Vmax < 0)
+        fprintf('%s not suitable for simulation\n',mname);
+    end
+end

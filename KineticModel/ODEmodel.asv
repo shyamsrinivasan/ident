@@ -43,7 +43,7 @@ flux = ExFlux(model,Y,flux,model.V2rct);
 flux(Vind) = ConvinienceKinetics(model,pmeter,Y,bm_ind,Vind);
 flux(bm_ind) = gr_flux;
 % flux(model.Vex) = ConvinienceKinetics(model,pmeter,Y,bm_ind,model.Vex);
-plotflux_timecourse(flux,t,model);
+hsubfig = plotflux_timecourse(flux,t,model,hsubfig);
 %Intracellular(Mitochondria) (Yeast)
 % flux(VMit) = ConvinienceKinetics(model,pmeter,Y,bm_ind,VMit);
 %% %Intracellular Metabolites
@@ -88,11 +88,11 @@ dXdt(Mbio) = 0;
 %Biomass 
 % dXdt(end) = data.S(end,:)*flux;
 
-if any(Y(Y<0))
-    flag = -1;
-else
+% if any(Y(Y<0))
+%     flag = -1;
+% else
     flag = 0;
-end
+% end
 newdata = [];
 end
 

@@ -28,7 +28,7 @@ if ~isfield(batch,'init')
     batch.init{1} = {'glc[e]';'lcts[e]';'ac[e]';'etoh[e]';'succ[e]';...
                      'nh4[e]';'co2[e]';'acald[e]';'akg[e]';'for[e]';...
                      'fum[e]';'h[e]';'h2o[e]';'o2[e]';'mal[e]';'pi[e]';'pyr[e]'};
-    batch.init{2} = [200;0;0;0;0;0;0;0;0;0;0;2E-3;1000;1;0;10;0];%mmoles 
+    batch.init{2} = [20;0;0;0;0;0;0;0;0;0;0;2E-3;1000;1;0;10;0];%mmoles 
 %       batch.init{1} = {'A[e]','D[e]','P[e]','E[e]'};
 %       batch.init{2} = [1;0;0;0];
 end
