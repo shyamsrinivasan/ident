@@ -31,7 +31,7 @@ dXdt = zeros(nr(1),1);%[Metabolites;Biomass]
 flux = zeros(nr(3),1);
 %% %Biomass flux
 % gr_flux = 0.8*prod(Y(Mbio_ind)./([.8;.1]+Y(Mbio_ind)));
-gr_flux = 0;%model.gmax;%0.8;%h-1
+gr_flux = 0.001;%model.gmax;%0.8;%h-1
 %% Fluxes 
 %Fixed Uptake Fluxes
 flux(model.Vupind) = model.Vuptake;%[20];
@@ -44,6 +44,7 @@ flux(Vind) = ConvinienceKinetics(model,pmeter,Y,bm_ind,Vind);
 flux(bm_ind) = gr_flux;
 % flux(model.Vex) = ConvinienceKinetics(model,pmeter,Y,bm_ind,model.Vex);
 plotflux_timecourse(flux,t,model);
+% plotconc_timecourse(Y,t,model);
 %Intracellular(Mitochondria) (Yeast)
 % flux(VMit) = ConvinienceKinetics(model,pmeter,Y,bm_ind,VMit);
 %% %Intracellular Metabolites

@@ -38,8 +38,8 @@ variable.MC = sampleMet(FBAmodel);
     nmodels = 100;
 %     [var,Fvar,EScell] = sampleMet_parallel(FBAmodel,parameter,variable,nmodels);
     [ensb] = build_ensemble(nmodels,FBAmodel,parameter,variable.MC);
-%     %Resample Kms
-    ensb = resample_ensemble(ensb,FBAmodel,variable.MC);
+% %     %Resample Kms
+%     ensb = resample_ensemble(ensb,FBAmodel,variable.MC);
 % load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\ecoliT4_parameters_4.mat');
     inSolution = [];
     varname = {'glc[c]','g6p[c]','pep[c]','pyr[c]',...

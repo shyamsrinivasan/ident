@@ -4,7 +4,7 @@ useVmax = 0;
 if nargin < 5
     useVmax = 1;
 end
-k = .1;
+k = .01;
 K = .1;
 if useVmax
     for iv = 1:length(Vex)    

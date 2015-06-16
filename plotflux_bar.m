@@ -69,7 +69,7 @@ for i = 1:nflux
 %         end
         hold on
     else
-        fprintf('No flux for %s exists',fluxind{i});
+        fprintf('No flux for %s exists\n',fluxind{i});
         continue        
     end   
 end
