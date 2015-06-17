@@ -2,7 +2,7 @@ clc
 % clear all
 addpath(genpath('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel'));
 % load('C:\Users\shyam\Documents\Courses\CHE 1125 Project\Kinetic Model\kmodel_pname.mat');
-rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\ecoliT6.txt';
+rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\ecoliT7.txt';
 [FBAmodel,parameter,variable,nrxn,nmetab] = modelgen(rxfname);
 % % % sample metabolites 
 % variable.MC = sampleMetabolites(FBAmodel);
