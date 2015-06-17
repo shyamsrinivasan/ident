@@ -17,7 +17,7 @@ for imodel = 1:nmodels
     fprintf('%s\n',mname);
 %     saveData.filename = mname;
     %Model initialization
-    [model,batch,solverP,saveData] = initializeModel(model,50000);
+    [model,batch,solverP,saveData] = initializeModel(model,5000);
     if nmodels > 1
         if isempty(inSolution.(mname))
             %simulate models first to get initial SS
@@ -32,12 +32,12 @@ for imodel = 1:nmodels
             allfinalSS.(mname).init.flux = inSolution.(mname).flux;
             
             %Plot Initial Solution
-            [hfig,hsubfig] =...
-            printMetResults(model,allSolution.(mname),[],[],[],varname);
+%             [hfig,hsubfig] =...
+%             printMetResults(model,allSolution.(mname),[],[],[],varname);
             
             %Plot Initial Fluxes
-            printvar = {'glcpts_1','glcpts','pfk','pgi','pyk','ex_pyr'};
-            plotflux_bar(model,inSolution.(mname).flux,printvar);
+%             printvar = {'glcpts_1','glcpts','pfk','pgi','pyk','ex_pyr'};
+%             plotflux_bar(model,inSolution.(mname).flux,printvar);
         end
     else
         if isempty(inSolution.model1)

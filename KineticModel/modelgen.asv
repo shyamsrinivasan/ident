@@ -456,11 +456,11 @@ variable.EC = model.EC;
 
 %Add Molecular weight individually
 model_data.MolWt = zeros(nt_metab,1);
-model_data.MolWt(strcmpi('g3p[c]',model_data.Metabolites)) = 172.074;
-model_data.MolWt(strcmpi('pyr[c]',model_data.Metabolites)) = 88.06;
-model_data.MolWt(strcmpi('pep[c]',model_data.Metabolites)) = 168.042;
-model_data.MolWt(strcmpi('f6p[c]',model_data.Metabolites)) = 259.81;
-model_data.MolWt(strcmpi('g6p[c]',model_data.Metabolites)) = 260.136;
+model_data.MolWt(strcmpi('g3p[c]',model.Metabolites)) = 172.074;
+model_data.MolWt(strcmpi('pyr[c]',model.Metabolites)) = 88.06;
+model_data.MolWt(strcmpi('pep[c]',model.Metabolites)) = 168.042;
+model_data.MolWt(strcmpi('f6p[c]',model.Metabolites)) = 259.81;
+model_data.MolWt(strcmpi('g6p[c]',model.Metabolites)) = 260.136;
 
 
 % nested functions

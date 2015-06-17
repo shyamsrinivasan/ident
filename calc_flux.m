@@ -39,5 +39,6 @@ else
     end
     flux = ExFlux(model,MC,flux,Vex,EC);    
 end
-flux(bm_ind) = model.gmax;
+% flux(bm_ind) = model.gmax;
+flux(bm_ind) = biomass_flux(model,MC,[],flux);
 return

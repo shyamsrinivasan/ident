@@ -1,6 +1,6 @@
 Enzymes	Etot Conc	kcat (1/s)	Vmax	Keq	delta G (pH 7.2)	"vss (Gur = -10, O2ur = -1000)"	 equation	Activators	Inhibitors	Rxn Mechanism	Substrate Km (mM)	Regulator Km (mM)	Metab	Mclow (mM)	Mchigh (mM)
 GLC_ex				4.5812E+06	-9.1	10	glc[e] <==> glc[c]						glc[e]	1	20
-GLCpts					-9.1	10	glc[c] ---> g6p[c]						g6p[c]	1	10
+GLCpts					-9.1	10	glc[c] + pep[c] ---> g6p[c] + pyr[c]						g6p[c]	1	10
 PGI				3.8511E+00	-0.8	4.8609	[c] : g6p <==> f6p						pep[c]	1	10
 PFK				6.0465E+02	-3.8	7.4774	[c] : atp + f6p --> adp + fdp + h						pyr[c]	1	10
 pfy					0.3	7.47	[c] : fdp <==> pep						f6p[c]	1	10
