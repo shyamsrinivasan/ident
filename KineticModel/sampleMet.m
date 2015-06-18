@@ -40,12 +40,17 @@ Hion = find(strcmpi('h[c]',FBAmodel.Metabolites));
 H2oe = find(strcmpi('h2o[e]',FBAmodel.Metabolites));
 Hione = find(strcmpi('h[e]',FBAmodel.Metabolites));
 
+nad = strcmpi('nad[c]',FBAmodel.Metabolites);
+nadh = strcmpi('nadh[c]',FBAmodel.Metabolites);
+
 if any(MClow == MChigh)
     MC_sampl(MClow == MChigh) = MClow(MClow == MChigh);   
 end
 if ~isempty(H2oe)
     MC_sampl(H2oe) = 1000;
 end
+
+MC_sampl(nad) = 1000*MC_sampl(nadh);
 % MC = MC_sampl;
 % [nm,nr] = size(FBAmodel.S);
 % for irxn = 1:nr

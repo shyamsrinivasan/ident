@@ -13,7 +13,7 @@ else
 %     Mbio = model.S(:,bm_ind)>0;
 %     nint_metab = nint_metab-length(find(Mbio));
     initval(1:(nint_metab)) = variable.MC(1:(nint_metab));
-    initval(Mbio) = 0;
+    initval(Mbio) = 0.01;
     initval(nint_metab+1:nint_metab+next_metab) = ...
     assign_extconc(batch.init{1},batch.init{2},model);
 end

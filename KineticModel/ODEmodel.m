@@ -9,6 +9,12 @@ bm_ind = model.bmrxn;
 Mbio = strcmpi('biomass',model.Metabolites);
 % Mbio = model.S(:,bm_ind)>0;
 
+%glcpts
+Mglc = strcmpi('glc[e]',model.Metabolites);
+Vglc = find(model.S(Mglc,:)<0);
+model.Vex = setdiff(model.Vex,Vglc);
+model.V2rct = setdiff(model.V2rct,Vglc);
+
 nr = zeros(4,1);
 nr(1) = model.nt_metab;
 nr(2) = model.nint_metab;%-length(find(Mbio));
@@ -39,6 +45,7 @@ flux(model.Vupind) = model.Vuptake;%[20];
 %Transporters
 flux = ExFlux(model,Y,flux,model.Vex);
 flux = ExFlux(model,Y,flux,model.V2rct);
+flux(Vglc) = ConvinienceKinetics(model,pmeter,Y,bm_ind,Vglc);
 %Intracellular(Cytosolic)
 %flux(Vind) = ConvinienceKinetics();
 flux(Vind) = ConvinienceKinetics(model,pmeter,Y,bm_ind,Vind);
@@ -82,13 +89,19 @@ plotconc_timecourse(Y,t,model);
 dXdt(1:nr(2)) = model.S(1:nr(2),:)*flux - Y(1:nr(2))*gr_flux;
 
 %Biomass
-dXdt(Mbio) = 0;
+dXdt(Mbio) = Y(Mbio)*gr_flux;
 
 
 
 %Extracellular Metabolites
 % dXdt(nr(2)+1:nr(1)) = D*(data.M*data.S(1:nr(2),:)*flux-Y(nr(2)+1:nr(1)))-...
 %                       data.M*data.S(1:nr(2),:)*flux;
+glce = strcmpi('glc[e]',model.Metabolites);
+lace = strcmpi('lac[e]',model.Metabolites);
+dXdt(glce) = model.S(glce,:)*flux;
+dXdt(lace) = model.S(lace,:)*flux;
+
+
 
 %Biomass 
 % dXdt(end) = data.S(end,:)*flux;

@@ -2,8 +2,17 @@
 function [ensb,flag] = build_ensemble(nmodels,model,pmeter,MC)
 % nmodels = 100;
 nsamples = nmodels;
-nrxn = model.n_rxn;
-Vind = model.Vind;
+
+%glcpts
+Mglc = strcmpi('glc[e]',model.Metabolites);
+Vglc = find(model.S(Mglc,:)<0);
+
+try
+    Vind = [model.Vind;Vglc];
+catch
+    Vind = [model.Vind Vglc];
+end
+nrxn = length(Vind);
 nt_rxn = model.nt_rxn;
 ntmetab = size(model.S,1);
 for isample = 1:nsamples
@@ -81,9 +90,7 @@ end
 flag = 0;
 for is = 1:nsamples
      mname = sprintf('model%d',is);  
-%      mname1 = sprintf('model %d',is); 
     if any(ensb.(mname).Vmax < 0)
         flag = 1;        
-%         fprintf('%s not suitable for simulation\n',mname1);
     end
 end

@@ -10,7 +10,7 @@ end
 if ~isfield(model,'Vuptake')
     nuprxns = length(model.Vupind);
     model.Vuptake = zeros(nuprxns,1);
-    model.Vuptake(model.Vuptake==0) = 1;%mmole/gDCW.s
+    model.Vuptake(model.Vuptake==0) = 20;%mmole/gDCW.s
 end
 if ~isfield(model,'Vefflux')
     model.Vefflux = 0;
@@ -72,10 +72,10 @@ end
 
 %Check if growth rate is possible
 %Uptake Flux
-bounds.Vuptake = model.Vuptake;
+bounds.Vuptake = 100;%model.Vuptake;
 bounds.vl = zeros(model.nt_rxn,1);
-% bounds.vl(bounds.vl==0) = -1;
-bounds.vl(logical(model.reversible)) = -100;%bounds.Vuptake;
+bounds.vl(bounds.vl==0) = -100;
+% bounds.vl(logical(model.reversible)) = -100;%bounds.Vuptake;
 bounds.vu = zeros(model.nt_rxn,1);          
 %Corresponding flux bounds
 bounds.vu(bounds.vu==0) = 100;%bounds.Vuptake;

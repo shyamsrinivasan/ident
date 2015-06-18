@@ -1,12 +1,14 @@
 Enzymes	Etot Conc	kcat (1/s)	Vmax	Keq	delta G (pH 7.2)	"vss (Gur = -10, O2ur = -1000)"	 equation	Activators	Inhibitors	Rxn Mechanism	Substrate Km (mM)	Regulator Km (mM)	Metab	Mclow (mM)	Mchigh (mM)
-GLC_ex				4.5812E+06	-9.1	10	glc[e] <==> glc[c]						glc[e]	1	20
-GLCpts					-9.1	10	glc[c] ---> g6p[c]						g6p[c]	1	10
-PGI				3.8511E+00	-0.8	4.8609	[c] : g6p <==> f6p						pep[c]	1	10
-pfk					0.3	7.47	[c] : f6p <==> pep						pyr[c]	1	10
-pyk					-5.3	1.75	[c] : pep <==> pyr						f6p[c]	1	10
-biomass							[c] : 0.0709 f6p + 0.2050 g6p + 7.5496 pep + 2.8328 pyr ---> Biomass						pyr[e]	0	0
-EX_pyr							pyr[c] <==> pyr[e]						glc[c]	1	20
-															
-															
-															
-															
+EXglc				4.5812E+06	-22.4	20	glc[e] + pep[c] ---> g6p[c] + pyr[c]						glc[e]	1	20
+PGI					1	4.8609	[c] : g6p + atp ---> adp + 2 g3p						g6p[c]	1	20
+GAPDH		120		3.8511E+00	-2.6	14.72	[c] : g3p + nad + adp <==> pep + nadh + h + atp						pep[c]	1	20
+pyk					-31.7	1.75	[c] : pep + adp ---> pyr + atp						pyr[c]	1	20
+lacY		250			-6.4	1.75	[c] : pyr + nadh + h ---> lac + nad						g3p[c]	1	20
+biomass							[c] : atp + g6p + pep + pyr ---> Biomass + adp						lac[c]	1	20
+EXlac							lac[c] ---> lac[e]						atp[c]	1	20
+EXh							h[c] <==> h[e]						adp[c]	1	20
+													nad[c]	1	20
+													nadh[c]	1	20
+													h[c]	1	20
+													h[e]	1	20
+													lac[e]	1	20

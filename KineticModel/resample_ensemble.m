@@ -1,12 +1,22 @@
 function ensb = resample_ensemble(ensb,model,MC)
 nmodels = length(fieldnames(ensb));
+
+%glcpts
+Mglc = strcmpi('glc[e]',model.Metabolites);
+Vglc = find(model.S(Mglc,:)<0);
+
+try
+    Vind = [model.Vind;Vglc];
+catch
+    Vind = [model.Vind Vglc];
+end
+nrxn = length(Vind);
+
 %Order of magnitude to determine whether to resample Km or not
 ofm = 1;
 for isample = 1:nmodels
     mname = sprintf('model%d',isample);
-    set = ensb.(mname);
-    Vind = model.Vind;
-    nrxn = length(Vind);
+    set = ensb.(mname);    
     for irxn = 1:nrxn        
         rpind = model.S(:,Vind(irxn))~=0;        
         rpKjnd = find(set.Kind(rpind,Vind(irxn))~=1);

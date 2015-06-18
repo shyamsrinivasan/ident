@@ -16,18 +16,20 @@ else
     vu = bounds.vu;
 end
 nint_metab = model.nint_metab-length(find(model.S(:,model.bmrxn)>0));
-S = model.S(1:nint_metab,:);
+S = model.S;%(1:nint_metab,:);
 %Add additional reactions for reversible reactions
 % if any(model.reversible)
 %     revCol = S(:,logical(model.reversible));
 %     S = [S -revCol];
 % end
-%Add elements to S for growth dilution
 
-bm_col = S(:,model.bmrxn);
-bm_col(bm_col < 0) = bm_col(bm_col < 0 )-1;
-bm_col(bm_col == 0) = -1;
-S(:,model.bmrxn) = bm_col;
+%Add elements to S for growth dilution
+if prxnid ~= model.bmrxn
+    bm_col = S(:,model.bmrxn);
+    bm_col(bm_col < 0) = bm_col(bm_col < 0 )-1;
+    bm_col(bm_col == 0) = -1;
+    S(:,model.bmrxn) = bm_col;
+end
 
 [nm,nr] = size(S);
 
@@ -39,6 +41,11 @@ if isfield(bounds,'Vuptake')
     end
 end
 
+Mglc = strcmpi('glc[e]',model.Metabolites);
+Vglc = find(model.S(Mglc,:)<0);
+vl(Vglc) = bounds.Vuptake;
+vu(Vglc) = bounds.Vuptake;
+
 %Growth Fluxes
 if prxnid ~= model.bmrxn
     if isfield(model,'gmax')
@@ -49,7 +56,7 @@ else
     vl(model.bmrxn) = 0;
 end
 %Exchnage Reactions Cannot occur in reverse
-vl(model.Vex) = 0;
+% vl(model.Vex) = 0;
 
 %Default Bounds - Reversible reactions
 
