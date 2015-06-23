@@ -9,7 +9,7 @@ if ~isemptyr(initialSol)
     initval = initialSol.y(:,end);
 else
 %     bm_ind = model.bmrxn;
-    Mbio = strcmpi('biomass',model.Metabolites);
+    Mbio = strcmpi('biomass',model.mets);
 %     Mbio = model.S(:,bm_ind)>0;
 %     nint_metab = nint_metab-length(find(Mbio));
     initval(1:(nint_metab)) = variable.MC(1:(nint_metab));

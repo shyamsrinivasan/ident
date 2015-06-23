@@ -53,26 +53,26 @@ saveData.dirname =...
 'C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KModel';
 
 %Assigning Indices
-ivec = 1;
-remVex = zeros(length(model.Vex),1);
-for irxn = 1:length(model.Vex)
-    nsubs = length(find(model.S(:,model.Vex(irxn))<0));
-    nprod = length(find(model.S(:,model.Vex(irxn))>0));
-    if nsubs > 1 && nprod > 1
-        model.V2rct(ivec) = model.Vex(irxn);
-        remVex(irxn) = 1;
-        ivec = ivec + 1;
-    end
-end
-if any(remVex)
-    model.Vex(logical(remVex)) = [];
-else
-    model.V2rct = [];
-end
+% ivec = 1;
+% remVex = zeros(length(model.Vex),1);
+% for irxn = 1:length(model.Vex)
+%     nsubs = length(find(model.S(:,model.Vex(irxn))<0));
+%     nprod = length(find(model.S(:,model.Vex(irxn))>0));
+%     if nsubs > 1 && nprod > 1
+%         model.V2rct(ivec) = model.Vex(irxn);
+%         remVex(irxn) = 1;
+%         ivec = ivec + 1;
+%     end
+% end
+% if any(remVex)
+%     model.Vex(logical(remVex)) = [];
+% else
+%     model.V2rct = [];
+% end
 
 %Check if growth rate is possible
 %Uptake Flux
-bounds.Vuptake = 100;%model.Vuptake;
+bounds.Vuptake = 20;%model.Vuptake;
 bounds.vl = zeros(model.nt_rxn,1);
 bounds.vl(bounds.vl==0) = -100;
 % bounds.vl(logical(model.reversible)) = -100;%bounds.Vuptake;
@@ -85,6 +85,10 @@ if Maxflag > 0 && -vMax < model.gmax
     fprintf('Given Maximum growth rate %2.3g is infeasible\n',model.gmax);
     model.gmax = -vMax;
 end
+
+% Consider only 2 sided reactions for the Dynamic Part
+
+
 return
 %function calculateVariance()
 %function sensAnalysis()

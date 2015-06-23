@@ -2,7 +2,7 @@ function ensb = resample_ensemble(ensb,model,MC)
 nmodels = length(fieldnames(ensb));
 
 %glcpts
-Mglc = strcmpi('glc[e]',model.Metabolites);
+Mglc = strcmpi('glc[e]',model.mets);
 Vglc = find(model.S(Mglc,:)<0);
 
 try

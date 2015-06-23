@@ -17,36 +17,26 @@ else
 end
 nint_metab = model.nint_metab-length(find(model.S(:,model.bmrxn)>0));
 S = model.S;%(1:nint_metab,:);
-%Add additional reactions for reversible reactions
-% if any(model.reversible)
-%     revCol = S(:,logical(model.reversible));
-%     S = [S -revCol];
-% end
 
 %Add elements to S for growth dilution
-if prxnid ~= model.bmrxn
-    bm_col = S(:,model.bmrxn);
-    bm_col(bm_col < 0) = bm_col(bm_col < 0 )-1;
-    bm_col(bm_col == 0) = -1;
-    S(:,model.bmrxn) = bm_col;
-end
+% if prxnid ~= model.bmrxn
+%     bm_col = S(:,model.bmrxn);
+%     bm_col(bm_col < 0) = bm_col(bm_col < 0 )-1;
+%     bm_col(bm_col == 0) = -1;
+%     S(:,model.bmrxn) = bm_col;
+% end
 
 [nm,nr] = size(S);
 
-%Uptake Fluxes
+%Uptake Flux bounds
 if isfield(bounds,'Vuptake')
     if ~isempty(bounds.Vuptake)
-        vl(model.Vupind) = bounds.Vuptake;
-        vu(model.Vupind) = bounds.Vuptake;
+        vl(model.VFup) = bounds.Vuptake;
+        vu(model.VFup) = bounds.Vuptake;
     end
 end
 
-Mglc = strcmpi('glc[e]',model.Metabolites);
-Vglc = find(model.S(Mglc,:)<0);
-vl(Vglc) = bounds.Vuptake;
-vu(Vglc) = bounds.Vuptake;
-
-%Growth Fluxes
+%Growth Flux bounds
 if prxnid ~= model.bmrxn
     if isfield(model,'gmax')
         vl(model.bmrxn) = model.gmax;
@@ -55,16 +45,31 @@ if prxnid ~= model.bmrxn
 else
     vl(model.bmrxn) = 0;
 end
+
+% 
+% Mglc = strcmpi('glc[e]',model.Metabolites);
+% Vglc = find(model.S(Mglc,:)<0);
+% vl(Vglc) = bounds.Vuptake;
+% vu(Vglc) = bounds.Vuptake;
+
+
 %Exchnage Reactions Cannot occur in reverse
 % vl(model.Vex) = 0;
 
 %Default Bounds - Reversible reactions
 
-b = zeros(nm,1);
+b = model.b;
 %Exchange of Product
 % vl(model.Vexind) = 0;
 %Objective Function
-cprod = sparse(1,prxnid,1,1,nr);
+cprod = full(model.c');
+vl(strcmpi('EXpyr',model.rxns)) = 0;
+vl(strcmpi('EXlac',model.rxns)) = 0;
+vl(strcmpi('EXacald',model.rxns)) = 0;
+vl(strcmpi('EXbiomass',model.rxns)) = 0;
+vl(~logical(model.rev)) = 0;
+% vl(strcmpi('EXglc',model.rxns)) = 50;
+% vu(strcmpi('EXglc',model.rxns)) = 50;
 
 [vLPmax,vProdLPmax,Maxflag] = cplexlp(-cprod(:),[],[],S,b,vl,vu);
 [vLPmin,vProdLPmin,Minflag] = cplexlp(cprod(:),[],[],S,b,vl,vu);

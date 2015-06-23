@@ -4,13 +4,16 @@ function [ensb,flag] = build_ensemble(nmodels,model,pmeter,MC)
 nsamples = nmodels;
 
 %glcpts
-Mglc = strcmpi('glc[e]',model.Metabolites);
+Mglc = strcmpi('glc[e]',model.mets);
 Vglc = find(model.S(Mglc,:)<0);
-
-try
-    Vind = [model.Vind;Vglc];
-catch
-    Vind = [model.Vind Vglc];
+if ~any(model.Vind==Vglc)
+    try
+        Vind = [model.Vind;Vglc];
+    catch
+        Vind = [model.Vind Vglc];
+    end
+else
+    Vind = model.Vind;
 end
 nrxn = length(Vind);
 nt_rxn = model.nt_rxn;
@@ -37,7 +40,7 @@ for irxn = 1:nrxn
     inhib{irxn} = find(model.SI(:,Vind(irxn))<0);
     nreg(irxn) = length(find(model.SI(:,Vind(irxn))));
 end
-  %Remove kinetic consideration for metabolites like water which are
+  %Remove kinetic consideration for mets like water which are
   %non-limiting always
 for isample = 1:nsamples
     mname = sprintf('model%d',isample);  
