@@ -20,9 +20,10 @@ fclose(fileid);
 
 model_data = struct();
 model_data.nt_rxn = length(C{8}(~cellfun('isempty',C{8})));
+
 nt_rxn = model_data.nt_rxn;
-%Enzyme/Reaction Information 
-model.EnzName = C{1}(~cellfun('isempty',C{1}));%Enzyme Name
+%enzs/Reaction Information 
+model.enzName = C{1}(~cellfun('isempty',C{1}));%enzs Name
 model.EC = C{2}(1:nt_rxn);     %Etotal Concentration
 model.Kcat = C{3}(1:nt_rxn);   %Reaction kcat 
 model.Vmax = C{4}(1:nt_rxn);   %Vmax
@@ -35,7 +36,7 @@ model.Kub = sparse(0,nt_rxn);
 Keq = zeros(nt_rxn,1);
 model.delG = zeros(nt_rxn,1);
 model.Vss = zeros(nt_rxn,1);
-model.Metabolites = {};
+model.mets = {};
 model.reversible = zeros(nt_rxn,1);
 
 imetab = 1;
@@ -72,6 +73,9 @@ for irxn = 1:nt_rxn
     
     if ~isempty(strfind(rxnstring, '<==>'))
 		eqsym = '<==>';
+		reverse = 1;
+    elseif ~isempty(strfind(rxnstring,'<=>'))
+        eqsym = '<=>';
 		reverse = 1;
     elseif ~isempty(strfind(rxnstring, '--->'))
 		eqsym = '--->';
@@ -125,7 +129,7 @@ for irxn = 1:nt_rxn
                 end
             end            
             %Required for compartmentalized models
-            tf = strcmpi(metab, model.Metabolites);
+            tf = strcmpi(metab, model.mets);
             if any(tf)
                 model.S(tf, irxn) = -stoich;
                 if ~isempty(par)
@@ -141,7 +145,7 @@ for irxn = 1:nt_rxn
                 end
             else
                 model.S(imetab, irxn) = -stoich;
-                model.Metabolites{imetab} = metab;
+                model.mets{imetab} = metab;
                 if ~isempty(par)
                     model.K(imetab,irxn) = par(ipt+iterm);
                     model.Klb(imetab,irxn) = 0;
@@ -183,7 +187,7 @@ for irxn = 1:nt_rxn
                     metab = terms{1}{iterm};
                 end
             end            
-            tf = strcmpi(metab, model.Metabolites);
+            tf = strcmpi(metab, model.mets);
             if any(tf)
                 model.S(tf, irxn) = stoich;
                 if ~isempty(par)
@@ -199,7 +203,7 @@ for irxn = 1:nt_rxn
                 end
             else
                 model.S(imetab, irxn) = stoich;
-                model.Metabolites{imetab} = metab;
+                model.mets{imetab} = metab;
                 if ~isempty(par)
                     model.K(imetab,irxn) = par(ipt+iterm);
                     model.Klb(imetab,irxn) = 0;
@@ -218,7 +222,7 @@ for irxn = 1:nt_rxn
     end 
     model.reversible(irxn) = reverse;
 end
-model.Metabolites = model.Metabolites';
+model.mets = model.mets';
 model.nt_metab = size(model.S, 1);
 nt_metab = model.nt_metab;
 
@@ -244,20 +248,20 @@ for irxn = 1:nt_rxn
     end
 end
 
-%Separate External & Internal Metabolites
-% exter_mind = ~cellfun('isempty',regexp(model.Metabolites,'\w(?:xt)$'));
-exter_mind = ~cellfun('isempty',regexp(model.Metabolites,'\w(?:\[e\])$'));
+%Separate External & Internal mets
+% exter_mind = ~cellfun('isempty',regexp(model.mets,'\w(?:xt)$'));
+exter_mind = ~cellfun('isempty',regexp(model.mets,'\w(?:\[e\])$'));
 inter_mind = ~exter_mind;
-bm_ind = strcmpi(model.Metabolites,'Biomass[c]');
+bm_ind = strcmpi(model.mets,'Biomass[c]');
 if any(bm_ind)
-    model.Metabolites{bm_ind} = 'Biomass';
+    model.mets{bm_ind} = 'Biomass';
 end
-% bm_mind = ~cellfun('isempty',regexp(model.Metabolites,'Biomass'));
+% bm_mind = ~cellfun('isempty',regexp(model.mets,'Biomass'));
 inter_mind(bm_ind)=0;
 
-model_data.Metabolites = [model.Metabolites(inter_mind,1);...
-                          model.Metabolites(exter_mind,1);...
-                          model.Metabolites(bm_ind,1)];
+model_data.mets = [model.mets(inter_mind,1);...
+                          model.mets(exter_mind,1);...
+                          model.mets(bm_ind,1)];
 newS = [model.S(inter_mind,:);model.S(exter_mind,:);model.S(bm_ind,:)];
 newSI = [model.SI(inter_mind,:);model.SI(exter_mind,:);model.SI(bm_ind,:)];
 newK = [model.K(inter_mind,:);model.K(exter_mind,:);model.K(bm_ind,:)];
@@ -272,48 +276,27 @@ newKIi = [model.KIihb(inter_mind,:);...
           model.KIihb(bm_ind,:)];
 
 %Identify Reaction Indices
-Vuptake = [];
-Vexind = [];
-% exind = ~cellfun('isempty',regexp(model_data.Metabolites,'\w(?:xt)$'));
-exind = ~cellfun('isempty',regexp(model_data.Metabolites,'\w(?:\[e\])$'));
-[~,allrxns] = find(newS(:,1:nt_rxn));
-all_unqrxns = unique(allrxns);
-nmetab_allrxns = histc(allrxns,all_unqrxns);
-ex_rxn = all_unqrxns(nmetab_allrxns == 1);
-[~,rxn] = find(newS(exind,ex_rxn));
-Vext = ex_rxn(rxn);%one sided rxns using only external metabolites
-[~,rxn1] = find(newS(~exind,ex_rxn));
-ex_rxn = ex_rxn(rxn1);
+% Vuptake = [];
+% Vexind = [];
 
-for jrxn = 1:length(ex_rxn)
-    if ~any(newS(:,ex_rxn(jrxn))<0)
-        %one sided uptake rxn
-        Vuptake = [Vuptake;ex_rxn(jrxn)];
-    end
-    if ~any(newS(:,ex_rxn(jrxn))>0)
-        %one sided excretion rxn
-        Vexind = [Vexind;ex_rxn(jrxn)];
-    end
+[Vind,Vuptake,VFup,VFex,Vex,bmrxn] = fluxIndex(model_data,nt_rxn,newS);
+try
+    Vext = [VFup' VFex'];
+catch
+    Vext = [VFup;VFex];
 end
 
-Vd = setdiff(1:nt_rxn,[Vuptake;Vexind;Vext]);
-[~,rxn] = find(newS(exind,Vd));
-Vex = unique(Vd(rxn)');%two sided exchange reactions
-%Identify biomass reaction
-[~,bmrxn] = find(newS(strcmpi(model_data.Metabolites,'Biomass'),:) > 0);
-Vind = setdiff(1:nt_rxn,[Vuptake;Vexind;bmrxn;Vext;Vex]);%intracellular rxns
-
-%Append appropriate rows/columns corresponding to enzymes/fluxes
-nenz = length(model.EnzName);
-other_ind = setdiff(1:nenz,[Vind';...
-                            Vuptake;...
-                            Vexind;...
-                            Vex;...
-                            Vext;...
+%Append appropriate rows/columns corresponding to enzss/fluxes
+nenz = length(model.enzName);
+other_ind = setdiff(1:nenz,[Vind...
+                            Vuptake'...                            
+                            Vex...
+                            Vext...
                             bmrxn]);
 [mS,~] = size(newS);
-model_data.Enzyme = [model.EnzName(setdiff(1:nenz,other_ind),1);...
-                     model.EnzName(other_ind,1)];
+model_data.enzs = [model.enzName(setdiff(1:nenz,other_ind),1);...
+                     model.enzName(other_ind,1)];
+model_data.rxns = model_data.enzs;                 
 newS = [newS,sparse(mS,length(other_ind))];
 newSI = [newSI,sparse(mS,length(other_ind))];
 newK = [newK,sparse(mS,length(other_ind))];
@@ -328,46 +311,20 @@ newKcat = [model.Kcat;zeros(length(other_ind),1)];
 newreverse = [model.reversible;zeros(length(other_ind),1)];
 
 %New Indices
-Vuptake = [];
-Vexind = [];
-% exind = ~cellfun('isempty',regexp(model_data.Metabolites,'\w(?:xt)$'));
-exind = ~cellfun('isempty',regexp(model_data.Metabolites,'\w(?:\[e\])$'));
-[~,allrxns] = find(newS(:,1:nt_rxn));
-all_unqrxns = unique(allrxns);
-nmetab_allrxns = histc(allrxns,all_unqrxns);
-ex_rxn = all_unqrxns(nmetab_allrxns == 1);
-[~,rxn] = find(newS(exind,ex_rxn));
-Vext = ex_rxn(rxn);%one sided rxns using only external metabolites
-[~,rxn1] = find(newS(~exind,ex_rxn));
-ex_rxn = ex_rxn(rxn1);
+% Vuptake = [];
+% Vexind = [];
 
-for jrxn = 1:length(ex_rxn)
-    if ~any(newS(:,ex_rxn(jrxn))<0)
-        %one sided uptake rxn
-        Vuptake = [Vuptake;ex_rxn(jrxn)];
-    end
-    if ~any(newS(:,ex_rxn(jrxn))>0)
-        %one sided excretion rxn
-        Vexind = [Vexind;ex_rxn(jrxn)];
-    end
-end
+[Vind,Vuptake,VFup,VFex,Vex,bmrxn,Vup,Vdn] = fluxIndex(model_data,nt_rxn,newS);
 
-Vd = setdiff(1:nt_rxn,[Vuptake;Vexind;Vext]);
-[~,rxn] = find(newS(exind,Vd));
-%two sided exchange reactions
-Vex = unique(Vd(rxn));
-%Identify biomass reaction
-[~,bmrxn] = find(newS(strcmpi(model_data.Metabolites,'Biomass'),:) > 0);
-%non Enzymatic Reactions
-noEnzreact = find(~cellfun('isempty',regexp(model_data.Enzyme,'(\w+.?)(?:_noenz)$')));
-model_data.VnoEnz = noEnzreact;
-%intracellular rxns
-model_data.Vind = setdiff(1:nt_rxn,[Vuptake;Vexind;bmrxn;Vext;Vex';noEnzreact]);
+model_data.Vind = Vind;
 model_data.Vupind = Vuptake;
-model_data.Vexind = Vexind;
+% model_data.Vexind = Vexind;
 model_data.Vex = Vex;
+model_data.VFup = VFup;
+model_data.VFex = VFex;
 model_data.bmrxn = bmrxn;
-
+model_data.Vup = Vup;
+model_data.Vdn = Vdn;
 %Identify activated reactions
 [~,allactrxn] = find(newSI(:,1:nt_rxn)>0);
 Vact_ind = unique(allactrxn);
@@ -382,7 +339,7 @@ model_data.Vss = newVss;
 model_data.delSGr = delSGr;
 model_data.Keq = newKeq;
 model_data.Kcat = newKcat;
-model_data.reversible = newreverse;
+model_data.rev = newreverse;
 
 model_data.Vact_ind = Vact_ind;
 model_data.Vihb_ind = Vihb_ind;
@@ -401,14 +358,14 @@ parameter.KIihb = newKIi;
 parameter.Vmax = model.Vmax;
 
 %Separate phosphorylated proteins from non-phosphorylated proteins
-%Separate PTS metabolites from other metabolites
-%At least get indices corresponding to PTS metabolites
+%Separate PTS mets from other mets
+%At least get indices corresponding to PTS mets
 %PEP,PYR,G6P,GLCxt,ACxt,RIBxt,GLXxt, etc
 pts_metab = {'pep[c]','pyr[c]','g6p[c]','lac[c]','gl[c]','gal[c]',...
              'glc[e]','lac[e]','gl[e]','gal[e]'};
 pts_ind = zeros(length(pts_metab),1);                                                                                                                                                                                                                                                                                                                                                                                          
 for ipts = 1:length(pts_metab)
-    tf_pts = strcmpi(model_data.Metabolites,pts_metab{ipts});
+    tf_pts = strcmpi(model_data.mets,pts_metab{ipts});
     if any(tf_pts)
         pts_ind(ipts) = find(tf_pts);
     end
@@ -424,8 +381,8 @@ concLow = C{15}(1:length(metabname));%Metabolite concentration
 concHigh = C{16}(1:length(metabname));
 model_data.MClow = zeros(nt_metab,1);
 model_data.MChigh = zeros(nt_metab,1);
-for imc = 1:length(model_data.Metabolites)
-    mtf = strcmpi(metabname,model_data.Metabolites{imc});
+for imc = 1:length(model_data.mets)
+    mtf = strcmpi(metabname,model_data.mets{imc});
     if any(mtf) 
         if ~isnan(concLow(mtf))
             model_data.MClow(imc) = concLow(mtf);        
@@ -442,6 +399,14 @@ for imc = 1:length(model_data.Metabolites)
         model_data.MChigh(imc) = 5;
     end
 end
+model_data.b = zeros(nt_metab,1);
+model_data.c = sparse(1,bmrxn,1,1,nt_rxn)';
+model_data.lb = zeros(nt_rxn,1);
+model_data.lb(model_data.lb==0) = -100;
+model_data.lb(bmrxn) = 0;
+model_data.ub = zeros(nt_rxn,1);
+model_data.ub(model_data.ub==0) = 100;
+
 %if runFBA
     %build FBA matrices
     %set flux bounds
@@ -453,6 +418,16 @@ end
 variable = struct();
 % variable.MC = model.MC;
 variable.EC = model.EC;
+
+%Add Molecular weight individually
+model_data.MolWt = zeros(nt_metab,1);
+model_data.MolWt(strcmpi('g3p[c]',model_data.mets)) = 172.074;
+model_data.MolWt(strcmpi('pyr[c]',model_data.mets)) = 88.06;
+model_data.MolWt(strcmpi('pep[c]',model_data.mets)) = 168.042;
+model_data.MolWt(strcmpi('f6p[c]',model_data.mets)) = 259.81;
+model_data.MolWt(strcmpi('g6p[c]',model_data.mets)) = 260.136;
+model_data.MolWt(strcmpi('B[c]',model_data.mets)) = 200;
+
 
 % nested functions
 function [model] = ident_regulator(model,reg_string,reg_stoich)%pass par as argument
@@ -492,7 +467,7 @@ function [model] = ident_regulator(model,reg_string,reg_stoich)%pass par as argu
         if iscell(mech{1})
             mech = mech{1};
         end
-         metabindx = strcmpi(mech{1},model.Metabolites);            
+         metabindx = strcmpi(mech{1},model.mets);            
             if any(metabindx)
                 model.SI(metabindx,irxn) = reg_stoich;
                 if ~isempty(par)
@@ -522,7 +497,7 @@ function [model] = ident_regulator(model,reg_string,reg_stoich)%pass par as argu
                         model.KIact(imetab,:) = sparse(1,size(model.KIact,2));
                     end
                 end
-                model.Metabolites{imetab} = mech{1};
+                model.mets{imetab} = mech{1};
                 if length(mech) < 2%no mechanism specified
                     [model] = reg_type('O',[imetab;irxn],model);                        
                 else
@@ -593,6 +568,63 @@ function [model] = reg_type(mechanism,index,model)
         otherwise
             model.SItype(index(1),index(2)) = 5;
     end
+end
+
+function [Vind,Vuptake,VFup,VFex,Vex,bmrxn,Vup,Vdn] = fluxIndex(model,nt_rxn,newS)
+%external mets
+exind = ~cellfun('isempty',regexp(model.mets,'\w(?:\[e\])$'));
+
+[~,allrxns] = find(newS(:,1:nt_rxn));
+all_unqrxns = unique(allrxns);
+nmetab_allrxns = histc(allrxns,all_unqrxns);
+ex_rxn = all_unqrxns(nmetab_allrxns == 1);%one sided rxns
+
+%FBA style Reactions A[e/c] <==> | <==> A[e/c]
+%one sided rxns
+[~,rxn] = find(newS(:,ex_rxn)<0);
+VFex = ex_rxn(rxn);%Excrretion from the system
+[~,rxn] = find(newS(:,ex_rxn)>0);
+VFup = ex_rxn(rxn);%Uptake into the system
+try
+    VFext = [VFup VFex];
+catch
+    VFext = [VFup;VFex];
+end
+
+%Uptake Reactions: A[e] ---> A[c] | A[e] ---> B[c] | A[e] + B[c] ---> A[c]
+%+ D[c]
+noex_rxn = setdiff(1:nt_rxn,ex_rxn);
+[~,rxn] = find(newS(exind,noex_rxn)<0);
+Vuptake = noex_rxn(rxn);
+
+%Matching VFup with Vuptake
+Vup = [];
+for ivf = 1:length(VFup)
+    nmet = newS(:,VFup(ivf))>0;
+    [~,rxn] = find(newS(nmet,noex_rxn)<0);
+    Vup = union(Vup,noex_rxn(rxn));
+end
+
+%Excrertion Reaction: A[c] ---> A[e] | A[c] ---> B[e] | A[c] + B[c] --->
+%A[e] + D[c]
+[~,rxn] = find(newS(exind,noex_rxn)>0);
+Vex = noex_rxn(rxn);
+
+%matchinf VFex with Vex
+Vdn = [];
+for ive = 1:length(VFex)
+    nmet = newS(:,VFex(ive))<0;
+    [~,rxn] = find(newS(nmet,noex_rxn)>0);
+    Vdn = union(Vdn,noex_rxn(rxn));
+end
+
+%Identify biomass reaction
+[~,bmrxn] = find(newS(strcmpi(model_data.mets,'Biomass'),:) > 0);
+try
+    Vind = setdiff(1:nt_rxn,[Vuptake;bmrxn;VFext;Vex']);%intracellular rxns
+catch
+    Vind = setdiff(1:nt_rxn,[Vuptake' bmrxn VFext' Vex]);%intracellular rxns
+end
 end
 
 end

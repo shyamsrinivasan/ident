@@ -7,16 +7,16 @@ rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\Kine
 % % % sample metabolites 
 % variable.MC = sampleMetabolites(FBAmodel);
 %Obtain Vss from FBA
-load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\FBAmodel.mat');
-load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\FBAsol.mat');
-for ienz = 1:length(FBAmodel.Enzyme)
-    tfe = strcmpi(FBAmodel.Enzyme{ienz},oldFBAmodel.rxns);
-    if any(tfe)
-        FBAmodel.Vss(ienz) = FBAsolution.x(tfe);
-%         FBAmodel.delG(ienz) = model.dGo(tfe);
-%         FBAmodel.Keq(ienz) = exp(-FBAmodel.delG(ienz)/(0.008314*298.15));
-    end
-end
+% load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\FBAmodel.mat');
+% load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\FBAsol.mat');
+% for ienz = 1:length(FBAmodel.rxns)
+%     tfe = strcmpi(FBAmodel.rxns{ienz},oldFBAmodel.rxns);
+%     if any(tfe)
+%         FBAmodel.Vss(ienz) = FBAsolution.x(tfe);
+% %         FBAmodel.delG(ienz) = model.dGo(tfe);
+% %         FBAmodel.Keq(ienz) = exp(-FBAmodel.delG(ienz)/(0.008314*298.15));
+%     end
+% end
 variable.MC = sampleMet(FBAmodel);
 % viol = delGaconsistent(FBAmodel,variable);
 % Sol = cell(1000,1);
@@ -34,12 +34,13 @@ variable.MC = sampleMet(FBAmodel);
 %     fprintf('Sample #%d of 1000\n',i);
 %     sam_name = sprintf('samp_%d',i);
 %     variable = data.(sam_name).variable;
-    load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\N2MC_5');
+    load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\N2_MC_1');
     nmodels = 1;
+%     [var,Fvar,EScell] = sampleMet_parallel(FBAmodel,parameter,variable,nmodels);
     [ensb] = build_ensemble(nmodels,FBAmodel,parameter,variable.MC);
     %Resample Kms
-    ensb = resample_ensemble(ensb,FBAmodel,variable);
-
+    ensb = resample_ensemble(ensb,FBAmodel,variable.MC);
+%     load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\N2_parameter_1');
     inSolution = [];
     varname = {'A[c]','B[c]','C[c]','D[c]','E[c]','P[c]'};
     [allSolution,allfinalSS,ySample] =...

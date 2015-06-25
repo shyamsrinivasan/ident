@@ -1,9 +1,24 @@
 %Sample Quantities to build ensemble of models
-function [ensb] = build_ensemble(nmodels,model,pmeter,MC)
+function [ensb,flag] = build_ensemble(nmodels,model,pmeter,MC)
 % nmodels = 100;
 nsamples = nmodels;
-nrxn = model.n_rxn;
-Vind = model.Vind;
+
+%glcpts
+Mglc = strcmpi('glc[e]',model.mets);
+Vglc = find(model.S(Mglc,:)<0);
+if ~isempty(Vglc)
+    if ~any(model.Vind==Vglc)
+        try
+            Vind = [model.Vind;Vglc];
+        catch
+            Vind = [model.Vind Vglc];
+        end
+    end
+else
+    Vind = model.Vind;
+end
+
+nrxn = length(Vind);
 nt_rxn = model.nt_rxn;
 ntmetab = size(model.S,1);
 for isample = 1:nsamples
@@ -28,7 +43,7 @@ for irxn = 1:nrxn
     inhib{irxn} = find(model.SI(:,Vind(irxn))<0);
     nreg(irxn) = length(find(model.SI(:,Vind(irxn))));
 end
-  %Remove kinetic consideration for metabolites like water which are
+  %Remove kinetic consideration for mets like water which are
   %non-limiting always
 for isample = 1:nsamples
     mname = sprintf('model%d',isample);  
@@ -75,4 +90,13 @@ for isample = 1:nsamples
     [~,vflux] = ConvinienceKinetics(model,ensb.(mname),MC,model.bmrxn,Vind);
     ensb.(mname).Vmax(Vind) = model.Vss(Vind)./vflux(Vind);
     ensb.(mname).Vmax(setdiff(1:nt_rxn,Vind)) = 1;    
+end
+
+%Select models from ensemble
+flag = 0;
+for is = 1:nsamples
+     mname = sprintf('model%d',is);  
+    if any(ensb.(mname).Vmax < 0)
+        flag = 1;        
+    end
 end

@@ -11,9 +11,9 @@ MC_sampl = zeros(nmetab,1);
 % MC_sampl(MClow ~= MChigh) = mSample(MClow ~= MChigh);
 % %ATP AMP ADP
 % ec = 0.8;
-% ATP = strcmpi('atp[c]',FBAmodel.Metabolites);
-% ADP = strcmpi('adp[c]',FBAmodel.Metabolites);
-% AMP = strcmpi('amp[c]',FBAmodel.Metabolites);
+% ATP = strcmpi('atp[c]',FBAmodel.mets);
+% ADP = strcmpi('adp[c]',FBAmodel.mets);
+% AMP = strcmpi('amp[c]',FBAmodel.mets);
 % MC_sampl(ATP) = (MC_sampl(AMP)-MC_sampl(ADP)*(1/(2*ec)-1))/(1/ec-1);
 
 %Sample Metabolites based on Lsawrence's Noisy Metabolomics Sampling
@@ -24,11 +24,11 @@ load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\Sam
 %Samples
 load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\Samples\CentralIshii_1.mat');
 mets = cellfun(@changeN,lower(model.mets),'UniformOutput',0);
-MCsample = zeros(length(FBAmodel.Metabolites),1000);
-for im = 1:length(FBAmodel.Metabolites)
-    tfm = strcmpi(FBAmodel.Metabolites{im},mets);
+MCsample = zeros(length(FBAmodel.mets),1000);
+for im = 1:length(FBAmodel.mets)
+    tfm = strcmpi(FBAmodel.mets{im},mets);
     if any(tfm)
-        fprintf('%d Metabolite:%s\n',im,FBAmodel.Metabolites{im});
+        fprintf('%d Metabolite:%s\n',im,FBAmodel.mets{im});
         MCsample(im,:) = exp(points(tfm,:));%points from loading mat file #2
         MC_sampl(im) = MCsample(im,ism);  
     else
@@ -36,10 +36,10 @@ for im = 1:length(FBAmodel.Metabolites)
         MC_sampl(im) = MCsample(im,ism); 
     end    
 end
-H2o = find(strcmpi('h2o[c]',FBAmodel.Metabolites));
-Hion = find(strcmpi('h[c]',FBAmodel.Metabolites));
-H2oe = find(strcmpi('h2o[e]',FBAmodel.Metabolites));
-Hione = find(strcmpi('h[e]',FBAmodel.Metabolites));
+H2o = find(strcmpi('h2o[c]',FBAmodel.mets));
+Hion = find(strcmpi('h[c]',FBAmodel.mets));
+H2oe = find(strcmpi('h2o[e]',FBAmodel.mets));
+Hione = find(strcmpi('h[e]',FBAmodel.mets));
 % MC = MC_sampl;
 % [nm,nr] = size(FBAmodel.S);
 % for irxn = 1:nr
@@ -106,7 +106,7 @@ Hione = find(strcmpi('h[e]',FBAmodel.Metabolites));
 % for ir = 1:nr
 %     metid = mets(logical(model.S(:,ir)));
 %     for irxn = 1:nr2
-%         metid2 = FBAmodel.Metabolites(logical(FBAmodel.S(:,irxn)));  
+%         metid2 = FBAmodel.mets(logical(FBAmodel.S(:,irxn)));  
 %         if length(metid2) == length(metid)
 %         met_diff = setdiff(metid2,metid);
 %         if isempty(met_diff)
@@ -120,9 +120,9 @@ Hione = find(strcmpi('h[e]',FBAmodel.Metabolites));
 
 %ATP AMP ADP
 ec = 0.8;
-ATP = strcmpi('atp[c]',FBAmodel.Metabolites);
-ADP = strcmpi('adp[c]',FBAmodel.Metabolites);
-AMP = strcmpi('amp[c]',FBAmodel.Metabolites);
+ATP = strcmpi('atp[c]',FBAmodel.mets);
+ADP = strcmpi('adp[c]',FBAmodel.mets);
+AMP = strcmpi('amp[c]',FBAmodel.mets);
 % MCsample(ATP,:) = (MCsample(AMP,:)-MCsample(ADP,:).*(1/(2*ec)-1))./(1/ec-1);
 % MC_sampl(ATP) = MCsample(ATP,ism);
 

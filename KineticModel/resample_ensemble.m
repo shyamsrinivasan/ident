@@ -1,4 +1,4 @@
-function ensb = resample_ensemble(ensb,model,variable)
+function ensb = resample_ensemble(ensb,model,MC)
 nmodels = length(fieldnames(ensb));
 %Order of magnitude to determine whether to resample Km or not
 ofm = 1;
@@ -11,7 +11,7 @@ for isample = 1:nmodels
         rpind = model.S(:,Vind(irxn))~=0;        
         rpKjnd = find(set.Kind(rpind,Vind(irxn))~=1);
         rpK = set.K(rpind,Vind(irxn));
-        rpC = variable.MC(rpind);
+        rpC = MC(rpind);
         %order of magnitude for Km based on C
         %concentration +/- 100
         if any(round(log10(rpK)-log10(rpC))>ofm)
@@ -27,7 +27,7 @@ for isample = 1:nmodels
         set.K(rpind,Vind(irxn)) = rpK;        
     end
     %calculate new Vmax
-    [~,vflux] = ConvinienceKinetics(model,set,variable.MC,model.bmrxn,Vind);
+    [~,vflux] = ConvinienceKinetics(model,set,MC,model.bmrxn,Vind);
     set.Vmax(Vind) = model.Vss(Vind)./vflux(Vind);    
     set.Vmax(setdiff(1:model.nt_rxn,Vind)) = 1; 
     ensb.(mname) = set;

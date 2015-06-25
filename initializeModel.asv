@@ -93,15 +93,15 @@ bounds.vu = zeros(model.nt_rxn,1);
 bounds.vu(bounds.vu==0) = 100;%bounds.Vuptake;
 %Determine Max and Min for flux to be constrained with =
 [vMax,~,~,~,Maxflag] = solveLP(model,'','',bounds,model.bmrxn);
-if ~isfield(model,'gmax') && Maxflag > 0
-    fprintf('Maximum feasible growth rate = %2.3g\n',-vMax);
-    model.gmax = -vMax;
-elseif -vMax < model.gmax
-    fprintf('Given maximum growth rate %2.3g is infeasible\n',model.gmax);
-    fprintf('Maximum feasible growth rate = %2.3g\n',-vMax);
-    model.gmax = -vMax;
-end  
-
+if isfield(model,'gmax')
+if Maxflag > 0 && -vMax < model.gmax
+    fprintf('Maximum feasible growth rate is %2.3g\n',-vMax);
+    if ~isfield(model,'gmax')
+        model.gmax = -vMax;
+%         model.gmax = 0.01;%h-1
+    end
+%     model.gmax = -vMax;
+end
 return
 %function calculateVariance()
 %function sensAnalysis()

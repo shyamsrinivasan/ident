@@ -3,7 +3,7 @@
 %Describing the ODE dXdt = data.S*flux(X,p)
 %September 2014
 %**************************************************************************
-function [dXdt,flag,newdata] = ODEmodel(t,Y,model,pmeter)
+function [dXdt,flag,newdata] = ODEmodel(t,Y,data,model,pmeter)
 % callODEmodel = @(t,Y,data)ODEmodel(t,Y,model,pmeter);
 bm_ind = model.bmrxn;
 Mbio = strcmpi('biomass',model.mets);
@@ -15,6 +15,10 @@ nr(2) = model.nint_metab;%-length(find(Mbio));
 nr(3) = model.nt_rxn;
 nr(4) = model.n_rxn;
 Vind = model.Vind;
+Vup = model.Vup;
+Vdn = model.Vdn;
+VFup = model.VFup;
+VFex = model.VFex;
 
 % Vic_exind = data.Vic_exind;
 % [~,Vuptake] = find(data.S(:,Vic_exind)>0);
@@ -28,23 +32,38 @@ Vind = model.Vind;
 % nxc_exrxn = length(Vxc_exind);
 dXdt = zeros(nr(1),1);%[Metabolites;Biomass]
 % dXdt = cons(dXdt,Y);
-flux = zeros(nr(3),1);
-%% %Biomass flux
-% gr_flux = 0.8*prod(Y(Mbio_ind)./([.8;.1]+Y(Mbio_ind)));
-gr_flux = model.gmax;%0.8;%h-1
-gr_flux = biomass_flux(model,Y,dXdt,flux)
+if isfield(data,'flux')
+    flux = data.flux;
+else
+    flux = calc_flux(model,pmeter,Y);%model.flux;%zeros(nr(3),1);
+end
+
 %% Fluxes 
+flux = calc_flux(model,pmeter,Y,flux);
 %Fixed Uptake Fluxes
 % flux(model.Vupind) = model.Vuptake;%[20];
-flux = ExFlux(model,Y,flux,model.Vupind);
-%Transporters
-flux = ExFlux(model,Y,flux,model.Vex);
-%Intracellular(Cytosolic)
-%flux(Vind) = ConvinienceKinetics();
-flux(Vind) = ConvinienceKinetics(model,pmeter,Y,bm_ind,Vind);
-flux(bm_ind) = gr_flux;
-% flux(model.Vex) = ConvinienceKinetics(model,pmeter,Y,bm_ind,model.Vex);
-
+% flux = ExFlux(model,Y,flux,model.Vupind,'mm');
+% %Transporters
+% flux = ExFlux(model,Y,flux,model.Vex,[]);
+% %Intracellular(Cytosolic)
+% %flux(Vind) = ConvinienceKinetics();
+% flux(Vind) = ConvinienceKinetics(model,pmeter,Y,bm_ind,Vind);
+% 
+% % flux(model.Vex) = ConvinienceKinetics(model,pmeter,Y,bm_ind,model.Vex);
+% %% %Biomass flux
+% % gr_flux = 0.8*prod(Y(Mbio_ind)./([.8;.1]+Y(Mbio_ind)));
+% gr_flux = model.gmax;%0.8;%h-1
+% % gr_flux = biomass_flux(model,Y,dXdt,flux);
+% % if isfield(data,'Y') && isfield(data,'t') && isfield(data,'flux')
+% %     gr_flux = biomass(model,Y,data.Y,t,data.t,data.flux,flux);
+% % else
+% %     gr_flux = biomass(model,Y,[],t,[],[],flux);
+% % end
+% flux(bm_ind) = gr_flux;
+% flux(VFup) = flux(Vup);
+% flux(VFex) = flux(Vdn);
+% plotflux_timecourse(flux,t,model)
+% plotconc_timecourse(Y,t,model)
 %Intracellular(Mitochondria) (Yeast)
 % flux(VMit) = ConvinienceKinetics(model,pmeter,Y,bm_ind,VMit);
 %% %Intracellular Metabolites
@@ -79,11 +98,12 @@ mind = setdiff(mind,find(Mbio));
 dXdt(mind) = model.S(mind,:)*flux - Y(mind)*gr_flux;
 
 %Biomass
-dXdt(Mbio) = 0;
+dXdt(Mbio) = model.S(Mbio,:)*flux*Y(Mbio);
 
 
 
 %Extracellular Metabolites
+% dXdt(strcmpi('A[e]',model.mets)) = model.S(strcmpi('A[e]',model.mets),:)*flux;
 % dXdt(nr(2)+1:nr(1)) = D*(data.M*data.S(1:nr(2),:)*flux-Y(nr(2)+1:nr(1)))-...
 %                       data.M*data.S(1:nr(2),:)*flux;
 
@@ -95,7 +115,10 @@ if any(Y(Y<0))
 else
     flag = 0;
 end
-newdata = [];
+newdata = data;
+newdata.flux = flux;
+newdata.Y = Y;
+newdata.t = t;
 end
 
 

@@ -7,7 +7,7 @@ nsmp = 1000;
 var = cell(nsmp,1);
 Fvar = zeros(nsmp,1);
 EScell = cell(nsmp,1);
-for ismp = 1:nsmp
+parfor ismp = 1:nsmp
     MC = sampleMet(FBAmodel);
     [ensb,flag] = build_ensemble(nmodels,FBAmodel,parameter,MC);
     if ~flag
