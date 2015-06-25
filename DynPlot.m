@@ -40,7 +40,7 @@ if mdes == 1
         end    
     end
 elseif mdes == 2
-    Var = model.Metabolites;
+    Var = model.mets;
 end
 
 nplots = length(varname);
@@ -86,18 +86,18 @@ for ivar = 1:nplots
             end
         elseif any(var_tf(ng(1)+ng(2)+1:ng(1)+ng(2)+ng(3)))
             cmp_tf = strcmpi(varname{ivar},model.Regulators);
-            mc_tf = strcmpi(varname{ivar},model.Metabolites);
+            mc_tf = strcmpi(varname{ivar},model.mets);
             if any(cmp_tf)&&any(mc_tf)
                 y_label1 = sprintf('%s umole/gDCW',model.Regulators{cmp_tf});
             end
         elseif any(var_tf(ng(1)+ng(2)+ng(3)+2:end))
-            m_tf = strcmpi(varname{ivar},model.Metabolites);        
+            m_tf = strcmpi(varname{ivar},model.mets);        
     %         if any(m_tf) && var_tf(end)%biomass
-    %             y_label1 = sprintf('%s (gDCW)',model.Metabolites{end});
+    %             y_label1 = sprintf('%s (gDCW)',model.mets{end});
     %             LineP.Displayname = y_label1;
             if any(m_tf)%Metabolite
-                y_label1 = sprintf('%s mmole/gDCW',model.Metabolites{m_tf}); 
-    %             LineP.Displayname = sprintf('%s',model.Metabolites{m_tf});
+                y_label1 = sprintf('%s mmole/gDCW',model.mets{m_tf}); 
+    %             LineP.Displayname = sprintf('%s',model.mets{m_tf});
             end      
         else
             fprintf('Variable %s does not Exist\n',varname{ivar});
@@ -105,7 +105,7 @@ for ivar = 1:nplots
         end
         x_label = 'Time (h)';
     elseif mdes == 2%Kinetic Model
-        y_label1{ivar} = sprintf('%s mmole/g DCW',model.Metabolites{var_tf});
+        y_label1{ivar} = sprintf('%s mmole/g DCW',model.mets{var_tf});
         if any(var_tf(1:model.nint_metab))            
             var_tf = logical(var_tf(1:model.nint_metab));
         end
@@ -134,10 +134,10 @@ for ivar = 1:nplots
     % whitebg(hfig,[0 0 0]);
     set(get(hca,'XLabel'),'String',x_label); 
     set(get(hca,'XLabel'),'FontName','Lucida Sans');
-    set(get(hca,'XLabel'),'FontSize',12);
+    set(get(hca,'XLabel'),'FontSize',10);
     set(get(hca,'YLabel'),'String',y_label1{ivar}); 
     set(get(hca,'YLabel'),'FontName','Lucida Sans');   
-    set(get(hca,'YLabel'),'FontSize',12);
+    set(get(hca,'YLabel'),'FontSize',10);
 end
 
 return
