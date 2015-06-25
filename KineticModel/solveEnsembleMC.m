@@ -15,9 +15,8 @@ for imodel = 1:nmodels
         inSolution.(mname) = struct([]);
     end
     fprintf('%s\n',mname);
-%     saveData.filename = mname;
     %Model initialization
-    [model,batch,solverP,saveData] = initializeModel(model,100);
+    [model,batch,solverP,saveData] = initializeModel(model,50,ensb.(mname),variable);
     if nmodels > 1
         if isempty(inSolution.(mname))
             %simulate models first to get initial SS
@@ -43,10 +42,10 @@ for imodel = 1:nmodels
             inSolution = Solution;             
             
             %Calculate initial & final flux   
-            inSolution.flux = calc_flux(model,ensb.(mname),Solution.y(:,end));
+%             inSolution.flux = calc_flux(model,ensb.(mname),Solution.y(:,end));
             allSolution.init = Solution;
             allfinalSS.init = finalSS;   
-            allfinalSS.init.flux = inSolution.flux;
+            allfinalSS.init.flux = calc_flux(model,ensb.(mname),Solution.y(:,end));
             
             %Plot Initial Solution
             [hfig,hsubfig] =...
@@ -57,9 +56,9 @@ for imodel = 1:nmodels
 end
 
 %Call MCsmulation for inital value MC on FBAmodel
-nsamples = 500; %# samples
+nsamples = 10000; %# samples
 lb = [1e-4];
-ub = [1000];
+ub = [100];
 pvar = {'C[c]'};
 
 if strcmpi(type,'MC')
@@ -71,6 +70,9 @@ if strcmpi(type,'MC')
                          allSolution.(mname),allfinalSS.(mname),varname);
             allfinalSS.(mname) = MCss;
             allSolution.(mname) = MCdyn;
+            varargout{1} = allSolution;
+            varargout{2} = allfinalSS;
+            varargout{3} = [];
         else
             if nsamples > 1
                 %Parallel
@@ -85,11 +87,11 @@ if strcmpi(type,'MC')
             end
             allSolution = MCdyn;
             allfinalSS = MCss;
+            varargout{1} = allSolution;
+            varargout{2} = allfinalSS;
+            varargout{3} = y0new;
         end
-    end
-    varargout{1} = allSolution;
-    varargout{2} = allfinalSS;
-    varargout{3} = y0new;
+    end    
 else
 %Call enzyme pertubation for enzyme perturbation on ensemble
 %     if nmodels > 1

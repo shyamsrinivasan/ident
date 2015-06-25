@@ -34,7 +34,7 @@ for i = 1:nflux
     if isfield(model,'Regulators');
         tfp = find(strcmpi(fluxind{i},model.Regulators));
     else
-        tfp = find(strcmpi(fluxind{i},model.Enzyme));
+        tfp = find(strcmpi(fluxind{i},model.rxns));
     end
     if any(tfp)
 %         xticklabel{i} = sprintf('%s Flux',fluxind{i});

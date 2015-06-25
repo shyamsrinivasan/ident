@@ -20,7 +20,7 @@ samp_name = cell(nsamples,1);
 for isamp = 1:nsamples
     ksp_name = sprintf('sample_%d',isamp);
     samp_name{isamp} = ksp_name;
-    [model,batch,solverP,saveData] = initializeModel(model,100);
+    [model,batch,solverP,saveData] = initializeModel(model,50);
     data.(ksp_name).model = model;
     data.(ksp_name).batch = batch;
     data.(ksp_name).solverP = solverP;
@@ -50,6 +50,7 @@ parfor isamp = 1:nsamples
     %Add protein name
     pertbinitval = struct();
     pertbinitval.y = y0new(:,isamp);
+    pertbinitval.flux = petflux(:,isamp);
     pertbinitval.pertbind = pbind;  
 %     createTask(job.(ksp_name),@callODEsolver,3,...
 %     {model,parameter,variable,pertbinitval,batch,solverP});    
@@ -64,7 +65,7 @@ parfor isamp = 1:nsamples
     conc(:,isamp+1) = ParfSS{isamp}.y;
     
     %Calculate Flux
-    flux(:,isamp+1) = calc_flux(model,parameter,ParfSS{isamp}.y);
+    flux(:,isamp+1) = calc_flux(model,parameter,ParfSS{isamp}.y);   
 
 end
 % delete(gcp);
@@ -117,8 +118,8 @@ close all
 [petflux,MSSflux] = binConcentrations(petflux);
 
 %Plot Fluxes & Bin and plot Flux Distribution
-printvar = {'Pin','P1','P2','P3','P4','P5','P6','P7','P8','P9'};
-plotflux_bar(model,flux./model.Vuptake,printvar);
+printvar = {'Pin','P1','P2','P3','P4','P5','P6','P7','P8','P9','BiomassEX'};
+plotflux_bar(model,flux,printvar);
 
 %Plot Steady State Concentrations
 plotSSexpression(model,[],conc,petconc,varname,'concentration');
@@ -127,12 +128,13 @@ plotSSexpression(model,[],conc,petconc,varname,'concentration');
 plotSSexpression(model,[],flux,petflux,printvar,'flux');
 
 %Calculate & Plot Envelope
-[hsubfig2,prxnid,flag] = FluxEnvelope(model);
+[hsubfig2,prxnid,flag] = FluxEnvelope(model,printvar);
 
 %Plot Scatter within Envelope (or superimpose)
-notbm = setdiff(1:size(flux,1),model.bmrxn);
+% notbm = setdiff(1:size(flux,1),model.bmrxn);
 if flag > 0
-    plotflux_envelope(model,flux(notbm,:)./model.Vuptake,printvar,hsubfig2,prxnid);
+    plotflux_envelope(model,flux,printvar,hsubfig2,prxnid);
+    plotflux_envelope(model,petflux,printvar,hsubfig2,prxnid,2);
 else
     fprintf('\n Envelopes Infeasible for growth rate = %3.2g h-1\n',model.gmax);
 end   
@@ -148,6 +150,8 @@ end
 
 %Plot Solution Curves
 % [plotData,h_subfig] =...
-% printResults(trnmodel,ng,allSolution,conc,petconc,flux,printvar,varname);
+% printResults(model,allSolution,[],[],[],varname);
+
+% printMetResults(model,allSolution,[],[],[],varname);
 
 return

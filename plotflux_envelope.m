@@ -1,4 +1,4 @@
-function plotflux_envelope(model,flux,fluxind,hsubfig,prxnid)
+function plotflux_envelope(model,flux,fluxind,hsubfig,prxnid,call)
 if nargin < 3
     nflux = length(model.Vind)+length(model.Vexind);
 else
@@ -16,7 +16,11 @@ else
 end
 
 %Randomly choose colors
-ColorSpec = chooseColors(nflux,{'Red'});
+if nargin < 6 || call == 1
+    ColorSpec = chooseColors(nflux,{'Red'});
+elseif call == 2
+    ColorSpec = chooseColors(nflux,{'LightGray'});
+end
 
 % hline = zeros(nflux,1);
 %Scatter Plot all Fluxes
@@ -27,8 +31,8 @@ for ivar = 1:nflux
         tfp = find(strcmpi(fluxind{ivar},model.Regulators));
         y_label1 = sprintf('Flux %s',model.Regulators{tfp});
     else
-        tfp = find(strcmpi(fluxind{ivar},model.Enzyme));
-        y_label1 = sprintf('Flux %s',model.Enzyme{tfp});
+        tfp = find(strcmpi(fluxind{ivar},model.rxns));
+        y_label1 = sprintf('Flux %s',model.rxns{tfp});
     end
     if any(tfp)
         if isempty(findobj('type','figure','Name',fig_name))
@@ -66,7 +70,7 @@ for ivar = 1:nflux
 
 %             set(get(gca,'YLabel'),'String',y_label1);  
             set(get(gca,'YLabel'),'FontName','Arabic Type Setting');   
-            set(get(gca,'YLabel'),'FontSize',12);  
+            set(get(gca,'YLabel'),'FontSize',10);  
 
     %         xlabel = sprintf('Steady States');
     %         set(get(gca,'XLabel'),'String',xlabel);  
@@ -97,6 +101,7 @@ for ifig = 1:length(hsubfig)
         maxY = max(maxY);
         minY = min(minY);
         [minY,maxY] = fixaxisbounds(minY,maxY);
+        [minX,maxX] = fixaxisbounds(minX,maxX);
         set(hfig,'CurrentAxes',hsubfig(ifig));
         set(gca,'YLim',[minY maxY]);
         AP.XColor = [.1 .1 .1];

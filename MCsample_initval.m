@@ -28,7 +28,7 @@ for ivar = 1:nvar
         tf1 = find(strcmpi(var{ivar},model.Gene));%tfg
         tf2 = find(strcmpi(var{ivar},model.Regulators));%tfr        
     elseif mdes == 2 %kinmodel
-        tf1 = find(strcmpi(var{ivar},model.Metabolites));
+        tf1 = find(strcmpi(var{ivar},model.mets));
         tf2 = [];      
     end
     

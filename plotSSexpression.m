@@ -68,13 +68,13 @@ switch variable
             Var(mt_ind) = model.Regulators(mt_ind-ng(1));
             Var(mx_ind) = model.Regulators(mx_ind-ng(1));
         elseif mdes == 2
-            Var = model.Metabolites;
+            Var = model.mets;
         end        
     case 'flux'
         if mdes == 1 && isfield(model,'Regulators')            
             Var = model.Regulators;
-        elseif mdes == 2 && isfield(model,'Enzyme')
-            Var = model.Enzyme;
+        elseif mdes == 2 && isfield(model,'rxns')
+            Var = model.rxns;
         end
 end
 
@@ -103,7 +103,7 @@ for j = 1:ncnc
                     m_tf = strcmpi(cncind{j},Var(ng(1)+ng(2)+2:end));
                     %Metabolite
                     if any(m_tf)
-                        y_label1 = sprintf('%s mmole/gDCW',model.Metabolites{m_tf}); 
+                        y_label1 = sprintf('%s mmole/gDCW',model.mets{m_tf}); 
                     end
                 else
                     fprintf('Variable %s does not Exist\n',cncind{j});
@@ -113,7 +113,7 @@ for j = 1:ncnc
                 tf = strcmpi(cncind{j},Var);
                 %Metabolite
                 if any(tf)
-                    y_label1 = sprintf('%s mmole/gDCW',model.Metabolites{tf});
+                    y_label1 = sprintf('%s mmole/gDCW',model.mets{tf});
                 else
                     fprintf('Variable %s does not Exist\n',cncind{j});
                     continue
@@ -170,19 +170,19 @@ end
 %     %             LineP.Displayname = sprintf('%s',model.Regulators{pg_tf});            
 %             end
 %         elseif any(tf(ng(1)+ng(2)+2:end))
-%             m_tf = strcmpi(cncind{j},model.Metabolites);
+%             m_tf = strcmpi(cncind{j},model.mets);
 %             if any(m_tf)%Metabolite
-%                 y_label1 = sprintf('%s mmole/gDCW',model.Metabolites{m_tf}); 
-%         %             LineP.Displayname = sprintf('%s',model.Metabolites{m_tf});
+%                 y_label1 = sprintf('%s mmole/gDCW',model.mets{m_tf}); 
+%         %             LineP.Displayname = sprintf('%s',model.mets{m_tf});
 %             end
 %         else
 %             fprintf('Variable %s does not Exist\n',cncind{j});
 %             continue
 %         end
 %     elseif mdes == 2
-%         mtf = strcmpi(cncind{j},model.Metabolites);
+%         mtf = strcmpi(cncind{j},model.mets);
 %         if any(mtf)
-%             y_label1 = sprintf('%s mmole/gDCW',model.Metabolites{mtf});
+%             y_label1 = sprintf('%s mmole/gDCW',model.mets{mtf});
 %         end
 %     end
 %     if isempty(findobj('type','figure','Name','Steady State Concentrations'))
