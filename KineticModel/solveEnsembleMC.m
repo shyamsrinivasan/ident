@@ -56,7 +56,7 @@ for imodel = 1:nmodels
 end
 
 %Call MCsmulation for inital value MC on FBAmodel
-nsamples = 10000; %# samples
+nsamples = 10; %# samples
 lb = [1e-4];
 ub = [100];
 pvar = {'C[c]'};
