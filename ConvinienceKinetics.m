@@ -31,7 +31,7 @@ flux = zeros(n_rxn,1);
 jmetab = 0;
 kact = 0;
 kihb = 0;
-h2oid = strcmpi(model.Metabolites,'h2o[c]');
+h2oid = strcmpi(model.mets,'h2o[c]');
 %Non-Exchange Reactions
 for irxn = 1:length(Vind)
     subsind = model.S(:,Vind(irxn)) < 0;%substrate
