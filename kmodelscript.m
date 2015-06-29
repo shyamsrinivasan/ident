@@ -2,7 +2,7 @@ clc
 % clear all
 addpath(genpath('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel'));
 % load('C:\Users\shyam\Documents\Courses\CHE 1125 Project\Kinetic Model\kmodel_pname.mat');
-rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\ecoliT2.txt';
+rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\ecoliT5.txt';
 [FBAmodel,parameter,variable,nrxn,nmetab] = modelgen(rxfname);
 % % % sample metabolites 
 % variable.MC = sampleMetabolites(FBAmodel);
@@ -34,12 +34,12 @@ variable.MC = sampleMet(FBAmodel);
 %     fprintf('Sample #%d of 1000\n',i);
 %     sam_name = sprintf('samp_%d',i);
 %     variable = data.(sam_name).variable;
-%     load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\ecoliT2_MC_1.mat');
-    nmodels = 1;
-    [var,Fvar,EScell] = sampleMet_parallel(FBAmodel,parameter,variable,nmodels);
-%     [ensb] = build_ensemble(nmodels,FBAmodel,parameter,variable.MC);
-% % %     %Resample Kms
-%     ensb = resample_ensemble(ensb,FBAmodel,variable.MC);
+%     load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\ecoliT4_MC_1.mat');
+%     nmodels = 1;
+%     [var,Fvar,EScell] = sampleMet_parallel(FBAmodel,parameter,variable,nmodels);
+    [ensb] = build_ensemble(nmodels,FBAmodel,parameter,variable.MC);
+% %     %Resample Kms
+    ensb = resample_ensemble(ensb,FBAmodel,variable.MC);
 % load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\ecoliT3_parameters_1_1000.mat');
     inSolution = [];
     varname = {'glc[e]','g6p[c]','pep[c]','pyr[c]',...

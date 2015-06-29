@@ -11,19 +11,20 @@ if rem(nflux,2)==0
 else
     n = (nflux+1)/2;
 end
-if n > 4
+if n > 8
     if rem(n,2)==0
         nrows = n/2;
     else
         nrows=(n+1)/2;
     end
+    n = 8;
 else
-    nrows = 2;
+    nrows = 4;
 end
     
 for ivar = 1:nflux
     if ~isfield(model,'Regulators')
-        y_label1 = sprintf('%s mmole/gDCW',model.Enzyme{ivar});
+        y_label1 = sprintf('%s mmole/gDCW',model.rxns{ivar});
     end
     if hsubfig(ivar) ~= 0
         hca = findobj(hsubfig(ivar),'type','axes');
@@ -45,12 +46,12 @@ for ivar = 1:nflux
     %Axis Properties
     set(get(gca,'YLabel'),'String',y_label1);  
     set(get(gca,'YLabel'),'FontName','Arabic Type Setting');   
-    set(get(gca,'YLabel'),'FontSize',12); 
+    set(get(gca,'YLabel'),'FontSize',8); 
     
-    xlabel = sprintf('Steady States');
-    set(get(gca,'XLabel'),'String',xlabel);  
-    set(get(gca,'XLabel'),'FontName','Arabic Type Setting');   
-    set(get(gca,'XLabel'),'FontSize',12);
+%     xlabel = sprintf('Steady States');
+%     set(get(gca,'XLabel'),'String',xlabel);  
+%     set(get(gca,'XLabel'),'FontName','Arabic Type Setting');   
+%     set(get(gca,'XLabel'),'FontSize',12);
 
 end
 

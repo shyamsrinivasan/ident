@@ -1,6 +1,6 @@
 function [MC_sampl] = sampleMet(FBAmodel,ism)
 nmetab = FBAmodel.nt_metab;
-pd = makedist('Beta');
+pd = makedist('Beta','a',2,'b',2);
 MClow = FBAmodel.MClow(1:nmetab);
 MChigh = FBAmodel.MChigh(1:nmetab);
 mSample = MClow + (MChigh - MClow).*random(pd,nmetab,1);

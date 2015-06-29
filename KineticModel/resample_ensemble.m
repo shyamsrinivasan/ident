@@ -38,8 +38,12 @@ for isample = 1:nmodels
     end
     %calculate new Vmax
     [~,vflux] = ConvinienceKinetics(model,set,MC,model.bmrxn,Vind);
+    oldVmax = set.Vmax;
     set.Vmax(Vind) = model.Vss(Vind)./vflux(Vind);    
     set.Vmax(setdiff(1:model.nt_rxn,Vind)) = 1; 
+    if any(~isnan(oldVmax))
+        set.Vmax(~isnan(oldVmax)) = oldVmax(~isnan(oldVmax));
+    end
     ensb.(mname) = set;
 end
 
