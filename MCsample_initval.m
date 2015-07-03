@@ -13,7 +13,8 @@ status = 0;
 if nvar == 1 && strcmpi(var{1},'all')
     ylb = lb*y0;
     yub = ub*y0;
-    y0new = ylb+(yub-ylb).*betarnd(1.5,4.5,length(y0new),1);
+    y0new = ylb+(yub-ylb).*rand(length(y0new),1);
+    %betarnd(2,2,length(y0new),1);
     return
 end
 pbind = zeros(nvar,1);

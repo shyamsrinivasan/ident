@@ -56,10 +56,10 @@ for imodel = 1:nmodels
 end
 
 %Call MCsmulation for inital value MC on FBAmodel
-nsamples = 10; %# samples
-lb = [1e-4];
-ub = [100];
-pvar = {'C[c]'};
+nsamples = 1000; %# samples
+lb = [1e-3];
+ub = [10];
+pvar = {'D[c]'};
 
 if strcmpi(type,'MC')
     for imodel = 1:nmodels

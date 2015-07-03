@@ -1,4 +1,4 @@
-function [allSolution,allfinalSS,y0new] =...
+function [allSolution,allfinalSS,varargout] =...
          MCsimulation_parallel(model,parameter,variable,nsamples,pvar,lb,ub,...
                       allSolution,allfinalSS,varname)
 
@@ -20,7 +20,7 @@ samp_name = cell(nsamples,1);
 for isamp = 1:nsamples
     ksp_name = sprintf('sample_%d',isamp);
     samp_name{isamp} = ksp_name;
-    [model,batch,solverP,saveData] = initializeModel(model,50);
+    [model,batch,solverP,saveData] = initializeModel(model,500);
     data.(ksp_name).model = model;
     data.(ksp_name).batch = batch;
     data.(ksp_name).solverP = solverP;
@@ -114,8 +114,8 @@ close all
 [conc,MSSconc] = binConcentrations(conc);
 [flux,MSSflux] = binConcentrations(flux);
 
-[petconc,MSSconc] = binConcentrations(petconc);
-[petflux,MSSflux] = binConcentrations(petflux);
+[petconc,MSSpconc] = binConcentrations(petconc);
+[petflux,MSSpflux] = binConcentrations(petflux);
 
 %Plot Fluxes & Bin and plot Flux Distribution
 printvar = {'Pin','P1','P2','P3','P4','P5','P6','P7','P8','P9','BiomassEX'};
@@ -134,11 +134,15 @@ plotSSexpression(model,[],flux,petflux,printvar,'flux');
 % notbm = setdiff(1:size(flux,1),model.bmrxn);
 if flag > 0
     plotflux_envelope(model,flux,printvar,hsubfig2,prxnid);
-    plotflux_envelope(model,petflux,printvar,hsubfig2,prxnid,2);
+%     plotflux_envelope(model,petflux,printvar,hsubfig2,prxnid,2);
 else
     fprintf('\n Envelopes Infeasible for growth rate = %3.2g h-1\n',model.gmax);
 end   
-
+varargout{1} = y0new;
+varargout{2} = MSSconc;
+varargout{3} = MSSpconc;
+varargout{4} = MSSflux;
+varargout{5} = MSSpflux;
 
 
 %Plot Flux Scatter

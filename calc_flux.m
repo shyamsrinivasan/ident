@@ -27,7 +27,7 @@ else
 end
 
 %Uptake Fluxes
-flux = ExFlux(model,MC,flux,Vupind,'mm');
+flux(Vupind) = 20;%ExFlux(model,MC,flux,Vupind,'mm');
 
 if useVmax
     %Transporters
@@ -48,8 +48,11 @@ end
 flux(VFup) = flux(Vup);
 flux(VFex) = flux(Vdn);
 %Biomass Flux
-% flux(bmind) = model.gmax;
-flux(bmind) = biomass_flux(model,MC,[],flux);
+if isfield(model,'gmax');
+    flux(bmind) = model.gmax;
+else
+    flux(bmind) = biomass_flux(model,MC,[],flux);
+end
 % % gr_flux = 0.8*prod(Y(Mbio_ind)./([.8;.1]+Y(Mbio_ind)));
 % gr_flux = model.gmax;%0.8;%h-1
 % % gr_flux = biomass_flux(model,Y,dXdt,flux);
