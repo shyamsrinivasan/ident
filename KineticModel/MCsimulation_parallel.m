@@ -14,20 +14,24 @@ petconc = zeros(nvar,nsamples);
 flux = zeros(model.nt_rxn,nsamples+1);
 petflux = zeros(model.nt_rxn,nsamples);
 
-[y0new,pbind,savesimd] =...
+[y0new,pbind,savesimd,status] =...
 MCsample_initval(model,[],pvar,allfinalSS.init.y,lb,ub,nsamples);
-samp_name = cell(nsamples,1);
-for isamp = 1:nsamples
-    ksp_name = sprintf('sample_%d',isamp);
-    samp_name{isamp} = ksp_name;
-    [model,batch,solverP,saveData] = initializeModel(model,500);
-    data.(ksp_name).model = model;
-    data.(ksp_name).batch = batch;
-    data.(ksp_name).solverP = solverP;
-    data.(ksp_name).saveData = saveData;
+if status >= 0
+    samp_name = cell(nsamples,1);
+    for isamp = 1:nsamples
+        ksp_name = sprintf('sample_%d',isamp);
+        samp_name{isamp} = ksp_name;
+        [model,batch,solverP,saveData] = initializeModel(model,500);
+        data.(ksp_name).model = model;
+        data.(ksp_name).batch = batch;
+        data.(ksp_name).solverP = solverP;
+        data.(ksp_name).saveData = saveData;
+    end
+    ParSol = cell(nsamples,1);
+    ParfSS = cell(nsamples,1);
+else
+    return
 end
-ParSol = cell(nsamples,1);
-ParfSS = cell(nsamples,1);
 
 parfor isamp = 1:nsamples
     fprintf('\nStarting Sample %d of %d \n',isamp,nsamples);                    
@@ -86,7 +90,7 @@ for isamp = 1:nsamples
     
     allSolution.(samp_name{isamp}) = ParSol{isamp};%ParallelData{isamp,1};
     allfinalSS.(samp_name{isamp}) = ParfSS{isamp};%ParallelData{isamp,2};
-    savefile(allSolution.(samp_name{isamp}),samp_name{isamp},saveData);
+%     savefile(allSolution.(samp_name{isamp}),samp_name{isamp},saveData);
 %     conc(:,isamp+1) = allfinalSS.(ksp_name).y;
     
     %Calculate Flux
@@ -97,7 +101,7 @@ for isamp = 1:nsamples
     
     %Save Flux
     fname = sprintf('flux_%d',isamp);
-    savefile(save_flux,fname,saveData);
+%     savefile(save_flux,fname,saveData);
 %     fprintf('Completed Sample #%d of %d\n',isamp,nsamples);
     close all  
 end
@@ -128,7 +132,8 @@ plotSSexpression(model,[],conc,petconc,varname,'concentration');
 plotSSexpression(model,[],flux,petflux,printvar,'flux');
 
 %Calculate & Plot Envelope
-[hsubfig2,prxnid,flag] = FluxEnvelope(model,printvar);
+prdid = strcmpi('Aex',model.rxns);
+[hsubfig2,prxnid,flag] = FluxEnvelope(model,printvar,prdid);
 
 %Plot Scatter within Envelope (or superimpose)
 % notbm = setdiff(1:size(flux,1),model.bmrxn);
@@ -138,6 +143,13 @@ if flag > 0
 else
     fprintf('\n Envelopes Infeasible for growth rate = %3.2g h-1\n',model.gmax);
 end   
+
+Csigma = OutputVariability(conc);
+Vsigma = OutputVariability(flux);
+
+CinSigma = OutputVariability(petconc);
+Vinsigma = OutputVariability(petflux);
+
 varargout{1} = y0new;
 varargout{2} = MSSconc;
 varargout{3} = MSSpconc;

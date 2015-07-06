@@ -1,8 +1,10 @@
-function sigma = OutputVariability(conc)
-sigma = zeros(length(model.mets),length(model.mets));
-for iout = 1:length(model.mets)
-    for imet = 1:length(model.mets)
-        outMean = mean(conc(iout,:));
-        sigma(iout,imet) = sum((conc(iout,:)-outMean).^2)/(length(conc(iout,:))-1);
-    end
+function sigma = OutputVariability(val)
+nvar = size(val,1);
+sigma = zeros(nvar,1);
+for iout = 1:nvar
+    outMean = mean(val(iout,:));
+    sigma(iout) = sum((val(iout,:)-outMean).^2)/(length(val(iout,:))-1);
+%     for imet = 1:length(model.mets)
+%         
+%     end
 end

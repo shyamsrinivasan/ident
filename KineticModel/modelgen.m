@@ -233,7 +233,7 @@ model.SItype = sparse(nt_metab,nt_rxn);%Regulation type
 model.KIact = sparse(nt_metab,nt_rxn);
 model.KIihb = sparse(nt_metab,nt_rxn);
 for irxn = 1:nt_rxn
-    par = extract_par(C{13}{irxn});%Acquire parameters as vectors
+    [par,Klb,Kub] = extract_par(C{13}{irxn});%Acquire parameters as vectors
     ireg = 0;       
     actstring = strtrim(strrep(C{9}{irxn},'"',''));%Activators    
     if ~isempty(actstring)         
@@ -477,6 +477,14 @@ function [model] = ident_regulator(model,reg_string,reg_stoich)%pass par as argu
                     elseif reg_stoich < 0
                         model.KIihb(metabindx,irxn) = par(ireg+iregterm);
                     end
+                    model.Klb(metabindx,irxn) = 0;
+                    model.Kub(metabindx,irxn) = 0;
+                end
+                if ~isempty(Klb)
+                    model.Klb(metabindx,irxn) = Klb(ireg+iregterm);
+                end
+                if ~isempty(Kub)
+                    model.Kub(metabindx,irxn) = Kub(ireg+iregterm);
                 end
                 if length(mech) < 2%no mechanism specified
                     [model] = reg_type('O',[find(metabindx);irxn],model);                        
@@ -487,6 +495,7 @@ function [model] = ident_regulator(model,reg_string,reg_stoich)%pass par as argu
                 model.SI(imetab,irxn) = reg_stoich;
                 model.S(imetab,:) = sparse(1,size(model.S,2));
                 model.K(imetab,:) = sparse(1,size(model.K,2));
+                model.mets{imetab} = mech{1};
                 if ~isempty(par)
 %                     model.KI(imetab,irxn) = par(ireg+iregterm);
                     if reg_stoich > 0
@@ -496,8 +505,15 @@ function [model] = ident_regulator(model,reg_string,reg_stoich)%pass par as argu
                         model.KIihb(imetab,irxn) = par(ireg+iregterm);
                         model.KIact(imetab,:) = sparse(1,size(model.KIact,2));
                     end
+                    model.Klb(imetab,irxn) = 0;
+                    model.Kub(imetab,irxn) = 0;
                 end
-                model.mets{imetab} = mech{1};
+                if ~isempty(Klb)
+                    model.Klb(imetab,irxn) = Klb(ireg+iregterm);
+                end
+                if ~isempty(Kub)
+                    model.Kub(imetab,irxn) = Kub(ireg+iregterm);
+                end                
                 if length(mech) < 2%no mechanism specified
                     [model] = reg_type('O',[imetab;irxn],model);                        
                 else

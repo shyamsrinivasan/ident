@@ -329,7 +329,11 @@ function hsubfig = lineplot(j,nplots,hfig,hsubfig,valt,pvalt,tf,y_label1,ColorSp
     
     %Plot only initial and final(sample) concentrations/fluxes
     concd = valt(:,tf);
-    pconcd = pvalt(:,tf);   
+    if ~isempty(pvalt)
+        pconcd = pvalt(:,tf);   
+    else
+        pconcd = [];
+    end
     X = zeros(length(concd)+length(pconcd),1);        
     initc = concd(1);
     concd(1) = [];
