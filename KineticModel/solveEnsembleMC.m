@@ -86,9 +86,9 @@ close all
 
 %Call MCsmulation for inital value MC on FBAmodel
 nsamples = 1000; %# samples
-lb = [1e-3;1e-3;1e-3];
-ub = [100;100;100];
-pvar = {'B[c]','N[c]','M[c]'};
+lb = [1e-3];
+ub = [100];
+pvar = {'D[c]'};
 
 if strcmpi(type,'MC')
     for imodel = 1:nmodels

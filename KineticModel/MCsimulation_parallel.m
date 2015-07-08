@@ -122,7 +122,7 @@ close all
 [petflux,MSSpflux] = binConcentrations(petflux);
 
 %Plot Fluxes & Bin and plot Flux Distribution
-printvar = {'Pin','P1','P2','P3','P4','P5','P6','P7','P8','P9','BiomassEX'};
+printvar = {'Pin','P1','P2','P3','P4','P5','P6','P7','P8','BiomassEX'};
 plotflux_bar(model,flux,printvar);
 
 %Plot Steady State Concentrations
@@ -132,7 +132,7 @@ plotSSexpression(model,[],conc,petconc,varname,'concentration');
 plotSSexpression(model,[],flux,petflux,printvar,'flux');
 
 %Calculate & Plot Envelope
-prdid = strcmpi('Aex',model.rxns);
+prdid = strcmpi('Pex',model.rxns);
 [hsubfig2,prxnid,flag] = FluxEnvelope(model,printvar,prdid);
 
 %Plot Scatter within Envelope (or superimpose)
