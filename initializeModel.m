@@ -1,8 +1,8 @@
 function [model,batch,solverP,saveData] = initializeModel(model,tmax,varargin)
-if ~isempty(varargin)
-    pmeter = varargin{1};
-    variable = varargin{2};
-end
+
+pmeter = varargin{1};
+variable = varargin{2};
+
 if nargin < 2
     tmax = 500000;%s
 end
@@ -30,7 +30,7 @@ if ~isfield(batch,'init')
 %                      'fum[e]';'h[e]';'h2o[e]';'o2[e]';'mal[e]'};
 %     batch.init{2} = [2;0;0;0;0;0;0;0;0;0;0;0;0;1;0];%mmoles 
       batch.init{1} = {'A[e]','E[e]','P[e]'};
-      batch.init{2} = [2;0;0];
+      batch.init{2} = [20;0;0];
 %       batch.init{1} = {'S[e]','B[e]','P[e]','A[e]'};
 %       batch.init{2} = [200;0;0;0];
 end

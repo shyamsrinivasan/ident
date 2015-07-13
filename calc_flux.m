@@ -7,7 +7,7 @@ if nargin < 5
     useVmax = 1;
 end
 nt_rxn = model.nt_rxn;
-if nargin < 4
+if nargin < 4 || isempty(flux)
     flux = zeros(nt_rxn,1);
 end
 

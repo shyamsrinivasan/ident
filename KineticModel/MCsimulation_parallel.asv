@@ -14,14 +14,9 @@ petconc = zeros(nvar,nsamples);
 flux = zeros(model.nt_rxn,nsamples+1);
 petflux = zeros(model.nt_rxn,nsamples);
 if ~isempty(pvar)
-    if any(strcmpi(pvar{1},model.mets))
-        [y0new,pbind,savesimd,status] =...
-        MCsample_initval(model,[],pvar,allfinalSS.init.y,lb,ub,nsamples);
-    else
-        %Do Vmax perturbation simulation
-        %Get samples for Vmax
-    end
-end
+    if any(strcmpi(pvar{1},mo
+[y0new,pbind,savesimd,status] =...
+MCsample_initval(model,[],pvar,allfinalSS.init.y,lb,ub,nsamples);
 if status >= 0
     samp_name = cell(nsamples,1);
     for isamp = 1:nsamples

@@ -1,14 +1,14 @@
 Enzymes	Etot Conc	kcat (1/s)	Vmax	Keq	SGFE (kJ/mol)	"Vss,net"	Reaction	Activators	Inhibitors	Rxn Mechanism	Substrate Km (mM)	Regulator Km (mM)	Metab	Mlow	Mhigh
 exS							<==> S[e]						A[c]	0.1	20
 Pin	0	0			-0.5	20	S[e] ---> S[c]						S[c]	0.1	20
-P2	0	0			-0.5	5	[c] : S ---> B						B[c]	0.1	20
-P1	0	0			-0.5	10	[c] : S ---> A		P[c]				M[c]	0.1	20
-P3	0	0			-0.5	5	[c] : S ---> M						P[c]	0.1	20
+P2	0	0			-0.5	2.5	[c] : S ---> B						B[c]	0.1	20
+P1	0	0			-0.5	2.5	[c] : S ---> A		P[c]				M[c]	0.1	20
+P3	0	0			-0.5	10	[c] : S ---> M						P[c]	0.1	20
 P5	0	0			-0.5	5	[c] : S ---> P						N[c]	0.1	20
-P4	0	0			0	2.5	[c] : M ---> N						K[c]	0.1	20
-P6	0	0			0	2.5	[c] : M + N ---> A + K						S[e]	0.1	20
-P10	0	0			-0.5	2.5	[c] : N ---> K						B[e]	0.1	20
-P11	0	0			-0.5	2.5	[c] : K ---> B + P						P[e]	0.1	20
+P4	0	0			-0.5	10	[c] : M ---> N						K[c]	0.1	20
+P6	0	0			0	9.5	[c] : M + N ---> A + K						S[e]	0.1	20
+P10	0	0			-0.5	0.25	[c] : N ---> K						B[e]	0.1	20
+P11	0	0			-0.5	0.25	[c] : K ---> B + P						P[e]	0.1	20
 P7							P[c] ---> P[e]								
 P8							B[c] ---> B[e]								
 P9							A[c] ---> A[e]								

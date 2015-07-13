@@ -85,10 +85,11 @@ close all
 % end
 
 %Call MCsmulation for inital value MC on FBAmodel
+%or for Vmax sample simulation
 nsamples = 1000; %# samples
-lb = [1e-3];
-ub = [100];
-pvar = {'D[c]'};
+lb = [1e-3;1e-3;1e-3;1e-3;1e-3];
+ub = [1000;1000;1000;1000;1000];
+pvar = {'A[c]','B[c]','C[c]','D[c]','E[c]'};
 
 if strcmpi(type,'MC')
     for imodel = 1:nmodels

@@ -1,12 +1,22 @@
 function ensb = resample_ensemble(ensb,model,MC)
 nmodels = length(fieldnames(ensb));
+
+%glcpts
+Mglc = strcmpi('glc[e]',model.mets);
+Vglc = find(model.S(Mglc,:)<0);
+
+try
+    Vind = [model.Vind;Vglc];
+catch
+    Vind = [model.Vind Vglc];
+end
+nrxn = length(Vind);
+
 %Order of magnitude to determine whether to resample Km or not
 ofm = 1;
 for isample = 1:nmodels
     mname = sprintf('model%d',isample);
-    set = ensb.(mname);
-    Vind = model.Vind;
-    nrxn = length(Vind);
+    set = ensb.(mname);    
     for irxn = 1:nrxn        
         rpind = model.S(:,Vind(irxn))~=0;        
         rpKjnd = find(set.Kind(rpind,Vind(irxn))~=1);
@@ -28,9 +38,21 @@ for isample = 1:nmodels
     end
     %calculate new Vmax
     [~,vflux] = ConvinienceKinetics(model,set,MC,model.bmrxn,Vind);
+    oldVmax = set.Vmax;
     set.Vmax(Vind) = model.Vss(Vind)./vflux(Vind);    
     set.Vmax(setdiff(1:model.nt_rxn,Vind)) = 1; 
+    if any(~isnan(oldVmax))
+        set.Vmax(~isnan(oldVmax)) = oldVmax(~isnan(oldVmax));
+    end
     ensb.(mname) = set;
+end
+
+%Select models from ensemble
+for is = 1:nmodels
+     mname = sprintf('model%d',is);  
+    if any(ensb.(mname).Vmax < 0)
+        fprintf('%s not suitable for simulation\n',mname);
+    end
 end
 
 return
