@@ -34,13 +34,13 @@ variable.MC = sampleMet(FBAmodel);
 %     fprintf('Sample #%d of 1000\n',i);
 %     sam_name = sprintf('samp_%d',i);
 %     variable = data.(sam_name).variable;
-    load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\ecoliT2_MC_1.mat');
+    load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\ecoliT2_MC_3.mat');
     nmodels = 1;
 %     [var,Fvar,EScell] = sampleMet_parallel(FBAmodel,parameter,variable,nmodels);
     [ensb] = build_ensemble(nmodels,FBAmodel,parameter,variable.MC);
 % %     %Resample Kms
     ensb = resample_ensemble(ensb,FBAmodel,variable.MC);
-% load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\ecoliT3_parameters_1_1000.mat');
+% load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\ecoliT2_parameters_1.mat');
     inSolution = [];
     varname = {'glc[e]','g6p[c]','pep[c]','pyr[c]',...
                'g3p[c]'};%,'fdp[c]','atp[c]','adp[c]','h[c]'};%,...

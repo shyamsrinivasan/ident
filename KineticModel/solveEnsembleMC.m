@@ -17,7 +17,7 @@ for imodel = 1:nmodels
     fprintf('%s\n',mname);
 %     saveData.filename = mname;
     %Model initialization
-    [model,batch,solverP,saveData] = initializeModel(model,10);
+    [model,batch,solverP,saveData] = initializeModel(model,100);
     if nmodels > 1
         if isempty(inSolution.(mname))
             %simulate models first to get initial SS
