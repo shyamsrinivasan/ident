@@ -42,7 +42,7 @@ end
 if ~isfield(model,'kcat')
     model.kcat = 1;%s-1
 end
-if ~isfield(model,'ext_MC')
+if ~isfield(model,ext_MC)
     model.ext_MC = assign_extconc(batch.init{1},batch.init{2},model);
 end
 %Fixed uptake rates for FBA

@@ -43,7 +43,7 @@ Vdn = [];
 for ive = 1:length(VFex)
     nmet = newS(:,VFex(ive))<0;
     [~,rxn] = find(newS(nmet,noex_rxn)>0);
-    Vdn = union(Vdn,noex_rxn(rxn));
+    Vdn = d_uUnion(Vdn,noex_rxn(rxn));
 end
 
 %Identify biomass reaction

@@ -25,17 +25,25 @@ for imodel = 1:nmodels
     initializeModel(model,50,ensb.(mname),variable.(mname));
     %model
     data{imodel}.model = model;
+%     data.(mname).model = model;
     %Inputs
     data{imodel}.batch = batch;
+%     data.(mname).batch = batch;
     %solver Options
     data{imodel}.solverP = solverP;
     data{imodel}.saveData = saveData;
+%     data.(mname).solverP = solverP;
+%     data.(mname).saveData = saveData;
     %Empty initial values (assigned before simulation in callODEsolver
     if isemptyr(inSolution{imodel})
-        inSolution{imodel} = struct([]);
+        inSolution{imodel} = structr([]);
     end
     p_ensb{imodel} = ensb.(mname);
-    p_var{imodel} = variable.(mname);
+    p_var{imodel} = variable
+%     if ~isfield(inSolution,mname)
+% %     if isempty(inSolution)
+%         inSolution.(mname) = struct([]);
+%     end   
 end
 ModSS = cell(nmodels,1);
 ModFSS = cell(nmodels,1);
@@ -44,36 +52,42 @@ ModFSS = cell(nmodels,1);
 parfor imodel = 1:nmodels
     fprintf('\nStarting Model %d of %d \n',imodel,nmodels); 
     saveData = data{imodel}.saveData;
-    
+%     saveData = data.(model_name{imodel}).saveData;
     fprintf('Cell Growth Rate = %1.2g h-1\n',data{imodel}.model.gmax);
+%     fprintf('Cell Growth Rate = %1.2g h-1\n',data.(model_name{imodel}).model.gmax);
     saveData.filename = model_name{imodel};
     
     %Save simulation conditions
     fname = sprintf('model_%d',imodel);
+%     savefile(savesimd,fname,saveData); 
     
     %simulate models to get SS for given model
     [Solution,finalSS] =...
     callODEsolver(data{imodel}.model,...
-                  p_ensb{imodel},p_var{imodel},inSolution{imodel},...
-                  data{imodel}.batch,...
-                  data{imodel}.solverP);
+                  ensb.(mname),variable.(mname),inSolution.(mname),...
+                  data.(model_name{imodel}).batch,...
+                  data.(model_name{imodel}).solverP);
+%     callODEsolver(data.(model_name{imodel}).model,...
+%                   ensb.(mname),variable.(mname),inSolution.(mname),...
+%                   data.(model_name{imodel}).batch,...
+%                   data.(model_name{imodel}).solverP);
     ModSS{imodel} = Solution;
     ModFSS{imodel} = finalSS;
 %     savefile(ModSS{imodel},model_name{imodel},saveData);
     conc(:,imodel) = finalSS.y;
     
     %Calculate Flux
-    flux(:,imodel) = calc_flux(model,p_ensb{imodel},finalSS.y);
+    flux(:,imodel) = calc_flux(model,ensb.(mname),finalSS.y);  
     ModFSS{imodel}.flux = flux(:,imodel);
 end
-clear inSolution
 
 fprintf('Saving data to file ... \n');
 for imodel = 1:nmodels
 %     fprintf('\nStarting Sample %d of %d \n',isamp,nsamples);                    
 %     ksp_name = sprintf('sample_%d',isamp);
-    model = data{imodel}.model;
-    saveData = data{imodel}.saveData;
+    
+    model = data.(model_name{imodel}).model;
+    saveData = data.(model_name{imodel}).saveData;
     saveData.filename = model_name{imodel};
     
     inSolution.(model_name{imodel}) = ModSS{imodel};%ParallelData{isamp,1};
@@ -96,8 +110,8 @@ fprintf('Complete\n');
 close all 
 
 %Plot Solution Curves
-% [hfig,hsubfig] =...
-% printMetResults(model,inSolution,conc,[],[],varname);
+[hfig,hsubfig] =...
+printMetResults(model,inSolution,conc,[],[],varname);
 
 %Plot Fluxes & Bin and plot Flux Distribution
 printvar = {'Pin','P1','P2','P3','P4','P5','P6','P7','P8','P9','BiomassEX'};

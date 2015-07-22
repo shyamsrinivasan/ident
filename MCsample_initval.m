@@ -27,7 +27,7 @@ fprintf('Variable Name\t\tUpperBound\t\tLowerBound\n');
 for ivar = 1:nvar
     if mdes == 1%trnmodel
         tf1 = find(strcmpi(var{ivar},model.Gene));%tfg
-        tf2 = find(strcmpi(var{ivar},model.Regulators));%tfr        
+        tf2 = find(strcmpi(var{ivar},model.regs));%tfr        
     elseif mdes == 2 %kinmodel
         tf1 = find(strcmpi(var{ivar},model.mets));
         tf2 = [];      

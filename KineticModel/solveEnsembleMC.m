@@ -32,11 +32,11 @@ else
         inSolution.(mname) = struct([]);
     end
     %Model initialization
-    [model,batch,solverP,saveData] = initializeModel(model,50,ensb.(mname),variable);
+    [model,batch,solverP,saveData] = initializeModel(model,100,ensb.(mname),variable.(mname));
     if isempty(inSolution.(mname))
             %simulate models first to get initial SS
             [Solution,finalSS] =...
-            callODEsolver(model,ensb.(mname),variable,inSolution,batch,solverP);
+            callODEsolver(model,ensb.(mname),variable.(mname),inSolution,batch,solverP);
             inSolution = Solution;             
             
             %Calculate initial & final flux   
@@ -86,10 +86,10 @@ close all
 
 %Call MCsmulation for inital value MC on FBAmodel
 %or for Vmax sample simulation
-nsamples = 1000; %# samples
-lb = [1e-3;1e-3;1e-3;1e-3;1e-3];
-ub = [1000;1000;1000;1000;1000];
-pvar = {'A[c]','B[c]','C[c]','D[c]','E[c]'};
+nsamples = 10; %# samples
+lb = [1e-3;1e-3];
+ub = [10;10];
+pvar = {'B[c]','C[c]'};
 
 if strcmpi(type,'MC')
     for imodel = 1:nmodels
@@ -114,6 +114,7 @@ if strcmpi(type,'MC')
                 [MCdyn,MCss] =...
                 MCsimulation(model,ensb.model1,variable,nsamples,pvar,lb,ub,...
                              allSolution,allfinalSS,varname);
+                y0new = [];
             end
             allSolution = MCdyn;
             allfinalSS = MCss;
@@ -123,55 +124,56 @@ if strcmpi(type,'MC')
         end
     end    
 else
+    
 %Call enzyme pertubation for enzyme perturbation on ensemble
 %     if nmodels > 1
-    fprintf('Model Perturbations\n');
-    %Function to perform different enzyme perturbations
-    [enSolution,npertb] =...
-    doPerturbation(pertb,model,ensb,variable,inSolution,SolverOptions);
-
-    %save concentration and flux data for 1 model named "model1"
-    [nvar,ntpts] = size(enSolution.pertb1.model1.y);
-    save_data.t = enSolution.pertb1.model1.t;
-    save_flux.y = zeros(npertb,model.nt_rxn);
-    %save concentration and flux data for all models
-    for imodel = 1:nmodels
-        save_data.y = zeros(npertb*nvar,ntpts);
-        mname = sprintf('model%d',imodel);
-        saveData.filename = mname;   
-        save_flux.t = inSolution.(mname).flux;
-        ipertb = 0;
-        while ipertb < npertb
-            pname = sprintf('pertb%d',ipertb+1);
-            save_data.y(nvar*ipertb+1:nvar*(ipertb+1),:)=...
-            enSolution.(pname).(mname).y;
-            save_flux.y(ipertb+1,:) = enSolution.(pname).(mname).flux;
-            ipertb = ipertb+1;
-        end
-        save_data.y = [inSolution.(mname).y;save_data.y];
-        savefile(save_data,mname,saveData);
-        fname = sprintf('flux_%s',mname);
-        savefile(save_flux,fname,saveData);
-        %write concentrations to excel file
-        status = selectData_kmodel(save_data,model,mname);
-        status = selectFlux_kmodel(save_flux,model,fname);
-    end
-    
-    %Plots - Comparison between models
-    LineP = struct();
-    LineP.LineWidth = 1.5;
-    ColorSpec = setLineP(nmodels);
-    [hfig,hsubfig] =...
-    compareEnsemble(model,npertb,varname,enSolution,ColorSpec,LineP);
-    %set default Line Properties
-    setProperties(hfig,hsubfig,enSolution.pertb1.model1);
-
-    %Plot - Comparison between fluxes
-    var_ind = [model.Vind,model.Vexind'];
-    F_ColorSpec = setLineP_flux(nmodels);
-    [h_ffig,h_fsubfig] =...
-    compareFluxes(nmodels,npertb,var_ind,enSolution,F_ColorSpec);
-    varargout{3} = enSolution;
+%     fprintf('Model Perturbations\n');
+%     %Function to perform different enzyme perturbations
+%     [enSolution,npertb] =...
+%     doPerturbation(pertb,model,ensb,variable,inSolution,SolverOptions);
+% 
+%     %save concentration and flux data for 1 model named "model1"
+%     [nvar,ntpts] = size(enSolution.pertb1.model1.y);
+%     save_data.t = enSolution.pertb1.model1.t;
+%     save_flux.y = zeros(npertb,model.nt_rxn);
+%     %save concentration and flux data for all models
+%     for imodel = 1:nmodels
+%         save_data.y = zeros(npertb*nvar,ntpts);
+%         mname = sprintf('model%d',imodel);
+%         saveData.filename = mname;   
+%         save_flux.t = inSolution.(mname).flux;
+%         ipertb = 0;
+%         while ipertb < npertb
+%             pname = sprintf('pertb%d',ipertb+1);
+%             save_data.y(nvar*ipertb+1:nvar*(ipertb+1),:)=...
+%             enSolution.(pname).(mname).y;
+%             save_flux.y(ipertb+1,:) = enSolution.(pname).(mname).flux;
+%             ipertb = ipertb+1;
+%         end
+%         save_data.y = [inSolution.(mname).y;save_data.y];
+%         savefile(save_data,mname,saveData);
+%         fname = sprintf('flux_%s',mname);
+%         savefile(save_flux,fname,saveData);
+%         %write concentrations to excel file
+%         status = selectData_kmodel(save_data,model,mname);
+%         status = selectFlux_kmodel(save_flux,model,fname);
+%     end
+%     
+%     %Plots - Comparison between models
+%     LineP = struct();
+%     LineP.LineWidth = 1.5;
+%     ColorSpec = setLineP(nmodels);
+%     [hfig,hsubfig] =...
+%     compareEnsemble(model,npertb,varname,enSolution,ColorSpec,LineP);
+%     %set default Line Properties
+%     setProperties(hfig,hsubfig,enSolution.pertb1.model1);
+% 
+%     %Plot - Comparison between fluxes
+%     var_ind = [model.Vind,model.Vexind'];
+%     F_ColorSpec = setLineP_flux(nmodels);
+%     [h_ffig,h_fsubfig] =...
+%     compareFluxes(nmodels,npertb,var_ind,enSolution,F_ColorSpec);
+%     varargout{3} = enSolution;
 %     end
 end
 return
