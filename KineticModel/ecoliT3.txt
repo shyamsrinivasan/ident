@@ -1,13 +1,19 @@
 Enzymes	Etot Conc	kcat (1/s)	Vmax	Keq	delta G (pH 7.2)	"vss (Gur = -10, O2ur = -1000)"	 equation	Activators	Inhibitors	Rxn Mechanism	Substrate Km (mM)	Regulator Km (mM)	Metab	Mclow (mM)	Mchigh (mM)
-GLC_ex				4.5812E+06	-9.1	10	glc[e] <==> glc[c]						glc[e]	1	20
-GLCpts					-9.1	10	glc[c] + pep[c] ---> g6p[c] + pyr[c]						g6p[c]	1	10
-PGI				3.8511E+00	-0.8	4.8609	[c] : g6p <==> f6p						pep[c]	1	10
-PFK				6.0465E+02	-3.8	7.4774	[c] : atp + f6p --> adp + fdp + h						pyr[c]	1	10
-pfy					0.3	7.47	[c] : fdp <==> pep						f6p[c]	1	10
-PYK				7.5765E+03	-5.3	1.7582	[c] : adp + h + pep --> atp + pyr						pyr[e]	0	0
-biomass							[c] : 0.0709 f6p + 0.2050 g6p + 7.5496 pep + 2.8328 pyr ---> Biomass						glc[c]	1	20
-EX_pyr							pyr[c] <==> pyr[e]						atp[c]	1	10
-EX_h							h[c] <==> h[e]						adp[c]	1	10
-													fdp[c]	1	10
-													h[c]	1	10
-													h[e]	1	50
+EXglc							<==> glc[e]						glc[e]	0.1	30
+glcPTS				4.5812E+06	-22.4	20	glc[e] + pep[c] ---> g6p[c] + pyr[c]						g6p[c]	0.1	30
+PGI		120		3.8511E+00	-4.6	4.8609	[c] : g6p + atp <==> fdp + adp + pi + h						g3p[c]	0.1	30
+fba		10.5			2.8	7.47	[c] : fdp <==> 2 g3p						atp[c]	0.1	30
+GAPD					-3.8	16.203	[c] : g3p + pi + adp <==> pep + h2o + atp						adp[c]	0.1	30
+PYK				7.5765E+03	-5.3	1.7582	[c] : adp + pep + h --> atp + pyr						pi[c]	0.1	30
+PPS					-1.2	0	[c] : atp + h2o + pyr --> amp + 2 h + pep + pi						amp[c]	0.1	30
+ADK1					-0.1	0	[c] : amp + atp <==> 2 adp						pep[c]	0.1	30
+biomass							[c] : 0.2050 g6p + 0.1290 g3p + 0.5191 pep + 59.81 atp + 2.8328 pyr + 59.81 h2o ---> biomass + 59.81 adp + 59.81 h + 59.81 pi						h[c]	0.1	30
+EXbiomass							biomass[c] <==>						h2o[c]	0.1	30
+Expyr€							pyr[c] <==> pyr[e]						pyr[c]	0.1	30
+Exh€							h[c] <==> h[e]								
+EXh2o€							h2o[c] <==> h2o[e]								
+Expi€							pi[c] <==> pi[e]								
+EXpyr							pyr[e] <==>								
+EXh							h[e] <==>								
+EXh2o							h2o[e] <==>								
+EXpi							pi[e] <==>								

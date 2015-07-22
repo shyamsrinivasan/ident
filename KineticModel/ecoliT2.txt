@@ -1,14 +1,22 @@
 Enzymes	Etot Conc	kcat (1/s)	Vmax	Keq	delta G (pH 7.2)	"vss (Gur = -10, O2ur = -1000)"	 equation	Activators	Inhibitors	Rxn Mechanism	Substrate Km (mM)	Regulator Km (mM)	Metab	Mclow (mM)	Mchigh (mM)
-EXglc				4.5812E+06	-22.4	20	glc[e] + pep[c] ---> g6p[c] + pyr[c]						glc[e]	1	20
-PGI					1	4.8609	[c] : g6p + atp ---> adp + 2 g3p						g6p[c]	1	20
-GAPDH		120		3.8511E+00	-2.6	14.72	[c] : g3p + nad + adp <==> pep + nadh + h + atp						pep[c]	1	20
-pyk					-31.7	1.75	[c] : pep + adp ---> pyr + atp						pyr[c]	1	20
-lacY		250			-6.4	1.75	[c] : pyr + nadh + h ---> lac + nad						g3p[c]	1	20
-biomass							[c] : atp + g6p + pep + pyr ---> Biomass + adp						lac[c]	1	20
-EXlac							lac[c] ---> lac[e]						atp[c]	1	20
-EXh							h[c] <==> h[e]						adp[c]	1	20
-													nad[c]	1	20
-													nadh[c]	1	20
-													h[c]	1	20
-													h[e]	1	20
-													lac[e]	1	20
+EXglc							<==> glc[e]						glc[e]	25.63861872	25.63861872
+glcPTS				4.5812E+06	-22.4	20	glc[e] + pep[c] ---> g6p[c] + pyr[c]						g6p[c]	5.316312681	5.316312681
+PGI		120		3.8511E+00	-0.8	4.8609	[c] : g6p <==> f6p						g3p[c]	0.785575537	0.785575537
+pfk		167			-3.8	7.47	[c] : f6p + atp ---> fdp + adp + h						atp[c]	21.45786963	21.45786963
+FBP					-2.8		[c] : fdp + h2o --> f6p + pi						adp[c]	19.83679398	19.83679398
+fba		10.5			4.2	7.47	[c] : fdp <==> dhap + g3p						pi[c]	3.747481187	3.747481187
+tpi		9000			1.4	7.47	[c] : dhap <==> g3p						amp[c]	24.87439043	24.87439043
+GAPD					-0.1		[c] : g3p + nad + pi <==> 13dpg + h + nadh						pep[c]	7.307060787	7.307060787
+PGK		120		3.8511E+00	-2.8	14.72	[c] : 13dpg + adp <==> 3pg + atp						nad[c]	0.01	30
+PGM					0.0		[c] : 3pg <==> 2pg						nadh[c]	0.01	30
+ENO					-0.9		[c] : 2pg <==> h2o + pep						h[c]	2.687992582	2.687992582
+PYK				7.5765E+03	-5.3	1.7582	[c] : adp + pep + h --> atp + pyr						lac[c]	0.01	30
+PPS					-1.2		[c] : atp + h2o + pyr --> amp + 2 h + pep + pi						h2o[c]	20.72326198	20.72326198
+lacY		250			-6.4	1.75	[c] : pyr + h + nadh <==> lac + nad						dhap[c]	0.01	30
+biomass							[c] : 0.2050 g6p + 0.1290 g3p + 0.5191 pep + 59.81 atp + 2.8328 pyr + 0.0709 f6p + 59.81 h2o + 3.547 nad + 1.496 3pg ---> biomass + 59.81 adp + 59.81 h + 59.81 pi + 3.547 nadh						3pg[c]	0.01	30
+EXbiomass							biomass[c] <==>						2pg[c]	0.01	30
+EXpyr							pyr[c] <==>						acald[c]	0.01	30
+EXlac							lac[c] <==>						etoh[c]	0.01	30
+EXh							h[c] <==>						pyr[c]	19.59322507	19.59322507
+EXh2o							h2o[c] <==>						f6p[c]	0.01	30
+EXpi							pi[c] <==>						fdp[c]	0.01	30

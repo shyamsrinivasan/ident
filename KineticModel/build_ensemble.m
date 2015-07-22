@@ -4,13 +4,16 @@ function [ensb,flag] = build_ensemble(nmodels,model,pmeter,MC)
 nsamples = nmodels;
 
 %glcpts
-Mglc = strcmpi('glc[e]',model.Metabolites);
+Mglc = strcmpi('glc[e]',model.mets);
 Vglc = find(model.S(Mglc,:)<0);
-
-try
-    Vind = [model.Vind;Vglc];
-catch
-    Vind = [model.Vind Vglc];
+if ~any(model.Vind==Vglc)
+    try
+        Vind = [model.Vind;Vglc];
+    catch
+        Vind = [model.Vind Vglc];
+    end
+else
+    Vind = model.Vind;
 end
 nrxn = length(Vind);
 nt_rxn = model.nt_rxn;
@@ -37,7 +40,7 @@ for irxn = 1:nrxn
     inhib{irxn} = find(model.SI(:,Vind(irxn))<0);
     nreg(irxn) = length(find(model.SI(:,Vind(irxn))));
 end
-  %Remove kinetic consideration for metabolites like water which are
+  %Remove kinetic consideration for mets like water which are
   %non-limiting always
 for isample = 1:nsamples
     mname = sprintf('model%d',isample);  
@@ -53,17 +56,21 @@ for isample = 1:nsamples
             sub_ratio = met_sat(1:nsubs)./(1-met_sat(1:nsubs));
             Ksubs = MC(subs{irxn})./sub_ratio;
             Kscol(subs{irxn},1) = ensb.(mname).K(subs{irxn},Vind(irxn));
-            ensb.(mname).K(Kscol==1,Vind(irxn)) =...
-            Ksubs(ensb.(mname).K(subs{irxn},Vind(irxn))==1); 
-            ensb.(mname).Kind(Kscol==1,Vind(irxn)) = 1;
+            if any(Kscol==1)
+                ensb.(mname).K(Kscol==1,Vind(irxn)) =...
+                Ksubs(ensb.(mname).K(subs{irxn},Vind(irxn))==1); 
+                ensb.(mname).Kind(Kscol==1,Vind(irxn)) = 1;
+            end
         end
         if nmetab(irxn)-nsubs ~= 0
             prod_ratio = met_sat(nsubs+1:nmetab(irxn))./(1-met_sat(nsubs+1:nmetab(irxn)));
             Kprod = MC(pruds{irxn})./prod_ratio;
             Kpcol(pruds{irxn},1) = ensb.(mname).K(pruds{irxn},Vind(irxn));
-            ensb.(mname).K(Kpcol==1,Vind(irxn)) =...
-            Kprod(ensb.(mname).K(pruds{irxn},Vind(irxn))==1);
-            ensb.(mname).Kind(Kpcol==1,Vind(irxn)) = 1;
+            if any(Kpcol == 1)
+                ensb.(mname).K(Kpcol==1,Vind(irxn)) =...
+                Kprod(ensb.(mname).K(pruds{irxn},Vind(irxn))==1);
+                ensb.(mname).Kind(Kpcol==1,Vind(irxn)) = 1;
+            end
         end
         %Regulator Samples             
         reg_sat = betarnd(1.5,4.5,nreg(irxn),1);
@@ -82,8 +89,12 @@ for isample = 1:nsamples
         kreg = kreg + nreg(irxn);
     end   
     [~,vflux] = ConvinienceKinetics(model,ensb.(mname),MC,model.bmrxn,Vind);
+    oldVmax = ensb.(mname).Vmax;
     ensb.(mname).Vmax(Vind) = model.Vss(Vind)./vflux(Vind);
-    ensb.(mname).Vmax(setdiff(1:nt_rxn,Vind)) = 1;    
+    ensb.(mname).Vmax(setdiff(1:nt_rxn,Vind)) = 1;
+    if any(~isnan(oldVmax))
+        ensb.(mname).Vmax(~isnan(oldVmax)) = oldVmax(~isnan(oldVmax));
+    end    
 end
 
 %Select models from ensemble

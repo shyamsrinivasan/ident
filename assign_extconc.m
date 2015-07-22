@@ -3,8 +3,8 @@
 % metabolite concentrations
 function [mConc] = assign_extconc(name,conc,model)
     mConc = zeros(model.next_metab,1);
-    exter_mind = ~cellfun('isempty',regexp(model.Metabolites,'\w(?:\[e\])$'));
-    exter_metab = model.Metabolites(exter_mind);
+    exter_mind = ~cellfun('isempty',regexp(model.mets,'\w(?:\[e\])$'));
+    exter_metab = model.mets(exter_mind);
     if ~isempty(exter_metab)
         if length(name) == length(conc)
             for iname = 1:length(name)
