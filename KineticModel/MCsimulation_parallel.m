@@ -27,7 +27,7 @@ if status >= 0
     for isamp = 1:nsamples
         ksp_name = sprintf('sample_%d',isamp);
         samp_name{isamp} = ksp_name;
-        [model,batch,solverP,saveData] = initializeModel(model,500);
+        [model,batch,solverP,saveData] = initializeModel(model,300000);
         data.(ksp_name).model = model;
         data.(ksp_name).batch = batch;
         data.(ksp_name).solverP = solverP;
@@ -52,7 +52,7 @@ parfor isamp = 1:nsamples
     
     %Save simulation conditions
     fname = sprintf('simconditions_%d',isamp);
-    savefile(savesimd,fname,saveData);  
+%     savefile(savesimd,fname,saveData);  
     
     %Create job
 %     job.(ksp_name) = createJob(cluster);
@@ -71,7 +71,7 @@ parfor isamp = 1:nsamples
     
     ParSol{isamp} = Solution;
     ParfSS{isamp} = finalSS;
-    savefile(ParSol{isamp},samp_name{isamp},saveData);
+%     savefile(ParSol{isamp},samp_name{isamp},saveData);
     conc(:,isamp+1) = ParfSS{isamp}.y;
     
     %Calculate Flux
@@ -128,8 +128,9 @@ close all
 [petflux,MSSpflux] = binConcentrations(petflux);
 
 %Plot Fluxes & Bin and plot Flux Distribution
-printvar = {'Pin','P1','P2','P3','P4','P5','P6','P7','P8','BiomassEX'};
-plotflux_bar(model,flux,printvar);
+% printvar = {'Pin','v1','v2','v3','v4','v5','v6','v7','v8','Pout','Bout','Aout','BiomassEX'};
+printvar = {'Pin','v1','v2','v3','v4','v5','v6','Pout','Dout','Eout','BiomassEX'};
+% plotflux_bar(model,flux,printvar);
 
 %Plot Steady State Concentrations
 plotSSexpression(model,[],conc,petconc,varname,'concentration');
@@ -149,6 +150,8 @@ if flag > 0
 else
     fprintf('\n Envelopes Infeasible for growth rate = %3.2g h-1\n',model.gmax);
 end   
+% getFigure(petconc',petflux',model);
+
 
 Csigma = OutputVariability(conc);
 Vsigma = OutputVariability(flux);

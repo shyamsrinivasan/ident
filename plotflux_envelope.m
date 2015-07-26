@@ -69,7 +69,7 @@ for ivar = 1:nflux
                          'MarkerEdgeColor',ColorSpec{ivar});
 
 %             set(get(gca,'YLabel'),'String',y_label1);  
-            set(get(gca,'YLabel'),'FontName','Arabic Type Setting');   
+            set(get(gca,'YLabel'),'FontName','CMU Serif');   
             set(get(gca,'YLabel'),'FontSize',10);  
 
     %         xlabel = sprintf('Steady States');

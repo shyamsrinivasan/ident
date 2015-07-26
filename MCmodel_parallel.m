@@ -100,7 +100,7 @@ close all
 % printMetResults(model,inSolution,conc,[],[],varname);
 
 %Plot Fluxes & Bin and plot Flux Distribution
-printvar = {'Pin','P1','P2','P3','P4','P5','P6','P7','P8','P9','BiomassEX'};
+printvar = {'v6'};
 plotflux_bar(model,flux,printvar);
 
 %Plot Steady State Concentrations
