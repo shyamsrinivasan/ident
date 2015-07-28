@@ -93,16 +93,16 @@ close all
 %Call MCsmulation for inital value MC on FBAmodel
 %or for Vmax sample simulation
 nsamples = 500; %# samples
-lb = [1e-4];
-ub = [1];
-pvar = {'P[c]'};
+lb = [1e-6];
+ub = [1e-2];
+pvar = {'E[c]'};
 
 if strcmpi(type,'MC')
     for imodel = 1:nmodels
         mname = sprintf('model%d',imodel);
         if nmodels > 1
             [MCdyn,MCss] =...
-            MCsimulation(model,ensb.(mname),variable,nsamples,pvar,lb,ub,...
+            MCsimulation(model,ensb.(mname),variable.model1,nsamples,pvar,lb,ub,...
                          allSolution.(mname),allfinalSS.(mname),varname);
             allfinalSS.(mname) = MCss;
             allSolution.(mname) = MCdyn;
@@ -113,12 +113,12 @@ if strcmpi(type,'MC')
             if nsamples > 1
                 %Parallel
                 [MCdyn,MCss,y0new] =...
-                 MCsimulation_parallel(model,ensb.model1,variable,nsamples,pvar,lb,ub,...
+                 MCsimulation_parallel(model,ensb.model1,variable.model1,nsamples,pvar,lb,ub,...
                                        allSolution,allfinalSS,varname);
             else
         %        Serial
                 [MCdyn,MCss] =...
-                MCsimulation(model,ensb.model1,variable,nsamples,pvar,lb,ub,...
+                MCsimulation(model,ensb.model1,variable.model1,nsamples,pvar,lb,ub,...
                              allSolution,allfinalSS,varname);
                 y0new = [];
             end

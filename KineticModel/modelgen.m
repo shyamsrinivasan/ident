@@ -237,14 +237,14 @@ for irxn = 1:nt_rxn
     ireg = 0;       
     actstring = strtrim(strrep(C{9}{irxn},'"',''));%Activators    
     if ~isempty(actstring)         
-        [model] = ident_regulator(model,actstring,2,par,Klb,Kub);%Activators        
+        [model] = ident_regulator(model,actstring,1,par,Klb,Kub);%Activators        
     end    
     inhstring = strtrim(strrep(C{10}{irxn},'"',''));%Inhibitors
     if ~isempty(inhstring)  
         %->Assign default parameters for inhibitors if par = [] or 
         %if length(par) < length(activators) + length(inhibitors)
         %par = defparval(nterms,par)
-        [model] = ident_regulator(model,inhstring,-2,par,Klb,Kub);%Inhibitors        
+        [model] = ident_regulator(model,inhstring,-1,par,Klb,Kub);%Inhibitors        
     end
 end
 

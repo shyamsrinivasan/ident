@@ -101,17 +101,18 @@ bounds.vu = zeros(model.nt_rxn,1);
 %Corresponding flux bounds
 bounds.vu(bounds.vu==0) = 100;%bounds.Vuptake;
 %Determine Max and Min for flux to be constrained with =
-[vMax,~,~,~,Maxflag] = solveLP(model,'','',bounds,model.bmrxn);
+[gMax,~,~,~,gMaxflag] = solveLP(model,'','',bounds,model.bmrxn);
+% [pMax,~,~,~,pMaxflag] = solveLP(model,'','',bounds,find(strcmpi('Pex',model.rxns)));
 fprintf('Uptake Flux = %2.3g\n',model.Vuptake);
-if ~isfield(model,'gmax') && Maxflag > 0
-    fprintf('Maximum feasible growth rate = %2.3g h-1\n',-vMax);
+if ~isfield(model,'gmax') && gMaxflag > 0
+    fprintf('Maximum feasible growth rate = %2.3g h-1\n',-gMax);
     model.gmax = 0.1;%-vMax;
 elseif ~isfield(model,'gmax')
     model.gmax = 0.1;
-elseif -vMax < model.gmax
+elseif -gMax < model.gmax
     fprintf('Given maximum growth rate %2.3g is infeasible\n',model.gmax);
-    fprintf('Maximum feasible growth rate = %2.3g h-1\n',-vMax);
-    model.gmax = -vMax;
+    fprintf('Maximum feasible growth rate = %2.3g h-1\n',-gMax);
+    model.gmax = -gMax;
 end  
 
 return

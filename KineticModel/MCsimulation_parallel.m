@@ -130,7 +130,7 @@ close all
 %Plot Fluxes & Bin and plot Flux Distribution
 % printvar = {'Pin','v1','v2','v3','v4','v5','v6','v7','v8','Pout','Bout','Aout','BiomassEX'};
 printvar = {'Pin','v1','v2','v3','v4','v5','v6','Pout','Dout','Eout','BiomassEX'};
-% plotflux_bar(model,flux,printvar);
+plotflux_bar(model,flux,printvar);
 
 %Plot Steady State Concentrations
 plotSSexpression(model,[],conc,petconc,varname,'concentration');

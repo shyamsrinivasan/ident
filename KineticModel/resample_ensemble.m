@@ -92,7 +92,9 @@ for isample = 1:nmodels
         set.Vmax(~isnan(oldVmax)) = oldVmax(~isnan(oldVmax));
     end
     ensb.(mname) = set;
+    ensb.(mname) = rmfield(ensb.(mname),{'Kind','KAind','KIind'});
 end
+
 
 %Select models from ensemble
 for is = 1:nmodels
