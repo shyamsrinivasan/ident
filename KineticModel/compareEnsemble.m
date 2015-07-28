@@ -15,8 +15,8 @@ if nargin < 6
 end
 y_label = cell(length(varname),1);
 for ivar = 1:length(varname)
-    var_tf = strcmpi(varname{ivar},model.Metabolites);
-    y_label{ivar} = sprintf('%s mmole/g DCW',model.Metabolites{var_tf});
+    var_tf = strcmpi(varname{ivar},model.mets);
+    y_label{ivar} = sprintf('%s mmole/g DCW',model.mets{var_tf});
     if any(var_tf(1:model.nint_metab))            
         var_tf = logical(var_tf(1:model.nint_metab));
     end

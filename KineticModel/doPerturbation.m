@@ -1,4 +1,4 @@
-function [ensembleSol,npertb] = doPerturbation(pertb,model,ensb,variable,initSol,SolverOptions)
+function [ensembleSol,npertb] = doPerturbation(pertb,model,ensb,variable,initSol,batch,SolverOptions)
 
 nmodels = length(fieldnames(ensb));
 npertb = length(fieldnames(pertb));
@@ -9,7 +9,7 @@ for isample = 1:nmodels
         pname = sprintf('pertb%d',ipertb);
         fprintf('Perturbation %d\n',ipertb);
         [Solution] = pertbEnzyme(pertb.(pname),model,ensb.(mname),...
-                                 variable,initSol.(mname),SolverOptions);
+                                 variable.(mname),initSol,batch,SolverOptions);
         ensembleSol.(pname).(mname) = Solution;        
         ensembleSol.(pname).(mname).flux = calc_flux(model,ensb.(mname),Solution.y(:,end));
     end

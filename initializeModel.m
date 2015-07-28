@@ -33,10 +33,10 @@ if ~isfield(batch,'init')
 %                      'nh4[e]';'co2[e]';'acald[e]';'akg[e]';'for[e]';...
 %                      'fum[e]';'h[e]';'h2o[e]';'o2[e]';'mal[e]'};
 %     batch.init{2} = [2;0;0;0;0;0;0;0;0;0;0;0;0;1;0];%mmoles 
-      batch.init{1} = {'A[e]','E[e]','P[e]','D[e]'};
+%       batch.init{1} = {'A[e]','P[e]','D[e]','E[e]'};
+%       batch.init{2} = [20;0;0;20];
+      batch.init{1} = {'S[e]','B[e]','P[e]','A[e]'};
       batch.init{2} = [20;0;0;0];
-%       batch.init{1} = {'S[e]','B[e]','P[e]','A[e]'};
-%       batch.init{2} = [200;0;0;0];
 end
 %??
 if ~isfield(model,'kcat')
@@ -106,6 +106,8 @@ fprintf('Uptake Flux = %2.3g\n',model.Vuptake);
 if ~isfield(model,'gmax') && Maxflag > 0
     fprintf('Maximum feasible growth rate = %2.3g h-1\n',-vMax);
     model.gmax = 0.1;%-vMax;
+elseif ~isfield(model,'gmax')
+    model.gmax = 0.1;
 elseif -vMax < model.gmax
     fprintf('Given maximum growth rate %2.3g is infeasible\n',model.gmax);
     fprintf('Maximum feasible growth rate = %2.3g h-1\n',-vMax);
