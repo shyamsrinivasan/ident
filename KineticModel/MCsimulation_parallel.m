@@ -27,7 +27,9 @@ if status >= 0
     for isamp = 1:nsamples
         ksp_name = sprintf('sample_%d',isamp);
         samp_name{isamp} = ksp_name;
-        [model,batch,solverP,saveData] = initializeModel(model,800);
+
+        [model,batch,solverP,saveData] = initializeModel(model,300000);
+
         data.(ksp_name).model = model;
         data.(ksp_name).batch = batch;
         data.(ksp_name).solverP = solverP;
@@ -128,8 +130,10 @@ close all
 [petflux,MSSpflux] = binConcentrations(petflux);
 
 %Plot Fluxes & Bin and plot Flux Distribution
-printvar = {'Pin','P1','P2','P3','P4','P5','P6','P10','P11','Pout','Bout','Aout','BiomassEX'};
-% printvar = {'Pin','P1','P2','P3','P4','P5','P6','Pout','Dout','Eout','BiomassEX'};
+
+% printvar = {'Pin','v1','v2','v3','v4','v5','v6','v7','v8','Pout','Bout','Aout','BiomassEX'};
+printvar = {'Pin','v1','v2','v3','v4','v5','v6','Pout','Dout','Eout','BiomassEX'};
+
 plotflux_bar(model,flux,printvar);
 
 %Plot Steady State Concentrations
@@ -150,6 +154,8 @@ if flag > 0
 else
     fprintf('\n Envelopes Infeasible for growth rate = %3.2g h-1\n',model.gmax);
 end   
+% getFigure(petconc',petflux',model);
+
 
 Csigma = OutputVariability(conc);
 Vsigma = OutputVariability(flux);

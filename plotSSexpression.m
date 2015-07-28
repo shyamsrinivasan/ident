@@ -350,12 +350,12 @@ function hsubfig = lineplot(j,nplots,hfig,hsubfig,valt,pvalt,tf,y_label1,ColorSp
               'MarkerEdgeColor',ColorSpec{j});
     %Axis Properties
     set(get(gca,'YLabel'),'String',y_label1);  
-    set(get(gca,'YLabel'),'FontName','Arabic Type Setting');   
+    set(get(gca,'YLabel'),'FontName','CMU Serif');   
     set(get(gca,'YLabel'),'FontSize',12); 
     
     xlabel = sprintf('Steady States');
     set(get(gca,'XLabel'),'String',xlabel);  
-    set(get(gca,'XLabel'),'FontName','Arabic Type Setting');   
+    set(get(gca,'XLabel'),'FontName','CMU Serif');   
     set(get(gca,'XLabel'),'FontSize',12);
     %Axis limits
     Ydata = get(hline,'YData');

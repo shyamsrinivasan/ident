@@ -10,8 +10,12 @@ saveData.dirname = 'C:\Users\shyam\Documents\Courses\CHE 1125 Project\Results\Km
 %Initial Model Perturbation
 fprintf('Initial Model Integration to obtain initial SS\n');
 imodel = 1;
+
 conc = zeros(nmodels,model.nt_metab);
+
 if nmodels > 1    
+    conc = zeros(nmodels,model.nt_metab);
+    flux = zeros(nmodels,model.nt_rxn);
     %Do just initial value simulation using parallel framework
     [inSolution,infinalSS] =...
     MCmodel_parallel(model,inSolution,ensb,variable,nmodels,varname); 
@@ -21,9 +25,13 @@ if nmodels > 1
             allSolution.(mname).init = inSolution.(mname);
             allfinalSS.(mname).init = infinalSS.(mname);
             conc(imodel,:) = infinalSS.(mname).y;
+
+            flux(imodel,:) = infinalSS.(mname).flux;
             %Plot Initial Solution
 %             [hfig,hsubfig] =...
 %             printMetResults(model,allSolution.(mname),[],[],[],varname);
+            % getFigure(conc,flux,model);
+
         end
     end
 else
@@ -33,7 +41,9 @@ else
         inSolution.(mname) = struct([]);
     end
     %Model initialization
-    [model,batch,solverP,saveData] = initializeModel(model,800,ensb.(mname),variable.(mname));
+
+    [model,batch,solverP,saveData] = initializeModel(model,300000,ensb.(mname),variable.(mname));
+
     if isempty(inSolution.(mname))
             %simulate models first to get initial SS
             [Solution,finalSS] =...
@@ -47,8 +57,12 @@ else
             allfinalSS.init.flux = calc_flux(model,ensb.(mname),Solution.y(:,end));
             
             %Plot Initial Solution
+
 %             [hfig,hsubfig] =...
 %             printMetResults(model,allSolution,[],[],[],varname);
+
+            % getFigure(conc,flux,model);
+
     end
 end
 close all
@@ -87,17 +101,19 @@ close all
 
 %Call MCsmulation for inital value MC on FBAmodel
 %or for Vmax sample simulation
-nsamples = 1000; %# samples
-lb = [1e-3;1e-3;1e-3;1e-3];
-ub = [100;100;100;100];
-pvar = {'B[c]','C[c]','D[c]','E[c]'};
+
+nsamples = 500; %# samples
+lb = [1e-6];
+ub = [1e-2];
+pvar = {'E[c]'};
+
 
 if strcmpi(type,'MC')
     for imodel = 1:nmodels
         mname = sprintf('model%d',imodel);
         if nmodels > 1
             [MCdyn,MCss] =...
-            MCsimulation(model,ensb.(mname),variable,nsamples,pvar,lb,ub,...
+            MCsimulation(model,ensb.(mname),variable.model1,nsamples,pvar,lb,ub,...
                          allSolution.(mname),allfinalSS.(mname),varname);
             allfinalSS.(mname) = MCss;
             allSolution.(mname) = MCdyn;
@@ -108,12 +124,12 @@ if strcmpi(type,'MC')
             if nsamples > 1
                 %Parallel
                 [MCdyn,MCss,y0new] =...
-                 MCsimulation_parallel(model,ensb.model1,variable,nsamples,pvar,lb,ub,...
+                 MCsimulation_parallel(model,ensb.model1,variable.model1,nsamples,pvar,lb,ub,...
                                        allSolution,allfinalSS,varname);
             else
         %        Serial
                 [MCdyn,MCss] =...
-                MCsimulation(model,ensb.model1,variable,nsamples,pvar,lb,ub,...
+                MCsimulation(model,ensb.model1,variable.model1,nsamples,pvar,lb,ub,...
                              allSolution,allfinalSS,varname);
                 y0new = [];
             end

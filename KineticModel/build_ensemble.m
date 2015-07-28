@@ -26,6 +26,8 @@ for isample = 1:nsamples
     ensb.(mname).Kind = sparse(ntmetab,nt_rxn);
     ensb.(mname).KIact = pmeter.KIact;
     ensb.(mname).KIihb = pmeter.KIihb;
+    ensb.(mname).KAind = sparse(ntmetab,nt_rxn);
+    ensb.(mname).KIind = sparse(ntmetab,nt_rxn);
     ensb.(mname).Vmax = pmeter.Vmax;
 end   
 subs = cell(nrxn,1);
@@ -74,18 +76,32 @@ for isample = 1:nsamples
                 ensb.(mname).Kind(Kpcol==1,Vind(irxn)) = 1;
             end
         end
+        KAcol = zeros(ntmetab,1);
+        KIcol = zeros(ntmetab,1);
         %Regulator Samples             
         reg_sat = betarnd(1.5,4.5,nreg(irxn),1);
         nact = length(act{irxn});
-        if nact ~= 0
+        if nact ~= 0            
             act_ratio = reg_sat(1:nact)./(1-reg_sat(1:nact));
-            ensb.(mname).KIa(act{irxn},Vind(irxn)) = MC(act{irxn})./act_ratio;
-%             ensb.(mname).KI(kreg+1:kreg+nact) = MC(act{irxn})./act_ratio;
+            KAreg = MC(act{irxn})./act_ratio;
+            KAcol(act{irxn},1) = ensb.(mname).KIact(act{irxn},Vind(irxn));
+            if any(KAcol == 1)
+                ensb.(mname).KIact(KAcol==1,Vind(irxn))=...
+                KAreg(ensb.(mname).KIact(act{irxn},Vind(irxn))==1);
+                ensb.(mname).KAind(KAcol==1,Vind(irxn)) = 1;
+            end
+%             ensb.(mname).KIact(act{irxn},Vind(irxn)) = MC(act{irxn})./act_ratio;
         end
         if nreg(irxn)-nact ~= 0
-            inhib_ratio = reg_sat(nact+1:nreg(irxn))./(1-reg_sat(nact+1:nreg(irxn))); 
-            ensb.(mname).KIi(inhib{irxn},Vind(irxn)) = MC(inhib{irxn})./inhib_ratio;
-%             ensb.(mname).KI(kreg+nact+1:kreg+nreg(irxn)) = MC(inhib{irxn})./inhib_ratio;
+            inhib_ratio = reg_sat(nact+1:nreg(irxn))./(1-reg_sat(nact+1:nreg(irxn)));
+            KIreg = MC(inhib{irxn})./inhib_ratio;
+            KIcol(inhib{irxn},1) = ensb.(mname).KIihb(inhib{irxn},Vind(irxn));
+            if any(KIcol==1)
+                ensb.(mname).KIihb(KIcol==1,Vind(irxn))=...
+                KIreg(ensb.(mname).KIihb(inhib{irxn},Vind(irxn))==1);
+                ensb.(mname).KIind(KIcol==1,Vind(irxn)) = 1;
+            end
+%             ensb.(mname).KIihb(inhib{irxn},Vind(irxn)) = MC(inhib{irxn})./inhib_ratio;
         end
         jmetab = jmetab + nmetab(irxn);
         kreg = kreg + nreg(irxn);
