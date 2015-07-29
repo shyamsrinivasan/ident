@@ -41,8 +41,8 @@ rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\Kine
 %     [ensb] = build_ensemble(nmodels,FBAmodel,parameter,variable.MC);
 %     %Resample Kms
 %     ensb = resample_ensemble(ensb,FBAmodel,variable.MC);
-    load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\N2mRa_MC2');
-    load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\N2mRa_parameter2');
+%     load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\N2mRa_MC2');
+%     load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\N2mRa_parameter2');
     inSolution = [];
     varname = {'A[c]','B[c]','C[c]','D[c]','E[c]','P[c]','S[c]'};
     [allSolution,allfinalSS,ySample] =...
