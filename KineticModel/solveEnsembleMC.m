@@ -11,6 +11,8 @@ saveData.dirname = 'C:\Users\shyam\Documents\Courses\CHE 1125 Project\Results\Km
 fprintf('Initial Model Integration to obtain initial SS\n');
 imodel = 1;
 
+conc = zeros(nmodels,model.nt_metab);
+
 if nmodels > 1    
     conc = zeros(nmodels,model.nt_metab);
     flux = zeros(nmodels,model.nt_rxn);
@@ -23,11 +25,13 @@ if nmodels > 1
             allSolution.(mname).init = inSolution.(mname);
             allfinalSS.(mname).init = infinalSS.(mname);
             conc(imodel,:) = infinalSS.(mname).y;
+
             flux(imodel,:) = infinalSS.(mname).flux;
             %Plot Initial Solution
 %             [hfig,hsubfig] =...
 %             printMetResults(model,allSolution.(mname),[],[],[],varname);
             % getFigure(conc,flux,model);
+
         end
     end
 else
@@ -37,7 +41,9 @@ else
         inSolution.(mname) = struct([]);
     end
     %Model initialization
+
     [model,batch,solverP,saveData] = initializeModel(model,300000,ensb.(mname),variable.(mname));
+
     if isempty(inSolution.(mname))
             %simulate models first to get initial SS
             [Solution,finalSS] =...
@@ -51,9 +57,12 @@ else
             allfinalSS.init.flux = calc_flux(model,ensb.(mname),Solution.y(:,end));
             
             %Plot Initial Solution
+
             [hfig,hsubfig] =...
             printMetResults(model,allSolution,[],[],[],varname);
+
             % getFigure(conc,flux,model);
+
     end
 end
 close all
@@ -92,10 +101,12 @@ close all
 
 %Call MCsmulation for inital value MC on FBAmodel
 %or for Vmax sample simulation
+
 nsamples = 500; %# samples
 lb = [1];
 ub = [100];
 pvar = {'E[c]'};
+
 
 if strcmpi(type,'MC')
     for imodel = 1:nmodels

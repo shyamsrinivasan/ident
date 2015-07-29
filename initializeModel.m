@@ -33,10 +33,12 @@ if ~isfield(batch,'init')
 %                      'nh4[e]';'co2[e]';'acald[e]';'akg[e]';'for[e]';...
 %                      'fum[e]';'h[e]';'h2o[e]';'o2[e]';'mal[e]'};
 %     batch.init{2} = [2;0;0;0;0;0;0;0;0;0;0;0;0;1;0];%mmoles 
+
       batch.init{1} = {'A[e]','P[e]','D[e]','E[e]'};
       batch.init{2} = [20;0;0;0];
 %       batch.init{1} = {'S[e]','B[e]','P[e]','A[e]'};
 %       batch.init{2} = [20;0;0;0];
+
 end
 %??
 if ~isfield(model,'kcat')

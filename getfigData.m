@@ -22,4 +22,8 @@ for j = 1:size(YD,2)
         end
     end
 %     setPropPlot
+
 end
+
+plot(conc(:,1),conc(:,2),'LineStyle','none','Marker','o');
+

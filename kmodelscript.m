@@ -34,17 +34,17 @@ rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\Kine
 %     fprintf('Sample #%d of 1000\n',i);
 %     sam_name = sprintf('samp_%d',i);
 %     variable = data.(sam_name).variable;
+
     
     nmodels = 1;
     [ensb,variable] = sampleMet_parallel(FBAmodel,parameter,nmodels);
-%     nmodels = 1;
-%     [ensb] = build_ensemble(nmodels,FBAmodel,parameter,variable.MC);
-%     %Resample Kms
-%     ensb = resample_ensemble(ensb,FBAmodel,variable.MC);
-%     load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\N2mRa_MC2');
-%     load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\N2mRa_parameter2');
+   
+%     load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\N2mRh_MC1');
+%     load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\N2mRh_parameter1');
+
     inSolution = [];
     varname = {'A[c]','B[c]','C[c]','D[c]','E[c]','P[c]','S[c]'};
+
     [allSolution,allfinalSS,ySample] =...
     solveEnsembleMC(FBAmodel,ensb,variable,inSolution,varname,'MC');
     
