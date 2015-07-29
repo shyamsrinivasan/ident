@@ -36,8 +36,8 @@ flval = zeros(npts,nrxn);
 bounds.Vuptake = model.Vuptake;
 bounds.vl = zeros(model.nt_rxn,1);
 % bounds.vl(bounds.vl==0) = -1;
-bounds.vl(bounds.vl==0) = -100;
-% bounds.vl(logical(model.rev)) = -100;%bounds.Vuptake;
+% bounds.vl(bounds.vl==0) = -100;
+bounds.vl(logical(model.rev)) = -100;%bounds.Vuptake;
 bounds.vu = zeros(model.nt_rxn,1);          
 %Corresponding flux bounds
 bounds.vu(bounds.vu==0) = 100;%bounds.Vuptake;

@@ -111,11 +111,7 @@ if ~isfield(model,'gmax') && gMaxflag > 0
     model.gmax = 0.1;%-vMax;
 elseif ~isfield(model,'gmax')
     model.gmax = 0.1;
-<<<<<<< HEAD
-elseif -vMax < model.gmax
-=======
 elseif -gMax < model.gmax
->>>>>>> b1639d2d7a4c57af4069788ff7abf820a6f44e2f
     fprintf('Given maximum growth rate %2.3g is infeasible\n',model.gmax);
     fprintf('Maximum feasible growth rate = %2.3g h-1\n',-gMax);
     model.gmax = -gMax;

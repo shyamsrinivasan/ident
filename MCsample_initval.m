@@ -35,8 +35,13 @@ for ivar = 1:nvar
     
     if any(tf1) && ~varfl(tf1) 
         varfl(tf1) = 1;
-        ylb(ivar) = lb(ivar)*y0old(tf1);
-        yub(ivar) = ub(ivar)*y0old(tf1);
+        if y0old(tf1)%If y0old is non-zero
+            ylb(ivar) = lb(ivar)*y0old(tf1);
+            yub(ivar) = ub(ivar)*y0old(tf1);
+        else%IF y0old is zero, use value in bounds as absolute
+            ylb(ivar) = lb(ivar);
+            yub(ivar) = ub(ivar);
+        end
         if mdes == 1
             if ylb(ivar) == 0 && yub(ivar)-1e-9 == 0
                 pbind(ivar) = tf1;

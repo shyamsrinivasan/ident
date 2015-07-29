@@ -58,8 +58,8 @@ else
             
             %Plot Initial Solution
 
-%             [hfig,hsubfig] =...
-%             printMetResults(model,allSolution,[],[],[],varname);
+            [hfig,hsubfig] =...
+            printMetResults(model,allSolution,[],[],[],varname);
 
             % getFigure(conc,flux,model);
 
@@ -102,10 +102,10 @@ close all
 %Call MCsmulation for inital value MC on FBAmodel
 %or for Vmax sample simulation
 
-nsamples = 500; %# samples
-lb = [1e-6];
-ub = [1e-2];
-pvar = {'E[c]'};
+nsamples = 1000; %# samples
+lb = [1e-2];
+ub = [100];
+pvar = {'P[c]'};
 
 
 if strcmpi(type,'MC')
