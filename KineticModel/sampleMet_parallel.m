@@ -3,7 +3,7 @@ function [ensb,variable] = sampleMet_parallel(FBAmodel,parameter,nmodels)
 if nargin < 3
     nmodels = 1;
 end
-nsmp = 50;
+nsmp = 100;
 var = cell(nsmp,1);
 Fvar = zeros(nsmp,1);
 EScell = cell(nsmp,1);

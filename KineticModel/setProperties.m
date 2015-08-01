@@ -12,8 +12,8 @@ if ~isempty(hsubfig)
         AxisP.XColor = [.4 .4 .4];
         AxisP.YColor = [.4 .4 .4];
         AxisP.XLim = [0 Xmax];
-        AxisP.FontName = 'Courier';
-        AxisP.FontSize = 14; 
+        AxisP.FontName = 'CMU Serif';
+        AxisP.FontSize = 24; 
 
         %Variable Specific Properties
         if hsubfig(ivar)

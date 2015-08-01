@@ -1,3 +1,7 @@
+% [Y,Yflux] =...
+% initializeConcentration(model,pmeter,variable,Vname,Vconc,type,initSol)
+% Formulate the initial conecntration and flux vector from given initial 
+% concentrations and input concentrations
 function [Y,Yflux] =...
 initializeConcentration(model,pmeter,variable,Vname,Vconc,type,initSol)
 if nargin < 7

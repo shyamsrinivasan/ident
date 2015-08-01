@@ -100,14 +100,20 @@ close all
 % printMetResults(model,inSolution,conc,[],[],varname);
 
 %Plot Fluxes & Bin and plot Flux Distribution
+%Bin Concentrations/Fluxes
+[conc,MSSconc] = binConcentrations(conc);
+[flux,MSSflux] = binConcentrations(flux);
 
-% printvar = {'Pin','v1','v2','v3','v4','v5','v6','v7','v8','Pout','Bout','Aout','BiomassEX'};
-printvar = {'Pin','v1','v2','v3','v4','v5','v6','Pout','Dout','Eout','BiomassEX'};
+printvar = {'Pin','v1','v2','v3','v4','v5','v6','v7','v8','Pout','Bout','Aout','BiomassEX'};
+% printvar = {'Pin','v1','v2','v3','v4','v5','v6','Pout','Dout','Eout','BiomassEX'};
 
 plotflux_bar(model,flux,printvar);
 
 %Plot Steady State Concentrations
 plotSSexpression(model,[],conc,[],varname,'concentration');
+
+%Plot Steady State Fluxes
+plotSSexpression(model,[],flux,[],printvar,'flux');
 
 %Calculate & Plot Envelope
 [hsubfig2,prxnid,flag] = FluxEnvelope(model,printvar);
