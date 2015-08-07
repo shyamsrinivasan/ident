@@ -1,22 +1,26 @@
 %function to solve ODE to obtain concentration profiles using SUNDIALS
 function [Sol,finalSS,status] = callODEsolver(model,pmeter,variable,initialSol,batch,solverP)%Initial Value
-nint_metab = model.nint_metab;
-next_metab = model.next_metab;
-nvar = model.nt_metab;%All Metabolites
-%Setting initial Solution
-initval = zeros(nvar,1);
-if ~isemptyr(initialSol)
-    initval = initialSol.y(:,end);
-else
-%     bm_ind = model.bmrxn;
-    Mbio = strcmpi('biomass',model.Metabolites);
-%     Mbio = model.S(:,bm_ind)>0;
-%     nint_metab = nint_metab-length(find(Mbio));
-    initval(1:(nint_metab-1)) = variable.MC(1:(nint_metab-1));
-    initval(Mbio) = 0;
-    initval(nint_metab+1:nint_metab+next_metab) = ...
-    assign_extconc(batch.init{1},batch.init{2},model);
-end
+% nint_metab = model.nint_metab;
+% next_metab = model.next_metab;
+% nvar = model.nt_metab;%All Metabolites
+% data.flux = zeros(size(model.S,2),1);
+% %Setting initial values for ODE
+% initval = zeros(nvar,1);
+% if ~isemptyr(initialSol)
+%     initval = initialSol.y(:,end);
+% else
+% %     bm_ind = model.bmrxn;
+%     Mbio = strcmpi('biomass',model.mets);
+% %     Mbio = model.S(:,bm_ind)>0;
+% %     nint_metab = nint_metab-length(find(Mbio));
+%     initval(1:(nint_metab-1)) = variable.MC(1:(nint_metab-1));
+%     initval(Mbio) = 0;
+%     initval(nint_metab+1:nint_metab+next_metab) = ...
+%     assign_extconc(batch.init{1},batch.init{2},model);
+% end
+[initval,initflux] = initializeConcentration(model,pmeter,variable,batch.init{1},...
+                                             batch.init{2},1,initialSol);
+data.flux = initflux;                                        
 % initval(nint_metab+1:nt_metab) = model.M*variable.MC;
 %time for initial data point
 t0 = 0.0;
@@ -29,7 +33,7 @@ AbsTol(AbsTol==0) = solverP.MabsTol;
     
 %% %Initialize CVode
 totaltstart = tic;
-options = CVodeSetOptions('UserData',model,...                                                    
+options = CVodeSetOptions('UserData',data,...                                                    
                           'RelTol',solverP.RelTol,...
                           'AbsTol',AbsTol,...
                           'MaxNumSteps',solverP.MaxIter);
@@ -42,7 +46,7 @@ mondata.skip = 10;
 options = CVodeSetOptions(options,'MonitorFn',@CVodeMonitor,...
                           'MonitorData',mondata); 
 %ODE Function Called through Anonymous function                      
-callODEmodel = @(t,Y,data)ODEmodel(t,Y,model,pmeter);
+callODEmodel = @(t,Y,data)ODEmodel(t,Y,data,model,pmeter);
 CVodeInit(callODEmodel,'BDF','Newton',t0,initval,options);
 %Time vector
 tout = solverP.tout:solverP.tmax/(solverP.MaxDataPoints-1):solverP.tmax;
@@ -51,13 +55,19 @@ tout = solverP.tout:solverP.tmax/(solverP.MaxDataPoints-1):solverP.tmax;
 Sol = struct();
 Sol.t = zeros(length(tout),1);
 Sol.y = zeros(length(initval),length(tout));
+Sol.flux = zeros(size(model.S,2),length(tout));
 itime = [];
 for ktime = 1:length(tout)
     itstart = tic;
-    [status,t,dY] = CVode(tout(ktime),'Normal');    
+    [status,t,dY] = CVode(tout(ktime),'Normal');   
+    %Plot Solution
+    flux = calc_flux(model,pmeter,dY);
+%     plotflux_timecourse(flux,t,model)
+%     plotconc_timecourse(dY,t,model)
     %Collect Solution
     Sol.t(ktime) = tout(ktime);
     Sol.y(:,ktime) = dY;
+    Sol.flux(:,ktime) = flux;
     %Solution.ys = [Solution.ys, YS];
     itfinish = toc(itstart);
     itime = [itime;itfinish];

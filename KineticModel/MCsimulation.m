@@ -6,6 +6,7 @@ nvar = model.nt_metab;
 conc = zeros(nvar,nsamples+1);
 petconc = zeros(nvar,nsamples);
 flux = zeros(model.nt_rxn,nsamples+1);
+petflux = zeros(model.nt_rxn,nsamples);
 
 [y0new,pbind,savesimd] =...
 MCsample_initval(model,[],pvar,allfinalSS.init.y,lb,ub,nsamples);
@@ -19,6 +20,7 @@ for isamp = 1:nsamples
     
     %Choose a sampled value
     petconc(:,isamp) = y0new(:,isamp);
+    petflux(:,isamp) = calc_flux(model,parameter,y0new(:,isamp));
     
     %Save simulation conditions
     fname = sprintf('simconditions_%d',isamp);
@@ -26,6 +28,7 @@ for isamp = 1:nsamples
 
     %Add protein name
     pertbinitval.y = y0new(:,isamp);
+    pertbinitval.flux = petflux(:,isamp);
     pertbinitval.pertbind = pbind;                              
     [Solution,finalSS] =...
     callODEsolver(model,parameter,variable,pertbinitval,batch,solverP);    
@@ -51,29 +54,30 @@ conc(:,1) = allfinalSS.init.y;
 flux(:,1) = allfinalSS.init.flux;
 close all
 
-%Plot Solution Curves
-[hfig,hsubfig] =...
-printMetResults(model,allSolution,conc,petconc,[],varname);
+
 
 %Plot Fluxes & Bin and plot Flux Distribution
-printvar = {'Pin','P1','P2','P3','P4','P5','P6','P7','P8','P9','Biomass'};
+printvar = {'Pin','P1','P2','P3','P4','P5','P6','P7','P8','P9','BiomassEX'};
 plotflux_bar(model,flux./model.Vuptake,printvar);
 
 %Plot Steady State Concentrations
-plotSSexpression(model,[],conc,petconc,varname);
+plotSSexpression(model,[],conc,petconc,varname,'concentration');
+
+%Plot Steady State Fluxes
+plotSSexpression(model,[],flux,petflux,printvar,'flux');
 
 %Calculate & Plot Envelope
-[hsubfig2,prxnid,flag] = FluxEnvelope(model);
+[hsubfig2,prxnid,flag] = FluxEnvelope(model,printvar);
 
 %Plot Scatter within Envelope (or superimpose)
 if flag > 0
-    plotflux_envelope(model,flux./model.Vuptake,printvar,hsubfig2,prxnid);
+    plotflux_envelope(model,flux,printvar,hsubfig2,prxnid);
 else
     fprintf('\n Envelopes Infeasible for growth rate = %3.2g h-1\n',model.gmax);
 end  
 
-%Plot Flux Scatter
-plotflux_scatter(model,flux./model.Vuptake,printvar);
+%Plot Solution Curves
+printMetResults(model,allSolution,conc,petconc,[],varname);
 
 %Plot Solution Curves
 % [plotData,h_subfig] =...

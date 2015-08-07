@@ -13,7 +13,8 @@ status = 0;
 if nvar == 1 && strcmpi(var{1},'all')
     ylb = lb*y0;
     yub = ub*y0;
-    y0new = ylb+(yub-ylb).*betarnd(1.5,4.5,length(y0new),1);
+    y0new = ylb+(yub-ylb).*rand(length(y0new),1);
+    %betarnd(2,2,length(y0new),1);
     return
 end
 pbind = zeros(nvar,1);
@@ -26,16 +27,21 @@ fprintf('Variable Name\t\tUpperBound\t\tLowerBound\n');
 for ivar = 1:nvar
     if mdes == 1%trnmodel
         tf1 = find(strcmpi(var{ivar},model.Gene));%tfg
-        tf2 = find(strcmpi(var{ivar},model.Regulators));%tfr        
+        tf2 = find(strcmpi(var{ivar},model.regs));%tfr        
     elseif mdes == 2 %kinmodel
-        tf1 = find(strcmpi(var{ivar},model.Metabolites));
+        tf1 = find(strcmpi(var{ivar},model.mets));
         tf2 = [];      
     end
     
     if any(tf1) && ~varfl(tf1) 
         varfl(tf1) = 1;
-        ylb(ivar) = lb(ivar)*y0old(tf1);
-        yub(ivar) = ub(ivar)*y0old(tf1);
+        if y0old(tf1)%If y0old is non-zero
+            ylb(ivar) = lb(ivar)*y0old(tf1);
+            yub(ivar) = ub(ivar)*y0old(tf1);
+        else%IF y0old is zero, use value in bounds as absolute
+            ylb(ivar) = lb(ivar);
+            yub(ivar) = ub(ivar);
+        end
         if mdes == 1
             if ylb(ivar) == 0 && yub(ivar)-1e-9 == 0
                 pbind(ivar) = tf1;

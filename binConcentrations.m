@@ -14,7 +14,7 @@ for iv = 1:nvar
     for ism = 1:nsampl        
         if ism < nsampl
             if nci(1,ism+1) > 1
-                if abs(nci(1,ism)-nci(1,ism+1))<= 1e-2
+                if abs(nci(1,ism)-nci(1,ism+1))<= 1e0
                     nci(1,ism+1) = nci(1,ism);              
                 end
             else
@@ -40,7 +40,7 @@ for iv = 1:nvar
         tiva = repmat(tiva,size(notiva,1),1);
         if ~isempty(tiva)
         if notiva(iva,1) > 1 && notiva(iva,1) < 10
-            tfr = abs(notiva(:,1)-tiva(:,1))<1e-2;
+            tfr = abs(notiva(:,1)-tiva(:,1))<1e0;
             if any(tfr) && length(find(tfr)) > 1                  
                 newSS = [newSS;tiva(1,1) ...
                              sum(notiva(abs(notiva(:,1)-tiva(:,1))<1e-2,2)) ...
@@ -55,7 +55,7 @@ for iv = 1:nvar
                 flag = 1;
             end 
         elseif notiva(iva,1) > 10
-            tfr = abs(notiva(:,1)-tiva(:,1))<1e-1;
+            tfr = abs(notiva(:,1)-tiva(:,1))<1e1;
             if any(tfr) && length(find(tfr)) > 1                  
                 newSS = [newSS;tiva(1,1) ...
                                sum(notiva(tfr,2)) ...

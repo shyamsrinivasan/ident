@@ -68,13 +68,13 @@ switch variable
             Var(mt_ind) = model.Regulators(mt_ind-ng(1));
             Var(mx_ind) = model.Regulators(mx_ind-ng(1));
         elseif mdes == 2
-            Var = model.Metabolites;
+            Var = model.mets;
         end        
     case 'flux'
         if mdes == 1 && isfield(model,'Regulators')            
             Var = model.Regulators;
-        elseif mdes == 2 && isfield(model,'Enzyme')
-            Var = model.Enzyme;
+        elseif mdes == 2 && isfield(model,'rxns')
+            Var = model.rxns;
         end
 end
 
@@ -103,7 +103,7 @@ for j = 1:ncnc
                     m_tf = strcmpi(cncind{j},Var(ng(1)+ng(2)+2:end));
                     %Metabolite
                     if any(m_tf)
-                        y_label1 = sprintf('%s mmole/gDCW',model.Metabolites{m_tf}); 
+                        y_label1 = sprintf('%s mmole/gDCW',model.mets{m_tf}); 
                     end
                 else
                     fprintf('Variable %s does not Exist\n',cncind{j});
@@ -113,7 +113,7 @@ for j = 1:ncnc
                 tf = strcmpi(cncind{j},Var);
                 %Metabolite
                 if any(tf)
-                    y_label1 = sprintf('%s mmole/gDCW',model.Metabolites{tf});
+                    y_label1 = sprintf('%s mmole/gDCW',model.mets{tf});
                 else
                     fprintf('Variable %s does not Exist\n',cncind{j});
                     continue
@@ -170,19 +170,19 @@ end
 %     %             LineP.Displayname = sprintf('%s',model.Regulators{pg_tf});            
 %             end
 %         elseif any(tf(ng(1)+ng(2)+2:end))
-%             m_tf = strcmpi(cncind{j},model.Metabolites);
+%             m_tf = strcmpi(cncind{j},model.mets);
 %             if any(m_tf)%Metabolite
-%                 y_label1 = sprintf('%s mmole/gDCW',model.Metabolites{m_tf}); 
-%         %             LineP.Displayname = sprintf('%s',model.Metabolites{m_tf});
+%                 y_label1 = sprintf('%s mmole/gDCW',model.mets{m_tf}); 
+%         %             LineP.Displayname = sprintf('%s',model.mets{m_tf});
 %             end
 %         else
 %             fprintf('Variable %s does not Exist\n',cncind{j});
 %             continue
 %         end
 %     elseif mdes == 2
-%         mtf = strcmpi(cncind{j},model.Metabolites);
+%         mtf = strcmpi(cncind{j},model.mets);
 %         if any(mtf)
-%             y_label1 = sprintf('%s mmole/gDCW',model.Metabolites{mtf});
+%             y_label1 = sprintf('%s mmole/gDCW',model.mets{mtf});
 %         end
 %     end
 %     if isempty(findobj('type','figure','Name','Steady State Concentrations'))
@@ -329,7 +329,11 @@ function hsubfig = lineplot(j,nplots,hfig,hsubfig,valt,pvalt,tf,y_label1,ColorSp
     
     %Plot only initial and final(sample) concentrations/fluxes
     concd = valt(:,tf);
-    pconcd = pvalt(:,tf);   
+    if ~isempty(pvalt)
+        pconcd = pvalt(:,tf);   
+    else
+        pconcd = [];
+    end
     X = zeros(length(concd)+length(pconcd),1);        
     initc = concd(1);
     concd(1) = [];
@@ -339,19 +343,19 @@ function hsubfig = lineplot(j,nplots,hfig,hsubfig,valt,pvalt,tf,y_label1,ColorSp
     hline = line(X,[initc;pconcd;concd]);
     
     %Object Properties
-    set(hline,'LineStyle','-',...
+    set(hline,'LineStyle','none',...
               'Marker','o',...
               'MarkerSize',5,...
               'MarkerFaceColor',ColorSpec{j},...
               'MarkerEdgeColor',ColorSpec{j});
     %Axis Properties
     set(get(gca,'YLabel'),'String',y_label1);  
-    set(get(gca,'YLabel'),'FontName','Arabic Type Setting');   
+    set(get(gca,'YLabel'),'FontName','CMU Serif');   
     set(get(gca,'YLabel'),'FontSize',12); 
     
     xlabel = sprintf('Steady States');
     set(get(gca,'XLabel'),'String',xlabel);  
-    set(get(gca,'XLabel'),'FontName','Arabic Type Setting');   
+    set(get(gca,'XLabel'),'FontName','CMU Serif');   
     set(get(gca,'XLabel'),'FontSize',12);
     %Axis limits
     Ydata = get(hline,'YData');
