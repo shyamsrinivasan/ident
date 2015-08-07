@@ -25,7 +25,7 @@ end
 % hline = zeros(nflux,1);
 %Scatter Plot all Fluxes
 % fig_name = texlabel(['Flux Envelope \mu = ' num2str(model.gmax) 'h^{-1}']);
-fig_name = sprintf('Flux Envelope mu = %g h-1',model.gmax);
+fig_name = sprintf('Flux Envelope %g',model.gmax);
 for ivar = 1:nflux
     if isfield(model,'Regulators');
         tfp = find(strcmpi(fluxind{ivar},model.Regulators));

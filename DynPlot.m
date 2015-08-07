@@ -135,10 +135,10 @@ for ivar = 1:nplots
     
     % whitebg(hfig,[0 0 0]);
     set(get(hca,'XLabel'),'String',x_label); 
-    set(get(hca,'XLabel'),'FontName','Lucida Sans');
+    set(get(hca,'XLabel'),'FontName','CMU Serif');
     set(get(hca,'XLabel'),'FontSize',10);
     set(get(hca,'YLabel'),'String',y_label1{ivar}); 
-    set(get(hca,'YLabel'),'FontName','Lucida Sans');   
+    set(get(hca,'YLabel'),'FontName','CMU Serif');   
     set(get(hca,'YLabel'),'FontSize',10);
 end
 

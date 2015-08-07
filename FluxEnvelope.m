@@ -114,8 +114,13 @@ else
     nplots = nrxn+1;
 end
 nrows = nplots/2;
+if length(varname)>1
+    ncol = 2;
+else
+    ncol=1;
+end
 % fig_name = texlabel(['Flux Envelope \mu = ' num2str(model.gmax) 'h^{-1}']);
-fig_name = sprintf('Flux Envelope mu = %g h-1',model.gmax);
+fig_name = sprintf('Flux Envelope %g',model.gmax);
 if isempty(findobj('type','figure','Name',fig_name))
     hfig = figure('Name',fig_name); 
     figure(hfig);
@@ -131,7 +136,7 @@ while ifl <= nrxn
 %         hca = findobj(hsubfig(ifl),'type','axes');
         set(hfig,'CurrentAxes',hca);  
     else%subplot is unassigned
-        hsubfig(rxnid(ifl)) = subplot(nrows,2,ifl);
+        hsubfig(rxnid(ifl)) = subplot(nrows,ncol,ifl);
 %         hsubfig(ifl) = subplot(nrows,2,ifl-1);   
         hca = gca;
         %Make sure more plots can be added at end of loop

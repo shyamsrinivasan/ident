@@ -2,7 +2,7 @@ clc
 % clear all
 addpath(genpath('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel'));
 % load('C:\Users\shyam\Documents\Courses\CHE 1125 Project\Kinetic Model\kmodel_pname.mat');
-rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\N3mD.txt';
+rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\N2m.txt';
 [FBAmodel,parameter,variable,nrxn,nmetab] = modelgen(rxfname);
 % % % sample metabolites 
 % variable.MC = sampleMetabolites(FBAmodel);
@@ -38,11 +38,11 @@ rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\Kine
 nmodels = 1;
 [ensb,variable] = sampleMet_parallel(FBAmodel,parameter,nmodels);
 
-load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\N3mD_ensb1');
-load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\N3mD_variable1');
+load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\N2m_ensb1');
+load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\N2m_variable1');
 
 inSolution = [];
-varname = {'A[c]','B[c]','M[c]','N[c]','K[c]','P[c]','S[c]'};
+varname = {'A[c]','B[c]','C[c]','D[c]','E[c]','P[c]','S[c]'};
 
 [allSolution,allfinalSS,ySample] =...
 solveEnsembleMC(FBAmodel,ensb,variable,inSolution,varname,'MC');

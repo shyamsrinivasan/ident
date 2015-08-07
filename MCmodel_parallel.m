@@ -7,7 +7,9 @@ if isempty(gcp('nocreate'))
 end
 
 nvar = model.nt_metab;
+iconc = zeros(nvar,nmodels);
 conc = zeros(nvar,nmodels);
+iflux = zeros(model.nt_rxn,nmodels);
 flux = zeros(model.nt_rxn,nmodels);
 model_name = cell(nmodels,1);
 
@@ -60,9 +62,11 @@ parfor imodel = 1:nmodels
     ModSS{imodel} = Solution;
     ModFSS{imodel} = finalSS;
 %     savefile(ModSS{imodel},model_name{imodel},saveData);
+    iconc(:,imodel) = p_var{imodel}.MC;
     conc(:,imodel) = finalSS.y;
     
     %Calculate Flux
+    iflux(:,imodel) = calc_flux(model,p_ensb{imodel},p_var{imodel}.MC);
     flux(:,imodel) = calc_flux(model,p_ensb{imodel},finalSS.y);
     ModFSS{imodel}.flux = flux(:,imodel);
 end
@@ -104,8 +108,11 @@ close all
 [conc,MSSconc] = binConcentrations(conc);
 [flux,MSSflux] = binConcentrations(flux);
 
-printvar = {'Pin','v1','v2','v3','v4','v5','v6','v7','v8','Pout','Bout','Aout','BiomassEX'};
-% printvar = {'Pin','v1','v2','v3','v4','v5','v6','Pout','Dout','Eout','BiomassEX'};
+[iconc] = binConcentrations(iconc);
+[iflux] = binConcentrations(iflux);
+
+% printvar = {'Pin','v1','v2','v3','v4','v5','v6','v7','v8','Pout','Bout','Aout','BiomassEX'};
+printvar = {'Pin','v1','v2','v3','v4','v5','v6','Pout','Dout','Eout','BiomassEX'};
 
 plotflux_bar(model,flux,printvar);
 
