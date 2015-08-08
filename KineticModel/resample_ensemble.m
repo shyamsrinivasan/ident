@@ -104,4 +104,12 @@ for is = 1:nmodels
     end
 end
 
+%Select models from ensemble
+for is = 1:nmodels
+     mname = sprintf('model%d',is);  
+    if any(ensb.(mname).Vmax < 0)
+        fprintf('%s not suitable for simulation\n',mname);
+    end
+end
+
 return

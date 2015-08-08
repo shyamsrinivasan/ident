@@ -1,13 +1,12 @@
 function [MC_sampl] = sampleMet(FBAmodel,ism)
 nmetab = FBAmodel.nt_metab;
-pd = makedist('Beta');
+pd = makedist('Beta','a',2,'b',2);
 MClow = FBAmodel.MClow(1:nmetab);
 MChigh = FBAmodel.MChigh(1:nmetab);
 mSample = MClow + (MChigh - MClow).*random(pd,nmetab,1);
 MC_sampl = zeros(nmetab,1);
-% if any(MClow == MChigh)
-%     MC_sampl(MClow == MChigh) = MClow(MClow == MChigh);   
-% end
+MC_sampl = mSample;
+
 % MC_sampl(MClow ~= MChigh) = mSample(MClow ~= MChigh);
 % %ATP AMP ADP
 % ec = 0.8;
@@ -16,8 +15,9 @@ MC_sampl = zeros(nmetab,1);
 % AMP = strcmpi('amp[c]',FBAmodel.mets);
 % MC_sampl(ATP) = (MC_sampl(AMP)-MC_sampl(ADP)*(1/(2*ec)-1))/(1/ec-1);
 
-%Sample Metabolites based on Lsawrence's Noisy Metabolomics Sampling
+%Sample mets based on Lsawrence's Noisy Metabolomics Sampling
 %Methodology (Directly load a pre-sampled file)
+
 ism = 10;
 %Model
 load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\Samples\centralIshiiModel.mat');
@@ -40,6 +40,19 @@ H2o = find(strcmpi('h2o[c]',FBAmodel.mets));
 Hion = find(strcmpi('h[c]',FBAmodel.mets));
 H2oe = find(strcmpi('h2o[e]',FBAmodel.mets));
 Hione = find(strcmpi('h[e]',FBAmodel.mets));
+
+nad = [];%strcmpi('nad[c]',FBAmodel.mets);
+nadh = [];%strcmpi('nadh[c]',FBAmodel.mets);
+
+if any(MClow == MChigh)
+    MC_sampl(MClow == MChigh) = MClow(MClow == MChigh);   
+end
+if ~isempty(H2oe)
+    MC_sampl(H2oe) = 1000;
+end
+
+MC_sampl(nad) = 1000*MC_sampl(nadh);
+
 % MC = MC_sampl;
 % [nm,nr] = size(FBAmodel.S);
 % for irxn = 1:nr

@@ -51,7 +51,9 @@ for irxn = 1:nt_rxn
         model.Vss(irxn) = 1;
     end    
     %Keq if available else use delG
-    if ~isempty(C{6}(irxn)) && ~isnan(C{6}(irxn))
+    if ~isempty(C{5}(irxn)) && ~isnan(C{5}(irxn))
+        Keq(irxn) = C{5}(irxn);
+    elseif ~isempty(C{6}(irxn)) && ~isnan(C{6}(irxn))
         Keq(irxn) = exp(-C{6}(irxn)/(0.008314*298.15));%delG = -RTlnKeq
         model.delG(irxn) = C{6}(irxn);
     else
@@ -289,7 +291,7 @@ end
 %Append appropriate rows/columns corresponding to enzss/fluxes
 nenz = length(model.enzName);
 other_ind = setdiff(1:nenz,[Vind...
-                            Vuptake...                            
+                            Vuptake...
                             Vex...
                             Vext...
                             bmrxn]);
@@ -470,6 +472,7 @@ ident_regulator(model,reg_string,reg_stoich,par,Klb,Kub)%pass par as argument
         if iscell(mech{1})
             mech = mech{1};
         end
+
         metabindx = strcmpi(mech{1},model.mets);            
         if any(metabindx)
             model.SI(metabindx,irxn) = reg_stoich;
@@ -523,7 +526,7 @@ ident_regulator(model,reg_string,reg_stoich,par,Klb,Kub)%pass par as argument
                 [model] = reg_type(mech{2},[imetab;irxn],model);
             end                    
             imetab = imetab + 1;
-        end                           
+        end 
         iregterm = iregterm + 1;
     end  
     ireg = ireg + iregterm - 1;   
@@ -588,62 +591,4 @@ function [model] = reg_type(mechanism,index,model)
             model.SItype(index(1),index(2)) = 5;
     end
 end
-
-% function [Vind,Vuptake,VFup,VFex,Vex,bmrxn,Vup,Vdn] = fluxIndex(model,nt_rxn,newS)
-% %external mets
-% exind = ~cellfun('isempty',regexp(model.mets,'\w(?:\[e\])$'));
-% 
-% [~,allrxns] = find(newS(:,1:nt_rxn));
-% all_unqrxns = unique(allrxns);
-% nmetab_allrxns = histc(allrxns,all_unqrxns);
-% ex_rxn = all_unqrxns(nmetab_allrxns == 1);%one sided rxns
-% 
-% %FBA style Reactions A[e/c] <==> | <==> A[e/c]
-% %one sided rxns
-% [~,rxn] = find(newS(:,ex_rxn)<0);
-% VFex = ex_rxn(rxn);%Excrretion from the system
-% [~,rxn] = find(newS(:,ex_rxn)>0);
-% VFup = ex_rxn(rxn);%Uptake into the system
-% try
-%     VFext = [VFup VFex];
-% catch
-%     VFext = [VFup;VFex];
-% end
-% 
-% %Uptake Reactions: A[e] ---> A[c] | A[e] ---> B[c] | A[e] + B[c] ---> A[c]
-% %+ D[c]
-% noex_rxn = setdiff(1:nt_rxn,ex_rxn);
-% [~,rxn] = find(newS(exind,noex_rxn)<0);
-% Vuptake = noex_rxn(rxn);
-% 
-% %Matching VFup with Vuptake
-% Vup = [];
-% for ivf = 1:length(VFup)
-%     nmet = newS(:,VFup(ivf))>0;
-%     [~,rxn] = find(newS(nmet,noex_rxn)<0);
-%     Vup = union(Vup,noex_rxn(rxn));
-% end
-% 
-% %Excrertion Reaction: A[c] ---> A[e] | A[c] ---> B[e] | A[c] + B[c] --->
-% %A[e] + D[c]
-% [~,rxn] = find(newS(exind,noex_rxn)>0);
-% Vex = noex_rxn(rxn);
-% 
-% %matchinf VFex with Vex
-% Vdn = [];
-% for ive = 1:length(VFex)
-%     nmet = newS(:,VFex(ive))<0;
-%     [~,rxn] = find(newS(nmet,noex_rxn)>0);
-%     Vdn = union(Vdn,noex_rxn(rxn));
-% end
-% 
-% %Identify biomass reaction
-% [~,bmrxn] = find(newS(strcmpi(model.mets,'Biomass'),:) > 0);
-% try
-%     Vind = setdiff(1:nt_rxn,[Vuptake;bmrxn;VFext;Vex']);%intracellular rxns
-% catch
-%     Vind = setdiff(1:nt_rxn,[Vuptake' bmrxn VFext' Vex]);%intracellular rxns
-% end
-% end
-
 end

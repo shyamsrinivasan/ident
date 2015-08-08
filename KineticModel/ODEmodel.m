@@ -63,8 +63,10 @@ gr_flux = flux(bmind);
 % flux(bmind) = gr_flux;
 % flux(VFup) = flux(Vup);
 % flux(VFex) = flux(Vdn);
+
 % plotflux_timecourse(flux,t,model)
 % plotconc_timecourse(Y,t,model)
+
 %Intracellular(Mitochondria) (Yeast)
 % flux(VMit) = ConvinienceKinetics(model,pmeter,Y,bm_ind,VMit);
 %% %Intracellular Metabolites

@@ -65,17 +65,29 @@ else
     vl(model.bmrxn) = 0;    
 end
 %Exchnage Reactions Cannot occur in reverse
-vl(model.Vex) = 0;
-
+rxnid = strcmpi('PPS',model.rxns);
+vl(rxnid) = 0;
+vu(rxnid) = 0;
 %Default Bounds - Reversible reactions
 
 b = zeros(nm,1);
 %Exchange of Product
 % vl(model.Vexind) = 0;
 %Objective Function
+% prxnid = find(strcmpi('EXpep',model.rxns));
+% pps = strcmpi('PPS',model.rxns);
+% vl(pps) = 0;
+% vu(pps) = 0;
+
 cprod = sparse(1,prxnid,1,1,nr);
 
+
 [vLPmax,vProdLPmax,Maxflag] = cplexlp(-cprod(:),[],[],S,b,vl,vu);
+if Maxflag > 0
+    if abs(vProdLPmax)<1e-4
+        vProdLPmax = 0;
+    end
+end
 [vLPmin,vProdLPmin,Minflag] = cplexlp(cprod(:),[],[],S,b,vl,vu);
 
 return

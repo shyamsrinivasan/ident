@@ -30,7 +30,8 @@ for i = 1:nflux
 %         xticklabel{i} = sprintf('%s Flux',fluxind{i});
         if isempty(findobj('type','figure','Name','Fluxes'))
             hfig = figure('Name','Fluxes'); 
-            figure(hfig);
+        else
+            hfig = findobj('type','figure','Name','Fluxes');
         end 
         figure(hfig);
         hsubfig(i) = subplot(nflux,1,i);
@@ -58,7 +59,7 @@ for i = 1:nflux
 %         end
         hold on
     else
-        fprintf('No flux for %s exists',fluxind{i});
+        fprintf('No flux for %s exists\n',fluxind{i});
         continue        
     end   
 end

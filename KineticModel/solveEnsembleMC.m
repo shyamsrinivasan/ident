@@ -41,9 +41,7 @@ else
         inSolution.(mname) = struct([]);
     end
     %Model initialization
-
     [model,batch,solverP,saveData] = initializeModel(model,300000,ensb.(mname),variable.(mname));
-
     if isempty(inSolution.(mname))
             %simulate models first to get initial SS
             [Solution,finalSS] =...
@@ -60,8 +58,11 @@ else
 
             [hfig,hsubfig] =...
             printMetResults(model,allSolution,[],[],[],varname);
-
             % getFigure(conc,flux,model);
+        
+            %Plot Initial Fluxes
+%             printvar = {'glcpts_1','glcpts','pfk','pgi','pyk','ex_pyr'};
+%             plotflux_bar(model,inSolution.flux,printvar);
 
     end
 end
@@ -101,13 +102,11 @@ close all
 
 %Call MCsmulation for inital value MC on FBAmodel
 %or for Vmax sample simulation
-
 nsamples = 1000; %# samples
 lb = [5e-5;5e-5;5e-5;5e-5;5e-5;5e-5];
 ub = [0.05;0.05;0.05;0.05;0.05;0.05];
 % pvar = {'S[c]','A[c]','B[c]','M[c]','N[c]','K[c]','P[c]'};
 pvar = {'A[c]','B[c]','C[c]','D[c]','E[c]','P[c]'};
-
 
 if strcmpi(type,'MC')
     for imodel = 1:nmodels

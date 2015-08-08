@@ -1,9 +1,11 @@
+
 function [hsubfig,prxnid,flag] = FluxEnvelope(model,varname,prodid)
 if nargin < 3
     prxnid = strcmpi('Pex',model.rxns);
 else
     prxnid = prodid;
 end
+
 if nargin < 2
     rxnid = setdiff(1:model.nt_rxn,model.VFup);    
 else
@@ -23,7 +25,6 @@ flag = 1;
 
 npts = 100;
 % rxnid = setdiff(1:model.nt_rxn,[model.bmrxn model.Vupind]);
-
 
 vLPmxAll = zeros(model.nt_rxn,npts,nrxn);
 vLPmnAll = zeros(model.nt_rxn,npts,nrxn);
@@ -51,6 +52,7 @@ if model.gmax > -gMax
 end
 
 %Find maximum/minimum allowable growth rate
+
 [pMax,pMin,~,~,Maxflag,Minflag] = solveLP(model,'','',bounds,find(prxnid));
 if Maxflag > 0 && Minflag > 0
     fprintf('\nMaximum allowable product flux = %2.3g h-1\n',-pMax);    
@@ -79,6 +81,7 @@ for ifl = 1:nrxn
     for iv = 1:size(flval,1)
         bounds.vl(rxnid(ifl)) = flval(iv,ifl);
         bounds.vu(rxnid(ifl)) = flval(iv,ifl);        
+
 %         prxnid = strcmpi('Pex',model.rxns);
         [fmax,fmin,vLPmax,vLPmin,Maxflag,Minflag] =...
         solveLP(model,'P','P5',bounds,find(prxnid));

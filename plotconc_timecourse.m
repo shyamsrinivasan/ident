@@ -11,7 +11,9 @@ if rem(nflux,2)==0
 else
     n = (nflux+1)/2;
 end
+
 if n > 4
+% if n > 8
     if rem(n,2)==0
         nrows = n/2;
     else
@@ -44,14 +46,12 @@ for ivar = 1:nflux
               'MarkerEdgeColor',[1 0 0]);
     %Axis Properties
     set(get(gca,'YLabel'),'String',y_label1);  
-    set(get(gca,'YLabel'),'FontName','Arabic Type Setting');   
-    set(get(gca,'YLabel'),'FontSize',12); 
-    
+    set(get(gca,'YLabel'),'FontName','Arabic Type Setting');
+    set(get(gca,'YLabel'),'FontSize',8);    
     xlabel = sprintf('Steady States');
     set(get(gca,'XLabel'),'String',xlabel);  
     set(get(gca,'XLabel'),'FontName','Arabic Type Setting');   
     set(get(gca,'XLabel'),'FontSize',12);
-
 end
 
 return

@@ -1,0 +1,17 @@
+Enzymes	Etot Conc	kcat (1/s)	Vmax	Keq	delta G (pH 7.2)	"vss (Gur = -10, O2ur = -1000)"	 equation	Activators	Inhibitors	Rxn Mechanism	Substrate Km (mM)	Regulator Km (mM)	Metab	Mclow (mM)	Mchigh (mM)
+EXglc				4.5812E+06	-22.4	20	glc[e] + pep[c] ---> g6p[c] + pyr[c]						glc[e]	1	20
+PGI		120		3.8511E+00	3.8	4.8609	[c] : g6p + atp <==> g3p + adp						g6p[c]	1	20
+gapd					-6.4	14.72	[c] : g3p + adp + nad ---> pep + atp + nadh + h						f6p[c]	1	20
+pyk					-31.7	1.75	[c] : pep + adp ---> pyr + atp						fdp[c]	1	20
+lacY		250			-6.4	1.75	[c] : pyr + nadh + h ---> lac + nad						dhap[c]	1	20
+biomass							[c] : 59.8 atp + 0.2050 g6p + 7.5496 pep + 2.8328 pyr ---> Biomass + 59.8 adp + 59.8 pi						g3p[c]	1	20
+EXpi							pi[c] <==> pi[e]						pep[c]	1	20
+EXpyr							pyr[c] <==> pyr[e]						pyr[c]	1	20
+EXpep							pep[c] <==> pep[e]						atp[c]	1	20
+EXlac							lac[c] ---> lac[e]						adp[c]	1	20
+													pi[c]	1	20
+													pi[e]	1	20
+													nad[c]	1	20
+													nadh[c]	1	20
+													h[c]	1	20
+													h[e]	1	20

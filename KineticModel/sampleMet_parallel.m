@@ -19,6 +19,7 @@ parfor ismp = 1:nsmp
     Fvar(ismp) = flag;
 end
 
+
 ensb = struct();
 imodel = 1;
 for ism = 1:nsmp

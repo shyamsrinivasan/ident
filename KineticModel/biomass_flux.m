@@ -5,6 +5,7 @@ ATP = strcmpi('atp[c]',model.mets);
 Mb = setdiff(find(Mb),find(ATP));
 
 % dXdt = zeros(length(Mb),1);
+
 if ~isempty(model.bmrxn)
     Sj = -model.S(Mb,model.bmrxn);
     Mj = model.MolWt(Mb);%Need to get this done
