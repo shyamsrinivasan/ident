@@ -1,4 +1,11 @@
-function [hsubfig,prxnid,flag] = FluxEnvelope(model,varname)
+
+function [hsubfig,prxnid,flag] = FluxEnvelope(model,varname,prodid)
+if nargin < 3
+    prxnid = strcmpi('Pex',model.rxns);
+else
+    prxnid = prodid;
+end
+
 if nargin < 2
     rxnid = setdiff(1:model.nt_rxn,model.VFup);    
 else
@@ -19,7 +26,6 @@ flag = 1;
 npts = 100;
 % rxnid = setdiff(1:model.nt_rxn,[model.bmrxn model.Vupind]);
 
-
 vLPmxAll = zeros(model.nt_rxn,npts,nrxn);
 vLPmnAll = zeros(model.nt_rxn,npts,nrxn);
 Maxtarget = zeros(1,npts,nrxn);
@@ -31,8 +37,8 @@ flval = zeros(npts,nrxn);
 bounds.Vuptake = model.Vuptake;
 bounds.vl = zeros(model.nt_rxn,1);
 % bounds.vl(bounds.vl==0) = -1;
-bounds.vl(bounds.vl==0) = -100;
-% bounds.vl(logical(model.rev)) = -100;%bounds.Vuptake;
+% bounds.vl(bounds.vl==0) = -100;
+bounds.vl(logical(model.rev)) = -100;%bounds.Vuptake;
 bounds.vu = zeros(model.nt_rxn,1);          
 %Corresponding flux bounds
 bounds.vu(bounds.vu==0) = 100;%bounds.Vuptake;
@@ -44,8 +50,9 @@ end
 if model.gmax > -gMax
     model.gmax = -gMax;
 end
+
 %Find maximum/minimum allowable growth rate
-prxnid = strcmpi('Pex',model.rxns);
+
 [pMax,pMin,~,~,Maxflag,Minflag] = solveLP(model,'','',bounds,find(prxnid));
 if Maxflag > 0 && Minflag > 0
     fprintf('\nMaximum allowable product flux = %2.3g h-1\n',-pMax);    
@@ -74,7 +81,8 @@ for ifl = 1:nrxn
     for iv = 1:size(flval,1)
         bounds.vl(rxnid(ifl)) = flval(iv,ifl);
         bounds.vu(rxnid(ifl)) = flval(iv,ifl);        
-        prxnid = strcmpi('Pex',model.rxns);
+
+%         prxnid = strcmpi('Pex',model.rxns);
         [fmax,fmin,vLPmax,vLPmin,Maxflag,Minflag] =...
         solveLP(model,'P','P5',bounds,find(prxnid));
 %         Max_flag(1,iv,ifl) = Maxflag;
@@ -109,8 +117,13 @@ else
     nplots = nrxn+1;
 end
 nrows = nplots/2;
+if length(varname)>1
+    ncol = 2;
+else
+    ncol=1;
+end
 % fig_name = texlabel(['Flux Envelope \mu = ' num2str(model.gmax) 'h^{-1}']);
-fig_name = sprintf('Flux Envelope mu = %g h-1',model.gmax);
+fig_name = sprintf('Flux Envelope %g',model.gmax);
 if isempty(findobj('type','figure','Name',fig_name))
     hfig = figure('Name',fig_name); 
     figure(hfig);
@@ -126,7 +139,7 @@ while ifl <= nrxn
 %         hca = findobj(hsubfig(ifl),'type','axes');
         set(hfig,'CurrentAxes',hca);  
     else%subplot is unassigned
-        hsubfig(rxnid(ifl)) = subplot(nrows,2,ifl);
+        hsubfig(rxnid(ifl)) = subplot(nrows,ncol,ifl);
 %         hsubfig(ifl) = subplot(nrows,2,ifl-1);   
         hca = gca;
         %Make sure more plots can be added at end of loop
@@ -155,7 +168,7 @@ end
 %Annotation TextBox
 set(hfig,'CurrentAxes',hsubfig(rxnid(1)));
 h = annotation('textbox',[.3 .9 .1 .1],...
-               'String',{['\mu = ' num2str(model.gmax) ' h^{-1}'],...
+               'String',{['$\mu$ = ' num2str(model.gmax) '$h^{-1}$'],...
                          ['Vuptake = ' num2str(model.Vuptake) ' mmole/gDCW.h']},...
                 'Color',[0 0 0],...
                 'BackgroundColor',[1 1 1]);

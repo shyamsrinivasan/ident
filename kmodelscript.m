@@ -9,15 +9,18 @@ rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\Kine
 %Obtain Vss from FBA
 % load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\FBAmodel.mat');
 % load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\FBAsol.mat');
-% for ienz = 1:length(FBAmodel.Enzyme)
-%     tfe = strcmpi(FBAmodel.Enzyme{ienz},oldFBAmodel.rxns);
+
+% for ienz = 1:length(FBAmodel.rxns)
+%     tfe = strcmpi(FBAmodel.rxns{ienz},oldFBAmodel.rxns);
 %     if any(tfe)
 %         FBAmodel.Vss(ienz) = FBAsolution.x(tfe);
 % %         FBAmodel.delG(ienz) = model.dGo(tfe);
 % %         FBAmodel.Keq(ienz) = exp(-FBAmodel.delG(ienz)/(0.008314*298.15));
 %     end
 % end
-variable.MC = sampleMet(FBAmodel);
+
+% variable.MC = sampleMet(FBAmodel);
+
 % viol = delGaconsistent(FBAmodel,variable);
 % Sol = cell(1000,1);
 % fSol = cell(1000,1);
@@ -34,21 +37,21 @@ variable.MC = sampleMet(FBAmodel);
 %     fprintf('Sample #%d of 1000\n',i);
 %     sam_name = sprintf('samp_%d',i);
 %     variable = data.(sam_name).variable;
+   
+nmodels = 1;
+[ensb,variable] = sampleMet_parallel(FBAmodel,parameter,nmodels);
 
-    load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\ecoliT4_MC_1.mat');
-    nmodels = 1;
-
-%     [var,Fvar,EScell] = sampleMet_parallel(FBAmodel,parameter,variable,nmodels);
-    [ensb] = build_ensemble(nmodels,FBAmodel,parameter,variable.MC);
-% %     %Resample Kms
-    ensb = resample_ensemble(ensb,FBAmodel,variable.MC);
-% load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\ecoliT2_parameters_1.mat');
-    inSolution = [];
-    varname = {'glc[e]','g6p[c]','pep[c]','pyr[c]',...
-               'g3p[c]'};%,'fdp[c]','atp[c]','adp[c]','h[c]'};%,...
+load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\N2m_ensb1');
+load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\N2m_variable1');
+%     load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\ecoliT4_MC_1.mat');
+inSolution = [];
+varname = {'A[c]','B[c]','C[c]','D[c]','E[c]','P[c]','S[c]'};
+% varname = {'glc[e]','g6p[c]','pep[c]','pyr[c]',...
+%                'g3p[c]'};%,'fdp[c]','atp[c]','adp[c]','h[c]'};%,...
 %                'pi[c]','g3p[c]'};
-    [allSolution,allfinalSS,ySample] =...
-    solveEnsembleMC(FBAmodel,ensb,variable,inSolution,varname,'MC');
+
+[allSolution,allfinalSS,ySample] =...
+solveEnsembleMC(FBAmodel,ensb,variable,inSolution,varname,'MC');
     
 %     Sol{i} = allSolution;
 %     fSol{i} = allfinalSS;

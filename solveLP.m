@@ -34,8 +34,8 @@ S = model.S;%(1:nint_metab,:);
 %Uptake Fluxes
 if isfield(bounds,'Vuptake')
     if ~isempty(bounds.Vuptake)
-        vl(model.VFup) = 20;%bounds.Vuptake;
-        vu(model.VFup) = 20;%bounds.Vuptake;
+        vl(model.VFup) = bounds.Vuptake;
+        vu(model.VFup) = bounds.Vuptake;
     end
 end
 %Set uptake to ireversible
@@ -44,15 +44,15 @@ if ~isempty(model.Vupind)
     vu(model.Vupind) = 100;
 end
 %Set VFex to irreversible
-% if ~isempty(model.VFex)
-%     vl(model.VFex) = 0;
-%     vu(model.VFex) = 100;
-% end
-% %Set Vex to irreversible
-% if ~isempty(model.VFex)
-%     vl(model.Vex) = 0;
-%     vu(model.Vex) = 100;
-% end
+if ~isempty(model.VFex)
+    vl(model.VFex) = 0;
+    vu(model.VFex) = 100;
+end
+%Set Vex to irreversible
+if ~isempty(model.VFex)
+    vl(model.Vex) = 0;
+    vu(model.Vex) = 100;
+end
 %Growth Fluxes
 if fixgrowth
     if prxnid ~= model.bmrxn

@@ -7,7 +7,8 @@ if nargin < 5
     useVmax = 1;
 end
 nt_rxn = model.nt_rxn;
-if nargin < 4
+
+if nargin < 4 || isempty(flux)
     flux = zeros(nt_rxn,1);
 end
 
@@ -20,6 +21,13 @@ VFup = model.VFup;
 VFex = model.VFex;
 bmind = model.bmrxn;
 
+
+% if ~isempty(Vex)
+%     [int_ind,~] = find(model.S(:,Vex)<0);
+% else
+%     int_ind = [];
+% end
+
 %Uptake Fluxes
 Vglc_up = model.S(strcmpi('glc[e]',model.mets),:)<0;
 if any(Vupind == find(Vglc_up))
@@ -30,6 +38,7 @@ if any(Vupind == find(Vglc_up))
 else    
     flux = ExFlux(model,MC,flux,Vupind,'mm');        
 end
+
 
 if useVmax
     %Transporters
@@ -50,8 +59,13 @@ end
 flux(VFup) = flux(Vup);
 flux(VFex) = flux(Vdn);
 %Biomass Flux
-% flux(bmind) = model.gmax;
-flux(bmind) = biomass_flux(model,MC,[],flux);
+
+if isfield(model,'gmax');
+    flux(bmind) = model.gmax;
+else
+    flux(bmind) = biomass_flux(model,MC,[],flux);
+end
+
 % % gr_flux = 0.8*prod(Y(Mbio_ind)./([.8;.1]+Y(Mbio_ind)));
 % gr_flux = model.gmax;%0.8;%h-1
 % % gr_flux = biomass_flux(model,Y,dXdt,flux);

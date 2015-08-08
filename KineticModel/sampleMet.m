@@ -17,24 +17,25 @@ MC_sampl = mSample;
 
 %Sample mets based on Lsawrence's Noisy Metabolomics Sampling
 %Methodology (Directly load a pre-sampled file)
-% ism = 10;
-% %Model
-% load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\Samples\centralIshiiModel.mat');
-% %Samples
-% load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\Samples\CentralIshii_1.mat');
-% mets = cellfun(@changeN,lower(model.mets),'UniformOutput',0);
-% MCsample = zeros(length(FBAmodel.mets),1000);
-% for im = 1:length(FBAmodel.mets)
-%     tfm = strcmpi(FBAmodel.mets{im},mets);
-%     if any(tfm)
-%         fprintf('%d Metabolite:%s\n',im,FBAmodel.mets{im});
-%         MCsample(im,:) = exp(points(tfm,:));%points from loading mat file #2
-%         MC_sampl(im) = MCsample(im,ism);  
-%     else
-%         MCsample(im,:) = MClow(im) + (MChigh(im) - MClow(im)).*random(pd,1,1000);
-%         MC_sampl(im) = MCsample(im,ism); 
-%     end    
-% end
+
+ism = 10;
+%Model
+load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\Samples\centralIshiiModel.mat');
+%Samples
+load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\Samples\CentralIshii_1.mat');
+mets = cellfun(@changeN,lower(model.mets),'UniformOutput',0);
+MCsample = zeros(length(FBAmodel.mets),1000);
+for im = 1:length(FBAmodel.mets)
+    tfm = strcmpi(FBAmodel.mets{im},mets);
+    if any(tfm)
+        fprintf('%d Metabolite:%s\n',im,FBAmodel.mets{im});
+        MCsample(im,:) = exp(points(tfm,:));%points from loading mat file #2
+        MC_sampl(im) = MCsample(im,ism);  
+    else
+        MCsample(im,:) = MClow(im) + (MChigh(im) - MClow(im)).*random(pd,1,1000);
+        MC_sampl(im) = MCsample(im,ism); 
+    end    
+end
 H2o = find(strcmpi('h2o[c]',FBAmodel.mets));
 Hion = find(strcmpi('h[c]',FBAmodel.mets));
 H2oe = find(strcmpi('h2o[e]',FBAmodel.mets));
@@ -51,6 +52,7 @@ if ~isempty(H2oe)
 end
 
 MC_sampl(nad) = 1000*MC_sampl(nadh);
+
 % MC = MC_sampl;
 % [nm,nr] = size(FBAmodel.S);
 % for irxn = 1:nr

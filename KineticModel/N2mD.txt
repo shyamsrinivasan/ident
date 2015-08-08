@@ -1,17 +1,17 @@
 Enzymes	Etot Conc	kcat (1/s)	Vmax	Keq	SGFE (kJ/mol)	"Vss,net"	Reaction	Activators	Inhibitors	Rxn Mechanism	Substrate Km (mM)	Regulator Km (mM)	Metab	Mlow	Mhigh
-Aex	0	0			0	5	<==> A[e]						A[c]	0.1	20
+Aex	0	0					<==> A[e]						A[c]	0.1	20
 Pin	0	0			-8	20	A[e] ---> A[c]				"1,1"		C[c]	0.1	20
 v2	0	3000			-8	20	[c] : A ---> C				"1,1"		B[c]	0.1	20
 v1	0	3000			-8	20	[c] : A ---> B				"1,1"		D[c]	0.1	20
-v3	0	3000			-8	40	[c] : A ---> D				"1,1"		P[c]	0.1	20
+v3	0	3000			10	-40	[c] : A <==> D				"1,1"		P[c]	0.1	20
 v4	0	3000			-8	20	[c] : C <==> B				"1,1"		E[c]	0.1	20
-v5	0	3000			-8	30	[c] : B ---> P				"1,1,1,1"				
-v6	0	3000			-8	10	[c] : C + D ---> P + E								
+v5	0	3000			-8	20	[c] : B ---> P				"1,1,1,1"				
+v6	0	3000			10	-10	[c] : C + D <==> P + E								
 Pout	0	0			-0.5	5	P[c] ---> P[e]								
+Eout	0	0			-0.5	2.5	E[c] <==> E[e]								
 Dout	0	0			-0.5	0	D[c] <==> D[e]								
 EC_biomass	0	0			-0.5	0.33	B[c] ---> Biomass[c]								
 Pex	0	0			-0.5	0	P[e] --->								
-Dex	0	0			-0.5	0	D[e] <==>								
-BiomassEX	0	0			0	0	Biomass[c] --->								
-Eout	0	0			-0.5	0	E[c] <==> E[e]								
 Eex	0	0			-0.5	0	E[e] <==>								
+Dex	0	0					D[e] <==>								
+BiomassEX	0	0					Biomass[c] --->								
