@@ -313,11 +313,7 @@ newKcat = [model.Kcat;zeros(length(other_ind),1)];
 newreverse = [model.reversible;zeros(length(other_ind),1)];
 
 %New Indices
-% Vuptake = [];
-% Vexind = [];
-
 [Vind,Vuptake,VFup,VFex,Vex,bmrxn,Vup,Vdn] = fluxIndex(model_data,nt_rxn,newS);
-
 model_data.Vind = Vind;
 model_data.Vupind = Vuptake;
 % model_data.Vexind = Vexind;

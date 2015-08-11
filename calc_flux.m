@@ -30,15 +30,32 @@ bmind = model.bmrxn;
 
 %Uptake Fluxes
 Vglc_up = model.S(strcmpi('glc[e]',model.mets),:)<0;
+Vatpsr = find(strcmpi('ATPS4r',model.rxns));
+Vnadh16 = find(strcmpi('NADH16',model.rxns));
 if any(Vupind == find(Vglc_up))
+    Vupind(Vupind==find(Vglc_up)) = [];
     if useVmax
-        flux(Vupind) = ConvinienceKinetics(model,pmeter,MC,bmind,Vupind);
+        flux(Vglc_up) =...
+        ConvinienceKinetics(model,pmeter,MC,bmind,find(Vglc_up));
     else
+    end
+elseif any(Vupind == Vatpsr)
+    Vupind(Vupind == Vatpsr) = [];
+    if useVmax
+        flux(Vatpsr) =...
+        ConvinienceKinetics(model,pmeter,MC,bmind,Vatpsr);
+    end
+elseif any(Vupind == Vnadh16)
+    Vupind(Vupind == Vnadh16) = [];
+    if useVmax
+        flux(Vnadh16) =...
+        ConvinienceKinetics(model,pmeter,MC,bmind,Vnadh16);
     end
 else    
     flux = ExFlux(model,MC,flux,Vupind,'mm');        
 end
 
+%
 
 if useVmax
     %Transporters

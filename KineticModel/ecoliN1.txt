@@ -1,0 +1,41 @@
+Enzymes	Etot Conc	kcat (1/s)	Vmax	Keq	delta G (pH 7.2)	"vss (Gur = -10, O2ur = -1000)"	 equation	Activators	Inhibitors	Rxn Mechanism	Substrate Km (mM)	Regulator Km (mM)	Metab	Mclow (mM)	Mchigh (mM)
+GLCin				4.5812E+06	-9.1	10	<==> glc[e]						pep[c]	1.00E-02	10
+GLCpts			100		-9.1	10	glc[e] + pep[c] ---> g6p[c] + pyr[c]						g6p[c]	1.00E-02	10
+PGI		120	0.0028	3.8511E+00	3.1	0.05	[c] : g6p <==> f6p						pyr[c]	1.00E-02	10
+PFK		167	250		-3.8	5	[c] : f6p + atp ---> fdp + adp + h						f6p[c]	1.00E-02	10
+FBP			250		-2.8	5	[c] : fdp + h2o ---> f6p + pi						atp[c]	1.00E-02	10
+FBA			250	8.4276E-04	4.2	0.05	[c] : fdp <==> dhap + g3p						fdp[c]	1.00E-02	10
+TPI			250		1.4	0.05	[c] : dhap <==> g3p						adp[c]	1.00E-02	10
+GAPD			250		-0.1	5	[c] : g3p + pi + nad <==> 13dpg + h + nadh						h[c]	1.00E-02	10
+PGK			250		2.8	0.05	[c] : 3pg + atp <==> 13dpg + adp						h2o[c]	1.00E-02	10
+PGM			250		0.0	5	[c] : 3pg <==> 2pg						pi[c]	1.00E-02	10
+ENO			250		-0.9	5	[c] : 2pg <==> pep + h2o						dhap[c]	1.00E-02	10
+PYK			250		-5.3	10	[c] : adp + h + pep --> atp + pyr						g3p[c]	1.00E-02	10
+PPS			250		-1.2	5	[c] : atp + h2o + pyr --> amp + 2 h + pep + pi						nad[c]	1.00E-02	10
+LDHD			250		-6.4	10	[c] : pyr + nadh + h <==> lac + nad						13dpg[c]	1.00E-02	10
+PDH			250		-8.3	10	[c] : coa + nad + pyr --> accoa + co2 + nadh						nadh[c]	1.00E-02	10
+PFL			250		-5.1	10	[c] : coa + pyr --> accoa + for						3pg[c]	1.00E-02	10
+ACALD			250		-4.4	10	[c] : acald + coa + nad <==> accoa + h + nadh						2pg[c]	1.00E-02	10
+ALCD2x			250		-6.0	10	[c] : acald + h + nadh <==> etoh + nad						amp[c]	1.00E-02	10
+PYRex							pyr[c] <==> pyr[e]						lac[c]	1.00E-02	10
+PYRout							pyr[e] <==>						coa[c]	1.00E-02	10
+LACex							lac[c] <==> lac[e]						accoa[c]	1.00E-02	10
+LACout							lac[e] <==>						co2[c]	1.00E-02	10
+ACALDex							acald[c] <==> acald[e]						for[c]	1.00E-02	10
+ACALDout							acald[e] <==>						acald[c]	1.00E-02	10
+ETOHex							etoh[c] <==> etoh[e]						etoh[c]	1.00E-02	10
+ETOHout							etoh[e] <==>						o2[c]	1.00E-02	10
+O2out							<==> o2[e]						q8h2[c]	1.00E-02	10
+O2ex							o2[e] <==> o2[c]						q8[c]	1.00E-02	10
+CYTBD			300		-37.2	10	2 h[c] + 0.5 o2[c] + q8h2[c] --> 2 h[e] + h2o[c] + q8[c]						glc[e]	0	1.00E-07
+NADH16			300		-17.4	10	4 h[c] + nadh[c] + q8[c] --> 3 h[e] + nad[c] + q8h2[c]						o2[e]	0	1.00E-07
+ATPM			300		-6.6	10	[c] : atp + h2o --> adp + h + pi						h2o[e]	0	1.00E-07
+ATPS4r			300		-6.6	0.0005	atp[c] + 3 h[c] + h2o[c] <== > adp[c] + 4 h[e] + pi[c]						h[e]	0	1.00E-07
+H2oex							h2o[e] <==> h2o[c]						pi[e]	0	1.00E-07
+H2oout							<==> h2o[e]						lac[e]	0	1.00E-07
+ADK1			250		-0.1	2	[c] : amp + atp <==> 2 adp						etoh[e]	0	1.00E-07
+EC_biomass							[c] : 3pg + atp + f6p + g3p + g6p + accoa + 59.8100 h2o + 3.5470 nad + 0.5191 pep + 2.8328 pyr ---> biomass + coa + 59.8100 adp + 59.8100 h + 3.5470 nadh + 59.8100 pi						acald[e]	0	1.00E-07
+Biomassout							biomass[c] <==> biomass[e]						pyr[e]	0	1.00E-07
+Biomassex							biomass[e] <==>								
+Hex							h[e] <==> h[c]								
+Hout							<==> h[e]								

@@ -3,11 +3,11 @@ function [ensb,variable] = sampleMet_parallel(FBAmodel,parameter,nmodels)
 if nargin < 3
     nmodels = 1;
 end
-nsmp = 100;
+nsmp = 1;
 var = cell(nsmp,1);
 Fvar = zeros(nsmp,1);
 EScell = cell(nsmp,1);
-parfor ismp = 1:nsmp
+for ismp = 1:nsmp
     MC = sampleMet(FBAmodel);
     [ensb,flag] = build_ensemble(1,FBAmodel,parameter,MC);
     if ~flag

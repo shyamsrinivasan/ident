@@ -2,7 +2,7 @@ clc
 % clear all
 addpath(genpath('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel'));
 % load('C:\Users\shyam\Documents\Courses\CHE 1125 Project\Kinetic Model\kmodel_pname.mat');
-rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\ecoliT5.txt';
+rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\ecoliN1.txt';
 [FBAmodel,parameter,variable,nrxn,nmetab] = modelgen(rxfname);
 % % % sample metabolites 
 % variable.MC = sampleMetabolites(FBAmodel);
@@ -41,8 +41,8 @@ rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\Kine
 nmodels = 1;
 [ensb,variable] = sampleMet_parallel(FBAmodel,parameter,nmodels);
 
-load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\N2m_ensb1');
-load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\N2m_variable1');
+% load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\N2m_ensb1');
+% load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\N2m_variable1');
 %     load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\ecoliT4_MC_1.mat');
 inSolution = [];
 varname = {'A[c]','B[c]','C[c]','D[c]','E[c]','P[c]','S[c]'};

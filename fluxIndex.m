@@ -37,6 +37,8 @@ end
 %A[e] + D[c]
 [~,rxn] = find(newS(exind,noex_rxn)>0);
 Vex = noex_rxn(rxn);
+%Remove Vex from considering A[c] + B[e] ---> C[c] + D[c] type reactions
+
 
 %matchinf VFex with Vex
 Vdn = [];
