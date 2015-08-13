@@ -19,8 +19,8 @@ if type == 1%Kinetic Model
     else
         Mbio = strcmpi('biomass',model.mets);
 
-        Y(1:(nint_metab-1)) = variable.MC(1:(nint_metab-1));
-%         Y(1:nint_metab) = variable.MC(1:nint_metab);
+%         Y(1:(nint_metab-1)) = variable.MC(1:(nint_metab-1));
+        Y(1:nint_metab) = variable.MC(1:nint_metab);
 
         Y(Mbio) = 0;
         Y(nint_metab+1:nint_metab+next_metab) = ...

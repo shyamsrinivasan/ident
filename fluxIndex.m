@@ -37,7 +37,16 @@ end
 %A[e] + D[c]
 [~,rxn] = find(newS(exind,noex_rxn)>0);
 Vex = noex_rxn(rxn);
+
 %Remove Vex from considering A[c] + B[e] ---> C[c] + D[c] type reactions
+remVex = zeros(length(Vex),1);
+for iex = 1:length(Vex)
+    if length(find(newS(:,Vex(iex))>0))>1 ||... 
+       length(find(newS(:,Vex(iex))<0))>1
+        remVex(iex) = 1;        
+    end
+end
+Vex(logical(remVex)) = [];
 
 
 %matchinf VFex with Vex
@@ -45,6 +54,16 @@ Vdn = [];
 for ive = 1:length(VFex)
     nmet = newS(:,VFex(ive))<0;
     [~,rxn] = find(newS(nmet,noex_rxn)>0);
+    if length(rxn)>1
+        remVdn = zeros(length(rxn),1);
+        for ir = 1:length(rxn)
+            if length(find(newS(:,noex_rxn(rxn(ir)))>0))>1 ||...
+               length(find(newS(:,noex_rxn(rxn(ir)))<0))>1
+               remVdn(ir) = 1;
+            end
+        end
+        rxn(logical(remVdn)) = [];
+    end
     Vdn = d_uUnion(Vdn,noex_rxn(rxn));
 end
 

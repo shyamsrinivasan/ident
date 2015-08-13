@@ -65,9 +65,9 @@ else
     vl(model.bmrxn) = 0;    
 end
 %Exchnage Reactions Cannot occur in reverse
-rxnid = strcmpi('PPS',model.rxns);
-vl(rxnid) = 0;
-vu(rxnid) = 0;
+% rxnid = strcmpi('PPS',model.rxns);
+% vl(rxnid) = 0;
+% vu(rxnid) = 0;
 %Default Bounds - Reversible reactions
 
 b = zeros(nm,1);

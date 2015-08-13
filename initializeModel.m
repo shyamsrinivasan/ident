@@ -41,7 +41,7 @@ if ~isfield(batch,'init')
                      'succ[e]';'nh4[e]';'co2[e]';'acald[e]';'akg[e]';...
                      'for[e]';'fum[e]';'o2[e]';'mal[e]'};
     batch.init{2} = [2000;0;1e-4;1000;0;1e-4;...
-                     0;0;0;0;100;0;0;0;0;0;0];%mmoles 
+                     0;0;0;0;100;0;0;0;0;1000;0];%mmoles 
 
 end
 %??
@@ -61,8 +61,8 @@ if ~isfield(model,'Vuptake')
 %     model.Vuptake = zeros(nuprxns,1);
 %     model.Vuptake(model.Vuptake==0) = 20;%mmole/gDCW.s
 
-%     model.Vuptake = 20;%Yflux(model.Vupind);
-    model.Vuptake = Yflux(model.Vupind);
+    model.Vuptake = [20;10];%Yflux(model.Vupind);
+%     model.Vuptake = Yflux(model.Vupind);
 
 end
 

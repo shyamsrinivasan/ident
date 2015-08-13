@@ -27,15 +27,21 @@ ETOHex							etoh[c] <==> etoh[e]						etoh[c]	1.00E-02	10
 ETOHout							etoh[e] <==>						o2[c]	1.00E-02	10
 O2out							<==> o2[e]						q8h2[c]	1.00E-02	10
 O2ex							o2[e] <==> o2[c]						q8[c]	1.00E-02	10
-CYTBD			300		-37.2	10	2 h[c] + 0.5 o2[c] + q8h2[c] --> 2 h[e] + h2o[c] + q8[c]						glc[e]	0	1.00E-07
-NADH16			300		-17.4	10	4 h[c] + nadh[c] + q8[c] --> 3 h[e] + nad[c] + q8h2[c]						o2[e]	0	1.00E-07
-ATPM			300		-6.6	10	[c] : atp + h2o --> adp + h + pi						h2o[e]	0	1.00E-07
-ATPS4r			300		-6.6	0.0005	atp[c] + 3 h[c] + h2o[c] <== > adp[c] + 4 h[e] + pi[c]						h[e]	0	1.00E-07
-H2oex							h2o[e] <==> h2o[c]						pi[e]	0	1.00E-07
-H2oout							<==> h2o[e]						lac[e]	0	1.00E-07
-ADK1			250		-0.1	2	[c] : amp + atp <==> 2 adp						etoh[e]	0	1.00E-07
-EC_biomass							[c] : 3pg + atp + f6p + g3p + g6p + accoa + 59.8100 h2o + 3.5470 nad + 0.5191 pep + 2.8328 pyr ---> biomass + coa + 59.8100 adp + 59.8100 h + 3.5470 nadh + 59.8100 pi						acald[e]	0	1.00E-07
-Biomassout							biomass[c] <==> biomass[e]						pyr[e]	0	1.00E-07
-Biomassex							biomass[e] <==>								
-Hex							h[e] <==> h[c]								
-Hout							<==> h[e]								
+CYTBD			300		-37.2	10	2 h[c] + 0.5 o2[c] + q8h2[c] --> 2 h[e] + h2o[c] + q8[c]						ac[c]	1.00E-02	10
+NADH16			300		-17.4	10	4 h[c] + nadh[c] + q8[c] --> 3 h[e] + nad[c] + q8h2[c]						actp[c]	1.00E-02	10
+ATPM			300		-6.6	10	[c] : atp + h2o --> adp + h + pi						glc[e]	0	1.00E-07
+ATPS4r			300		-6.6	0.0005	atp[c] + 3 h[c] + h2o[c] <==> adp[c] + 4 h[e] + pi[c]						o2[e]	0	1.00E-07
+H2oex							h2o[c] <==> h2o[e]						h2o[e]	0	1.00E-07
+H2oout							h2o[e] <==>						h[e]	0	1.00E-07
+ADK1			250		-0.1	2	[c] : amp + atp <==> 2 adp						pi[e]	0	1.00E-07
+EC_biomass							[c] : 3pg + atp + f6p + g3p + g6p + accoa + 59.8100 h2o + 3.5470 nad + 0.5191 pep + 2.8328 pyr ---> biomass + coa + 59.8100 adp + 59.8100 h + 3.5470 nadh + 59.8100 pi						lac[e]	0	1.00E-07
+Biomassout							biomass[c] <==> biomass[e]						etoh[e]	0	1.00E-07
+Biomassex							biomass[e] <==>						acald[e]	0	1.00E-07
+Hex							h[c] <==> h[e]						pyr[e]	0	1.00E-07
+Hout							h[e] <==>								
+Piout							pi[e] <==>								
+Piex							pi[c] <==> pi[e]								
+PTAr					3.8	2	[c] : accoa + pi <==> actp + coa								
+ACKr					4.3	2	[c] : ac + atp <==> actp + adp								
+ACex							ac[c] <==> ac[e]								
+Acout							ac[e] <==>								

@@ -21,7 +21,6 @@ VFup = model.VFup;
 VFex = model.VFex;
 bmind = model.bmrxn;
 
-
 % if ~isempty(Vex)
 %     [int_ind,~] = find(model.S(:,Vex)<0);
 % else
@@ -29,33 +28,28 @@ bmind = model.bmrxn;
 % end
 
 %Uptake Fluxes
-Vglc_up = model.S(strcmpi('glc[e]',model.mets),:)<0;
-Vatpsr = find(strcmpi('ATPS4r',model.rxns));
-Vnadh16 = find(strcmpi('NADH16',model.rxns));
-if any(Vupind == find(Vglc_up))
-    Vupind(Vupind==find(Vglc_up)) = [];
+Vglc = model.S(strcmpi('glc[e]',model.mets),:)<0;
+% Vatpsr = find(strcmpi('ATPS4r',model.rxns));
+% Vnadh16 = find(strcmpi('NADH16',model.rxns));
+if any(Vupind == find(Vglc))
+    Vupind(Vupind==find(Vglc)) = [];
     if useVmax
-        flux(Vglc_up) =...
-        ConvinienceKinetics(model,pmeter,MC,bmind,find(Vglc_up));
+        flux(Vglc) =...
+        ConvinienceKinetics(model,pmeter,MC,bmind,find(Vglc));
     else
-    end
-elseif any(Vupind == Vatpsr)
-    Vupind(Vupind == Vatpsr) = [];
-    if useVmax
-        flux(Vatpsr) =...
-        ConvinienceKinetics(model,pmeter,MC,bmind,Vatpsr);
-    end
-elseif any(Vupind == Vnadh16)
-    Vupind(Vupind == Vnadh16) = [];
-    if useVmax
-        flux(Vnadh16) =...
-        ConvinienceKinetics(model,pmeter,MC,bmind,Vnadh16);
     end
 else    
     flux = ExFlux(model,MC,flux,Vupind,'mm');        
 end
-
-%
+Vo2 = model.S(strcmpi('o2[e]',model.mets),:)<0;
+if any(Vupind == find(Vo2))
+    if useVmax
+%         flux(Vo2) =...
+%         ConvinienceKinetics(model,pmeter,MC,bmind,find(Vo2));
+        flux = ExFlux(model,MC,flux,find(Vo2),[]);
+    else
+    end
+end
 
 if useVmax
     %Transporters
@@ -82,6 +76,9 @@ if isfield(model,'gmax');
 else
     flux(bmind) = biomass_flux(model,MC,[],flux);
 end
+%biomass exchange
+Vbmex = model.S(strcmpi('biomass',model.mets),:)<0;
+flux(Vbmex) = flux(bmind);
 
 % % gr_flux = 0.8*prod(Y(Mbio_ind)./([.8;.1]+Y(Mbio_ind)));
 % gr_flux = model.gmax;%0.8;%h-1
