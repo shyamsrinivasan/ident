@@ -45,3 +45,9 @@ PTAr					3.8	2	[c] : accoa + pi <==> actp + coa
 ACKr					4.3	2	[c] : ac + atp <==> actp + adp								
 ACex							ac[c] <==> ac[e]								
 Acout							ac[e] <==>								
+COAex							coa[c] <==> coa[e]								
+COAout							coa[e] <==>								
+NADex							nad[c] <==> nad[e]								
+NADout							nad[e] <==>								
+NADHex							nadh[c] <==> nadh[e]								
+NADHout							nadh[e] <==>								

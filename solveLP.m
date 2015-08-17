@@ -64,6 +64,30 @@ if fixgrowth
 else
     vl(model.bmrxn) = 0;    
 end
+vl(strcmpi(model.rxns,'h2oex')) = -100;
+vl(strcmpi(model.rxns,'h2oout')) = -100;
+
+vl(strcmpi(model.rxns,'hex')) = -100;
+vl(strcmpi(model.rxns,'hout')) = -100;
+
+vl(strcmpi(model.rxns,'piex')) = -100;
+vl(strcmpi(model.rxns,'piout')) = -100;
+
+vl(strcmpi(model.rxns,'coaex')) = -100;
+vl(strcmpi(model.rxns,'coaout')) = -100;
+
+vl(strcmpi(model.rxns,'nadex')) = -100;
+vl(strcmpi(model.rxns,'nadout')) = -100;
+
+vl(strcmpi(model.rxns,'nadhex')) = -100;
+vl(strcmpi(model.rxns,'nadhout')) = -100;
+
+vu(strcmpi(model.rxns,'pyrex')) = 0;
+vu(strcmpi(model.rxns,'pyrout')) = 0;
+
+% vu(strcmpi(model.rxns,'lacex')) = 0;
+% vu(strcmpi(model.rxns,'lacout')) = 0;
+
 %Exchnage Reactions Cannot occur in reverse
 % rxnid = strcmpi('PPS',model.rxns);
 % vl(rxnid) = 0;
@@ -71,7 +95,7 @@ end
 %Default Bounds - Reversible reactions
 
 b = zeros(nm,1);
-%Exchange of Product
+%Exchange of Produ ct
 % vl(model.Vexind) = 0;
 %Objective Function
 % prxnid = find(strcmpi('EXpep',model.rxns));
@@ -79,8 +103,8 @@ b = zeros(nm,1);
 % vl(pps) = 0;
 % vu(pps) = 0;
 
-cprod = sparse(1,prxnid,1,1,nr);
-
+% cprod = sparse(1,prxnid,1,1,nr);
+cprod = sparse(1,26,1,1,nr);
 
 [vLPmax,vProdLPmax,Maxflag] = cplexlp(-cprod(:),[],[],S,b,vl,vu);
 if Maxflag > 0
