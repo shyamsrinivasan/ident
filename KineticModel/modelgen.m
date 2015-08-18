@@ -280,20 +280,20 @@ newKIi = [model.KIihb(inter_mind,:);...
 %Identify Reaction Indices
 % Vuptake = [];
 % Vexind = [];
-
-[Vind,Vuptake,VFup,VFex,Vex,bmrxn] = fluxIndex(model_data,nt_rxn,newS);
-try
-    Vext = [VFup' VFex'];
-catch
-    Vext = [VFup;VFex];
-end
+model_data.rxns = model.enzName;
+[Vind,VFex,Vex,bmrxn] = fluxIndex(model_data,nt_rxn,newS);
+% [Vind,Vuptake,VFup,VFex,Vex,bmrxn] = fluxIndex(model_data,nt_rxn,newS);
+% try
+%     Vext = [VFup' VFex'];
+% catch
+%     Vext = [VFup;VFex];
+% end
 
 %Append appropriate rows/columns corresponding to enzss/fluxes
 nenz = length(model.enzName);
-other_ind = setdiff(1:nenz,[Vind...
-                            Vuptake...
+other_ind = setdiff(1:nenz,[Vind...                            
                             Vex...
-                            Vext...
+                            VFex'...
                             bmrxn]);
 [mS,~] = size(newS);
 model_data.enzs = [model.enzName(setdiff(1:nenz,other_ind),1);...
@@ -313,16 +313,17 @@ newKcat = [model.Kcat;zeros(length(other_ind),1)];
 newreverse = [model.reversible;zeros(length(other_ind),1)];
 
 %New Indices
-[Vind,Vuptake,VFup,VFex,Vex,bmrxn,Vup,Vdn] = fluxIndex(model_data,nt_rxn,newS);
+[Vind,VFex,Vex,bmrxn] = fluxIndex(model_data,nt_rxn,newS);
+% [Vind,Vuptake,VFup,VFex,Vex,bmrxn,Vup,Vdn] = fluxIndex(model_data,nt_rxn,newS);
 model_data.Vind = Vind;
-model_data.Vupind = Vuptake;
+% model_data.Vupind = Vuptake;
 % model_data.Vexind = Vexind;
 model_data.Vex = Vex;
-model_data.VFup = VFup;
+% model_data.VFup = VFup;
 model_data.VFex = VFex;
 model_data.bmrxn = bmrxn;
-model_data.Vup = Vup;
-model_data.Vdn = Vdn;
+% model_data.Vup = Vup;
+% model_data.Vdn = Vdn;
 %Identify activated reactions
 [~,allactrxn] = find(newSI(:,1:nt_rxn)>0);
 Vact_ind = unique(allactrxn);
