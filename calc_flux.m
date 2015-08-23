@@ -7,68 +7,57 @@ if nargin < 5
     useVmax = 1;
 end
 nt_rxn = model.nt_rxn;
-
 if nargin < 4 || isempty(flux)
     flux = zeros(nt_rxn,1);
 end
 
-Vind = model.Vind;
-% Vupind = model.Vupind;
+%transport fluxes 
 Vex = model.Vex;
-% Vup = model.Vup;
-% Vdn = model.Vdn;
-% VFup = model.VFup;
-VFex = model.VFex;
-bmind = model.bmrxn;
-
-%Uptake Fluxes
 %glucose
 Vglc = model.S(strcmpi('glc[e]',model.mets),:)<0;
 if any(Vex == find(Vglc))
     Vex(Vex==find(Vglc)) = [];
     if useVmax
         flux(Vglc) =...
-        ConvinienceKinetics(model,pmeter,MC,bmind,find(Vglc));
+        ConvinienceKinetics(model,pmeter,MC,[],find(Vglc));
     else
         flux(Vglc) = ExFlux(model,MC,flux,find(Vglc),[]);
     end
 end
-
 %oxygen
 Vo2 = model.S(strcmpi('o2[e]',model.mets),:)<0;
 if any(Vex == find(Vo2))
-    Vex(Vex==Vo2) = [];
+    Vex(Vex==find(Vo2)) = [];
     if useVmax
         flux = ExFlux(model,MC,flux,find(Vo2),[]);
     end
 end
-
 %other fluxes
+Vind = model.Vind;%intracellular fluxes
+VFex = model.VFex;%exchange fluxes
+Vuptake = model.Vuptake;%fixed uptake fluxes for exchange reactions
 if useVmax
     %Transport fluxes
-    flux = ExFlux(model,MC,flux,Vex,[]);
-    
+    flux = ExFlux(model,MC,flux,Vex,[]);    
     %Intracellular Fluxes
-    flux(Vind) = ConvinienceKinetics(model,pmeter,MC,bmind,Vind);
-%     flux(Vex) = pmeter.Vmax(Vex).*MC(int_ind);   
-
-    %exchange fluxes
-    flux = ExFlux
+    flux(Vind) = ConvinienceKinetics(model,pmeter,MC,[],Vind);
+%     flux(Vex) = pmeter.Vmax(Vex).*MC(int_ind);    
 else
     %Transporters
 %     if ~isempty(Vex) && ~isempty(int_ind)
 %         flux(Vex) = 1000*EC(Vex).*MC(int_ind);
 %     end
-    flux = ExFlux(model,MC,flux,Vex,[],EC);   
-    
+    flux = ExFlux(model,MC,flux,Vex,[],EC);       
     %Intracellular fluxes
-    flux(Vind) = ConvinienceKinetics(model,pmeter,MC,bmind,Vind,EC); 
-    
-    %exchange fluxes
-    
+    flux(Vind) = ConvinienceKinetics(model,pmeter,MC,[],Vind,EC);    
 end
-
+%exchange fluxes
+for ivfex = 1:length(VFex)
+%     flux(VFex(ivfex)) = f(met[e]) - Vuptake(VFex(ivfex));
+    flux(VFex(ivfex)) = -Vuptake(VFex(ivfex));
+end
 %biomass Flux
+bmind = model.bmrxn;
 if isfield(model,'gmax');
     flux(bmind) = model.gmax;
 else
@@ -85,8 +74,6 @@ end
 % else    
 %     flux = ExFlux(model,MC,flux,Vupind,'mm');        
 % end
-
-
 
 % 
 % flux(VFup) = flux(Vup);

@@ -1,8 +1,8 @@
 function growth = biomass_flux(model,Y,dXdt,flux)
 %Metabolites consumed for biomass
 Mb = model.S(:,model.bmrxn)<0;
-ATP = strcmpi('atp[c]',model.mets);
-Mb = setdiff(find(Mb),find(ATP));
+% ATP = strcmpi('atp[c]',model.mets);
+% Mb = setdiff(find(Mb),find(ATP));
 
 % dXdt = zeros(length(Mb),1);
 Sj = -model.S(Mb,model.bmrxn);

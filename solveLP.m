@@ -1,4 +1,4 @@
-function [vProdLPmax,vProdLPmin,vLPmax,vLPmin,Maxflag,Minflag] =...
+function [vProdLPmax,vProdLPmin,vLPmax,vLPmin,Maxflag,Minflag,model] =...
          solveLP(model,prod,enz,bounds,prxnid,fixgrowth)
 if nargin < 6
     fixgrowth = 0;
@@ -31,28 +31,44 @@ S = model.S;%(1:nint_metab,:);
 %Flux calculation based on intial concentrations
 % flux = ExFlux(model,Y,zeros(nr,1),model.Vupind,'mm');
 
+%change bounds for exchange metabolites
+ess_rxn = {'exCO2','exH','exH2O','exPI','exO2'};
+essid = [];
+for iess = 1:length(ess_rxn)
+    essid = union(essid,find(strcmpi(ess_rxn{iess},model.rxns)));
+end
+Vess = setdiff(model.VFex,essid);
+vl(Vess) = 0;
+
+%atp maintanance
+vl(strcmpi(model.rxns,'ATPM')) = 8.39;
+
 %Uptake Fluxes
 if isfield(bounds,'Vuptake')
     if ~isempty(bounds.Vuptake)
-        vl(model.VFup) = bounds.Vuptake;
-        vu(model.VFup) = bounds.Vuptake;
+        vl(strcmpi(model.rxns,'exGLC')) = -bounds.Vuptake(strcmpi(model.rxns,'exGLC'));        
+        vl(strcmpi(model.rxns,'exO2')) = -bounds.Vuptake(strcmpi(model.rxns,'exO2'));
+        vu(strcmpi(model.rxns,'exGLC')) = bounds.Vuptake(strcmpi(model.rxns,'exGLC'));        
+        vu(strcmpi(model.rxns,'exO2')) = bounds.Vuptake(strcmpi(model.rxns,'exO2'));
     end
 end
+
+
 %Set uptake to ireversible
-if ~isempty(model.Vupind)
-    vl(model.Vupind) = 0;
-    vu(model.Vupind) = 100;
-end
+% if ~isempty(model.Vupind)
+%     vl(model.Vupind) = 0;
+%     vu(model.Vupind) = 100;
+% end
 %Set VFex to irreversible
-if ~isempty(model.VFex)
-    vl(model.VFex) = 0;
-    vu(model.VFex) = 100;
-end
+% if ~isempty(model.VFex)
+%     vl(model.VFex) = 0;
+%     vu(model.VFex) = 100;
+% end
 %Set Vex to irreversible
-if ~isempty(model.VFex)
-    vl(model.Vex) = 0;
-    vu(model.Vex) = 100;
-end
+% if ~isempty(model.VFex)
+%     vl(model.Vex) = 0;
+%     vu(model.Vex) = 100;
+% end
 %Growth Fluxes
 if fixgrowth
     if prxnid ~= model.bmrxn
@@ -103,8 +119,8 @@ b = zeros(nm,1);
 % vl(pps) = 0;
 % vu(pps) = 0;
 
-% cprod = sparse(1,prxnid,1,1,nr);
-cprod = sparse(1,26,1,1,nr);
+cprod = sparse(1,prxnid,1,1,nr);
+% cprod = sparse(1,73,1,1,nr);
 
 [vLPmax,vProdLPmax,Maxflag] = cplexlp(-cprod(:),[],[],S,b,vl,vu);
 if Maxflag > 0
@@ -113,6 +129,10 @@ if Maxflag > 0
     end
 end
 [vLPmin,vProdLPmin,Minflag] = cplexlp(cprod(:),[],[],S,b,vl,vu);
+model.lb = vl;
+model.ub = vu;
+model.c = cprod;
+model.b = b;
 
 return
 

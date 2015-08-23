@@ -29,20 +29,12 @@ elseif isfield(model,'Kcat')
 end
 %Initial Extracellular concentrations
 if ~isfield(batch,'init')
-
-
-%       batch.init{1} = {'A[e]','P[e]','D[e]','E[e]'};
-%       batch.init{2} = [20;0;0;0];
-%       batch.init{1} = {'S[e]','B[e]','P[e]','A[e]'};
-%       batch.init{2} = [20;0;0;0];
-
     batch.init{1} = {'glc[e]';'lac[e]';'h[e]';'h2o[e]';'pyr[e]';'pi[e]';...
                      'ac[e]';'etoh[e]';...
                      'succ[e]';'nh4[e]';'co2[e]';'acald[e]';'akg[e]';...
                      'for[e]';'fum[e]';'o2[e]';'mal[e]'};
     batch.init{2} = [2000;0;1e-4;1000;0;1e-4;...
                      0;0;0;0;100;0;0;0;0;1000;0];%mmoles 
-
 end
 %??
 if ~isfield(model,'kcat')
@@ -52,8 +44,14 @@ end
 if ~isfield(model,'ext_MC')
     model.ext_MC = assign_extconc(batch.init{1},batch.init{2},model);
 end
+
 %Fixed uptake rates for FBA
 if ~isfield(model,'Vuptake')
+    Vuptake = zeros(model.nt_rxn,1);
+    Vuptake(strcmpi(model.rxns,'exGLC')) = 20;%mmol/gDCW.h
+    Vuptake(strcmpi(model.rxns,'exO2')) = 10;%mmole/gDCW.h
+    model.Vuptake = Vuptake;
+    
     [~,Yflux] =...
     initializeConcentration(model,pmeter,variable,batch.init{1},...
                             batch.init{2},1);
@@ -61,7 +59,7 @@ if ~isfield(model,'Vuptake')
 %     model.Vuptake = zeros(nuprxns,1);
 %     model.Vuptake(model.Vuptake==0) = 20;%mmole/gDCW.s
 
-    model.Vuptake = [20;10];%Yflux(model.Vupind);
+%     model.Vuptake = [20;10];%Yflux(model.Vupind);
 %     model.Vuptake = Yflux(model.Vupind);
 
 end
@@ -83,24 +81,6 @@ saveData.filename = '';%sprintf('ExptCondition_%d',exptnum);
 saveData.dirname =...
 'C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KModel';
 
-%Assigning Indices
-% ivec = 1;
-% remVex = zeros(length(model.Vex),1);
-% for irxn = 1:length(model.Vex)
-%     nsubs = length(find(model.S(:,model.Vex(irxn))<0));
-%     nprod = length(find(model.S(:,model.Vex(irxn))>0));
-%     if nsubs > 1 && nprod > 1
-%         model.V2rct(ivec) = model.Vex(irxn);
-%         remVex(irxn) = 1;
-%         ivec = ivec + 1;
-%     end
-% end
-% if any(remVex)
-%     model.Vex(logical(remVex)) = [];
-% else
-%     model.V2rct = [];
-% end
-
 %Check if growth rate is possible
 %Uptake Flux
 bounds.Vuptake = model.Vuptake;
@@ -112,7 +92,7 @@ bounds.vu = zeros(model.nt_rxn,1);
 bounds.vu(bounds.vu==0) = 100;%bounds.Vuptake;
 %Determine Max and Min for flux to be constrained with =
 
-[gMax,~,~,~,gMaxflag] = solveLP(model,'','',bounds,model.bmrxn);
+[gMax,~,~,~,gMaxflag,~,model] = solveLP(model,'','',bounds,model.bmrxn);
 % [pMax,~,~,~,pMaxflag] = solveLP(model,'','',bounds,find(strcmpi('Pex',model.rxns)));
 fprintf('Uptake Flux = %2.3g\n',model.Vuptake);
 if ~isfield(model,'gmax') && gMaxflag > 0
