@@ -5,6 +5,7 @@ nsamples = nmodels;
 
 %glcpts
 Vind = [model.Vind find(strcmpi(model.rxns,'GLCpts'))];
+Vex = setdiff(model.Vex,Vind);
 
 nrxn = length(Vind);
 nt_rxn = model.nt_rxn;
@@ -127,6 +128,20 @@ for isample = 1:nsamples
     if any(~isnan(oldVmax))
         ensb.(mname).Vmax(~isnan(oldVmax)) = oldVmax(~isnan(oldVmax));
     end    
+    %exhcnage reaction kcat_fwd and kcat_bkw
+    for irxn = 1:length(Vex)
+        if ~isnan(model.Kcat(Vex(irxn)))
+            ensb.(mname).kcat_fwd(Vex(irxn)) = model.Kcat(Vex(irxn));
+        %kla for o2 transfer - OTR
+            if Vex(irxn) == find(strcmpi(model.rxns,'O2t'))
+                ensb.(mname).kcat_bkw(Vex(irxn)) = model.Kcat(Vex(irxn));
+            else
+                ensb.(mname).kcat_bkw(Vex(irxn)) = model.Kcat(Vex(irxn));
+            end
+        else
+           ensb.(mname).kcat_fwd(Vex(irxn)) = 0;
+        end           
+    end
 end
 
 %Select models from ensemble

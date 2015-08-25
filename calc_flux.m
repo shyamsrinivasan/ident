@@ -6,30 +6,30 @@ useVmax = 0;
 if nargin < 5
     useVmax = 1;
 end
-nt_rxn = model.nt_rxn;
+
 if nargin < 4 || isempty(flux)
-    flux = zeros(nt_rxn,1);
+    flux = zeros(model.nt_rxn,1);
 end
 
 %transport fluxes 
 Vex = model.Vex;
 %glucose
-Vglc = model.S(strcmpi('glc[e]',model.mets),:)<0;
+Vglc = strcmpi(model.rxns,'glcpts');
 if any(Vex == find(Vglc))
     Vex(Vex==find(Vglc)) = [];
     if useVmax
         flux(Vglc) =...
-        ConvinienceKinetics(model,pmeter,MC,[],find(Vglc));
+        ConvinienceKinetics(model,pmeter,MC,find(Vglc));
     else
-        flux(Vglc) = ExFlux(model,MC,flux,find(Vglc),[]);
+        flux(Vglc) = ExFlux(model,pmeter,MC,flux,find(Vglc),[]);
     end
 end
 %oxygen
-Vo2 = model.S(strcmpi('o2[e]',model.mets),:)<0;
+Vo2 = strcmpi(model.rxns,'O2t');
 if any(Vex == find(Vo2))
     Vex(Vex==find(Vo2)) = [];
     if useVmax
-        flux = ExFlux(model,MC,flux,find(Vo2),[]);
+        flux = ExFlux(model,pmeter,MC,flux,find(Vo2),[]);
     end
 end
 %other fluxes
@@ -38,9 +38,9 @@ VFex = model.VFex;%exchange fluxes
 Vuptake = model.Vuptake;%fixed uptake fluxes for exchange reactions
 if useVmax
     %Transport fluxes
-    flux = ExFlux(model,MC,flux,Vex,[]);    
+    flux = ExFlux(model,pmeter,MC,flux,Vex,[]);    
     %Intracellular Fluxes
-    flux(Vind) = ConvinienceKinetics(model,pmeter,MC,[],Vind);
+    flux(Vind) = ConvinienceKinetics(model,pmeter,MC,Vind,[]);
 %     flux(Vex) = pmeter.Vmax(Vex).*MC(int_ind);    
 else
     %Transporters
@@ -49,11 +49,44 @@ else
 %     end
     flux = ExFlux(model,MC,flux,Vex,[],EC);       
     %Intracellular fluxes
-    flux(Vind) = ConvinienceKinetics(model,pmeter,MC,[],Vind,EC);    
+    flux(Vind) = ConvinienceKinetics(model,pmeter,MC,Vind,EC);    
 end
 %exchange fluxes
+% Voth = setdiff(1:model.nt_rxn,VFex);
 for ivfex = 1:length(VFex)
-%     flux(VFex(ivfex)) = f(met[e]) - Vuptake(VFex(ivfex));
+%     vexh2o = strcmpi(model.rxns,'exH2O');
+%     if VFex(ivfex) == find(vexh2o)   
+%         %consuming h2o
+%         Vch2o = model.S(strcmpi(model.mets,'h2o[e]'),Voth)<0;
+%         Vph2o = model.S(strcmpi(model.mets,'h2o[e]'),Voth)>0;
+%         Vuptake(VFex(ivfex)) = sum(flux(Voth(Vch2o)))+...
+%                                sum(flux(Voth(Vph2o)));
+%     end
+%     vexpi = strcmpi(model.rxns,'exPI');
+%     if VFex(ivfex) == find(vexpi)
+%         %reaction consuming pi
+%         Vconpi = model.S(strcmpi(model.mets,'pi[e]'),Voth)<0;
+%         Vpropi = model.S(strcmpi(model.mets,'pi[e]'),Voth)>0;
+%         Vuptake(VFex(ivfex)) = sum(flux(Voth(Vconpi)))+...
+%                                sum(flux(Voth(Vpropi)));
+%     end
+%     vexh = strcmpi(model.rxns,'exH');
+%     if VFex(ivfex) == find(vexh)
+%         %consuming h
+%         Vconh = model.S(strcmpi(model.mets,'h[e]'),Voth)<0;
+%         Vproh = model.S(strcmpi(model.mets,'h[e]'),Voth)>0;
+%         Vuptake(VFex(ivfex)) = sum(flux(Voth(Vconh)))+...
+%                                sum(flux(Voth(Vproh)));
+%     end
+%     vexco2 = strcmpi(model.rxns,'exCO2');
+%     if VFex(ivfex) == find(vexco2)
+%         %consuming h
+%         Vconco = model.S(strcmpi(model.mets,'co2[e]'),Voth)<0;
+%         Vproco = model.S(strcmpi(model.mets,'co2[e]'),Voth)>0;
+%         Vuptake(VFex(ivfex)) = sum(flux(Voth(Vconco)))+...
+%                                sum(flux(Voth(Vproco)));
+%     end
+%     flux(VFex(ivfex)) = f(met[e]) - Vuptake(VFex(ivfex));    
     flux(VFex(ivfex)) = -Vuptake(VFex(ivfex));
 end
 %biomass Flux

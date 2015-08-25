@@ -39,10 +39,10 @@ rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\Kine
 %     variable = data.(sam_name).variable;
    
 nmodels = 1;
-[ensb,variable] = sampleMet_parallel(FBAmodel,parameter,nmodels);
+% [ensb,variable] = sampleMet_parallel(FBAmodel,parameter,nmodels);
 
-% load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\N2m_ensb1');
-% load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\N2m_variable1');
+load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\ecoliN1_parameter_1');
+load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\ecoliN1_MC_1');
 %     load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\ecoliT4_MC_1.mat');
 inSolution = [];
 varname = {'A[c]','B[c]','C[c]','D[c]','E[c]','P[c]','S[c]'};

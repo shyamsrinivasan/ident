@@ -41,7 +41,7 @@ else
         inSolution.(mname) = struct([]);
     end
     %Model initialization
-    [model,batch,solverP,saveData] = initializeModel(model,300000,ensb.(mname),variable.(mname));
+    [model,batch,solverP,saveData] = initializeModel(model,150,ensb.(mname),variable.(mname));
     if isempty(inSolution.(mname))
             %simulate models first to get initial SS
             [Solution,finalSS] =...
