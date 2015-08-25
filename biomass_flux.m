@@ -32,7 +32,7 @@ netflux(bm) = model.S(bm,Vnobm)*flux(Vnobm);
 if all(met(bm)>0)
     vsynth = netflux(bm)./(Sj.*(ones(length(bm))+met(bm)./Sj));
     vmin = min(vsynth);
-    if vmin > 0
+    if vmin >= 0
         mu = vmin;
     else
         mu = -vmin;

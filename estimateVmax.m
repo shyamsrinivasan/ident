@@ -16,7 +16,7 @@ while abs(mu_c-mu_g)<=1e-4
     [~,vcontr] = ConvenienceKinetics(model,pmeter,MC,vg6p);
     Vmax(vg6p) = flux(vglc)/vcontr;
     %rxnlist
-    rxnlist = {'
+    rxnlist = {''};
     
 end
 
