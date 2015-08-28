@@ -30,6 +30,7 @@ vact_ = zeros(n_rxn,1);
 vihb_ = zeros(n_rxn,1);
 vreg_ = zeros(n_rxn,1);
 flux = zeros(n_rxn,1);
+vcontr = zeros(n_rxn,1);
 
 % vcontr = zeros(nt_rxn,1);
 h2oid = strcmpi(model.mets,'h2o[c]');
@@ -121,11 +122,11 @@ for irxn = 1:length(Vind)
         end
         if kcat_fwd(Vind(irxn))
             %build ensemble use
-            vcontr = kcat_fwd(Vind(irxn))*vthermo_(Vind(irxn))*...
+            vcontr(Vind(irxn)) = kcat_fwd(Vind(irxn))*vthermo_(Vind(irxn))*...
                                           vsat_(Vind(irxn))*...
                                           vreg_(Vind(irxn));
         elseif ~kcat_fwd(Vind(irxn))
-            vcontr = vthermo_(Vind(irxn))*vsat_(Vind(irxn))*vreg_(Vind(irxn));
+            vcontr(Vind(irxn)) = vthermo_(Vind(irxn))*vsat_(Vind(irxn))*vreg_(Vind(irxn));
         end
     else
         if ~isnan(kcat_fwd(Vind(irxn)))
@@ -151,6 +152,7 @@ end
 %     end
 % end
 flux = flux(Vind);
+vcontr = vcontr(Vind);
      
 %build ensemble use
 % vcontr = vthermo_.*vsat_.*vreg_;
