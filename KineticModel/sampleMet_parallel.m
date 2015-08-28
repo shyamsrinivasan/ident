@@ -3,14 +3,16 @@ function [ensb,variable] = sampleMet_parallel(FBAmodel,pvector,nmodels)
 if nargin < 3
     nmodels = 1;
 end
-nsmp = 1000;
+nsmp = 1;
 var = cell(nsmp,1);
 Fvar1 = zeros(nsmp,1);
 Fvar2 = zeros(nsmp,1);
 EScell = cell(nsmp,1);
-parfor ismp = 1:nsmp
-    [MC,KVl] = sampleMet(FBAmodel);
-    [ensb,flag1,flag2] = build_ensemble(1,FBAmodel,pvector,MC,KVl);
+model = initModel(FBAmodel);
+MC = initConcentration(model);
+for ismp = 1:nsmp
+    [MC,KVl] = sampleMet(model,MC);    
+    [ensb,flag1,flag2] = build_ensemble(1,model,pvector,MC,KVl);
 %     if ~flag
         %Resample Kms        
 %         ensb = resample_ensemble(ensb,FBAmodel,MC);

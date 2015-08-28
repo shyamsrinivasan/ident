@@ -1,12 +1,10 @@
-function [model,batch,solverP,saveData] = initializeModel(model,tmax,varargin)
+function [model,batch,solverP,saveData] = initModel(model,tmax)
 
-if nargin < 3
-    pmeter = [];
-    variable = [];
-else
-    pmeter = varargin{1};
-    variable = varargin{2};
-end
+% if nargin < 3    
+%     variable = [];
+% else    
+%     variable = varargin{1};
+% end
 if nargin < 2
     tmax = 500000;%s
 end
@@ -28,22 +26,20 @@ elseif isfield(model,'Kcat')
     model.Kcat(model.Kcat == 0) = 3000;    
 end
 %Initial Extracellular concentrations
-if ~isfield(batch,'init')
-    batch.init{1} = {'glc[e]';'lac[e]';'h[e]';'h2o[e]';'pyr[e]';'pi[e]';...
-                     'ac[e]';'etoh[e]';...
-                     'succ[e]';'nh4[e]';'co2[e]';'acald[e]';'akg[e]';...
-                     'for[e]';'fum[e]';'o2[e]';'mal[e]'};
-    batch.init{2} = [2000;0;1e-4;10000;0;1e-4;...
-                     0;0;0;0;100;0;0;0;0;1000;0];%mmoles 
-end
+% if ~isfield(batch,'init')
+%     batch.init{1} = {'glc[e]';'h[e]';'h2o[e]';'pi[e]';...             
+%                      'nh4[e]';'co2[e]';'o2[e]'};
+%     batch.init{2} = [2000;1e-4;10000;1e-4;...
+%                      0;100;1000];%mmoles 
+% end
 %??
 if ~isfield(model,'kcat')
     model.kcat = 1;%s-1
 end
 
-if ~isfield(model,'ext_MC')
-    model.ext_MC = assign_extconc(batch.init{1},batch.init{2},model);
-end
+% if ~isfield(model,'ext_MC')
+%     model.ext_MC = assign_extconc(batch.init{1},batch.init{2},model);
+% end
 
 %Fixed uptake rates for FBA
 if ~isfield(model,'Vuptake')
@@ -52,9 +48,12 @@ if ~isfield(model,'Vuptake')
     Vuptake(strcmpi(model.rxns,'exO2')) = 10;%mmole/gDCW.h
     model.Vuptake = Vuptake;
     
-    [~,Yflux] =...
-    initializeConcentration(model,pmeter,variable,batch.init{1},...
-                            batch.init{2},1);
+%     Y = initConcentration(model,variable,batch.init{1},batch.init{2},1);
+%     estimateVmax(model,Y)
+    
+%     [~,Yflux] =...
+%     initializeConcentration(model,pmeter,variable,batch.init{1},...
+%                             batch.init{2},1);
 %     nuprxns = length(model.Vupind);
 %     model.Vuptake = zeros(nuprxns,1);
 %     model.Vuptake(model.Vuptake==0) = 20;%mmole/gDCW.s
@@ -108,5 +107,3 @@ model = estimateLPgrowth(model);
 % end  
 
 return
-%function calculateVariance()
-%function sensAnalysis()

@@ -106,23 +106,54 @@ for irxn = 1:length(Vind)
         vreg_(Vind(irxn)) = 1;
     end
 end
-if useVmax
-    if ~any(isnan(Vmax(Vind))) && ~any(isnan(kcat_fwd(Vind)))
-        flux(Vind) = Vmax(Vind).*kcat_fwd(Vind).*vthermo_(Vind).*vsat_(Vind).*vreg_(Vind);
+
+for irxn = 1:length(Vind)
+    if useVmax
+        if kcat_fwd(Vind(irxn)) && ~isnan(Vmax(Vind(irxn)))
+            flux(Vind(irxn)) = Vmax(Vind(irxn)).*kcat_fwd(Vind(irxn)).*...
+                               vthermo_(Vind(irxn)).*...
+                               vsat_(Vind(irxn)).*vreg_(Vind(irxn));            
+        elseif ~kcat_fwd(Vind(irxn)) && ~isnan(Vmax(Vind(irxn)))
+            flux(Vind) = Vmax(Vind)*vthermo_(Vind(irxn))*...
+                         vsat_(Vind(irxn))*vreg_(Vind(irxn));            
+        else
+            flux(Vind(irxn)) = 0;
+        end
+        if kcat_fwd(Vind(irxn))
+            %build ensemble use
+            vcontr = kcat_fwd(Vind(irxn))*vthermo_(Vind(irxn))*...
+                                          vsat_(Vind(irxn))*...
+                                          vreg_(Vind(irxn));
+        elseif ~kcat_fwd(Vind(irxn))
+            vcontr = vthermo_(Vind(irxn))*vsat_(Vind(irxn))*vreg_(Vind(irxn));
+        end
     else
-        flux(Vind) = 0;
-    end
-else
-    if ~isnan(kcat_fwd(Vind))
-        flux(Vind) = EC(Vind).*kcat_fwd(Vind).*vthermo_(Vind).*vsat_(Vind).*vreg_(Vind);
-    else
-        flux(Vind) = 0;
+        if ~isnan(kcat_fwd(Vind(irxn)))
+            flux(Vind) = EC(Vind).*kcat_fwd(Vind(irxn))*vthermo_(Vind(irxn))*...
+                                   vsat_(Vind(irxn))*vreg_(Vind(irxn));
+        else
+            flux(Vind) = 0;
+        end
     end
 end
+% if useVmax    
+%     if ~any(isnan(Vmax(Vind))) && ~any(isnan(kcat_fwd(Vind)))
+%         flux(Vind) = Vmax(Vind).*kcat_fwd(Vind).*vthermo_(Vind).*vsat_(Vind).*vreg_(Vind);
+%         
+%     else
+%         flux(Vind) = 0;
+%     end
+% else
+%     if ~isnan(kcat_fwd(Vind))
+%         flux(Vind) = EC(Vind).*kcat_fwd(Vind).*vthermo_(Vind).*vsat_(Vind).*vreg_(Vind);
+%     else
+%         flux(Vind) = 0;
+%     end
+% end
 flux = flux(Vind);
      
 %build ensemble use
-vcontr = vthermo_.*vsat_.*vreg_;
+% vcontr = vthermo_.*vsat_.*vreg_;
 varargout{1} = vthermo_;
 varargout{2} = vsat_;
 varargout{3} = vreg_;

@@ -26,11 +26,11 @@ function mu = biomass_flux(model,met,dXdt,flux)
 % end
 bm = model.S(:,model.bmrxn)<0;
 Sj = -model.S(bm,model.bmrxn);
-Vnobm = setdiff(1:nt_rxn,model.bmrxn);
+Vnobm = setdiff(1:model.nt_rxn,model.bmrxn);
 netflux = zeros(length(Vnobm),1);
 netflux(bm) = model.S(bm,Vnobm)*flux(Vnobm);
 if all(met(bm)>0)
-    vsynth = netflux(bm)./(Sj.*(ones(length(bm))+met(bm)./Sj));
+    vsynth = netflux(bm)./(Sj.*(1+met(bm)./Sj));
     vmin = min(vsynth);
     if vmin >= 0
         mu = vmin;

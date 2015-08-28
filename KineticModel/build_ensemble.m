@@ -116,7 +116,7 @@ for isample = 1:nsamples
         ensb.(mname).kcat_bkw(Vind(irxn)) = kcat_bkw;
         [~,vflux] = ConvinienceKinetics(model,ensb.(mname),MC,Vind(irxn));
         if model.Vss(Vind(irxn)) ~= 0
-            Vmax(Vind(irxn)) = model.Vss(Vind(irxn))/vflux(Vind(irxn));
+            Vmax(Vind(irxn)) = model.Vss(Vind(irxn))/vflux;
         else
             Vmax(Vind(irxn)) = 0;
         end
@@ -128,6 +128,9 @@ for isample = 1:nsamples
     if any(~isnan(oldVmax))
         ensb.(mname).Vmax(~isnan(oldVmax)) = oldVmax(~isnan(oldVmax));
     end    
+    
+    estimateVmax(model,ensb.(mname),MC)
+    estimateVmax(model)
     %exhcnage reaction kcat_fwd and kcat_bkw
     for irxn = 1:length(Vex)
         if ~isnan(model.Kcat(Vex(irxn)))

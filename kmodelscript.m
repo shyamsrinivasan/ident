@@ -39,7 +39,7 @@ rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\Kine
 %     variable = data.(sam_name).variable;
    
 nmodels = 1;
-% [ensb,variable] = sampleMet_parallel(FBAmodel,parameter,nmodels);
+[ensb,variable] = sampleMet_parallel(FBAmodel,parameter,nmodels);
 
 load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\ecoliN1_parameter_1');
 load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\ecoliN1_MC_1');

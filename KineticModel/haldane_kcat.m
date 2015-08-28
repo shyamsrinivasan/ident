@@ -32,8 +32,10 @@ elseif Vss(irxn) > 0
         kcat_bkw = kcat_lb + (kcat_ub-kcat_lb).*rand(1,1);
 %         kcat_fwd = exp(log(KVl(irxn)) + lnkcat/2);
     end
-else
+elseif Vss(irxn) == 0 && ~kcat_fwd
     kcat_fwd = 0;
+    kcat_bkw = 0;
+else
     kcat_bkw = 0;
 end
 kcat_ratio = exp(lnkcat);%kcat_fwd/kcat_bkw
