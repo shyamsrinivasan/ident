@@ -66,7 +66,7 @@ mu = flux(bmind);
 %% %Intracellular Metabolites
 %Cytosolic
 dXdt(1:nin_m) = model.S(1:nin_m,:)*flux-mu*Y(1:nin_m);
-dXdt(nin_m+1:nt_m) = model.S(nin_m+1:nt_m,:)*flux-mu*Y(nin_m+1:nt_m);
+dXdt(nin_m+1:nt_m) = model.S(nin_m+1:nt_m,:)*flux;%-mu*Y(nin_m+1:nt_m);
 
 %ATP, AMP, ADP
 % ec = 0.8;
@@ -110,11 +110,11 @@ dXdt(nin_m+1:nt_m) = model.S(nin_m+1:nt_m,:)*flux-mu*Y(nin_m+1:nt_m);
 %Biomass 
 % dXdt(end) = data.S(end,:)*flux;
 
-% if any(Y(Y<0))
-%     flag = -1;
-% else
+if any(Y(Y<0))
+    flag = -1;
+else
     flag = 0;
-% end
+end
 newdata = data;
 newdata.flux = flux;
 newdata.Y = Y;

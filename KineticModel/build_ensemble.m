@@ -25,10 +25,6 @@ for isample = 1:nsamples
     ensb.(mname).kcat_bkw = zeros(nt_rxn,1);
 end   
 
-%Select models from ensemble
-kflag = 0;
-Vflag = 0;
-
 %Remove kinetic consideration for mets like water which are
 %non-limiting always
 for isample = 1:nsamples
@@ -147,33 +143,10 @@ for isample = 1:nsamples
            ensb.(mname).kcat_fwd(Vex(irxn)) = 0;
         end           
     end
-    %estimate flags here
-    kcatfl = zeros(length(Vind),1);
-    for irxn = 1:length(Vind)
-        if model.Vss(Vind(irxn)) < 0
-            if ensb.(mname).kcat_bkw(Vind(irxn)) > ensb.(mname).kcat_fwd(Vind(irxn))
-                kcatfl(irxn) = 1;
-            end
-        elseif model.Vss(Vind(irxn))>0
-            if ensb.(mname).kcat_bkw(Vind(irxn)) < ensb.(mname).kcat_fwd(Vind(irxn))
-                kcatfl(irxn) = 1;
-            end
-        else
-            if ensb.(mname).kcat_fwd(Vind(irxn)) == 0
-                kcatfl(irxn) = 1;
-            end
-        end
-    end
-    if all(kcatfl)
-        kflag = 1;
-    end
-    if any(ensb.(mname).Vmax < 0)
-        Vflag = 1;        
-    end
+       
     
-    
-    estimateVmax(model,ensb.(mname),MC)
-    estimateVmax(model)
+%     estimateVmax(model,ensb.(mname),MC)
+%     estimateVmax(model)
 end
 
 %Select models from ensemble
@@ -189,6 +162,11 @@ for is = 1:nsamples
             end
         elseif model.Vss(Vind(irxn))>0
             if ensb.(mname).kcat_bkw(Vind(irxn)) < ensb.(mname).kcat_fwd(Vind(irxn))
+                kcatfl(irxn) = 1;
+            end
+        elseif model.Vss(Vind(irxn)) == 0
+            if ensb.(mname).kcat_bkw(Vind(irxn)) == 0 ||...
+               ensb.(mname).kcat_fwd(Vind(irxn)) == 0
                 kcatfl(irxn) = 1;
             end
         else

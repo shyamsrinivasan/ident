@@ -20,17 +20,17 @@ kcat_bkw = exp(log(Kcat(irxn)) - lnkcat/2);
 
 if Vss(irxn) < 0
     if kcat_bkw < kcat_fwd
-        kcat_lb = exp(log(KVl(irxn)) + lnkcat/2);
+        kcat_lb = 1.5*exp(log(KVl(irxn)) + lnkcat/2);
         kcat_ub = 2*exp(log(KVl(irxn)) + lnkcat/2);        
         kcat_bkw = kcat_lb + (kcat_ub-kcat_lb).*rand(1,1);
-%         kcat_fwd = exp(log(KVl(irxn)) + lnkcat/2);
+        kcat_fwd = exp(log(KVl(irxn)) + lnkcat/2);
     end
 elseif Vss(irxn) > 0
     if kcat_bkw > kcat_fwd
         kcat_lb = 0;
-        kcat_ub = exp(log(KVl(irxn)) + lnkcat/2);        
+        kcat_ub = 0.5*exp(log(KVl(irxn)) + lnkcat/2);        
         kcat_bkw = kcat_lb + (kcat_ub-kcat_lb).*rand(1,1);
-%         kcat_fwd = exp(log(KVl(irxn)) + lnkcat/2);
+        kcat_fwd = exp(log(KVl(irxn)) + lnkcat/2);
     end
 elseif Vss(irxn) == 0 && ~kcat_fwd
     kcat_fwd = 0;

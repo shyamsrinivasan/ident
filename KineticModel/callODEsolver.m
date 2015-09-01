@@ -18,8 +18,12 @@ function [Sol,finalSS,status] = callODEsolver(model,pmeter,variable,initialSol,b
 %     initval(nint_metab+1:nint_metab+next_metab) = ...
 %     assign_extconc(batch.init{1},batch.init{2},model);
 % end
-[initval,initflux] = initializeConcentration(model,pmeter,variable,batch.init{1},...
-                                             batch.init{2},1,initialSol);
+% [initval,initflux] = initializeConcentration(model,pmeter,variable,batch.init{1},...
+%                                              batch.init{2},1,initialSol);
+initval = initConcentration(model,batch,variable,1,batch.init{1},...
+                            batch.init{2},initialSol);
+initflux = initFlux(model,pmeter,initval,1);
+
 data.flux = initflux;                                        
 % initval(nint_metab+1:nt_metab) = model.M*variable.MC;
 %time for initial data point

@@ -41,7 +41,10 @@ else
         inSolution.(mname) = struct([]);
     end
     %Model initialization
-    [model,batch,solverP,saveData] = initializeModel(model,150,ensb.(mname),variable.(mname));
+%     [model,batch,solverP,saveData] = initializeModel(model,150,ensb.(mname),variable.(mname));
+    [model,batch,solverP,saveData] = initModel(model,150);
+    [Y,batch] = initConcentration(model,batch,variable.(mname));
+    variable.(mname).MC = Y;
     if isempty(inSolution.(mname))
             %simulate models first to get initial SS
             [Solution,finalSS] =...

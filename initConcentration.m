@@ -4,22 +4,22 @@
 % Formulate the initial conecntration and flux vector from given initial 
 % concentrations and input concentrations
 function [Y,batch] =...
-initConcentration(model,variable,type,Vname,Vconc,initSol)
-if nargin < 6
+initConcentration(model,batch,variable,type,Vname,Vconc,initSol)
+if nargin < 7
     initSol = {};
 end
-if nargin < 5
+if nargin < 6
     Vconc = [2000;1e-4;10000;1e-4;...
              0;100;1000];%mmoles 
 end
-if nargin < 4
+if nargin < 5
     Vname = {'glc[e]';'h[e]';'h2o[e]';'pi[e]';...             
              'nh4[e]';'co2[e]';'o2[e]'};
 end
-if nargin < 3
+if nargin < 4
     type = 1;
 end
-if nargin < 2
+if nargin < 3
     variable.MC = zeros(model.nt_metab,1);
 end
 if type == 1%Kinetic Model
