@@ -53,7 +53,6 @@ if isfield(bounds,'Vuptake')
     end
 end
 
-
 %Set uptake to ireversible
 % if ~isempty(model.Vupind)
 %     vl(model.Vupind) = 0;
