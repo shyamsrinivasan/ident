@@ -3,11 +3,12 @@ function [ensb,variable] = sampleMet_parallel(FBAmodel,pvector,nmodels)
 if nargin < 3
     nmodels = 1;
 end
-nsmp = 100;
+nsmp = 1;
 var = cell(nsmp,1);
 Fvar1 = zeros(nsmp,1);
 Fvar2 = zeros(nsmp,1);
 EScell = cell(nsmp,1);
+%initialize model with uptake fluxes and external metabolite concentrations
 model = initModel(FBAmodel);
 initC = initConcentration(model);
 for ismp = 1:nsmp

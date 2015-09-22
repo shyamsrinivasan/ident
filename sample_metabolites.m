@@ -30,6 +30,7 @@ vme1 = strcmpi(model.rxns,'me1');
 vmdh = strcmpi(model.rxns,'mdh');
 vpdh = strcmpi(model.rxns,'pdh');
 vppc = strcmpi(model.rxns,'ppc');
+vppck = strcmpi(mode.rxns,'ppck');
 vpyk = strcmpi(model.rxns,'pyk');
 vatpm = strcmpi(model.rxns,'atpm');
 
@@ -62,19 +63,35 @@ mal = strcmpi(model.mets,'mal[c]');
 oaa = strcmpi(model.mets,'oaa[c]');
 pic = strcmpi(model.mets,'pi[c]');
 h = strcmpi(model.mets,'h[c]');
+o2 = strcmpi(model.mets,'o2[c]');
 
 mc = zeros(model.nt_metab,1);
 mclb = zeros(model.nt_metab,1);
 mcub = zeros(model.nt_metab,1);
 %assuymed concentrations in moles/L or M
 mc(glc) = 0.2;
+mc(o2) = 3e-3;
 mc(pic) = 1e-3;
 mc(h) = 1e-7;
+mc(accoa) = 4.5e-3;
+
 nadp_r = 1e-3;%nadp/nadph
 nad_r = 1e3;%nad/nadh
 
+
+%atp/adp
+% atp_adplb = max(mc(h)*mc(pic)*exp(delG(vatpm)/RT),...
+%                 mc(fdp)*mc(h)/mc(f6p)*exp(delG(vpfk)/RT));
+%adp/atp
+% adp_atpub = min(1/(mc(h)*mc(pic))*exp(-delG(vatpm)/RT),...
+%                 mc(f6p)/(mc(fdp)*mc(h))*exp(-delG(vpfk)/RT));  
+adp_atplb = 0;
+adp_atpub  = 1/(mc(h)*mc(pic))*min(exp((-delG(vppc)-delG(vppck))/RT),...
+                                   exp(-delG(vatpm)/RT)); 
+pd = makedist('Uniform','lower',adp_atplb,'upper',adp_atpub);
+adp_atp = random(pd,1,1);
 %g6p
-mcub(g6p) = mc(glc)*mc(pi)*exp((-delG(vpts)+delG(vatpm)+delG(vpyk))/RT);
+mcub(g6p) = mc(glc)/(adp_atp*mc(h))*exp((-delG(vpts)+delG(vpyk))/RT);
 mc(g6p)
 %f6p
 mcub(f6p) = mc(g6p)*exp(-delG(vpgi)/RT);
@@ -83,18 +100,12 @@ mc(f6p)
 mclb(fdp) = mc(f6p)*mc(pic)*exp(delG(vfbp)/RT);
 mcub(fdp) = mc(f6p)*mc(pic)*exp(delG(vfbp)/RT);
 mc(fdp)
-%atp/adp
-atp_adplb = max(mc(h)*mc(pic)*exp(delG(vatpm)/RT),...
-                mc(fdp)*mc(h)/mc(f6p)*exp(delG(vpfk)/RT));
-%adp/atp
-adp_atpub = min(1/(mc(h)*mc(pic))*exp(-delG(vatpm)/RT),...
-                mc(f6p)/(mc(fdp)*mc(h))*exp(-delG(vpfk)/RT));  
-adp_atp = 1/(mc(h)*mc(pic))*exp((-delG(vppc)-delG(vppck))/RT);            
+           
 %g3p
-mcub(g3p) = sqrt(mc(fdp)*exp((-delG(vfba)-delG(-vtpi))/RT));
+mcub(g3p) = sqrt(mc(fdp)*exp((-delG(vfba)-delG(vtpi))/RT));
 mc(g3p)
 %dhap
-mcub(dhap) = mc(g3p)*mc(fdp)*exp(-delG(vfba)/RT);
+mcub(dhap) = mc(fdp)/mc(g3p)*exp(-delG(vfba)/RT);
 mclb(dhap) = mc(g3p)*exp(delG(vtpi)/RT);
 mc(dhap)
 %6pgl
@@ -123,7 +134,7 @@ mc(s7p)
 mcub(dpg) = (mc(g3p)*mc(pic)*nad_r/mc(h))*exp(-delG(vgapd)/RT);
 mc(dpg)
 %3pg
-mcub(pg3) = mc(dpg)*
+mcub(pg3) = mc(dpg)*adp_atp*exp(-delG(vpgk)/RT);
 mc(pg3)
 %2pg
 mcub(pg2) = mc(pg3)*exp(-delG(vpgm)/RT);
@@ -134,7 +145,18 @@ mc(pep)
 %pyr
 mcub(pyr) = mc(pep)*mc(h)*exp(-delG(vpyk)/RT)*adp_atp;
 mc(pyr)
-%accoa
+%TCA metabolites
+%cit,icit,akg,succoa,succ,fum,mal,oaa,glx
+mc(cit) = 0;
+mc(icit) = 0;
+mc(akg) = 0;
+mc(sucoa) = 0;
+mc(succ) = 0;
+mc(fum) = 0;
+mc(mal) = 0;
+mc(oaa) = 0;
+mc(glx) = 0;
+
 
 
 

@@ -9,8 +9,8 @@ if nargin < 7
     initSol = {};
 end
 if nargin < 6
-    Vconc = [2000;1e-4;10000;1e-4;...
-             0;100;1000];%mmoles 
+    Vconc = [0.15;1e-4;0;0;...
+             0;0;0];%mmoles 
 end
 if nargin < 5
     Vname = {'glc[e]';'h[e]';'h2o[e]';'pi[e]';...             

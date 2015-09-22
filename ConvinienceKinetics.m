@@ -106,20 +106,35 @@ for irxn = 1:length(Vind)
         vsat_(Vind(irxn)) = 1;        
         vreg_(Vind(irxn)) = 1;
     end
+    %testing
+    vthermo_(Vind(irxn)) = 1;
 end
+
 
 for irxn = 1:length(Vind)
     if useVmax
-        if kcat_fwd(Vind(irxn)) && ~isnan(Vmax(Vind(irxn)))
-            flux(Vind(irxn)) = Vmax(Vind(irxn)).*kcat_fwd(Vind(irxn)).*...
-                               vthermo_(Vind(irxn)).*...
-                               vsat_(Vind(irxn)).*vreg_(Vind(irxn));            
-        elseif ~kcat_fwd(Vind(irxn)) && ~isnan(Vmax(Vind(irxn)))
-            flux(Vind) = Vmax(Vind)*vthermo_(Vind(irxn))*...
-                         vsat_(Vind(irxn))*vreg_(Vind(irxn));            
-        else
-            flux(Vind(irxn)) = 0;
+        %testing only
+        if ~isnan(Vmax(Vind(irxn)))
+            if Vmax(Vind(irxn))<0 || Vmax(Vind(irxn))==1
+                flux(Vind(irxn)) = kcat_fwd(Vind(irxn)).*...
+                                   vthermo_(Vind(irxn)).*...
+                                   vsat_(Vind(irxn)).*vreg_(Vind(irxn));  
+            elseif Vmax(Vind(irxn))>=0 || Vmax(Vind(irxn))~=1
+                flux(Vind(irxn)) = Vmax(Vind(irxn))*vthermo_(Vind(irxn))*...
+                         vsat_(Vind(irxn))*vreg_(Vind(irxn));           
+            end
         end
+        %the real thing
+%         if kcat_fwd(Vind(irxn)) && ~isnan(Vmax(Vind(irxn)))
+%             flux(Vind(irxn)) = Vmax(Vind(irxn)).*kcat_fwd(Vind(irxn)).*...
+%                                vthermo_(Vind(irxn)).*...
+%                                vsat_(Vind(irxn)).*vreg_(Vind(irxn));            
+%         elseif ~kcat_fwd(Vind(irxn)) && ~isnan(Vmax(Vind(irxn)))
+%             flux(Vind(irxn)) = Vmax(Vind(irxn))*vthermo_(Vind(irxn))*...
+%                          vsat_(Vind(irxn))*vreg_(Vind(irxn));            
+%         else
+%             flux(Vind(irxn)) = 0;
+%         end
         if kcat_fwd(Vind(irxn))
             %build ensemble use
             vcontr(Vind(irxn)) = kcat_fwd(Vind(irxn))*vthermo_(Vind(irxn))*...

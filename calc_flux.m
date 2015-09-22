@@ -32,6 +32,43 @@ if any(Vex == find(Vo2))
         flux = ExFlux(model,pmeter,MC,flux,find(Vo2),[]);
     end
 end
+%other exchange fluxes
+Vnadh = find(strcmpi(model.rxns,'NADH16'));
+if any(Vex==Vnadh)
+    Vex(Vex==Vnadh) = [];
+    if useVmax
+        flux(Vnadh) =...
+        ConvinienceKinetics(model,pmeter,MC,Vnadh);
+    end
+end
+
+Vthd2 = find(strcmpi(model.rxns,'THD2')); 
+if any(Vex==Vthd2)
+    Vex(Vex==Vthd2) = [];
+    if useVmax
+        flux(Vthd2) =...
+        ConvinienceKinetics(model,pmeter,MC,Vthd2);
+    end
+end
+
+Vatps4r = find(strcmpi(model.rxns,'ATPS4r')); 
+if any(Vex==Vatps4r)
+    Vex(Vex==Vatps4r) = [];
+    if useVmax
+        flux(Vatps4r) =...
+        ConvinienceKinetics(model,pmeter,MC,Vatps4r);
+    end
+end
+
+Vcyt = find(strcmpi(model.rxns,'CYTBD'));
+if any(Vex==Vcyt)
+    Vex(Vex==Vcyt) = [];
+    if useVmax
+        flux(Vcyt) =...
+        ConvinienceKinetics(model,pmeter,MC,Vcyt);
+    end
+end
+
 %other fluxes
 Vind = model.Vind;%intracellular fluxes
 VFex = model.VFex;%exchange fluxes

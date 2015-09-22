@@ -18,12 +18,12 @@ end
 %Kcat for all reactions
 if ~isfield(model,'Kcat')
     model.Kcat = zeros(model.nt_rxn,1);
-    model.Kcat(model.Kcat == 0) = 3000;%s-1
+    model.Kcat(model.Kcat == 0) = 0.1;%s-1
 elseif isfield(model,'Kcat')
     if any(isnan(model.Kcat))
-        model.Kcat(isnan(model.Kcat)) = 3000;
+        model.Kcat(isnan(model.Kcat)) = 0.1;
     end
-    model.Kcat(model.Kcat == 0) = 3000;    
+    model.Kcat(model.Kcat == 0) = 0.1;    
 end
 %Initial Extracellular concentrations
 % if ~isfield(batch,'init')
@@ -45,7 +45,7 @@ end
 if ~isfield(model,'Vuptake')
     Vuptake = zeros(model.nt_rxn,1);
     Vuptake(strcmpi(model.rxns,'exGLC')) = 20;%mmol/gDCW.h
-    Vuptake(strcmpi(model.rxns,'exO2')) = 1000;%mmole/gDCW.h
+    Vuptake(strcmpi(model.rxns,'exO2')) = 10;%mmole/gDCW.h
     Vuptake(strcmpi(model.rxns,'exH2O')) = 40;
     Vuptake(strcmpi(model.rxns,'exPI')) = 50;
     model.Vuptake = Vuptake;

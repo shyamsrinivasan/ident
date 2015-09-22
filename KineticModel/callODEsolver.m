@@ -22,6 +22,8 @@ function [Sol,finalSS,status] = callODEsolver(model,pmeter,variable,initialSol,b
 %                                              batch.init{2},1,initialSol);
 initval = initConcentration(model,batch,variable,1,batch.init{1},...
                             batch.init{2},initialSol);
+initval = zeros(model.nt_metab,1);  
+initval(initval==0) = 0.001;
 initflux = initFlux(model,pmeter,initval,1);
 
 data.flux = initflux;                                        

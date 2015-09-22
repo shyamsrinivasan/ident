@@ -174,6 +174,8 @@ for i = 1:1
     flux(vpyk) = ConvinienceKinetics(model,pvec,met,find(vpyk));
     knidx(vpyk) = 1;
     
+    %testing to see whether thermodynamics is the problem
+%     pvec.Vmax(1:model.nt_rxn) = 1;
     %solve model to obtain concentrations
     [model,batch,solverP] = initModel(model,150);
     variable.MC = met;
