@@ -13,7 +13,8 @@ model = initModel(FBAmodel);
 initC = initConcentration(model);
 for ismp = 1:nsmp
     MC = initC;
-    [MC,KVl] = sampleMet(model,MC);    
+    [MC,KVl] = sampleMet(model,MC); 
+    MC = (sample_metabolites(model,MC))*1e-3;
     [ensb,flag1,flag2] = build_ensemble(1,model,pvector,MC,KVl);
 %     if ~flag
         %Resample Kms        
@@ -23,11 +24,11 @@ for ismp = 1:nsmp
 %     end
     Fvar1(ismp) = flag1;
     Fvar2(ismp) = flag2;
-    if flag1 == 1 %&& flag2 ~= 1
+%     if flag1 == 1 %&& flag2 ~= 1
         %estimate Vmax 
         ensb.model1 = estimateVmax(model,EScell{ismp},MC);
         variable.model1.MC = MC;
-    end
+%     end
     
 end
 

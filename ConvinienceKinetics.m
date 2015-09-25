@@ -33,15 +33,21 @@ flux = zeros(n_rxn,1);
 vcontr = zeros(n_rxn,1);
 
 % vcontr = zeros(nt_rxn,1);
-h2oid = strcmpi(model.mets,'h2o[c]');
+h2o = find(strcmpi(model.mets,'h2o[c]'));
+pic = find(strcmpi(model.mets,'pi[c]'));
+pie = find(strcmpi(model.mets,'pi[e]'));
+hc = find(strcmpi(model.mets,'h[c]'));
+he = find(strcmpi(model.mets,'h[e]'));
+co2 = find(strcmpi(model.mets,'co2[c]'));
+
 
 for irxn = 1:length(Vind)
     subid = S(:,Vind(irxn)) < 0;%substrate
     prdid = S(:,Vind(irxn)) > 0;
     %Remove h2o from consideration of kinetics - Non limiting
 %     if any(subid(h2oid)) || any(prdid(h2oid))
-%         subid(h2oid) = 0;
-%         prdid(h2oid) = 0;
+        subid([h2o pic pie hc he]) = 0;
+        prdid([h2o pic pie hc he]) = 0;
 %     end
     if any(subid) || any(prdid)
         sub = MC(subid);
@@ -58,6 +64,7 @@ for irxn = 1:length(Vind)
                 %avoid divide by zero error
                 vthermo_(Vind(irxn)) = 1 - (kcat_bkw(Vind(irxn))/kcat_fwd(Vind(irxn)))*...
                                        prod(prd.^s_prd)/prod(sub.^s_sub);
+                vthermo_(Vind(irxn)) = 1;
             else
                 vthermo_(Vind(irxn)) = 0;
             end    
