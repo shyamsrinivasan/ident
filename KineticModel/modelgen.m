@@ -12,21 +12,21 @@ if fileid == -1
     return;
 end
 
-C = textscan(fileid, '%s%f%f%f%f%f%f%s%s%s%s%s%s%s%f%f',...
+C = textscan(fileid, '%s%s%s%f%f%f%f%f%f%f%f%s%s%s%s%s%s%f%f',...
                      'Delimiter', '\t',...
                      'TreatAsEmpty', {'None'},...
                      'HeaderLines', 1);
 fclose(fileid);
 
 model_data = struct();
-model_data.nt_rxn = length(C{8}(~cellfun('isempty',C{8})));
+model_data.nt_rxn = length(C{3}(~cellfun('isempty',C{3})));
 
 nt_rxn = model_data.nt_rxn;
 %enzs/Reaction Information 
 model.enzName = C{1}(~cellfun('isempty',C{1}));%enzs Name
-model.EC = C{2}(1:nt_rxn);     %Etotal Concentration
-model.Kcat = C{3}(1:nt_rxn);   %Reaction kcat 
-model.Vmax = C{4}(1:nt_rxn);   %Vmax
+model.EC = C{9}(1:nt_rxn);     %Etotal Concentration
+model.Kcat = C{8}(1:nt_rxn);   %Reaction kcat 
+model.Vmax = C{10}(1:nt_rxn);   %Vmax
 %model.Vss = C{7};
 %model.RxnMech = C{11};
 model.S = sparse(0,nt_rxn);
@@ -35,6 +35,8 @@ model.Klb = sparse(0,nt_rxn);
 model.Kub = sparse(0,nt_rxn);
 Keq = zeros(nt_rxn,1);
 model.delG = zeros(nt_rxn,1);
+model.delGlb = zeros(nt_rxn,1);
+model.delGub = zeros(nt_rxn,1);
 model.Vss = zeros(nt_rxn,1);
 model.mets = {};
 model.reversible = zeros(nt_rxn,1);
@@ -43,23 +45,36 @@ imetab = 1;
 for irxn = 1:nt_rxn
     ipt = 0; 
     %Vsteady state
-    if ~isempty(C{7}(irxn)) && ~isnan(C{7}(irxn))
-        model.Vss(irxn) = C{7}(irxn);
+    if ~isempty(C{11}(irxn)) && ~isnan(C{11}(irxn))
+        model.Vss(irxn) = C{11}(irxn);
     else
         %run FBA after building model
         %runFBA = true;
         model.Vss(irxn) = 1;
-    end    
-    %Keq if available else use delG
-    if ~isempty(C{5}(irxn)) && ~isnan(C{5}(irxn))
-        Keq(irxn) = C{5}(irxn);
-    elseif ~isempty(C{6}(irxn)) && ~isnan(C{6}(irxn))
-        Keq(irxn) = exp(-C{6}(irxn)/(0.008314*298.15));%delG = -RTlnKeq
-        model.delG(irxn) = C{6}(irxn);
+    end   
+    %use delG to obtain Keq
+    if ~isempty(C{4}(irxn)) && ~isnan(C{4}(irxn))
+        Keq(irxn) = exp(-C{4}(irxn)/(0.008314*298.15));%delG = -RTlnKeq
+        model.delG(irxn) = C{4}(irxn);
     else
         Keq(irxn) = 0;
     end    
-%     if ~isempty(C{5}(irxn)) && ~isnan(C{5}(irxn))        
+    if ~isempty(C{5}(irxn)) && ~isnan(C{5}{irxn})
+        model.delGlb(irxn) = C{5}(irxn);
+    end
+    if ~isempty(C{6}(irxn)) && ~isnan(C{6}{irxn})
+        model.delGub(irxn) = C{6}(irxn);
+    end
+    %Keq if available else use delG
+%     if ~isempty(C{5}(irxn)) && ~isnan(C{5}(irxn))
+%         Keq(irxn) = C{5}(irxn);
+%     elseif ~isempty(C{6}(irxn)) && ~isnan(C{6}(irxn))
+%         Keq(irxn) = exp(-C{6}(irxn)/(0.008314*298.15));%delG = -RTlnKeq
+%         model.delG(irxn) = C{6}(irxn);
+%     else
+%         Keq(irxn) = 0;
+%     end    
+% %     if ~isempty(C{5}(irxn)) && ~isnan(C{5}(irxn))        
 %         Keq(irxn) = C{5}(irxn);
 %     elseif ~isempty(C{6}(irxn)) && ~isnan(C{6}(irxn))
 %         Keq(irxn) = exp(-C{6}(irxn)/(0.008314*298.15));%delG = -RTlnKeq
@@ -69,9 +84,9 @@ for irxn = 1:nt_rxn
 % %         model.delG(irxn) = 0;
 %     end        
     %Building S and K matrices
-    rxnstring = C{8}{irxn};  
+    rxnstring = C{3}{irxn};  
     %separate terms into a vector
-    [par,Klb,Kub] = extract_par(C{12}{irxn});    
+    [par,Klb,Kub] = extract_par(C{13}{irxn});    
     
     if ~isempty(strfind(rxnstring, '<==>'))
 		eqsym = '<==>';
@@ -235,13 +250,13 @@ model.SItype = sparse(nt_metab,nt_rxn);%Regulation type
 model.KIact = sparse(nt_metab,nt_rxn);
 model.KIihb = sparse(nt_metab,nt_rxn);
 for irxn = 1:nt_rxn
-    [par,Klb,Kub] = extract_par(C{13}{irxn});%Acquire parameters as vectors
+    [par,Klb,Kub] = extract_par(C{16}{irxn});%Acquire parameters as vectors
     ireg = 0;       
-    actstring = strtrim(strrep(C{9}{irxn},'"',''));%Activators    
+    actstring = strtrim(strrep(C{14}{irxn},'"',''));%Activators    
     if ~isempty(actstring)         
         [model] = ident_regulator(model,actstring,1,par,Klb,Kub);%Activators        
     end    
-    inhstring = strtrim(strrep(C{10}{irxn},'"',''));%Inhibitors
+    inhstring = strtrim(strrep(C{15}{irxn},'"',''));%Inhibitors
     if ~isempty(inhstring)  
         %->Assign default parameters for inhibitors if par = [] or 
         %if length(par) < length(activators) + length(inhibitors)
@@ -375,9 +390,9 @@ end
 model_data.PTSind = pts_ind;
 
 % Reading in the concentration for each metabolite
-metabname = C{14}(~cellfun('isempty',C{14}));%Metabolite Name
-concLow = C{15}(1:length(metabname));%Metabolite concentration
-concHigh = C{16}(1:length(metabname));
+metabname = C{17}(~cellfun('isempty',C{17}));%Metabolite Name
+concLow = C{18}(1:length(metabname));%Metabolite concentration
+concHigh = C{19}(1:length(metabname));
 model_data.MClow = zeros(nt_metab,1);
 model_data.MChigh = zeros(nt_metab,1);
 for imc = 1:length(model_data.mets)
