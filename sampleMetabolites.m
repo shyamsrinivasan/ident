@@ -3,7 +3,9 @@ if nargin < 2
     mc = zeros(model.nt_metab,1);
 end
 
-delG = model.delSGr;
+delSG = model.delSGr;
+delGr = delGsample(model);
+
 R = 0.008314; %kJ/mol.K
 T = 298; %K
 RT = R*T;
@@ -115,87 +117,87 @@ vacald = strcmpi(model.rxns,'acald');
 valcd2x = strcmpi(model.rxns,'alcd2x');
 
 %glycolysis
-mcub(pyr)=mc(pep)*mc(adp)/mc(atp)*exp(-delG(vpyk)/RT);
+mcub(pyr)=mc(pep)*mc(adp)/mc(atp)*exp(-delSG(vpyk)/RT);
 mc(pyr) = random(makedist('Uniform','lower',mcub(pyr)/10,'upper',mcub(pyr)),1,1);
 
-mcub(g6p)=mc(glc)*mc(pep)/mc(pyr)*exp(-delG(vpts)/RT);
+mcub(g6p)=mc(glc)*mc(pep)/mc(pyr)*exp(-delSG(vpts)/RT);
 mc(g6p) = random(makedist('Uniform','lower',mcub(g6p)/100,'upper',mcub(g6p)/10),1,1);
 
-mcub(f6p) = mc(g6p)*exp(-delG(vpgi)/RT);
+mcub(f6p) = mc(g6p)*exp(-delSG(vpgi)/RT);
 mc(f6p) = random(makedist('Uniform','lower',mcub(f6p)/10,'upper',mcub(f6p)),1,1);
 
-mcub(fdp) = mc(f6p)*exp(-delG(vpfk)/RT);
+mcub(fdp) = mc(f6p)*exp(-delSG(vpfk)/RT);
 mc(fdp) = random(makedist('Uniform','lower',mcub(fdp)/10,'upper',mcub(fdp)),1,1);
 
-mcub(g3p) = min(mc(fdp)/mc(dhap)*exp(-delG(vfba)/RT),...
-                mc(dhap)*exp(-delG(vtpi)/RT));
+mcub(g3p) = min(mc(fdp)/mc(dhap)*exp(-delSG(vfba)/RT),...
+                mc(dhap)*exp(-delSG(vtpi)/RT));
 mc(g3p) = random(makedist('Uniform','lower',mcub(g3p)/10,'upper',mcub(g3p)),1,1);
 
-mcub(dpg) = mc(g3p)*mc(nad)/mc(nadh)*exp(-delG(vgapd)/RT);
+mcub(dpg) = mc(g3p)*mc(nad)/mc(nadh)*exp(-delSG(vgapd)/RT);
 mc(dpg) = random(makedist('Uniform','lower',mcub(dpg)/10,'upper',mcub(dpg)),1,1);
 
-mcub(pg3) = mc(dpg)*mc(adp)/mc(atp)*exp(-delG(vpgk)/RT);
+mcub(pg3) = mc(dpg)*mc(adp)/mc(atp)*exp(-delSG(vpgk)/RT);
 mc(pg3) = random(makedist('Uniform','lower',mcub(pg3)/10,'upper',mcub(pg3)),1,1);
 
-mcub(pg2) = mc(pg3)*exp(-delG(vpgm)/RT);
+mcub(pg2) = mc(pg3)*exp(-delSG(vpgm)/RT);
 mc(pg2) = random(makedist('Uniform','lower',mcub(pg2)/10,'upper',mcub(pg2)),1,1);
 
 %pentose phosphate
-mc(pgl) = mc(g6p)*mc(nadp)/mc(nadph)*exp(-delG(vg6pd)/RT);
+mc(pgl) = mc(g6p)*mc(nadp)/mc(nadph)*exp(-delSG(vg6pd)/RT);
 %mc(pgl)  = random(makedist('Uniform','lower',mcub(pgl)/10,'upper',mcub(pgl),1,1));
 
-mc(pgc) = mc(pgl)*exp(-delG(vpgl)/RT);
+mc(pgc) = mc(pgl)*exp(-delSG(vpgl)/RT);
 % mc(pgc) = random(makedist('Uniform','lower',mcub(pgc)/10,'upper',mcub(pgc),1,1));
 
-mc(ru5p) = mc(pgc)*mc(nadp)/mc(nadph)*exp(-delG(vgnd)/RT);
+mc(ru5p) = mc(pgc)*mc(nadp)/mc(nadph)*exp(-delSG(vgnd)/RT);
 % mc(ru5p) = random(makedist('Uniform','lower',mcub(ru5p)/10,'upper',mcub(ru5p),1,1));
 
-mclb(x5p) = mc(ru5p)*exp(-delG(vrpe)/RT);
+mclb(x5p) = mc(ru5p)*exp(-delSG(vrpe)/RT);
 mc(x5p) = random(makedist('Uniform','lower',mclb(x5p),'upper',mclb(x5p)*10),1,1);
 
-mclb(r5p) = mc(ru5p)*exp(-delG(vrpi)/RT);
+mclb(r5p) = mc(ru5p)*exp(-delSG(vrpi)/RT);
 mc(r5p) = random(makedist('Uniform','lower',mclb(r5p),'upper',mclb(r5p)*10),1,1);
 
-mclb(s7p) = mc(r5p)*mc(x5p)/mc(g3p)*exp(-delG(vtkt1)/RT);
+mclb(s7p) = mc(r5p)*mc(x5p)/mc(g3p)*exp(-delSG(vtkt1)/RT);
 mc(s7p) = random(makedist('Uniform','lower',mclb(s7p),'upper',mclb(s7p)*10),1,1);
 
-mcub(e4p) = mc(f6p)*mc(g3p)/mc(x5p)*exp(delG(vtkt2)/RT);
-mclb(e4p) = mc(g3p)*mc(s7p)/mc(f6p)*exp(-delG(vtala)/RT);
+mcub(e4p) = mc(f6p)*mc(g3p)/mc(x5p)*exp(delSG(vtkt2)/RT);
+mclb(e4p) = mc(g3p)*mc(s7p)/mc(f6p)*exp(-delSG(vtala)/RT);
 mc(e4p) = random(makedist('Uniform','lower',mclb(e4p),'upper',mcub(e4p)),1,1);
 
 %tca cycle
-mclb(oaa) = mc(cit)*mc(coa)/mc(accoa)*exp(delG(vcs)/RT);
-mcub(oaa) = mc(mal)*mc(nad)/mc(nadh)*exp(delG(vmdh)/RT);
+mclb(oaa) = mc(cit)*mc(coa)/mc(accoa)*exp(delSG(vcs)/RT);
+mcub(oaa) = mc(mal)*mc(nad)/mc(nadh)*exp(delSG(vmdh)/RT);
 mc(oaa) = random(makedist('Uniform','lower',mclb(oaa),'upper',mcub(oaa)),1,1);
 
-mcub(icit) = mc(cit)*exp(-delG(vacont)/RT);
+mcub(icit) = mc(cit)*exp(-delSG(vacont)/RT);
 mc(icit) = random(makedist('Uniform','lower',mcub(icit)/10,'upper',mcub(icit)),1,1);
 
-mcub(akg) = mc(icit)*mc(nadp)/mc(nadph)*exp(-delG(vicd)/RT);
+mcub(akg) = mc(icit)*mc(nadp)/mc(nadph)*exp(-delSG(vicd)/RT);
 mc(akg) = random(makedist('Uniform','lower',mcub(akg)/10,'upper',mcub(akg)),1,1);
 
 %glyoxylate
-mcub(glx) = mc(icit)/mc(suc)*exp(-delG(vicl)/RT);
-mclb(glx) = mc(coa)*mc(mal)/mc(accoa)*exp(delG(vmals)/RT);
+mcub(glx) = mc(icit)/mc(suc)*exp(-delSG(vicl)/RT);
+mclb(glx) = mc(coa)*mc(mal)/mc(accoa)*exp(delSG(vmals)/RT);
 mc(glx) = random(makedist('Uniform','lower',mclb(glx),'upper',mcub(glx)),1,1);
 
 %pyruvate metabolism
-mcub(form) = mc(coa)*mc(pyr)/mc(accoa)*exp(-delG(vpfl)/RT);
+mcub(form) = mc(coa)*mc(pyr)/mc(accoa)*exp(-delSG(vpfl)/RT);
 mc(form) = random(makedist('Uniform','lower',mcub(form)/10,'upper',mcub(form)),1,1);
 
-mcub(lac) = mc(pyr)*mc(nadh)/mc(nad)*exp(-delG(vldh)/RT);
+mcub(lac) = mc(pyr)*mc(nadh)/mc(nad)*exp(-delSG(vldh)/RT);
 mc(lac) = random(makedist('Uniform','lower',mcub(lac)/10,'upper',mcub(lac)),1,1);
 
-mcub(actp) = mc(accoa)/mc(coa)*exp(-delG(vpta)/RT);
+mcub(actp) = mc(accoa)/mc(coa)*exp(-delSG(vpta)/RT);
 mc(actp) = random(makedist('Uniform','lower',mcub(actp)/10,'upper',mcub(actp)),1,1);
 
-mcub(ac) = mc(actp)*mc(adp)/mc(atp)*exp(delG(vack)/RT);
+mcub(ac) = mc(actp)*mc(adp)/mc(atp)*exp(delSG(vack)/RT);
 mc(ac) = random(makedist('Uniform','lower',mcub(ac)/10,'upper',mcub(ac)),1,1);
 
-mcub(acald) = mc(accoa)*mc(nadh)/(mc(coa)*mc(nad))*exp(delG(vacald)/RT);
+mcub(acald) = mc(accoa)*mc(nadh)/(mc(coa)*mc(nad))*exp(delSG(vacald)/RT);
 mc(acald) = random(makedist('Uniform','lower',mcub(acald)/10,'upper',mcub(acald)),1,1);
 
-mcub(etoh) = mc(acald)*mc(nadh)/mc(nad)*exp(-delG(valcd2x)/RT);
+mcub(etoh) = mc(acald)*mc(nadh)/mc(nad)*exp(-delSG(valcd2x)/RT);
 mc(etoh) = random(makedist('Uniform','lower',mcub(etoh)/10,'upper',mcub(etoh)),1,1);
 
 %convert M to mM

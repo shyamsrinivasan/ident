@@ -1,9 +1,9 @@
-function [vProdLPmax,vProdLPmin,vLPmax,vLPmin,Maxflag,Minflag,model] =...
-         solveLP(model,prod,enz,bounds,prxnid,fixgrowth)
-if nargin < 6
+function [vProdLPmax,vLPmax,vProdLPmin,vLPmin,Maxflag,Minflag,model] =...
+         solveLP(model,bounds,prxnid,fixgrowth)
+if nargin < 4
     fixgrowth = 0;
 end
-if nargin < 4
+if nargin < 2
     nr = size(model.S,2);
     vl = zeros(nr,1);
     vl(vl==0) = -100;
@@ -48,26 +48,11 @@ if isfield(bounds,'Vuptake')
     if ~isempty(bounds.Vuptake)
         vl(strcmpi(model.rxns,'exGLC')) = -bounds.Vuptake(strcmpi(model.rxns,'exGLC'));        
         vl(strcmpi(model.rxns,'exO2')) = -bounds.Vuptake(strcmpi(model.rxns,'exO2'));
-        vu(strcmpi(model.rxns,'exGLC')) = bounds.Vuptake(strcmpi(model.rxns,'exGLC'));        
-        vu(strcmpi(model.rxns,'exO2')) = bounds.Vuptake(strcmpi(model.rxns,'exO2'));
+        vu(strcmpi(model.rxns,'exGLC')) = -bounds.Vuptake(strcmpi(model.rxns,'exGLC'));        
+        vu(strcmpi(model.rxns,'exO2')) = -bounds.Vuptake(strcmpi(model.rxns,'exO2'));
     end
 end
 
-%Set uptake to ireversible
-% if ~isempty(model.Vupind)
-%     vl(model.Vupind) = 0;
-%     vu(model.Vupind) = 100;
-% end
-%Set VFex to irreversible
-% if ~isempty(model.VFex)
-%     vl(model.VFex) = 0;
-%     vu(model.VFex) = 100;
-% end
-%Set Vex to irreversible
-% if ~isempty(model.VFex)
-%     vl(model.Vex) = 0;
-%     vu(model.Vex) = 100;
-% end
 %Growth Fluxes
 if fixgrowth
     if prxnid ~= model.bmrxn
@@ -79,35 +64,6 @@ if fixgrowth
 else
     vl(model.bmrxn) = 0;    
 end
-% vl(strcmpi(model.rxns,'h2oex')) = -100;
-% vl(strcmpi(model.rxns,'h2oout')) = -100;
-% 
-% vl(strcmpi(model.rxns,'hex')) = -100;
-% vl(strcmpi(model.rxns,'hout')) = -100;
-% 
-% vl(strcmpi(model.rxns,'piex')) = -100;
-% vl(strcmpi(model.rxns,'piout')) = -100;
-% 
-% vl(strcmpi(model.rxns,'coaex')) = -100;
-% vl(strcmpi(model.rxns,'coaout')) = -100;
-% 
-% vl(strcmpi(model.rxns,'nadex')) = -100;
-% vl(strcmpi(model.rxns,'nadout')) = -100;
-% 
-% vl(strcmpi(model.rxns,'nadhex')) = -100;
-% vl(strcmpi(model.rxns,'nadhout')) = -100;
-% 
-% vu(strcmpi(model.rxns,'pyrex')) = 0;
-% vu(strcmpi(model.rxns,'pyrout')) = 0;
-
-% vu(strcmpi(model.rxns,'lacex')) = 0;
-% vu(strcmpi(model.rxns,'lacout')) = 0;
-
-%Exchnage Reactions Cannot occur in reverse
-% rxnid = strcmpi('PPS',model.rxns);
-% vl(rxnid) = 0;
-% vu(rxnid) = 0;
-%Default Bounds - Reversible reactions
 
 b = zeros(nm,1);
 %Exchange of Produ ct

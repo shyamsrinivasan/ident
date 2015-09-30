@@ -1,9 +1,10 @@
-function ensb = buildmodels(model,pvec,mc)
+function pvec = buildmodels(model,pvec,mc)
 
 %reactions to consider for kinetics other than Vind
 Vind = [model.Vind...
         find(strcmpi(model.rxns,'GLCpts'))...
-        find(strcmpi(model.rxns,'THD2'))];
+        find(strcmpi(model.rxns,'THD2'))...
+        find(strcmpi(model.rxns,'NADH16'))];
 
 Vind = setdiff(Vind,find(strcmpi(model.rxns,'ATPM')));
 
@@ -11,21 +12,23 @@ pic = find(strcmpi(model.mets,'pi[c]'));
 pie = find(strcmpi(model.mets,'pi[e]'));
 hc = find(strcmpi(model.mets,'h[c]'));
 he = find(strcmpi(model.mets,'h[e]'));
-q8 = find(strcmpi(model.mets,'q8[c]'));
-q8h2 = find(strcmpi(model.mets,'q8h2[c]'));
 h2o = find(strcmpi(model.mets,'h2o[c]'));
+% q8 = find(strcmpi(model.mets,'q8[c]'));
+% q8h2 = find(strcmpi(model.mets,'q8h2[c]'));
 
 nrxn = length(Vind);
 ntrxn = model.nt_rxn;
 ntmet = model.nt_metab;
 
 %backup known parameters from pvec
+newp = struct();
 newp.K = pvec.K;
 newp.Kind = sparse(ntmet,ntrxn);
 newp.Vmax = pvec.Vmax;
-newp.kfwd = pvec.kfwd;
-newp.kbkw = pvec.bkw;
+newp.kfwd = pvec.kcat_fwd;
+newp.kbkw = pvec.kcat_bkw;
 
+pvec.Kin = sparse(ntmet,ntrxn);
 S = model.S;
 
 for irxn = 1:nrxn
@@ -36,8 +39,8 @@ for irxn = 1:nrxn
     Kpcol = zeros(length(find(prid)),1);
     
     %no parameters for cofactors - assumed abundant 
-    sbid([pic pie hc he q8 q8h2 h2o]) = 0;
-    prid([pic pie hc he q8 q8h2 h2o]) = 0;
+    sbid([pic pie hc he h2o]) = 0;
+    prid([pic pie hc he h2o]) = 0;
     
     nsb = length(find(sbid));
     npr = length(find(prid));
@@ -49,7 +52,7 @@ for irxn = 1:nrxn
     
     %determine kientic parameters from concentration and sigma
     %substrates
-    if ~ismepty(find(sbid,1))
+    if ~isempty(find(sbid,1))
         sb_rat = sigma(1:nsb)./(1-sigma(1:nsb));
         Ksb = mc(logical(sbid))./sb_rat;
         Kscol(logical(sbid),1) = pvec.K(logical(sbid),Vind(irxn));
@@ -72,9 +75,16 @@ for irxn = 1:nrxn
     
     %forward and backward catalytic rates
     %kfwd and kbkw
-    %kfwd = kcat
-    %kbkw is sampled basedon reaction directionality from FBA for
+    %kfwd or kbkw is sampled basedon reaction directionality from FBA for
     %thermodynamic consistency
+    %sampling done only for unknown values
+    pvec = samplekcat(pvec,sbid,prid,Vind(irxn),mc);
+    
+    pvec.Vmax(Vind(irxn)) = 1;
+end
+pvec.kcat_fwd(model.VFex) = 0;
+pvec.kcat_bkw(model.VFex) = 0;
+
     
     
             

@@ -3,7 +3,7 @@
 %Describing the ODE dXdt = data.S*flux(X,p)
 %September 2014
 %**************************************************************************
-function [dXdt,flag,newdata] = ODEmodel(t,Y,data,model,pmeter)
+function [dXdt,flag,newdata] = ODEmodel(t,y,data,model,pvec)
 % callODEmodel = @(t,Y,data)ODEmodel(t,Y,model,pmeter);
 bmind = model.bmrxn;
 % Mbio = strcmpi('biomass',model.mets);
@@ -47,7 +47,8 @@ dXdt = zeros(nt_m,1);%[Metabolites;Biomass]
 
 %% Fluxes 
 %initial flux
-flux = calc_flux(model,pmeter,Y);
+% flux = calc_flux(model,pmeter,Y);
+flux = iflux(model,pvec,y);
 
 % %% %Biomass flux - growth rate
 % % gr_flux = 0.8*prod(Y(Mbio_ind)./([.8;.1]+Y(Mbio_ind)));
@@ -65,7 +66,7 @@ mu = flux(bmind);
 % plotconc_timecourse(Y,t,model)
 %% %Intracellular Metabolites
 %Cytosolic
-dXdt(1:nin_m) = model.S(1:nin_m,:)*flux-mu*Y(1:nin_m);
+dXdt(1:nin_m) = model.S(1:nin_m,:)*flux-mu*y(1:nin_m);
 dXdt(nin_m+1:nt_m) = model.S(nin_m+1:nt_m,:)*flux;%-mu*Y(nin_m+1:nt_m);
 
 %ATP, AMP, ADP
@@ -110,14 +111,14 @@ dXdt(nin_m+1:nt_m) = model.S(nin_m+1:nt_m,:)*flux;%-mu*Y(nin_m+1:nt_m);
 %Biomass 
 % dXdt(end) = data.S(end,:)*flux;
 
-if any(Y(Y<0))
+if any(y(y<0))
     flag = -1;
 else
     flag = 0;
 end
 newdata = data;
 newdata.flux = flux;
-newdata.Y = Y;
+newdata.Y = y;
 newdata.t = t;
 end
 

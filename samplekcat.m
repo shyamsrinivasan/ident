@@ -1,21 +1,33 @@
-function kcatbkw = samplekcat(delGlb,delGub,delG,rdir,sbid,prid,mc)
+function pvec = samplekcat(pvec,sbid,prid,irxn,mc)
 
-%sample delGr
-%positive direction
-if rdir > 0
-    delG = random(makedist('Uniform','lower',delGlb,'upper',0),1,1);
-elseif rdir < 0
-    delG = random(makedist('Uniform','lower',0,'upper',delGub),1,1);
-end
+delGr = pvec.delGr(irxn);     
+kcatfwd = pvec.kcat_fwd(irxn);
+kcatbkw = pvec.kcat_bkw(irxn);
+K = pvec.K;
 
-%reverse kcat for reversible reactions
+R = 0.008314; %kJ/mol.K
+T = 298; %K
+RT = R*T;
+
 %normalized substrates
 nrm_sb = prod(mc(sbid)./K(sbid,irxn));
 
 %normalized product
 nrm_pr = prod(mc(prid)./K(prid,irxn));
 
-kcatbkw = kcatfwd*nrm_sb/nrm_pr*exp(delG/RT);
+if isnan(kcatfwd)
+    pvec.kcat_fwd(irxn) = nrm_pr/nrm_sb*kcatbkw*exp(-delGr/RT);
+end
+if isnan(kcatbkw)
+    pvec.kcat_bkw(irxn) = nrm_sb/nrm_pr*kcatfwd*exp(delGr/RT);
+end
+
+    
+
+irxn
+
+
+
     
     
 

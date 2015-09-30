@@ -7,8 +7,8 @@ end
 S = model.S;
 nrxn = model.nt_rxn;
 K = pvec.K;
-kfwd = pvec.kfwd;
-kbkw = pvec.kbkw;
+kfwd = pvec.kcat_fwd;
+kbkw = pvec.kcat_bkw;
 Vmax = pvec.Vmax;
 
 vflux = zeros(nrxn,1); 
@@ -20,23 +20,24 @@ pic = find(strcmpi(model.mets,'pi[c]'));
 pie = find(strcmpi(model.mets,'pi[e]'));
 hc = find(strcmpi(model.mets,'h[c]'));
 he = find(strcmpi(model.mets,'h[e]'));
-q8 = find(strcmpi(model.mets,'q8[c]'));
-q8h2 = find(strcmpi(model.mets,'q8h2[c]'));
+% q8 = find(strcmpi(model.mets,'q8[c]'));
+% q8h2 = find(strcmpi(model.mets,'q8h2[c]'));
 h2o = find(strcmpi(model.mets,'h2o[c]'));
+co2 = find(strcmpi(model.mets,'co2[c]'));
 
 for irxn = 1:length(Vind)
     sbid = S(:,Vind(irxn))<0;
-    prid = S(:,Vind(ikrxn))>0;
+    prid = S(:,Vind(irxn))>0;
     Sb = S(sbid,Vind(irxn));
-    Sp = -S(prid,Vind(ikrxn));
+    Sp = -S(prid,Vind(irxn));
     
-    sbid([pic pie hc he q8 q8h2 h2o]) = 0;
-    prid([pic pie hc he q8 q8h2 h2o]) = 0;
+    sbid([pic pie hc he h2o co2]) = 0;
+    prid([pic pie hc he h2o co2]) = 0;
     
     if any(sbid) && any(prid)
         %Numerator - 1.6
-        nr_flux = kfwd*(prod(MC(sbid)./K(sbid,Vind(irxn))) -...
-                  (kbkw/kfwd)*prod(MC(prid)./K(prid,Vind(irxn))));
+        nr_flux = kfwd(irxn)*prod(MC(sbid)./K(sbid,Vind(irxn))) -...
+                  kbkw(irxn)*prod(MC(prid)./K(prid,Vind(irxn)));
         %Denominator - 1.6
         %dr_sb
         dr_sb = 1+MC(sbid)./K(sbid,Vind(irxn));
@@ -53,9 +54,10 @@ for irxn = 1:length(Vind)
             end
         end
         dr_flux = prod(dr_sb)+prod(dr_pr)-1;
-        vflux(Vind(irxn)) = nr_flux/(dr_flux-1);
+        vflux(Vind(irxn)) = nr_flux/dr_flux;
     else
         vflux(Vind(irxn)) = 0;
     end
     flux(Vind(irxn)) = Vmax(Vind(irxn))*vflux(Vind(irxn));
 end
+flux = flux(Vind);
