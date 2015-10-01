@@ -1,4 +1,4 @@
-function flux = CKinetics(model,pvec,MC,Vind)
+function [flux,vflux] = CKinetics(model,pvec,mc,Vind)
 if nargin < 5
     useVmax = 1;
 else
@@ -36,28 +36,29 @@ for irxn = 1:length(Vind)
     
     if any(sbid) && any(prid)
         %Numerator - 1.6
-        nr_flux = kfwd(irxn)*prod(MC(sbid)./K(sbid,Vind(irxn))) -...
-                  kbkw(irxn)*prod(MC(prid)./K(prid,Vind(irxn)));
+        nr_flux = kfwd(Vind(irxn))*prod(mc(sbid)./K(sbid,Vind(irxn))) -...
+                  kbkw(Vind(irxn))*prod(mc(prid)./K(prid,Vind(irxn)));
         %Denominator - 1.6
         %dr_sb
-        dr_sb = 1+MC(sbid)./K(sbid,Vind(irxn));
+        dr_sb = 1+mc(sbid)./K(sbid,Vind(irxn));
         for j = 1:length(find(sbid))
             for si = 2:Sb(j)
                 dr_sb(j) = dr_sb(j) + dr_sb(j)^si;                
             end
         end
         %dr_pr
-        dr_pr = 1+MC(prid)./K(prid,Vind(irxn));
+        dr_pr = 1+mc(prid)./K(prid,Vind(irxn));
         for j = 1:length(find(prid))
             for si = 2:Sp(j)
                 dr_pr(j) = dr_pr(j)+dr_pr(j)^si;
             end
         end
         dr_flux = prod(dr_sb)+prod(dr_pr)-1;
-        vflux(Vind(irxn)) = nr_flux/dr_flux;
+        vflux(Vind(irxn)) = scale_flux(nr_flux/dr_flux);
     else
         vflux(Vind(irxn)) = 0;
     end
     flux(Vind(irxn)) = Vmax(Vind(irxn))*vflux(Vind(irxn));
 end
 flux = flux(Vind);
+vflux = vflux(Vind);

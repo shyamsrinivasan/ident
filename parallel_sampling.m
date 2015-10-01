@@ -35,3 +35,5 @@ else
     mc = smp{1,1};
     pvec.delGr = smp{1,2};
 end
+load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\ecoliN1_MC1.mat');
+load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\ecoliN1_pvec1.mat');

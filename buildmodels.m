@@ -30,6 +30,8 @@ newp.kbkw = pvec.kcat_bkw;
 
 pvec.Kin = sparse(ntmet,ntrxn);
 S = model.S;
+check = zeros(ntrxn,1);
+flux = zeros(ntrxn,1);
 
 for irxn = 1:nrxn
     sbid = S(:,Vind(irxn))<0;    
@@ -78,9 +80,40 @@ for irxn = 1:nrxn
     %kfwd or kbkw is sampled basedon reaction directionality from FBA for
     %thermodynamic consistency
     %sampling done only for unknown values
+    fprintf('irxn = %d \t delG = %3.6g\n',Vind(irxn),...
+             pvec.delGr(Vind(irxn)));
     pvec = samplekcat(pvec,sbid,prid,Vind(irxn),mc);
     
     pvec.Vmax(Vind(irxn)) = 1;
+    
+    %#check for vss and delGr direction    
+    flux(Vind(irxn)) = CKinetics(model,pvec,mc,Vind(irxn));
+    if pvec.delGr(Vind(irxn)) ~= 0
+        if flux(Vind(irxn))*pvec.delGr(Vind(irxn))<0
+            check(Vind(irxn)) = 1;
+        else
+            check(Vind(irxn)) = -1;
+        end    
+    else
+        if flux(Vind(irxn))*pvec.delGr(Vind(irxn))<1e-6
+            check(Vind(irxn)) = 1;
+        else
+            check(Vind(irxn)) = -1;
+        end
+    end    
+end
+
+%restore Vmax from backup
+pvec.Vmax = newp.Vmax;
+
+%estimate Vmax
+if all(check(Vind)>0)
+    pvec.Vmax(pvec.delGr==0) = 0;
+    pvec = findVmax(model,pvec,mc);
+else
+    fprintf('Thermodynamically infeasible parameters\n');
+    fprintf('Discontinuing\n');
+    return
 end
 pvec.kcat_fwd(model.VFex) = 0;
 pvec.kcat_bkw(model.VFex) = 0;

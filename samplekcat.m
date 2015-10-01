@@ -22,9 +22,7 @@ if isnan(kcatbkw)
     pvec.kcat_bkw(irxn) = nrm_sb/nrm_pr*kcatfwd*exp(delGr/RT);
 end
 
-    
-
-irxn
+pvec.kcat_fwd(irxn)*nrm_sb - pvec.kcat_bkw(irxn)*nrm_pr
 
 
 
