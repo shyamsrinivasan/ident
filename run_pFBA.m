@@ -38,11 +38,11 @@ if vLPmin.flag > 0
     while ir<=(length(modelIrrev.rxns)-1)
         if ir<(length(modelIrrev.rxns)-1)
             if irrev2rev(ir)==irrev2rev(ir+1);
-                irrev2rev(ir)
+%                 irrev2rev(ir)
                 Vss(irrev2rev(ir))=vLPmin.v(ir)-vLPmin.v(ir+1);
                 ir = ir+2;
             else
-                irrev2rev(ir)
+%                 irrev2rev(ir)
                 Vss(irrev2rev(ir)) = vLPmin.v(ir);
                 ir = ir+1;
             end

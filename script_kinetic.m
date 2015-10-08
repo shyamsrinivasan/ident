@@ -13,7 +13,7 @@ solvemetLP(FBAmodel)
 
 x = initialsample(FBAmodel);
 
-%sample initial metabolite concentrations for estimating kientic parameters
+%samwple initial metabolite concentrations for estimating kientic parameters
 [mc,parameter] = parallel_sampling(FBAmodel,parameter);
 
 %estimate kinetic parameters in an ensemble

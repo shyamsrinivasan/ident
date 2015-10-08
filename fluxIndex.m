@@ -1,5 +1,11 @@
 % function [Vind,Vuptake,VFup,VFex,Vex,bmrxn,Vup,Vdn] = fluxIndex(model,nt_rxn,newS)
 function [Vind,VFex,Vex,bmrxn] = fluxIndex(model,nt_rxn,newS)
+if nargin<3
+    newS = model.S;
+end
+if nargin<2
+    nt_rxn = size(newS,2);
+end
 %external mets
 % exind = ~cellfun('isempty',regexp(model.mets,'\w(?:\[e\])$'));
 

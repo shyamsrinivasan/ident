@@ -32,7 +32,7 @@ switch lower(option)
         bounds.vl(logical(model.rev)) = -100;
         bounds.vu = zeros(model.nt_rxn,1);          
         bounds.vu(bounds.vu==0) = 100;
-        [vLPmax,vLPmin,model] = solveLP(model,bounds,model.bmrxn);
+        [vLPmax,~,model] = solveLP(model,bounds,model.bmrxn);
         model.vl(model.c==1) = -vLPmax.obj;
         
         %claculate pFBA fluxes and irreversible model
