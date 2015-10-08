@@ -9,6 +9,8 @@ rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\Kine
 %assign initial fluxes and calculate FBA fluxes for direction
 FBAmodel = FBAfluxes(FBAmodel,'pfba');
 
+solvemetLP(FBAmodel)
+
 x = initialsample(FBAmodel);
 
 %sample initial metabolite concentrations for estimating kientic parameters

@@ -15,6 +15,8 @@ while i <=npoints/2
             model.c = sparse(i,1,1,nrxns,1);
         end
         model.osense=maxMin;
+        
+        %determine max or min
         sol = solverCobraLP(model)
         x = sol.full;
         
