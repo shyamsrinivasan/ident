@@ -20,6 +20,20 @@ vpfk = strcmpi(model.rxns,'pfk');
 vfba = strcmpi(model.rxns,'fba');
 vtpi = strcmpi(model.rxns,'tpi');
 vgapd = strcmpi(model.rxns,'gapd');
+vpgk = strcmpi(model.rxns,'pgk');
+vpgm = strcmpi(model.rxns,'pgm');
+veno = strcmpi(model.rxns,'eno');
+vppc = strcmpi(model.rxns,'ppc');
+vpdh = strcmpi(model.rxns,'pdh');
+vack = strcmpi(model.rxns,'ackr');
+vpta = strcmpi(model.rxns,'ptar');
+vcs = strcmpi(model.rxns,'cs');
+vacont = strcmpi(model.rxns,'aconta');
+vicd = strcmpi(model.rxns,'icdhyr');
+vakgd = strcmpi(model.rxns,'akgdh');
+vsuca = strcmpi(model.rxns,'sucoas');
+vfum = strcmpi(model.rxns,'fum');
+vmdh = strcmpi(model.rxns,'mdh');
 
 g6p = strcmpi(model.mets,'g6p[c]');
 pgl = strcmpi(model.mets,'6pgl[c]');
@@ -33,12 +47,26 @@ f6p = strcmpi(model.mets,'f6p[c]');
 fdp = strcmpi(model.mets,'fdp[c]');
 dhap = strcmpi(model.mets,'dhap[c]');
 g3p = strcmpi(model.mets,'g3p[c]');
+dpg = strcmpi(model.mets,'13dpg[c]');
+pg3 = strcmpi(model.mets,'3pg[c]');
+pg2 = strcmpi(model.mets,'2pg[c]');
+pep = strcmpi(model.mets,'pep[c]');
+pyr = strcmpi(model.mets,'pyr[c]');
+ac = strcmpi(model.mets,'ac[c]');
+actp = strcmpi(model.mets,'actp[c]');
+accoa = strcmpi(model.mets,'accoa[c]');
+cit = strcmpi(model.mets,'cit[c]');
+icit = strcmpi(model.mets,'icit[c]');
+akg = strcmpi(model.mets,'akg[c]');
+suca = strcmpi(model.mets,'succoa[c]');
+fum = strcmpi(model.mets,'fum[c]');
+mal = strcmpi(model.mets,'mal[c]');
+
+%calculate some Vmax's from FBA Vss
+pvec = VmaxFBA(model,pvec,mc);
 
 %known fluxes
-% knflux = {'G6PDH2r','me1','mdh'};
-% knflxid = cellfun(@(x)strcmpi(model.rxns,x),knflux,'UniformOutput',false);
-% knflxid = cell2mat(cellfun(@find,knflxid,'UniformOutput',false));
-knflxid = logical(pvec.Vmax==0);
+knflxid = logical(~isnan(pvec.Vmax));
 knid = false(model.nt_rxn,1);
 knid(knflxid) = 1;
 
@@ -90,22 +118,61 @@ nr = vf(vrpi)+vf(vgnd)-mu*mc(ru5p);
 
 [vf,pvec,knid] = linearfluxes(model,vf,mc,mu,knid,pvec,g3p,vgapd);
 
-%lower glycolysis 
+%lower glycolysis I
 [vf,pvec,knid] = linearfluxes(model,vf,mc,mu,knid,pvec,dpg,vpgk);
 
 [vf,pvec,knid] = linearfluxes(model,vf,mc,mu,knid,pvec,pg3,vpgm);
 
 [vf,pvec,knid] = linearfluxes(model,vf,mc,mu,knid,pvec,pg2,veno);
 
-%how to calculate v(pyk) from assumed Vmax?
 [vf,pvec,knid] = linearfluxes(model,vf,mc,mu,knid,pvec,pep,vppc);
 
+[vf,pvec,knid] = linearfluxes(model,vf,mc,mu,knid,pvec,pyr,vpdh);
+
+%acetate
+[vf,pvec,knid] = linearfluxes(model,vf,mc,mu,knid,pvec,ac,vack);
+
+[vf,pvec,knid] = linearfluxes(model,vf,mc,mu,knid,pvec,actp,vpta);
+
+%lower glycolysis II
+[vf,pvec,knid] = linearfluxes(model,vf,mc,mu,knid,pvec,accoa,vcs);
+
+%tca cycle
+[vf,pvec,knid] = linearfluxes(model,vf,mc,mu,knid,pvec,cit,vacont);
+
+[vf,pvec,knid] = linearfluxes(model,vf,mc,mu,knid,pvec,icit,vicd);
+
+[vf,pvec,knid] = linearfluxes(model,vf,mc,mu,knid,pvec,akg,vakgd);
+
+[vf,pvec,knid] = linearfluxes(model,vf,mc,mu,knid,pvec,suca,vsuca);
+
+% [vf,pvec,knid] = linearfluxes(model,vf,mc,mu,knid,pvec,suc,vsuca);
+
+[vf,pvec,knid] = linearfluxes(model,vf,mc,mu,knid,pvec,fum,vfum);
+
+[vf,pvec,knid] = linearfluxes(model,vf,mc,mu,knid,pvec,mal,vmdh);
+
+% [vf,pvec,knid] = linearfluxes(model,vf,mc,mu,knid,pvec,oaa,vsuca);
+
+%other Vmax's
+pvec.Vmax(model.VFex) = 1;
+
+% for irxn = 1:length(unkw)
+%     if ismember(unkw(irxn),model.Vex)
+%         pvec.Vmax(unkw(irxn)) = 1;
+%         knid(unkw(irxn)) = 1;
+%     end
+% end
 
 
 function [vf,pvec,knid] = linearfluxes(model,vf,mc,mu,knid,pvec,metid,vid)
     vmet_f = model.S(metid,:);
     vknw = setdiff(find(vmet_f),find(vid));
-    nr = model.S(metid,vknw)*vf(vknw)-mu*mc(metid);
+    if model.S(metid,vid)<0
+        nr = model.S(metid,vknw)*vf(vknw)-mu*mc(metid);
+    else
+        nr = -(model.S(metid,vknw)*vf(vknw)-mu*mc(metid));
+    end
     [pvec,vf,knid] = Vmax_sub1(model,pvec,mc,find(vid),nr,vf,knid);
 %     [~,ck] = CKinetics(model,pvec,mc,find(rxnid));
 %     pvec.Vmax(rxnid) = (model.S(metid,vknw)*vf(vknw)-mu*mc(metid))/ck;
@@ -116,14 +183,16 @@ return
 function [pvec,vf,knid] = Vmax_sub1(model,pvec,mc,vid,nr,vf,knid)
 
 [~,ck] = CKinetics(model,pvec,mc,vid);
-if ck
-    if nr/ck < 0
-        pvec.Vmax(vid) = model.Vss(vid)/ck;
+if ~knid(vid)
+    if ck
+        if nr/ck < 0
+            pvec.Vmax(vid) = model.Vss(vid)/ck;
+        else
+            pvec.Vmax(vid) = nr/ck;
+        end
     else
-        pvec.Vmax(vid) = nr/ck;
+        pvec.Vmax(vid) = 0;
     end
-else
-    pvec.Vmax(vid) = 0;
 end
 vf(vid) = CKinetics(model,pvec,mc,vid);
 knid(vid) = 1;

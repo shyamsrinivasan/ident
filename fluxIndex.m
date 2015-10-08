@@ -100,6 +100,7 @@ try
     Vind = setdiff(1:nt_rxn,[VFex;bmrxn;Vex']);%intracellular rxns
 catch
 %     Vind = setdiff(1:nt_rxn,[Vuptake bmrxn VFext' Vex]);%intracellular rxns
-    Vind = setdiff(1:nt_rxn,[VFex' bmrxn Vex]);%intracellular rxns
+    Vind = setdiff(1:nt_rxn,[VFex' bmrxn Vex']);%intracellular rxns
+    
 end
 end

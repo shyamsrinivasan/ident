@@ -13,6 +13,7 @@ end
 %calculate initial flux
 flux = iflux(model,pvec,imc);
 
+model.Vuptake = zeros(model.nt_rxn,1);
 %integrate model
 [sol,finalSS,status] = callODEsolver(model,pvec,imc,solverP);
 

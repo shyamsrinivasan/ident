@@ -1,14 +1,22 @@
-function [vProdLPmax,vLPmax,vProdLPmin,vLPmin,Maxflag,Minflag,model] =...
+function [vLPmax,vLPmin,model] =...
          solveLP(model,bounds,prxnid,fixgrowth)
 if nargin < 4
     fixgrowth = 0;
 end
 if nargin < 2
     nr = size(model.S,2);
-    vl = zeros(nr,1);
-    vl(vl==0) = -100;
-    vu = zeros(nr,1);
-    vu(vu==0) = 100;
+    if ~isfield(model,'vl')
+        vl = zeros(nr,1);
+        vl(vl==0) = -100;
+    else
+        vl = model.vl;
+    end
+    if ~isfield(model,'vu')
+        vu = zeros(nr,1);
+        vu(vu==0) = 100;
+    else
+        vu = model.vu;
+    end
 else
     vl = bounds.vl;
     vu = bounds.vu;
@@ -21,24 +29,20 @@ S = model.S;%(1:nint_metab,:);
 %     S = [S -revCol];
 % end
 
-%Add elements to S for growth dilution
-% bm_col = S(:,model.bmrxn);
-% bm_col(bm_col < 0) = bm_col(bm_col < 0 )-1;
-% bm_col(bm_col == 0) = -1;
-% S(:,model.bmrxn) = bm_col;
-
 [nm,nr] = size(S);
 %Flux calculation based on intial concentrations
 % flux = ExFlux(model,Y,zeros(nr,1),model.Vupind,'mm');
 
 %change bounds for exchange metabolites
-ess_rxn = {'exCO2','exH','exH2O','exPI','exO2'};
+ess_rxn = {'exCO2','exH','exH2O','exPI','exO2','exGLC'};
 essid = [];
 for iess = 1:length(ess_rxn)
     essid = union(essid,find(strcmpi(ess_rxn{iess},model.rxns)));
 end
-Vess = setdiff(model.VFex,essid);
-vl(Vess) = 0;
+if isfield(model,'VFex')
+    Vess = setdiff(model.VFex,essid);
+    vl(Vess) = 0;
+end
 
 %atp maintanance
 vl(strcmpi(model.rxns,'ATPM')) = 8.39;
@@ -48,8 +52,8 @@ if isfield(bounds,'Vuptake')
     if ~isempty(bounds.Vuptake)
         vl(strcmpi(model.rxns,'exGLC')) = -bounds.Vuptake(strcmpi(model.rxns,'exGLC'));        
         vl(strcmpi(model.rxns,'exO2')) = -bounds.Vuptake(strcmpi(model.rxns,'exO2'));
-        vu(strcmpi(model.rxns,'exGLC')) = -bounds.Vuptake(strcmpi(model.rxns,'exGLC'));        
-        vu(strcmpi(model.rxns,'exO2')) = -bounds.Vuptake(strcmpi(model.rxns,'exO2'));
+%         vu(strcmpi(model.rxns,'exGLC')) = -bounds.Vuptake(strcmpi(model.rxns,'exGLC'));        
+%         vu(strcmpi(model.rxns,'exO2')) = -bounds.Vuptake(strcmpi(model.rxns,'exO2'));
     end
 end
 
@@ -65,7 +69,18 @@ else
     vl(model.bmrxn) = 0;    
 end
 
-b = zeros(nm,1);
+if ~isfield(model,'b')
+    b = zeros(nm,1);
+else
+    b = model.b;
+end
+
+if ~isfield(model,'vl')
+    model.vl = vl;
+end
+if ~isfield(model,'vu')
+    model.vu = vu;
+end
 %Exchange of Produ ct
 % vl(model.Vexind) = 0;
 %Objective Function
@@ -75,17 +90,37 @@ b = zeros(nm,1);
 % vu(pps) = 0;
 
 cprod = sparse(1,prxnid,1,1,nr);
-% cprod = sparse(1,73,1,1,nr);
 
-[vLPmax,vProdLPmax,Maxflag] = cplexlp(-cprod(:),[],[],S,b,vl,vu);
+%maximization
+[vmax,vobj,Maxflag] = cplexlp(-cprod(:),[],[],S,b,vl,vu);
 if Maxflag > 0
-    if abs(vProdLPmax)<1e-4
-        vProdLPmax = 0;
+    if abs(vobj)<1e-4
+        vobj = 0;
     end
+    vLPmax.obj = vobj;
+    vLPmax.v = vmax;    
+else
+    vLPmax.obj = [];
+    vLPmax.v = [];    
 end
-[vLPmin,vProdLPmin,Minflag] = cplexlp(cprod(:),[],[],S,b,vl,vu);
-model.lb = vl;
-model.ub = vu;
+vLPmax.flag = Maxflag;
+
+%minimization
+[vmin,vobj,Minflag] = cplexlp(cprod(:),[],[],S,b,vl,vu);
+if Minflag > 0
+    if abs(vobj)<1e-4
+        vobj = 0;
+    end
+    vLPmin.obj = vobj;
+    vLPmin.v = vmin;
+else
+    vLPmin.obj = [];
+    vLPmin.v = [];    
+end
+vLPmin.flag = Maxflag;
+
+model.vl = vl;
+model.vu = vu;
 model.c = cprod;
 model.b = b;
 

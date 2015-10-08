@@ -13,26 +13,37 @@ Vmax = pvec.Vmax;
 
 vflux = zeros(nrxn,1); 
 flux = zeros(nrxn,1);
+
+vspl = [find(strcmpi(model.rxns,'THD2'))...
+        find(strcmpi(model.rxns,'NADH16'))...
+        find(strcmpi(model.rxns,'ATPS4r'))];
+    
 %eliminate consideration for excess cofators
 %pi[c],pi[e],h[c],h[e],h2o[c]
-
-pic = find(strcmpi(model.mets,'pi[c]'));
+pic = [];%find(strcmpi(model.mets,'pi[c]'));
 pie = find(strcmpi(model.mets,'pi[e]'));
 hc = find(strcmpi(model.mets,'h[c]'));
 he = find(strcmpi(model.mets,'h[e]'));
-% q8 = find(strcmpi(model.mets,'q8[c]'));
-% q8h2 = find(strcmpi(model.mets,'q8h2[c]'));
 h2o = find(strcmpi(model.mets,'h2o[c]'));
 co2 = find(strcmpi(model.mets,'co2[c]'));
 
 for irxn = 1:length(Vind)
+    if ismember(Vind(irxn),vspl)
+        q8 = find(strcmpi(model.mets,'q8[c]'));
+        q8h2 = find(strcmpi(model.mets,'q8h2[c]'));
+    else
+        q8 = [];
+        q8h2 = [];
+    end
+    
     sbid = S(:,Vind(irxn))<0;
-    prid = S(:,Vind(irxn))>0;
+    prid = S(:,Vind(irxn))>0;    
+    
+    sbid([pic pie hc he h2o co2 q8 q8h2]) = 0;
+    prid([pic pie hc he h2o co2 q8 q8h2]) = 0;
+    
     Sb = S(sbid,Vind(irxn));
     Sp = -S(prid,Vind(irxn));
-    
-    sbid([pic pie hc he h2o co2]) = 0;
-    prid([pic pie hc he h2o co2]) = 0;
     
     if any(sbid) && any(prid)
         %Numerator - 1.6

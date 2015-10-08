@@ -1,5 +1,7 @@
-function flux = TKinetics(model,pvec,mc,Vex)
+function [flux,vflux] = TKinetics(model,pvec,mc,Vex)
 flux = zeros(model.nt_rxn,1);
+vflux = zeros(model.nt_rxn,1);
+Vmax = pvec.Vmax;
 
 h2o = find(strcmpi(model.mets,'h2o[c]'));
 pic = find(strcmpi(model.mets,'pi[c]'));
@@ -7,10 +9,12 @@ pie = find(strcmpi(model.mets,'pi[e]'));
 hc = find(strcmpi(model.mets,'h[c]'));
 he = find(strcmpi(model.mets,'h[e]'));
 
+vpts = find(strcmpi(model.rxns,'GLCpts'));
 vthd2 = find(strcmpi(model.rxns,'THD2'));%nadph --->
 vatps = find(strcmpi(model.rxns,'ATPS4r'));%atp ---> adp
 vnad16 = find(strcmpi(model.rxns,'NADH16'));%nad ---> nadh
 vcyt = find(strcmpi(model.rxns,'CYTBD'));%o2 --->
+vspl = [vpts vthd2 vatps vnad16 vcyt];
 
 nadph = strcmpi(model.mets,'nadph[c]');
 nadp = strcmpi(model.mets,'nadp[c]');
@@ -44,24 +48,35 @@ for irxn = 1:length(Vex)
         kbkw = 1;
     end
     
-    if model.rev(Vex(irxn))
-        flux(Vex(irxn)) = kfwd*prod(mc(sbid)) - kbkw*prod(mc(prid));
-    elseif ~model.rev(Vex(irxn))
-        flux(Vex(irxn)) = kfwd*prod(mc(sbid));
-    end   
+    if ~ismember(Vex(irxn),vspl)
+        if model.rev(Vex(irxn))        
+            vflux(Vex(irxn)) = kfwd*prod(mc(sbid)) - kbkw*prod(mc(prid));
+        elseif ~model.rev(Vex(irxn))
+            vflux(Vex(irxn)) = kfwd*prod(mc(sbid));
+        end   
+    end
     
     %other fluxes
+    if Vex(irxn)==vpts
+        [~,vflux(Vex(irxn))] = CKinetics(model,pvec,mc,Vex(irxn));
+    end
     if Vex(irxn)==vthd2
-        flux(Vex(irxn)) = kfwd*mc(nadph)-kbkw*mc(nadp);
+        vflux(Vex(irxn)) = CKinetics(model,pvec,mc,Vex(irxn));
+        %kfwd*mc(nadph)-kbkw*mc(nadp);
     end
     if Vex(irxn)==vatps
-        flux(Vex(irxn)) = kfwd*mc(atp)-kbkw*mc(adp);
+        vflux(Vex(irxn)) = CKinetics(model,pvec,mc,Vex(irxn));
+        %kfwd*mc(atp)-kbkw*mc(adp);
     end
     if Vex(irxn)==vnad16
-        flux(Vex(irxn)) = kfwd*mc(nad)-kbkw*mc(nadh);
+        vflux(Vex(irxn)) = CKinetics(model,pvec,mc,Vex(irxn));
+        %kfwd*mc(nad)-kbkw*mc(nadh);
     end
     if Vex(irxn)==vcyt
-        flux(Vex(irxn)) = kfwd*(mc(o2))^0.5;
-    end    
+        vflux(Vex(irxn)) = kfwd*(mc(o2))^0.5;
+    end   
+    vflux(Vex(irxn)) = scale_flux(vflux(Vex(irxn)));
+    flux(Vex(irxn)) = Vmax(Vex(irxn))*vflux(Vex(irxn));
 end
 flux = flux(Vex);
+vflux = vflux(Vex);

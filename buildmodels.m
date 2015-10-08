@@ -4,11 +4,12 @@ function pvec = buildmodels(model,pvec,mc)
 Vind = [model.Vind...
         find(strcmpi(model.rxns,'GLCpts'))...
         find(strcmpi(model.rxns,'THD2'))...
-        find(strcmpi(model.rxns,'NADH16'))];
+        find(strcmpi(model.rxns,'NADH16'))...
+        find(strcmpi(model.rxns,'ATPS4r'))];
 
 Vind = setdiff(Vind,find(strcmpi(model.rxns,'ATPM')));
 
-pic = find(strcmpi(model.mets,'pi[c]'));
+pic = [];%find(strcmpi(model.mets,'pi[c]'));
 pie = find(strcmpi(model.mets,'pi[e]'));
 hc = find(strcmpi(model.mets,'h[c]'));
 he = find(strcmpi(model.mets,'h[e]'));
@@ -81,7 +82,7 @@ for irxn = 1:nrxn
     %thermodynamic consistency
     %sampling done only for unknown values
     fprintf('irxn = %d \t delG = %3.6g\n',Vind(irxn),...
-             pvec.delGr(Vind(irxn)));
+             pvec.delGr(Vind(irxn)));    
     pvec = samplekcat(pvec,sbid,prid,Vind(irxn),mc);
     
     pvec.Vmax(Vind(irxn)) = 1;
@@ -110,6 +111,16 @@ pvec.Vmax = newp.Vmax;
 if all(check(Vind)>0)
     pvec.Vmax(pvec.delGr==0) = 0;
     pvec = findVmax(model,pvec,mc);
+    
+    %simple vmax = vss/ck
+    for irxn = 1:length(Vind)
+        [~,ck] = CKinetics(model,pvec,mc,Vind(irxn));
+        if ck
+            pvec.Vmax(Vind(irxn)) = model.Vss(Vind(irxn))/ck;
+        else
+            pvec.Vmax(Vind(irxn)) = 1;
+        end
+    end
 else
     fprintf('Thermodynamically infeasible parameters\n');
     fprintf('Discontinuing\n');
@@ -117,6 +128,9 @@ else
 end
 pvec.kcat_fwd(model.VFex) = 0;
 pvec.kcat_bkw(model.VFex) = 0;
+
+%check - calculate initial flux
+flux = iflux(model,pvec,mc,flux);
 
     
     
