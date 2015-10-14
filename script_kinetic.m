@@ -7,16 +7,16 @@ rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\Kine
 [FBAmodel,parameter,variable,nrxn,nmetab] = modelgen(rxfname);
 
 %add rxn
-rxn.equation = 'atp[c] <==>';
-FBAmodel = addRxn(FBAmodel,rxn);
+% rxn.equation = 'atp[c] <==>';
+% FBAmodel = addRxn(FBAmodel,parameter,rxn);
 
 %assign initial fluxes and calculate FBA fluxes for direction
 FBAmodel = FBAfluxes(FBAmodel,'pfba');
 
 % [x,xFlag,xmax,xmin] = getiConEstimate(FBAmodel);
-% FBAmodel.x = x;
 
-setupMetLP_2(FBAmodel)
+%create warmup points for ACHR
+warmUp = createWarmupPoints(FBAmodel);
 
 % x = initialsample(FBAmodel);
 

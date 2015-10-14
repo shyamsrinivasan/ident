@@ -30,6 +30,7 @@ end
 bounds.vl = modelIrrev.vl;
 bounds.vu = modelIrrev.vu;
 [~,vLPmin] = solveLP(modelIrrev,bounds,prxnid);
+vLPmin.v(vLPmin.v<1e-7)=0;
 
 Vss = zeros(length(model.rxns),1);
 if vLPmin.flag > 0

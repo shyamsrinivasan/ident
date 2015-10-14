@@ -46,6 +46,16 @@ end
 
 %atp maintanance
 vl(strcmpi(model.rxns,'ATPM')) = 8.39;
+vu(strcmpi(model.rxns,'ATPM')) = 100;
+
+%ETC
+% vl(strcmpi(model.rxns,'ATPS4r')) = -100;
+% vu(strcmpi(model.rxns,'ATPS4r')) = 0;
+vl(strcmpi(model.rxns,'NADTRHD')) = 0;
+vu(strcmpi(model.rxns,'NADTRHD')) = 100;
+vl(strcmpi(model.rxns,'THD2')) = 0;
+vu(strcmpi(model.rxns,'THD2')) = 0;
+
 
 %Uptake Fluxes
 if isfield(bounds,'Vuptake')

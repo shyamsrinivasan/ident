@@ -2,7 +2,7 @@ function model = FBAfluxes(model,option)
 
 if ~isfield(model,'Vuptake')
     Vuptake = zeros(model.nt_rxn,1);
-    Vuptake(strcmpi(model.rxns,'exGLC')) = 20;%mmol/gDCW.h
+    Vuptake(strcmpi(model.rxns,'exGLC')) = 1;%mmol/gDCW.h
     Vuptake(strcmpi(model.rxns,'exO2')) = 1000;%mmole/gDCW.h
 %         Vuptake(strcmpi(model.rxns,'exH2O')) = 40;
 %         Vuptake(strcmpi(model.rxns,'exPI')) = 50;
@@ -32,8 +32,8 @@ switch lower(option)
         bounds.vl(logical(model.rev)) = -100;
         bounds.vu = zeros(model.nt_rxn,1);          
         bounds.vu(bounds.vu==0) = 100;
-%         atp = find(strcmpi(model.rxns,'ATPM'));
-        [vLPmax,~,model] = solveLP(model,bounds,model.bmrxn);
+        atp = find(strcmpi(model.rxns,'ATPM'));
+        [vLPmax,~,model] = solveLP(model,bounds,atp);
         model.vl(model.c==1) = -vLPmax.obj;
         
         %claculate pFBA fluxes and irreversible model

@@ -161,4 +161,4 @@ end
 if size(model.mets,2)>size(model.mets,1)
     model.mets = model.mets';
 end
-model.nt_metab = size(model.S,1);
+% model.nt_metab = size(model.S,1);

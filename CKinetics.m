@@ -20,7 +20,7 @@ vspl = [find(strcmpi(model.rxns,'THD2'))...
     
 %eliminate consideration for excess cofators
 %pi[c],pi[e],h[c],h[e],h2o[c]
-pic = [];%find(strcmpi(model.mets,'pi[c]'));
+pic = find(strcmpi(model.mets,'pi[c]'));
 pie = find(strcmpi(model.mets,'pi[e]'));
 hc = find(strcmpi(model.mets,'h[c]'));
 he = find(strcmpi(model.mets,'h[e]'));
