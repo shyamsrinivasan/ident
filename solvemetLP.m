@@ -61,7 +61,12 @@ elseif ~isfield(newmodel,'cprod') && ~prxnid
     cprod = sparse(1,size(A,2));
     maxMin = 0;
 elseif isfield(newmodel,'cprod') && ~prxnid
-    cprod = newmodel.cprod;   
+    if length(newmodel.cprod)==size(A,2)
+        cprod = newmodel.cprod;   
+    else
+        n_slack = size(A,2)-length(newmodel.cprod);
+        cprod = [newmodel.cprod sparse(1,n_slack)];
+    end
     maxMin = 1;
 end
 
@@ -69,7 +74,7 @@ end
 [x,xobj,flag,output,lambda] = cplexlp(-cprod(:),[],[],A,b,lb,ub);
 if flag>0    
     LPmax.x = x;
-    LPmax.obj = xobj;
+    LPmax.obj = -xobj;
 end
 LPmax.flag = flag;
 

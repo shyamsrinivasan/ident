@@ -6,7 +6,8 @@ end
 
 %set concentration bounds
 if nargin<2
-    bounds = setupMetLP(model);    
+    %problem setup with slack variables for all inequalities
+    bounds = setupMetLP(model);     
 else
     
     %setup the initial LP problem to obtain cocnetrations
@@ -21,26 +22,39 @@ else
 %     end
 end
 
-lb = assignConc(bounds.lb,model,bounds);
-ub = assignConc(bounds.ub,model,bounds);
-    
-[nmets] = size(model.S,1);
+if npts<2*size(bounds.S,1);
+     %change deafult to # sampled metabolites only   
+    npts = 2*size(bounds.S,1);
+end
 
-warmUp = sparse(nmets,npts);
-% model = setupMetLP(model);
+%not all metabolites are sampled - rearranging lb and ub for all
+%metabollites
+lb = separate_slack(bounds.lb,model,bounds);
+ub = separate_slack(bounds.ub,model,bounds);
 
-validflag = 0;
+%total sampled metabolites
+n_mets = length(bounds.mets);
+% n_mets = size(bounds.A,2);
+
+%total metabolites
+% nmets = size(model.S,1);
+warmUp = zeros(n_mets,npts);
+
 ipt = 1;
 %generate points
-while ipt<npts/2
+while ipt<=npts/2
+    validflag = 0;
+%     fprintf('Max/Min metabolite %d %s\n',ipt,bounds.mets{ipt});
     %create random objective function    
 %     prxnid = 0;
-    bounds.cprod = rand(1,nmets)-0.5;
+    %objective for sampled mets only
+    bounds.cprod = rand(1,n_mets)-0.5;
     
     %max/min objective
-    if ipt<=nmets
+    if ipt<=n_mets
 %         prxnid = ipt;
-        bounds.cprod = sparse(1,ipt,1,1,nmets);                
+        %objective for sampled mets only
+        bounds.cprod = sparse(1,ipt,1,1,n_mets);                
     end
     
     %get maximum and minimum for cprod(ipt)
@@ -49,14 +63,12 @@ while ipt<npts/2
     %use max points
     if LPmax.flag>0
         xmax = separate_slack(LPmax.x,model,bounds);
-%         xmax = LPmax.x;
         validflag = validflag+1;
     else
         validflag = validflag-1;
     end
     if LPmin.flag>0
         xmin = separate_slack(LPmin.x,model,bounds);
-%         xmin = LPmin.x;
         validflag = validflag+1;
     else
         validflag = validflag-1;
@@ -69,7 +81,7 @@ while ipt<npts/2
     xmin(xmin>ub) = ub(xmin>ub);
     xmin(xmin<lb) = lb(xmin<lb);
     
-    %store points
+    %store points    
     warmUp(:,2*ipt-1) = xmin;
     warmUp(:,2*ipt) = xmax;
     
@@ -78,8 +90,11 @@ while ipt<npts/2
     else
         if validflag<0
             fprintf('Both min and max failed\n');
+            fprintf('%d. %s',ipt,bounds.mets{ipt});
         elseif validflag == 0
             fprintf('Either min or max failed\n');
+            fprintf('%d. %s MaxFlag %d MinFlag %d\n',...
+                    ipt,bounds.mets{ipt},LPmax.flag,LPmin.flag);
         end
     end  
 end
@@ -88,4 +103,9 @@ centrepoint = mean(warmUp,2);
 
 %moving in points
 warmUp = warmUp*.99+.01*centrepoint*ones(1,npts);
+
+%lb and ub are for lnP and lnS
+% warmUp = exp(warmUp);
+
+% warmUp = assignConc(warmUp,model,bounds);
             

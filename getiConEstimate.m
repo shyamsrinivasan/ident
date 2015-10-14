@@ -36,7 +36,7 @@ end
     if LPmax.flag>0 
         %do not include slack variables
         [mc,assignFlag] = separate_slack(LPmax.x,model,bounds);
-%         x = exp(LPmax.x(1:length(bounds.mets)));
+        mc = exp(mc);
     else
         error('mcEst:LPinfeas',...
             'LP for thermodynamic metabolite conentrations is infeasible');
@@ -47,10 +47,12 @@ end
     if ~isempty(xmax)
 %         mcMax = assignConc(xmax,model,bounds);
         mcMax = separate_slack(xmax,model,bounds);
+        mcMax = exp(mcMax);
     end
     if ~isempty(xmin)
 %         mcMin = assignConc(xmin,model,bounds);
         mcMin = separate_slack(xmin,model,bounds);
+        mcMin = exp(mcMin);
     end
     %check for delGr values
     delGr = checkdelGr(model,mc);    

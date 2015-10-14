@@ -15,8 +15,9 @@ FBAmodel = FBAfluxes(FBAmodel,'pfba');
 
 % [x,xFlag,xmax,xmin] = getiConEstimate(FBAmodel);
 
-%create warmup points for ACHR
-warmUp = createWarmupPoints(FBAmodel);
+
+%ACHR for metabolite samples
+ACHRmetSampling(FBAmodel)
 
 % x = initialsample(FBAmodel);
 
