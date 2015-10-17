@@ -17,7 +17,7 @@ FBAmodel = FBAfluxes(FBAmodel,'pfba');
 
 
 %ACHR for metabolite samples
-ACHRmetSampling(FBAmodel)
+ACHRmetSampling(FBAmodel,1,500,200)
 
 % x = initialsample(FBAmodel);
 

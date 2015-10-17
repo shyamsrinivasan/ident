@@ -1,6 +1,6 @@
 function ACHRmetSampling(model,nFiles,nptsPerFile,stepsPerPnt)
 if nargin<4
-    stepsPerPnt = 2;
+    stepsPerPnt = 200;
 end
 
 if nargin<3
@@ -22,7 +22,7 @@ dTol = 1e-14;
 
 %create warmup points for ACHR - temporary call
 bounds = setupMetLP(model);
-warmUpPts = createWarmupPoints(model,bounds,2000);
+warmUpPts = createWarmupPoints(model,bounds);
 lb = separate_slack(bounds.lb,model,bounds);
 ub = separate_slack(bounds.ub,model,bounds);
 
@@ -65,7 +65,7 @@ for i=1:nFiles
             %determine if too close to boundary
             validDir = ((distUb>dTol) & (distLb>dTol));
             
-            if ~any(validDir)
+            if isempty(validDir)
                 continue
             end
             

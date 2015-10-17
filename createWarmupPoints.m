@@ -75,11 +75,11 @@ while ipt<=npts/2
     end
     
     %move points to within bounds
-    xmax(xmax>ub) = ub(xmax>ub);
-    xmax(xmax<lb) = lb(xmax<lb);
-    
-    xmin(xmin>ub) = ub(xmin>ub);
-    xmin(xmin<lb) = lb(xmin<lb);
+%     xmax(xmax>ub) = ub(xmax>ub);
+%     xmax(xmax<lb) = lb(xmax<lb);
+%     
+%     xmin(xmin>ub) = ub(xmin>ub);
+%     xmin(xmin<lb) = lb(xmin<lb);
     
     %store points    
     warmUp(:,2*ipt-1) = xmin;
