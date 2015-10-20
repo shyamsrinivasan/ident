@@ -109,7 +109,7 @@ ub(strcmpi(newmodel.mets,'glc[e]')) = log(0.2);
 % ub(strcmpi(newmodel.mets,'amp[c]')) = log(2.32e-4);
 ub(strcmpi(newmodel.mets,'pep[c]')) = log(1.46e-4);
 % ub(strcmpi(newmodel.mets,'dhap[c]')) = log(3.44e-4);
-ub(strcmpi(newmodel.mets,'nad[c]')) = log(2.32e-3);
+% ub(strcmpi(newmodel.mets,'nad[c]')) = log(2.32e-3);
 ub(strcmpi(newmodel.mets,'nadh[c]')) = log(5.45e-5);
 % ub(strcmpi(newmodel.mets,'nadp[c]')) = log(1.4e-7);
 % ub(strcmpi(newmodel.mets,'nadph[c]')) = log(1.1e-4);
@@ -126,23 +126,36 @@ ub(strcmpi(newmodel.mets,'o2[c]')) = log(1.6);
 % ub(strcmpi(newmodel.mets,'h[c]')) = log(1e-7);
 ub(strcmpi(newmodel.mets,'h2o[c]')) = log(55.0);
 
+knwn_id = zeros(nmet,1);
+for imet = 1:nmet
+    if lb(imet) == ub(imet)
+        knwn_id(imet)=1;
+    end
+end
+
 %setup original problem
 %Ax <=b 
 A = newmodel.S';
-A_ub = A;
+A_ub = A(:,~logical(knwn_id));
 % A_ub = repmat(sign(newmodel.Vss),1,nmet).*A;
 newmodel.A = A_ub;
+newmodel.A_kn = A(:,logical(knwn_id));
 
 % b_ub = sign(newmodel.Vss).*log(newmodel.Keq);
-b_ub = log(newmodel.Keq);
+b_ub = log(newmodel.Keq)-A(:,logical(knwn_id))*lb(logical(knwn_id));
 % b_lb = sign(newmodel.Vss).*(-(log(1e-8)+log(newmodel.Keq)));
 newmodel.b = b_ub;%b_lb];
 
-newmodel.lb = lb;
-newmodel.ub = ub;
+newmodel.x = lb(logical(knwn_id));%known concentrations
+newmodel.lb = lb(~logical(knwn_id));
+newmodel.ub = ub(~logical(knwn_id));
+newmodel.mets_kn = newmodel.mets(logical(knwn_id));
+newmodel.mets = newmodel.mets(~logical(knwn_id));
 
-%setup slack problem
-newmodel = setupSlackVariables(newmodel);
+
+
+% %setup slack problem
+% newmodel = setupSlackVariables(newmodel);
 
 % nconstr = length((newmodel.A(:,1)));
 % %add slack variables to all constraints

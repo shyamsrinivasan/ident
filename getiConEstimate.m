@@ -1,82 +1,48 @@
-function [mc,assignFlag,mcMax,mcMin] = getiConEstimate(model)
+function [x,assignFlag,delGr,vCorrectFlag] = getiConEstimate(model)
 
 %setup problem with default constraints for thermodynamically active
 %reaction
 % delG > or < 0 and Vss < or > 0
 bounds = setupMetLP(model);
-x=[];
-xmax = [];
-xmin = [];
-mcMax = [];
-mcMin = [];
 
 %check
-if ~isfield(bounds,'A')
+if ~isfield(bounds,'A') 
     error('getiest:NoA','No stoichiometric transpose found');
 end
-% if size(bounds.A,2) == length(bounds.mets)
-%     nmets = size(bounds.A,1);    
+if size(bounds.A,2) == length(bounds.mets)
     
-%     %loop through all metabolites to get min and max
-%     xmax = zeros(nmets,1);
-%     xmin = zeros(nmets,1);
-%     for im = 1:nmets
-%         prxnid = im;
-%         [LPmax,LPmin] = solvemetLP(bounds,prxnid);
-%         if LPmax.flag>0
-%             xmax(im) = exp(LPmax.obj);
-%         end
-%         if LPmin.flag>0
-%             xmin(im) = exp(LPmin.obj);
-%         end
-%     end
+    %setup slack problem
+    bounds = setupSlackVariables(bounds);
     
     %solve once more to  obtain consistent concentrations  size(bounds.A,2)  
     LPmax = solvemetLP(bounds);
     if LPmax.flag>0 
         %do not include slack variables
-        [mc,assignFlag] = separate_slack(LPmax.x,model,bounds);
-        mc = exp(mc);
+        x = separate_slack(LPmax.x,model,bounds);
+        
+        %get mc for model and check for delGr values
+        if ~isempty(x)
+            [x,assignFlag,delGr,vCorrectFlag] = assignConc(x,model,bounds);        
+        end
+        if ~isempty(delGr)
+            [delGr,assignFlux] = assignRxns(delGr,model,bounds);
+        end
+        
+        mc = exp(x);
+        mc(x==0)=0;
+        x = mc;
     else
         error('mcEst:LPinfeas',...
             'LP for thermodynamic metabolite conentrations is infeasible');
     end
-%     if ~isempty(x)
-%         [mc,assignFlag] = assignConc(x,model,bounds);        
-%     end
-    if ~isempty(xmax)
-%         mcMax = assignConc(xmax,model,bounds);
-        mcMax = separate_slack(xmax,model,bounds);
-        mcMax = exp(mcMax);
-    end
-    if ~isempty(xmin)
-%         mcMin = assignConc(xmin,model,bounds);
-        mcMin = separate_slack(xmin,model,bounds);
-        mcMin = exp(mcMin);
-    end
-    %check for delGr values
-    delGr = checkdelGr(model,mc);    
-    RxnDir = delGr.*model.Vss;
-% else
-%     error('getiConEst:sizeCheck',...
-%         'Number of metabolites in bounds.S and bounds.mets do not match');
-% end
+
+else
+    error('getiConEst:sizeCheck',...
+        'Number of metabolites in bounds.S and bounds.mets do not match');
+end
 
 %concentrations for thermodynamically inactive reactions
 %delG = 0 and Vss = 0
-
-
-% function [mc,assignFlag] = assignConc(x,model,bounds)
-% %assign concentrations to the model at large
-% mc = zeros(length(model.mets),1);
-% assignFlag = zeros(length(model.mets),1);
-% for im = 1:length(bounds.mets)
-%     tfm = strcmpi(bounds.mets{im},model.mets);
-%     if any(tfm)
-%         mc(tfm) = x(im);
-%         assignFlag(tfm) = 1;
-%     end
-% end
 
 function delGr = checkdelGr(model,mc)
 

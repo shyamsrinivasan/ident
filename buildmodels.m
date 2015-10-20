@@ -2,18 +2,19 @@ function pvec = buildmodels(model,pvec,mc)
 
 %reactions to consider for kinetics other than Vind
 Vind = [model.Vind...
-        find(strcmpi(model.rxns,'GLCpts'))...
-        find(strcmpi(model.rxns,'THD2'))...
-        find(strcmpi(model.rxns,'NADH16'))...
-        find(strcmpi(model.rxns,'ATPS4r'))];
+        find(strcmpi(model.rxns,'GLCpts'))];
+%         find(strcmpi(model.rxns,'THD2'))...
+%         find(strcmpi(model.rxns,'NADH16'))...
+%         find(strcmpi(model.rxns,'ATPS4r'))];
 
 Vind = setdiff(Vind,find(strcmpi(model.rxns,'ATPM')));
 
-pic = [];%find(strcmpi(model.mets,'pi[c]'));
-pie = find(strcmpi(model.mets,'pi[e]'));
-hc = find(strcmpi(model.mets,'h[c]'));
-he = find(strcmpi(model.mets,'h[e]'));
-h2o = find(strcmpi(model.mets,'h2o[c]'));
+%metabolites that do not affect thermodynamic equilibrium   
+vmet = [find(strcmpi(model.mets,'h[c]'))...
+        find(strcmpi(model.mets,'h[e]'))...
+        find(strcmpi(model.mets,'pi[c]'))...
+        find(strcmpi(model.mets,'pi[e]'))...
+        find(strcmpi(model.mets,'h2o[c]'))];
 % q8 = find(strcmpi(model.mets,'q8[c]'));
 % q8h2 = find(strcmpi(model.mets,'q8h2[c]'));
 
@@ -42,8 +43,8 @@ for irxn = 1:nrxn
     Kpcol = zeros(length(find(prid)),1);
     
     %no parameters for cofactors - assumed abundant 
-    sbid([pic pie hc he h2o]) = 0;
-    prid([pic pie hc he h2o]) = 0;
+    sbid(vmet) = 0;
+    prid(vmet) = 0;
     
     nsb = length(find(sbid));
     npr = length(find(prid));
@@ -53,7 +54,7 @@ for irxn = 1:nrxn
                    nsb+npr,...
                    1);
     
-    %determine kientic parameters from concentration and sigma
+    %determine kinetic parameters from concentration and sigma
     %substrates
     if ~isempty(find(sbid,1))
         sb_rat = sigma(1:nsb)./(1-sigma(1:nsb));

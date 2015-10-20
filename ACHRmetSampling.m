@@ -1,6 +1,6 @@
-function ACHRmetSampling(model,nFiles,nptsPerFile,stepsPerPnt)
+function [pts,assignFlag,delGr,vCorrectFlag] = ACHRmetSampling(model,nFiles,nptsPerFile,stepsPerPnt)
 if nargin<4
-    stepsPerPnt = 2;
+    stepsPerPnt = 199;
 end
 
 if nargin<3
@@ -22,7 +22,12 @@ dTol = 1e-14;
 
 %create warmup points for ACHR - temporary call
 bounds = setupMetLP(model);
-warmUpPts = createWarmupPoints(model,bounds,2000);
+if size(bounds.A,2)==length(bounds.mets)
+    %setup slack problem
+    bounds = setupSlackVariables(bounds);
+    warmUpPts = createWarmupPoints(model,bounds,2000);   
+end
+
 lb = separate_slack(bounds.lb,model,bounds);
 ub = separate_slack(bounds.ub,model,bounds);
 
@@ -134,6 +139,34 @@ for i=1:nFiles
         ptcnt = ptcnt+1;
     end %points per cycle
     
+    %re-assign concentrations to model.mets
+    [pts,assignFlag,delGr,vCorrectFlag] = assignConc(pts,model,bounds); 
+    [delGr,assignFlux] = assignRxns(delGr,model,bounds);
+    
+    mc = exp(pts);
+    mc(pts==0)=0;
+    pts = mc;
+    
+    %re-checking delGr and concentrations for thermodynamic feasibility
+    vSpl = zeros(length(model.rxns),1);
+    for ir = 1:length(bounds.rxns)
+        vSpl(ir) = length(find(vCorrectFlag(ir,:)));
+        if all(vCorrectFlag(ir,:))
+            fprintf('%d. %s\n',ir,model.rxns{ir});
+        end
+    end
+    for is = 1:length(pts(1,:))
+        if all(vCorrectFlag(:,is))
+            fprintf('Sample %d\n',is);
+        end
+    end           
+          
+%     [delGr
+%     for ipt = 1:length(pts(1,:))
+%         if ~isempty(pts(:,ipt))
+%             
+%         end
+%     end
     %save current points to file
 end
             

@@ -7,24 +7,14 @@ end
 %set concentration bounds
 if nargin<2
     %problem setup with slack variables for all inequalities
-    bounds = setupMetLP(model);     
-else
-    
-    %setup the initial LP problem to obtain cocnetrations
-    
-%     if isfield(bounds,'lb')
-%         lb = bounds.lb;
-%         bndflag_lb = 0;
-%     end
-%     if isfield(bounds,'ub')
-%         ub = bounds.ub;
-%         bndflag_ub = 0;
-%     end
+    bounds = setupMetLP(model);
 end
 
-if npts<2*size(bounds.S,1);
-     %change deafult to # sampled metabolites only   
-    npts = 2*size(bounds.S,1);
+if isfield(bounds,'S')
+    if npts<2*size(bounds.S,1);
+         %change deafult to # sampled metabolites only   
+        npts = 2*size(bounds.S,1);
+    end
 end
 
 %not all metabolites are sampled - rearranging lb and ub for all
@@ -46,15 +36,15 @@ while ipt<=npts/2
     validflag = 0;
 %     fprintf('Max/Min metabolite %d %s\n',ipt,bounds.mets{ipt});
     %create random objective function    
-%     prxnid = 0;
     %objective for sampled mets only
     bounds.cprod = rand(1,n_mets)-0.5;
+%     bounds.cprod = sparse(1,n_mets);
     
     %max/min objective
     if ipt<=n_mets
-%         prxnid = ipt;
         %objective for sampled mets only
-        bounds.cprod = sparse(1,ipt,1,1,n_mets);                
+        bounds.cprod = sparse(1,ipt,1,1,n_mets);       
+%         bounds.cprod = sparse(1,n_mets);
     end
     
     %get maximum and minimum for cprod(ipt)
@@ -75,11 +65,11 @@ while ipt<=npts/2
     end
     
     %move points to within bounds
-%     xmax(xmax>ub) = ub(xmax>ub);
-%     xmax(xmax<lb) = lb(xmax<lb);
-%     
-%     xmin(xmin>ub) = ub(xmin>ub);
-%     xmin(xmin<lb) = lb(xmin<lb);
+    xmax(xmax>ub) = ub(xmax>ub);
+    xmax(xmax<lb) = lb(xmax<lb);
+    
+    xmin(xmin>ub) = ub(xmin>ub);
+    xmin(xmin<lb) = lb(xmin<lb);
     
     %store points    
     warmUp(:,2*ipt-1) = xmin;
@@ -102,7 +92,7 @@ end
 centrepoint = mean(warmUp,2);
 
 %moving in points
-warmUp = warmUp*.99+.01*centrepoint*ones(1,npts);
+warmUp = warmUp*.33+.67*centrepoint*ones(1,npts);
 
 %lb and ub are for lnP and lnS
 % warmUp = exp(warmUp);
