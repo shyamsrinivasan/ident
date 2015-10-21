@@ -2,16 +2,15 @@ function ensb = parallel_ensemble(model,mc,pvec,nmodels,smp)
 if nargin<5
     smp={};
 end
-
-%# models from the ensemble
-if nargin<4    
+if nargin<4
+    %# models from the ensemble
     nmodels=1;
 end
-
-%# metabolite concentration samples available
+ 
 if ~isempty(smp)
     nsamples = size(smp,1);
 else
+    # metabolite concentration samples
     nsamples = 1;
 end
 

@@ -66,9 +66,9 @@ nmet = size(newmodel.S,1);
 
 %bounds
 lb = zeros(nmet,1);
-lb(lb==0) = log(1e-6);
+lb(lb==0) = log(1e-8);
 ub = zeros(nmet,1);
-ub(ub==0) = log(25e-2);
+ub(ub==0) = log(3e-2);
 
 %concentrations in M = mole/L, Bennett et al., 2009
 lb(strcmpi(newmodel.mets,'glc[e]')) = log(0.2);
@@ -79,10 +79,10 @@ lb(strcmpi(newmodel.mets,'3pg[c]')) = log(0.5e-5);
 % lb(strcmpi(newmodel.mets,'adp[c]')) = log(4.37e-4);
 % lb(strcmpi(newmodel.mets,'amp[c]')) = log(2.32e-4);
 lb(strcmpi(newmodel.mets,'pep[c]')) = log(1e-7);
-lb(strcmpi(newmodel.mets,'dhap[c]')) = log(3.44e-4);
+% lb(strcmpi(newmodel.mets,'dhap[c]')) = log(3.44e-4);
 lb(strcmpi(newmodel.mets,'nad[c]')) = log(2.32e-3);
 % lb(strcmpi(newmodel.mets,'nadh[c]')) = log(5.45e-5);
-lb(strcmpi(newmodel.mets,'nadp[c]')) = log(1.4e-7);
+% lb(strcmpi(newmodel.mets,'nadp[c]')) = log(1.4e-7);
 % lb(strcmpi(newmodel.mets,'nadph[c]')) = log(1.1e-4);
 % lb(strcmpi(newmodel.mets,'accoa[c]')) = log(5.29e-4);
 lb(strcmpi(newmodel.mets,'coa[c]')) = log(8.8e-5);
@@ -108,13 +108,14 @@ ub(strcmpi(newmodel.mets,'glc[e]')) = log(0.2);
 % ub(strcmpi(newmodel.mets,'adp[c]')) = log(4.37e-4);
 % ub(strcmpi(newmodel.mets,'amp[c]')) = log(2.32e-4);
 ub(strcmpi(newmodel.mets,'pep[c]')) = log(1.46e-4);
-% ub(strcmpi(newmodel.mets,'dhap[c]')) = log(3.44e-4);
+ub(strcmpi(newmodel.mets,'dhap[c]')) = log(3.44e-4);
 % ub(strcmpi(newmodel.mets,'nad[c]')) = log(2.32e-3);
-ub(strcmpi(newmodel.mets,'nadh[c]')) = log(5.45e-5);
+ub(strcmpi(newmodel.mets,'nadh[c]')) = log(2.32e-3);
 % ub(strcmpi(newmodel.mets,'nadp[c]')) = log(1.4e-7);
 % ub(strcmpi(newmodel.mets,'nadph[c]')) = log(1.1e-4);
 % ub(strcmpi(newmodel.mets,'accoa[c]')) = log(5.29e-4);
 % ub(strcmpi(newmodel.mets,'coa[c]')) = log(8.8e-5);
+ub(strcmpi(newmodel.mets,'cit[c]')) = log(0.25);
 % ub(strcmpi(newmodel.mets,'icit[c]')) = log(1.10e-6);
 % ub(strcmpi(newmodel.mets,'mal[c]')) = log(1.66e-3);
 % ub(strcmpi(newmodel.mets,'fum[c]')) = log(3e-6);

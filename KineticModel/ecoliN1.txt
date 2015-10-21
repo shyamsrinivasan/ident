@@ -1,15 +1,15 @@
 Enzymes	Enzyme Name	 equation	delta G (pH 7.2)	delGlb	delGub	Keq	kcat+(1/s)	kcat-(1/s)	Etot Conc	Vmax	"vss (Gur = -10, O2ur = -1000)"	EC	Substrate Km (mM)	Activators	Inhibitors	Regulator Km (mM)	Metab	Mclow (mM)	Mchigh (mM)
 GLCpts		glc[e] + pep[c] --> g6p[c] + pyr[c]	-9.1	-50.4	0.9		250				20.00	0					glc[e]	0.0556	0.0556
-PGI		[c] : g6p <==> f6p	-0.8	-17.1	20.6		11.09				19.64	5.3.1.9	"0.28,0.147"				g6p[c]	3.48	3.48
+PGI		[c] : g6p <==> f6p	3.132	-17.1	20.6		120				19.64	5.3.1.9	"0.28,0.147"				g6p[c]	3.48	3.48
 PFK		[c] : atp + f6p --> adp + fdp + h	-3.8	-53.9	21.4		49				18.26	2.7.1.11					f6p[c]	0.6	0.6
 FBP		[c] : fdp + h2o --> f6p + pi	-2.8	-48.8	-9.7		22				0.00	3.1.3.11					fdp[c]	0.272	0.272
-FBA		[c] : fdp <==> dhap + g3p	4.2	-29.4	27.1		8.5				18.26	4.1.2.13					gap[c]	0.218	0.218
-TPI		[c] : g3p <==> dhap	-1.4	-24.3	13.4	9.12		9000			-18.26	5.3.1.1					dhap[c]	0.167	0.167
-GAPD		[c] : g3p + nad + pi <==> 13dpg + h + nadh	-0.1	-12.8	62.6		671.72				35.35	1.2.1.12					3pg[c]	2.13	2.13
-PGK		[c] : 3pg + atp <==> 13dpg + adp	2.8	-19.2	56.1			2225			-35.35	2.7.2.3					2pg[c]	0.399	0.399
-PGM		[c] : 2pg <==> 3pg		-23.1	14.6	5.49		90.55			-32.73	5.4.2.1					pep[c]	2.67	2.67
+FBA		[c] : fdp <==> dhap + g3p	4.2	-29.4	27.1		8.5	0.4			18.26	4.1.2.13					gap[c]	0.218	0.218
+TPI		[c] : g3p <==> dhap	7.598	-24.3	13.4			9000			-18.26	5.3.1.1					dhap[c]	0.167	0.167
+GAPD		[c] : g3p + nad + pi <==> 13dpg + h + nadh	-0.1	-12.8	62.6		268				35.35	1.2.1.12					3pg[c]	2.13	2.13
+PGK		[c] : 3pg + atp <==> 13dpg + adp	-10.51	-19.2	56.1			654			-35.35	2.7.2.3					2pg[c]	0.399	0.399
+PGM		[c] : 2pg <==> 3pg	6.229	-23.1	14.6			530			-32.73	5.4.2.1					pep[c]	2.67	2.67
 ENO		[c] : 2pg <==> h2o + pep	-0.9	-22.9	14.7		355.79				32.73	4.2.1.11					pyr[c]	2.67	2.67
-PYK		[c] : atp + pyr <==> adp + h + pep		-10.8	65.3	1.40E-05		10.17		0.97	-15.90	2.7.1.40					ru5p-D	0.111	0.111
+PYK		[c] : atp + pyr <==> adp + h + pep	-31.12	-10.8	65.3			10.17		0.97	-15.90	2.7.1.40					ru5p-D	0.111	0.111
 PPS		[c] : atp + h2o + pyr --> amp + 2 h + pep + pi	-1.2	-50.9	24.4		1				0.00	2.7.9.2					xu5p-D	0.138	0.138
 PDH		[c] : coa + nad + pyr --> accoa + co2 + nadh	-8.3	-73	2.3		6.32				8.46	1.2.4.1					s7p[c]	0.276	0.276
 CS		[c] : cit + coa + h <==> accoa + h2o + oaa	8.6	-4	60.9			81			7.21	2.3.3.1					r5p[c]	0.398	0.398
@@ -39,11 +39,11 @@ TALA		[c] : g3p + s7p <==> e4p + f6p	-1.7	-38.4	36.9		16.57				-0.31	2.2.1.2
 TKT2		[c] : f6p + g3p <==> e4p + xu5p-D	1.7	-27.7	47.7	0.0177		15.45			0.95	2.2.1.1							
 NADH16		4 h[e] + nad[c] + q8h2[c] <==> 5 h[c] + nadh[c] + q8[c]	17.4	24.2	122.4			26			-20.00	1.6.5.3							
 NADTRHD		[c] : nad + nadph <==> nadh + nadp		-38.6	36.7	1.48		0.0667			-100.00	1.6.1.2							
-THD2		2 h[c] + nad[c] + nadph[c] <==> 2 h[e] + nadh[c] + nadp[c]		-38.6	36.7	1.48	167.9				69.98	1.6.1.1							
+THD2		2 h[c] + nad[c] + nadph[c] <==> 2 h[e] + nadh[c] + nadp[c]		-38.6	36.7	1.48	167.9	100			69.98	1.6.1.1							
 ADK1		[c] : amp + atp <==> 2 adp		-40.2	35.1	2.82	0.053				0.00	2.7.4.3							
 ATPM		[c] : atp + h2o --> adp + h + pi	-6.6				1	0			8.39								
 ATPS4r		atp[c] + 3 h[c] + h2o[c] <==> adp[c] + 4 h[e] + pi[c]		-62.3	1.5	4.20E+04		2200			-48.53	3.6.3.14							
-CYTBD		6 h[c] + 0.5 o2[c] + q8h2[c] --> 6 h[e] + h2o[c] + q8[c]	-37.2				341	0			20.00	1.10.3.12							
+CYTBD		6 h[c] + 0.5 o2[c] + q8h2[c] --> 6 h[e] + h2o[c] + q8[c]	-37.2				341	100			20.00	1.10.3.12							
 PPC		[c] : h + oaa + pi <==> co2 + h2o + pep	6.8	-7.1	55.6			540		18.2	4.08	4.1.1.31							
 PPCK		[c] : atp + oaa --> adp + co2 + pep	0.2	-44.4	30.9		1				0.00	4.1.1.49							
 ME1		[c] : mal + nad --> co2 + nadh + pyr	1.3	-41.8	33.6		1				0.00	1.1.1.38							

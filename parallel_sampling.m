@@ -3,21 +3,28 @@ if nargin<3
     nsample = 500;
 end
 
+%extracellular metabolites in M moles/L
+% met.glc = 0.2;
+% met.o2 = 1e-5;
+met.pi_e = 1e-3;
+met.h_e = 1e-7;
+% met.co2 = 1e-8;
+met.h2o_e = 55.0;
+met.pi_c = 1e-3;
+met.h_c = 1e-7;
+met.h2o_c = 55.0;
+
+fprintf('Generating single feasible concentration sample\n');
 %generate one metabolite concentration for parameter estimation
 %get one set of concentrations and coresponding delGr
 [mc,assignFlag,delGr,vCorrectFlag] = getiConEstimate(model);
 
-%extracellular metabolites in M moles/L
-met.glc = 0.2;
-met.o2 = 1e-5;
-met.pi = 1e-3;
-met.h = 1e-7;
-met.co2 = 1e-8;
-met.h2o = 55.0;
-
-mc = iconcentration(model,met,mc,assignFlag);
+[mc,assignFlag] = iconcentration(model,met,mc,assignFlag);
+%M to mM
+mc = mc*1000;
 pvec.delGr = delGr;
 
+% fprintf('Generating %d concentration samples using ACHR\n',nsample);
 %sample met using ACHR
 %get more than one set of concentrations using ACHR sampling
 clear assignFlag
@@ -32,8 +39,8 @@ if ~isempty(pts)
     smp = cell(nsample,1);
     for ism = 1:nsample    
         %extracellular metabolites in M moles/L
-
-        smp{ism,1} = pts(:,ism);
+        %from M to mM
+        smp{ism,1} = pts(:,ism)*1000;
         smp{ism,2} = pvec;
         smp{ism,2}.delGr = ptsdelGr(:,ism);
 

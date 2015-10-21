@@ -26,3 +26,15 @@ for im = 1:length(bounds.mets)
     end
 end
 
+%assign same concentrations to intra and extracellular co2,o2,h,pi and h2o
+%if available
+met = {'co2','o2','h','pi','h2o'};
+for imet = 1:length(met)
+    tfbnd = strcmpi(bounds.mets,[met{imet} '[c]']);
+    tfmod = strcmpi(model.mets, [met{imet} '[e]']);
+    if any(tfbnd) && any(tfmod)
+        mc(tfmod,:) = x(tfbnd,:);
+        assignFlag(tfmod) = 1;
+    end    
+end
+

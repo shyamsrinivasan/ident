@@ -19,7 +19,7 @@ if size(bounds.A,2) == length(bounds.mets)
     if LPmax.flag>0 
         %do not include slack variables
         x = separate_slack(LPmax.x,model,bounds);
-        
+        check_1(bounds,x);
         %get mc for model and check for delGr values
         if ~isempty(x)
             [x,assignFlag,delGr,vCorrectFlag] = assignConc(x,model,bounds);        
