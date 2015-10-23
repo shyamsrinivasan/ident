@@ -19,7 +19,7 @@ if size(bounds.A,2) == length(bounds.mets)
     if LPmax.flag>0 
         %do not include slack variables
         x = separate_slack(LPmax.x,model,bounds);
-        check_1(bounds,x);
+%         check_1(bounds,x);
         %get mc for model and check for delGr values
         if ~isempty(x)
             [x,assignFlag,delGr,vCorrectFlag] = assignConc(x,model,bounds);        
@@ -35,7 +35,6 @@ if size(bounds.A,2) == length(bounds.mets)
         error('mcEst:LPinfeas',...
             'LP for thermodynamic metabolite conentrations is infeasible');
     end
-
 else
     error('getiConEst:sizeCheck',...
         'Number of metabolites in bounds.S and bounds.mets do not match');
@@ -76,6 +75,6 @@ for irxn = 1:length(model.Vind)
     sb = prod(mc(sbid));
     pr = prod(mc(prid));
     delGr(Vind(irxn)) = 0.008314*298*log(pr/(sb*model.Keq(Vind(irxn))));
-    fprintf('delG = %2.3g \t Vss = %3.4g \n',delGr(Vind(irxn)),model.Vss(Vind(irxn)));
+%     fprintf('delG = %2.3g \t Vss = %3.4g \n',delGr(Vind(irxn)),model.Vss(Vind(irxn)));
     
 end

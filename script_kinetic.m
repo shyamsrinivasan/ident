@@ -25,15 +25,14 @@ FBAmodel = FBAfluxes(FBAmodel,'pfba');
 %get parameter estimates
 ensb = parallel_ensemble(FBAmodel,mc,parameter);
 
-
-
-
 % x = initialsample(FBAmodel);
-
-
 
 %estimate kinetic parameters in an ensemble
 
-
 %solve ODE of model to steady state
-sol = IntegrateModel(FBAmodel,ensb);
+if ensb{1,2}.feasible
+    sol = IntegrateModel(FBAmodel,ensb,ensb{1,1});
+else
+    error('No feasible model found');
+end
+% sol = IntegrateModel(FBAmodel,ensb);

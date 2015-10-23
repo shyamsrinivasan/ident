@@ -56,7 +56,8 @@ vu(strcmpi(model.rxns,'NADTRHD')) = 100;
 model.rev(strcmpi(model.rxns,'NADTRHD')) = 0;
 vl(strcmpi(model.rxns,'THD2')) = 0;
 vu(strcmpi(model.rxns,'THD2')) = 0;
-
+vu(strcmpi(model.rxns,'SUCCt2_2')) = 0;
+vu(strcmpi(model.rxns,'FORt2')) = 0;
 
 %Uptake Fluxes
 if isfield(bounds,'Vuptake')

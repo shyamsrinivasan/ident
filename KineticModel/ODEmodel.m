@@ -3,7 +3,7 @@
 %Describing the ODE dXdt = data.S*flux(X,p)
 %September 2014
 %**************************************************************************
-function [dXdt,flag,newdata] = ODEmodel(t,y,data,model,pvec)
+function [dXdt,flag,newdata] = ODEmodel(t,mc,data,model,pvec)
 % callODEmodel = @(t,Y,data)ODEmodel(t,Y,model,pmeter);
 bmind = model.bmrxn;
 % Mbio = strcmpi('biomass',model.mets);
@@ -48,7 +48,7 @@ dXdt = zeros(nt_m,1);%[Metabolites;Biomass]
 %% Fluxes 
 %initial flux
 % flux = calc_flux(model,pmeter,Y);
-flux = iflux(model,pvec,y);
+flux = iflux(model,pvec,mc);
 
 % %% %Biomass flux - growth rate
 % % gr_flux = 0.8*prod(Y(Mbio_ind)./([.8;.1]+Y(Mbio_ind)));
@@ -62,13 +62,34 @@ flux = iflux(model,pvec,y);
 mu = flux(bmind);
 
 %plot time course concentrations and flux during integration
-% plotflux_timecourse(flux,t,model)
-% plotconc_timecourse(Y,t,model)
+nad16 = find(strcmpi(model.rxns,'NADH16'));
+atps = find(strcmpi(model.rxns,'ATPS4r'));
+cyt = find(strcmpi(model.rxns,'CYTBD'));
+pit = find(strcmpi(model.rxns,'PIt2r'));
+act = find(strcmpi(model.rxns,'ACt2r'));
+
+plotflux_timecourse(flux,t,model,[nad16 atps cyt pit act]);
+
+hc = find(strcmpi(model.mets,'h[c]'));
+he = find(strcmpi(model.mets,'h[e]'));
+pic = find(strcmpi(model.mets,'pi[c]'));
+pie = find(strcmpi(model.mets,'pi[e]'));
+
+plotconc_timecourse(mc,t,model,[hc he pic pie]);
 %% %Intracellular Metabolites
 %Cytosolic
-dXdt(1:nin_m) = model.S(1:nin_m,:)*flux-mu*y(1:nin_m);
+dXdt(1:nin_m) = model.S(1:nin_m,:)*flux-mu*mc(1:nin_m);
+% dXdt(nin_m+1:nt_m) = 0;
 dXdt(nin_m+1:nt_m) = model.S(nin_m+1:nt_m,:)*flux;%-mu*Y(nin_m+1:nt_m);
 
+idx = find(mc<0);
+% dbstop in ODEmodel.m at 79 if any(find(mc<0))
+if any(idx)
+    fprintf('%d %s %3.6g\n',length(idx),model.mets{idx(1)},t);
+    fprintf('Net flux = %3.6g\n',dXdt(hc));
+    fprintf('Net flux = %3.6g\n',dXdt(he));
+%     return
+end
 %ATP, AMP, ADP
 % ec = 0.8;
 % ATP = strcmpi('atp[c]',model.mets);
@@ -110,15 +131,15 @@ dXdt(nin_m+1:nt_m) = model.S(nin_m+1:nt_m,:)*flux;%-mu*Y(nin_m+1:nt_m);
 
 %Biomass 
 % dXdt(end) = data.S(end,:)*flux;
-
-if any(y(y<0))
+% 
+if any(mc(mc<0))
     flag = -1;
 else
     flag = 0;
 end
 newdata = data;
 newdata.flux = flux;
-newdata.Y = y;
+newdata.Y = mc;
 newdata.t = t;
 end
 

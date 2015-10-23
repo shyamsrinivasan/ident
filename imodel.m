@@ -7,8 +7,8 @@ solverP = struct();
 %ODE Solver parameters
 solverP.RabsTol = 1e-6;
 solverP.PabsTol = 1e-6;
-solverP.MabsTol = 1e-5;
-solverP.RelTol = 1e-4;
+solverP.MabsTol = 1e-9;
+solverP.RelTol = 1e-9;
 solverP.MaxIter = 1000;    
 solverP.MaxDataPoints = 200;
 solverP.tmax = tmax;%s
@@ -20,9 +20,9 @@ saveData.dirname =...
 'C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KModel';
 
 %recheck growth rate
-[gMax,~,flag] = estimateLPgrowth(model);
-if flag
-    fprintf('Maximum feasible growth rate = %2.3g h-1\n',-gMax);
+[vLPmax,~,~,model] = estimateLPgrowth(model);
+if vLPmax.flag
+    fprintf('Maximum feasible growth rate = %2.3g h-1\n',-vLPmax.obj);
 else
     fprintf('Growth is Infeasible\n');
 end

@@ -1,11 +1,19 @@
-function plotflux_timecourse(flux,t,model,hsubfig,hfig)
-if nargin < 5
+function plotflux_timecourse(flux,t,model,idx,hsubfig,hfig)
+if nargin < 6
     hfig = initialize();
 end
-if nargin < 4
+if nargin < 5
     [~,hsubfig] = initialize(hfig,flux);
 end
-nflux = length(flux);
+if nargin<4
+    idx = [];
+end
+if ~isempty(idx)
+    nflux = length(idx);
+else
+    idx = 1:length(flux);
+    nflux = length(flux);
+end
 if rem(nflux,2)==0
     n = nflux/2;
 else
@@ -27,7 +35,7 @@ end
     
 for ivar = 1:nflux
     if ~isfield(model,'Regulators')
-        y_label1 = sprintf('%s mmole/gDCW',model.rxns{ivar});
+        y_label1 = sprintf('%s mmole/gDCW',model.rxns{idx(ivar)});
     end
     if hsubfig(ivar) ~= 0
         hca = findobj(hsubfig(ivar),'type','axes');
@@ -39,7 +47,7 @@ for ivar = 1:nflux
         set(hca,'NextPlot','add');     
         set(hsubfig(ivar),'NextPlot','add');
     end
-    hline = line(t,flux(ivar));
+    hline = line(t,flux(idx(ivar)));
     %Object Properties
     set(hline,'LineStyle','-',...
               'Marker','o',...

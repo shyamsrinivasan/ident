@@ -5,11 +5,11 @@ end
 
 %extracellular metabolites in M moles/L
 % met.glc = 0.2;
-% met.o2 = 1e-5;
 met.pi_e = 1e-3;
-met.h_e = 1e-7;
-% met.co2 = 1e-8;
-met.h2o_e = 55.0;
+met.o2_e = 5.5;
+met.h_e = 1e-6;
+met.co2_e = 0;%1e-8;
+met.h2o_e = 60.0;%55.0;
 met.pi_c = 1e-3;
 met.h_c = 1e-7;
 met.h2o_c = 55.0;

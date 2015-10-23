@@ -21,7 +21,7 @@ for jmc = 1:length(mets)
     end
     
     tfm = strcmpi(model.mets,[kmet{jmc} cmp]);    
-    if any(tfm) && ~assignFlag(tfm)
+    if any(tfm) %&& ~assignFlag(tfm)
         mc(tfm,:) = VMC.(mets{jmc});
         assignFlag(tfm,:) = 1;
     end

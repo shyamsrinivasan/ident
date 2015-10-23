@@ -90,9 +90,9 @@ for irxn = 1:nrxn
     %kfwd or kbkw is sampled basedon reaction directionality from FBA for
     %thermodynamic consistency
     %sampling done only for unknown values
-    fprintf('%s \t delG = %3.6g \t Vflux = %3.6g\t',model.rxns{Vind(irxn)},...
-             pvec.delGr(Vind(irxn)),...
-             model.Vss(Vind(irxn)));    
+%     fprintf('%s \t delG = %3.6g \t Vflux = %3.6g\t',model.rxns{Vind(irxn)},...
+%              pvec.delGr(Vind(irxn)),...
+%              model.Vss(Vind(irxn)));    
     pvec = samplekcat(model,pvec,sbid,prid,Vind(irxn),mc);
     
     pvec.Vmax(Vind(irxn)) = 1;
@@ -117,13 +117,12 @@ end
 
 %other reactions - redox balance
 pvec = samplekcatRedox(model,pvec,mc);
-flux = RedoxKinetics(model,pvec,mc);
 
 if any(isnan(pvec.kcat_fwd))
-    pvec.kcat_fwd(isnan(pvec.kcat_fwd)) = 1;
+    pvec.kcat_fwd(isnan(pvec.kcat_fwd)) = 1000;
 end
 if any(isnan(pvec.kcat_fwd))
-    pvec.kcat_fwd(isnan(pvec.kcat_fwd)) = 1;
+    pvec.kcat_fwd(isnan(pvec.kcat_fwd)) = 1000;
 end
 
 %set irreversible kcats
@@ -141,6 +140,7 @@ pvec.kcat_bkw(model.VFex) = 0;
 pvec.Vmax = newp.Vmax;
 
 %estimate Vmax
+%for Vind
 if all(check(Vind)>0)
     pvec.Vmax(pvec.delGr==0) = 0;
 %     pvec = findVmax(model,pvec,mc);
@@ -154,6 +154,31 @@ if all(check(Vind)>0)
             pvec.Vmax(Vind(irxn)) = 1;
         end
     end
+    
+    %for redox reactions
+    [~,rk,vred] = RedoxKinetics(model,pvec,mc,flux);
+    for irxn = 1:length(vred)
+        if rk(irxn)
+            pvec.Vmax(vred(irxn)) = model.Vss(vred(irxn))/rk(irxn);
+        else
+            pvec.Vmax(vred(irxn)) = 1;
+        end
+    end   
+    
+    %for trasnport fluxes
+     Vex = model.Vex;
+    Vex = setdiff(Vex,[Vind vred]);
+    pvec.Vmax(Vex) = 1;
+%     for irxn = 1:length(Vex)
+%         [~,tk] = TKinetics(model,pvec,mc,Vex(irxn));
+%         if tk
+%             pvec.Vmax(Vex(irxn)) = model.Vss(Vex(irxn))/tk;
+%         else
+%             pvec.Vmax(Vex(irxn)) = 1;
+%         end
+%     end   
+    
+    pvec.Vmax(model.VFex) = 1;    
     pvec.Vmax(model.Vss==0) = 0;
     pvec.feasible = 1;
 else
@@ -164,8 +189,9 @@ else
 end
 
 
+
 %check - calculate initial flux
-flux = iflux(model,pvec,mc,flux);
+flux = iflux(model,pvec,mc);
 
     
     
