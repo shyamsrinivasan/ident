@@ -125,6 +125,7 @@ if any(isnan(pvec.kcat_fwd))
     pvec.kcat_fwd(isnan(pvec.kcat_fwd)) = 1000;
 end
 
+
 %set irreversible kcats
 for irxn = 1:length(model.rxns)
     if ~model.rev(irxn)
@@ -166,8 +167,9 @@ if all(check(Vind)>0)
     end   
     
     %for trasnport fluxes
-     Vex = model.Vex;
-    Vex = setdiff(Vex,[Vind vred]);
+    Vex = model.Vex;
+    Vex = setdiff(Vex,[Vind vred]);    
+    getTKparameter(model,pvec,mc,Vex)
     pvec.Vmax(Vex) = 1;
 %     for irxn = 1:length(Vex)
 %         [~,tk] = TKinetics(model,pvec,mc,Vex(irxn));

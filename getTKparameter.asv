@@ -28,9 +28,6 @@ for irxn = 1:length(Vex)
             x0 = [1;1];
             [x,fval,exitflag,output,lambda] =...
             fmincon(@vflux,x0,[],[],[],[],lb,ub);
-            pvec.kcat_fwd(Vex(irxn)) = x(1);
-            pvec.kcat_bkw(Vex(irxn)) = x(2);
-            pvec.Vmax(Vex(irxn)) = 1;
             flux = TKinetics(model,pvec,mc,Vex(irxn));
             fprintf('%3.6g',x);
         end
