@@ -1,4 +1,4 @@
-function [x,assignFlag,delGr,vCorrectFlag] = getiConEstimate(model)
+function [x,assignFlag,delGr,model,vCorrectFlag] = getiConEstimate(model)
 
 %setup problem with default constraints for thermodynamically active
 %reaction
@@ -24,6 +24,10 @@ if size(bounds.A,2) == length(bounds.mets)
         if ~isempty(x)
             [x,assignFlag,delGr,vCorrectFlag] = assignConc(x,model,bounds);        
         end
+        lb = separate_slack(bounds.lb,model,bounds);
+        model.lb = exp(assignConc(lb,model,bounds));
+        ub = separate_slack(bounds.lb,model,bounds);
+        model.ub = exp(assignConc(ub,model,bounds));
         if ~isempty(delGr)
             [delGr,assignFlux] = assignRxns(delGr,model,bounds);
         end

@@ -68,22 +68,25 @@ cyt = find(strcmpi(model.rxns,'CYTBD'));
 pit = find(strcmpi(model.rxns,'PIt2r'));
 act = find(strcmpi(model.rxns,'ACt2r'));
 
-plotflux_timecourse(flux,t,model,[nad16 atps cyt pit act]);
+% plotflux_timecourse(flux,t,model,[nad16 atps cyt pit act]);
 
 hc = find(strcmpi(model.mets,'h[c]'));
 he = find(strcmpi(model.mets,'h[e]'));
 pic = find(strcmpi(model.mets,'pi[c]'));
 pie = find(strcmpi(model.mets,'pi[e]'));
 
-plotconc_timecourse(mc,t,model,[hc he pic pie]);
+
 %% %Intracellular Metabolites
 %Cytosolic
 dXdt(1:nin_m) = model.S(1:nin_m,:)*flux-mu*mc(1:nin_m);
 % dXdt(nin_m+1:nt_m) = 0;
 dXdt(nin_m+1:nt_m) = model.S(nin_m+1:nt_m,:)*flux;%-mu*Y(nin_m+1:nt_m);
 
+plotconc_timecourse(dXdt,t,model,[hc he pic pie]);
 idx = find(mc<0);
-% dbstop in ODEmodel.m at 79 if any(find(mc<0))
+% if t > 1e-7
+%     dbstop in ODEmodel.m at 136
+% end
 if any(idx)
     fprintf('%d %s %3.6g\n',length(idx),model.mets{idx(1)},t);
     fprintf('Net flux = %3.6g\n',dXdt(hc));

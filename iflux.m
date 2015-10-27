@@ -48,7 +48,7 @@ if isempty(idx)
 
     % flux(strcmpi(model.rxns,'atpm')) = 0;
     if mc(logical(model.S(:,model.bmrxn)<0))>0
-        flux(model.bmrxn) = 0.01;
+        flux(model.bmrxn) = model.Vss(model.bmrxn);%0.01;
     else
         flux(model.bmrxn) = 0;
     end

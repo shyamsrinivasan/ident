@@ -30,7 +30,7 @@ model.Vuptake([h]) = [1000];
 
 %calculate initial flux
 flux = iflux(model,pvec,imc);
-
+dXdt = ODEmodel(0,imc,[],model,pvec);
 
 %integrate model
 [sol,finalSS,status] = callODEsolver(model,pvec,imc,solverP);

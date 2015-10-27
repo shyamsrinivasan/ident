@@ -5,19 +5,19 @@ end
 
 %extracellular metabolites in M moles/L
 % met.glc = 0.2;
-met.pi_e = 1e-3;
-met.o2_e = 5.5;
-met.h_e = 1e-6;
-met.co2_e = 0;%1e-8;
-met.h2o_e = 60.0;%55.0;
+met.pi_e = 1e-2;
+met.o2_e = 0.0025;
+met.h_e = 1e-7;
+met.co2_e = 0.002;%1e-8;
+met.h2o_e = 55.0;%55.0;
 met.pi_c = 1e-3;
 met.h_c = 1e-7;
-met.h2o_c = 55.0;
+met.h2o_c = 55.0;%1.53e-13;
 
 fprintf('Generating single feasible concentration sample\n');
 %generate one metabolite concentration for parameter estimation
 %get one set of concentrations and coresponding delGr
-[mc,assignFlag,delGr,vCorrectFlag] = getiConEstimate(model);
+[mc,assignFlag,delGr,model,vCorrectFlag] = getiConEstimate(model);
 
 [mc,assignFlag] = iconcentration(model,met,mc,assignFlag);
 %M to mM
@@ -34,6 +34,18 @@ ptsdelGr = [];
 % ACHRmetSampling(model,1,nsample,200);
 
 % pts = iconcentration(model,met,pts,assignFlag);
+
+model.lb(strcmpi(model.mets,'pi[e]')) = 1e-9;
+model.lb(strcmpi(model.mets,'o2[e]')) = 1e-9;
+model.lb(strcmpi(model.mets,'co2[e]')) = 1e-9;
+model.lb(strcmpi(model.mets,'h[e]')) = 1e-9;
+model.lb(strcmpi(model.mets,'h2o[e]')) = 1e-9;
+
+model.ub(strcmpi(model.mets,'pi[e]')) = 250;
+model.ub(strcmpi(model.mets,'o2[e]')) = 250;
+model.ub(strcmpi(model.mets,'co2[e]')) = 250;
+model.ub(strcmpi(model.mets,'h[e]')) = 250;
+model.ub(strcmpi(model.mets,'h2o[e]')) = 250;
 
 if ~isempty(pts)
     smp = cell(nsample,1);

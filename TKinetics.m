@@ -2,6 +2,7 @@ function [flux,vflux] = TKinetics(model,pvec,mc,Vex)
 flux = zeros(model.nt_rxn,1);
 vflux = zeros(model.nt_rxn,1);
 Vmax = pvec.Vmax;
+K = pvec.K;
 
 h2o = find(strcmpi(model.mets,'h2o[c]'));
 pic = find(strcmpi(model.mets,'pi[c]'));
@@ -54,7 +55,7 @@ for irxn = 1:length(Vex)
             sbid([hc he]) = 0;
 %             prid([hc he]) = 0;
         end
-        sr_rt=min(mc(sbid)./1e-3);            
+        sr_rt=min(mc(sbid)./K(sbid,Vex(irxn)));            
     else
         %all foward = 0
         sr_rt = 0;
@@ -74,7 +75,7 @@ for irxn = 1:length(Vex)
 %             sbid([hc he]) = 0;
             prid([hc he]) = 0;
         end
-        pr_rt = min(mc(prid)./1e-3);
+        pr_rt = min(mc(prid)./K(prid,Vex(irxn)));
     else
         %all reverse = 0
         pr_rt = 0;

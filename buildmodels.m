@@ -156,8 +156,9 @@ if all(check(Vind)>0)
         end
     end
     
-    %for redox reactions
+    %for redox reactions    
     [~,rk,vred] = RedoxKinetics(model,pvec,mc,flux);
+    pvec = getRKparameter(model,pvec,mc,vred);
     for irxn = 1:length(vred)
         if rk(irxn)
             pvec.Vmax(vred(irxn)) = model.Vss(vred(irxn))/rk(irxn);
@@ -169,7 +170,7 @@ if all(check(Vind)>0)
     %for trasnport fluxes
     Vex = model.Vex;
     Vex = setdiff(Vex,[Vind vred]);    
-    getTKparameter(model,pvec,mc,Vex)
+    pvec = getTKparameter(model,pvec,mc,Vex);
     pvec.Vmax(Vex) = 1;
 %     for irxn = 1:length(Vex)
 %         [~,tk] = TKinetics(model,pvec,mc,Vex(irxn));
