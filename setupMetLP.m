@@ -21,9 +21,10 @@ vspl =  [find(strcmpi(newmodel.rxns,'THD2'))...
         find(strcmpi(newmodel.rxns,'CYTBD'))];
 
 %metabolites that do not affect thermodynamic equilibrium   
-vmet = [find(strcmpi(newmodel.mets,'h[c]'))...
-        find(strcmpi(newmodel.mets,'h[e]'))...
-        find(strcmpi(newmodel.mets,'pi[c]'))];
+vmet=[];
+% vmet = [find(strcmpi(newmodel.mets,'h[c]'))...
+%         find(strcmpi(newmodel.mets,'h[e]'))...
+        %find(strcmpi(newmodel.mets,'pi[c]'))];
      
 %find all exchnage and transport reactions in newmodel
 [Vind,VFex,Vex,bmrxn] = fluxIndex(newmodel);
@@ -99,6 +100,7 @@ lb(strcmpi(newmodel.mets,'icit[c]')) = log(1.0e-5);
 % lb(strcmpi(newmodel.mets,'Xu5p-D[c]')) = log(1e-4);
 % lb(strcmpi(newmodel.mets,'ru5p-D[c]')) = log(1e-7);
 lb(strcmpi(newmodel.mets,'h2o[c]')) = log(55.0);
+lb(strcmpi(newmodel.mets,'pi[c]')) = log(1e-9);
 
 ub(strcmpi(newmodel.mets,'glc[e]')) = log(0.2);
 % ub(strcmpi(newmodel.mets,'fdp[c]')) = log(1.5e-7);
@@ -126,6 +128,7 @@ ub(strcmpi(newmodel.mets,'co2[c]')) = log(3.0);
 ub(strcmpi(newmodel.mets,'o2[c]')) = log(1.6);
 % ub(strcmpi(newmodel.mets,'h[c]')) = log(1e-7);
 ub(strcmpi(newmodel.mets,'h2o[c]')) = log(55.0);
+ub(strcmpi(newmodel.mets,'pi[c]')) = log(1e-2);
 
 knwn_id = zeros(nmet,1);
 for imet = 1:nmet

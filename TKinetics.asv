@@ -55,10 +55,19 @@ for irxn = 1:length(Vex)
                ~any(strcmpi(model.rxns{Vex(irxn)},'PIt2r'))
            sbid([pic pie hc he q8 q8h2]) = 0;
         elseif ~any(strcmpi(model.rxns{Vex(irxn)},'PIt2r'))
-            sbid([h2o pie hc he q8 q8h2]) = 0;
+            sbid([h2o pie hc q8 q8h2]) = 0;
         else
+            sbid() = 0;
+        end
+        if ~any(strcmpi(model.rxns{Vex(irxn)},'h2ot'))
+                        
+        end
+        if any(strcmpi(model.rxns{Vex(irxn)},'ATPS4r'))
+            sbid([h2o pie hc q8 q8h2]) = 0;
+        end
+        if any(strcmpi(model.rxns{Vex(irxn)},'PIt2r'))
             sbid([h2o hc he q8 q8h2]) = 0;
-        end            
+        end       
         sr_rt=min(mc(sbid)./K(sbid,Vex(irxn)));            
     else
         %all foward = 0
@@ -69,18 +78,15 @@ for irxn = 1:length(Vex)
     if all(mc(prid)>0)
         %all reverse
         %eliminate water from all reactions
-        if ~any(strcmpi(model.rxns{Vex(irxn)},'h2ot')) &&...
-           ~any(strcmpi(model.rxns{Vex(irxn)},'ATPS4r')) &&...
-           ~any(strcmpi(model.rxns{Vex(irxn)},'PIt2r'))            
-            prid([h2o pic pie hc he q8 q8h2]) = 0;
-        elseif ~any(strcmpi(model.rxns{Vex(irxn)},'ATPS4r')) &&...
-               ~any(strcmpi(model.rxns{Vex(irxn)},'PIt2r'))
+        if any(strcmpi(model.rxns{Vex(irxn)},'h2ot'))
             prid([pic pie hc he q8 q8h2]) = 0;
-        elseif ~any(strcmpi(model.rxns{Vex(irxn)},'PIt2r'))
-            prid([h2o pie hc he q8 q8h2]) = 0;
-        else
+        end
+        if any(strcmpi(model.rxns{Vex(irxn)},'ATPS4r'))
+            prid([h2o pie hc q8 q8h2]) = 0;
+        end
+        if any(strcmpi(model.rxns{Vex(irxn)},'PIt2r'))
             prid([h2o hc he q8 q8h2]) = 0;
-        end     
+        end        
         pr_rt = min(mc(prid)./K(prid,Vex(irxn)));
     else
         %all reverse = 0

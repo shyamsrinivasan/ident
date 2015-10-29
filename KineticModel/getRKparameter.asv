@@ -17,8 +17,8 @@ for irxn = 1:length(Vred)
                 sbid([pic pie hc he h2o q8 q8h2]) = 0;
                 prid([pic pie hc he h2o q8 q8h2]) = 0;
             else
-                sbid([hc he h2o q8 q8h2]) = 0;
-                prid([hc he h2o q8 q8h2]) = 0;
+                sbid([h2o]) = 0;
+                prid([h2o]) = 0;
             end
             
             sbid = find(sbid);
