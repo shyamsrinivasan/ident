@@ -50,6 +50,27 @@ for irxn = 1:nrxn
     %no parameters for cofactors - assumed abundant 
     %cofactros are assumed as compensated species
     %hence
+    if ~any(strcmpi(model.rxns{Vind(irxn)},'PPC'))
+        if any(sbid)
+            if ~any(model.CMPS(sbid,Vind(irxn))) 
+                sbid(vmet) = 0;                
+            else
+                sbid = find(sbid);
+                cmp_s = sbid(logical(model.CMPS(sbid,Vind(irxn))));
+                sbid = setdiff(sbid,cmp_s);
+            end
+        end
+        if any(prid)
+            if ~any(model.CMPS(prid,Vind(irxn)))
+                prid(vmet) = 0;
+            else
+                prid = find(prid);
+                cmp_p = prid(logical(model.CMPS(prid,Vind(irxn))));
+                prid = setdiff(prid,cmp_p);
+            end
+        end
+    else
+    end
     if any(sbid)
         if any(sbid(vmet))
             sbcmp(vmet(logical(sbid(vmet)))) =...
