@@ -10,6 +10,7 @@ vmet = [find(strcmpi(model.mets,'h[e]'))...
         find(strcmpi(model.mets,'pi[c]'))...
         find(strcmpi(model.mets,'h2o[c]'))...       
         find(strcmpi(model.mets,'co2[c]'))];
+h2o = find(strcmpi(model.mets,'h2o[c]'));        
 q8 = find(strcmpi(model.mets,'q8[c]'));
 q8h2 = find(strcmpi(model.mets,'q8h2[c]'));
 
@@ -26,24 +27,61 @@ q8h2 = find(strcmpi(model.mets,'q8h2[c]'));
 % nadh = strcmpi(model.mets,'nadh[c]');
 % atp = strcmpi(model.mets,'atp[c]');
 % adp = strcmpi(model.mets,'adp[c]');
-o2 = strcmpi(model.mets,'o2[c]');
+% o2 = strcmpi(model.mets,'o2[c]');
 
 for irxn = 1:length(Vex)
     %kcat
-    if ~isnan(pvec.kcat_fwd(Vex(irxn)))
-        kfwd = pvec.kcat_fwd(Vex(irxn));
-    else
-        kfwd = 1000;
-    end
-    if ~isnan(pvec.kcat_bkw(Vex(irxn)))
-        kbkw = pvec.kcat_bkw(Vex(irxn));
-    else
-        kbkw = 1000;
-    end 
+    kfwd = pvec.kcat_fwd(Vex(irxn));
+    kbkw = pvec.kcat_bkw(Vex(irxn));
+%     if ~isnan(pvec.kcat_fwd(Vex(irxn)))
+%         kfwd = pvec.kcat_fwd(Vex(irxn));
+%     else
+%         kfwd = 1000;
+%     end
+%     if ~isnan(pvec.kcat_bkw(Vex(irxn)))
+%         kbkw = pvec.kcat_bkw(Vex(irxn));
+%     else
+%         kbkw = 1000;
+%     end 
     
     %kinetics - substrate and product
     sbid = logical(model.S(:,Vex(irxn))<0);
     prid = logical(model.S(:,Vex(irxn))>0);
+    
+    if any(sbid)
+        mc_alls = prod(logical(mc(sbid)));
+        if ~any(model.CMPS(sbid,Vind(irxn)))
+            sbid(vmet) = 0;
+            cmp_s = [];
+        else
+            sbid = find(sbid);
+            cmp_s = sbid(logical(model.CMPS(sbid,Vind(irxn))));
+            sbid = setdiff(sbid,cmp_s);
+        end            
+    end
+    
+    if any(prid)
+        mc_allp = prod(logical(mc(prid)));
+        if ~any(model.CMPS(prid,Vind(irxn)))
+            prid(vmet) = 0;
+            cmp_p = [];
+        else
+            prid = find(prid);
+            cmp_p = prid(logical(model.CMPS(prid,Vind(irxn))));
+            prid = setdiff(prid,cmp_p);                       
+        end
+    end
+    
+    if model.rev(Vex(irxn))
+        
+    if model.rev(Vex(irxn))
+        vfwd = mc_alls*cmp_s*kfwd*sr_rt;
+        vbkw = mc_allp*cmp_p*kbkw*pr_rt;
+        vflux(Vex(irxn)) = (vfwd-vbkw)/(1+sr_rt+pr_rt);
+    elseif ~model.rev(Vex(irxn))
+        vfwd = mc_alls*cmp_s*kfwd*sr_rt;
+        vflux(Vex(irxn)) = vfwd/(1+sr_rt);
+    end
     
     if all(mc(sbid)>0)
         %all forward 

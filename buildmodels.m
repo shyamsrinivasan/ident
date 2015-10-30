@@ -2,20 +2,27 @@ function pvec = buildmodels(model,pvec,mc)
 
 %reactions to consider for kinetics other than Vind
 Vind = [model.Vind find(strcmpi(model.rxns,'GLCpts'))];
-%         find(strcmpi(model.rxns,'THD2'))...
+Vind = [Vind find(strcmpi(model.rxns,'NADH16'))];
+Vind = [Vind find(strcmpi(model.rxns,'ATPS4r'))];
+Vind = [Vind find(strcmpi(model.rxns,'NADTRHD'))];
+Vind = [Vind find(strcmpi(model.rxns,'THD2'))];
+Vind = [Vind find(strcmpi(model.rxns,'CYTBD'))];
 %         find(strcmpi(model.rxns,'NADH16'))...
 %         find(strcmpi(model.rxns,'ATPS4r'))];
 
 Vind = setdiff(Vind,find(strcmpi(model.rxns,'ATPM')));
-Vind = setdiff(Vind,find(strcmpi(model.rxns,'NADTRHD')));
+% Vind = setdiff(Vind,find(strcmpi(model.rxns,'NADTRHD')));
 
-%metabolites that do not affect thermodynamic equilibrium   
-vmet = [find(strcmpi(model.mets,'h[e]'))...
+%metabolites that do not affect thermodynamic equilibrium  
+he = find(strcmpi(model.mets,'h[e]'));
+h2o = find(strcmpi(model.mets,'h2o[c]'));
+vmet = [he...
         find(strcmpi(model.mets,'h[c]'))...
         find(strcmpi(model.mets,'pi[e]'))...
         find(strcmpi(model.mets,'pi[c]'))...
-        find(strcmpi(model.mets,'h2o[c]'))...       
+        h2o...       
         find(strcmpi(model.mets,'co2[c]'))];
+        
 % q8 = find(strcmpi(model.mets,'q8[c]'));
 % q8h2 = find(strcmpi(model.mets,'q8h2[c]'));
 
@@ -38,8 +45,8 @@ flux = zeros(ntrxn,1);
 
 for irxn = 1:nrxn
     %compensated species indices
-    sbcmp = zeros(length(model.mets),1);
-    prcmp = zeros(length(model.mets),1);
+%     sbcmp = zeros(length(model.mets),1);
+%     prcmp = zeros(length(model.mets),1);
     
     sbid = S(:,Vind(irxn))<0;    
     prid = S(:,Vind(irxn))>0;
@@ -58,6 +65,7 @@ for irxn = 1:nrxn
                 sbid = find(sbid);
                 cmp_s = sbid(logical(model.CMPS(sbid,Vind(irxn))));
                 sbid = setdiff(sbid,cmp_s);
+                sbid = setdiff(sbid,[he h2o]);
             end
         end
         if any(prid)
@@ -67,25 +75,28 @@ for irxn = 1:nrxn
                 prid = find(prid);
                 cmp_p = prid(logical(model.CMPS(prid,Vind(irxn))));
                 prid = setdiff(prid,cmp_p);
+                prid = setdiff(prid,[he h2o]);
             end
         end
     else
+        sbid(h2o) = 0;
+        prid(h2o) = 0;            
     end
-    if any(sbid)
-        if any(sbid(vmet))
-            sbcmp(vmet(logical(sbid(vmet)))) =...
-            sbid(vmet(logical(sbid(vmet))));    
-            sbid(vmet) = 0;
-        end
-    end
-    
-    if any(prid)
-        if any(prid(vmet))
-            prcmp(vmet(logical(prid(vmet)))) =...
-            prid(vmet(logical(prid(vmet))));
-            prid(vmet) = 0;
-        end
-    end
+%     if any(sbid)
+%         if any(sbid(vmet))
+%             sbcmp(vmet(logical(sbid(vmet)))) =...
+%             sbid(vmet(logical(sbid(vmet))));    
+%             sbid(vmet) = 0;
+%         end
+%     end
+%     
+%     if any(prid)
+%         if any(prid(vmet))
+%             prcmp(vmet(logical(prid(vmet)))) =...
+%             prid(vmet(logical(prid(vmet))));
+%             prid(vmet) = 0;
+%         end
+%     end
         
     sbfn = find(sbid);
     prfn = find(prid);
@@ -198,19 +209,19 @@ if all(check(Vind)>0)
     end
     
     %for redox reactions    
-    [~,rk,vred] = RedoxKinetics(model,pvec,mc,flux);
-    pvec = getRKparameter(model,pvec,mc,vred);
-    for irxn = 1:length(vred)
-        if rk(irxn)
-            pvec.Vmax(vred(irxn)) = model.Vss(vred(irxn))/rk(irxn);
-        else
-            pvec.Vmax(vred(irxn)) = 1;
-        end
-    end   
+%     [~,rk,vred] = RedoxKinetics(model,pvec,mc,flux);
+%     pvec = getRKparameter(model,pvec,mc,vred);
+%     for irxn = 1:length(vred)
+%         if rk(irxn)
+%             pvec.Vmax(vred(irxn)) = model.Vss(vred(irxn))/rk(irxn);
+%         else
+%             pvec.Vmax(vred(irxn)) = 1;
+%         end
+%     end   
     
     %for trasnport fluxes
     Vex = model.Vex;
-    Vex = setdiff(Vex,[Vind vred]);    
+    Vex = setdiff(Vex,Vind);    
     pvec = getTKparameter(model,pvec,mc,Vex);
     pvec.Vmax(Vex) = 1;
 %     for irxn = 1:length(Vex)

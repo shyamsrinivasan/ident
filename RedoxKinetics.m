@@ -15,6 +15,21 @@ vred = [find(strcmpi(model.rxns,'NADTRHD'))...
         find(strcmpi(model.rxns,'THD2'))...
         find(strcmpi(model.rxns,'NADH16'))...
         find(strcmpi(model.rxns,'ATPS4r'))];
+
+for irxn = 1:length(vred)
+    sbid = logical(model.S(:,Vex(irxn))<0);
+    prid = logical(model.S(:,Vex(irxn))>0);
+    
+    kfwd = pvec.kcat_fwd(Vex(irxn));
+    kbkw = pvec.kcat_bkw(Vex(irxn));
+    
+    if any(sbid)
+    end
+    
+    if any(prid)
+    end
+    
+end
     
 nadph = strcmpi(model.mets,'nadph[c]');    
 o2 = strcmpi(model.mets,'o2[c]');

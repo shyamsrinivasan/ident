@@ -16,6 +16,7 @@ else
 end
 
 if (nsamples==1 && nmodels==1)
+    fprintf('\nGenerating a single model in the ensemble\n');
     ensb = cell(nmodels,2);
     model_ens = cell(nmodels,1);     
     ensb{1,1} = mc;
