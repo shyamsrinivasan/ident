@@ -15,13 +15,12 @@ Vind = setdiff(Vind,find(strcmpi(model.rxns,'ATPM')));
 
 %metabolites that do not affect thermodynamic equilibrium  
 he = find(strcmpi(model.mets,'h[e]'));
+hc = find(strcmpi(model.mets,'h[c]'));
 h2o = find(strcmpi(model.mets,'h2o[c]'));
-vmet = [he...
-        find(strcmpi(model.mets,'h[c]'))...
-        find(strcmpi(model.mets,'pi[e]'))...
-        find(strcmpi(model.mets,'pi[c]'))...
-        h2o...       
-        find(strcmpi(model.mets,'co2[c]'))];
+pie = find(strcmpi(model.mets,'pi[e]'));
+pic = find(strcmpi(model.mets,'pi[c]'));
+co2 = find(strcmpi(model.mets,'co2[c]'));
+vmet = [he hc pie pic h2o co2];
         
 % q8 = find(strcmpi(model.mets,'q8[c]'));
 % q8h2 = find(strcmpi(model.mets,'q8h2[c]'));
@@ -47,12 +46,15 @@ for irxn = 1:nrxn
     %compensated species indices
 %     sbcmp = zeros(length(model.mets),1);
 %     prcmp = zeros(length(model.mets),1);
-    
+    nmet = size(S,1);
+
     sbid = S(:,Vind(irxn))<0;    
     prid = S(:,Vind(irxn))>0;
     
-    Kscol = zeros(length(find(sbid)),1);
-    Kpcol = zeros(length(find(prid)),1);
+%     Kscol = zeros(length(find(sbid)),1);
+%     Kpcol = zeros(length(find(prid)),1);
+    Kscol = zeros(nmet,1);
+    Kpcol = zeros(nmet,1);
     
     %no parameters for cofactors - assumed abundant 
     %cofactros are assumed as compensated species
@@ -66,6 +68,7 @@ for irxn = 1:nrxn
                 cmp_s = sbid(logical(model.CMPS(sbid,Vind(irxn))));
                 sbid = setdiff(sbid,cmp_s);
                 sbid = setdiff(sbid,[he h2o]);
+                sbid = logical(sparse(sbid,1,1,nmet,1));
             end
         end
         if any(prid)
@@ -76,6 +79,7 @@ for irxn = 1:nrxn
                 cmp_p = prid(logical(model.CMPS(prid,Vind(irxn))));
                 prid = setdiff(prid,cmp_p);
                 prid = setdiff(prid,[he h2o]);
+                prid = logical(sparse(prid,1,1,nmet,1));
             end
         end
     else
@@ -97,45 +101,7 @@ for irxn = 1:nrxn
 %             prid(vmet) = 0;
 %         end
 %     end
-        
-    sbfn = find(sbid);
-    prfn = find(prid);
-    
-    sbzro = sbfn(mc(sbfn)==0);
-    przro = prfn(mc(prfn)==0);
-    
-    nsb = length(find(sbid));
-    npr = length(find(prid));
-    
-    %enzyme saturation
-    sigma = random(makedist('Uniform'),...
-                   nsb+npr,...
-                   1);
-    
-    %determine kinetic parameters from concentration and sigma
-    %substrates
-    if ~isempty(find(sbid,1))
-        sb_rat = sigma(1:nsb)./(1-sigma(1:nsb));
-        Ksb = mc(logical(sbid))./sb_rat;
-        Kscol(logical(sbid),1) = pvec.K(logical(sbid),Vind(irxn));
-        if any(Kscol==1)
-            pvec.K(Kscol==1,Vind(irxn))=Ksb(pvec.K(logical(sbid),Vind(irxn))==1);
-            pvec.K(sbzro,Vind(irxn)) = 1;
-            pvec.Kind(Kscol==1,Vind(irxn))=1;
-        end
-    end
-    
-    %products
-    if ~isempty(find(prid,1))
-        pr_rat = sigma(nsb+1:nsb+npr)./(1-sigma(nsb+1:nsb+npr));
-        Kpr = mc(logical(prid))./pr_rat;
-        Kpcol(logical(prid),1) = pvec.K(logical(prid),Vind(irxn));
-        if any(Kpcol==1)
-            pvec.K(Kpcol==1,Vind(irxn))=Kpr(pvec.K(logical(prid),Vind(irxn))==1);
-            pvec.K(przro,Vind(irxn)) = 1;
-            pvec.Kind(Kpcol==1,Vind(irxn))=1;
-        end
-    end
+    pvec = estimateKm(pvec,sbid,prid,mc,Kscol,Kpcol,Vind(irxn));
     
     %forward and backward catalytic rates
     %kfwd and kbkw
@@ -167,6 +133,66 @@ for irxn = 1:nrxn
     end    
 end
 
+%other reactions 
+%transport reactions x[e] <==> x[c]
+Vex = model.Vex;
+Vex = setdiff(Vex,Vind); 
+for irxn = 1:length(Vex)
+    nmet = size(S,1);
+    
+    sbid = S(:,Vex(irxn))<0;    
+    prid = S(:,Vex(irxn))>0;
+    
+    Kscol = zeros(nmet,1);
+    Kpcol = zeros(nmet,1);
+    
+%     Kscol = zeros(length(find(sbid)),1);
+%     Kpcol = zeros(length(find(prid)),1);
+    
+    if any(sbid)
+        if ~any(strcmpi(model.rxns{Vex(irxn)},'h2ot'))
+            sbid(h2o) = 0;
+        end
+        if ~any(strcmpi(model.rxns{Vex(irxn)},'PIt2r'))
+            sbid([pie pic]) = 0;
+        end
+        if ~any(strcmpi(model.rxns{Vex(irxn)},'CO2t'))
+            sbid(co2) = 0;
+        end
+        
+        if ~any(model.CMPS(sbid,Vind(irxn))) 
+            sbid([he hc]) = 0;                
+        else
+            sbid = find(sbid);
+            cmp_s = sbid(logical(model.CMPS(sbid,Vind(irxn))));
+            sbid = setdiff(sbid,cmp_s);
+            sbid = logical(sparse(sbid,1,1,nmet,1));
+%             sbid = setdiff(sbid,[he h2o]);
+        end
+    end
+    if any(prid)
+        if ~any(strcmpi(model.rxns{Vex(irxn)},'h2ot'))
+            prid(h2o) = 0;
+        end
+        if ~any(strcmpi(model.rxns{Vex(irxn)},'PIt2r'))
+            prid([pie pic]) = 0;
+        end
+        if ~any(strcmpi(model.rxns{Vex(irxn)},'CO2t'))
+            prid(co2) = 0;
+        end
+        if ~any(model.CMPS(prid,Vind(irxn)))
+            prid([he hc]) = 0;
+        else
+            prid = find(prid);
+            cmp_p = prid(logical(model.CMPS(prid,Vind(irxn))));
+            prid = setdiff(prid,cmp_p);
+            prid = logical(sparse(prid,1,1,nmet,1));
+%             prid = setdiff(prid,[he h2o]);
+        end
+    end    
+   pvec = estimateKm(pvec,sbid,prid,mc,Kscol,Kpcol,Vex(irxn));
+end
+
 %other reactions - redox balance
 % pvec = samplekcatRedox(model,pvec,mc);
 % 
@@ -176,7 +202,6 @@ end
 % if any(isnan(pvec.kcat_fwd))
 %     pvec.kcat_fwd(isnan(pvec.kcat_fwd)) = 1000;
 % end
-
 
 %set irreversible kcats
 for irxn = 1:length(model.rxns)
@@ -208,6 +233,16 @@ if all(check(Vind)>0)
         end
     end
     
+    %other reactions
+    for irxn = 1:length(Vex)
+        [~,tk] = TKinetics(model,pvec,mc,Vex(irxn));
+        if tk
+            pvec.Vmax(Vex(irxn)) = model.Vss(Vex(irxn))/tk;
+        else
+            pvec.Vmax(Vex(irxn)) = 1;
+        end
+    end  
+    
     %for redox reactions    
 %     [~,rk,vred] = RedoxKinetics(model,pvec,mc,flux);
 %     pvec = getRKparameter(model,pvec,mc,vred);
@@ -220,10 +255,10 @@ if all(check(Vind)>0)
 %     end   
     
     %for trasnport fluxes
-    Vex = model.Vex;
-    Vex = setdiff(Vex,Vind);    
-    pvec = getTKparameter(model,pvec,mc,Vex);
-    pvec.Vmax(Vex) = 1;
+%     Vex = model.Vex;
+%     Vex = setdiff(Vex,Vind);    
+%     pvec = getTKparameter(model,pvec,mc,Vex);
+%     pvec.Vmax(Vex) = 1;
 %     for irxn = 1:length(Vex)
 %         [~,tk] = TKinetics(model,pvec,mc,Vex(irxn));
 %         if tk

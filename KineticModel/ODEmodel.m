@@ -78,11 +78,11 @@ pie = find(strcmpi(model.mets,'pi[e]'));
 
 %% %Intracellular Metabolites
 %Cytosolic
-dXdt(1:nin_m) = model.S(1:nin_m,:)*flux-mu*mc(1:nin_m);
+dXdt(1:nin_m) = model.S(1:nin_m,:)*flux;%-mu*mc(1:nin_m);
 % dXdt(nin_m+1:nt_m) = 0;
-dXdt(nin_m+1:nt_m) = model.S(nin_m+1:nt_m,:)*flux;%-mu*Y(nin_m+1:nt_m);
+dXdt(nin_m+1:nt_m) = 0;%model.S(nin_m+1:nt_m,:)*flux;%-mu*Y(nin_m+1:nt_m);
 
-plotconc_timecourse(dXdt,t,model,[hc he pic pie]);
+% plotconc_timecourse(dXdt,t,model,[hc he pic pie]);
 idx = find(mc<0);
 % if t > 1e-7
 %     dbstop in ODEmodel.m at 136

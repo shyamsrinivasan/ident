@@ -19,7 +19,7 @@ else
 end
     
 %initialize solver properties
-[model,solverP,saveData] = imodel(model,10);
+[model,solverP,saveData] = imodel(model,100);
 
 % model.Vuptake = zeros(model.nt_rxn,1);
 % h2o = find(strcmpi(model.rxns,'exH2O'));

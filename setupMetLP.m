@@ -42,16 +42,15 @@ if ~isempty(vmet)
     newmodel.S(vmet,:) = [];
     newmodel.mets(vmet) = [];
     % [~,cl] = find(newmodel.CMPS(vmet,:));
-    vspl = unique([vspl]);% ToColumnVector(cl)]);
-    for irxn = 1:length(Vind)
-        if ~ismember(Vind(irxn),vspl)
-            if any(newmodel.S(vmet(logical(newmodel.S(vmet,Vind(irxn)))),Vind(irxn)))
-                newmodel.S(vmet(logical(newmodel.S(vmet,Vind(irxn)))),Vind(irxn)) = 0;
-            end
-        end
-    end
+%     vspl = unique([vspl]);% ToColumnVector(cl)]);
+%     for irxn = 1:length(Vind)
+%         if ~ismember(Vind(irxn),vspl)
+%             if any(newmodel.S(vmet(logical(newmodel.S(vmet,Vind(irxn)))),Vind(irxn)))
+%                 newmodel.S(vmet(logical(newmodel.S(vmet,Vind(irxn)))),Vind(irxn)) = 0;
+%             end
+%         end
+%     end
 end
-
 
 %remove h2o[c]
 vh2o = [find(strcmpi(newmodel.mets,'h2o[c]'))...

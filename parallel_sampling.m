@@ -8,9 +8,9 @@ end
 % met.h_e = 1e-7;
 % met.h_c = 1e-7;
 met.h2o_c = 55.0;%1.53e-13;
-met.h2o_e = 55.0;%55.0;
+met.h2o_e = 50.0;%55.0;
 met.o2_e = 0.0025;
-met.pi_e = 1e-2;
+met.pi_e = 4e-2;
 % met.pi_c = 1e-3;
 met.co2_e = 0.002;%1e-8;
 

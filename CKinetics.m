@@ -25,6 +25,7 @@ for irxn = 1:length(Vind)
     %compensated species indices
 %     sbcmp = zeros(length(model.mets),1);
 %     prcmp = zeros(length(model.mets),1);
+    nmet = size(S,1);
     
     sbid = S(:,Vind(irxn))<0;
     prid = S(:,Vind(irxn))>0;    
@@ -40,6 +41,7 @@ for irxn = 1:length(Vind)
                 cmp_s = sbid(logical(model.CMPS(sbid,Vind(irxn))));
                 sbid = setdiff(sbid,cmp_s);
                 sbid = setdiff(sbid,[he h2o]);
+                sbid = logical(sparse(sbid,1,1,nmet,1));
     %             sbid(sbid==cmp_s) = [];                     
             end
         end
@@ -54,29 +56,44 @@ for irxn = 1:length(Vind)
                 cmp_p = prid(logical(model.CMPS(prid,Vind(irxn))));
                 prid = setdiff(prid,cmp_p);  
                 prid = setdiff(prid,[he h2o]);
+                prid = logical(sparse(prid,1,1,nmet,1));
             end
-        end
-        if ~isempty(cmp_s)
-            cmp_s = prod(mc(cmp_s).*(-model.S(cmp_s,Vind(irxn))));
-        else
-            cmp_s = 1;
-        end
-        if ~isempty(cmp_p)
-            cmp_p = prod(mc(cmp_p).*(model.S(cmp_p,Vind(irxn))));
-        else
-            cmp_p = 1;
-        end
+        end        
     else
         mc_alls = prod(logical(mc(sbid)));
         mc_allp = prod(logical(mc(prid)));
         sbid(h2o) = 0;
         prid(h2o) = 0;        
         if ~any(model.CMPS(sbid,Vind(irxn)))  
-            cmp_s = 1;
+            sbid(vmet) = 0;
+            cmp_s = [];
+        else
+            sbid = find(sbid);
+            cmp_s = sbid(logical(model.CMPS(sbid,Vind(irxn))));
+            sbid = setdiff(sbid,cmp_s);
+            sbid = setdiff(sbid,[he h2o]);    
+            sbid = logical(sparse(sbid,1,1,nmet,1));
         end
         if ~any(model.CMPS(prid,Vind(irxn)))
-            cmp_p = 1;
-        end        
+            prid(vmet) = 0;
+            cmp_p = [];
+        else
+            prid = find(prid);
+            cmp_p = prid(logical(model.CMPS(prid,Vind(irxn))));
+            prid = setdiff(prid,cmp_p);  
+            prid = setdiff(prid,[he h2o]);
+            prid = logical(sparse(prid,1,1,nmet,1));
+        end             
+    end
+    if ~isempty(cmp_s)
+        cmp_s = prod(mc(cmp_s).*(-model.S(cmp_s,Vind(irxn))));
+    else
+        cmp_s = 1;
+    end
+    if ~isempty(cmp_p)
+        cmp_p = prod(mc(cmp_p).*(model.S(cmp_p,Vind(irxn))));
+    else
+        cmp_p = 1;
     end
 %         if any(prid(vmet))
 %             prcmp(vmet(logical(prid(vmet)))) =...

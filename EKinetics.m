@@ -20,7 +20,7 @@ for irxn = 1:length(VFex)
         net_out = -sign(model.S(sbid,VFex(irxn)))*...
                   (model.S(sbid,ind)*flux(ind));
 %               -model.S(sbid,VFex(irxn))*Vuptake(VFex(irxn)));
-        flux(VFex(irxn)) = scale_flux(net_out);%-Vuptake(VFex(irxn)));
+        flux(VFex(irxn)) = 0;%scale_flux(net_out);%-Vuptake(VFex(irxn)));
 %         flux(VFex(irxn)) = scale_flux(flux(VFex(irxn)));
 %     else
         
