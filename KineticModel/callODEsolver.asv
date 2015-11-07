@@ -42,9 +42,8 @@ tout = solverP.tout:solverP.tmax/(solverP.MaxDataPoints-1):solverP.tmax;
 
 %Normalize t vectors
 %t = mu*t;
-% mu = model.Vss(model.bmrxn);
-% tout = mu*tout;
-% t0 = mu*t0;
+tout = mu*tout;
+t0 = mu*t0;
     
 %% %Initialize CVode
 totaltstart = tic;

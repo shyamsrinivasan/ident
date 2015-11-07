@@ -28,10 +28,15 @@ h = find(strcmpi(model.rxns,'exH'));
 % 
 model.Vuptake([h]) = [1000];
 
+%noramlize concentration vector to intial state
+Nimc = imc./imc;
+Nimc(imc==0) = 0;
+model.imc = imc;
+model.imc(model.imc==0) = 1;
 %calculate initial flux
-flux = iflux(model,pvec,imc);
-dXdt = ODEmodel(0,imc,[],model,pvec);
+flux = iflux(model,pvec,Nimc.*imc);
+dXdt = ODEmodel(0,Nimc,[],model,pvec);
 
 %integrate model
-[sol,finalSS,status] = callODEsolver(model,pvec,imc,solverP);
+[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
 

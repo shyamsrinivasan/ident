@@ -61,7 +61,7 @@ if isempty(idx)
 %     else
 %         flux(model.bmrxn) = 0;
 %     end
-    flux(model.bmrxn) = 1.0;%model.Vss(model.bmrxn);
+    flux(model.bmrxn) = model.Vss(model.bmrxn);
 else
     %determine which group idx belongs to
     for id = 1:length(idx)
