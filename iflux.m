@@ -55,10 +55,13 @@ if isempty(idx)
 %         flux(strcmpi(model.rxns,'atpm')) = 0;
 %     end
 
-    flux(strcmpi(model.rxns,'atpm')) = 8.39;
-%     if mc(logical(model.S(:,model.bmrxn)<0))>0
+%     flux(strcmpi(model.rxns,'atpm')) = 8.39;
+    atp = strcmpi(model.mets,'atp[c]');
+    flux(strcmpi(model.rxns,'atpm')) = 8.39*mc(atp)/1e-5/(1+mc(atp)/1e-5);
+    
+%     if all(mc(logical(model.S(:,model.bmrxn)<0))>1e-5)
 %         flux(model.bmrxn) = model.Vss(model.bmrxn);%0.01;
-%     else
+%     elseif any(mc(logical(model.S(:,model.bmrxn)<0))<1e-5)
 %         flux(model.bmrxn) = 0;
 %     end
     flux(model.bmrxn) = model.Vss(model.bmrxn);

@@ -7,7 +7,7 @@ if nargin < 3
 %     imc(strcmpi(model.mets,'pep[c]')) = 1e-5;
 else
     imc = mc;
-%     imc(strcmpi(model.mets,'h[c]')) = 100;
+    imc(strcmpi(model.mets,'glc[e]')) = imc(strcmpi(model.mets,'glc[e]'));
 %     imc(strcmpi(model.mets,'q8h2[c]')) = 100;
 %     imc(strcmpi(model.mets,'pi[c]')) = 100;
 end
@@ -19,7 +19,7 @@ else
 end
     
 %initialize solver properties
-[model,solverP,saveData] = imodel(model,100);
+[model,solverP,saveData] = imodel(model,1.2);
 
 % model.Vuptake = zeros(model.nt_rxn,1);
 % h2o = find(strcmpi(model.rxns,'exH2O'));
@@ -31,11 +31,72 @@ model.Vuptake([h]) = [1000];
 %noramlize concentration vector to intial state
 Nimc = imc./imc;
 Nimc(imc==0) = 0;
+Nimc(strcmpi(model.mets,'glc[e]')) = 1.1;
 model.imc = imc;
 model.imc(model.imc==0) = 1;
 %calculate initial flux
 flux = iflux(model,pvec,Nimc.*imc);
 dXdt = ODEmodel(0,Nimc,[],model,pvec);
+
+%integrate model
+[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
+
+%initialize solver properties
+[model,solverP,saveData] = imodel(model,10.0);
+
+%integrate model
+[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
+
+%initialize solver properties
+[model,solverP,saveData] = imodel(model,50.0);
+
+%integrate model
+[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
+
+%initialize solver properties
+[model,solverP,saveData] = imodel(model,100.0);
+
+%integrate model
+[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
+
+%initialize solver properties
+[model,solverP,saveData] = imodel(model,200.0);
+
+%integrate model
+[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
+
+%initialize solver properties
+[model,solverP,saveData] = imodel(model,500.0);
+
+%integrate model
+[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
+
+%initialize solver properties
+[model,solverP,saveData] = imodel(model,1000.0);
+
+%integrate model
+[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
+
+%initialize solver properties
+[model,solverP,saveData] = imodel(model,2000.0);
+
+%integrate model
+[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
+
+%initialize solver properties
+[model,solverP,saveData] = imodel(model,5000.0);
+
+%integrate model
+[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
+
+%initialize solver properties
+[model,solverP,saveData] = imodel(model,10000.0);
+
+%integrate model
+[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
+
+%initialize solver properties
+[model,solverP,saveData] = imodel(model,15000.0);
 
 %integrate model
 [sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);

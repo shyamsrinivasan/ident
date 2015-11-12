@@ -19,7 +19,6 @@ nt_m = model.nt_metab;
 nin_m = model.nint_metab;
 nex_m = model.next_metab;
 
-
 % nr = zeros(4,1);
 % nr(1) = model.nt_metab;
 % nr(2) = model.nint_metab;%-length(find(Mbio));
@@ -61,7 +60,7 @@ flux = iflux(model,pvec,mc.*model.imc);
 % % else
 % %     gr_flux = biomass(model,Y,[],t,[],[],flux);
 % % end
-mu = flux(bmind);
+% mu = flux(bmind);
 
 %plot time course concentrations and flux during integration
 nad16 = find(strcmpi(model.rxns,'NADH16'));
@@ -80,7 +79,8 @@ pie = find(strcmpi(model.mets,'pi[e]'));
 
 %% %Intracellular Metabolites
 %Cytosolic
-dXdt(1:nin_m) = (1./model.imc(1:nin_m)).*(model.S(1:nin_m,:)*flux-mu*mc(1:nin_m));%
+dXdt(1:nin_m) = (1./model.imc(1:nin_m)).*(model.S(1:nin_m,:)*flux);%-mu*mc(1:nin_m);%
+% dXdt(1:nin_m) = -mu*mc(1:nin_m);%
 % dXdt(nin_m+1:nt_m) = 0;
 dXdt(nin_m+1:nt_m) = 0;%model.S(nin_m+1:nt_m,:)*flux;%-mu*Y(nin_m+1:nt_m);
 
@@ -89,12 +89,12 @@ idx = find(mc<0);
 % if t > 1e-7
 %     dbstop in ODEmodel.m at 136
 % end
-% if any(idx)
-%     fprintf('%d %s %3.6g\n',length(idx),model.mets{idx(1)},t);
-%     fprintf('Net flux = %3.6g\n',dXdt(hc));
-%     fprintf('Net flux = %3.6g\n',dXdt(he));
-% %     return
-% end
+if any(idx)
+    dbstop in ODEmodel.m at 145
+    fprintf('%d %3.6g %d\n',length(idx),t,idx(:));
+    
+%     return
+end
 %ATP, AMP, ADP
 % ec = 0.8;
 % ATP = strcmpi('atp[c]',model.mets);
@@ -137,7 +137,7 @@ idx = find(mc<0);
 %Biomass 
 % dXdt(end) = data.S(end,:)*flux;
 % 
-if any(mc(mc<0))
+if any(mc<0)
     flag = -1;
 else
     flag = 0;
