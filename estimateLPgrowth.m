@@ -1,4 +1,4 @@
-function [vLPmax,flag,vLPmin,model] = estimateLPgrowth(model,bounds)
+function [vLPmax,flag,vLPmin,model] = estimateLPgrowth(model,ess_rxn,bounds)
 if nargin <2
     %Check if growth rate is possible
     %Uptake Flux
@@ -14,7 +14,7 @@ end
 flag = 1;
 
 %Determine Max and Min for flux to be constrained with
-[vLPmax,vLPmin,model] = solveLP(model,bounds,model.bmrxn);
+[vLPmax,vLPmin,model] = solveLP(model,ess_rxn,bounds,model.bmrxn);
 
 %Print uptake fluxes
 vupid = logical(model.Vuptake);

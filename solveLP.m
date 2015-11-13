@@ -1,9 +1,14 @@
 function [vLPmax,vLPmin,model] =...
-         solveLP(model,bounds,prxnid,fixgrowth)
-if nargin < 4
+         solveLP(model,ess_rxn,bounds,prxnid,Vup_struct,fixgrowth)
+if nargin<5
+    %FBA uptake rates
+    Vup_struct = ([]);
+end
+if nargin < 6
     fixgrowth = 0;
 end
-if nargin < 2
+
+if nargin < 3
     nr = size(model.S,2);
     if ~isfield(model,'vl')
         vl = zeros(nr,1);
@@ -21,20 +26,15 @@ else
     vl = bounds.vl;
     vu = bounds.vu;
 end
-% nint_metab = model.nint_metab-length(find(model.S(:,model.bmrxn)>0));
+
 S = model.S;%(1:nint_metab,:);
-%Add additional reactions for reversible reactions
-% if any(model.reversible)
-%     revCol = S(:,logical(model.reversible));
-%     S = [S -revCol];
-% end
 
 [nm,nr] = size(S);
 %Flux calculation based on intial concentrations
 % flux = ExFlux(model,Y,zeros(nr,1),model.Vupind,'mm');
 
 %change bounds for exchange metabolites
-ess_rxn = {'exCO2','exH','exH2O','exPI','exO2','exGLC'};
+% ess_rxn = {'exCO2','exH','exH2O','exPI','exO2','exGLC'};
 essid = [];
 for iess = 1:length(ess_rxn)
     essid = union(essid,find(strcmpi(ess_rxn{iess},model.rxns)));
@@ -48,37 +48,11 @@ end
 vl(strcmpi(model.rxns,'ATPM')) = 8.39;
 vu(strcmpi(model.rxns,'ATPM')) = 100;
 
-%ETC
-% vl(strcmpi(model.rxns,'ATPS4r')) = -100;
-% vu(strcmpi(model.rxns,'ATPS4r')) = 0;
-vl(strcmpi(model.rxns,'NADTRHD')) = 0;
-vu(strcmpi(model.rxns,'NADTRHD')) = 100;
-model.rev(strcmpi(model.rxns,'NADTRHD')) = 0;
-vl(strcmpi(model.rxns,'THD2')) = 0;
-vu(strcmpi(model.rxns,'THD2')) = 0;
-vu(strcmpi(model.rxns,'SUCCt2_2')) = 0;
-vu(strcmpi(model.rxns,'FORt2')) = 0;
-
-%Uptake Fluxes
-if isfield(bounds,'Vuptake')
-    if ~isempty(bounds.Vuptake)
-        vl(strcmpi(model.rxns,'exGLC')) = -bounds.Vuptake(strcmpi(model.rxns,'exGLC'));        
-        vl(strcmpi(model.rxns,'exO2')) = -bounds.Vuptake(strcmpi(model.rxns,'exO2'));
-%         vu(strcmpi(model.rxns,'exGLC')) = -bounds.Vuptake(strcmpi(model.rxns,'exGLC'));        
-%         vu(strcmpi(model.rxns,'exO2')) = -bounds.Vuptake(strcmpi(model.rxns,'exO2'));
-    end
-end
-
-%Growth Fluxes
+%change miscellaneous rxn bounds and fix uptake fluxes
 if fixgrowth
-    if prxnid ~= model.bmrxn
-        if isfield(model,'gmax')
-            vl(model.bmrxn) = model.gmax;
-            vu(model.bmrxn) = model.gmax;
-        end
-    end
+    [model,vl,vu] = changebounds(model,bounds,vl,vu,fixgrowth);
 else
-    vl(model.bmrxn) = 0;    
+    [model,vl,vu] = changebounds(model,bounds,vl,vu,Vup_struct);
 end
 
 if ~isfield(model,'b')
