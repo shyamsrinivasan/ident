@@ -21,8 +21,19 @@ ess_rxn = {'exCO2','exH','exH2O','exPI','exO2','exGLC'};
 %assign initial fluxes and calculate FBA fluxes for direction
 FBAmodel = FBAfluxes(FBAmodel,'pfba',ess_rxn,Vup_struct);
 
+%extracellular metabolites in M moles/L
+% met.glc_e = 0.2;
+% met.h_e = 1e-7;
+% met.h_c = 1e-7;
+met.h2o_c = 55.0;%1.53e-13;
+met.h2o_e = 50.0;%55.0;
+met.o2_e = 0.0025;
+met.pi_e = 4e-2;
+% met.pi_c = 1e-3;
+met.co2_e = 0.002;%1e-8;
+
 %samwple initial metabolite concentrations for estimating kientic parameters
-[mc,parameter,smp] = parallel_sampling(FBAmodel,parameter,500);
+[mc,parameter,smp] = parallel_sampling(FBAmodel,parameter,met,'setupMetLP',500);
 
 %get one set of concentrations and coresponding delGr
 % [x,delGr,assignFlag,vCorrectFlag] = getiConEstimate(FBAmodel);
@@ -30,16 +41,23 @@ FBAmodel = FBAfluxes(FBAmodel,'pfba',ess_rxn,Vup_struct);
 %get more than one set of concentrations using ACHR sampling
 % ACHRmetSampling(FBAmodel,1,500,200)
 
+%Reactions to be considered cytosolic even if defined otherwise
+%reactions to consider for kinetics other than Vind
+rxn_add = {'GLCpts','NADH16','ATPS4r','NADTRHD','THD2','CYTBD'};
+%reactions not be considered cytosolic even if defined otherwise
+rxn_excep = {'ATPM'};
+
 %get parameter estimates
-ensb = parallel_ensemble(FBAmodel,mc,parameter);
+ensb = parallel_ensemble(FBAmodel,mc,parameter,rxn_add,rxn_excep);
 
 % x = initialsample(FBAmodel);
 
 %estimate kinetic parameters in an ensemble
 
 %solve ODE of model to steady state
+change_pos.glc_e = 10;
 if ensb{1,2}.feasible
-    sol = IntegrateModel(FBAmodel,ensb,ensb{1,1});
+    sol = IntegrateModel(FBAmodel,ess_rxn,Vup_struct,ensb,ensb{1,1});%,change_pos);
 else
     error('No feasible model found');
 end

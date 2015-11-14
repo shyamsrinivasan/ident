@@ -1,9 +1,12 @@
-function [x,assignFlag,delGr,model,vCorrectFlag] = getiConEstimate(model)
+function [x,assignFlag,delGr,model,vCorrectFlag] = getiConEstimate(model,setupfun)
 
 %setup problem with default constraints for thermodynamically active
 %reaction
 % delG > or < 0 and Vss < or > 0
-bounds = setupMetLP(model);
+fh = str2func(setupfun);
+% bounds = setupMetLP(model);
+% bounds = setupMetLP_toy(model);
+bounds = fh(model);
 
 %check
 if ~isfield(bounds,'A') 
@@ -26,7 +29,7 @@ if size(bounds.A,2) == length(bounds.mets)
         end
         lb = separate_slack(bounds.lb,model,bounds);
         model.lb = exp(assignConc(lb,model,bounds));
-        ub = separate_slack(bounds.lb,model,bounds);
+        ub = separate_slack(bounds.ub,model,bounds);
         model.ub = exp(assignConc(ub,model,bounds));
         if ~isempty(delGr)
             [delGr,assignFlux] = assignRxns(delGr,model,bounds);

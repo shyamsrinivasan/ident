@@ -1,4 +1,4 @@
-function model = run_pFBA(model,ess_rxn,Vup_struct)
+function [model,Vss] = run_pFBA(model,ess_rxn,Vup_struct)
 %convert to irreversible model
 [modelIrrev,~,~,irrev2rev]=convertIrreversible(model);
 
@@ -20,7 +20,7 @@ modelIrrev.rev(end+1) = 0;
 prxnid = find(strcmpi('netFlux',modelIrrev.rxns));
 bounds.vl = modelIrrev.vl;
 bounds.vu = modelIrrev.vu;
-[~,vLPmin] = solveLP(modelIrrev,ess_rxn,bounds,prxnid,Vup_struct);
+[~,vLPmin] = solveLP(modelIrrev,bounds,ess_rxn,prxnid,Vup_struct);
 
 if vLPmin.flag > 0
     modelIrrev.vl(prxnid) = vLPmin.obj;
@@ -29,7 +29,7 @@ end
 
 bounds.vl = modelIrrev.vl;
 bounds.vu = modelIrrev.vu;
-[~,vLPmin] = solveLP(modelIrrev,ess_rxn,bounds,prxnid,Vup_struct);
+[~,vLPmin] = solveLP(modelIrrev,bounds,ess_rxn,prxnid,Vup_struct);
 vLPmin.v(vLPmin.v<1e-7)=0;
 
 Vss = zeros(length(model.rxns),1);
@@ -52,9 +52,12 @@ if vLPmin.flag > 0
             ir = ir+1;
         end
     end
+else
+    error('run_pFBA:pFBAfeas','The pFBA problem was infeasible');
 end
 
 Vss(abs(Vss)<1e-6) = 0;
 model.Vss = Vss;
+
 
     

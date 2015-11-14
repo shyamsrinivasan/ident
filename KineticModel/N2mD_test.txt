@@ -1,18 +1,18 @@
-Enzymes	Enzyme Name	 equation	Compensated Species	delta G (pH 7.2)	delGlb	delGub	Keq	kcat+(1/s)	kcat-(1/s)	Etot Conc	Vmax	"vss (Gur = -10, O2ur = -1000)"	EC	Substrate Km (mM)	Activators	Inhibitors	Regulator Km (mM)	Metab	Mclow (mM)	Mchigh (mM)
-Ain		A[e] ---> A[c]		-8				3000				20						A[c]	0.1	20
-v1		[c] : A ---> B		-8				3000				20						C[c]	0.1	20
-v2		[c] : A ---> C		-8				3000				20						B[c]	0.1	20
-v3		[c] : A <==> D		10					3000			-40						D[c]	0.1	20
-v4		[c] : C <==> B		-8				3000				20						P[c]	0.1	20
-v5		[c] : B ---> P		-8				3000				20						E[c]	0.1	20
-v6		[c] : C + D <==> P + E		10					3000			-10						F[c]	0.1	20
+Enzymes	Enzyme Name	 equation	Compensated Species	delta G (pH 7.2)	delGlb	delGub	Keq	kcat+(1/s)	kcat-(1/s)	Etot Conc	Vmax	"vss (Gur = -10, O2ur = -1000)"	EC	Substrate Km (mM)	Activators	Inhibitors	Regulator Km (mM)	Metab	Mclow (M)	Mchigh (M)
+Ain		A[e] ---> A[c]		-8				3000				20						A[c]	0.0001	0.02
+v1		[c] : A ---> B		-8				3000				20						C[c]	0.0001	0.02
+v2		[c] : A ---> C		-8				3000				20						B[c]	0.0001	0.02
+v3		[c] : A <==> D		10					3000			-40						D[c]	0.0001	0.02
+v4		[c] : C <==> B		-8				3000				20						P[c]	0.0001	0.02
+v5		[c] : B ---> P		-8				3000				20						E[c]	0.0001	0.02
+v6		[c] : C + D <==> P + E		10					3000			-10						F[c]	0.0001	0.02
 Pout		P[c] ---> P[e]		0				1	0			5								
 Eout		E[c] <==> E[e]		0				1	1			2.5								
 Dout		D[c] <==> D[e]		0				1	1			0								
-Fout		F[c] <==> F[e]		0				1	1			0								
+Fout		F[c] <==> F[e]		0				1	1			0.33								
 exA		A[e] <==>		0								20								
-exP		P[e] --->		0								0								
-exE		E[e] <==>		0								0								
+exP		P[e] --->		0								5								
+exE		E[e] <==>		0								2.5								
 exD		D[e] <==>		0								0								
-exF		F[e] <==>		0								0								
-EC_biomass		[c] : 0.33 B + 0.33 C + 0.33 D ---> F		0								0								
+exF		F[e] <==>		0								0.33								
+EC_biomass		[c] : B ---> F		0								0.33								

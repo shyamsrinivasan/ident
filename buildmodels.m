@@ -1,17 +1,25 @@
-function pvec = buildmodels(model,pvec,mc)
+function pvec = buildmodels(model,pvec,mc,rxn_add,rxn_excep)
+if nargin < 5
+    rxn_excep = {};
+end
+if nargin<4
+    rxn_add = {};
+end
+
+Vind = addToVind(model,rxn_add,rxn_excep);
 
 %reactions to consider for kinetics other than Vind
-Vind = [model.Vind find(strcmpi(model.rxns,'GLCpts'))];
-Vind = [Vind find(strcmpi(model.rxns,'NADH16'))];
-Vind = [Vind find(strcmpi(model.rxns,'ATPS4r'))];
-Vind = [Vind find(strcmpi(model.rxns,'NADTRHD'))];
-Vind = [Vind find(strcmpi(model.rxns,'THD2'))];
-Vind = [Vind find(strcmpi(model.rxns,'CYTBD'))];
-%         find(strcmpi(model.rxns,'NADH16'))...
-%         find(strcmpi(model.rxns,'ATPS4r'))];
-
-Vind = setdiff(Vind,find(strcmpi(model.rxns,'ATPM')));
-% Vind = setdiff(Vind,find(strcmpi(model.rxns,'NADTRHD')));
+% Vind = [model.Vind find(strcmpi(model.rxns,'GLCpts'))];
+% Vind = [Vind find(strcmpi(model.rxns,'NADH16'))];
+% Vind = [Vind find(strcmpi(model.rxns,'ATPS4r'))];
+% Vind = [Vind find(strcmpi(model.rxns,'NADTRHD'))];
+% Vind = [Vind find(strcmpi(model.rxns,'THD2'))];
+% Vind = [Vind find(strcmpi(model.rxns,'CYTBD'))];
+% %         find(strcmpi(model.rxns,'NADH16'))...
+% %         find(strcmpi(model.rxns,'ATPS4r'))];
+% 
+% Vind = setdiff(Vind,find(strcmpi(model.rxns,'ATPM')));
+% % Vind = setdiff(Vind,find(strcmpi(model.rxns,'NADTRHD')));
 
 %metabolites that do not affect thermodynamic equilibrium  
 he = find(strcmpi(model.mets,'h[e]'));

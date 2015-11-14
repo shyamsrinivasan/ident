@@ -7,7 +7,7 @@ nconstr = length((newmodel.A(:,1)));
 %add slack variables to all constraints
 A_slack = sparse(1:nconstr,1:nconstr,1,nconstr,nconstr);
 
-%adjust sign of slack variables to be >= 0
+%adjust sign of slack variable coeffcient for variable to be >= 0
 A_slack = repmat(sign(newmodel.Vss),1,nconstr).*A_slack;
 
 newmodel.A = [newmodel.A A_slack];

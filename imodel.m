@@ -1,5 +1,5 @@
-function [model,solverP,saveData] = imodel(model,tmax)
-if nargin < 2
+function [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,tmax)
+if nargin < 4
     tmax = 500000;%s
 end
 solverP = struct();
@@ -20,7 +20,7 @@ saveData.dirname =...
 'C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KModel';
 
 %recheck growth rate
-[vLPmax,~,~,model] = estimateLPgrowth(model);
+[vLPmax,~,~,model] = estimateLPgrowth(model,ess_rxn,Vup_struct);
 if vLPmax.flag
     fprintf('Maximum feasible growth rate = %2.3g h-1\n',-vLPmax.obj);
 else

@@ -1,27 +1,33 @@
 function [vLPmax,vLPmin,model] =...
-         solveLP(model,ess_rxn,bounds,prxnid,Vup_struct,fixgrowth)
+         solveLP(model,bounds,ess_rxn,prxnid,Vup_struct,fixgrowth)
+if nargin < 6
+    fixgrowth = 0;
+end
 if nargin<5
     %FBA uptake rates
     Vup_struct = ([]);
 end
-if nargin < 6
-    fixgrowth = 0;
+if nargin <4
+    prxnid = 0;
 end
-
-if nargin < 3
-    nr = size(model.S,2);
-    if ~isfield(model,'vl')
-        vl = zeros(nr,1);
-        vl(vl==0) = -100;
-    else
-        vl = model.vl;
-    end
-    if ~isfield(model,'vu')
-        vu = zeros(nr,1);
-        vu(vu==0) = 100;
-    else
-        vu = model.vu;
-    end
+if nargin <3
+    ess_rxn = {};
+end
+if nargin < 2
+    [model,bounds] = changebounds(model,ess_rxn,bounds,fixgrowth);
+%     nr = size(model.S,2);
+%     if ~isfield(model,'vl')
+%         vl = zeros(nr,1);
+%         vl(vl==0) = -100;
+%     else
+%         vl = model.vl;
+%     end
+%     if ~isfield(model,'vu')
+%         vu = zeros(nr,1);
+%         vu(vu==0) = 100;
+%     else
+%         vu = model.vu;
+%     end
 else
     vl = bounds.vl;
     vu = bounds.vu;
@@ -33,27 +39,34 @@ S = model.S;%(1:nint_metab,:);
 %Flux calculation based on intial concentrations
 % flux = ExFlux(model,Y,zeros(nr,1),model.Vupind,'mm');
 
-%change bounds for exchange metabolites
-% ess_rxn = {'exCO2','exH','exH2O','exPI','exO2','exGLC'};
-essid = [];
-for iess = 1:length(ess_rxn)
-    essid = union(essid,find(strcmpi(ess_rxn{iess},model.rxns)));
-end
-if isfield(model,'VFex')
-    Vess = setdiff(model.VFex,essid);
-    vl(Vess) = 0;
-end
+% %change bounds for exchange metabolites
+% % ess_rxn = {'exCO2','exH','exH2O','exPI','exO2','exGLC'};
+% essid = [];
+% for iess = 1:length(ess_rxn)
+%     essid = union(essid,find(strcmpi(ess_rxn{iess},model.rxns)));
+% end
+% if isfield(model,'VFex')
+%     Vess = setdiff(model.VFex,essid);
+%     vl(Vess) = 0;
+% end
 
-%atp maintanance
-vl(strcmpi(model.rxns,'ATPM')) = 8.39;
-vu(strcmpi(model.rxns,'ATPM')) = 100;
-
-%change miscellaneous rxn bounds and fix uptake fluxes
+% %atp maintanance
+% vl(strcmpi(model.rxns,'ATPM')) = 8.39;
+% vu(strcmpi(model.rxns,'ATPM')) = 100;
 if fixgrowth
-    [model,vl,vu] = changebounds(model,bounds,vl,vu,fixgrowth);
-else
-    [model,vl,vu] = changebounds(model,bounds,vl,vu,Vup_struct);
+    bounds.vl = vl;
+    bounds.vu = vu;
+    [model,bounds] = changebounds(model,ess_rxn,bounds,fixgrowth);
+    vl = bounds.vl;
+    vu = bounds.vu;
 end
+%change miscellaneous rxn bounds and fix uptake fluxes
+% if fixgrowth
+%     [model,vl,vu] = changebounds(model,bounds,fixgrowth);
+%     [model,vl,vu] = changebounds(model,bounds,vl,vu,fixgrowth);
+% else
+%     [model,vl,vu] = changebounds(model,bounds,vl,vu,Vup_struct);
+% end
 
 if ~isfield(model,'b')
     b = zeros(nm,1);
