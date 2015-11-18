@@ -57,7 +57,7 @@ ensb = parallel_ensemble(FBAmodel,mc,parameter,rxn_add,rxn_excep);
 %solve ODE of model to steady state
 change_pos.glc_e = 10;
 if ensb{1,2}.feasible
-    sol = IntegrateModel(FBAmodel,ess_rxn,Vup_struct,ensb,ensb{1,1});%,change_pos);
+    sol = IntegrateModel(FBAmodel,ess_rxn,Vup_struct,ensb,ensb{1,1},change_pos);
 else
     error('No feasible model found');
 end

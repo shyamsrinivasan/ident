@@ -3,11 +3,12 @@ function [vLPmax,flag,vLPmin,model] = estimateLPgrowth(model,ess_rxn,Vup_struct,
 if nargin <4
     %Check if growth rate is possible
     %Uptake Flux
-    bounds.Vuptake = model.Vuptake;
-    bounds.vl = zeros(model.nt_rxn,1);
-    bounds.vl(logical(model.rev)) = -100;%bounds.Vuptake;
-    bounds.vu = zeros(model.nt_rxn,1);          
-    bounds.vu(bounds.vu==0) = 100;%bounds.Vuptake;
+%     bounds.Vuptake = model.Vuptake;
+%     bounds.vl = zeros(model.nt_rxn,1);
+%     bounds.vl(logical(model.rev)) = -100;%bounds.Vuptake;
+%     bounds.vu = zeros(model.nt_rxn,1);          
+%     bounds.vu(bounds.vu==0) = 100;%bounds.Vuptake;
+    [model,bounds] = changebounds(model,ess_rxn);
 end
 if nargin<3
     Vup_struct([]);
@@ -19,19 +20,19 @@ end
 flag = 1;
 
 %Determine Max and Min for flux to be constrained with using FBA
-[vLPmax,vLPmin] = solveLP(model,bounds,ess_rxn,model.bmrxn,Vup_struct);
+[vLPmax,vLPmin] = solveLP(model,bounds,ess_rxn,model.bmrxn);
 
-%Determine Max and Min for flux to be constrained with using FBA
-model.vl(model.c==1) = -vLPmax.obj;
-[~,Vss] = run_pFBA(model,ess_rxn,Vup_struct);
+%Determine Max and Min for flux to be constrained with using pFBA
+% model.vl(model.c==1) = -vLPmax.obj;
+% [~,Vss] = run_pFBA(model,ess_rxn,Vup_struct);
 
 if vLPmax.flag > 0
-    if abs((-vLPmax.obj)-Vss(model.bmrxn))<=1e-8
+    if abs((-vLPmax.obj)-model.Vss(model.bmrxn))<=1e-8
         maxGr = -vLPmax.obj;
     else
         warning('estLP:muDiff',...
         'FBA and pFBA growth rates are different\nThe process will proceed regardless with pFBA growth rates');
-        maxGr = Vss(model.bmrxn);
+        maxGr = model.Vss(model.bmrxn);
     end
 else
     error('estLP:LPfeas','The FBA problem is infeasible');

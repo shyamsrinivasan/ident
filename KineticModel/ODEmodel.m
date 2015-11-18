@@ -89,12 +89,12 @@ idx = find(mc<0);
 % if t > 1e-7
 %     dbstop in ODEmodel.m at 136
 % end
-if any(idx)
-    dbstop in ODEmodel.m at 145
-    fprintf('%d %3.6g %d\n',length(idx),t,idx(:));
-    
-%     return
-end
+% if any(idx)
+%     dbstop in ODEmodel.m at 145
+%     fprintf('%d %3.6g %d\n',length(idx),t,idx(:));
+%     
+% %     return
+% end
 %ATP, AMP, ADP
 % ec = 0.8;
 % ATP = strcmpi('atp[c]',model.mets);

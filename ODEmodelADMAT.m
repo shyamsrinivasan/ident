@@ -1,9 +1,9 @@
+function dXdt = ODEmodelADMAT(t,mc,data,model,pvec)
 %function [dXdt,flag,newdata] = ODEmodel(t,Y,data,pmeter)
 %**************************************************************************
 %Describing the ODE dXdt = data.S*flux(X,p)
 %September 2014
 %**************************************************************************
-function [dXdt,flag,newdata] = ODEmodel(t,mc,data,model,pvec)
 % callODEmodel = @(t,Y,data)ODEmodel(t,Y,model,pmeter);
 bmind = model.bmrxn;
 % Mbio = strcmpi('biomass',model.mets);
@@ -19,25 +19,8 @@ nt_m = model.nt_metab;
 nin_m = model.nint_metab;
 nex_m = model.next_metab;
 
-% nr = zeros(4,1);
-% nr(1) = model.nt_metab;
-% nr(2) = model.nint_metab;%-length(find(Mbio));
-% nr(3) = model.nt_rxn;
-% nr(4) = model.n_rxn;
-
-
-% Vic_exind = data.Vic_exind;
-% [~,Vuptake] = find(data.S(:,Vic_exind)>0);
-% [intm_ind,~] = find(model.S(:,model.Vexind)<0);
-% Vuptake = Vic_exind(Vuptake);
-% Vexcrt = Vic_exind(Vexcrt);
-% Mbio = data.S(:,end);
-% Mbio_ind = find(Mbio<0);
-% nic_exrxn = length(Vic_exind);
-% Vxc_exind = data.Vxc_exind;
-% nxc_exrxn = length(Vxc_exind);
 dXdt = zeros(nt_m,1);%[Metabolites;Biomass]
-% dXdt = cons(dXdt,Y);
+dXdt = cons(dXdt,mc);
 % if isfield(data,'flux')
 %     flux = data.flux;
 % else
@@ -45,8 +28,7 @@ dXdt = zeros(nt_m,1);%[Metabolites;Biomass]
 % end
 
 %% Fluxes 
-%initial flux
-% flux = calc_flux(model,pmeter,Y);
+
 flux = iflux(model,pvec,mc.*model.imc);
 
 % %% %Biomass flux - growth rate
@@ -63,18 +45,18 @@ flux = iflux(model,pvec,mc.*model.imc);
 % mu = flux(bmind);
 
 %plot time course concentrations and flux during integration
-nad16 = find(strcmpi(model.rxns,'NADH16'));
-atps = find(strcmpi(model.rxns,'ATPS4r'));
-cyt = find(strcmpi(model.rxns,'CYTBD'));
-pit = find(strcmpi(model.rxns,'PIt2r'));
-act = find(strcmpi(model.rxns,'ACt2r'));
+% nad16 = find(strcmpi(model.rxns,'NADH16'));
+% atps = find(strcmpi(model.rxns,'ATPS4r'));
+% cyt = find(strcmpi(model.rxns,'CYTBD'));
+% pit = find(strcmpi(model.rxns,'PIt2r'));
+% act = find(strcmpi(model.rxns,'ACt2r'));
 
 % plotflux_timecourse(flux,t,model,[nad16 atps cyt pit act]);
-
-hc = find(strcmpi(model.mets,'h[c]'));
-he = find(strcmpi(model.mets,'h[e]'));
-pic = find(strcmpi(model.mets,'pi[c]'));
-pie = find(strcmpi(model.mets,'pi[e]'));
+% 
+% hc = find(strcmpi(model.mets,'h[c]'));
+% he = find(strcmpi(model.mets,'h[e]'));
+% pic = find(strcmpi(model.mets,'pi[c]'));
+% pie = find(strcmpi(model.mets,'pi[e]'));
 
 
 %% %Intracellular Metabolites
@@ -95,39 +77,10 @@ idx = find(mc<0);
 %     
 % %     return
 % end
-%ATP, AMP, ADP
-% ec = 0.8;
-% ATP = strcmpi('atp[c]',model.mets);
-% ADP = strcmpi('adp[c]',model.mets);
-% AMP = strcmpi('amp[c]',model.mets);
-% AdID = [find(ATP),find(ADP),find(AMP)];
-% 
-% dXdt(AMP) = 0;
-% dXdt(ATP) = model.S(ATP,:)*flux - Y(ATP)*mu;
-% dXdt(ADP) = model.S(ADP,:)*flux - Y(ADP)*mu;
-% 
-% Y(AMP) = Y(ATP)*(1/ec-1)+Y(ADP)*(1/(2*ec)-1);
-% %NAD+, NADH, NADP, NADPH
-% NAD = strcmpi('nad[c]',model.mets);
-% NADH = strcmpi('nadh[c]',model.mets);
-% NADP = strcmpi('nadp[c]',model.mets);
-% NADPH = strcmpi('nadph[c]',model.mets);
-% NaID = [find(NAD) find(NADH),find(NADP),find(NADPH)];
-% 
-% dXdt(NAD) = model.S(NAD,:)*flux - Y(NAD)*mu;
-% dXdt(NADH) = model.S(NAD,:)*flux - Y(NADH)*mu;
-% dXdt(NADP) = model.S(NAD,:)*flux - Y(NADP)*mu;
-% dXdt(NADPH) = model.S(NAD,:)*flux - Y(NADPH)*mu;
-% 
-% mind = setdiff(1:nr(2),[AdID,NaID]);
-% mind = setdiff(mind,find(Mbio));
-% 
-% dXdt(mind) = model.S(mind,:)*flux - Y(mind)*mu;
+
 % 
 % %Biomass
 % dXdt(Mbio) = model.S(Mbio,:)*flux*Y(Mbio);
-
-
 
 %Extracellular Metabolites
 % dXdt(strcmpi('A[e]',model.mets)) = model.S(strcmpi('A[e]',model.mets),:)*flux;
