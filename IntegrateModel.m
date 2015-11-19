@@ -60,7 +60,12 @@ model.imc(model.imc==0) = 1;
 %calculate initial flux
 flux = iflux(model,pvec,Nimc.*imc);
 dXdt = ODEmodel(0,Nimc,[],model,pvec);
-% dXdt = 
+
+% %call to ADmat for stability/jacobian info
+% Nimc_obj = deriv(Nimc,eye(model.nt_metab));
+% dXdt = ODEmodelADMAT(0,Nimc_obj,[],model,pvec);
+% Y = getval(dXdt);
+% Jac = getydot(dXdt);
 
 %integrate model
 [sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
