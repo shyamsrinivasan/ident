@@ -1,7 +1,7 @@
 function sol = IntegrateModel(model,ess_rxn,Vup_struct,ensb,mc,change_pos,change_neg)
 %change in initial conditions
 if nargin<7
-    change_neg = ([]);
+    change_neg = struct([]);
 end
 if nargin < 6
     change_pos = struct([]);
@@ -62,10 +62,10 @@ flux = iflux(model,pvec,Nimc.*imc);
 dXdt = ODEmodel(0,Nimc,[],model,pvec);
 
 % %call to ADmat for stability/jacobian info
-% Nimc_obj = deriv(Nimc,eye(model.nt_metab));
-% dXdt = ODEmodelADMAT(0,Nimc_obj,[],model,pvec);
-% Y = getval(dXdt);
-% Jac = getydot(dXdt);
+Nimc_obj = deriv(Nimc,eye(model.nt_metab));
+dXdtADMAT = ODEmodelADMAT(0,Nimc_obj,[],model,pvec);
+Y = getval(dXdtADMAT);
+Jac = getydot(dXdtADMAT);
 
 %integrate model
 [sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
@@ -77,7 +77,7 @@ dXdt = ODEmodel(0,Nimc,[],model,pvec);
 [sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
 
 %initialize solver properties
-[model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,5000.0);
+[model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,100000.0);
 
 %integrate model
 [sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);

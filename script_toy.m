@@ -18,8 +18,8 @@ Vup_struct.exA = 20;%mmol/gDCW.h
 ess_rxn = {'exA'};
 
 %assign initial fluxes and calculate FBA fluxes for direction
-prxnid = find(strcmpi(model.rxns,'exP'));
-FBAmodel = FBAfluxes(FBAmodel,'fba',ess_rxn,Vup_struct,prxnid);
+% prxnid = find(strcmpi(FBAmodel.rxns,'exP'));
+FBAmodel = FBAfluxes(FBAmodel,'',ess_rxn,Vup_struct);
 
 %extracellular metabolites in M moles/L
 % met.glc_e = 0.2;
@@ -37,8 +37,12 @@ met = struct([]);
 %Reactions to be considered cytosolic even if defined otherwise
 %reactions to consider for kinetics other than Vind
 rxn_add = {'Ain'};
+
 %reactions not be considered cytosolic even if defined otherwise
 rxn_excep = {'ATPM'};
+
+FBAmodel.rxn_add = rxn_add;
+FBAmodel.rxn_excep = rxn_excep;
 
 %get parameter estimates
 ensb = parallel_ensemble(FBAmodel,mc,parameter,rxn_add,rxn_excep);
@@ -49,7 +53,8 @@ ensb = parallel_ensemble(FBAmodel,mc,parameter,rxn_add,rxn_excep);
 
 %solve ODE of model to steady state
 if ensb{1,2}.feasible
-    sol = IntegrateModel(FBAmodel,ensb,ensb{1,1});
+    [Y,Jac] = stabilityADMAT(FBAmodel,ensb,ensb{1,1});
+    sol = IntegrateModel(FBAmodel,ess_rxn,Vup_struct,ensb,ensb{1,1});
 else
     error('No feasible model found');
 end

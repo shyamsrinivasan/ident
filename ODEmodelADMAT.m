@@ -28,8 +28,8 @@ dXdt = cons(dXdt,mc);
 % end
 
 %% Fluxes 
-
-flux = iflux(model,pvec,mc.*model.imc);
+% imc = cons(model.imc,mc);
+flux = ifluxADMAT(model,pvec,mc.*model.imc);
 
 % %% %Biomass flux - growth rate
 % % gr_flux = 0.8*prod(Y(Mbio_ind)./([.8;.1]+Y(Mbio_ind)));
@@ -64,7 +64,8 @@ flux = iflux(model,pvec,mc.*model.imc);
 dXdt(1:nin_m) = (1./model.imc(1:nin_m)).*(model.S(1:nin_m,:)*flux);%-mu*mc(1:nin_m);%
 % dXdt(1:nin_m) = -mu*mc(1:nin_m);%
 % dXdt(nin_m+1:nt_m) = 0;
-dXdt(nin_m+1:nt_m) = 0;%model.S(nin_m+1:nt_m,:)*flux;%-mu*Y(nin_m+1:nt_m);
+dXdt(nin_m+1:nt_m) = (1./model.imc(nin_m+1:nt_m)).*(model.S(nin_m+1:nt_m,:)*zeros(model.nt_rxn,1));
+%model.S(nin_m+1:nt_m,:)*flux;%-mu*Y(nin_m+1:nt_m);
 
 % plotconc_timecourse(dXdt,t,model,[hc he pic pie]);
 idx = find(mc<0);

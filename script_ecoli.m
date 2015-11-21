@@ -47,6 +47,9 @@ rxn_add = {'GLCpts','NADH16','ATPS4r','NADTRHD','THD2','CYTBD'};
 %reactions not be considered cytosolic even if defined otherwise
 rxn_excep = {'ATPM'};
 
+FBAmodel.rxn_add = rxn_add;
+FBAmodel.rxn_excep = rxn_excep;
+
 %get parameter estimates
 ensb = parallel_ensemble(FBAmodel,mc,parameter,rxn_add,rxn_excep);
 
@@ -55,8 +58,10 @@ ensb = parallel_ensemble(FBAmodel,mc,parameter,rxn_add,rxn_excep);
 %estimate kinetic parameters in an ensemble
 
 %solve ODE of model to steady state
-change_pos.glc_e = 10;
+% change_pos.glc_e = 10;
+change_pos = [];
 if ensb{1,2}.feasible
+    [Y,Jac] = stabilityADMAT(FBAmodel,ensb,ensb{1,1});
     sol = IntegrateModel(FBAmodel,ess_rxn,Vup_struct,ensb,ensb{1,1},change_pos);
 else
     error('No feasible model found');
