@@ -196,7 +196,7 @@ for irxn = 1:length(Vind)
     else
         vflux(Vind(irxn)) = 0;
     end
-    Vmax(Vind(irxn))*vflux(Vind(irxn))
+%     Vmax(Vind(irxn))*vflux(Vind(irxn))
     flux(Vind(irxn)) = Vmax(Vind(irxn))*vflux(Vind(irxn));
 end
 flux = flux(Vind);

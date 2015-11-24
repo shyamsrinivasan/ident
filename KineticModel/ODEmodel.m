@@ -147,8 +147,3 @@ newdata.flux = flux;
 newdata.Y = mc;
 newdata.t = t;
 end
-
-
-
-
-

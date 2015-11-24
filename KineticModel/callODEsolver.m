@@ -110,5 +110,9 @@ if ~f_flag
     finalSS.t = Sol.t(end);
     finalSS.y = Sol.y(:,end); 
 end
+
+%plot for debugging purposes only
+figure
+plot(Sol.t,Sol.y(1:48,:));
 return;
 
