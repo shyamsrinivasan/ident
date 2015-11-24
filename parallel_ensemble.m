@@ -38,7 +38,7 @@ elseif nsamples==1 && nmodels>1
         ensb{im,1} = mc;
         model_ens{1,im} = buildmodels(model,pvec,mc,rxn_add,rxn_excep);
     end    
-elseif nsamples>1 && nmodels>=1
+elseif nsamples>1 && nmodels>=1 %--------not supported yet
     ensb = cell(nsamples,nmodels,2);
     model_ens = cell(nsamples,nmodels);
     parfor ism = 1:nsamples        
@@ -49,17 +49,21 @@ elseif nsamples>1 && nmodels>=1
     end
 end
 
-if ndims(ensb)>2
-    for ism = 1:nsamples
-        for im = 1:size(model_ens,1)
-            ensb{ism,im,2} = model_ens{ism,im};
-        end
-    end
-else
-    for im = 1:size(model_ens,1)
+if length(model_ens)>1
+    for im = 1:length(model_ens)
         ensb{im,2} = model_ens{1,im};
     end
+else
+    ensb{1,2} = model_ens{1,1};
 end
+
+% if ndims(model_ens)>2
+%     for ism = 1:nsamples
+%         for im = 1:size(model_ens,1)
+%             ensb{ism,im,2} = model_ens{ism,im};
+%         end
+%     end
+% end
     
 
 

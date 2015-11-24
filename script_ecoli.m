@@ -52,7 +52,10 @@ FBAmodel.rxn_add = rxn_add;
 FBAmodel.rxn_excep = rxn_excep;
 
 %get parameter estimates - estimate kinetic parameters in an ensemble
-ensb = parallel_ensemble(FBAmodel,mc,parameter,rxn_add,rxn_excep);
+ensb = parallel_ensemble(FBAmodel,mc,parameter,rxn_add,rxn_excep,10);
+
+%load a pre determined model
+% load('C:\Users\Shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\ecoliN1_newpvec_2_Nov24.mat');
 
 % x = initialsample(FBAmodel);
 
@@ -60,10 +63,15 @@ ensb = parallel_ensemble(FBAmodel,mc,parameter,rxn_add,rxn_excep);
 % change_pos.glc_e = 10;
 change_pos = [];
 
-%solve ODE of model to steady state
-if ensb{1,2}.feasible    
-    sol = IntegrateModel(FBAmodel,ess_rxn,Vup_struct,ensb,ensb{1,1},change_pos);
+if size(ensb,1)>1 
+    %run a parallel version to solve all odes
+    sol = IntegrateModelEnsemble(FBAmodel,ess_rxn,Vup_struct,ensb,ensb{1,1},change_pos);
 else
-    error('No feasible model found');
+    %serially solve ODE of model to steady state
+    if ensb{1,2}.feasible    
+        sol = IntegrateModel(FBAmodel,ess_rxn,Vup_struct,ensb,ensb{1,1},change_pos);
+    else
+        error('No feasible model found');
+    end
 end
 
