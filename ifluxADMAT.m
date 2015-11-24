@@ -1,4 +1,4 @@
-function flux = iflux(model,pvec,mc,flux,idx)
+function flux = ifluxADMAT(model,pvec,mc,flux,idx)
 if nargin <5
     idx = [];
 else
@@ -20,35 +20,23 @@ rxn_excep = model.rxn_excep;
 
 Vind = addToVind(model,rxn_add,rxn_excep);
 
-%carbon uptake fluxes
-% [flux,~,vcup] = CarbonKinetics(model,pvec,mc,flux);
-
-%redox reaction fluxes in vrem
-% [flux,~,vred] = RedoxKinetics(model,pvec,mc,flux);
-
-%intracellular fluxes in Vind
-% Vind = model.Vind;
-% vrem = [find(strcmpi(model.rxns,'GLCpts'))...        
-%         find(strcmpi(model.rxns,'ATPM'))...
-%         vred];
-% Vind = setdiff(Vind,vrem);    
-
 %transport fluxes
 Vex = model.Vex;
 Vex = setdiff(Vex,Vind);
 
 %other fixed exchaged fluxes
 VFex = model.VFex;
+flux = cons(flux,mc);
 
 if isempty(idx)
     
-    flux(Vind) = CKinetics(model,pvec,mc,Vind);
+    flux(Vind) = CKineticsADMAT(model,pvec,mc,Vind);
 
     %transport fluxes    
-    flux(Vex) = TKinetics(model,pvec,mc,Vex);
+    flux(Vex) = TKineticsADMAT(model,pvec,mc,Vex);
 
     %other fixed exchaged fluxes    
-    flux(VFex) = EKinetics(model,pvec,mc,VFex,flux);
+    flux(VFex) = EKineticsADMAT(model,pvec,mc,VFex,flux);
 
     %biomass
 %     if mc(strcmpi(model.mets,'atp[c]'))>0 &&...
@@ -60,7 +48,7 @@ if isempty(idx)
 
 %     flux(strcmpi(model.rxns,'atpm')) = 8.39;
     atp = strcmpi(model.mets,'atp[c]');
-    flux(strcmpi(model.rxns,'atpm')) = 8.39*logical(mc(atp));%*mc(atp)/1e-5/(1+mc(atp)/1e-5);
+    flux(strcmpi(model.rxns,'atpm')) = 8.39*logical(getval(mc(atp)));%*mc(atp)/1e-5/(1+mc(atp)/1e-5);
     
 %     if all(mc(logical(model.S(:,model.bmrxn)<0))>1e-5)
 %         flux(model.bmrxn) = model.Vss(model.bmrxn);%0.01;
@@ -95,10 +83,5 @@ else
     flux = idflux(idx);
 end
 
-% if flux(strcmpi(model.rxns,'atpm'))>=1e-5 &&...
-%     all(mc(logical(model.S(:,model.bmrxn)>0))>0)
-%     flux(model.bmrxn) = 0.1;
-% else
-%     flux(model.bmrxn) = 0;
-% end
+
 
