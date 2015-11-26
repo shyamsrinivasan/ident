@@ -51,10 +51,15 @@ dXdt_ = ODEmodel(0,Nimc,[],model,pvec);
 addpath(genpath('C:\Users\shyam\Documents\MATLAB\zz_ADMAT-2.0'),'-end');
 
 % %call to admat for stability/jacobian info
-Nimc_obj = deriv(Nimc,eye(model.nt_metab));
-dXdtADMAT = ODEmodelADMAT(0,Nimc_obj,[],model,pvec);
-Y = getval(dXdtADMAT);
-Jac = getydot(dXdtADMAT);
+% Nimc_obj = deriv(Nimc,eye(model.nt_metab));
+% dXdtADMAT = ODEmodelADMAT(Nimc_obj,model,pvec);
+% Y = getval(dXdtADMAT);
+% Jac = getydot(dXdtADMAT);
+model.pvec = pvec;
+% callODEmodel = @(x,model)ODEmodelADMAT(x,model,pvec);
+
+myfun = ADfun('ODEmodelADMAT',length(Nimc));
+f = feval(myfun,Nimc,model);
 
 rmpath('C:\Users\shyam\Documents\MATLAB\zz_ADMAT-2.0');
 

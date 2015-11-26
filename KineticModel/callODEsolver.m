@@ -1,5 +1,9 @@
 %function to solve ODE to obtain concentration profiles using SUNDIALS
-function [Sol,finalSS,status] = callODEsolver(model,pvec,initval,solverP)%Initial Value
+function [Sol,finalSS,status] = callODEsolver(model,pvec,initval,solverP,sol)
+if nargin < 5
+    sol = struct([]);
+end
+%Initial Value
 % nint_metab = model.nint_metab;
 % next_metab = model.next_metab;
 % nvar = model.nt_metab;%All Metabolites
@@ -29,8 +33,7 @@ function [Sol,finalSS,status] = callODEsolver(model,pvec,initval,solverP)%Initia
 % 
 % data.flux = initflux;                                        
 % initval(nint_metab+1:nt_metab) = model.M*variable.MC;
-%time for initial data point
-t0 = 0.0;
+
 %Set ScalAbsTol
 AbsTol = zeros(model.nt_metab,1);
 AbsTol(AbsTol==0) = solverP.MabsTol;
@@ -38,7 +41,30 @@ data = struct();
 % options = odeset('RelTol',solverP.RelTol,'AbsTol',AbsTol);
 
 %Time vector
-tout = solverP.tout:solverP.tmax/(solverP.MaxDataPoints-1):solverP.tmax;
+Sol = struct();
+if isempty(sol)
+    %time for initial data point
+    t0 = 0.0;
+    
+    tout = solverP.tout:solverP.tmax/(solverP.MaxDataPoints-1):solverP.tmax;
+    Sol.t = zeros(length(tout),1);
+    Sol.y = zeros(length(initval),length(tout));
+    Sol.flux = zeros(size(model.S,2),length(tout));
+    itime = 0;
+else
+    tavail = sol.t;    
+    %time for initial data point
+    t0 = tavail(end);
+    
+    %initial value
+    initval = sol.y(:,end);
+    
+    tout = tavail(end)+solverP.tout:solverP.tmax/(solverP.MaxDataPoints-1):solverP.tmax;
+    Sol.t = [sol.t;zeros(length(tout),1)];
+    Sol.y = [sol.y zeros(length(initval),length(tout))];
+    Sol.flux = [sol.flux zeros(size(model.S,2),length(tout))];
+    itime = length(sol.t);
+end
 
 %Normalize t vectors
 %t = mu*t;
@@ -65,11 +91,8 @@ callODEmodel = @(t,Y,data)ODEmodel(t,Y,data,model,pvec);
 CVodeInit(callODEmodel,'BDF','Newton',t0,initval,options);
 % [t,dy] = ode15s(callODEmodel,tout,initval,options);
 %% %Solve ODE
-Sol = struct();
-Sol.t = zeros(length(tout),1);
-Sol.y = zeros(length(initval),length(tout));
-Sol.flux = zeros(size(model.S,2),length(tout));
-itime = [];
+
+% itime = [];
 for ktime = 1:length(tout)
     itstart = tic;
     [status,t,dY] = CVode(tout(ktime),'Normal');   
@@ -78,12 +101,12 @@ for ktime = 1:length(tout)
 %     plotflux_timecourse(flux,t,model)
 %     plotconc_timecourse(dY,t,model)
     %Collect Solution
-    Sol.t(ktime) = tout(ktime);
-    Sol.y(:,ktime) = dY;
-    Sol.flux(:,ktime) = flux;
+    Sol.t(itime+ktime) = tout(ktime);
+    Sol.y(:,itime+ktime) = dY;
+    Sol.flux(:,itime+ktime) = flux;
     %Solution.ys = [Solution.ys, YS];
     itfinish = toc(itstart);
-    itime = [itime;itfinish];
+%     itime = [itime;itfinish];
 end
 % EWT = CVodeGet('ErrorWeigths');
 CVodeFree;

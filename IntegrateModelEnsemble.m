@@ -85,6 +85,44 @@ for im = 1:nmodels
     
     %integrate model
     [sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
+    
+    %initialize solver properties
+    [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e4);
+
+    %integrate model
+    [sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
+
+    %initialize solver properties
+    [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,9e4);
+
+    %integrate model
+    [sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
+
+    %initialize solver properties
+    [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,5e5);
+
+    %integrate model
+    [sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
+
+    %initialize solver properties
+    [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e6);
+
+    %integrate model
+    [sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
+
+    %initialize solver properties
+    [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,5e6);
+
+    %integrate model
+    [sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
+
+    %initialize solver properties
+    [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e7);
+
+    %integrate model
+    [sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
+
+
     sol_all{im} = sol;
     finalSS_all{im} = finalSS;    
 end

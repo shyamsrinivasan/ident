@@ -1,11 +1,12 @@
-function dXdt = ODEmodelADMAT(t,mc,data,model,pvec)
-%function [dXdt,flag,newdata] = ODEmodel(t,Y,data,pmeter)
+function dXdt = ODEmodelADMAT(mc,model)
+%function dXdt = ODEmodelADMAT(mc,model,pvec)
 %**************************************************************************
 %Describing the ODE dXdt = data.S*flux(X,p)
 %September 2014
 %**************************************************************************
 % callODEmodel = @(t,Y,data)ODEmodel(t,Y,model,pmeter);
 bmind = model.bmrxn;
+pvec = model.pvec;
 % Mbio = strcmpi('biomass',model.mets);
 % % Mbio = model.S(:,bm_ind)>0;
 % nt_rxn = model.nt_rxn;
@@ -45,18 +46,7 @@ flux = ifluxADMAT(model,pvec,mc.*model.imc);
 % mu = flux(bmind);
 
 %plot time course concentrations and flux during integration
-% nad16 = find(strcmpi(model.rxns,'NADH16'));
-% atps = find(strcmpi(model.rxns,'ATPS4r'));
-% cyt = find(strcmpi(model.rxns,'CYTBD'));
-% pit = find(strcmpi(model.rxns,'PIt2r'));
-% act = find(strcmpi(model.rxns,'ACt2r'));
-
 % plotflux_timecourse(flux,t,model,[nad16 atps cyt pit act]);
-% 
-% hc = find(strcmpi(model.mets,'h[c]'));
-% he = find(strcmpi(model.mets,'h[e]'));
-% pic = find(strcmpi(model.mets,'pi[c]'));
-% pie = find(strcmpi(model.mets,'pi[e]'));
 
 
 %% %Intracellular Metabolites
@@ -91,15 +81,10 @@ idx = find(mc<0);
 %Biomass 
 % dXdt(end) = data.S(end,:)*flux;
 % 
-if any(mc<0)
-    flag = -1;
-else
-    flag = 0;
-end
-newdata = data;
-newdata.flux = flux;
-newdata.Y = mc;
-newdata.t = t;
+% newdata = data;
+% newdata.flux = flux;
+% newdata.Y = mc;
+% newdata.t = t;
 end
 
 
