@@ -70,7 +70,8 @@ for irxn = 1:nrxn
     if ~any(strcmpi(model.rxns{Vind(irxn)},'PPC'))
         if any(sbid)
             if ~any(model.CMPS(sbid,Vind(irxn))) 
-                sbid(vmet) = 0;                
+                sbid(vmet) = 0;     
+                cmp_s = [];
             else
                 sbid = find(sbid);
                 cmp_s = sbid(logical(model.CMPS(sbid,Vind(irxn))));
@@ -82,6 +83,7 @@ for irxn = 1:nrxn
         if any(prid)
             if ~any(model.CMPS(prid,Vind(irxn)))
                 prid(vmet) = 0;
+                cmp_p = [];
             else
                 prid = find(prid);
                 cmp_p = prid(logical(model.CMPS(prid,Vind(irxn))));
@@ -92,7 +94,37 @@ for irxn = 1:nrxn
         end
     else
         sbid(h2o) = 0;
-        prid(h2o) = 0;            
+        prid(h2o) = 0;       
+        if ~any(model.CMPS(sbid,Vind(irxn)))  
+            sbid(vmet) = 0;
+            cmp_s = [];
+        else
+            sbid = find(sbid);
+            cmp_s = sbid(logical(model.CMPS(sbid,Vind(irxn))));
+            sbid = setdiff(sbid,cmp_s);
+            sbid = setdiff(sbid,[he h2o]);    
+            sbid = logical(sparse(sbid,1,1,nmet,1));
+        end
+        if ~any(model.CMPS(prid,Vind(irxn)))
+            prid(vmet) = 0;
+            cmp_p = [];
+        else
+            prid = find(prid);
+            cmp_p = prid(logical(model.CMPS(prid,Vind(irxn))));
+            prid = setdiff(prid,cmp_p);  
+            prid = setdiff(prid,[he h2o]);
+            prid = logical(sparse(prid,1,1,nmet,1));
+        end 
+    end
+    if ~isempty(cmp_s)
+        cmp_s = prod(mc(cmp_s).*(-model.S(cmp_s,Vind(irxn))));
+    else
+        cmp_s = 1;
+    end
+    if ~isempty(cmp_p)
+        cmp_p = prod(mc(cmp_p).*(model.S(cmp_p,Vind(irxn))));
+    else
+        cmp_p = 1;
     end
 %     if any(sbid)
 %         if any(sbid(vmet))
