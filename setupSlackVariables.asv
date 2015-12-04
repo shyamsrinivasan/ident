@@ -19,8 +19,8 @@ vpyk = strcmpi(newmodel.rxns,'pyk');
 lb_slack(vpyk) = 14;
 vmdh = strcmpi(newmodel.rxns,'mdh');
 lb_slack(vmdh) = 7;
-% vgpd = strcmpi(newmodel.rxns,'g6pdh2r');
-% lb_slack(vgpd) = 1;
+vgpd = strcmpi(newmodel.rxns,'g6pdh2r');
+lb
 %-------
 ub_slack = zeros(size(newmodel.A,1),1);
 ub_slack(ub_slack==0) = Inf;
