@@ -1,0 +1,26 @@
+Reaction	Positive Effectors	Negative Effectors
+---> R1		M2
+---> R2		
+---> R3		
+---> R5		
+R1 ---> P1	R1	
+R2 ---> P2	R2	
+R3 ---> P3	R3	
+R5 ---> P5	R5	
+---> M1		
+M1 ---> M2	"P1, M1"	
+M1 ---> M3	"P2, M1"	
+M2 ---> M3	"P3, M2"	
+M2 --->	"M2, P5"	
+0.5 M3 --->	M3	
+R1 ---> 	R1	
+R2 ---> 	R2	
+R3 ---> 	R3	
+R5 --->	R5	
+P1 --->	P1	
+P2 --->	P2	
+P3 --->	P3	
+P5 --->	P5	
+M2 ---> M1	"M2, P1"	
+M3 ---> M1	"M3, P2"	
+M3 ---> M2	"M3, P3"	

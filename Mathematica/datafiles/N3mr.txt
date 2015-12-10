@@ -1,0 +1,17 @@
+Reaction	Positive Effectors	Negative Effectors
+---> S[e]		
+S[e] ---> S[c]	S[e]	
+S[c] ---> B[c]	S[c]	
+S[c] ---> A[c]	S[c]	
+S[c] ---> M[c]	S[c]	
+S[c] ---> P[c]	S[c]	
+M[c] ---> N[c]	M[c]	
+M[c] + N[c] --->A[c] + K[c]	"M[c], N[c]"	"A[c], K[c]"
+N[c] ---> K[c]	N[c]	
+K[c] ---> B[c] + P[c]	K[c]	
+A[c] ---> A[e]	A[c]	
+P[c] ---> P[e]	P[c]	
+A[e] --->	A[e]	
+P[e] --->	P[e]	
+B[c] ---> B[e]	B[c]	
+B[e] --->	B[e]	
