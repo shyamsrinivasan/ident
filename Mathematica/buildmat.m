@@ -21,11 +21,19 @@ fclose(fileid);
 
 nt_rxn = length(C{1}); 
 model.S = sparse(0,nt_rxn);
-model.Metabolites = {};
+model.Z = sparse(nt_rxn,0);
+model.metab = {};
+% poseff = cell(nt_rxn);
+% negeff = cell(irxn);
 
 imetab = 1;
 for irxn = 1:nt_rxn
-%     ipt = 0; 
+    nts_rxn = size(model.S,2);
+    
+    %Effectors to build influence matrix
+    poseff = effectors(C{2}{irxn});
+    negeff = effectors(C{3}{irxn});
+    
     %Building S and Z matrices
     rxnstring = C{1}{irxn};  
     %separate terms into a vector
@@ -67,109 +75,67 @@ for irxn = 1:nt_rxn
     end
     if ~isempty(lhs)
         stoich = -1;
-        [model,imetab] = rxn_sp(lhs,imetab,irxn,stoich,model);
-%         terms = strtrim(textscan(lhs, '%s', 'Delimiter', '+'));
-%         s = regexp(terms{1}, '[(]?([0-9.]+)[)]? ([A-Za-z0-9_\-\[\]]+)', 'tokens');  
-%         for iterm = 1:length(s)
-%             if ~isempty(s{iterm})
-%                 stoich = str2double(s{iterm}{1}{1});
-%                 metab = s{iterm}{1}{2};
-%             else
-%                 stoich = 1;
-%                 metab = terms{1}{iterm};
-%             end            
-%             %metab = strcat(metab, compartment);%Required for
-%             %compartmentalized models
-%             tf = strcmp(metab, model.Metabolites);
-%             if any(tf)
-%                 model.S(tf, irxn) = -stoich;                
-%             else
-%                 model.S(imetab, irxn) = -stoich;
-%                 model.Metabolites{imetab} = metab;
-%                 imetab = imetab + 1;
-%             end
-%         end
-%         ipt = ipt + iterm;
+        [model,imetab] = rxn_sp(lhs,imetab,irxn,stoich,model,poseff,negeff);
     end    
     if ~isempty(rhs)
         stoich = 1;
-        [model,imetab] = rxn_sp(rhs,imetab,irxn,stoich,model);
-%         terms = strtrim(textscan(rhs, '%s', 'Delimiter', '+'));
-%         s = regexp(terms{1},'[(]?([0-9.]+)[)]? ([A-Za-z0-9_\-\[\]]+)','tokens');
-%         for iterm = 1:length(s)
-%             if ~isempty(s{iterm})
-%                 stoich = str2double(s{iterm}{1}{1});
-%                 metab = s{iterm}{1}{2};
-%             else
-%                 stoich = 1;
-%                 metab = terms{1}{iterm};
-%             end            
-%             %metab = strcat(metab, compartment);
-%             tf = strcmp(metab, model.Metabolites);
-%             if any(tf)
-%                 model.S(tf, irxn) = stoich;
-%             else
-%                 model.S(imetab, irxn) = stoich;
-%                 model.Metabolites{imetab} = metab;
-%                 imetab = imetab + 1;
-%             end
-%         end
-%         ipt = ipt + iterm;
+        [model,imetab] = rxn_sp(rhs,imetab,irxn,stoich,model,poseff,negeff);
     end
     if ~isempty(lhs_r)
         stoich = -1;
-        [model,imetab] = rxn_sp(lhs_r,imetab,nt_rxn+1,stoich,model);
+        [model,imetab] = rxn_sp(lhs_r,imetab,nts_rxn+1,stoich,model,poseff,negeff);
     end
     if ~isempty(rhs_r)
         stoich = 1;
-        [model,imetab] = rxn_sp(rhs_r,imetab,nt_rxn+1,stoich,model);
+        [model,imetab] = rxn_sp(rhs_r,imetab,nts_rxn+1,stoich,model,poseff,negeff);
     end
-    if ~isempty(lhs_r) && ~isempty(rhs_r)
-        nt_rxn = nt_rxn + 1;
-    end
+%     if ~isempty(lhs_r) && ~isempty(rhs_r)
+%         nt_rxn = nt_rxn + 1;
+%     end
 end
-model.Z = sparse(nt_rxn,length(model.Metabolites));
-for irxn = 1:nt_rxn
-    %Effectors to build influence matrix
-    poseff = effectors(C{2}{irxn});
-    negeff = effectors(C{3}{irxn});
-    if ~isempty(poseff)
-        ipeff = 1;
-        while ipeff <= length(poseff)
-            tfpos = strcmp(poseff{ipeff},model.Metabolites);
-            if any(tfpos)
-                model.Z(irxn,tfpos) = 1;
-            end
-            ipeff = ipeff + 1;
-        end
-    end
-    if ~isempty(negeff)
-        ineff = 1;
-        while ineff <= length(negeff)
-            tfneg = strcmp(negeff{ineff},model.Metabolites);
-            if any(tfneg)
-                model.Z(irxn,tfneg) = -1;
-            end
-            ineff = ineff + 1;
-        end
-    end        
-end
-tfSt = strcmp('St',model.Metabolites);
-tfS = strcmp('S',model.Metabolites);
-tfX = strcmp('X',model.Metabolites);
-tfE = strcmp('E',model.Metabolites);
-if any(tfSt)&& any(tfS) && any(tfX) && any(tfE)
-    model.S = [model.S(tfS,:);model.S(tfSt,:);model.S(tfE,:);model.S(tfX,:)];
-    model.Z = [model.Z(:,tfS) model.Z(:,tfSt) model.Z(:,tfE) model.Z(:,tfX)];
-end
+nts_rxn = size(model.S,2);
+% model.Z = sparse(nts_rxn,length(model.metab));
+% for irxn = 1:nt_rxn
+%     %Effectors to build influence matrix
+%     poseff = effectors(C{2}{irxn});
+%     negeff = effectors(C{3}{irxn});
+%     if ~isempty(poseff)
+%         ipeff = 1;
+%         while ipeff <= length(poseff)
+%             tfpos = strcmp(poseff{ipeff},model.metab);
+%             if any(tfpos)
+%                 model.Z(irxn,tfpos) = 1;
+%             end
+%             ipeff = ipeff + 1;
+%         end
+%     end
+%     if ~isempty(negeff)
+%         ineff = 1;
+%         while ineff <= length(negeff)
+%             tfneg = strcmp(negeff{ineff},model.metab);
+%             if any(tfneg)
+%                 model.Z(irxn,tfneg) = -1;
+%             end
+%             ineff = ineff + 1;
+%         end
+%     end        
+% end
+% tfSt = strcmp('St',model.metab);
+% tfS = strcmp('S',model.metab);
+% tfX = strcmp('X',model.metab);
+% tfE = strcmp('E',model.metab);
+% if any(tfSt)&& any(tfS) && any(tfX) && any(tfE)
+%     model.S = [model.S(tfS,:);model.S(tfSt,:);model.S(tfE,:);model.S(tfX,:)];
+%     model.Z = [model.Z(:,tfS) model.Z(:,tfSt) model.Z(:,tfE) model.Z(:,tfX)];
+% end
 S = model.S;
 Z = model.Z;
-model.Metabolites = model.Metabolites';
+model.metab = model.metab';
 % model.S = full(model.S);
 % model.Z = full(model.Z);
 return
 
-function [model,imetab] = rxn_sp(sptrm,imetab,irxn,stmul,model)
+function [model,imetab] = rxn_sp(sptrm,imetab,irxn,stmul,model,poseff,negeff)
 terms = strtrim(textscan(sptrm, '%s', 'Delimiter', '+'));
 s = regexp(terms{1},'[(]?([0-9.]+)[)]? ([A-Za-z0-9_\-\[\]]+)','tokens');
 for iterm = 1:length(s)
@@ -180,13 +146,37 @@ for iterm = 1:length(s)
         stoich = 1*stmul;
         metab = terms{1}{iterm};
     end                
-    tf = strcmp(metab, model.Metabolites);
+    tf = strcmp(metab, model.metab);
     if any(tf)
         model.S(tf, irxn) = stoich;
     else
         model.S(imetab, irxn) = stoich;
-        model.Metabolites{imetab} = metab;
+        model.metab{imetab} = metab;
         imetab = imetab + 1;
+    end
+end
+if ~isempty(poseff)
+    for ipeff = 1:length(poseff)
+        tfpos = strcmp(poseff{ipeff},model.metab);
+        if any(tfpos)
+           model.Z(irxn,tfpos) = 1;
+        else
+           model.Z(irxn,imetab) = 1;
+           model.metab{imetab}= poseff{ipeff};
+           imetab = imetab+1;
+        end
+    end
+end
+if ~isempty(negeff)
+    for ineff = 1:length(negeff)
+        tfneg = strcmp(negeff{ineff},model.metab);
+        if any(tfneg)
+           model.Z(irxn,tfneg) = -1;
+        else
+           model.Z(irxn,imetab) = 1;
+           model.metab{imetab}= negeff{ineff};
+           imetab = imetab+1;
+        end        
     end
 end
 return
