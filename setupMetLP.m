@@ -71,6 +71,7 @@ vcs = strcmpi(newmodel.rxns,'cs');
 vmdh = strcmpi(newmodel.rxns,'mdh');
 vpyk = strcmpi(newmodel.rxns,'pyk');
 vgpd = strcmpi(newmodel.rxns,'g6pdh2r');
+vpgl = strcmpi(newmodel.rxns,'pgl');
 
 newmodel.S(hc,vgapd) = 0;
 newmodel.S(hc,vpfk) = 0;
@@ -78,6 +79,7 @@ newmodel.S(hc,vcs) = 0;
 newmodel.S(hc,vmdh) = 0;
 newmodel.S(hc,vpyk) = 0;
 newmodel.S(hc,vgpd) = 0;
+newmodel.S(hc,vpgl) = 0;
 
 %----------
 newmodel.S(:,[Vex VFex bmrxn]) = [];
