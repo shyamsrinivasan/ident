@@ -1,0 +1,314 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 10.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      9439,        305]
+NotebookOptionsPosition[      8085,        255]
+NotebookOutlinePosition[      8429,        270]
+CellTagsIndexPosition[      8386,        267]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"FindRoot", "[", 
+   RowBox[{
+    RowBox[{"{", 
+     RowBox[{
+      RowBox[{"lhs1", "\[Equal]", "rhs1"}], ",", 
+      RowBox[{"lhs2", "\[Equal]", "rhs2"}]}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"x1", ",", "x10"}], "}"}], ",", 
+    RowBox[{"{", 
+     RowBox[{"x2", ",", "x20"}], "}"}]}], "]"}], "\[IndentingNewLine]", 
+  "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{"nrxn", " ", "=", " ", 
+    RowBox[{"#", " ", "of", " ", "reactions"}]}], " ", 
+   "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"nrxn", " ", "=", " ", "2"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Reactions", " ", ":=", " ", 
+   RowBox[{"Table", "[", 
+    RowBox[{
+     RowBox[{"f", "[", "i", "]"}], ",", 
+     RowBox[{"{", 
+      RowBox[{"i", ",", "1", ",", "nrxn"}], "}"}]}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"f", "[", "1", "]"}], " ", "=", " ", "\[IndentingNewLine]", 
+    RowBox[{"for", " ", "[", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"ieqn", "=", "1"}], ";", "\[IndentingNewLine]", "\t", 
+       RowBox[{
+        RowBox[{"f", "[", "ieqn", "]"}], "=", 
+        RowBox[{"Sum", "[", 
+         RowBox[{"regf", ",", 
+          RowBox[{"{", 
+           RowBox[{"1", ",", "ireg"}], "}"}]}], "]"}]}]}], ",", 
+      "\[IndentingNewLine]", "\t", 
+      RowBox[{"ieqn", "++"}]}], "\[IndentingNewLine]", "\t", "]"}]}], ";"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "regf", " ", "will", " ", "be", " ", "the", " ", "regulatory", " ", 
+    "function", " ", "evaluated", " ", "from", " ", 
+    RowBox[{"Matlab", "?"}]}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{"Use", " ", "MATLink", " ", "to", " ", "generate", " ", "regf"}], 
+   "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "Use", " ", "NDSolve", " ", "to", " ", "solve", " ", "the", " ", 
+    "Reactions", " ", "system", " ", "of", " ", "ODEs"}], " ", "*)"}], 
+  "\t"}]}], "Input",
+ CellChangeTimes->{{3.627143039230486*^9, 3.6271430836633644`*^9}, {
+  3.6271431215332737`*^9, 3.627143145356516*^9}, {3.627219890704658*^9, 
+  3.6272199632934856`*^9}, {3.6272202107363744`*^9, 3.627220213603918*^9}, {
+  3.6272609488558755`*^9, 3.627261229859777*^9}, {3.6272624060630736`*^9, 
+  3.6272624135062866`*^9}, {3.627265937283902*^9, 3.627265954135932*^9}}],
+
+Cell[BoxData[""], "Input",
+ CellChangeTimes->{{3.6274115742470856`*^9, 3.6274115754950876`*^9}}],
+
+Cell["\<\
+New Code
+\
+\>", "Text",
+ CellChangeTimes->{{3.6274115898561134`*^9, 3.627411591993317*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"Needs", "[", "\"\<MATLink`\>\"", "]"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"OpenMATLAB", "[", "]"}], ";"}], "\[IndentingNewLine]"}], "Input",
+ CellChangeTimes->{{3.627411612962556*^9, 3.627411629255985*^9}, {
+  3.6274116666408663`*^9, 3.62741167434928*^9}, {3.6274117200843625`*^9, 
+  3.6274117455138083`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+  "Null", ",", "Null", ",", "Null", ",", "Null", ",", "Null", ",", "Null", 
+   ",", "Null", ",", "Null", ",", "Null", ",", "Null", ",", "Null", ",", 
+   "Null", ",", "Null"}], "}"}]], "Input",
+ NumberMarks->False],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+  "Null", ",", "Null", ",", "Null", ",", "Null", ",", "Null", ",", "Null", 
+   ",", "Null", ",", "Null", ",", "Null", ",", "Null", ",", "Null", ",", 
+   "Null", ",", "Null"}], "}"}]], "Output",
+ CellChangeTimes->{3.627411693829115*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"engOpenQ", "[", "]"}], "\[IndentingNewLine]"}]], "Input",
+ CellChangeTimes->{{3.6274117531920223`*^9, 3.6274117550328255`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"engOpenQ", "[", "]"}]], "Output",
+ CellChangeTimes->{3.627411759995634*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"closeMATLAB", "[", "]"}], "\[IndentingNewLine]"}]], "Input",
+ CellChangeTimes->{{3.6274117944312954`*^9, 3.627411799931506*^9}}],
+
+Cell[BoxData[
+ RowBox[{"closeMATLAB", "[", "]"}]], "Output",
+ CellChangeTimes->{3.6274118051293154`*^9}]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"DisconnectEngine", "[", "]"}], "\[IndentingNewLine]"}]], "Input",
+ CellChangeTimes->{{3.6274119004986367`*^9, 3.627411911292658*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{
+   RowBox[{"MEvaluate", "[", "\"\<magic(3)\>\"", "]"}], ";"}], 
+  "\[IndentingNewLine]"}]], "Input",
+ CellChangeTimes->{{3.627411942604314*^9, 3.6274119610983467`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"MEvaluate", "::", "engc"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"Not connected to the MATLAB engine.\"\>"}]], "Message", \
+"MSG",
+ CellChangeTimes->{3.6274119687327604`*^9}]
+}, Open  ]],
+
+Cell[BoxData[""], "Input",
+ CellChangeTimes->{{3.6274153440857015`*^9, 3.627415349333311*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"ConnectEngine", "[", "]"}], "\[IndentingNewLine]"}]], "Input",
+ CellChangeTimes->{{3.62741535668224*^9, 3.627415363566852*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"MEvaluate", "[", "\"\<magic_mat = magic(3)\>\"", "]"}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"magic_mat", " ", "=", 
+   RowBox[{"MGet", "[", "\"\<magic_mat\>\"", "]"}]}], 
+  ";"}], "\[IndentingNewLine]"}], "Input",
+ CellChangeTimes->{{3.627415378140478*^9, 3.6274154602889414`*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"MATLink", "::", "noconn"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"MATLink has lost connection to the MATLAB engine; please \
+restart MATLink to create a new connection. If this was a crash, then please \
+try to reproduce it and open a new issue, making sure to provide all the \
+details necessary to reproduce it.\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.6274154685457563`*^9, 3.6274155692130404`*^9}],
+
+Cell[BoxData["$Aborted"], "Output",
+ CellChangeTimes->{3.6274154685613565`*^9, 3.6274155692130404`*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"MGet", "::", "engc"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"Not connected to the MATLAB engine.\"\>"}]], "Message", \
+"MSG",
+ CellChangeTimes->{3.6274154685457563`*^9, 3.6274155693534403`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"DisconnectEngine", "[", "]"}], "\[IndentingNewLine]"}]], "Input",
+ CellChangeTimes->{{3.627415489636794*^9, 3.62741552079685*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"DisconnectEngine", "::", "engc"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"Not connected to the MATLAB engine.\"\>"}]], "Message", \
+"MSG",
+ CellChangeTimes->{{3.627415558920122*^9, 3.627415577678255*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"OpenMATLAB", "[", "]"}], "\[IndentingNewLine]", 
+  "\[IndentingNewLine]"}]], "Input",
+ CellChangeTimes->{{3.627415540093288*^9, 3.627415546000098*^9}, {
+  3.6274155844802675`*^9, 3.627415589466676*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"MATLink", "::", "noconn"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"MATLink has lost connection to the MATLAB engine; please \
+restart MATLink to create a new connection. If this was a crash, then please \
+try to reproduce it and open a new issue, making sure to provide all the \
+details necessary to reproduce it.\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{3.6274155947937856`*^9}],
+
+Cell[BoxData["$Aborted"], "Output",
+ CellChangeTimes->{3.6274155947937856`*^9}]
+}, Open  ]]
+},
+WindowSize->{650, 650},
+WindowMargins->{{Automatic, -811}, {-61, Automatic}},
+FrontEndVersion->"10.0 for Microsoft Windows (64-bit) (July 1, 2014)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 2405, 62, 292, "Input"],
+Cell[2966, 84, 96, 1, 31, "Input"],
+Cell[3065, 87, 101, 4, 49, "Text"],
+Cell[3169, 93, 365, 8, 72, "Input"],
+Cell[CellGroupData[{
+Cell[3559, 105, 253, 6, 52, "Input"],
+Cell[3815, 113, 275, 6, 52, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[4127, 124, 162, 3, 52, "Input"],
+Cell[4292, 129, 99, 2, 31, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[4428, 136, 163, 3, 52, "Input"],
+Cell[4594, 141, 104, 2, 31, "Output"]
+}, Open  ]],
+Cell[4713, 146, 168, 3, 52, "Input"],
+Cell[CellGroupData[{
+Cell[4906, 153, 203, 5, 52, "Input"],
+Cell[5112, 160, 231, 7, 21, "Message"]
+}, Open  ]],
+Cell[5358, 170, 94, 1, 31, "Input"],
+Cell[5455, 173, 162, 3, 52, "Input"],
+Cell[CellGroupData[{
+Cell[5642, 180, 335, 8, 72, "Input"],
+Cell[5980, 190, 465, 9, 73, "Message"],
+Cell[6448, 201, 103, 1, 31, "Output"],
+Cell[6554, 204, 250, 7, 21, "Message"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[6841, 216, 165, 3, 52, "Input"],
+Cell[7009, 221, 260, 7, 21, "Message"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[7306, 233, 237, 5, 72, "Input"],
+Cell[7546, 240, 441, 9, 73, "Message"],
+Cell[7990, 251, 79, 1, 31, "Output"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)

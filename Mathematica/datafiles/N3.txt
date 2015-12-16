@@ -1,0 +1,45 @@
+Reaction	Positive Effectors	Negative Effectors
+S ---> B	"S, P1"	
+S ---> P	"S, P2"	
+S ---> A	"S, P3"	
+S ---> M	"S, P4"	
+---> S		
+M ---> N	"M, P6"	
+M + N ---> A + K	"M, N, P5"	
+N ---> K	"N, K, P7"	
+K ---> B + P	"K, P8"	
+B --->	B	
+P --->	P	
+A --->	A	
+---> G1		
+---> G2		
+---> G3		
+---> G4		
+---> G5		
+---> G6		
+---> G7		
+---> G8		
+G1 ---> P1	G1	
+G2 ---> P2	G2	
+G3 ---> P3	G3	
+G4 ---> P4	G4	
+G5 ---> P5	G5	
+G6 ---> P6	G6	
+G7 ---> P7	G7	
+G8 ---> P8	G8	
+G1 --->	G1	
+G2 --->	G2	
+G3 --->	G3	
+G4 --->	G4	
+G5 --->	G5	
+G6 --->	G6	
+G7 --->	G7	
+G8 --->	G8	
+P1 --->	P1	
+P2 --->	P2	
+P3 --->	P3	
+P4 --->	P4	
+P5 --->	P5	
+P6 --->	P6	
+P7 --->	P7	
+P8 --->	P8	

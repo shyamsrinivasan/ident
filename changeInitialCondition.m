@@ -20,13 +20,13 @@ if ~isempty(VMCneg)
     end
 %     if any(mc(initval==0)
 %         
-    Nimc = Nimc-mc/100;
+    Nimc = Nimc-Nimc.*mc/100;
     Nimc(initval==0) = 0;
 end
 
 if ~isempty(VMCpos)
     mc = iconcentration(model,VMCpos);
-    Nimc = Nimc+mc/100;
+    Nimc = Nimc+Nimc.*mc/100;
 end
 
 

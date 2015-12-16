@@ -57,11 +57,31 @@ vh2o = [find(strcmpi(newmodel.mets,'h2o[c]'))...
         find(strcmpi(newmodel.mets,'h2o[e]'))];  
 
 vhe = [];%find(strcmpi(newmodel.mets,'h[e]'));    
+vhc = [];%find(strcmpi(newmodel.mets,'h[c]'));    
      
 % newmodel.S(vh2o,setdiff(1:size(newmodel.S,2),vatpm)) = 0;      
-newmodel.S([vh2o vhe],:) = [];
-newmodel.mets([vhe vh2o]) = []; 
+newmodel.S([vh2o vhe vhc],:) = [];
+newmodel.mets([vhe vhc vh2o]) = []; 
 
+%----------
+hc = strcmpi(newmodel.mets,'h[c]');
+vgapd = strcmpi(newmodel.rxns,'gapd');
+vpfk = strcmpi(newmodel.rxns,'pfk');
+vcs = strcmpi(newmodel.rxns,'cs');
+vmdh = strcmpi(newmodel.rxns,'mdh');
+vpyk = strcmpi(newmodel.rxns,'pyk');
+vgpd = strcmpi(newmodel.rxns,'g6pdh2r');
+vpgl = strcmpi(newmodel.rxns,'pgl');
+
+newmodel.S(hc,vgapd) = 0;
+newmodel.S(hc,vpfk) = 0;
+newmodel.S(hc,vcs) = 0;
+newmodel.S(hc,vmdh) = 0;
+newmodel.S(hc,vpyk) = 0;
+newmodel.S(hc,vgpd) = 0;
+newmodel.S(hc,vpgl) = 0;
+
+%----------
 newmodel.S(:,[Vex VFex bmrxn]) = [];
 newmodel.Keq([Vex VFex bmrxn]) = [];
 newmodel.Vss([Vex VFex bmrxn]) = [];

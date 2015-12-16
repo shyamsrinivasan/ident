@@ -1,4 +1,4 @@
-function sol = IntegrateModel(model,ess_rxn,Vup_struct,ensb,mc,change_pos,change_neg)
+function [sol,jacobian] = IntegrateModel(model,ess_rxn,Vup_struct,ensb,mc,change_pos,change_neg)
 %change in initial conditions
 if nargin<7
     change_neg = struct([]);
@@ -61,14 +61,10 @@ model.imc(model.imc==0) = 1;
 flux = iflux(model,pvec,Nimc.*imc);
 dXdt = ODEmodel(0,Nimc,[],model,pvec);
 
-%add ADMAT and subfolders to bottom of search path
-addpath(genpath('C:\Users\shyam\Documents\MATLAB\zz_ADMAT-2.0'),'-end');
-
 % %call to ADmat for stability/jacobian info
 [Y,Jac] = stabilityADMAT(model,pvec,Nimc);
 e_val = eig(Jac);
-
-rmpath('C:\Users\shyam\Documents\MATLAB\zz_ADMAT-2.0');
+jacobian = Jac;
 
 %test reals of eigen values of jacobians
 if any(real(e_val)>0)
@@ -102,10 +98,13 @@ end
 % [sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
 
 %initialize solver properties
-[model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e4);
+[model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e1);
+
+%introduce perturbation
+Nimc = perturbEqSolution(model,finalSS.y,change_pos,change_neg);
 
 %integrate model
-[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
+[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP,sol);
 
 %initialize solver properties
 % [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,5e4);
@@ -114,34 +113,34 @@ end
 % [sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
 
 %initialize solver properties
-[model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,9e4);
+[model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,5e4);
 
 %integrate model
-[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
+[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP,sol);
 
 %initialize solver properties
 [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,5e5);
 
 %integrate model
-[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
+[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP,sol);
 
 %initialize solver properties
 [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e6);
 
 %integrate model
-[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
+[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP,sol);
 
 %initialize solver properties
 [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,5e6);
 
 %integrate model
-[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
+[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP,sol);
 
 %initialize solver properties
 [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e7);
 
 %integrate model
-[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
+[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP,sol);
 
 
 

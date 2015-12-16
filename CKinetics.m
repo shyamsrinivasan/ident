@@ -25,6 +25,8 @@ for irxn = 1:length(Vind)
     %compensated species indices
 %     sbcmp = zeros(length(model.mets),1);
 %     prcmp = zeros(length(model.mets),1);
+    nr_flux = zeros(1,1);
+    
     nmet = size(S,1);
     
     sbid = S(:,Vind(irxn))<0;
@@ -87,11 +89,21 @@ for irxn = 1:length(Vind)
     end
     if ~isempty(cmp_s)
         cmp_s = prod(mc(cmp_s).*(-model.S(cmp_s,Vind(irxn))));
+%         if cmp_s > 0
+%             cmp_s = 1;
+%         else
+%             cmp_s = 0;
+%         end
     else
         cmp_s = 1;
     end
     if ~isempty(cmp_p)
         cmp_p = prod(mc(cmp_p).*(model.S(cmp_p,Vind(irxn))));
+%         if cmp_p > 0
+%             cmp_p = 1;
+%         else
+%             cmp_p = 0;
+%         end
     else
         cmp_p = 1;
     end
@@ -110,18 +122,21 @@ for irxn = 1:length(Vind)
     if model.rev(Vind(irxn))
         Sb = -S(sbid,Vind(irxn));
         Sp = S(prid,Vind(irxn));   
-        if all(mc(sbid)>=0) && all(mc(prid)>=0)
+        if all(mc(sbid)>0) && all(mc(prid)>0)
             nr_flux = mc_alls*kfwd(Vind(irxn))*cmp_s*prod(mc(sbid)./K(sbid,Vind(irxn))) -...
                       mc_allp*kbkw(Vind(irxn))*cmp_p*prod(mc(prid)./K(prid,Vind(irxn)));
-        elseif all(mc(sbid)>=0)
+        elseif all(mc(sbid)>0)
             nr_flux = mc_alls*kfwd(Vind(irxn))*cmp_s*prod(mc(sbid)./K(sbid,Vind(irxn)));
-        elseif all(mc(prid)>=0)
+        elseif all(mc(prid)>0)
             nr_flux = -mc_allp*kbkw(Vind(irxn))*cmp_p*prod(mc(prid)./K(prid,Vind(irxn)));
         end            
     elseif ~model.rev(Vind(irxn))
         Sb = -S(sbid,Vind(irxn));    
         Sp = S(prid,Vind(irxn));
-        nr_flux = mc_alls*kfwd(Vind(irxn))*cmp_s*prod(mc(sbid)./K(sbid,Vind(irxn)));
+        if all(mc(sbid)>0)
+            nr_flux =...
+            mc_alls*kfwd(Vind(irxn))*cmp_s*prod(mc(sbid)./K(sbid,Vind(irxn)));
+        end
     end
     
     if any(sbid) && any(prid)

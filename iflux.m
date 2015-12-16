@@ -68,6 +68,7 @@ if isempty(idx)
 %         flux(model.bmrxn) = 0;
 %     end
     flux(model.bmrxn) = model.Vss(model.bmrxn);
+    flux(strcmpi('GLCpts',model.rxns)) = 20;
 else
     %determine which group idx belongs to
     for id = 1:length(idx)
@@ -93,6 +94,7 @@ else
         end        
     end
     flux = idflux(idx);
+    flux(strcmpi('GLCpts',model.rxns)) = 20;
 end
 
 % if flux(strcmpi(model.rxns,'atpm'))>=1e-5 &&...
