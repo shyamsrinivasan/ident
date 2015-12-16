@@ -119,12 +119,14 @@ i = size(Sol.y,2);
 while ~f_flag
 % for i = size(Solution.initSS.y,2):-1:1
     if any(Sol.y(1:model.nint_metab,i)<-solverP.MabsTol)
-        finalSS.y = Sol.y(:,i-1);
         finalSS.t = Sol.t(i-1);
+        finalSS.y = Sol.y(:,i-1);        
+        finalSS.flux = Sol.flux(:,i-1);
         f_flag = 1;  
     else
-        finalSS.y = Sol.y(:,i);
         finalSS.t = Sol.t(i);
+        finalSS.y = Sol.y(:,i);        
+        finalSS.flux = Sol.flux(:,i);
         f_flag = 1;
     end
     i = i-1;
@@ -132,6 +134,7 @@ end
 if ~f_flag
     finalSS.t = Sol.t(end);
     finalSS.y = Sol.y(:,end); 
+    finalSS.flux = Sol.flux(:,end);
 end
 
 %plot for debugging purposes only

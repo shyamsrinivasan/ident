@@ -52,7 +52,7 @@ FBAmodel.rxn_add = rxn_add;
 FBAmodel.rxn_excep = rxn_excep;
 
 %get parameter estimates - estimate kinetic parameters in an ensemble
-ensb = parallel_ensemble(FBAmodel,mc,parameter,rxn_add,rxn_excep,10);
+ensb = parallel_ensemble(FBAmodel,mc,parameter,rxn_add,rxn_excep);
 
 %load a pre determined model
 % load('C:\Users\Shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\ecoliN1_newpvec_1.mat');

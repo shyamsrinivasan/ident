@@ -100,6 +100,9 @@ end
 %initialize solver properties
 [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e1);
 
+%introduce perturbation
+Nimc = perturbEqSolution(model,finalSS.y,change_pos,change_neg);
+
 %integrate model
 [sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP,sol);
 
