@@ -45,27 +45,27 @@ Sol = struct();
 if isempty(sol)
     %time for initial data point
     t0 = 0.0;
+    tout = solverP.tmax;
+%     tout = solverP.tout:solverP.tmax/(solverP.MaxDataPoints-1):solverP.tmax;
     
-    tout = solverP.tout:solverP.tmax/(solverP.MaxDataPoints-1):solverP.tmax;
-    Sol.t = zeros(length(tout),1);
-    Sol.y = zeros(length(initval),length(tout));
-    Sol.flux = zeros(size(model.S,2),length(tout));
+    Sol.t = [];%zeros(length(tout),1);
+    Sol.y = zeros(length(initval),0);
+    Sol.flux = zeros(size(model.S,2),0);
     itime = 0;
 else
     tavail = sol.t;    
     %time for initial data point
     t0 = tavail(end);
+    tout = solverP.tmax;
+%     tout = tavail(end)+solverP.tout:solverP.tmax/(solverP.MaxDataPoints-1):solverP.tmax;
     
     %initial value
-    initval = sol.y(:,end);
-    
-    tout = tavail(end)+solverP.tout:solverP.tmax/(solverP.MaxDataPoints-1):solverP.tmax;
-    Sol.t = [sol.t;zeros(length(tout),1)];
-    Sol.y = [sol.y zeros(length(initval),length(tout))];
-    Sol.flux = [sol.flux zeros(size(model.S,2),length(tout))];
+    initval = sol.y(:,end);    
+    Sol.t = [sol.t;zeros(length(tout),0)];
+    Sol.y = [sol.y zeros(length(initval),0)];
+    Sol.flux = [sol.flux zeros(size(model.S,2),0)];
     itime = length(sol.t);
 end
-
 %Normalize t vectors
 %t = mu*t;
 % mu = model.Vss(model.bmrxn);
@@ -92,20 +92,26 @@ CVodeInit(callODEmodel,'BDF','Newton',t0,initval,options);
 % [t,dy] = ode15s(callODEmodel,tout,initval,options);
 %% %Solve ODE
 
-% itime = [];
-for ktime = 1:length(tout)
+t = t0;
+itime = 1;
+%store initial values
+Sol.t = [Sol.t;t];    
+Sol.y = [Sol.y initval];
+Sol.flux = [Sol.flux iflux(model,pvec,initval.*model.imc)];
+while t < tout        
     itstart = tic;
-    [status,t,dY] = CVode(tout(ktime),'Normal');   
+    [status,t,dY] = CVode(tout,'OneStep');   
     %Plot Solution
-    flux = iflux(model,pvec,dY);
+    flux = iflux(model,pvec,dY.*model.imc);
 %     plotflux_timecourse(flux,t,model)
 %     plotconc_timecourse(dY,t,model)
     %Collect Solution
-    Sol.t(itime+ktime) = tout(ktime);
-    Sol.y(:,itime+ktime) = dY;
-    Sol.flux(:,itime+ktime) = flux;
-    %Solution.ys = [Solution.ys, YS];
+    Sol.t = [Sol.t;t];
+    Sol.y = [Sol.y dY];
+    Sol.flux = [Sol.flux flux];
+%     %Solution.ys = [Solution.ys, YS];
     itfinish = toc(itstart);
+%     itime = itime+1;
 %     itime = [itime;itfinish];
 end
 % EWT = CVodeGet('ErrorWeigths');

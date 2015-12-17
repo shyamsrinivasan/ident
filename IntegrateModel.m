@@ -32,7 +32,7 @@ if nargin<2
     ess_rxn = {};
 end
 %initialize solver properties
-[model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1.2);
+[model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1000);
 
 % model.Vuptake = zeros(model.nt_rxn,1);
 % h2o = find(strcmpi(model.rxns,'exH2O'));
@@ -62,7 +62,7 @@ flux = iflux(model,pvec,Nimc.*imc);
 dXdt = ODEmodel(0,Nimc,[],model,pvec);
 
 % %call to ADmat for stability/jacobian info
-[Y,Jac] = stabilityADMAT(model,pvec,Nimc);
+[Y,Jac] = stabilityADMAT(model,pvec,Nimc.*imc);
 e_val = eig(Jac);
 jacobian = Jac;
 
@@ -98,10 +98,10 @@ end
 % [sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
 
 %initialize solver properties
-[model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e1);
+[model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e4);
 
 %introduce perturbation
-Nimc = perturbEqSolution(model,finalSS.y,change_pos,change_neg);
+% Nimc = perturbEqSolution(model,finalSS.y,change_pos,change_neg);
 
 %integrate model
 [sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP,sol);
