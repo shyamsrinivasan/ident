@@ -28,6 +28,3 @@ if ~isempty(VMCpos)
     mc = iconcentration(model,VMCpos);
     Nimc = Nimc+Nimc.*mc/100;
 end
-
-
-

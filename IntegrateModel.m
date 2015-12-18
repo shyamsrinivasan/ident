@@ -1,4 +1,5 @@
-function [sol,jacobian] = IntegrateModel(model,ess_rxn,Vup_struct,ensb,mc,change_pos,change_neg)
+function [sol,jacobian] =...
+IntegrateModel(model,ess_rxn,Vup_struct,ensb,mc,change_pos,change_neg)
 %change in initial conditions
 if nargin<7
     change_neg = struct([]);
