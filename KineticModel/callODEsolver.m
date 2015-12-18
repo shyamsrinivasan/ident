@@ -84,8 +84,8 @@ mondata.mode = 'text';
 mondata.update = 100;
 mondata.skip = 10;
 % mondata.initialized = false;
-options = CVodeSetOptions(options,'MonitorFn',@CVodeMonitor,...
-                          'MonitorData',mondata); 
+% options = CVodeSetOptions(options,'MonitorFn',@CVodeMonitor,...
+%                           'MonitorData',mondata); 
 %ODE Function Called through Anonymous function                      
 callODEmodel = @(t,Y,data)ODEmodel(t,Y,data,model,pvec);
 CVodeInit(callODEmodel,'BDF','Newton',t0,initval,options);

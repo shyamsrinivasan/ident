@@ -48,12 +48,12 @@ Nimc(imc==0) = 0;
 %intorduce perturbation in initial conditions
 % met.glc_e = 10;
 % Nimc(strcmpi(model.mets,'glc[e]')) = 1.1;
-if ~isempty(change_pos)
-    Nimc = changeInitialCondition(model,Nimc,change_pos);
-end
-if ~isempty(change_neg)
-    Nimc = changeInitialCondition(mdoel,Nimc,[],change_neg);
-end
+% if ~isempty(change_pos)
+%     Nimc = changeInitialCondition(model,Nimc,change_pos);
+% end
+% if ~isempty(change_neg)
+%     Nimc = changeInitialCondition(mdoel,Nimc,[],change_neg);
+% end
 
 model.imc = imc;
 model.imc(model.imc==0) = 1;
@@ -63,12 +63,13 @@ dXdt = ODEmodel(0,Nimc,[],model,pvec);
 
 % %call to ADmat for stability/jacobian info
 [Y,Jac] = stabilityADMAT(model,pvec,Nimc.*imc);
-e_val = eig(Jac);
+[e_vec,e_val] = eig(Jac);
+e_val = diag(e_val);
 jacobian = Jac;
 
 %test reals of eigen values of jacobians
 if any(real(e_val)>0)
-    model.mets(real(e_val)>0)
+    model.mets(real(e_val)>1e-6)
 %     fprintf('%d %3.6g %d\n',find(real(e_val)>0));
 end
 % Nimc_obj = deriv(Nimc,eye(model.nt_metab));
@@ -101,10 +102,10 @@ end
 [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e4);
 
 %introduce perturbation
-% Nimc = perturbEqSolution(model,finalSS.y,change_pos,change_neg);
+Nimc = perturbEqSolution(model,finalSS.y,change_pos,change_neg);
 
 %integrate model
-[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP,sol);
+[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
 
 %initialize solver properties
 % [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,5e4);
