@@ -1,8 +1,5 @@
-function Nimc = changeInitialCondition(model,initval,VMCpos,VMCneg,allMets)
+function Nimc = changeInitialCondition(model,initval,VMCpos,VMCneg)
 %change intial value by the given percentage in VMC
-if nargin<5
-    allMets = 0;
-end
 if nargin<4
     VMCneg = struct([]);
 end
@@ -30,10 +27,7 @@ end
 if ~isempty(VMCpos)
     mc = iconcentration(model,VMCpos);
     Nimc = Nimc+Nimc.*mc/100;
-elseif allMets    
-    %normed vector spaces(scalar)
-    %note: vector*scalar = vector with different length but same direction
+else
     %Nimc = Nimc + Nimc*random percentage(0-1)*Scaling factor
-    %use vector direction determination from ACHR sampler for
-    %concentrations
+    
 end
