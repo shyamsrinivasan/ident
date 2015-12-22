@@ -84,8 +84,8 @@ mondata.mode = 'text';
 mondata.update = 100;
 mondata.skip = 10;
 % mondata.initialized = false;
-% options = CVodeSetOptions(options,'MonitorFn',@CVodeMonitor,...
-%                           'MonitorData',mondata); 
+options = CVodeSetOptions(options,'MonitorFn',@CVodeMonitor,...
+                          'MonitorData',mondata); 
 %ODE Function Called through Anonymous function                      
 callODEmodel = @(t,Y,data)ODEmodel(t,Y,data,model,pvec);
 CVodeInit(callODEmodel,'BDF','Newton',t0,initval,options);
@@ -100,16 +100,18 @@ Sol.y = [Sol.y initval];
 Sol.flux = [Sol.flux iflux(model,pvec,initval.*model.imc)];
 while t < tout        
     itstart = tic;
-    [status,t,dY] = CVode(tout,'OneStep');   
+    [status,t,dY] = CVode(tout,'Normal');   
     %Plot Solution
     flux = iflux(model,pvec,dY.*model.imc);
 %     plotflux_timecourse(flux,t,model)
 %     plotconc_timecourse(dY,t,model)
     %Collect Solution
+    
     Sol.t = [Sol.t;t];
     Sol.y = [Sol.y dY];
     Sol.flux = [Sol.flux flux];
 %     %Solution.ys = [Solution.ys, YS];
+    
     itfinish = toc(itstart);
 %     itime = itime+1;
 %     itime = [itime;itfinish];
