@@ -33,6 +33,9 @@ if ~isempty(VMCpos)
 elseif allMets    
     %normed vector spaces(scalar)
     %note: vector*scalar = vector with different length but same direction
+    mc = iconcentration(model,[]);
+    rnd_dist = random(makedist('Uniform'),length(mc),1);
+    Nimc = Nimc + Nimc.*rnd_dist;
     %Nimc = Nimc + Nimc*random percentage(0-1)*Scaling factor
     %use vector direction determination from ACHR sampler for
     %concentrations

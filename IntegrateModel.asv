@@ -70,7 +70,7 @@ jacobian = Jac;
 
 %test reals of eigen values of jacobians
 if any(real(e_val)>0)
-    model.mets(real(e_val)>0)
+    model.mets(real(e_val)>1e-6)
 %     fprintf('%d %3.6g %d\n',find(real(e_val)>0));
 end
 % Nimc_obj = deriv(Nimc,eye(model.nt_metab));
@@ -82,16 +82,16 @@ end
 [sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
 
 %initialize solver properties
-[model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e6);
+[model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,10.0);
 
 %integrate model
-[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP,sol);
+% [sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
 
 %initialize solver properties
-[model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e8);
+% [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e3);
 
 %integrate model
-[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP,sol);
+% [sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
 
 %initialize solver properties
 % [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,5e3);
@@ -115,7 +115,7 @@ Nimc = perturbEqSolution(model,finalSS.y,change_pos,change_neg);
 % [sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
 
 %initialize solver properties
-[model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e9);
+[model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,5e4);
 
 %integrate model
 [sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP,sol);
