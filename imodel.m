@@ -5,10 +5,10 @@ end
 solverP = struct();
 
 %ODE Solver parameters
-solverP.RabsTol = 1e-8;
-solverP.PabsTol = 1e-8;
-solverP.MabsTol = 1e-8;
-solverP.RelTol = 1e-10;
+solverP.RabsTol = 1e-10;
+solverP.PabsTol = 1e-10;
+solverP.MabsTol = 1e-10;
+solverP.RelTol = 1e-12;
 solverP.MaxIter = 1000;    
 solverP.MaxDataPoints = 200;
 solverP.tmax = tmax;%s

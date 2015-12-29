@@ -99,9 +99,6 @@ Sol.t = [Sol.t;t];
 Sol.y = [Sol.y initval];
 Sol.flux = [Sol.flux iflux(model,pvec,initval.*model.imc)];
 tstep = 0;
-fprintf('Initial time %4.3g\n',t0);
-fprintf('Final time %4.3g\n',tout);
-fprintf('Total simulaion time: %4.3g\n',tout-t0);
 while t < tout        
     itstart = tic;
     [status,t,dY] = CVode(tout,'OneStep');  

@@ -33,7 +33,7 @@ if nargin<2
     ess_rxn = {};
 end
 %initialize solver properties
-[model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e4);
+[model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e6);
 
 % model.Vuptake = zeros(model.nt_rxn,1);
 % h2o = find(strcmpi(model.rxns,'exH2O'));
@@ -84,11 +84,14 @@ end
 %initialize solver properties
 [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e6);
 
+%introduce perturbation
+Nimc = perturbEqSolution(model,finalSS.y,[],[]);
+
 %integrate model
-[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP,sol);
+[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
 
 %initialize solver properties
-[model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e8);
+[model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1.1e6);
 
 %integrate model
 [sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP,sol);
@@ -100,13 +103,10 @@ end
 % [sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
 
 %initialize solver properties
-[model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e8);
-
-%introduce perturbation
-Nimc = perturbEqSolution(model,finalSS.y,change_pos,change_neg);
+[model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,3e6);
 
 %integrate model
-[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
+[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP,sol);
 
 %initialize solver properties
 % [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,5e4);
@@ -115,7 +115,7 @@ Nimc = perturbEqSolution(model,finalSS.y,change_pos,change_neg);
 % [sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
 
 %initialize solver properties
-[model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e9);
+[model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,4e7);
 
 %integrate model
 [sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP,sol);
