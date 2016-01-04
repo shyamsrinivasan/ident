@@ -13,7 +13,7 @@ if fileid == -1
     return;
 end
 
-C = textscan(fileid, '%s%s%s',...
+C = textscan(fileid, '%s%s%s%s%s',...
                      'Delimiter', '\t',...
                      'TreatAsEmpty', {'None'},...
                      'HeaderLines', 1);
@@ -31,8 +31,10 @@ for irxn = 1:nt_rxn
     nts_rxn = size(model.S,2);
     
     %Effectors to build influence matrix
-    poseff = effectors(C{2}{irxn});
-    negeff = effectors(C{3}{irxn});
+    poseff_f = effectors(C{2}{irxn});
+    negeff_f = effectors(C{3}{irxn});
+    poseff_b = effectors(C{4}{irxn});
+    negeff_b = effectors(C{5}{irxn});
     
     %Building S and Z matrices
     rxnstring = C{1}{irxn};  
@@ -75,19 +77,19 @@ for irxn = 1:nt_rxn
     end
     if ~isempty(lhs)
         stoich = -1;
-        [model,imetab] = rxn_sp(lhs,imetab,irxn,stoich,model,poseff,negeff);
+        [model,imetab] = rxn_sp(lhs,imetab,irxn,stoich,model,poseff_f,negeff_f);
     end    
     if ~isempty(rhs)
         stoich = 1;
-        [model,imetab] = rxn_sp(rhs,imetab,irxn,stoich,model,poseff,negeff);
+        [model,imetab] = rxn_sp(rhs,imetab,irxn,stoich,model,poseff_f,negeff_f);
     end
     if ~isempty(lhs_r)
         stoich = -1;
-        [model,imetab] = rxn_sp(lhs_r,imetab,nts_rxn+1,stoich,model,poseff,negeff);
+        [model,imetab] = rxn_sp(lhs_r,imetab,nts_rxn+1,stoich,model,poseff_b,negeff_b);
     end
     if ~isempty(rhs_r)
         stoich = 1;
-        [model,imetab] = rxn_sp(rhs_r,imetab,nts_rxn+1,stoich,model,poseff,negeff);
+        [model,imetab] = rxn_sp(rhs_r,imetab,nts_rxn+1,stoich,model,poseff_b,negeff_b);
     end
 %     if ~isempty(lhs_r) && ~isempty(rhs_r)
 %         nt_rxn = nt_rxn + 1;
