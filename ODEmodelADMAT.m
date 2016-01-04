@@ -53,8 +53,8 @@ flux = ifluxADMAT(model,pvec,mc.*model.imc);
 %Cytosolic
 dXdt(1:nin_m) = (1./model.imc(1:nin_m)).*(model.S(1:nin_m,:)*flux);%-mu*mc(1:nin_m);%
 % dXdt(1:nin_m) = -mu*mc(1:nin_m);%
-% dXdt(nin_m+1:nt_m) = 0;
-dXdt(nin_m+1:nt_m) = (1./model.imc(nin_m+1:nt_m)).*(model.S(nin_m+1:nt_m,:)*zeros(model.nt_rxn,1));
+dXdt(nin_m+1:nt_m) = zeros(length(nin_m+1:nt_m),1);
+% dXdt(nin_m+1:nt_m) = (1./model.imc(nin_m+1:nt_m)).*(model.S(nin_m+1:nt_m,:)*zeros(model.nt_rxn,1));
 %model.S(nin_m+1:nt_m,:)*flux;%-mu*Y(nin_m+1:nt_m);
 
 % plotconc_timecourse(dXdt,t,model,[hc he pic pie]);
