@@ -50,7 +50,7 @@ for ic = 1:nc
         flux(Vex,ic) = TKinetics(model,pvec,mc(:,ic),Vex);
 
         %other fixed exchaged fluxes    
-        flux(VFex,ic) = EKinetics(model,pvec,mc(:,ic),VFex,flux(:,ic));
+        flux(VFex,ic) = EKinetics(model,pvec,mc(:,ic),VFex,flux);
 
         %biomass
     %     if mc(strcmpi(model.mets,'atp[c]'))>0 &&...
@@ -69,8 +69,8 @@ for ic = 1:nc
     %     elseif any(mc(logical(model.S(:,model.bmrxn)<0))<1e-5)
     %         flux(model.bmrxn) = 0;
     %     end
-        flux(model.bmrxn,ic) = model.Vss(model.bmrxn);
-        flux(strcmpi('GLCpts',model.rxns),ic) = 20;
+        flux(model.bmrxn) = model.Vss(model.bmrxn);
+        flux(strcmpi('GLCpts',model.rxns)) = 20;
     else
         %determine which group idx belongs to
         for id = 1:length(idx)
@@ -94,13 +94,10 @@ for ic = 1:nc
             elseif idx(id)==model.bmrxn
                 idflux(id,ic) = 0;
             end        
-        end        
-        idxflux(strcmpi('GLCpts',model.rxns),ic) = 20;        
+        end
+        flux = idflux(idx,ic);
+        flux(strcmpi('GLCpts',model.rxns)) = 20;
     end
-end
-
-if ~isempty(idx)
-    flux = idxflux(idx,:);
 end
 
 % if flux(strcmpi(model.rxns,'atpm'))>=1e-5 &&...

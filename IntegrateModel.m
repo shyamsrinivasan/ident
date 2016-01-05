@@ -63,16 +63,16 @@ flux = iflux(model,pvec,Nimc.*imc);
 dXdt = ODEmodel(0,Nimc,[],model,pvec);
 
 % %call to ADmat for stability/jacobian info
-[Y,Jac] = stabilityADMAT(model,pvec,Nimc.*imc);
-[e_vec,e_val] = eig(Jac);
-e_val = diag(e_val);
-jacobian = Jac;
+% [Y,Jac] = stabilityADMAT(model,pvec,Nimc.*imc);
+% [e_vec,e_val] = eig(Jac);
+% e_val = diag(e_val);
+% jacobian = Jac;
 
 %test reals of eigen values of jacobians
-if any(real(e_val)>0)
-    model.mets(real(e_val)>0)
-%     fprintf('%d %3.6g %d\n',find(real(e_val)>0));
-end
+% if any(real(e_val)>0)
+%     model.mets(real(e_val)>0)
+% %     fprintf('%d %3.6g %d\n',find(real(e_val)>0));
+% end
 % Nimc_obj = deriv(Nimc,eye(model.nt_metab));
 % dXdtADMAT = ODEmodelADMAT(0,Nimc_obj,[],model,pvec);
 % Y = getval(dXdtADMAT);
