@@ -25,7 +25,7 @@ for iel = 1:N
     end
 end
 
-z = fsolve(@func1,[0 0 0]);
+fsolve(
 %rhs matrix
 % func = @(x)(x^2-2*x+1);
 % x = [0;0.155051;0.644949;1];
