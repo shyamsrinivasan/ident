@@ -12,6 +12,7 @@ if nargin < 3
     return
 end
 
+nintmet = model.nint_metab;
 Nimc = initval;
 if ~isempty(VMCneg)
     mc = iconcentration(model,VMCneg);
@@ -35,7 +36,7 @@ elseif allMets
     %note: vector*scalar = vector with different length but same direction
     mc = iconcentration(model,[]);
     rnd_dist = random(makedist('Uniform'),length(mc),1);
-    Nimc = Nimc + Nimc.*rnd_dist*0.01;
+    Nimc(1:nintmet) = Nimc(1:nintmet) + Nimc(1:nintmet).*rnd_dist(1:nintmet)*0.5;
     %Nimc = Nimc + Nimc*random percentage(0-1)*Scaling factor
     %use vector direction determination from ACHR sampler for
     %concentrations
