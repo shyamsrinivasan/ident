@@ -96,6 +96,12 @@ for irxn = 1:nt_rxn
 %     end
 end
 nts_rxn = size(model.S,2);
+if size(model.Z,2)<size(model.S,1)
+    model.Z = [model.Z zeros(size(model.Z,1),size(model.S,1)-size(model.Z,2))];
+end
+if size(model.Z,1)<size(model.S,2)
+    model.Z = [model.Z;zeros(size(model.S,2)-size(model.Z,1),size(model.Z,2))];
+end
 % model.Z = sparse(nts_rxn,length(model.metab));
 % for irxn = 1:nt_rxn
 %     %Effectors to build influence matrix
@@ -168,6 +174,8 @@ if ~isempty(poseff)
            imetab = imetab+1;
         end
     end
+% else
+%     model.Z(irxn,logical(model.S(:,irxn))) = 0;
 end
 if ~isempty(negeff)
     for ineff = 1:length(negeff)
@@ -175,11 +183,13 @@ if ~isempty(negeff)
         if any(tfneg)
            model.Z(irxn,tfneg) = -1;
         else
-           model.Z(irxn,imetab) = 1;
+           model.Z(irxn,imetab) = -1;
            model.metab{imetab}= negeff{ineff};
            imetab = imetab+1;
         end        
     end
+% else
+%     model.Z(irxn,logical(model.S(:,irxn))) = 0;
 end
 return
 

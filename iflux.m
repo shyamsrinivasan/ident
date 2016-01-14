@@ -70,7 +70,7 @@ for ic = 1:nc
     %         flux(model.bmrxn) = 0;
     %     end
         flux(model.bmrxn,ic) = model.Vss(model.bmrxn);
-%         flux(strcmpi('GLCpts',model.rxns),ic) = 20;
+        flux(strcmpi('GLCpts',model.rxns),ic) = 20;
     else
         %determine which group idx belongs to
         for id = 1:length(idx)
