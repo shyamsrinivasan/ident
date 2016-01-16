@@ -60,8 +60,8 @@ load('C:\Users\Shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\eco
 % x = initialsample(FBAmodel);
 
 %change initial conditions to simulate a perturbation
-change_pos(1).pgi = 10;
-change_pos(2).pgi = 100;
+change_neg(1).pyr_c = 10;
+change_neg(2).pyr_c = 100;
 % change_pos = [];
 
 if size(ensb,1)>1 
@@ -76,5 +76,3 @@ else
     end
 end
 
-%Perturbation to concentrations
-[sol] = MonteCarloPertrubationIV(model,ess_rxn,Vup_struct,ensb,initval,VMCpos,VMCneg,np);

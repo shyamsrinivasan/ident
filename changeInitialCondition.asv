@@ -26,14 +26,8 @@ if ~isempty(VMCneg)
         Nimc = Nimc-Nimc.*mc_lb/100;
         Nimc(initval==0) = 0;
     elseif any(mc_lb>0) && any(mc_ub>0)
-        mcid = find(mc_lb);
-        for id = 1:length(mcid)
-            rnd_dist =...
-            random(makedist('Uniform','lower',mc_lb(mcid(id))/100,...
-                                      'upper',mc_ub(mcid(id))/100),...
-                                      length(mc_lb),1);
-            Nimc(mcid(id)) = Nimc(mcid(id)).*rnd_dist(mcid(id));
-        end
+        rnd_dist = random(makedist('Uniform','lower',mc_lb/100,'upper',mc_ub/100),length(mc_lb),1);
+        Nimc(1:nintmet) = Nimc(1:nintmet).*rnd_dist(1:nintmet);
     end
 end
 
@@ -47,9 +41,11 @@ if ~isempty(VMCpos)
             rnd_dist =...
             random(makedist('Uniform','lower',mc_lb(mcid(id))/100,...
                                       'upper',mc_ub(mcid(id))/100),...
-                                      1,1);
-            Nimc(mcid(id)) = Nimc(mcid(id)).*rnd_dist;
-        end        
+                                      length(mc_lb),1);
+            
+        end
+        
+        Nimc(1:nintmet) = Nimc(1:nintmet).*rnd_dist(1:nintmet);
     end    
 end
 %Nimc = Nimc + Nimc*random percentage(0-1)*Scaling factor

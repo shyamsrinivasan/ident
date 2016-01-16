@@ -1,11 +1,15 @@
 % Formulate the initial conecntration
-function [mc,assignFlag] = iconcentration(model,VMC,mc,assignFlag)
+function [varargout] = iconcentration(model,VMC,mc_lb,assignFlag)
 if nargin<4
     assignFlag = zeros(length(model.mets),1);
 end
 if nargin<3
-    mc = zeros(model.nt_metab,1);
+    mc_lb = zeros(model.nt_metab,1);
+    mc_ub = zeros(model.nt_metab,1);
+else
+    mc_ub = mc_lb;
 end
+% mc_ub = zeros(model.nt_metab,1);
 
 if ~isempty(VMC)
     mets = fieldnames(VMC);
@@ -23,8 +27,20 @@ if ~isempty(VMC)
 
         tfm = strcmpi(model.mets,[kmet{jmc} cmp]);    
         if any(tfm) %&& ~assignFlag(tfm)
-            mc(tfm,:) = VMC.(mets{jmc});
-            assignFlag(tfm,:) = 1;
+            if length(VMC)>1
+                mc_lb(tfm,:) = VMC(1).(mets{jmc});
+                mc_ub(tfm,:) = VMC(2).(mets{jmc});
+                assignFlag(tfm,:) = 1;
+            else
+                mc_lb(tfm,:) = VMC.(mets{jmc});
+                assignFlag(tfm,:) = 1;
+            end
         end
     end
 end
+if ~any(mc_ub)
+    mc_ub = [];
+end
+varargout{1} = mc_lb;
+varargout{2} = mc_ub;
+varargout{3} = assignFlag;
