@@ -7,6 +7,7 @@ rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\Kine
 %create model structure
 [FBAmodel,parameter,variable,nrxn,nmetab] = modelgen(rxfname);
 
+[SBMLmodel,result] = CRNTanalysis(FBAmodel);
 %add rxn
 % rxn.equation = 'atp[c] <==>';
 % FBAmodel = addRxn(FBAmodel,parameter,rxn);
