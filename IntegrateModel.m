@@ -33,7 +33,7 @@ if nargin<2
     ess_rxn = {};
 end
 %initialize solver properties
-[model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e4);
+[model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e7);
 
 % model.Vuptake = zeros(model.nt_rxn,1);
 % h2o = find(strcmpi(model.rxns,'exH2O'));
@@ -82,10 +82,10 @@ dXdt = ODEmodel(0,Nimc,[],model,pvec);
 [sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
 
 %Perturbation to concentrations
-% [sol] =...
-% MonteCarloPertrubationIV(model,ess_rxn,Vup_struct,ensb,finalSS.y.*imc,change_pos,[]);
+[sol] =...
+MonteCarloPertrubationIV(model,ess_rxn,Vup_struct,ensb,finalSS.y.*imc,change_pos,[]);
 
-sol = MCPerturbationFlux(model,ess_rxn,Vup_struct,ensb,finalSS.flux,change_pos,[]);
+% sol = MCPerturbationFlux(model,ess_rxn,Vup_struct,ensb,finalSS.y,finalSS.flux,change_pos,[]);
 
 %initialize solver properties
 [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e5);

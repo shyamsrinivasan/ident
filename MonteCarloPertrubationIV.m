@@ -44,7 +44,7 @@ for ip = 1:np
     end    
     
     %initialize solver properties
-    [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e4);
+    [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e6);
     
     %calculate initial flux
     flux = iflux(model,pvec,initval.*model.imc);

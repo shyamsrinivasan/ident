@@ -53,5 +53,5 @@ for ip = 1:np
     dXdt = ODEmodel(0,mc,[],model,pvec);
     
     %integrate model
-    [sol{ip},finalSS{ip},status] = callODEsolver(model,pvec,initval,solverP);
+    [sol{ip},finalSS{ip},status] = callODEsolver(model,pvec,mc,solverP);
 end

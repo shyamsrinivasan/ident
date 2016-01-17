@@ -24,7 +24,7 @@ if ~isempty(VMC)
             kmet{jmc} = mets{jmc}(1:kc-1);
             cmp = '[c]';
         end
-
+        
         tfm = strcmpi(model.mets,[kmet{jmc} cmp]);    
         if any(tfm) %&& ~assignFlag(tfm)
             if length(VMC)>1

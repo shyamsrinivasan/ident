@@ -56,13 +56,14 @@ FBAmodel.rxn_excep = rxn_excep;
 ensb = parallel_ensemble(FBAmodel,mc,parameter,rxn_add,rxn_excep);
 
 %load a pre determined model
-load('C:\Users\Shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\ecoliN1_newpvec_1.mat');
+% load('C:\Users\Shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\ecoliN1_newpvec_1.mat');
+% load('C:\Users\Shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\ecoliN1_pvec_Jan17.mat');
 
 % x = initialsample(FBAmodel);
 
 %change initial conditions to simulate a perturbation
-change_pos(1).pgi = 10;
-change_pos(2).pgi = 100;
+change_pos(1).glc_e = 1;
+change_pos(2).glc_e = 10;
 % change_pos = [];
 
 if size(ensb,1)>1 
