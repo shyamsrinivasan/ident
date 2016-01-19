@@ -74,22 +74,21 @@ end
     
 %% %Initialize CVode
 totaltstart = tic;
-% options = CVodeSetOptions('UserData',data,...                                                    
-%                           'RelTol',solverP.RelTol,...
-%                           'AbsTol',AbsTol,...
-%                           'MaxNumSteps',solverP.MaxIter);
-options = odeset('RelTol',solverP.RelTol,'AbsTol',AbsTol,'NonNegative',ones(length(initval),1));
+options = CVodeSetOptions('UserData',data,...                                                    
+                          'RelTol',solverP.RelTol,...
+                          'AbsTol',AbsTol,...
+                          'MaxNumSteps',solverP.MaxIter);
+
 %Using SUNDIALS provided monitor function  
-mondata.mode = 'text';
-mondata.update = 100;
+mondata.mode = 'graphical';
+mondata.updt = 100;
 mondata.skip = 10;
 % mondata.initialized = false;
-% options = CVodeSetOptions(options,'MonitorFn',@CVodeMonitor,...
-%                           'MonitorData',mondata); 
-%ODE Function Called through Anonymous function     
-callODEmodel = @(t,Y)ODEmodel(t,Y,data,model,pvec);
-% callODEmodel = @(t,Y,data)ODEmodel(t,Y,data,model,pvec);
-% CVodeInit(callODEmodel,'BDF','Newton',t0,initval,options);
+options = CVodeSetOptions(options,'MonitorFn',@MonitorCVodeGraph,...
+                          'MonitorData',mondata); 
+%ODE Function Called through Anonymous function                      
+callODEmodel = @(t,Y,data)ODEmodel(t,Y,data,model,pvec);
+CVodeInit(callODEmodel,'BDF','Newton',t0,initval,options);
 % [t,dy] = ode15s(callODEmodel,tout,initval,options);
 %% %Solve ODE
 
@@ -107,27 +106,13 @@ fprintf('Total simulaion time: %4.3g\n',tout(end)-t0);
 % while t < tout        
     itstart = tic;
 %     [status,t,dY] = CVode(tout,'OneStep');  
-%     [status,t,dY] = CVode(tout,'Normal');  
-    [t,dY] = ode15s(callODEmodel,tout,initval,options);
+    [status,t,dY] = CVode(tout,'Normal');  
 %     tstep = tstep+1;
 %     if ~rem(tstep,100)
 %         si = CVodeGetStats;
-%         fprintf('%6.5g\t %d\t %d\t %d\t %d\t\n',si.tcur,si.nst,si.nfe,si.netf,si.ncfn);     
-    try
+%         fprintf('%6.5g\t %d\t %d\t %d\t %d\t\n',si.tcur,si.nst,si.nfe,si.netf,si.ncfn);                  
         Sol.t = [Sol.t;t'];
-    catch
-        Sol.t = [Sol.t t'];
-    end
-    try
         Sol.y = [Sol.y dY];
-    catch
-        try
-            Sol.y = [Sol.y;dY];
-        catch
-            Sol.y = [Sol.y dY']; 
-            dY = dY';
-        end
-    end
 %         Sol.flux = [Sol.flux flux];
 %     end
 %     [status,t,dY] = CVode(tout,'Normal');   
@@ -140,13 +125,13 @@ fprintf('Total simulaion time: %4.3g\n',tout(end)-t0);
     
     
 %     %Solution.ys = [Solution.ys, YS];
-    status = 0;
+    
     itfinish = toc(itstart);
 %     itime = itime+1;
 %     itime = [itime;itfinish];
 % end
 % EWT = CVodeGet('ErrorWeigths');
-% CVodeFree;
+CVodeFree;
 totaltfinish = toc(totaltstart);  
 
 %Get final Steady State

@@ -74,18 +74,18 @@ end
     
 %% %Initialize CVode
 totaltstart = tic;
-% options = CVodeSetOptions('UserData',data,...                                                    
-%                           'RelTol',solverP.RelTol,...
-%                           'AbsTol',AbsTol,...
-%                           'MaxNumSteps',solverP.MaxIter);
-options = odeset();
+options = CVodeSetOptions('UserData',data,...                                                    
+                          'RelTol',solverP.RelTol,...
+                          'AbsTol',AbsTol,...
+                          'MaxNumSteps',solverP.MaxIter);
+
 %Using SUNDIALS provided monitor function  
 mondata.mode = 'text';
 mondata.update = 100;
 mondata.skip = 10;
 % mondata.initialized = false;
-% options = CVodeSetOptions(options,'MonitorFn',@CVodeMonitor,...
-%                           'MonitorData',mondata); 
+options = CVodeSetOptions(options,'MonitorFn',@CVodeMonitor,...
+                          'MonitorData',mondata); 
 %ODE Function Called through Anonymous function                      
 callODEmodel = @(t,Y,data)ODEmodel(t,Y,data,model,pvec);
 CVodeInit(callODEmodel,'BDF','Newton',t0,initval,options);
@@ -106,8 +106,7 @@ fprintf('Total simulaion time: %4.3g\n',tout(end)-t0);
 % while t < tout        
     itstart = tic;
 %     [status,t,dY] = CVode(tout,'OneStep');  
-%     [status,t,dY] = CVode(tout,'Normal');  
-    [t,dY] = ode15s(callODEmodel,tout,initval,options);
+    [status,t,dY] = CVode(tout,'Normal');  
 %     tstep = tstep+1;
 %     if ~rem(tstep,100)
 %         si = CVodeGetStats;
@@ -162,6 +161,8 @@ end
 
 %plot for debugging purposes only
 figure
-plot(Sol.t,Sol.y(1:48,:));
+yS = Sol.y(1:48,:);
+yS(strcmpi(model.mets,'h2o[c]'),:) = [];
+plot(Sol.t,yS);
 return;
 
