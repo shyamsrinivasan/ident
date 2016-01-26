@@ -33,7 +33,7 @@ if nargin<2
     ess_rxn = {};
 end
 %initialize solver properties
-[model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e7);
+[model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e9);
 
 % model.Vuptake = zeros(model.nt_rxn,1);
 % h2o = find(strcmpi(model.rxns,'exH2O'));
