@@ -45,10 +45,10 @@ Sol = struct();
 if isempty(sol)
     %time for initial data point
     t0 = 0.0;
-    tout = solverP.tmax;
-%     tout = solverP.tout:solverP.tmax/(solverP.MaxDataPoints-1):solverP.tmax;
+%     tout = solverP.tmax;
+    tout = solverP.tout:solverP.tmax/(solverP.MaxDataPoints-1):solverP.tmax;
     
-    Sol.t = [];%zeros(length(tout),1);
+    Sol.t = [];%zeros(length(tout)+1,1);
     Sol.y = zeros(length(initval),0);
     Sol.flux = zeros(size(model.S,2),0);
     itime = 0;
@@ -56,14 +56,14 @@ else
     tavail = sol.t;    
     %time for initial data point
     t0 = tavail(end);
-    tout = solverP.tmax;
-%     tout = tavail(end)+solverP.tout:solverP.tmax/(solverP.MaxDataPoints-1):solverP.tmax;
+%     tout = solverP.tmax;
+    tout = tavail(end)+solverP.tout:solverP.tmax/(solverP.MaxDataPoints-1):solverP.tmax;
     
     %initial value
     initval = sol.y(:,end);    
-    Sol.t = [sol.t;zeros(length(tout),0)];
-    Sol.y = [sol.y zeros(length(initval),0)];
-    Sol.flux = [sol.flux zeros(size(model.S,2),0)];
+    Sol.t = sol.t;%zeros(length(tout),1)];
+    Sol.y = sol.y;% zeros(length(initval),length(tout))];
+    Sol.flux = sol.flux;% zeros(size(model.S,2),length(tout))];
     itime = length(sol.t);
 end
 %Normalize t vectors
@@ -80,11 +80,11 @@ options = CVodeSetOptions('UserData',data,...
                           'MaxNumSteps',solverP.MaxIter);
 
 %Using SUNDIALS provided monitor function  
-mondata.mode = 'text';
-mondata.update = 100;
+mondata.mode = 'graphical';
+mondata.updt = 100;
 mondata.skip = 10;
 % mondata.initialized = false;
-options = CVodeSetOptions(options,'MonitorFn',@CVodeMonitor,...
+options = CVodeSetOptions(options,'MonitorFn',@MonitorCVodeGraph,...
                           'MonitorData',mondata); 
 %ODE Function Called through Anonymous function                      
 callODEmodel = @(t,Y,data)ODEmodel(t,Y,data,model,pvec);
@@ -98,26 +98,41 @@ itime = 1;
 Sol.t = [Sol.t;t];    
 Sol.y = [Sol.y initval];
 Sol.flux = [Sol.flux iflux(model,pvec,initval.*model.imc)];
-while t < tout        
+
+tstep = 0;
+fprintf('Initial time %4.3g\n',t0);
+fprintf('Final time %4.3g\n',tout(end));
+fprintf('Total simulaion time: %4.3g\n',tout(end)-t0);
+% while t < tout        
     itstart = tic;
     [status,t,dY] = CVode(tout,'OneStep');   
     si = CVodeGetStats;
     fprintf('%4.3g\t\n',si.tcur);
+%     [status,t,dY] = CVode(tout,'OneStep');  
+    [status,t,dY] = CVode(tout,'Normal');  
+%     tstep = tstep+1;
+%     if ~rem(tstep,100)
+%         si = CVodeGetStats;
+%         fprintf('%6.5g\t %d\t %d\t %d\t %d\t\n',si.tcur,si.nst,si.nfe,si.netf,si.ncfn);                  
+        Sol.t = [Sol.t;t'];
+        Sol.y = [Sol.y dY];
+%         Sol.flux = [Sol.flux flux];
+%     end
+%     [status,t,dY] = CVode(tout,'Normal');   
     %Plot Solution
-    flux = iflux(model,pvec,dY.*model.imc);
+    flux = iflux(model,pvec,dY.*repmat(model.imc,1,length(tout)));
+    Sol.flux = [Sol.flux flux];
 %     plotflux_timecourse(flux,t,model)
 %     plotconc_timecourse(dY,t,model)
     %Collect Solution
     
-    Sol.t = [Sol.t;t];
-    Sol.y = [Sol.y dY];
-    Sol.flux = [Sol.flux flux];
+    
 %     %Solution.ys = [Solution.ys, YS];
     
     itfinish = toc(itstart);
 %     itime = itime+1;
 %     itime = [itime;itfinish];
-end
+% end
 % EWT = CVodeGet('ErrorWeigths');
 CVodeFree;
 totaltfinish = toc(totaltstart);  
@@ -149,6 +164,8 @@ end
 
 %plot for debugging purposes only
 figure
-plot(Sol.t,Sol.y(1:48,:));
+yS = Sol.y(1:48,:);
+yS(strcmpi(model.mets,'h2o[c]'),:) = [];
+plot(Sol.t,yS);
 return;
 

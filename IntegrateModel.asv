@@ -81,16 +81,16 @@ dXdt = ODEmodel(0,Nimc,[],model,pvec);
 %integrate model
 [sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
 
-
+<<<<<<< HEAD
 %introduce perturbation
 Nimc = perturbEqSolution(model,finalSS.y,change_pos,change_neg);
-
+=======
 %Perturbation to concentrations
 [sol] =...
 MonteCarloPertrubationIV(model,ess_rxn,Vup_struct,ensb,finalSS.y.*imc,change_pos,[]);
 
 % sol = MCPerturbationFlux(model,ess_rxn,Vup_struct,ensb,finalSS.y,finalSS.flux,change_pos,[]);
-
+>>>>>>> 0249fabd2b72a0a59a341e3927a5f4a7cdb0d384
 
 %initialize solver properties
 [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e5);

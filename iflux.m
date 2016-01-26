@@ -1,11 +1,12 @@
 function flux = iflux(model,pvec,mc,flux,idx)
+[~,nc] = size(mc);
 if nargin <5
     idx = [];
 else
-    idflux = zeros(length(idx),1);
+    idflux = zeros(length(idx),nc);
 end
 if nargin<4
-    flux = zeros(model.nt_rxn,1);
+    flux = zeros(model.nt_rxn,nc);
 end
 rxn_add = model.rxn_add;
 rxn_excep = model.rxn_excep;
@@ -40,61 +41,69 @@ Vex = setdiff(Vex,Vind);
 %other fixed exchaged fluxes
 VFex = model.VFex;
 
-if isempty(idx)
-    
-    flux(Vind) = CKinetics(model,pvec,mc,Vind);
+for ic = 1:nc
+    if isempty(idx)
 
-    %transport fluxes    
-    flux(Vex) = TKinetics(model,pvec,mc,Vex);
+        flux(Vind,ic) = CKinetics(model,pvec,mc(:,ic),Vind);
 
-    %other fixed exchaged fluxes    
-    flux(VFex) = EKinetics(model,pvec,mc,VFex,flux);
+        %transport fluxes    
+        flux(Vex,ic) = TKinetics(model,pvec,mc(:,ic),Vex);
 
-    %biomass
-%     if mc(strcmpi(model.mets,'atp[c]'))>0 &&...
-%        mc(strcmpi(model.mets,'h2o[c]'))>0
-%         flux(strcmpi(model.rxns,'atpm')) = 8.39;
-%     else
-%         flux(strcmpi(model.rxns,'atpm')) = 0;
-%     end
+        %other fixed exchaged fluxes    
+        flux(VFex,ic) = EKinetics(model,pvec,mc(:,ic),VFex,flux(:,ic));
 
-%     flux(strcmpi(model.rxns,'atpm')) = 8.39;
-    atp = strcmpi(model.mets,'atp[c]');
-    flux(strcmpi(model.rxns,'atpm')) = 8.39*logical(mc(atp));%*mc(atp)/1e-5/(1+mc(atp)/1e-5);
-    
-%     if all(mc(logical(model.S(:,model.bmrxn)<0))>1e-5)
-%         flux(model.bmrxn) = model.Vss(model.bmrxn);%0.01;
-%     elseif any(mc(logical(model.S(:,model.bmrxn)<0))<1e-5)
-%         flux(model.bmrxn) = 0;
-%     end
-    flux(model.bmrxn) = model.Vss(model.bmrxn);
-    flux(strcmpi('GLCpts',model.rxns)) = 20;
-else
-    %determine which group idx belongs to
-    for id = 1:length(idx)
-        if ismemeber(idx(id),Vind)
-%         if ismember(idx(id),vcup) || ismember(idx(id),vred)
-%             idflux(idx(id)) = flux(idx(id));
-%         elseif ismember(idx(id),Vind)
-            idflux(idx(id)) = CKinetics(model,pvec,mc,idx(id));
-        elseif ismember(idx(id),Vex)
-            idflux(idx(id)) = TKinetics(model,pvec,mc,idx(id));
-        elseif ismember(idx(id),VFex)
-            idflux(idx(id)) = EKinetics(model,pvec,mc,VFex,idflux);
-        elseif idx(id)==find(strcmpi(model.rxns,'atpm'))
-%             if mc(strcmpi(model.mets,'atp[c]'))>0 &&...
-%                mc(strcmpi(model.mets,'h2o[c]'))>0
-%                 idflux(idx(id)) = 8.39;
-%             else
-%                 idflux(idx(id)) = 0;
-%             end
-            idflux(idx(id)) = 0;
-        elseif idx(id)==model.bmrxn
-            idflux(id) = 0;
+        %biomass
+    %     if mc(strcmpi(model.mets,'atp[c]'))>0 &&...
+    %        mc(strcmpi(model.mets,'h2o[c]'))>0
+    %         flux(strcmpi(model.rxns,'atpm')) = 8.39;
+    %     else
+    %         flux(strcmpi(model.rxns,'atpm')) = 0;
+    %     end
+
+    %     flux(strcmpi(model.rxns,'atpm')) = 8.39;
+        atp = strcmpi(model.mets,'atp[c]');
+%         flux(strcmpi(model.rxns,'atpm'),ic) = 8.39*logical(mc(atp,ic));%*mc(atp)/1e-5/(1+mc(atp)/1e-5);
+        flux(strcmpi(model.rxns,'atpm'),ic) = pvec.Vmax(strcmpi(model.rxns,'atpm'))*...
+                                              mc(atp)/1e-5/(1+mc(atp)/1e-5);
+        %vatp = 
+
+    %     if all(mc(logical(model.S(:,model.bmrxn)<0))>1e-5)
+    %         flux(model.bmrxn) = model.Vss(model.bmrxn);%0.01;
+    %     elseif any(mc(logical(model.S(:,model.bmrxn)<0))<1e-5)
+    %         flux(model.bmrxn) = 0;
+    %     end
+        flux(model.bmrxn,ic) = model.Vss(model.bmrxn)/3600;
+%         flux(strcmpi('GLCpts',model.rxns),ic) = 10;
+    else
+        %determine which group idx belongs to
+        for id = 1:length(idx)
+            if ismemeber(idx(id),Vind)
+    %         if ismember(idx(id),vcup) || ismember(idx(id),vred)
+    %             idflux(idx(id)) = flux(idx(id));
+    %         elseif ismember(idx(id),Vind)
+                idflux(idx(id),ic) = CKinetics(model,pvec,mc(:,ic),idx(id));
+            elseif ismember(idx(id),Vex)
+                idflux(idx(id),ic) = TKinetics(model,pvec,mc(:,ic),idx(id));
+            elseif ismember(idx(id),VFex)
+                idflux(idx(id),ic) = EKinetics(model,pvec,mc(:,ic),VFex,idflux);
+            elseif idx(id)==find(strcmpi(model.rxns,'atpm'))
+    %             if mc(strcmpi(model.mets,'atp[c]'))>0 &&...
+    %                mc(strcmpi(model.mets,'h2o[c]'))>0
+    %                 idflux(idx(id)) = 8.39;
+    %             else
+    %                 idflux(idx(id)) = 0;
+    %             end
+                idflux(idx(id),ic) = 0;
+            elseif idx(id)==model.bmrxn
+                idflux(id,ic) = 0;
+            end        
         end        
+        idxflux(strcmpi('GLCpts',model.rxns),ic) = 20;        
     end
-    flux = idflux(idx);
-    flux(strcmpi('GLCpts',model.rxns)) = 20;
+end
+
+if ~isempty(idx)
+    flux = idxflux(idx,:);
 end
 
 % if flux(strcmpi(model.rxns,'atpm'))>=1e-5 &&...

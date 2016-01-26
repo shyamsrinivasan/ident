@@ -2,11 +2,12 @@
 clc
 
 addpath(genpath('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel'));
-rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\ecoliN1.txt';
+rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\N2mClose.txt';
 
 %create model structure
 [FBAmodel,parameter,variable,nrxn,nmetab] = modelgen(rxfname);
 
+[SBMLmodel,result] = CRNTanalysis(FBAmodel);
 %add rxn
 % rxn.equation = 'atp[c] <==>';
 % FBAmodel = addRxn(FBAmodel,parameter,rxn);
@@ -55,13 +56,16 @@ FBAmodel.rxn_excep = rxn_excep;
 ensb = parallel_ensemble(FBAmodel,mc,parameter,rxn_add,rxn_excep);
 
 %load a pre determined model
-load('C:\Users\Shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\ecoliN1_newpvec_1.mat');
+% load('C:\Users\Shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\ecoliN1_newpvec_1.mat');
+% load('C:\Users\Shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\ecoliN1_pvec2_Jan17.mat');
+load('C:\Users\Shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\ecoliN1_pvec_Jan18.mat');
 
 % x = initialsample(FBAmodel);
 
 %change initial conditions to simulate a perturbation
-% change_pos.pyr_c = 10;
-change_pos = [];
+change_pos(1).glc_e = 1;
+change_pos(2).glc_e = 10;
+% change_pos = [];
 
 if size(ensb,1)>1 
     %run a parallel version to solve all odes
@@ -75,3 +79,5 @@ else
     end
 end
 
+%Perturbation to concentrations
+[sol] = MonteCarloPertrubationIV(model,ess_rxn,Vup_struct,ensb,initval,VMCpos,VMCneg,np);

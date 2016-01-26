@@ -257,7 +257,7 @@ if all(check(Vind)>0)
     for irxn = 1:length(Vind)
         [~,ck] = CKinetics(model,pvec,mc,Vind(irxn));
         if ck
-            pvec.Vmax(Vind(irxn)) = model.Vss(Vind(irxn))/ck;
+            pvec.Vmax(Vind(irxn)) = model.Vss(Vind(irxn))/(3600*ck);
         else
             pvec.Vmax(Vind(irxn)) = 1;
         end
@@ -267,12 +267,16 @@ if all(check(Vind)>0)
     for irxn = 1:length(Vex)
         [~,tk] = TKinetics(model,pvec,mc,Vex(irxn));
         if tk
-            pvec.Vmax(Vex(irxn)) = model.Vss(Vex(irxn))/tk;
+            pvec.Vmax(Vex(irxn)) = model.Vss(Vex(irxn))/(3600*tk);
         else
             pvec.Vmax(Vex(irxn)) = 1;
         end
     end  
     
+    %atp maintanance
+    atp = strcmpi(model.mets,'atp[c]');
+    pvec.Vmax(strcmpi(model.rxns,'atpm')) =...
+    model.Vss(strcmpi(model.rxns,'atpm'))/(mc(atp)/1e-5/(1+mc(atp)/1e-5))/3600;
     %for redox reactions    
 %     [~,rk,vred] = RedoxKinetics(model,pvec,mc,flux);
 %     pvec = getRKparameter(model,pvec,mc,vred);
