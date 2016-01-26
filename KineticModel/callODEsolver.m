@@ -100,7 +100,9 @@ Sol.y = [Sol.y initval];
 Sol.flux = [Sol.flux iflux(model,pvec,initval.*model.imc)];
 while t < tout        
     itstart = tic;
-    [status,t,dY] = CVode(tout,'Normal');   
+    [status,t,dY] = CVode(tout,'OneStep');   
+    si = CVodeGetStats;
+    fprintf('%4.3g\t\n',si.tcur);
     %Plot Solution
     flux = iflux(model,pvec,dY.*model.imc);
 %     plotflux_timecourse(flux,t,model)

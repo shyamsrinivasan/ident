@@ -81,11 +81,14 @@ end
 %integrate model
 [sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
 
+%introduce perturbation
+Nimc = perturbEqSolution(model,finalSS.y,change_pos,change_neg);
+
 %initialize solver properties
 [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e6);
 
 %integrate model
-[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP,sol);
+[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
 
 %initialize solver properties
 [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e8);
@@ -102,8 +105,6 @@ end
 %initialize solver properties
 [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e8);
 
-%introduce perturbation
-Nimc = perturbEqSolution(model,finalSS.y,change_pos,change_neg);
 
 %integrate model
 [sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
