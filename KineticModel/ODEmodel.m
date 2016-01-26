@@ -3,8 +3,7 @@
 %Describing the ODE dXdt = data.S*flux(X,p)
 %September 2014
 %**************************************************************************
-function [dXdt] = ODEmodel(t,mc,data,model,pvec)
-% [dXdt,flag,newdata] = ODEmodel(t,mc,data,model,pvec)
+function [dXdt,flag,newdata] = ODEmodel(t,mc,data,model,pvec)
 % callODEmodel = @(t,Y,data)ODEmodel(t,Y,model,pmeter);
 bmind = model.bmrxn;
 % Mbio = strcmpi('biomass',model.mets);
@@ -84,7 +83,6 @@ dXdt(1:nin_m) = (1./model.imc(1:nin_m)).*(model.S(1:nin_m,:)*flux);%-mu*mc(1:nin
 % dXdt(1:nin_m) = -mu*mc(1:nin_m);%
 % dXdt(nin_m+1:nt_m) = 0;
 dXdt(nin_m+1:nt_m) = 0;%model.S(nin_m+1:nt_m,:)*flux;%-mu*Y(nin_m+1:nt_m);
-% dXdt(strcmpi(model.mets,'glc[e]')) = -flux(strcmpi(model.rxns,'GLCpts'));
 
 % plotconc_timecourse(dXdt,t,model,[hc he pic pie]);
 idx = find(mc<0);

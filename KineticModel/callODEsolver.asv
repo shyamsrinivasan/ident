@@ -80,11 +80,11 @@ options = CVodeSetOptions('UserData',data,...
                           'MaxNumSteps',solverP.MaxIter);
 
 %Using SUNDIALS provided monitor function  
-mondata.mode = 'graphical';
-mondata.updt = 100;
+mondata.mode = 'text';
+mondata.update = 100;
 mondata.skip = 10;
 % mondata.initialized = false;
-options = CVodeSetOptions(options,'MonitorFn',@MonitorCVodeGraph,...
+options = CVodeSetOptions(options,'MonitorFn',@CVodeMonitor,...
                           'MonitorData',mondata); 
 %ODE Function Called through Anonymous function                      
 callODEmodel = @(t,Y,data)ODEmodel(t,Y,data,model,pvec);
