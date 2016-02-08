@@ -8,6 +8,9 @@ end
 if nargin< 3
     ess_rxn = {};
 end
+if nargin<2
+    option = 'fba';
+end
 
 %fix flux uptakes for FBA solution
 model = fixUptake(model,Vup_struct);

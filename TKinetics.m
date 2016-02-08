@@ -33,6 +33,13 @@ vmet = [he hc pie pic h2o co2];
 % o2 = strcmpi(model.mets,'o2[c]');
 
 for irxn = 1:length(Vex)
+    
+    if any(strcmpi(model.rxns{Vex(irxn)},'o2t'))
+        %vflux(Vex(irxn)) = constant input
+        %flux(Vex(irxn)) = Vmax(vex(irxn))*constant input where
+        %Vmax(Vex(irxn)) = 1
+    end
+        
     %kcat
     kfwd = pvec.kcat_fwd(Vex(irxn));
     kbkw = pvec.kcat_bkw(Vex(irxn));

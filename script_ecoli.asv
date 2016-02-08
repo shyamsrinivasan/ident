@@ -2,7 +2,7 @@
 clc
 
 addpath(genpath('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel'));
-rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\ecoliN1.txt';
+rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\.txt';
 
 %create model structure
 [FBAmodel,parameter,variable,nrxn,nmetab] = modelgen(rxfname);
@@ -27,7 +27,7 @@ FBAmodel = FBAfluxes(FBAmodel,'pfba',ess_rxn,Vup_struct);
 % met.h_e = 1e-7;
 % met.h_c = 1e-7;
 met.h2o_c = 55.0;%1.53e-13;
-met.h2o_e = 55.0;%55.0;
+met.h2o_e = 50.0;%55.0;
 met.o2_e = 0.0025;
 met.pi_e = 4e-2;
 % met.pi_c = 1e-3;
