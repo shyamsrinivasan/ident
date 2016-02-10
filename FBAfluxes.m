@@ -13,25 +13,18 @@ if nargin<2
 end
 
 %fix flux uptakes for FBA solution
-model = fixUptake(model,Vup_struct);
+Vuptake = fixUptake(model,Vup_struct);
+if ~isfield(model,'Vuptake')
+    model.Vuptake = Vuptake;
+end
 % bounds = changebounds(model);
-% 
-% bounds.Vuptake = model.Vuptake;
-% bounds.vl = zeros(model.nt_rxn,1);        
-% bounds.vl(logical(model.rev)) = -100;
-% bounds.vu = zeros(model.nt_rxn,1);          
-% bounds.vu(bounds.vu==0) = 100;%bounds.Vuptake;
 
+%change reaction flux bounds to desired values
 [model,bounds] = changebounds(model,ess_rxn);
     
 switch lower(option)
     case 'fba'
         %calculate FBA fluxes and growth rate
-%         bounds.Vuptake = model.Vuptake;
-%         bounds.vl = zeros(model.nt_rxn,1);        
-%         bounds.vl(logical(model.rev)) = -100;
-%         bounds.vu = zeros(model.nt_rxn,1);          
-%         bounds.vu(bounds.vu==0) = 100;%bounds.Vuptake;
 %         [vLP,flag] = estimateLPgrowth(model,ess_rxn,bounds);
         %Determine Max and Min for flux to be constrained with
         if ~prxnid
@@ -47,11 +40,6 @@ switch lower(option)
         end
     case 'pfba'
         %calcuate maximum objective (growth rate, etc)
-%         bounds.Vuptake = model.Vuptake;
-%         bounds.vl = zeros(model.nt_rxn,1);        
-%         bounds.vl(logical(model.rev)) = -100;
-%         bounds.vu = zeros(model.nt_rxn,1);          
-%         bounds.vu(bounds.vu==0) = 100;
         if ~prxnid
             prxnid = model.bmrxn;
         end
@@ -63,11 +51,6 @@ switch lower(option)
         model = run_pFBA(model,ess_rxn,Vup_struct);
     otherwise
         fprintf('Not calculating FBA SS fluxes. \nOnly Calculating bounds.\n');
-%         bounds.Vuptake = model.Vuptake;
-%         bounds.vl = zeros(model.nt_rxn,1);        
-%         bounds.vl(logical(model.rev)) = -100;
-%         bounds.vu = zeros(model.nt_rxn,1);          
-%         bounds.vu(bounds.vu==0) = 100;%bounds.Vuptake;
         [~,~,model] = solveLP(model,bounds,ess_rxn,model.bmrxn,Vup_struct);
 end
 

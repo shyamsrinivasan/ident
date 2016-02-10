@@ -6,7 +6,17 @@ rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\Kine
 %create model structure
 [FBAmodel,parameter,variable,nrxn,nmetab] = modelgen(rxfname);
 
-ess_rxn = {'exCO2','exH','exH2O','exPI','exO2','exGLC'};
+%obtain conentrations from file
+mc = readCNCfromFile(fname,model);
 
-[model,bounds] = changebounds(model,ess_rxn);
+% Vup_struct.exO2 = 1000;%mmole/gDCW.h
+% %fix flux uptakes 
+% Vuptake = fixUptake(model,Vup_struct);
+% if ~isfield(model,'Vuptake')
+%     model.Vuptake = Vuptake;
+% end
+
+%get parameter estimates - estimate kinetic parameters in an ensemble
+ensb = parallel_ensemble(FBAmodel,mc,parameter,rxn_add,rxn_excep);
+
 ToyODEmodel(t,mc,data,model,pvec)

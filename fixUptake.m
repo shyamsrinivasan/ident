@@ -1,4 +1,4 @@
-function model = fixUptake(model,Vup_struct)
+function Vuptake = fixUptake(model,Vup_struct)
 %fix uptake of reactions designated as fields in Vuptake to model.Vuptake
 
 if ~isfield(model,'Vuptake')
@@ -12,5 +12,5 @@ if ~isfield(model,'Vuptake')
             end
         end
     end
-    model.Vuptake = Vuptake;
+%     model.Vuptake = Vuptake;
 end

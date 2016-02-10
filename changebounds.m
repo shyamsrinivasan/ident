@@ -69,6 +69,8 @@ if fixgrowth
         if isfield(model,'gmax')
             vl(model.bmrxn) = model.gmax;
             vu(model.bmrxn) = model.gmax;
+        else
+            error('Nogmax:changebounds','No field gmax found in model. Cannot fix growth');
         end
     end
 else
