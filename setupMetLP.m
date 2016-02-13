@@ -1,13 +1,13 @@
 function newmodel = setupMetLP(model)
 
-%create new model structure
+%% %create new model structure
 newmodel.S = model.S;
 newmodel.Keq = model.Keq;
 newmodel.Vss = model.Vss;
 newmodel.rxns = model.rxns;
 newmodel.CMPS = model.CMPS;
 
-%remove reactions with zero fluxes
+%% %remove reactions with zero fluxes
 newmodel.S(:,abs(newmodel.Vss)<1e-7) = [];
 newmodel.Keq(abs(newmodel.Vss)<1e-7) = [];
 newmodel.rxns(abs(newmodel.Vss)<1e-7) = [];
@@ -15,28 +15,28 @@ newmodel.CMPS(:,abs(newmodel.Vss)<1e-7) = [];
 newmodel.Vss(abs(newmodel.Vss)<1e-7) = [];
 newmodel.mets = model.mets;
 
-%special reactions - reactions where h[c], h[e],pi[c] affect 
+%% %special reactions - reactions where h[c], h[e],pi[c] affect 
 %thermodynamic equilibrium 
 vspl =  [find(strcmpi(newmodel.rxns,'THD2'))...
         find(strcmpi(newmodel.rxns,'NADH16'))...
         find(strcmpi(newmodel.rxns,'ATPS4r'))... 
         find(strcmpi(newmodel.rxns,'CYTBD'))];
 
-%metabolites that do not affect thermodynamic equilibrium   
+%% %metabolites that do not affect thermodynamic equilibrium   
 vmet= [];%find(strcmpi(newmodel.mets,'h[e]'));%[];
 % vmet = [find(strcmpi(newmodel.mets,'h[e]'))...
 %         find(strcmpi(newmodel.mets,'h[c]'))...
 %         find(strcmpi(newmodel.mets,'pi[c]'))];
      
-%find all exchnage and transport reactions in newmodel
+%% %find all exchnage and transport reactions in newmodel
 [Vind,VFex,Vex,bmrxn] = fluxIndex(newmodel);
-Vind = ToColumnVector(Vind);
-VFex = ToColumnVector(VFex);
-Vex = ToColumnVector(Vex);
+% Vind = ToColumnVector(Vind);
+% VFex = ToColumnVector(VFex);
+% Vex = ToColumnVector(Vex);
 Vind = [Vind vspl find(strcmpi(newmodel.rxns,'GLCpts'))]; 
 Vex = setdiff(Vex,Vind);     
 
-%remove h[c], h[e],pi[c]
+%% %remove h[c], h[e],pi[c]
 %remove from all reactions except vspl
 if ~isempty(vmet)
     newmodel.S(vmet,:) = [];
@@ -52,7 +52,7 @@ if ~isempty(vmet)
 %     end
 end
 
-%remove h2o[c]
+%% %remove h2o[c]
 vh2o = [find(strcmpi(newmodel.mets,'h2o[c]'))...
         find(strcmpi(newmodel.mets,'h2o[e]'))];  
 
@@ -87,7 +87,7 @@ newmodel.Keq([Vex VFex bmrxn]) = [];
 newmodel.Vss([Vex VFex bmrxn]) = [];
 newmodel.rxns([Vex VFex bmrxn]) = [];
 
-%remove empty rows in S
+%% %remove empty rows in S
 newmodel.mets = newmodel.mets(logical(sum(logical(newmodel.S),2)));
 newmodel.S = newmodel.S(logical(sum(logical(newmodel.S),2)),:);
 
@@ -98,7 +98,7 @@ newmodel.rxns = newmodel.rxns(setdiff(1:size(newmodel.S,2),vatpm));
 newmodel.Keq = newmodel.Keq(setdiff(1:size(newmodel.S,2),vatpm));
 newmodel.S = newmodel.S(:,setdiff(1:size(newmodel.S,2),vatpm));
 
-%nonzero reactions for thermodynamic analysis
+%% %nonzero reactions for thermodynamic analysis
 nmet = size(newmodel.S,1);
 
 %bounds
@@ -176,7 +176,7 @@ for imet = 1:nmet
     end
 end
 
-%setup original problem
+%% %setup original problem
 %Ax <=b 
 A = newmodel.S';
 A_ub = A(:,~logical(knwn_id));
@@ -189,7 +189,7 @@ b_ub = log(newmodel.Keq)-A(:,logical(knwn_id))*lb(logical(knwn_id));
 % b_lb = sign(newmodel.Vss).*(-(log(1e-8)+log(newmodel.Keq)));
 newmodel.b = b_ub;%b_lb];
 
-newmodel.x = lb(logical(knwn_id));%known concentrations
+newmodel.x_kn = lb(logical(knwn_id));%known concentrations
 newmodel.lb = lb(~logical(knwn_id));
 newmodel.ub = ub(~logical(knwn_id));
 newmodel.mets_kn = newmodel.mets(logical(knwn_id));

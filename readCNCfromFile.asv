@@ -33,8 +33,6 @@ hc = find(strcmpi(newmodel.mets,'h[c]'));
 o2e = find(strcmpi(newmodel.mets,'o2[e]'));
 
 vmet = [he hc h2oc o2e];
-newcell = cellfun(@(x)strcmpi(vmet,x),model.mets,'UniformOutput',false);
-display(newcell);
-% for im = 1:length(model.mets)
-    
+for im = 1:length(model.mets)
+    tfm = cellfun(@(x)strcmpi(vmet,x),model.mets
 

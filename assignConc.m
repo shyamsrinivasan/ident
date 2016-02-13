@@ -7,8 +7,8 @@ else
 end
 
 %appending mets with same lb and ub
-x = [x;repmat(bounds.x,1,size(x,2))];
-bounds.A = [bounds.A(:,1:length(bounds.mets)) bounds.A_kn];
+x = [x;repmat(bounds.x_kn,1,size(x,2))];
+bounds.A = [bounds.A bounds.A_kn];
 bounds.mets = [bounds.mets;bounds.mets_kn];
 
 %check for delGr values

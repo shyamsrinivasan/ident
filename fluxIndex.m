@@ -112,4 +112,7 @@ catch
     Vind = setdiff(1:nt_rxn,[VFex' bmrxn Vex']);%intracellular rxns
     
 end
+Vind = ToColumnVector(Vind);
+VFex = ToColumnVector(VFex);
+Vex = ToColumnVector(Vex);
 end

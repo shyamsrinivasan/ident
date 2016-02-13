@@ -1,6 +1,10 @@
-function mc = separate_slack(x,model,bounds)
+function mc = separate_slack(x,bounds)
 if ~isempty(x)
+    if size(x,2)>1
+        mc = x(:,1:length(bounds.mets));
+    else
     mc = x(1:length(bounds.mets));
+    end
 %     bounds.A = bounds.A(:,1:length(bounds.mets));
 %     bounds.lb = bounds.lb(1:length(bounds.mets));
 %     bounds.ub = bounds.ub(1:length(bounds.mets));

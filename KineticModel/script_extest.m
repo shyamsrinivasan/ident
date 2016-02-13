@@ -2,12 +2,22 @@
 clc
 addpath(genpath('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel'));
 rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\o2_test.txt';
-
+cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\o2_testC.txt';
 %create model structure
 [FBAmodel,parameter,variable,nrxn,nmetab] = modelgen(rxfname);
 
 %obtain conentrations from file
-mc = readCNCfromFile(fname,model);
+[mc,FBAmodel] = readCNCfromFile(cnfname,FBAmodel);
+
+%setup problem for delGr calculation
+bounds = setupMetLP_o2(FBAmodel,mc);
+
+%delGr calculation
+[lnmc,assignFlag,delGr,vCorrectFlag] = assignConc(log(bounds.mc),FBAmodel,bounds);
+
+%assign other metabolite concentrations from file
+
+[mc,assignFlag] = iconcentration(model,met,mc,assignFlag);
 
 % Vup_struct.exO2 = 1000;%mmole/gDCW.h
 % %fix flux uptakes 
