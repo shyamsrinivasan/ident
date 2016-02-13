@@ -25,6 +25,8 @@ for im = 1:length(bounds.mets)
         assignFlag(tfm) = 1;
     end
 end
+assignFlag = logical(assignFlag);
+vCorrectFlag = logical(vCorrectFlag);
 
 %assign same concentrations to intra and extracellular co2,o2,h,pi and h2o
 %if available

@@ -43,4 +43,8 @@ if ~any(mc_ub)
 end
 varargout{1} = mc_lb;
 varargout{2} = mc_ub;
-varargout{3} = assignFlag;
+if mc_ub == mc_lb
+    varargout{2} = logical(assignFlag);
+else
+    varargout{3} = logical(assignFlag);
+end

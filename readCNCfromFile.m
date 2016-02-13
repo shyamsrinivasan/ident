@@ -1,6 +1,6 @@
 % function [mc,model] = readCNCfromFile(fname,model)
 % read concentrations from text file
-function [mc,model] = readCNCfromFile(fname,model)
+function [mc,model,met] = readCNCfromFile(fname,model)
 fileid = fopen(fname);
 if fileid == -1
     fprintf('File %s cannot be opened.', fname);
@@ -27,14 +27,19 @@ for ic = 1:length(C{1})
 end
 
 %get metabolite structure suitable for input to iconcetration.m
-h2oc = find(strcmpi(newmodel.mets,'h2o[c]'));
-he = find(strcmpi(newmodel.mets,'h[e]'));
-hc = find(strcmpi(newmodel.mets,'h[c]'));
-o2e = find(strcmpi(newmodel.mets,'o2[e]'));
-
-vmet = [he hc h2oc o2e];
-newcell = cellfun(@(x)strcmpi(vmet,x),model.mets,'UniformOutput',false);
-display(newcell);
-% for im = 1:length(model.mets)
+vmet = {'h2o[c]','h[e]', 'h[c]', 'o2[e]'};
+mets_idx = cellfun(@(x)strcmpi(x,vmet),model.mets,'UniformOutput',false);
+vmet_id = cellfun(@(x) find(x),mets_idx,'UniformOutput',false);
+% vmet_id = cell2mat(vmet_id);
+vmet_id(cell2mat(cellfun(@(x)isempty(x),vmet_id,'UniformOutput',false))) = {0};
+vmet_id = cell2mat(vmet_id);
+vmet = cellfun(@(x)strrep(x,'[c]','_c'),vmet,'UniformOutput',false);
+vmet = cellfun(@(x)strrep(x,'[e]','_e'),vmet,'UniformOutput',false);
+met = struct();
+for im = 1:length(vmet_id)
+    if any(vmet_id(im))
+        met.(vmet{vmet_id(im)}) = mc(ismember(vmet_id,vmet_id(im)));
+    end
+end
     
 

@@ -7,17 +7,18 @@ cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\Kine
 [FBAmodel,parameter,variable,nrxn,nmetab] = modelgen(rxfname);
 
 %obtain conentrations from file
-[mc,FBAmodel] = readCNCfromFile(cnfname,FBAmodel);
+[mc,FBAmodel,met] = readCNCfromFile(cnfname,FBAmodel);
 
 %setup problem for delGr calculation
 bounds = setupMetLP_o2(FBAmodel,mc);
 
 %delGr calculation
 [lnmc,assignFlag,delGr,vCorrectFlag] = assignConc(log(bounds.mc),FBAmodel,bounds);
+parameter.delGr = delGr;
 
 %assign other metabolite concentrations from file
 
-[mc,assignFlag] = iconcentration(model,met,mc,assignFlag);
+[mc,assignFlag] = iconcentration(FBAmodel,met,mc,assignFlag);
 
 % Vup_struct.exO2 = 1000;%mmole/gDCW.h
 % %fix flux uptakes 
@@ -27,6 +28,9 @@ bounds = setupMetLP_o2(FBAmodel,mc);
 % end
 
 %get parameter estimates - estimate kinetic parameters in an ensemble
-ensb = parallel_ensemble(FBAmodel,mc,parameter,rxn_add,rxn_excep);
+rxn_add = {'CYTBD'};
+FBAmodel.rxn_add = rxn_add;
+
+ensb = parallel_ensemble(FBAmodel,mc,parameter,rxn_add);
 
 ToyODEmodel(t,mc,data,model,pvec)
