@@ -32,13 +32,7 @@ vmet = [he hc pie pic h2o co2];
 % adp = strcmpi(model.mets,'adp[c]');
 % o2 = strcmpi(model.mets,'o2[c]');
 
-for irxn = 1:length(Vex)
-    
-    if any(strcmpi(model.rxns{Vex(irxn)},'o2t'))
-        %vflux(Vex(irxn)) = constant input
-        %flux(Vex(irxn)) = Vmax(vex(irxn))*constant input where
-        %Vmax(Vex(irxn)) = 1
-    end
+for irxn = 1:length(Vex)    
         
     %kcat
     kfwd = pvec.kcat_fwd(Vex(irxn));
@@ -57,6 +51,15 @@ for irxn = 1:length(Vex)
     %kinetics - substrate and product
     sbid = logical(model.S(:,Vex(irxn))<0);
     prid = logical(model.S(:,Vex(irxn))>0);
+    
+    if any(strcmpi(model.rxns{Vex(irxn)},'o2t'))
+        Do2 = 2.1e-9; %m2/s
+        Acell = 4.42e-12; %m2
+        vflux(Vex(irxn)) = Do2/Acell*(mc(sbid)-mc(prid));
+        %vflux(Vex(irxn)) = constant input
+        %flux(Vex(irxn)) = Vmax(vex(irxn))*constant input where
+        Vmax(Vex(irxn)) = 1;
+    end
     
     if any(sbid)
         mc_alls = prod(logical(mc(sbid)));
