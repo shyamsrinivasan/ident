@@ -35,6 +35,9 @@ vmet = [he hc pie pic h2o co2];
 for irxn = 1:length(Vex)
     
     if any(strcmpi(model.rxns{Vex(irxn)},'o2t'))
+        Do2 = 2.1e-9;%m2/s
+        Acell = 
+        %vflux(Vex(irxn)) = Do2/Acell*(mc(sbid)-mc(prid));
         %vflux(Vex(irxn)) = constant input
         %flux(Vex(irxn)) = Vmax(vex(irxn))*constant input where
         %Vmax(Vex(irxn)) = 1

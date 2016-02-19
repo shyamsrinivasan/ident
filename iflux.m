@@ -8,8 +8,16 @@ end
 if nargin<4
     flux = zeros(model.nt_rxn,nc);
 end
-rxn_add = model.rxn_add;
-rxn_excep = model.rxn_excep;
+if isfield(model,'rxn_add');
+    rxn_add = model.rxn_add;
+else
+    rxn_add = {};
+end
+if isfield(model,'rxn_excep')
+    rxn_excep = model.rxn_excep;
+else
+    rxn_excep = {};
+end
 % Vind = [model.Vind find(strcmpi(model.rxns,'GLCpts'))];
 % Vind = [Vind find(strcmpi(model.rxns,'NADH16'))];
 % Vind = [Vind find(strcmpi(model.rxns,'ATPS4r'))];
