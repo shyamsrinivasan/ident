@@ -25,11 +25,12 @@ else
 end
 
 if (nsamples==1 && nmodels==1)
-    fprintf('\nGenerating a single model in the ensemble\n');
+    fprintf('\nGenerating a single parameter set in the ensemble...\n');
     ensb = cell(nmodels,2);
     model_ens = cell(nmodels,1);     
     ensb{1,1} = mc;
     model_ens{1} = buildmodels(model,pvec,mc,rxn_add,rxn_excep);    
+    fprintf('Parameter generation complete\n\n');
 elseif nsamples==1 && nmodels>1
     ensb = cell(nmodels,2);
     model_ens = cell(1,nmodels);

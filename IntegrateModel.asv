@@ -1,46 +1,48 @@
 function [sol,jacobian] =...
-IntegrateModel(model,ensb,mc,ess_rxn,Vup_struct,change_pos,change_neg)
-% change in initial conditions
+IntegrateModel(model,ess_rxn,Vup_struct,ensb,mc,change_pos,change_neg)
+%change in initial conditions
 if nargin<7
     change_neg = struct([]);
 end
 if nargin < 6
     change_pos = struct([]);
 end
-if nargin<5
-    Vup_struct = ([]);
-end
-if nargin<4
-    ess_rxn = {};
-end
-
-% check if concentrations are initialized
-if nargin < 3
-    % reinitialize concentrations
+%check if concentrations are initialized
+if nargin < 5
+    %reinitialize concentrations
     imc = zeros(model.nt_metab,1);
+%     imc(strcmpi(model.mets,'pep[c]')) = 0.002;
+%     imc(strcmpi(model.mets,'pep[c]')) = 1e-5;
 else
     imc = ones(length(mc),1);%mc;
+%     imc(strcmpi(model.mets,'glc[e]')) = imc(strcmpi(model.mets,'glc[e]'));
+%     imc(strcmpi(model.mets,'q8h2[c]')) = 100;
+%     imc(strcmpi(model.mets,'pi[c]')) = 100;
 end
-if nargin<2
+
+if nargin<4
     error('getiest:NoA','No parameter vector');
 else
     pvec = ensb{1,2};
 end
-
+    
+if nargin<3
+    Vup_struct([]);
+end
+if nargin<2
+    ess_rxn = {};
+end
 %initialize solver properties
-% ecoli model
-% [model,solverP,saveData] = imodel(model,1e9,ess_rxn,Vup_struct);
-
-% toy model
-[model,solverP,saveData] = imodel(model,1e5);
+[model,solverP,saveData] = imodel(model,1e9,ess_rxn,Vup_struct);
+%initialize solver properties
+[model,solverP,saveData] = imodel(FBAmodel,1e9);
 
 % model.Vuptake = zeros(model.nt_rxn,1);
 % h2o = find(strcmpi(model.rxns,'exH2O'));
 % pi =  find(strcmpi(model.rxns,'exPI'));
-
-%ecoli model
-% h = find(strcmpi(model.rxns,'exH'));
-% model.Vuptake([h]) = [1000];
+h = find(strcmpi(model.rxns,'exH'));
+% 
+model.Vuptake([h]) = [1000];
 
 %noramlize concentration vector to intial state
 Nimc = mc;%imc./imc;
@@ -60,12 +62,7 @@ model.imc = imc;
 model.imc(model.imc==0) = 1;
 %calculate initial flux
 flux = iflux(model,pvec,Nimc.*imc);
-
-% ecoli model
-% dXdt = ODEmodel(0,Nimc,[],model,pvec);
-
-% toy model
-dXdt = ToyODEmodel(0,Nimc,[],model,pvec);
+dXdt = ODEmodel(0,Nimc,[],model,pvec);
 
 % %call to ADmat for stability/jacobian info
 % [Y,Jac] = stabilityADMAT(model,pvec,Nimc.*imc);

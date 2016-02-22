@@ -50,16 +50,7 @@ for irxn = 1:length(Vex)
     nmet = size(S,1);
     %kinetics - substrate and product
     sbid = logical(model.S(:,Vex(irxn))<0);
-    prid = logical(model.S(:,Vex(irxn))>0);
-    
-    if any(strcmpi(model.rxns{Vex(irxn)},'o2t'))
-        Do2 = 2.1e-9; %m2/s
-        Acell = 4.42e-12; %m2
-        vflux(Vex(irxn)) = Do2/Acell*(mc(sbid)-mc(prid));
-        %vflux(Vex(irxn)) = constant input
-        %flux(Vex(irxn)) = Vmax(vex(irxn))*constant input where
-        Vmax(Vex(irxn)) = 1;
-    end
+    prid = logical(model.S(:,Vex(irxn))>0);   
     
     if any(sbid)
         mc_alls = prod(logical(mc(sbid)));
@@ -177,6 +168,16 @@ for irxn = 1:length(Vex)
         vflux(Vex(irxn)) = scale_flux(nr_flux/dr_flux);
     else
         vflux(Vex(irxn)) = 0;
+    end
+    
+    if any(strcmpi(model.rxns{Vex(irxn)},'o2t'))
+%         Do2 = 2.1e-9; %m2/s
+%         Acell = 4.42e-12; %m2
+%         vflux(Vex(irxn)) = Do2/Acell*(mc(sbid)-mc(prid));
+        vflux(Vex(irxn)) = kfwd*prod(mc(sbid)./K(sbid,Vex(irxn)))/...
+                           (1+prod(mc(sbid)./K(sbid,Vex(irxn)))+...
+                           prod(mc(prid)./K(prid,Vex(irxn))));
+%         Vmax(Vex(irxn)) = 1;
     end
 %     flux(Vex(irxn)) = Vmax(Vex(irxn))*vflux(Vex(irxn));
 

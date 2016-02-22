@@ -3,6 +3,7 @@ function [model_data,parameter,variable,nt_rxn,nt_metab,bmrxn] = modelgen(rxfnam
 %Metabolic Network
 
 %Shyam 2014
+fprintf('Creating MATLAB model from model file...\n');
 fileid = fopen(rxfname);
 if fileid == -1
     fprintf('File %s cannot be opened.', rxfname);
@@ -490,7 +491,7 @@ model_data.MolWt(strcmpi('f6p[c]',model_data.mets)) = 259.81;
 model_data.MolWt(strcmpi('g6p[c]',model_data.mets)) = 260.136;
 model_data.MolWt(strcmpi('B[c]',model_data.mets)) = 200;
 
-
+fprintf('Model generation complete\n\n');
 % nested functions
 function [model] =...
 ident_regulator(model,reg_string,reg_stoich,par,Klb,Kub)%pass par as argument

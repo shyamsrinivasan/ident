@@ -84,10 +84,14 @@ mondata.mode = 'graphical';
 mondata.updt = 100;
 mondata.skip = 10;
 % mondata.initialized = false;
-options = CVodeSetOptions(options,'MonitorFn',@MonitorCVodeGraph,...
-                          'MonitorData',mondata); 
-%ODE Function Called through Anonymous function                      
-callODEmodel = @(t,Y,data)ODEmodel(t,Y,data,model,pvec);
+% options = CVodeSetOptions(options,'MonitorFn',@MonitorCVodeGraph,...
+%                           'MonitorData',mondata); 
+%ODE Function Called through Anonymous function  
+% ecoli model
+% callODEmodel = @(t,Y,data)ODEmodel(t,Y,data,model,pvec);
+
+% toy model
+callODEmodel = @(t,Y,data)ToyODEmodel(t,Y,data,model,pvec);
 CVodeInit(callODEmodel,'BDF','Newton',t0,initval,options);
 % [t,dy] = ode15s(callODEmodel,tout,initval,options);
 %% %Solve ODE
@@ -105,9 +109,9 @@ fprintf('Final time %4.3g\n',tout(end));
 fprintf('Total simulaion time: %4.3g\n',tout(end)-t0);
 % while t < tout        
     itstart = tic;
-    [status,t,dY] = CVode(tout,'OneStep');   
-    si = CVodeGetStats;
-    fprintf('%4.3g\t\n',si.tcur);
+%     [status,t,dY] = CVode(tout,'OneStep');   
+%     si = CVodeGetStats;
+%     fprintf('%4.3g\t\n',si.tcur);
 %     [status,t,dY] = CVode(tout,'OneStep');  
     [status,t,dY] = CVode(tout,'Normal');  
 %     tstep = tstep+1;
@@ -164,7 +168,7 @@ end
 
 %plot for debugging purposes only
 figure
-yS = Sol.y(1:48,:);
+yS = Sol.y(1:model.nint_metab,:);
 yS(strcmpi(model.mets,'h2o[c]'),:) = [];
 plot(Sol.t,yS);
 return;

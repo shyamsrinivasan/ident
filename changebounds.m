@@ -4,20 +4,17 @@ if nargin < 4
     fixgrowth = 0;
 end
 model.rev(strcmpi(model.rxns,'NADTRHD')) = 0;
+if isfield(model,'Vuptake')
+    Vuptake = model.Vuptake;
+end
 if nargin < 3
-    bounds = struct();
-    if isfield(model,'Vuptake')
-        Vuptake = model.Vuptake;
-    end
+    bounds = struct();    
     nr = size(model.S,2);
     vl = zeros(nr,1);        
     vl(logical(model.rev)) = -100;
     vu = zeros(nr,1);          
     vu(vu==0) = 100;
-else
-    if isfield(bounds,'Vuptake')
-        Vuptake = bounds.Vuptake;
-    end
+else    
     vl = bounds.vl;
     vu = bounds.vu;    
 end

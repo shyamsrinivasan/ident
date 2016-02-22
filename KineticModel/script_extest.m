@@ -33,7 +33,12 @@ FBAmodel.rxn_add = rxn_add;
 
 ensb = parallel_ensemble(FBAmodel,mc,parameter,rxn_add);
 
-%initialize solver properties
-[model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e9);
+%serially solve ODE of model to steady state
+if ensb{1,2}.feasible    
+    sol = IntegrateModel(FBAmodel,ensb,ensb{1,1});
+else
+    error('No feasible model found');
+end
 
-ToyODEmodel(t,mc,data,model,pvec)
+
+

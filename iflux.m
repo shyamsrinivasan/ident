@@ -67,12 +67,16 @@ for ic = 1:nc
     %     else
     %         flux(strcmpi(model.rxns,'atpm')) = 0;
     %     end
-
-    %     flux(strcmpi(model.rxns,'atpm')) = 8.39;
+        
+        %atp maintanance
         atp = strcmpi(model.mets,'atp[c]');
+        if any(atp) && any(strcmpi(model.rxns,'atpm'))
+    %     flux(strcmpi(model.rxns,'atpm')) = 8.39;        
 %         flux(strcmpi(model.rxns,'atpm'),ic) = 8.39*logical(mc(atp,ic));%*mc(atp)/1e-5/(1+mc(atp)/1e-5);
-        flux(strcmpi(model.rxns,'atpm'),ic) = pvec.Vmax(strcmpi(model.rxns,'atpm'))*...
-                                              mc(atp)/1e-5/(1+mc(atp)/1e-5);
+            flux(strcmpi(model.rxns,'atpm'),ic) =...
+            pvec.Vmax(strcmpi(model.rxns,'atpm'))*...
+            mc(atp)/1e-5/(1+mc(atp)/1e-5);
+        end
         %vatp = 
 
     %     if all(mc(logical(model.S(:,model.bmrxn)<0))>1e-5)
