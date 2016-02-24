@@ -1,6 +1,6 @@
 Metab	Mc (mM)
 o2[c]	10
-o2[e]	50
+o2[e]	2.73E-01
 h[c]	1.00E-04
 h[e]	1.00E-04
 q8h2[c]	1
@@ -8,3 +8,13 @@ q8[c]	1
 h2o[c]	55000
 q8h2[e]	20
 q8[e]	20
+succ[c]	5
+succ[e]	20
+fum[c]	7
+mal[c]	5
+pyr[c]	5
+pyr[e]	1
+nadp[c]	4
+nadph[c]	4
+co2[c]	1.32E-02
+co2[e]	1.32E-02

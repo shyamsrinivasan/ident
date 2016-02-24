@@ -33,9 +33,9 @@ if size(bounds.A,2) == length(bounds.mets)
         
         model.lb = exp(assignConc(bounds.lb,model,bounds));        
         model.ub = exp(assignConc(bounds.ub,model,bounds));
-        if ~isempty(delGr)
-            [delGr,assignFlux] = assignRxns(delGr,model,bounds);
-        end
+%         if ~isempty(delGr)
+%             [delGr,assignFlux] = assignRxns(delGr,model,bounds);
+%         end
         
         mc = exp(lnmc);
         mc(lnmc==0)=0;

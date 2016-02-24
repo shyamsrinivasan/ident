@@ -1,7 +1,7 @@
 %script_extest
 clc
 addpath(genpath('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel'));
-rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\o2_test.txt';
+rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\glc_test.txt';
 cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\o2_testC.txt';
 %create model structure
 [FBAmodel,parameter,variable,nrxn,nmetab] = modelgen(rxfname);
@@ -28,7 +28,7 @@ parameter.delGr = delGr;
 % end
 
 %get parameter estimates - estimate kinetic parameters in an ensemble
-rxn_add = {'CYTBD'};
+rxn_add = {'CYTBD','GLCpts','NADH16'};
 FBAmodel.rxn_add = rxn_add;
 
 ensb = parallel_ensemble(FBAmodel,mc,parameter,rxn_add);

@@ -1,4 +1,4 @@
-function newmodel = setupMetLP_o2(model,mc)
+function newmodel = setupMetLP_glc(model,mc)
 if nargin<2
     mc = [];
 end

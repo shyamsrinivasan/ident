@@ -28,6 +28,10 @@ end
 assignFlag = logical(assignFlag);
 vCorrectFlag = logical(vCorrectFlag);
 
+if ~isempty(delGr)
+    delGr = assignRxns(delGr,model,bounds);
+end
+
 %assign same concentrations to intra and extracellular co2,o2,h,pi and h2o
 %if available
 % met = {'co2','o2','h','pi','h2o'};

@@ -186,11 +186,11 @@ for irxn = 1:length(Vex)
             sbid(co2) = 0;
         end
         
-        if ~any(model.CMPS(sbid,Vind(irxn))) 
+        if ~any(model.CMPS(sbid,Vex(irxn))) 
             sbid([he hc]) = 0;                
         else
             sbid = find(sbid);
-            cmp_s = sbid(logical(model.CMPS(sbid,Vind(irxn))));
+            cmp_s = sbid(logical(model.CMPS(sbid,Vex(irxn))));
             sbid = setdiff(sbid,cmp_s);
             sbid = logical(sparse(sbid,1,1,nmet,1));
 %             sbid = setdiff(sbid,[he h2o]);
@@ -206,11 +206,11 @@ for irxn = 1:length(Vex)
         if ~any(strcmpi(model.rxns{Vex(irxn)},'CO2t'))
             prid(co2) = 0;
         end
-        if ~any(model.CMPS(prid,Vind(irxn)))
+        if ~any(model.CMPS(prid,Vex(irxn)))
             prid([he hc]) = 0;
         else
             prid = find(prid);
-            cmp_p = prid(logical(model.CMPS(prid,Vind(irxn))));
+            cmp_p = prid(logical(model.CMPS(prid,Vex(irxn))));
             prid = setdiff(prid,cmp_p);
             prid = logical(sparse(prid,1,1,nmet,1));
 %             prid = setdiff(prid,[he h2o]);
