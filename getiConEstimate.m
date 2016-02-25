@@ -3,6 +3,8 @@ function [mc,assignFlag,delGr,model,vCorrectFlag] =...
 %setup problem with default constraints for thermodynamically active
 %reactions
 % delG > or < 0 and Vss < or > 0
+fprintf('Generating single feasible concentration sample...\n');
+
 fh = str2func(setupfun);
 % bounds = setupMetLP(model);
 % bounds = setupMetLP_toy(model);
@@ -35,11 +37,11 @@ if size(bounds.A,2) == length(bounds.mets)
         model.ub = exp(assignConc(bounds.ub,model,bounds));
 %         if ~isempty(delGr)
 %             [delGr,assignFlux] = assignRxns(delGr,model,bounds);
-%         end
-        
+%         end        
         mc = exp(lnmc);
         mc(lnmc==0)=0;
 %         lnmc = mc;
+        fprintf('Sample generation Complete\n\n');
     else
         error('mcEst:LPinfeas',...
             'LP for thermodynamic metabolite conentrations is infeasible');

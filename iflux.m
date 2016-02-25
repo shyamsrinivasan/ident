@@ -27,20 +27,13 @@ end
 % 
 % Vind = setdiff(Vind,find(strcmpi(model.rxns,'ATPM')));
 
-Vind = addToVind(model,rxn_add,rxn_excep);
+Vind = addToVind(model,model.Vind,rxn_add,rxn_excep);
 
 %carbon uptake fluxes
 % [flux,~,vcup] = CarbonKinetics(model,pvec,mc,flux);
 
 %redox reaction fluxes in vrem
 % [flux,~,vred] = RedoxKinetics(model,pvec,mc,flux);
-
-%intracellular fluxes in Vind
-% Vind = model.Vind;
-% vrem = [find(strcmpi(model.rxns,'GLCpts'))...        
-%         find(strcmpi(model.rxns,'ATPM'))...
-%         vred];
-% Vind = setdiff(Vind,vrem);    
 
 %transport fluxes
 Vex = model.Vex;

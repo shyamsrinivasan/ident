@@ -12,7 +12,6 @@ if nargin<4 || isempty(met)
     met = struct([]);
 end
 
-fprintf('Generating single feasible concentration sample\n');
 %generate one metabolite concentration for parameter estimation
 %get one set of concentrations and coresponding delGr
 [mc,assignFlag,delGr,model,vCorrectFlag] = getiConEstimate(model,funName,mc,rxn_add);
