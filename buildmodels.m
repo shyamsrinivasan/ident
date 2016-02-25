@@ -7,7 +7,7 @@ if nargin<4
 end
 
 %reactions to consider for kinetics other than Vind
-Vind = addToVind(model,rxn_add,rxn_excep);
+Vind = addToVind(model,model.Vind,rxn_add,rxn_excep);
 
 % Vind = [model.Vind find(strcmpi(model.rxns,'GLCpts'))];
 % Vind = [Vind find(strcmpi(model.rxns,'NADTRHD'))];
@@ -24,7 +24,7 @@ h2o = find(strcmpi(model.mets,'h2o[c]'));
 pie = find(strcmpi(model.mets,'pi[e]'));
 pic = find(strcmpi(model.mets,'pi[c]'));
 co2 = find(strcmpi(model.mets,'co2[c]'));
-vmet = [he hc pie pic h2o co2];
+vmet = [he hc h2o co2];
         
 % q8 = find(strcmpi(model.mets,'q8[c]'));
 % q8h2 = find(strcmpi(model.mets,'q8h2[c]'));

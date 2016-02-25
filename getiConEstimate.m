@@ -1,12 +1,12 @@
-function [mc,assignFlag,delGr,model,vCorrectFlag] = getiConEstimate(model,setupfun)
-
+function [mc,assignFlag,delGr,model,vCorrectFlag] =...
+         getiConEstimate(model,setupfun,mc,rxn_add)
 %setup problem with default constraints for thermodynamically active
-%reaction
+%reactions
 % delG > or < 0 and Vss < or > 0
 fh = str2func(setupfun);
 % bounds = setupMetLP(model);
 % bounds = setupMetLP_toy(model);
-bounds = fh(model);
+bounds = fh(model,rxn_add,mc);
 
 %check
 if ~isfield(bounds,'A') 
