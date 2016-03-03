@@ -10,7 +10,7 @@ cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\Kine
 [mc,FBAmodel,met] = readCNCfromFile(cnfname,FBAmodel);
 
 %calculate delGr if concentrations cannot be sampled
-% rxn_add = {'GLCpts','NADH16'};
+rxn_add = {'GLCpts','NADH16'};
 % bounds = setupMetLP_g6p(FBAmodel,rxn_add,mc);
 % [lnmc,assignFlag,delGr,vCorrectFlag] = assignConc(log(bounds.mc),FBAmodel,bounds);  
 % parameter.delGr = delGr;

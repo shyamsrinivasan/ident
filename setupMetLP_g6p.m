@@ -94,7 +94,8 @@ lb(strcmpi(newmodel.mets,'glc[e]')) = log(mc(strcmpi(model.mets,'glc[e]')));
 lb(strcmpi(newmodel.mets,'pyr[c]')) = log(1e-6);
 lb(strcmpi(newmodel.mets,'atp[c]')) = log(1e-6);
 lb(strcmpi(newmodel.mets,'adp[c]')) = log(1e-6);
-lb(strcmpi(newmodel.mets,'dhap[c]')) = log(1e-6);
+lb(strcmpi(newmodel.mets,'fdp[c]')) = log(1e-5);
+lb(strcmpi(newmodel.mets,'dhap[c]')) = log(1e-4);
 
 ub(strcmpi(newmodel.mets,'glc[e]')) = log(mc(strcmpi(model.mets,'glc[e]')));
 ub(strcmpi(newmodel.mets,'dhap[c]')) = log(3e-4);
