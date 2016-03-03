@@ -1,12 +1,20 @@
-function [mc,pvec,smp] = parallel_sampling(model,pvec,met,funName,nsample)
-if nargin<5
+function [mc,pvec,smp] = parallel_sampling(model,pvec,funName,met,mc,rxn_add,nsample)
+if nargin<7
     nsample = 500;
 end
+if nargin<6
+    rxn_add = {};
+end
+if nargin<5
+    mc = [];
+end
+if nargin<4 || isempty(met)
+    met = struct([]);
+end
 
-fprintf('Generating single feasible concentration sample\n');
 %generate one metabolite concentration for parameter estimation
 %get one set of concentrations and coresponding delGr
-[mc,assignFlag,delGr,model,vCorrectFlag] = getiConEstimate(model,funName);
+[mc,assignFlag,delGr,model,vCorrectFlag] = getiConEstimate(model,funName,mc,rxn_add);
 
 [mc,assignFlag] = iconcentration(model,met,mc,assignFlag);
 %M to mM

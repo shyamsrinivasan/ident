@@ -1,6 +1,9 @@
-function newmodel = setupMetLP_o2(model,mc)
-if nargin<2
+function newmodel = setupMetLP_glc(model,rxn_add,mc)
+if nargin<3
     mc = [];
+end
+if nargin<2
+    rxn_add = {};
 end
 %% %create new model structure
 newmodel.S = model.S;
@@ -22,14 +25,16 @@ end
 
 %% %special reactions - reactions where h[c], h[e],pi[c] affect 
 %thermodynamic equilibrium 
-vspl =  [find(strcmpi(newmodel.rxns,'CYTBD'))];
+% vspl =  [];%[find(strcmpi(newmodel.rxns,'CYTBD'))];
 
 %% %metabolites that do not affect thermodynamic equilibrium   
 vmet= [];
 
 %% %find all exchnage and transport reactions in newmodel
 [Vind,VFex,Vex,bmrxn] = fluxIndex(newmodel);
-Vind = [Vind vspl find(strcmpi(newmodel.rxns,'GLCpts'))]; 
+%reactions to consider for kinetics other than Vind
+Vind = addToVind(model,Vind,rxn_add);
+% Vind = [Vind vspl find(strcmpi(newmodel.rxns,'GLCpts'))]; 
 Vex = setdiff(Vex,Vind);     
 
 %% %remove h[c], h[e],pi[c]
@@ -40,15 +45,6 @@ if ~isempty(vmet)
     if ~isempty(mc)
         newmodel.mc(vmet) = [];
     end
-    % [~,cl] = find(newmodel.CMPS(vmet,:));
-%     vspl = unique([vspl]);% ToColumnVector(cl)]);
-%     for irxn = 1:length(Vind)
-%         if ~ismember(Vind(irxn),vspl)
-%             if any(newmodel.S(vmet(logical(newmodel.S(vmet,Vind(irxn)))),Vind(irxn)))
-%                 newmodel.S(vmet(logical(newmodel.S(vmet,Vind(irxn)))),Vind(irxn)) = 0;
-%             end
-%         end
-%     end
 end
 
 %% %remove h2o[c]
@@ -94,27 +90,16 @@ ub = zeros(nmet,1);
 ub(ub==0) = log(3e-2);
 
 %concentrations in M = mole/L, Bennett et al., 2009
-lb(strcmpi(newmodel.mets,'o2[c]')) = log(mc(strcmpi(model.mets,'o2[c]')));
-lb(strcmpi(newmodel.mets,'q8[c]')) = log(mc(strcmpi(model.mets,'q8[c]')));
-lb(strcmpi(newmodel.mets,'q8h2[c]')) = log(mc(strcmpi(model.mets,'q8h2[c]')));
-lb(strcmpi(newmodel.mets,'mal[c]')) = log(mc(strcmpi(model.mets,'mal[c]')));
-lb(strcmpi(newmodel.mets,'fum[c]')) = log(mc(strcmpi(model.mets,'fum[c]')));
-lb(strcmpi(newmodel.mets,'nadph[c]')) = log(mc(strcmpi(model.mets,'nadph[c]')));
-lb(strcmpi(newmodel.mets,'nadp[c]')) = log(mc(strcmpi(model.mets,'nadp[c]')));
-lb(strcmpi(newmodel.mets,'succ[c]')) = log(mc(strcmpi(model.mets,'succ[c]')));
-lb(strcmpi(newmodel.mets,'pyr[c]')) = log(mc(strcmpi(model.mets,'pyr[c]')));
-lb(strcmpi(newmodel.mets,'co2[c]')) = log(mc(strcmpi(model.mets,'co2[c]')));
+lb(strcmpi(newmodel.mets,'glc[e]')) = log(mc(strcmpi(model.mets,'glc[e]')));
+lb(strcmpi(newmodel.mets,'pep[c]')) = log(1e-6);
+lb(strcmpi(newmodel.mets,'pyr[c]')) = log(1e-6);
+lb(strcmpi(newmodel.mets,'atp[c]')) = log(1e-6);
+lb(strcmpi(newmodel.mets,'q8[c]')) = log(1e-6);
+lb(strcmpi(newmodel.mets,'q8h2[c]')) = log(1e-6);
+lb(strcmpi(newmodel.mets,'nad[c]')) = log(1e-5);
+lb(strcmpi(newmodel.mets,'nadh[c]')) = log(1e-5);
 
-ub(strcmpi(newmodel.mets,'o2[c]')) = log(mc(strcmpi(model.mets,'o2[c]')));
-ub(strcmpi(newmodel.mets,'q8[c]')) = log(mc(strcmpi(model.mets,'q8[c]')));
-ub(strcmpi(newmodel.mets,'q8h2[c]')) = log(mc(strcmpi(model.mets,'q8h2[c]')));
-ub(strcmpi(newmodel.mets,'mal[c]')) = log(mc(strcmpi(model.mets,'mal[c]')));
-ub(strcmpi(newmodel.mets,'fum[c]')) = log(mc(strcmpi(model.mets,'fum[c]')));
-ub(strcmpi(newmodel.mets,'nadph[c]')) = log(mc(strcmpi(model.mets,'nadph[c]')));
-ub(strcmpi(newmodel.mets,'nadp[c]')) = log(mc(strcmpi(model.mets,'nadp[c]')));
-ub(strcmpi(newmodel.mets,'succ[c]')) = log(mc(strcmpi(model.mets,'succ[c]')));
-ub(strcmpi(newmodel.mets,'pyr[c]')) = log(mc(strcmpi(model.mets,'pyr[c]')));
-ub(strcmpi(newmodel.mets,'co2[c]')) = log(mc(strcmpi(model.mets,'co2[c]')));
+ub(strcmpi(newmodel.mets,'glc[e]')) = log(mc(strcmpi(model.mets,'glc[e]')));
 
 
 knwn_id = zeros(nmet,1);

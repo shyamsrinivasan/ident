@@ -27,7 +27,7 @@ for ic = 1:length(C{1})
 end
 
 %get metabolite structure suitable for input to iconcetration.m
-vmet = {'h2o[c]','h[e]', 'h[c]', 'o2[e]'};
+vmet = {'h2o[c]','h2o[e]','h[e]','h[c]','o2[e]','pi[e]'};
 mets_idx = cellfun(@(x)strcmpi(x,vmet),model.mets,'UniformOutput',false);
 vmet_id = cellfun(@(x) find(x),mets_idx,'UniformOutput',false);
 % vmet_id = cell2mat(vmet_id);

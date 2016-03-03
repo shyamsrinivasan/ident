@@ -43,6 +43,7 @@ vu(strcmpi(model.rxns,'FORt2')) = 0;
 %Uptake Fluxes
 if any(Vuptake)
     vl(logical(Vuptake)) = -Vuptake(logical(Vuptake));
+%     vu(logical(Vuptake)) = -Vuptake(logical(Vuptake));
 end
 
 %change bounds for exchange metabolites

@@ -1,12 +1,14 @@
-function [mc,assignFlag,delGr,model,vCorrectFlag] = getiConEstimate(model,setupfun)
-
+function [mc,assignFlag,delGr,model,vCorrectFlag] =...
+         getiConEstimate(model,setupfun,mc,rxn_add)
 %setup problem with default constraints for thermodynamically active
-%reaction
+%reactions
 % delG > or < 0 and Vss < or > 0
+fprintf('Generating single feasible concentration sample...\n');
+
 fh = str2func(setupfun);
 % bounds = setupMetLP(model);
 % bounds = setupMetLP_toy(model);
-bounds = fh(model);
+bounds = fh(model,rxn_add,mc);
 
 %check
 if ~isfield(bounds,'A') 
@@ -33,13 +35,13 @@ if size(bounds.A,2) == length(bounds.mets)
         
         model.lb = exp(assignConc(bounds.lb,model,bounds));        
         model.ub = exp(assignConc(bounds.ub,model,bounds));
-        if ~isempty(delGr)
-            [delGr,assignFlux] = assignRxns(delGr,model,bounds);
-        end
-        
+%         if ~isempty(delGr)
+%             [delGr,assignFlux] = assignRxns(delGr,model,bounds);
+%         end        
         mc = exp(lnmc);
         mc(lnmc==0)=0;
 %         lnmc = mc;
+        fprintf('Sample generation Complete\n\n');
     else
         error('mcEst:LPinfeas',...
             'LP for thermodynamic metabolite conentrations is infeasible');

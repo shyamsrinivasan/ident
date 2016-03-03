@@ -53,7 +53,7 @@ for irxn = 1:length(Vex)
     prid = logical(model.S(:,Vex(irxn))>0); 
     
     if any(sbid)
-        mc_alls = prod(logical(mc(sbid)));
+%         mc_alls = prod(logical(mc(sbid)));
 %         if ~any(strcmpi(model.rxns{Vex(irxn)},'h2ot'))
 %             sbid(h2o) = 0;
 %         end
@@ -64,20 +64,31 @@ for irxn = 1:length(Vex)
 %             sbid(co2) = 0;
 %         end
 %         
-        if ~any(model.CMPS(sbid,Vex(irxn))) 
-            sbid([he hc]) = 0;     
-            cmp_s = [];
-        else
-            sbid = find(sbid);
-            cmp_s = sbid(logical(model.CMPS(sbid,Vex(irxn))));
-            sbid = setdiff(sbid,cmp_s);
-            sbid = logical(sparse(sbid,1,1,nmet,1));
-%             sbid = setdiff(sbid,[he h2o]);
-        end
-    end    
-
-    if any(prid)
-        mc_allp = prod(logical(mc(prid)));
+%         if ~any(model.CMPS(sbid,Vex(irxn))) 
+%             sbid([he hc]) = 0;     
+%             cmp_s = [];
+%         else
+%             sbid = find(sbid);
+%             cmp_s = sbid(logical(model.CMPS(sbid,Vex(irxn))));
+%             sbid = setdiff(sbid,cmp_s);
+%             sbid = logical(sparse(sbid,1,1,nmet,1));
+% %             sbid = setdiff(sbid,[he h2o]);
+%         end
+    end
+    
+%     if any(sbid)
+%         mc_alls = prod(logical(mc(sbid)));
+%         if ~any(model.CMPS(sbid,Vex(irxn)))
+%             sbid(vmet) = 0;
+%             cmp_s = [];
+%         else
+%             sbid = find(sbid);
+%             cmp_s = sbid(logical(model.CMPS(sbid,Vex(irxn))));
+%             sbid = setdiff(sbid,cmp_s);
+%         end            
+%     end
+%     if any(prid)
+%         mc_allp = prod(logical(mc(prid)));
 %         if ~any(strcmpi(model.rxns{Vex(irxn)},'h2ot'))
 %             prid(h2o) = 0;
 %         end
@@ -87,18 +98,29 @@ for irxn = 1:length(Vex)
 %         if ~any(strcmpi(model.rxns{Vex(irxn)},'CO2t'))
 %             prid(co2) = 0;
 %         end
-        if ~any(model.CMPS(prid,Vex(irxn)))
-            prid([he hc]) = 0;
-            cmp_p = [];
-        else
-            prid = find(prid);
-            cmp_p = prid(logical(model.CMPS(prid,Vex(irxn))));
-            prid = setdiff(prid,cmp_p);
-            prid = logical(sparse(prid,1,1,nmet,1));
-%             prid = setdiff(prid,[he h2o]);
-        end
-    end 
-
+%         if ~any(model.CMPS(prid,Vex(irxn)))
+%             prid([he hc]) = 0;
+%             cmp_p = [];
+%         else
+%             prid = find(prid);
+%             cmp_p = prid(logical(model.CMPS(prid,Vex(irxn))));
+%             prid = setdiff(prid,cmp_p);
+%             prid = logical(sparse(prid,1,1,nmet,1));
+% %             prid = setdiff(prid,[he h2o]);
+%         end
+%     end 
+%     
+%     if any(prid)
+%         mc_allp = prod(logical(mc(prid)));
+%         if ~any(model.CMPS(prid,Vex(irxn)))
+%             prid(vmet) = 0;
+%             cmp_p = [];
+%         else
+%             prid = find(prid);
+%             cmp_p = prid(logical(model.CMPS(prid,Vex(irxn))));
+%             prid = setdiff(prid,cmp_p);                       
+%         end
+%     end
     if ~isempty(cmp_s)
         cmp_s = logical(prod(mc(cmp_s).*(-model.S(cmp_s,Vex(irxn)))));
     else

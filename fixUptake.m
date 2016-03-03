@@ -1,8 +1,8 @@
 function Vuptake = fixUptake(model,Vup_struct)
 %fix uptake of reactions designated as fields in Vuptake to model.Vuptake
 
-if ~isfield(model,'Vuptake')
-    Vuptake = zeros(model.nt_rxn,1);
+Vuptake = zeros(model.nt_rxn,1);
+if ~isfield(model,'Vuptake')    
     if ~isempty(Vup_struct)
         rxns = fieldnames(Vup_struct);
     else
