@@ -1,8 +1,8 @@
 %script_extest
 clc
 addpath(genpath('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel'));
-rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\g6p_test.txt';
-cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\g6p_testC.txt';
+rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\gly_test.txt';
+cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\gly_testC.txt';
 %create model structure
 [FBAmodel,parameter,variable,nrxn,nmetab] = modelgen(rxfname);
 
@@ -11,16 +11,16 @@ cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\Kine
 
 %calculate delGr if concentrations cannot be sampled
 rxn_add = {'GLCpts','NADH16'};
-bounds = setupMetLP_g6p(FBAmodel,rxn_add,mc);
-[lnmc,assignFlag,delGr,vCorrectFlag] = assignConc(log(bounds.mc),FBAmodel,bounds);  
-parameter.delGr = delGr;
+% bounds = setupMetLP_g6p(FBAmodel,rxn_add,mc);
+% [lnmc,assignFlag,delGr,vCorrectFlag] = assignConc(log(bounds.mc),FBAmodel,bounds);  
+% parameter.delGr = delGr;
 
 % and/or
 
 % sample initial metabolite concentrations for estimating kinetic parameters
-% [mc,parameter,smp] = parallel_sampling(FBAmodel,parameter,'setupMetLP_g6p',[],mc,rxn_add);
+[mc,parameter,smp] = parallel_sampling(FBAmodel,parameter,'setupMetLP_g6p',met,mc,rxn_add);
 
-mc = iconcentration(FBAmodel,met,exp(lnmc));
+% mc = iconcentration(FBAmodel,met,exp(lnmc));
 % Vup_struct.exO2 = 1000;%mmole/gDCW.h
 % %fix flux uptakes 
 % Vuptake = fixUptake(model,Vup_struct);

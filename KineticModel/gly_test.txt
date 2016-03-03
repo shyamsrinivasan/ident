@@ -1,16 +1,18 @@
 Enzymes	Enzyme Name	 equation	Compensated Species	delta G (pH 7.2)	delGlb	delGub	Keq	kcat+(1/s)	kcat-(1/s)	Etot Conc	Vmax	"vss (Gur = -10, O2ur = -1000)"	EC	Substrate Km (mM)	Activators	Inhibitors	Regulator Km (mM)	Metab	Mclow (mM)	Mchigh (mM)
 GLCpts		glc[e] + pep[c] --> g6p[c] + pyr[c]		-9.1	-50.4	0.9		250	0			20.00	0	"1,0.18,1,1"				glc[e]	0.0556	0.0556
 PGI		[c] : g6p <==> f6p		3.132	-17.1	20.6		120				11.64	5.3.1.9	"0.28,0.147"				g6p[c]	3.48	3.48
-PFK		[c] : atp + f6p --> adp + fdp		-3.8	-53.9	21.4		49	0			11.64	2.7.1.11	"6e-2,1.25e-2,2e-1,1.25e-2"				f6p[c]	0.6	0.6
+PFK		[c] : atp + f6p --> adp + fdp + h	h[c]	-3.8	-53.9	21.4		49	0			11.64	2.7.1.11	"6e-2,1.25e-2,2e-1,1.25e-2,1"				f6p[c]	0.6	0.6
 FBA		[c] : fdp <==> dhap + g3p		4.2	-29.4	27.1		8.5				11.64	4.1.2.13					gap[c]	0.218	0.218
 TPI		[c] : g3p <==> dhap		7.598	-24.3	13.4			9000			-11.64	5.3.1.1					dhap[c]	0.167	0.167
-GAPD		[c] : g3p <==> 13dpg		-0.1	-12.8	62.6		268				27.77	1.2.1.12					3pg[c]	2.13	2.13
+GAPD		[c] : g3p + nad <==> 13dpg + h + nadh	h[c]	-0.1	-12.8	62.6		268				27.77	1.2.1.12					3pg[c]	2.13	2.13
 PGK		[c] : 3pg + atp <==> 13dpg + adp		-10.51	-19.2	56.1			654			-27.77	2.7.2.3					2pg[c]	0.399	0.399
 PGM		[c] : 2pg <==> 3pg		6.229	-23.1	14.6			530			-24.29	5.4.2.1					pep[c]	2.67	2.67
 ENO		[c] : 2pg <==> pep		-0.9	-22.9	14.7		355.79				24.29	4.2.1.11					pyr[c]	2.67	2.67
-PYK		[c] : atp + pyr <==> adp + pep		-31.12	-10.8	65.3		2540				-8.51	2.7.1.40	"0.33,5,0.07,1,0.03"				ru5p-D	0.111	0.111
+PYK		[c] : atp + pyr <==> adp + pep + h	h[c]	-31.12	-10.8	65.3		2540				-8.51	2.7.1.40	"0.33,5,0.07,0.03,1"				ru5p-D	0.111	0.111
 PYRt2r		pyr[e] <==> pyr[c]		0				2540	2540			-8.51		"5,5"						
 exPYR		pyr[e] <==>		0								8.51								
 exGLC		glc[e] <==>		0								-20.00								
-ATPs		[c] : atp --> adp		-30				1000	0			10.00		"6e-2,2e-1"						
-																				
+ATPs		[c] : atp --> adp		-30				1000	0			8.39		"6e-2,2e-1"						
+Htr		h[c] <==> h[e]										30.90								
+exH		h[e] <==>										30.90								
+NADH16		4 h[e] + nad[c] <==> 5 h[c] + nadh[c]			24.2	122.4	1.40E-15		200			-43.15	1.6.5.3	"1,4e-3,1,4e-3"						

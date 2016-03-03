@@ -32,7 +32,7 @@ end
 % [model,solverP,saveData] = imodel(model,1e9,ess_rxn,Vup_struct);
 
 % toy model
-[model,solverP,saveData] = imodel(model,1e6);
+[model,solverP,saveData] = imodel(model,5e7);
 
 % model.Vuptake = zeros(model.nt_rxn,1);
 % h2o = find(strcmpi(model.rxns,'exH2O'));
