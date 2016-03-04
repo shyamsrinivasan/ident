@@ -1,13 +1,27 @@
 %script_extest
 clc
 addpath(genpath('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel'));
-rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\gly_test.txt';
+rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\red_test.txt';
 cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\gly_testC.txt';
 %create model structure
 [FBAmodel,parameter,variable,nrxn,nmetab] = modelgen(rxfname);
 
 %obtain conentrations from file
 [mc,FBAmodel,met] = readCNCfromFile(cnfname,FBAmodel);
+
+%FBA or pFBA solution - optional
+%fix flux uptakes for FBA solution
+Vup_struct.exGLC = 20;%mmol/gDCW.h
+
+%designate reactions for which uptake should not be zero in FBA
+ess_rxn = {'exCO2','exH','exH2O','exPI','exO2','exGLC'};
+
+%Optional - FBAmodel.Vss already has the requiste information from the
+%excel file
+%assign initial fluxes and calculate FBA fluxes for direction
+FBAmodel.bmrxn = find(strcmpi(FBAmodel.rxns,'exPYR'));
+FBAmodel = FBAfluxes(FBAmodel,'fba',ess_rxn,Vup_struct);
+
 
 %calculate delGr if concentrations cannot be sampled
 rxn_add = {'GLCpts','NADH16'};

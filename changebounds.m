@@ -40,6 +40,15 @@ vu(strcmpi(model.rxns,'THD2')) = 0;
 vu(strcmpi(model.rxns,'SUCCt2_2')) = 0;
 vu(strcmpi(model.rxns,'FORt2')) = 0;
 
+vl(strcmpi(model.rxns,'FBP')) = 0;
+vu(strcmpi(model.rxns,'FBP')) = 0;
+vl(strcmpi(model.rxns,'PPC')) = 0;
+vl(strcmpi(model.rxns,'PPS')) = 0;
+vu(strcmpi(model.rxns,'PPS')) = 0;
+vl(strcmpi(model.rxns,'FRD7')) = 0;
+vu(strcmpi(model.rxns,'FRD7')) = 0;
+
+
 %Uptake Fluxes
 if any(Vuptake)
     vl(logical(Vuptake)) = -Vuptake(logical(Vuptake));

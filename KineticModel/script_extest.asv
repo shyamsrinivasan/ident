@@ -9,6 +9,20 @@ cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\Kine
 %obtain conentrations from file
 [mc,FBAmodel,met] = readCNCfromFile(cnfname,FBAmodel);
 
+%FBA or pFBA solution - optional
+%fix flux uptakes for FBA solution
+Vup_struct.exGLC = 20;%mmol/gDCW.h
+
+%designate reactions for which uptake should not be zero in FBA
+ess_rxn = {'exCO2','exH','exH2O','exPI','exO2','exGLC'};
+
+%Optional - FBAmodel.Vss already has the requiste information from the
+%excel file
+%assign initial fluxes and calculate FBA fluxes for direction
+FBAmodel.bmrxn = find(strcmpi(FBAmodel.rxns,'exP'));
+FBAmodel = FBAfluxes(FBAmodel,'pfba',ess_rxn,Vup_struct);
+
+
 %calculate delGr if concentrations cannot be sampled
 rxn_add = {'GLCpts','NADH16'};
 % bounds = setupMetLP_g6p(FBAmodel,rxn_add,mc);

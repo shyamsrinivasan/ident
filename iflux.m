@@ -50,7 +50,7 @@ for ic = 1:nc
         %transport fluxes    
         flux(Vex,ic) = TKinetics(model,pvec,mc(:,ic),Vex);
 
-        %other fixed exchaged fluxes    
+        %other fixed exchaged fluxes - currently sets them to 0  
         flux(VFex,ic) = EKinetics(model,pvec,mc(:,ic),VFex,flux(:,ic));
 
         %biomass

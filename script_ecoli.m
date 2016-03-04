@@ -19,13 +19,13 @@ rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\Kine
 Vup_struct.exGLC = 20;%mmol/gDCW.h
 Vup_struct.exO2 = 1000;%mmole/gDCW.h
 
-%designate reactions for which uptake should be zero in FBA
+%designate reactions for which uptake should not be zero in FBA
 ess_rxn = {'exCO2','exH','exH2O','exPI','exO2','exGLC'};
 
 %Optional - FBAmodel.Vss already has the requiste information from the
 %excel file
 %assign initial fluxes and calculate FBA fluxes for direction
-FBAmodel = FBAfluxes(FBAmodel,'pfba',ess_rxn,Vup_struct);
+FBAmodel = FBAfluxes(FBAmodel,'fba',ess_rxn,Vup_struct);
 
 %% Metabolite conecntrations 
 %extracellular metabolites in M moles/L

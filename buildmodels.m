@@ -21,8 +21,8 @@ Vind = addToVind(model,model.Vind,rxn_add,rxn_excep);
 he = find(strcmpi(model.mets,'h[e]'));
 hc = find(strcmpi(model.mets,'h[c]'));
 h2o = find(strcmpi(model.mets,'h2o[c]'));
-pie = find(strcmpi(model.mets,'pi[e]'));
-pic = find(strcmpi(model.mets,'pi[c]'));
+% pie = find(strcmpi(model.mets,'pi[e]'));
+% pic = find(strcmpi(model.mets,'pi[c]'));
 co2 = find(strcmpi(model.mets,'co2[c]'));
 vmet = [he hc h2o co2];
         
