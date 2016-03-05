@@ -20,7 +20,7 @@ ess_rxn = {'exCO2','exH','exH2O','exPI','exO2','exGLC'};
 %excel file
 %assign initial fluxes and calculate FBA fluxes for direction
 FBAmodel.bmrxn = find(strcmpi(FBAmodel.rxns,'exPYR'));
-FBAmodel = FBAfluxes(FBAmodel,'fba',ess_rxn,Vup_struct);
+FBAmodel = FBAfluxes(FBAmodel,'any',ess_rxn,Vup_struct);
 
 
 %calculate delGr if concentrations cannot be sampled
@@ -32,7 +32,7 @@ rxn_add = {'GLCpts','NADH16'};
 % and/or
 
 % sample initial metabolite concentrations for estimating kinetic parameters
-[mc,parameter,smp] = parallel_sampling(FBAmodel,parameter,'setupMetLP_g6p',met,mc,rxn_add);
+[mc,parameter,smp] = parallel_sampling(FBAmodel,parameter,'setupMetLP_red',met,mc,rxn_add);
 
 % mc = iconcentration(FBAmodel,met,exp(lnmc));
 % Vup_struct.exO2 = 1000;%mmole/gDCW.h

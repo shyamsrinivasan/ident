@@ -1,5 +1,5 @@
-function [model,Vss] = run_pFBA(model,ess_rxn,Vup_struct)
-%convert to irreversible model
+function vLPmin = run_pFBA(model,ess_rxn,Vup_struct)
+% convert to irreversible model
 [modelIrrev,~,~,irrev2rev]=convertIrreversible(model);
 
 %adding sum of all fluxes to Irrev S
@@ -57,7 +57,8 @@ else
 end
 
 Vss(abs(Vss)<1e-6) = 0;
-model.Vss = Vss;
+vLPmin.v = Vss;
+% model.Vss = Vss;
 
 
     

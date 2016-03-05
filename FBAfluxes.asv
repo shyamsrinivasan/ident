@@ -25,26 +25,46 @@ end
 switch lower(option)
     case 'fba'
         %calculate FBA fluxes and growth rate
-        model = calculateFBAfluxes(model);
-        
-    case 'pfba'       
-        model = calculatePFBAfluxes(model);
-        
+%         [vLP,flag] = estimateLPgrowth(model,ess_rxn,bounds);
+        model = calculateFBAfluxes();
+        %Determine Max and Min for flux to be constrained with
+%         if ~prxnid
+%             prxnid = model.bmrxn;
+%         end        
+%         [vLPmax,vLPmin,model] = solveLP(model,bounds,ess_rxn,prxnid,Vup_struct);
+%         
+%         if vLPmax.flag
+%             %steady state FBA fluxes for direction
+%             model.Vss = vLPmax.v;
+%         else
+%             fprintf('FBA fluxes unassigned\n');
+%         end
+    case 'pfba'
+        % calcuate maximum objective (growth rate, etc)
+        model = calculatePFBAfluxes();
+%         if ~prxnid
+%             prxnid = model.bmrxn;
+%         end
+% %         atp = find(strcmpi(model.rxns,'ATPM'));
+%         [vLPmax,~,model] = solveLP(model,bounds,ess_rxn,prxnid,Vup_struct);
+%         model.vl(model.c==1) = -vLPmax.obj;
+%         
+%         %claculate pFBA fluxes and irreversible model
+%         model = run_pFBA(model,ess_rxn,Vup_struct);
     case 'any'
         % calculate fluxes using either fba or pfba whichever is feasible        
         % first use pfba
         try
-            model = calculatePFBAfluxes(model);
+            model = calculatePFBAfluxes(model,prxnid);
         catch % calculate pfba
-            fprintf('\n pFBA was unsuccesful \n Trying FBA now...\n');
-            model = calculateFBAfluxes(model);
+            model = calculateFBAfluxes(model,prxnid);
         end        
     otherwise
         fprintf('Not calculating FBA SS fluxes. \nOnly Calculating bounds.\n');
         [~,~,model] = solveLP(model,bounds,ess_rxn,model.bmrxn,Vup_struct);
 end
 
-function model = calculatePFBAfluxes(model)
+function model = calculatePFBAfluxes()
 % calcuate maximum objective (growth rate, etc)
 if ~prxnid
     prxnid = model.bmrxn;
@@ -59,10 +79,9 @@ vLPmin = run_pFBA(model,ess_rxn,Vup_struct);
 if vLPmin.flag
     model.Vss = vLPmin.v;
 end
-fprintf('pFBA was successful\n');
 end
 
-function model = calculateFBAfluxes(model)
+function model = calculateFBAfluxes()
 % Determine Max and Min for flux to be constrained with
 if ~prxnid
     prxnid = model.bmrxn;
@@ -72,7 +91,6 @@ end
 if vLPmax.flag
     % steady state FBA fluxes for direction
     model.Vss = vLPmax.v;
-    fprintf('FBA successful\n');
 else
     fprintf('FBA fluxes unassigned\n');
 end
