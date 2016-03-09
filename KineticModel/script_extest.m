@@ -24,7 +24,7 @@ FBAmodel = FBAfluxes(FBAmodel,'any',ess_rxn,Vup_struct);
 
 
 %calculate delGr if concentrations cannot be sampled
-rxn_add = {'GLCpts','NADH16'};
+rxn_add = {'GLCpts','NADH16','ATPS4r'};
 % bounds = setupMetLP_g6p(FBAmodel,rxn_add,mc);
 % [lnmc,assignFlag,delGr,vCorrectFlag] = assignConc(log(bounds.mc),FBAmodel,bounds);  
 % parameter.delGr = delGr;
