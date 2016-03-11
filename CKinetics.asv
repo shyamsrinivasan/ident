@@ -132,11 +132,11 @@ for ic = 1:nc
         tfphe = strcmpi(pmet,'h[e]');
         if any(tfshc)||any(tfshe)
             Sb(tfshc) = 1;
-            Sb(tfshe) = 1;
+            Sb(tfhe) = 1;
         end            
         if any(tfphc) || any(tfphe)
-            Sp(tfphc) = 1;
-            Sp(tfphe) = 1;
+            Sp([tfshc tfshe]) = 1;
+            Sp(
         end
         if model.rev(Vind(irxn))          
             if all(mc(sbid)>0) && all(mc(prid)>0)

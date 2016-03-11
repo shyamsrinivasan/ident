@@ -15,14 +15,17 @@ nrm_sb = prod(mc(sbid)./K(sbid,irxn));
 %normalized product
 nrm_pr = prod(mc(prid)./K(prid,irxn));
 
+Sb = -model.S(sbid,irxn); 
+Sp = model.S(prid,irxn);   
+
 if isnan(kcatfwd)
     pvec.kcat_fwd(irxn) = model.Keq(irxn)*kcatbkw*...
-                          prod(K(sbid,irxn))/prod(K(prid,irxn));
+                          prod(K(sbid,irxn).^Sb)/prod(K(prid,irxn).^Sp);
 %     pvec.kcat_fwd(irxn) = nrm_pr/nrm_sb*kcatbkw*exp(-delGr/RT);    
 end
 if isnan(kcatbkw)
     pvec.kcat_bkw(irxn) = (kcatfwd/model.Keq(irxn))*...
-                          prod(K(prid,irxn))/prod(K(sbid,irxn));
+                          prod(K(prid,irxn).^Sp)/prod(K(sbid,irxn).^Sb);
 %     pvec.kcat_bkw(irxn) = nrm_sb/nrm_pr*kcatfwd*exp(delGr/RT);
 end
 if model.Vss(irxn)==0

@@ -42,7 +42,7 @@ if size(bounds.A,2) == length(bounds.mets)
         mc(lnmc==0)=0;
 %         lnmc = mc;
         fprintf('Sample generation Complete\n\n');
-    else
+    elseif LPmax.flag<0
         error('mcEst:LPinfeas',...
             'LP for thermodynamic metabolite conentrations is infeasible');
     end

@@ -63,11 +63,8 @@ for irxn = 1:nrxn
     %no parameters for cofactors - assumed abundant 
     %cofactros are assumed as compensated species
     %hence
-    if any(strcmpi(model.rxns{Vind(irxn)},'PPC')) ||...
-        any(strcmpi(model.rxns{Vind(irxn)},'ATPS4r'))
-        sbid(h2o) = 0;
-        prid(h2o) = 0;       
-    else
+    if any(str
+    if ~any(strcmpi(model.rxns{Vind(irxn)},'PPC'))
         if any(sbid)
             if ~any(model.CMPS(sbid,Vind(irxn))) 
                 sbid(vmet) = 0;
@@ -92,9 +89,9 @@ for irxn = 1:nrxn
                 prid = logical(sparse(prid,1,1,nmet,1));
             end
         end
-    end
-    if ~any(strcmpi(model.rxns{Vind(irxn)},'PPC'))        
-    else 
+    else
+        sbid(h2o) = 0;
+        prid(h2o) = 0;   
 %         if ~any(model.CMPS(sbid,Vind(irxn)))  
 %             sbid(vmet) = 0;
 %             cmp_s = [];

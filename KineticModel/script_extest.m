@@ -2,7 +2,7 @@
 clc
 addpath(genpath('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel'));
 rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\red_test.txt';
-cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\gly_testC.txt';
+cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\red_testC.txt';
 %create model structure
 [FBAmodel,parameter,variable,nrxn,nmetab] = modelgen(rxfname);
 
@@ -24,7 +24,7 @@ FBAmodel = FBAfluxes(FBAmodel,'any',ess_rxn,Vup_struct);
 
 
 %calculate delGr if concentrations cannot be sampled
-rxn_add = {'GLCpts','NADH16','ATPS4r'};
+rxn_add = {'GLCpts','NADH16','ATPS4r','CYTBD'};
 % bounds = setupMetLP_g6p(FBAmodel,rxn_add,mc);
 % [lnmc,assignFlag,delGr,vCorrectFlag] = assignConc(log(bounds.mc),FBAmodel,bounds);  
 % parameter.delGr = delGr;
