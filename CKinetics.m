@@ -103,21 +103,21 @@ for ic = 1:nc
 %         end
         if ~isempty(cmp_s)
             cmp_s = prod(mc(cmp_s).*(-model.S(cmp_s,Vind(irxn))));
-            if cmp_s > 0
-                cmp_s = 1;
-            else
-                cmp_s = 0;
-            end
+%             if cmp_s > 0
+%                 cmp_s = 1;
+%             else
+%                 cmp_s = 0;
+%             end
         else
             cmp_s = 1;
         end
         if ~isempty(cmp_p)
             cmp_p = prod(mc(cmp_p).*(model.S(cmp_p,Vind(irxn))));
-            if cmp_p > 0
-                cmp_p = 1;
-            else
-                cmp_p = 0;
-            end
+%             if cmp_p > 0
+%                 cmp_p = 1;
+%             else
+%                 cmp_p = 0;
+%             end
         else
             cmp_p = 1;
         end
