@@ -63,11 +63,8 @@ vhc = find(strcmpi(newmodel.mets,'h[c]'));
 
 vatps = find(strcmpi(newmodel.rxns,'ATPS4r'));
 
-
-
-     
-    
-
+vother = setdiff(1:length(newmodel.rxns),vatps);
+newmodel.S([vhe vhc],vother) = 0;
 
 newmodel.S(:,[Vex VFex bmrxn]) = [];
 newmodel.Keq([Vex VFex bmrxn]) = [];
@@ -104,15 +101,20 @@ lb(strcmpi(newmodel.mets,'atp[c]')) = log(1e-6);
 lb(strcmpi(newmodel.mets,'adp[c]')) = log(1e-6);
 lb(strcmpi(newmodel.mets,'fdp[c]')) = log(1e-5);
 lb(strcmpi(newmodel.mets,'dhap[c]')) = log(1e-4);
-% lb(strcmpi(newmodel.mets,'pi[c]')) = log(5e-4);
+lb(strcmpi(newmodel.mets,'pi[c]')) = log(5e-4);
 lb(strcmpi(newmodel.mets,'g3p[c]')) = log(5e-4);
-lb(strcmpi(newmodel.mets,'h[c]')) = log(1e-6);
-lb(strcmpi(newmodel.mets,'h[e]')) = log(1e-5);
+lb(strcmpi(newmodel.mets,'h[c]')) = log(1e-7);
+lb(strcmpi(newmodel.mets,'nadh[c]')) = log(1e-6);
+% lb(strcmpi(newmodel.mets,'h[e]')) = log(1e-8);
 
 ub(strcmpi(newmodel.mets,'glc[e]')) = log(mc(strcmpi(model.mets,'glc[e]')));
 ub(strcmpi(newmodel.mets,'dhap[c]')) = log(3e-4);
-% ub(strcmpi(newmodel.mets,'pi[c]')) = log(5e-3);
-
+ub(strcmpi(newmodel.mets,'h[c]')) = log(1e-7);
+ub(strcmpi(newmodel.mets,'h[e]')) = log(5e-4);
+ub(strcmpi(newmodel.mets,'pi[c]')) = log(5e-3);
+ub(strcmpi(newmodel.mets,'q8h2[c]')) = log(1e-3);
+ub(strcmpi(newmodel.mets,'nadh[c]')) = log(1e-3);
+ub(strcmpi(newmodel.mets,'nad[c]')) = log(1e-2);
 
 knwn_id = zeros(nmet,1);
 for imet = 1:nmet
