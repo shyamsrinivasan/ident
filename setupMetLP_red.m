@@ -103,14 +103,14 @@ lb(strcmpi(newmodel.mets,'fdp[c]')) = log(1e-5);
 lb(strcmpi(newmodel.mets,'dhap[c]')) = log(1e-4);
 lb(strcmpi(newmodel.mets,'pi[c]')) = log(5e-4);
 lb(strcmpi(newmodel.mets,'g3p[c]')) = log(5e-4);
-lb(strcmpi(newmodel.mets,'h[c]')) = log(1e-6);
+lb(strcmpi(newmodel.mets,'h[c]')) = log(10^(-7.5));
 lb(strcmpi(newmodel.mets,'nadh[c]')) = log(1e-6);
 % lb(strcmpi(newmodel.mets,'h[e]')) = log(1e-8);
 
 ub(strcmpi(newmodel.mets,'glc[e]')) = log(mc(strcmpi(model.mets,'glc[e]')));
 ub(strcmpi(newmodel.mets,'dhap[c]')) = log(3e-4);
-ub(strcmpi(newmodel.mets,'h[c]')) = log(1e-5);
-ub(strcmpi(newmodel.mets,'h[e]')) = log(3e-1);
+ub(strcmpi(newmodel.mets,'h[c]')) = log(1e-7);
+ub(strcmpi(newmodel.mets,'h[e]')) = log(1e-6);
 ub(strcmpi(newmodel.mets,'pi[c]')) = log(5e-3);
 ub(strcmpi(newmodel.mets,'q8h2[c]')) = log(1e-3);
 ub(strcmpi(newmodel.mets,'nadh[c]')) = log(1e-3);
@@ -142,7 +142,10 @@ newmodel.ub = ub(~logical(knwn_id));
 newmodel.mets_kn = newmodel.mets(logical(knwn_id));
 newmodel.mets = newmodel.mets(~logical(knwn_id));
 
-
+%% for ATPS4r
+hc = find(strcmpi(newmodel.mets,'h[c]'));
+he = find(strcmpi(newmodel.mets,'h[e]'));
+newmodel.A(strcmpi(newmodel.rxns,'ATPS4r'),[hc he]) = [-4 4];
 
 
 
