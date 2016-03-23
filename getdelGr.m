@@ -14,4 +14,6 @@ for ipt = 1:size(lnmc,2)
             delGr(i,ipt) = 0;
         end
     end
+    %calculate delGr for ATPS4r
+%     if any(strcmpi(model.rxns,'ATPS4r'))
 end

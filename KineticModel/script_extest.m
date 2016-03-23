@@ -34,7 +34,7 @@ rxn_add = {'GLCpts','NADH16','ATPS4r','CYTBD'};
 % sample initial metabolite concentrations for estimating kinetic parameters
 [mc,parameter,smp] = parallel_sampling(FBAmodel,parameter,'setupMetLP_red',met,mc,rxn_add);
 
-[flux,vflux] = fluxATPS4r(FBAmodel,parameter,mc);
+% [flux,vflux] = fluxATPS4r(FBAmodel,parameter,mc);
 
 % mc = iconcentration(FBAmodel,met,exp(lnmc));
 % Vup_struct.exO2 = 1000;%mmole/gDCW.h

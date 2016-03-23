@@ -140,13 +140,16 @@ for irxn = 1:nrxn
     %sampling done only for unknown values
 %     fprintf('%s \t delG = %3.6g \t Vflux = %3.6g\t',model.rxns{Vind(irxn)},...
 %              pvec.delGr(Vind(irxn)),...
-%              model.Vss(Vind(irxn)));    
-    pvec = samplekcat(model,pvec,sbid,prid,Vind(irxn),mc);
+%              model.Vss(Vind(irxn)));  
+    if ~any(strcmpi(model.rxns{Vind(irxn)},'ATPS4r'))
+        %ATPsynthase does not strictly obey Briggs Haldane
+        pvec = samplekcat(model,pvec,sbid,prid,Vind(irxn),mc);
+    end
     
     pvec.Vmax(Vind(irxn)) = 1;
     pvec.Vmax(model.Vss==0) = 0;
     
-    %#check for vss and delGr direction    
+    %#check for vss and delGr direction      
     flux(Vind(irxn)) = CKinetics(model,pvec,mc,Vind(irxn));
     if pvec.delGr(Vind(irxn)) ~= 0
         if flux(Vind(irxn))*pvec.delGr(Vind(irxn))<0

@@ -20,7 +20,7 @@ lb_slack(lb_slack==0) = 1;%1.3201;%5e-1;
 % vpfk = strcmpi(newmodel.rxns,'pfk');
 % lb_slack(vpfk) = 2;
 lb_slack(strcmpi(newmodel.rxns,'fba')) = 5;
-lb_slack(strcmpi(newmodel.rxns,'atps4r')) = 2;
+lb_slack(strcmpi(newmodel.rxns,'atps4r')) = 10;
 % lb_slack(strcmpi(newmodel.rxns,'pgk')) = 2;
 % lb_slack(strcmpi(newmodel.rxns,'tpi')) = 3;
 % lb_slack(strcmpi(newmodel.rxns,'gapd')) = 2;
