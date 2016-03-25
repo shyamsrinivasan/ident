@@ -166,10 +166,13 @@ if ~f_flag
     finalSS.flux = Sol.flux(:,end);
 end
 
+%plot
+rmvlst = model.mets(model.nint_metab+1:model.nt_metab);
+rmvlst = {rmvlst{:},'h2o[c]','h[c]'}; 
+var.mets = removemets(model.mets,rmvlst);
+timecourseplots(Sol.t,Sol.y,'c',model,var);
+var1.rxns = model.rxns([1 2 3 4]);
+timecourseplots(Sol.t,Sol.flux,'f',model,var1);
 %plot for debugging purposes only
-figure
-yS = Sol.y(1:model.nint_metab,:);
-yS(strcmpi(model.mets,'h2o[c]'),:) = [];
-plot(Sol.t,yS);
 return;
 

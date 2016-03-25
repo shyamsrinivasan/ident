@@ -298,12 +298,13 @@ if all(check(Vind)>0)
         end
     end  
     
-    %atp maintanance
-    atp = strcmpi(model.mets,'atp[c]');
-    if any(atp) && any(strcmpi(model.rxns,'atpm'))
-        pvec.Vmax(strcmpi(model.rxns,'atpm')) =...
-        model.Vss(strcmpi(model.rxns,'atpm'))/(mc(atp)/1e-5/(1+mc(atp)/1e-5))/3600;
-    end
+       
+    %atp maintanance - include in Vind so calculated using CKinetics
+%     atp = strcmpi(model.mets,'atp[c]');
+%     if any(atp) && any(strcmpi(model.rxns,'atpm'))
+%         pvec.Vmax(strcmpi(model.rxns,'atpm')) =...
+%         model.Vss(strcmpi(model.rxns,'atpm'))/(mc(atp)/1e-5/(1+mc(atp)/1e-5))/3600;
+%     end
     %for redox reactions    
 %     [~,rk,vred] = RedoxKinetics(model,pvec,mc,flux);
 %     pvec = getRKparameter(model,pvec,mc,vred);
@@ -332,6 +333,10 @@ if all(check(Vind)>0)
     pvec.Vmax(model.VFex) = 1;    
     pvec.Vmax(model.Vss==0) = 0;
     pvec.feasible = 1;
+    
+    %PI2tr
+    pvec.Vmax(strcmpi(model.rxns,'PIt2r')) = 1e-5;
+    pvec.Vmax(strcmpi(model.rxns,'H2Ot')) = 1e-3;
 else
     fprintf('Thermodynamically infeasible parameters\n');
     fprintf('Discontinuing\n');

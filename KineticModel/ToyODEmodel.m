@@ -15,6 +15,10 @@ dXdt(1:nin_m) = (1./model.imc(1:nin_m)).*(model.S(1:nin_m,:)*flux);
 hc = strcmpi('h[c]',model.mets);
 dXdt(hc) = 0;
 
+%change pi[c]
+% pic = strcmpi('pi[c]',model.mets);
+% dXdt(pic) = dXdt(pic)+0.001;
+
 %Extracellular
 dXdt(nin_m+1:nt_m) = 0;%
 
