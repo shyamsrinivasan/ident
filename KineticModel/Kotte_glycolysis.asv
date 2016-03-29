@@ -1,0 +1,50 @@
+%model for bistability in gluconeogenesis, Kotte 2014
+function dM = Kotte_glycolysis(t,M)
+
+%parameters
+kEcat
+KEacetate
+KFbpFBP
+VFbpmax
+Lfbp
+KFbpPEP
+vEXmax
+KEXPEP
+vemax
+KeFBP
+ne
+d
+
+%acetate --E--> PEP --vEX--> FBP --Fbp--> Nothing
+% u(1) --M(1)--> M(2) --vEX--> M(3) --Fbp--> Nothing
+%regulation
+%PEP ---> Fbp
+%FBP ---| Cra
+%Cra ---> E
+
+%metabolic fluxes
+%J(E, acetate)
+J = kEcat*M(1)*acetate/(acetate+KEacetate);
+
+%vFbp(PEP,FBP)
+ratio = 1+M(3)/KFbpFBP;
+vFbp = vFbpmax*(ratio-1)*(ratio)^4/(ratio^4+Lfbp*(1+M(2)/KFbpPEP));
+
+%vEX(PEP)
+vEX = vEXmax*M(2)/(M(2)+KEXPEP);
+
+%enzyme production fluxes
+%E(FBP) for J (%FBP ---| Cra and Cra ---> E)
+fFBP = vemax*(1-1/(1+(KeFBP/M(3))^ne));
+
+%differential equations
+%enzymes
+%E
+dM(1) = fFBP - d*M(1);
+
+%PEP
+dM(2) = J - vEX;
+
+%FBP
+dM(3) = J - vFbp;
+
