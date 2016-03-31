@@ -2,19 +2,8 @@
 function dM = Kotte_glycolysis(t,M)
 dM = zeros(4,1);
 
-%parameters
-kEcat
-KEacetate
-KFbpFBP
-VFbpmax
-Lfbp
-KFbpPEP
-vEXmax
-KEXPEP
-vemax
-KeFBP
-ne
-d
+% parameters
+d = 0.18; %or 0.25 or 0.35
 
 %acetate --E--> PEP --vEX--> FBP --Fbp--> Nothing
 % u(1) --M(1)--> M(2) --vEX--> M(3) --Fbp--> Nothing
