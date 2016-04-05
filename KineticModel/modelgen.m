@@ -465,10 +465,10 @@ end
 model_data.b = zeros(nt_metab,1);
 model_data.c = sparse(1,bmrxn,1,1,nt_rxn)';
 model_data.vl = zeros(nt_rxn,1);
-model_data.vl(model_data.vl==0) = -100;
+model_data.vl(model_data.vl==0) = -500;
 model_data.vl(bmrxn) = 0;
 model_data.vu = zeros(nt_rxn,1);
-model_data.vu(model_data.vu==0) = 100;
+model_data.vu(model_data.vu==0) = 500;
 
 %if runFBA
     %build FBA matrices

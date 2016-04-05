@@ -1,5 +1,5 @@
 %script_extest
-clc
+% clc
 addpath(genpath('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel'));
 rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\red_test2.txt';
 cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\red_testC.txt';
@@ -45,7 +45,7 @@ rxn_add = {'GLCpts','NADH16','ATPS4r','CYTBD'};
 % end
 
 %get parameter estimates - estimate kinetic parameters in an ensemble
-FBAmodel.rxn_add = rxn_add;
+% FBAmodel.rxn_add = rxn_add;
 
 ensb = parallel_ensemble(FBAmodel,mc,parameter,rxn_add);
 

@@ -34,7 +34,7 @@ end
 % vl(strcmpi(model.rxns,'ATPS4r')) = -100;
 % vu(strcmpi(model.rxns,'ATPS4r')) = 0;
 vl(strcmpi(model.rxns,'NADTRHD')) = 0;
-vu(strcmpi(model.rxns,'NADTRHD')) = 100;
+vu(strcmpi(model.rxns,'NADTRHD')) = 500;
 vl(strcmpi(model.rxns,'THD2')) = 0;
 vu(strcmpi(model.rxns,'THD2')) = 0;
 vu(strcmpi(model.rxns,'SUCCt2_2')) = 0;
@@ -61,7 +61,7 @@ end
 
 %atp maintanance
 vl(strcmpi(model.rxns,'ATPM')) = 8.39;
-vu(strcmpi(model.rxns,'ATPM')) = 100;
+vu(strcmpi(model.rxns,'ATPM')) = 500;
 
 %Growth Fluxes
 if fixgrowth

@@ -9,14 +9,6 @@ end
 %reactions to consider for kinetics other than Vind
 Vind = addToVind(model,model.Vind,rxn_add,rxn_excep);
 
-% Vind = [model.Vind find(strcmpi(model.rxns,'GLCpts'))];
-% Vind = [Vind find(strcmpi(model.rxns,'NADTRHD'))];
-% Vind = [Vind find(strcmpi(model.rxns,'THD2'))];
-% Vind = [Vind find(strcmpi(model.rxns,'CYTBD'))];
-% %         find(strcmpi(model.rxns,'NADH16'))...
-% %         find(strcmpi(model.rxns,'ATPS4r'))];
-
-
 %metabolites that do not affect thermodynamic equilibrium  
 he = find(strcmpi(model.mets,'h[e]'));
 hc = find(strcmpi(model.mets,'h[c]'));
@@ -151,6 +143,7 @@ for irxn = 1:nrxn
     
     %#check for vss and delGr direction      
     flux(Vind(irxn)) = CKinetics(model,pvec,mc,Vind(irxn));
+    flux = ETCflux(model,mc,flux);
     if pvec.delGr(Vind(irxn)) ~= 0
         if flux(Vind(irxn))*pvec.delGr(Vind(irxn))<0
             check(Vind(irxn)) = 1;

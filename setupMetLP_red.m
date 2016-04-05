@@ -12,7 +12,7 @@ newmodel.Vss = model.Vss;
 newmodel.rxns = model.rxns;
 newmodel.CMPS = model.CMPS;
 
-% newmodel = addremoveRxns(newmodel);
+newmodel = addremoveRxns(newmodel,{'ATPS4r'});
 
 %% %remove reactions with zero fluxes
 newmodel.S(:,abs(newmodel.Vss)<1e-7) = [];
@@ -62,8 +62,9 @@ vhe = find(strcmpi(newmodel.mets,'h[e]'));
 vhc = find(strcmpi(newmodel.mets,'h[c]'));   
 
 vatps = find(strcmpi(newmodel.rxns,'ATPS4r'));
+vnadh16 = find(strcmpi(newmodel.rxns,'NADH16'));
 
-vother = setdiff(1:length(newmodel.rxns),vatps);
+vother = setdiff(1:length(newmodel.rxns),[vatps,vnadh16]);
 newmodel.S([vhe vhc],vother) = 0;
 
 newmodel.S(:,[Vex VFex bmrxn]) = [];
@@ -103,18 +104,19 @@ lb(strcmpi(newmodel.mets,'fdp[c]')) = log(1e-5);
 lb(strcmpi(newmodel.mets,'dhap[c]')) = log(1e-6);
 lb(strcmpi(newmodel.mets,'pi[c]')) = log(5e-4);
 lb(strcmpi(newmodel.mets,'g3p[c]')) = log(5e-5);
-lb(strcmpi(newmodel.mets,'h[c]')) = log(1e-9);
-lb(strcmpi(newmodel.mets,'nadh[c]')) = log(1e-6);
+lb(strcmpi(newmodel.mets,'h[c]')) =  log(1e-7);
+lb(strcmpi(newmodel.mets,'nadh[c]')) = log(5e-3);
 lb(strcmpi(newmodel.mets,'h[e]')) = log(1e-5);
+lb(strcmpi(newmodel.mets,'q8[c]')) = log(1e-3);
 
 ub(strcmpi(newmodel.mets,'glc[e]')) = log(mc(strcmpi(model.mets,'glc[e]')));
 ub(strcmpi(newmodel.mets,'dhap[c]')) = log(3e-4);
-ub(strcmpi(newmodel.mets,'h[c]')) = log(1e-8);
-ub(strcmpi(newmodel.mets,'h[e]')) = log(1.6e-5);
+ub(strcmpi(newmodel.mets,'h[c]')) = log(1e-6);
+ub(strcmpi(newmodel.mets,'h[e]')) = log(1.6e-4);
 ub(strcmpi(newmodel.mets,'pi[c]')) = log(5e-3);
-ub(strcmpi(newmodel.mets,'q8h2[c]')) = log(1e-3);
+ub(strcmpi(newmodel.mets,'q8h2[c]')) = log(2e-4);
 ub(strcmpi(newmodel.mets,'nadh[c]')) = log(1e-3);
-ub(strcmpi(newmodel.mets,'nad[c]')) = log(1e-2);
+ub(strcmpi(newmodel.mets,'nad[c]')) = log(5e-1);
 
 knwn_id = zeros(nmet,1);
 for imet = 1:nmet
@@ -126,6 +128,31 @@ end
 %% %setup original problem
 %Ax <=b 
 A = newmodel.S';
+b = log(newmodel.Keq)-A(:,logical(knwn_id))*lb(logical(knwn_id));
+%% for NADH16 - check sign of inequality
+R = 0.008314;%kJ/mol.K
+T = 298;%K
+F = 0.0965;%kJ/mol.mV
+Z = R*T/F;
+sbid = newmodel.S(:,strcmpi(newmodel.rxns,'NADH16'))<0;
+prid = newmodel.S(:,strcmpi(newmodel.rxns,'NADH16'))>0;
+hc = find(strcmpi(newmodel.mets,'h[c]'));
+he = find(strcmpi(newmodel.mets,'h[e]'));
+newmodel.A(strcmpi(newmodel.rxns,'NADH16'),sbid) = (1-0.7)/2;
+newmodel.A(strcmpi(newmodel.rxns,'NADH16'),prid) = -(1-0.7)/2;
+newmodel.A(strcmpi(newmodel.rxns,'NADH16'),[hc he]) = [-2 2];
+b(strcmpi(newmodel.rxns,'NADH16')) = 390*(1-0.7)/Z;%redox potential difference in mV
+%% for ATPS4r
+delG_atphydro = -30.5;%kJ/mol.K
+sbid = newmodel.S(:,strcmpi(newmodel.rxns,'ATPS4r'))<0;
+prid = newmodel.S(:,strcmpi(newmodel.rxns,'ATPS4r'))>0;
+hc = find(strcmpi(newmodel.mets,'h[c]'));
+he = find(strcmpi(newmodel.mets,'h[e]'));
+newmodel.A(strcmpi(newmodel.rxns,'ATPS4r'),sbid) = (1-0.7);
+newmodel.A(strcmpi(newmodel.rxns,'ATPS4r'),prid) = -(1-0.7);
+newmodel.A(strcmpi(newmodel.rxns,'ATPS4r'),[hc he]) = [4 -4];
+b(strcmpi(newmodel.rxns,'ATPS4r')) = delG_atphydro*(1-0.7)/(R*T);%redox potential difference in mV
+%%
 A_ub = A(:,~logical(knwn_id));
 newmodel.A = A_ub;
 newmodel.A_kn = A(:,logical(knwn_id));
@@ -142,10 +169,11 @@ newmodel.ub = ub(~logical(knwn_id));
 newmodel.mets_kn = newmodel.mets(logical(knwn_id));
 newmodel.mets = newmodel.mets(~logical(knwn_id));
 
+
 %% for ATPS4r
-hc = find(strcmpi(newmodel.mets,'h[c]'));
-he = find(strcmpi(newmodel.mets,'h[e]'));
-newmodel.A(strcmpi(newmodel.rxns,'ATPS4r'),[hc he]) = [-4 4];
+% hc = find(strcmpi(newmodel.mets,'h[c]'));
+% he = find(strcmpi(newmodel.mets,'h[e]'));
+% newmodel.A(strcmpi(newmodel.rxns,'ATPS4r'),[hc he]) = [-4 4];
 
 
 

@@ -46,6 +46,8 @@ for ic = 1:nc
     if isempty(idx)
 
         flux(Vind,ic) = CKinetics(model,pvec,mc(:,ic),Vind);
+        
+        flux = ETCflux(model,mc,flux);
 
         %transport fluxes    
         flux(Vex,ic) = TKinetics(model,pvec,mc(:,ic),Vex);
