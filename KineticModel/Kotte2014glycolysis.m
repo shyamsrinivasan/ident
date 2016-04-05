@@ -12,11 +12,11 @@ out{9} = [];
 function dM = fun_eval(t,kmrgd,kEcat,KEacetate,...
                          KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
                          vEXmax,KEXPEP,...
-                         vemax,KeFBP,ne)
-dM = zeros(4,1);
+                         vemax,KeFBP,ne,acetate,d)
+dM = zeros(3,1);
                      
 %J(E, acetate)
-flux(1) = kEcat.*kmrgd(1).*kmrgd(4)./(kmrgd(4)+KEacetate);
+flux(1) = kEcat.*kmrgd(1).*acetate./(acetate+KEacetate);
 %vFbp(PEP,FBP)
 ratio = 1+kmrgd(3)/KFbpFBP;
 flux(3) = vFbpmax.*(ratio-1).*(ratio).^4/(ratio.^4+Lfbp*(1+kmrgd(2)./KFbpPEP));
@@ -35,57 +35,58 @@ dM(2) = flux(1) - flux(2);
 %FBP
 dM(3) = flux(2) - flux(3);
 %acetate
-dM(4) = 0;
+% dM(4) = 0;
 
 function [tspan,y0,options] = init
 handles = feval(Kotte2014glycolysis);
 
 % obtain initial steady states
-M = zeros(4,1);
+M = zeros(3,1);
 M(1)  = 1;      % E
 M(2)  = 0.01;   % PEP
 M(3)  = 0.03;   % FBP
-M(4) = 2;       % a.u acetate
+
 
 [~,yout] = ode45(@Kotte_glycolysis,0:0.1:30,M);
 y0 = yout(end,:);
-options = odeset('Jacobian',[],'JacobianP',[],'Hessians',[],'HessiansP',[]);
+options = odeset('Jacobian',handles(3),'JacobianP',handles(4),...
+                 'Hessians',handles(4),'HessiansP',handles(5));
 tspan = [0 10];
 
 function jac = jacobian(t,kmrgd,kEcat,KEacetate,...
                          KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
                          vEXmax,KEXPEP,...
-                         vemax,KeFBP,ne)
+                         vemax,KeFBP,ne,acetate,d)
 
 function jacp = jacobianp(t,kmrgd,kEcat,KEacetate,...
                          KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
                          vEXmax,KEXPEP,...
-                         vemax,KeFBP,ne)      
+                         vemax,KeFBP,ne,acetate,d)      
                      
 function jacp = hessians(t,kmrgd,kEcat,KEacetate,...
                          KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
                          vEXmax,KEXPEP,...
-                         vemax,KeFBP,ne)           
+                         vemax,KeFBP,ne,acetate,d)           
                      
 function jacp = hessiansp(t,kmrgd,kEcat,KEacetate,...
                          KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
                          vEXmax,KEXPEP,...
-                         vemax,KeFBP,ne)      
+                         vemax,KeFBP,ne,acetate,d)      
 
 function jacp = der3(t,kmrgd,kEcat,KEacetate,...
                          KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
                          vEXmax,KEXPEP,...
-                         vemax,KeFBP,ne)    
+                         vemax,KeFBP,ne,acetate,d)    
                      
 function jacp = der4(t,kmrgd,kEcat,KEacetate,...
                          KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
                          vEXmax,KEXPEP,...
-                         vemax,KeFBP,ne)    
+                         vemax,KeFBP,ne,acetate,d)    
                      
 function jacp = der5(t,kmrgd,kEcat,KEacetate,...
                          KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
                          vEXmax,KEXPEP,...
-                         vemax,KeFBP,ne)                         
+                         vemax,KeFBP,ne,acetate,d)                         
 
 
 
