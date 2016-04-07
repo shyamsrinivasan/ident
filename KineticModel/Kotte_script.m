@@ -30,8 +30,6 @@ func = @(t,x)rhsfunc(t,x,kEcat,KEacetate,...
         vemax,KeFBP,ne,acetate,d);
 dMdt = func(0,M);    
 
-% dMdt = Kotte_glycolysis(0,M,pvec);
-% func = @(t,x)Kotte_glycolysis(t,x,pvec);
 opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
 [tout,yout] = ode45(func,0:0.1:200,M,opts);
 fout = zeros(length(tout),4);
@@ -242,13 +240,44 @@ for it = 1:size(x1,2)
 end
 
 figure
+subplot(221)
+bifurcationPlot(y,p,s1,f1,1,1)
+xlabel('Acetate');
+ylabel('E');
+subplot(222)
 bifurcationPlot(y,p,s1,f1,2,1)
 xlabel('Acetate');
 ylabel('PEP');
+subplot(223)
+bifurcationPlot(y,p,s1,f1,3,1)
+xlabel('Acetate');
+ylabel('FBP');
+subplot(224)
+bifurcationPlot(flux1,p,s1,f1,1,1);
+xlabel('Acetate');
+ylabel('flux J');
+
+figure
+subplot(221)
+bifurcationPlot(flux1,p,s1,f1,4,1);
+xlabel('Acetate');
+ylabel('flux E');
+subplot(222)
+bifurcationPlot(y,flux1,s1,f1,1,1);
+xlabel('flux J');
+ylabel('E');
+subplot(223)
+bifurcationPlot(y,flux1,s1,f1,2,1);
+xlabel('flux J');
+ylabel('PEP');
+subplot(224)
+bifurcationPlot(y,flux1,s1,f1,3,1);
+xlabel('flux J');
+ylabel('FBA');
+
 
 % figure
 % cpl(x1,v1,s1,[4,1]);
-% bifurcationPlot(flux1,p,s1,f1,4,1);
 
 
 % extract critical points - if critical points exist
