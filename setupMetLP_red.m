@@ -80,6 +80,7 @@ ub(ub==0) = log(3e-2);
 
 %concentrations in M = mole/L, Bennett et al., 2009
 lb(strcmpi(newmodel.mets,'glc[e]')) = log(mc(strcmpi(model.mets,'glc[e]')));
+lb(strcmpi(newmodel.mets,'o2[c]')) = log(mc(strcmpi(model.mets,'o2[c]')));
 lb(strcmpi(newmodel.mets,'pyr[c]')) = log(1e-6);
 lb(strcmpi(newmodel.mets,'atp[c]')) = log(1e-5);
 lb(strcmpi(newmodel.mets,'adp[c]')) = log(1e-5);
@@ -89,17 +90,18 @@ lb(strcmpi(newmodel.mets,'pi[c]')) = log(5e-4);
 lb(strcmpi(newmodel.mets,'g3p[c]')) = log(5e-5);
 lb(strcmpi(newmodel.mets,'h[c]')) = log(1e-7);
 lb(strcmpi(newmodel.mets,'nadh[c]')) = log(1e-5);
-lb(strcmpi(newmodel.mets,'q8[c]')) = log(1e-3);
-% lb(strcmpi(newmodel.mets,'h[e]')) = log(1e-5);
+% lb(strcmpi(newmodel.mets,'q8[c]')) = log(1e-3);
+lb(strcmpi(newmodel.mets,'q8h2[c]')) = log(1e-5);
 
 ub(strcmpi(newmodel.mets,'glc[e]')) = log(mc(strcmpi(model.mets,'glc[e]')));
+ub(strcmpi(newmodel.mets,'o2[c]')) = log(mc(strcmpi(model.mets,'o2[c]')));
 ub(strcmpi(newmodel.mets,'dhap[c]')) = log(3e-4);
 ub(strcmpi(newmodel.mets,'h[c]')) = log(1.1e-7);
 ub(strcmpi(newmodel.mets,'h[e]')) = log(1.6e-1);
 ub(strcmpi(newmodel.mets,'pi[c]')) = log(5e-3);
-ub(strcmpi(newmodel.mets,'q8h2[c]')) = log(2e-4);
+ub(strcmpi(newmodel.mets,'q8[c]')) = log(2e-3);
 % ub(strcmpi(newmodel.mets,'nadh[c]')) = log(1e-1);
-ub(strcmpi(newmodel.mets,'nad[c]')) = log(1e-2);
+ub(strcmpi(newmodel.mets,'nad[c]')) = log(1e-1);
 
 knwn_id = zeros(nmet,1);
 for imet = 1:nmet
@@ -111,7 +113,6 @@ end
 %% %setup original problem
 %Ax <=b 
 A = newmodel.S';
-<<<<<<< HEAD
 b_ub = log(newmodel.Keq)-A(:,logical(knwn_id))*lb(logical(knwn_id));
 
 %% ETC reaction based on Klamt et al., 2007
@@ -138,7 +139,8 @@ end
 % CYTBD
 if any(strcmpi(newmodel.rxns,'CYTBD'))
 %     A(strcmpi(newmodel.rxns,'CYTBD'),strcmpi(newmodel.mets,'o2[c]')) = 0;
-    A(strcmpi(newmodel.rxns,'CYTBD'),[hc he]) = [-1/0.3 1/0.3];
+%     A(strcmpi(newmodel.rxns,'CYTBD'),[hc he]) = [-1/0.3 1/0.3];
+%     b_ub(strcmpi(newmodel.rxns,'CYTBD')) = 180/Z;
 end
 
 A_ub = A(:,~logical(knwn_id));
