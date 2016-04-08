@@ -47,8 +47,7 @@ flux(1) = kEcat.*M(1).*acetate./(acetate+KEacetate);
 
 %vFbp(PEP,FBP)
 ratio = 1+M(3)/KFbpFBP;
-flux(3) = vFbpmax.*(ratio-1).*(ratio).^4/(ratio.^4+Lfbp*(1+M(2)./KFbpPEP));
-
+flux(3) = vFbpmax.*(ratio-1).*(ratio).^3/(ratio.^4+Lfbp*(1+M(2)./KFbpPEP).^(-4));
 %vEX(PEP)
 flux(2) = vEXmax.*M(2)./(M(2)+KEXPEP);
 
