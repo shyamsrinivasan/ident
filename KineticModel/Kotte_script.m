@@ -152,7 +152,8 @@ fun = @(x)Kotte_glycolysis_NLAE(x,pvec);
 options = optimoptions('fsolve','Display','iter');
 [x1,fval,exitflag,output,jacobian] = fsolve(fun,M,options);
 
-%change in acetate concentration
+%change in acetate concentration\
+options = optimoptions('fsolve','Display','off');
 acetate = linspace(0.001,100,10000);
 xNLEout = zeros(10000,3);
 fNLEout = zeros(10000,4);
