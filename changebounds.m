@@ -39,8 +39,10 @@ vl(strcmpi(model.rxns,'THD2')) = 0;
 vu(strcmpi(model.rxns,'THD2')) = 0;
 vu(strcmpi(model.rxns,'SUCCt2_2')) = 0;
 vu(strcmpi(model.rxns,'FORt2')) = 0;
-
 vl(strcmpi(model.rxns,'PPC')) = 0;
+
+vu(strcmpi(model.rxns,'ATPS4r')) = 200;
+
 
 %Uptake Fluxes
 if any(Vuptake)
@@ -61,7 +63,7 @@ end
 
 %atp maintanance
 vl(strcmpi(model.rxns,'ATPM')) = 8.39;
-vu(strcmpi(model.rxns,'ATPM')) = 500;
+vu(strcmpi(model.rxns,'ATPM')) = 200;
 
 %Growth Fluxes
 if fixgrowth
