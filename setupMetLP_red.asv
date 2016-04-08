@@ -161,10 +161,10 @@ sign(newmodel.Vss(strcmpi(newmodel.rxns,'ATPS4r')));
 b(strcmpi(newmodel.rxns,'ATPS4r')) = delG_atphydro/(R*T)*...
 sign(newmodel.Vss(strcmpi(newmodel.rxns,'ATPS4r')));
 %% for CYTB cytochrome bd oxidase
-A(strcmpi(newmodel.rxns,'CYTBD'),[hc he]) = [-1/0.3 1/0.3];
-o2 = find(strcmpi(newmodel.mets,'o2[c]'));
-h2o = find(strcmpi(newmodel.mets,'h2o[e]'));
-A(strcmpi(newmodel.rxns,'CYTBD'),[o2 h2o]) = [0 0];
+A(strcmpi(newmodel.rxns,'ATPS4r'),[hc he]) = [-/0.3 -3/0.3];
+A(strcmpi(newmodel.rxns,'ATPS4r'),:) =...
+A(strcmpi(newmodel.rxns,'ATPS4r'),:).*...
+sign(newmodel.Vss(strcmpi(newmodel.rxns,'ATPS4r')));
 %%
 A_ub = A(:,~logical(knwn_id));
 newmodel.A = A_ub;
