@@ -111,6 +111,7 @@ end
 %% %setup original problem
 %Ax <=b 
 A = newmodel.S';
+<<<<<<< HEAD
 b_ub = log(newmodel.Keq)-A(:,logical(knwn_id))*lb(logical(knwn_id));
 
 %% ETC reaction based on Klamt et al., 2007

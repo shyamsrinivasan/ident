@@ -34,7 +34,7 @@ end
 % vl(strcmpi(model.rxns,'ATPS4r')) = -100;
 % vu(strcmpi(model.rxns,'ATPS4r')) = 0;
 vl(strcmpi(model.rxns,'NADTRHD')) = 0;
-vu(strcmpi(model.rxns,'NADTRHD')) = 100;
+vu(strcmpi(model.rxns,'NADTRHD')) = 500;
 vl(strcmpi(model.rxns,'THD2')) = 0;
 vu(strcmpi(model.rxns,'THD2')) = 0;
 vu(strcmpi(model.rxns,'SUCCt2_2')) = 0;

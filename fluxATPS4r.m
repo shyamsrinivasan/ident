@@ -18,8 +18,6 @@ D = 1 + x + x.^2 + x.^3 + x.^4;
 kfwd = k2*1/(1+Kc)*1./D;
 kbkw = k1*Kc/(1+Kc)*((x.^4)./D);
 
-
-
 S = model.S;
 Vmax = pvec.Vmax;
 

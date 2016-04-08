@@ -113,35 +113,64 @@ for irxn = 1:length(Vex)
     if model.rev(Vex(irxn))
         Sb = -S(sbid,Vex(irxn));
         Sp = S(prid,Vex(irxn));  
-        if all(mc(sbid)>=0) && all(mc(prid)>=0)
+        if all(mc(sbid)>0) && all(mc(prid)>0)
             nr_flux = mc_alls*kfwd*cmp_s*prod(mc(sbid)./K(sbid,Vex(irxn))) -...
                       mc_allp*kbkw*cmp_p*prod(mc(prid)./K(prid,Vex(irxn)));
-        elseif all(mc(sbid)>=0)
+        elseif all(mc(sbid)>0)
             nr_flux = mc_alls*kfwd*cmp_s*prod(mc(sbid)./K(sbid,Vex(irxn)));
-        elseif all(mc(prid)>=0)
+        elseif all(mc(prid)>0)
             nr_flux = -mc_allp*kbkw*cmp_p*prod(mc(prid)./K(prid,Vex(irxn)));
         end
+        if any(sbid) && any(prid)
+            %Denominator - 1.6
+            dr_sb = 1+mc(sbid)./K(sbid,Vex(irxn));
+            for j = 1:length(find(sbid))
+                for si = 2:Sb(j)
+                    dr_sb(j) = dr_sb(j) + dr_sb(j)^si;                
+                end
+            end
+            %dr_pr
+            dr_pr = 1+mc(prid)./K(prid,Vex(irxn));
+            for j = 1:length(find(prid))
+                for si = 2:Sp(j)
+                    dr_pr(j) = dr_pr(j)+dr_pr(j)^si;
+                end
+            end
+        else
+            dr_sb = 0;
+            dr_pr = 0;
+        end        
     elseif ~model.rev(Vex(irxn))
         Sb = -S(sbid,Vex(irxn));    
         Sp = S(prid,Vex(irxn));
-        nr_flux = mc_alls*kfwd*cmp_s*prod(mc(sbid)./K(sbid,Vex(irxn)));             
+        nr_flux = mc_alls*kfwd*cmp_s*prod(mc(sbid)./K(sbid,Vex(irxn)));  
+        if any(sbid) && any(prid)
+            dr_sb = 1+mc(sbid)./K(sbid,Vex(irxn));
+            for j = 1:length(find(sbid))
+                for si = 2:Sb(j)
+                    dr_sb(j) = dr_sb(j) + dr_sb(j)^si;                
+                end
+            end
+        else
+            dr_sb = 0;
+        end
     end
     
     if any(sbid) && any(prid)
         %Denominator - 1.6
-        dr_sb = 1+mc(sbid)./K(sbid,Vex(irxn));
-        for j = 1:length(find(sbid))
-            for si = 2:Sb(j)
-                dr_sb(j) = dr_sb(j) + dr_sb(j)^si;                
-            end
-        end
+%         dr_sb = 1+mc(sbid)./K(sbid,Vex(irxn));
+%         for j = 1:length(find(sbid))
+%             for si = 2:Sb(j)
+%                 dr_sb(j) = dr_sb(j) + dr_sb(j)^si;                
+%             end
+%         end
         %dr_pr
-        dr_pr = 1+mc(prid)./K(prid,Vex(irxn));
-        for j = 1:length(find(prid))
-            for si = 2:Sp(j)
-                dr_pr(j) = dr_pr(j)+dr_pr(j)^si;
-            end
-        end
+%         dr_pr = 1+mc(prid)./K(prid,Vex(irxn));
+%         for j = 1:length(find(prid))
+%             for si = 2:Sp(j)
+%                 dr_pr(j) = dr_pr(j)+dr_pr(j)^si;
+%             end
+%         end
         dr_flux = prod(dr_sb)+prod(dr_pr)-1;
         vflux(Vex(irxn)) = scale_flux(nr_flux/dr_flux);
     else

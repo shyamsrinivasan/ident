@@ -164,8 +164,8 @@ for ic = 1:nc
                     end
                 end
             else
-                dr_sb = 0;
-                dr_pr = 0;
+                dr_sb = 1;
+                dr_pr = 1;
             end
         elseif ~model.rev(Vind(irxn))                           
             if all(mc(sbid)>0)
@@ -181,9 +181,9 @@ for ic = 1:nc
                     end
                 end                  
             else
-                dr_sb = 0;                
+                dr_sb = 1;                
             end
-            dr_pr = 0;
+            dr_pr = 1;
         end
         
 
