@@ -32,7 +32,12 @@ rxn_add = {'GLCpts','NADH16','ATPS4r','CYTBD'};
 % and/or
 
 % sample initial metabolite concentrations for estimating kinetic parameters
-[mc,parameter,smp] = parallel_sampling(FBAmodel,parameter,'setupMetLP_red',met,mc,rxn_add);
+[mc,parameter,smp] = parallel_sampling(FBAmodel,parameter,'setupMetLP_red',met,mc,rxn_add,500);
+if isempty(mc)
+    % multiple saples are being supplied
+    mc = smp{1,1};
+    parameter = smp{1,2};
+end
 
 % [flux,vflux] = fluxATPS4r(FBAmodel,parameter,mc);
 
@@ -46,7 +51,7 @@ rxn_add = {'GLCpts','NADH16','ATPS4r','CYTBD'};
 
 %get parameter estimates - estimate kinetic parameters in an ensemble
 % FBAmodel.rxn_add = rxn_add;
-
+rxn_add = {'GLCpts'};
 ensb = parallel_ensemble(FBAmodel,mc,parameter,rxn_add);
 
 %serially solve ODE of model to steady state

@@ -148,33 +148,42 @@ for i=1:nFiles
         ptcnt = ptcnt+1;
     end %points per cycle
     
-    %re-assign concentrations to model.mets
+    % re-assign concentrations to model.mets
     [pts,assignFlag,delGr,vCorrectFlag] = assignConc(pts,model,bounds); 
     if ~all(prod(vCorrectFlag,1))
         fprintf('Not all samples are thermodynamically consistent with the desired flux direction\n');
         fprintf('Use caution when using the samples\n');
+        
         % Need to add filters to remove thermodynamically inconsistent
-        % samples
+        % samples - re-checking delGr and concentrations for thermodynamic 
+        % feasibility
+        pts = pts(:,prod(vCorrectFlag,1)~=0);
+        delGr = delGr(:,prod(vCorrectFlag,1)~=0);
     end
-    [delGr,assignFlux] = assignRxns(delGr,model,bounds);
-    
-    mc = exp(pts);
-    mc(pts==0)=0;
-    pts = mc;
+    if ~isempty(pts)
+        [delGr,assignFlux] = assignRxns(delGr,model,bounds);    
+        mc = exp(pts);
+        mc(pts==0)=0;
+        pts = mc;
+    else
+        fprintf('No thermodynamically feasible samples found\n');
+        error('ACHRSampler:ThermInfeas',...
+        'Rerun simulation to obtain thermodynamically feasible samples\n');
+    end
     
     %re-checking delGr and concentrations for thermodynamic feasibility
-    vSpl = zeros(length(model.rxns),1);
-    for ir = 1:length(bounds.rxns)
-        vSpl(ir) = length(find(vCorrectFlag(ir,:)));
-        if all(vCorrectFlag(ir,:))
-            fprintf('%d. %s\n',ir,model.rxns{ir});
-        end
-    end
-    for is = 1:length(pts(1,:))
-        if all(vCorrectFlag(:,is))
-            fprintf('Sample %d\n',is);
-        end
-    end           
+%     vSpl = zeros(length(model.rxns),1);
+%     for ir = 1:length(bounds.rxns)
+%         vSpl(ir) = length(find(vCorrectFlag(ir,:)));
+%         if all(vCorrectFlag(ir,:))
+%             fprintf('%d. %s\n',ir,model.rxns{ir});
+%         end
+%     end
+%     for is = 1:length(pts(1,:))
+%         if all(vCorrectFlag(:,is))
+%             fprintf('Sample %d\n',is);
+%         end
+%     end           
           
 %     [delGr
 %     for ipt = 1:length(pts(1,:))
