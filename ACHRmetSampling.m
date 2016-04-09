@@ -1,16 +1,20 @@
-function [pts,assignFlag,delGr,vCorrectFlag] = ACHRmetSampling(model,nFiles,nptsPerFile,stepsPerPnt)
-if nargin<4
+function [pts,assignFlag,delGr,vCorrectFlag] =...
+         ACHRmetSampling(model,setupfun,mc,rxn_add,nFiles,nptsPerFile,stepsPerPnt)
+if nargin<7
     stepsPerPnt = 199;
 end
-
-if nargin<3
+if nargin<6
     nptsPerFile=1000;
 end
-
-if nargin<2
+if nargin<5
     nFiles = 10;
 end
-
+if nargin<4
+    rxn_add = {};
+end
+if nargin<3
+    mc = [];
+end
 %distance closest constraint
 maxMinTol = 1e-9;
 
@@ -21,15 +25,16 @@ uTol = 1e-9;
 dTol = 1e-14;
 
 %create warmup points for ACHR - temporary call
-bounds = setupMetLP(model);
+fh = str2func(setupfun);
+bounds = fh(model,rxn_add,mc);
 if size(bounds.A,2)==length(bounds.mets)
     %setup slack problem
     bounds = setupSlackVariables(bounds);
     warmUpPts = createWarmupPoints(model,bounds,2000);   
 end
 
-lb = separate_slack(bounds.lb,model,bounds);
-ub = separate_slack(bounds.ub,model,bounds);
+lb = separate_slack(bounds.lb,bounds);
+ub = separate_slack(bounds.ub,bounds);
 
 [nmets,npts] = size(warmUpPts);
 

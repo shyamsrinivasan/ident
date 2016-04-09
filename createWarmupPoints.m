@@ -5,10 +5,10 @@ if nargin<3 || npts<2*size(model.S,1)
 end
 
 %set concentration bounds
-if nargin<2
-    %problem setup with slack variables for all inequalities
-    bounds = setupMetLP(model);
-end
+% if nargin<2
+%     %problem setup with slack variables for all inequalities
+%     bounds = setupMetLP(model);
+% end
 
 if isfield(bounds,'S')
     if npts<2*size(bounds.S,1);
@@ -19,8 +19,8 @@ end
 
 %not all metabolites are sampled - rearranging lb and ub for all
 %metabollites
-lb = separate_slack(bounds.lb,model,bounds);
-ub = separate_slack(bounds.ub,model,bounds);
+lb = separate_slack(bounds.lb,bounds);
+ub = separate_slack(bounds.ub,bounds);
 
 %total sampled metabolites
 n_mets = length(bounds.mets);
@@ -52,13 +52,13 @@ while ipt<=npts/2
     
     %use max points
     if LPmax.flag>0
-        xmax = separate_slack(LPmax.x,model,bounds);
+        xmax = separate_slack(LPmax.x,bounds);
         validflag = validflag+1;
     else
         validflag = validflag-1;
     end
     if LPmin.flag>0
-        xmin = separate_slack(LPmin.x,model,bounds);
+        xmin = separate_slack(LPmin.x,bounds);
         validflag = validflag+1;
     else
         validflag = validflag-1;

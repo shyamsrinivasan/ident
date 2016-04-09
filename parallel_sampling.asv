@@ -12,14 +12,14 @@ if nargin<4 || isempty(met)
     met = struct([]);
 end
 
-% generate one metabolite concentration for parameter estimation
-% get one set of concentrations and coresponding delGr
+%generate one metabolite concentration for parameter estimation
+%get one set of concentrations and coresponding delGr
+[mc,assignFlag,delGr,model,vCorrectFlag] = getiConEstimate(model,funName,mc,rxn_add);
 
-% [mc,assignFlag,delGr,model,vCorrectFlag] = getiConEstimate(model,funName,mc,rxn_add);
-% [mc,assignFlag] = iconcentration(model,met,mc,assignFlag);
-% %M to mM
-% mc = mc*1000;
-% pvec.delGr = delGr;
+[mc,assignFlag] = iconcentration(model,met,mc,assignFlag);
+%M to mM
+mc = mc*1000;
+pvec.delGr = delGr;
 
 % fprintf('Generating %d concentration samples using ACHR\n',nsample);
 %sample met using ACHR
@@ -27,8 +27,8 @@ end
 clear assignFlag
 pts = [];
 ptsdelGr = [];
-[pts,assignFlag,ptsdelGr,vCorrectFlag] =...
-ACHRmetSampling(model,funName,mc,rxn_add,1,nsample,200);
+% [pts,assignFlag,ptsdelGr,vCorrectFlag] =...
+% ACHRmetSampling(model,funName,1,nsample,200);
 
 % pts = iconcentration(model,met,pts,assignFlag);
 
