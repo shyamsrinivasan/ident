@@ -3,7 +3,8 @@ if nargin<3 || npts<2*size(model.S,1)
     %default # of warmup points
     npts = 2*size(model.S,1);
 end
-
+fprintf('Creating warm up points for ACHR sampler\n');
+tic;
 %set concentration bounds
 % if nargin<2
 %     %problem setup with slack variables for all inequalities
@@ -93,7 +94,7 @@ centrepoint = mean(warmUp,2);
 
 %moving in points
 warmUp = warmUp*.33+.67*centrepoint*ones(1,npts);
-
+fprintf('estimated time : %f\n',toc);
 %lb and ub are for lnP and lnS
 % warmUp = exp(warmUp);
 

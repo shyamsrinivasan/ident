@@ -15,6 +15,9 @@ end
 if nargin<3
     mc = [];
 end
+fprintf('\nGenerating %d concentration samples using ACHR\n',nptsPerFile);
+tic;
+
 %distance closest constraint
 maxMinTol = 1e-9;
 
@@ -33,8 +36,9 @@ if size(bounds.A,2)==length(bounds.mets)
     warmUpPts = createWarmupPoints(model,bounds,2000);   
 end
 
-lb = separate_slack(bounds.lb,bounds);
-ub = separate_slack(bounds.ub,bounds);
+bounds.A = separate_slack(bounds.A,bounds);
+bounds.lb = separate_slack(bounds.lb,bounds);
+bounds.ub = separate_slack(bounds.ub,bounds);
 
 [nmets,npts] = size(warmUpPts);
 
@@ -69,8 +73,8 @@ for i=1:nFiles
             u = u/norm(u);
             
             %distance to upper and lower bound
-            distUb = ub-prevPt;
-            distLb = prevPt-lb;
+            distUb = bounds.ub-prevPt;
+            distLb = prevPt-bounds.lb;
             
             %determine if too close to boundary
             validDir = ((distUb>dTol) & (distLb>dTol));
@@ -116,12 +120,12 @@ for i=1:nFiles
             %print errors to file
             
             %print step information
-%             overInd = find(ub-curPt>0);
-%             underInd = find(curPt-lb<0);
+%             overInd = find(bounds.ub-curPt>0);
+%             underInd = find(curPt-bounds.lb<0);
             
-            if (any((ub-curPt) < 0) || any((curPt-lb)< 0))
-               curPt(ub-curPt>0) = ub(ub-curPt>0);
-               curPt(curPt-lb<0) = lb(curPt-lb<0);             
+            if (any((bounds.ub-curPt) < 0) || any((curPt-bounds.lb)< 0))
+               curPt(bounds.ub-curPt>0) = bounds.ub(bounds.ub-curPt>0);
+               curPt(curPt-bounds.lb<0) = bounds.lb(curPt-bounds.lb<0);             
             end
             
 %             if mod(totalStepcnt,2000)==0
@@ -146,6 +150,12 @@ for i=1:nFiles
     
     %re-assign concentrations to model.mets
     [pts,assignFlag,delGr,vCorrectFlag] = assignConc(pts,model,bounds); 
+    if ~all(prod(vCorrectFlag,1))
+        fprintf('Not all samples are thermodynamically consistent with the desired flux direction\n');
+        fprintf('Use caution when using the samples\n');
+        % Need to add filters to remove thermodynamically inconsistent
+        % samples
+    end
     [delGr,assignFlux] = assignRxns(delGr,model,bounds);
     
     mc = exp(pts);
@@ -174,4 +184,5 @@ for i=1:nFiles
 %     end
     %save current points to file
 end
+fprintf('estimated time: %f\n',toc);
             

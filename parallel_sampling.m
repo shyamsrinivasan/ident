@@ -21,7 +21,7 @@ end
 % mc = mc*1000;
 % pvec.delGr = delGr;
 
-% fprintf('Generating %d concentration samples using ACHR\n',nsample);
+% 
 %sample met using ACHR
 %get more than one set of concentrations using ACHR sampling
 clear assignFlag
