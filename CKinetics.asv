@@ -150,16 +150,12 @@ for ic = 1:nc
 %         end
         if model.rev(Vind(irxn))          
             if all(mc(sbid)>0) && all(mc(prid)>0)
-%                 nr_flux = mc_alls*kfwd(Vind(irxn))*cmp_s*prod((mc(sbid)./K(sbid,Vind(irxn))).^Sb) -...
-%                           mc_allp*kbkw(Vind(irxn))*cmp_p*prod((mc(prid)./K(prid,Vind(irxn))).^Sp);
-              nr_flux = kfwd(Vind(irxn))*prod((mc(sbid)./K(sbid,Vind(irxn))).^Sb) -...
-                        kbkw(Vind(irxn))*prod((mc(prid)./K(prid,Vind(irxn))).^Sp);
+                nr_flux = mc_alls*kfwd(Vind(irxn))*cmp_s*prod((mc(sbid)./K(sbid,Vind(irxn))).^Sb) -...
+                          mc_allp*kbkw(Vind(irxn))*cmp_p*prod((mc(prid)./K(prid,Vind(irxn))).^Sp);
             elseif all(mc(sbid)>0)
-%                 nr_flux = mc_alls*kfwd(Vind(irxn))*cmp_s*prod((mc(sbid)./K(sbid,Vind(irxn))).^Sb);
-                nr_flux = kfwd(Vind(irxn))*prod((mc(sbid)./K(sbid,Vind(irxn))).^Sb);
+                nr_flux = mc_alls*kfwd(Vind(irxn))*cmp_s*prod((mc(sbid)./K(sbid,Vind(irxn))).^Sb);
             elseif all(mc(prid)>0)
-%                 nr_flux = -mc_allp*kbkw(Vind(irxn))*cmp_p*prod((mc(prid)./K(prid,Vind(irxn))).^Sp);
-                nr_flux = -kbkw(Vind(irxn))*prod((mc(prid)./K(prid,Vind(irxn))).^Sp);
+                nr_flux = -mc_allp*kbkw(Vind(irxn))*cmp_p*prod((mc(prid)./K(prid,Vind(irxn))).^Sp);
             end    
             if any(sbid) && any(prid)
                 %Denominator - 1.6
@@ -182,10 +178,8 @@ for ic = 1:nc
             end
         elseif ~model.rev(Vind(irxn))                           
             if all(mc(sbid)>0)
-%                 nr_flux =...
-%                 mc_alls*kfwd(Vind(irxn))*cmp_s*prod((mc(sbid)./K(sbid,Vind(irxn))).^Sb);
                 nr_flux =...
-                kfwd(Vind(irxn))*prod((mc(sbid)./K(sbid,Vind(irxn))).^Sb);
+                mc_alls*kfwd(Vind(irxn))*cmp_s*prod((mc(sbid)./K(sbid,Vind(irxn))).^Sb);
             end
             if any(sbid) && any(prid)
                 %Denominator - 1.6

@@ -15,7 +15,7 @@ hc = find(strcmpi(model.mets,'h[c]'));
 h2o = find(strcmpi(model.mets,'h2o[c]'));
 % pie = find(strcmpi(model.mets,'pi[e]'));
 % pic = find(strcmpi(model.mets,'pi[c]'));
-% co2 = find(strcmpi(model.mets,'co2[c]'));
+co2 = find(strcmpi(model.mets,'co2[c]'));
 % vmet = [he hc h2o co2];
         
 % q8 = find(strcmpi(model.mets,'q8[c]'));
@@ -39,10 +39,12 @@ check = zeros(ntrxn,1);
 flux = zeros(ntrxn,1);
 
 for irxn = 1:nrxn
-%     nmet = size(S,1);
+    nmet = size(S,1);
     sbid = S(:,Vind(irxn))<0;    
     prid = S(:,Vind(irxn))>0;
-        
+    Kscol = zeros(nmet,1);
+    Kpcol = zeros(nmet,1);
+    
     % remove water
     sbid(h2o) = 0;
     prid(h2o) = 0;  
@@ -89,8 +91,6 @@ for irxn = 1:nrxn
     end
 % %     flux = ETCflux(model,mc,flux);
 end
-
-%calculate fluxes for ETC reactions
 
 %other reactions 
 %transport reactions x[e] <==> x[c]

@@ -32,7 +32,7 @@ rxn_add = {'GLCpts','NADH16','ATPS4r','CYTBD'};
 % and/or
 
 % sample initial metabolite concentrations for estimating kinetic parameters
-[mc,parameter,smp] = parallel_sampling(FBAmodel,parameter,'setupMetLP_red',met,mc,rxn_add,500);
+[mc,parameter,smp] = parallel_sampling(FBAmodel,parameter,'setupMetLP_red',met,mc,rxn_add);
 if isempty(mc)
     % multiple saples are being supplied
     mc = smp{1,1};
