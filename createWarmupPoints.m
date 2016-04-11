@@ -57,6 +57,7 @@ while ipt<=npts/2
         validflag = validflag+1;
     else
         validflag = validflag-1;
+        error('metLP:Infeas','LP for thermodynamic metabolite conentrations is infeasible');
     end
     if LPmin.flag>0
         xmin = separate_slack(LPmin.x,bounds);

@@ -6,10 +6,10 @@ if nargin<4
     rxn_add = {};
 end
 
-%reactions to consider for kinetics other than Vind
+% reactions to consider for kinetics other than Vind
 Vind = addToVind(model,model.Vind,rxn_add,rxn_excep);
 
-%metabolites that do not affect thermodynamic equilibrium  
+% metabolites that do not affect thermodynamic equilibrium  
 he = find(strcmpi(model.mets,'h[e]'));
 hc = find(strcmpi(model.mets,'h[c]'));
 h2o = find(strcmpi(model.mets,'h2o[c]'));
@@ -25,7 +25,7 @@ nrxn = length(Vind);
 ntrxn = model.nt_rxn;
 ntmet = model.nt_metab;
 
-%backup known parameters from pvec
+% backup known parameters from pvec
 newp = struct();
 newp.K = pvec.K;
 newp.Kind = sparse(ntmet,ntrxn);
@@ -39,52 +39,53 @@ check = zeros(ntrxn,1);
 flux = zeros(ntrxn,1);
 
 for irxn = 1:nrxn
-    %compensated species indices
-%     sbcmp = zeros(length(model.mets),1);
-%     prcmp = zeros(length(model.mets),1);
     nmet = size(S,1);
-
     sbid = S(:,Vind(irxn))<0;    
     prid = S(:,Vind(irxn))>0;
-    
-%     Kscol = zeros(length(find(sbid)),1);
-%     Kpcol = zeros(length(find(prid)),1);
     Kscol = zeros(nmet,1);
     Kpcol = zeros(nmet,1);
     
-    %no parameters for cofactors - assumed abundant 
-    %cofactros are assumed as compensated species
-    %hence
-    if any(strcmpi(model.rxns{Vind(irxn)},'PPC')) ||...
-        any(strcmpi(model.rxns{Vind(irxn)},'ATPS4r'))
-        sbid(h2o) = 0;
-        prid(h2o) = 0;       
-    else
-        if any(sbid)
-            if ~any(model.CMPS(sbid,Vind(irxn))) 
-                sbid(vmet) = 0;
-                cmp_s = [];
-            else
-                sbid = find(sbid);
-                cmp_s = sbid(logical(model.CMPS(sbid,Vind(irxn))));
-                sbid = setdiff(sbid,cmp_s);
-                sbid = setdiff(sbid,[he h2o]);
-                sbid = logical(sparse(sbid,1,1,nmet,1));
-            end
-        end
-        if any(prid)
-            if ~any(model.CMPS(prid,Vind(irxn)))
-                prid(vmet) = 0;
-                cmp_p = [];
-            else
-                prid = find(prid);
-                cmp_p = prid(logical(model.CMPS(prid,Vind(irxn))));
-                prid = setdiff(prid,cmp_p);
-                prid = setdiff(prid,[he h2o]);
-                prid = logical(sparse(prid,1,1,nmet,1));
-            end
-        end
-    end
+    % remove water
+    sbid(h2o) = 0;
+    prid(h2o) = 0;  
+    
+    % remove protons
+    sbid([he hc]) = 0;
+    prid([he hc]) = 0;
+    
+    % no parameters for cofactors - assumed abundant 
+    % cofactros are assumed as compensated species
+    % hence
+%     if any(strcmpi(model.rxns{Vind(irxn)},'PPC')) ||...
+%         any(strcmpi(model.rxns{Vind(irxn)},'ATPS4r'))
+%         sbid(h2o) = 0;
+%         prid(h2o) = 0;       
+%     else
+%         if any(sbid)
+%             if ~any(model.CMPS(sbid,Vind(irxn))) 
+%                 sbid(vmet) = 0;
+%                 cmp_s = [];
+%             else
+%                 sbid = find(sbid);
+%                 cmp_s = sbid(logical(model.CMPS(sbid,Vind(irxn))));
+%                 sbid = setdiff(sbid,cmp_s);
+%                 sbid = setdiff(sbid,[he h2o]);
+%                 sbid = logical(sparse(sbid,1,1,nmet,1));
+%             end
+%         end
+%         if any(prid)
+%             if ~any(model.CMPS(prid,Vind(irxn)))
+%                 prid(vmet) = 0;
+%                 cmp_p = [];
+%             else
+%                 prid = find(prid);
+%                 cmp_p = prid(logical(model.CMPS(prid,Vind(irxn))));
+%                 prid = setdiff(prid,cmp_p);
+%                 prid = setdiff(prid,[he h2o]);
+%                 prid = logical(sparse(prid,1,1,nmet,1));
+%             end
+%         end
+%     end
     if ~any(strcmpi(model.rxns{Vind(irxn)},'PPC'))        
     else 
 %         if ~any(model.CMPS(sbid,Vind(irxn)))  
@@ -123,40 +124,51 @@ for irxn = 1:nrxn
 %             prid(vmet) = 0;
 %         end
 %     end
-    pvec = estimateKm(pvec,sbid,prid,mc,Kscol,Kpcol,Vind(irxn));
+    rerun = 0;
+    Ksbackup = pvec.K(sbid,Vind(irxn));
+    Kpbackup = pvec.K(prid,Vind(irxn));
+    kfwdbkup = pvec.kcat_fwd(Vind(irxn));
+    kbkwbkup = pvec.kcat_bkw(Vind(irxn));
+    while check(Vind(irxn))~=1
+    % sampling of parameters needs to be recursive untile check (see below) is 1
+    pvec = estimateKm(pvec,sbid,prid,mc,Ksbackup,Kpbackup,Vind(irxn),rerun);
     
-    %forward and backward catalytic rates
-    %kfwd and kbkw
-    %kfwd or kbkw is sampled basedon reaction directionality from FBA for
-    %thermodynamic consistency
-    %sampling done only for unknown values
+    % forward and backward catalytic rates
+    % kfwd and kbkw
+    % kfwd or kbkw is sampled basedon reaction directionality from FBA for
+    % thermodynamic consistency
+    % sampling done only for unknown values
 %     fprintf('%s \t delG = %3.6g \t Vflux = %3.6g\t',model.rxns{Vind(irxn)},...
 %              pvec.delGr(Vind(irxn)),...
 %              model.Vss(Vind(irxn)));  
-    if ~any(strcmpi(model.rxns{Vind(irxn)},'ATPS4r'))
-        %ATPsynthase does not strictly obey Briggs Haldane
-        pvec = samplekcat(model,pvec,sbid,prid,Vind(irxn),mc);
-    end
+%     if ~any(strcmpi(model.rxns{Vind(irxn)},'ATPS4r'))
+        % ATPsynthase does not strictly obey Briggs Haldane
+        pvec = samplekcat(model,pvec,sbid,prid,Vind(irxn),mc,kfwdbkup,kbkwbkup,rerun);
+%     end
     
     pvec.Vmax(Vind(irxn)) = 1;
     pvec.Vmax(model.Vss==0) = 0;
     
-    %#check for vss and delGr direction      
-    flux(Vind(irxn)) = CKinetics(model,pvec,mc,Vind(irxn));
-    flux = ETCflux(model,mc,flux);
-    if pvec.delGr(Vind(irxn)) ~= 0
-        if flux(Vind(irxn))*pvec.delGr(Vind(irxn))<0
-            check(Vind(irxn)) = 1;
-        else
-            check(Vind(irxn)) = -1;
-        end    
-    else
-        if flux(Vind(irxn))*pvec.delGr(Vind(irxn))<1e-6
-            check(Vind(irxn)) = 1;
-        else
-            check(Vind(irxn)) = -1;
-        end
-    end    
+    % check for vss and delGr direction
+    check = checkthermo(@CKinetics,check);
+    rerun = 1;
+    % if not satisfied => resample -> use a while loop?
+    end
+%     flux(Vind(irxn)) = CKinetics(model,pvec,mc,Vind(irxn));
+% %     flux = ETCflux(model,mc,flux);
+%     if pvec.delGr(Vind(irxn)) ~= 0
+%         if flux(Vind(irxn))*pvec.delGr(Vind(irxn))<0
+%             check(Vind(irxn)) = 1;
+%         else
+%             check(Vind(irxn)) = -1;
+%         end    
+%     else
+%         if flux(Vind(irxn))*pvec.delGr(Vind(irxn))<1e-6
+%             check(Vind(irxn)) = 1;
+%         else
+%             check(Vind(irxn)) = -1;
+%         end
+%     end    
 end
 
 %other reactions 
@@ -341,6 +353,29 @@ end
 
 %check - calculate initial flux
 flux = iflux(model,pvec,mc);
+
+function check = checkthermo(fhandle,check)
+
+%#check for vss and delGr direction      
+flux(Vind(irxn)) = fhandle(model,pvec,mc,Vind(irxn));
+%     flux = ETCflux(model,mc,flux);
+if pvec.delGr(Vind(irxn)) ~= 0
+    if flux(Vind(irxn))*pvec.delGr(Vind(irxn))<0
+        check(Vind(irxn)) = 1;
+    else
+        check(Vind(irxn)) = -1;
+    end    
+else
+    if flux(Vind(irxn))*pvec.delGr(Vind(irxn))<1e-6
+        check(Vind(irxn)) = 1;
+    else
+        check(Vind(irxn)) = -1;
+    end
+end 
+
+end
+
+end
 
     
     

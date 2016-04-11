@@ -49,7 +49,7 @@ end
 %     model.Vuptake = Vuptake;
 % end
 
-%get parameter estimates - estimate kinetic parameters in an ensemble
+% get parameter estimates - estimate kinetic parameters in an ensemble
 % FBAmodel.rxn_add = rxn_add;
 rxn_add = {'GLCpts'};
 ensb = parallel_ensemble(FBAmodel,mc,parameter,rxn_add);
