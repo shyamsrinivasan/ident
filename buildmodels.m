@@ -91,6 +91,7 @@ for irxn = 1:nrxn
 end
 
 %calculate fluxes for ETC reactions
+flux = ETCflux(model,mc,flux);
 
 %other reactions 
 %transport reactions x[e] <==> x[c]
