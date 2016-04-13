@@ -6,6 +6,9 @@ if nargin<4
     rxn_add = {};
 end
 
+model.rxn_add = rxn_add;
+model.rxn_excep = rxn_excep;
+
 % reactions to consider for kinetics other than Vind
 Vind = addToVind(model,model.Vind,rxn_add,rxn_excep);
 
@@ -13,13 +16,6 @@ Vind = addToVind(model,model.Vind,rxn_add,rxn_excep);
 he = find(strcmpi(model.mets,'h[e]'));
 hc = find(strcmpi(model.mets,'h[c]'));
 h2o = find(strcmpi(model.mets,'h2o[c]'));
-% pie = find(strcmpi(model.mets,'pi[e]'));
-% pic = find(strcmpi(model.mets,'pi[c]'));
-% co2 = find(strcmpi(model.mets,'co2[c]'));
-% vmet = [he hc h2o co2];
-        
-% q8 = find(strcmpi(model.mets,'q8[c]'));
-% q8h2 = find(strcmpi(model.mets,'q8h2[c]'));
 
 nrxn = length(Vind);
 ntrxn = model.nt_rxn;
@@ -39,14 +35,11 @@ check = zeros(ntrxn,1);
 flux = zeros(ntrxn,1);
 
 for irxn = 1:nrxn
-%     nmet = size(S,1);
     sbid = S(:,Vind(irxn))<0;    
-    prid = S(:,Vind(irxn))>0;
-        
+    prid = S(:,Vind(irxn))>0;        
     % remove water
     sbid(h2o) = 0;
-    prid(h2o) = 0;  
-    
+    prid(h2o) = 0;      
     % remove protons
     sbid([he hc]) = 0;
     prid([he hc]) = 0;
@@ -87,91 +80,26 @@ for irxn = 1:nrxn
 %             fprintf('Parameter estimation entering an infinite loop for %s\n',model.rxns(Vind(irxn)))
 %         end
     end
-% %     flux = ETCflux(model,mc,flux);
 end
 
-%other reactions 
-%transport reactions x[e] <==> x[c]
-% Vex = model.Vex;
-rxn_excep = union(rxn_excep,model.rxns(Vind));
-Vex = addToVind(model,model.Vex,[],rxn_excep);
-% Vex = setdiff(Vex,Vind); 
+% other reactions 
+% transport reactions x[e] <==> x[c]
+new_excep = union(rxn_excep,model.rxns(Vind));
+Vex = addToVind(model,model.Vex,[],new_excep);
 for irxn = 1:length(Vex)
     nmet = size(S,1);
     
     sbid = S(:,Vex(irxn))<0;    
     prid = S(:,Vex(irxn))>0;
     
+    % remove protons
+    sbid([he hc]) = 0;
+    prid([he hc]) = 0;
+    
     Kscol = zeros(nmet,1);
-    Kpcol = zeros(nmet,1);
+    Kpcol = zeros(nmet,1); 
     
-%     Kscol = zeros(length(find(sbid)),1);
-%     Kpcol = zeros(length(find(prid)),1);
-    if any(sbid)
-        if ~any(model.CMPS(sbid,Vex(irxn))) 
-            sbid([he hc]) = 0;                
-        else
-            sbid = find(sbid);
-            cmp_s = sbid(logical(model.CMPS(sbid,Vex(irxn))));
-            sbid = setdiff(sbid,cmp_s);
-            sbid = logical(sparse(sbid,1,1,nmet,1));
-        end
-    end
-    
-    if any(prid)
-        if ~any(model.CMPS(prid,Vex(irxn)))
-            prid([he hc]) = 0;
-        else
-            prid = find(prid);
-            cmp_p = prid(logical(model.CMPS(prid,Vex(irxn))));
-            prid = setdiff(prid,cmp_p);
-            prid = logical(sparse(prid,1,1,nmet,1));
-%             prid = setdiff(prid,[he h2o]);
-        end
-    end
-        
-%     if any(sbid)
-%         if ~any(strcmpi(model.rxns{Vex(irxn)},'h2ot'))
-%             sbid(h2o) = 0;
-%         end
-%         if ~any(strcmpi(model.rxns{Vex(irxn)},'PIt2r'))
-%             sbid([pie pic]) = 0;
-%         end
-%         if ~any(strcmpi(model.rxns{Vex(irxn)},'CO2t'))
-%             sbid(co2) = 0;
-%         end
-%         
-%         if ~any(model.CMPS(sbid,Vex(irxn))) 
-%             sbid([he hc]) = 0;                
-%         else
-%             sbid = find(sbid);
-%             cmp_s = sbid(logical(model.CMPS(sbid,Vex(irxn))));
-%             sbid = setdiff(sbid,cmp_s);
-%             sbid = logical(sparse(sbid,1,1,nmet,1));
-% %             sbid = setdiff(sbid,[he h2o]);
-%         end
-%     end
-%     if any(prid)
-%         if ~any(strcmpi(model.rxns{Vex(irxn)},'h2ot'))
-%             prid(h2o) = 0;
-%         end
-%         if ~any(strcmpi(model.rxns{Vex(irxn)},'PIt2r'))
-%             prid([pie pic]) = 0;
-%         end
-%         if ~any(strcmpi(model.rxns{Vex(irxn)},'CO2t'))
-%             prid(co2) = 0;
-%         end
-%         if ~any(model.CMPS(prid,Vex(irxn)))
-%             prid([he hc]) = 0;
-%         else
-%             prid = find(prid);
-%             cmp_p = prid(logical(model.CMPS(prid,Vex(irxn))));
-%             prid = setdiff(prid,cmp_p);
-%             prid = logical(sparse(prid,1,1,nmet,1));
-% %             prid = setdiff(prid,[he h2o]);
-%         end
-%     end    
-   pvec = estimateKm(pvec,sbid,prid,mc,Kscol,Kpcol,Vex(irxn));
+    pvec = estimateKm(pvec,sbid,prid,mc,Kscol,Kpcol,Vex(irxn));
 end
 
 % set irreversible kcats
@@ -189,10 +117,10 @@ pvec.kcat_bkw(model.VFex) = 0;
 pvec.Vmax = newp.Vmax;
 
 % estimate Vmax
-% for Vind
 if all(check(Vind)>0)
     pvec.Vmax(pvec.delGr==0) = 0;
     
+    % for Vind
     % simple vmax = vss/ck
     for irxn = 1:length(Vind)
         [~,ck] = CKinetics(model,pvec,mc,Vind(irxn));
@@ -216,28 +144,29 @@ if all(check(Vind)>0)
     % calculate fluxes for ETC reactions
     [~,etck] = ETCflux(model,pvec,mc,flux);
     rnlst = {'ATPS4r','NADH16','CYTBD'};
-%     Vetc = zeros(length(rnlst),1);
     for irxn = 1:length(rnlst)
         tfr = strcmpi(model.rxns,rnlst{irxn});
-        if any(tfr)
-            pvec.Vmax(tfr) = model.Vss(tfr)/etck(tfr);
+        if any(tfr) && etck(tfr)
+            pvec.Vmax(tfr) = model.Vss(tfr)/(3600*etck(tfr));
+        else
+            pvec.Vmax(tfr) = 1;
         end
     end    
        
-    %atp maintanance - include in Vind so calculated using CKinetics
-%     atp = strcmpi(model.mets,'atp[c]');
-%     if any(atp) && any(strcmpi(model.rxns,'atpm'))
-%         pvec.Vmax(strcmpi(model.rxns,'atpm')) =...
-%         model.Vss(strcmpi(model.rxns,'atpm'))/(mc(atp)/1e-5/(1+mc(atp)/1e-5))/3600;
-%     end      
-
-    pvec.Vmax(model.VFex) = 1;    
-    pvec.Vmax(model.Vss==0) = 0;
-    pvec.feasible = 1;
+    % atp maintanance
+    tatpm = strcmpi(model.rxns,'ATPM');
+    sbid = model.S(:,tatpm)<0;
+    sbid(h2o) = 0;
+    atpmk = 18.84*mc(sbid)/pvec.K(sbid,tatpm)/(1+mc(sbid)/pvec.K(sbid,tatpm));
+    if logical(atpmk)
+        pvec.Vmax(tatpm) = model.Vss(tatpm)/(3600*atpmk);
+    else
+        pvec.Vmax(tatpm) = 1;
+    end
     
-    %PI2tr
-    pvec.Vmax(strcmpi(model.rxns,'PIt2r')) = 1e-5;
-    pvec.Vmax(strcmpi(model.rxns,'H2Ot')) = 1e-3;
+    pvec.Vmax(model.VFex) = 0;    
+    pvec.Vmax(model.Vss==0) = 0;
+    pvec.feasible = 1;   
 else
     fprintf('Thermodynamically infeasible parameters\n');
     fprintf('Discontinuing\n');
@@ -245,9 +174,7 @@ else
     return
 end
 
-
-
-%check - calculate initial flux
+% check - calculate initial flux
 flux = iflux(model,pvec,mc);
 
 function check = checkthermo(fhandle,check)

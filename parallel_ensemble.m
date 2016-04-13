@@ -2,21 +2,17 @@ function ensb = parallel_ensemble(model,mc,pvec,rxn_add,rxn_excep,nmodels,smp)
 if nargin<7
     smp={};
 end
-
 %# models from the ensemble
 if nargin<6    
     nmodels=1;
 end
-
 %if no rxn exceptions for Vind in buildmodels
 if nargin < 5
     rxn_excep = {};
 end
-
 if nargin < 4
     rxn_add = {};
 end
-
 %# metabolite concentration samples available
 if ~isempty(smp)
     nsamples = size(smp,1);

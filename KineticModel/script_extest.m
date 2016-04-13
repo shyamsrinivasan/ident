@@ -3,27 +3,27 @@
 addpath(genpath('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel'));
 rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\ETC_test.txt';
 cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\ETC_testC.txt';
-%create model structure
+% create model structure
 [FBAmodel,parameter,variable,nrxn,nmetab] = modelgen(rxfname);
 
-%obtain conentrations from file
+% obtain conentrations from file
 [mc,FBAmodel,met] = readCNCfromFile(cnfname,FBAmodel);
 
-%FBA or pFBA solution - optional
-%fix flux uptakes for FBA solution
+% FBA or pFBA solution - optional
+% fix flux uptakes for FBA solution
 Vup_struct.exGLC = 20;%mmol/gDCW.h
 
-%designate reactions for which uptake should not be zero in FBA
+% designate reactions for which uptake should not be zero in FBA
 ess_rxn = {'exCO2','exH','exH2O','exPI','exO2','exGLC'};
 
-%Optional - FBAmodel.Vss already has the requiste information from the
-%excel file
-%assign initial fluxes and calculate FBA fluxes for direction
+% Optional - FBAmodel.Vss already has the requiste information from the
+% excel file
+% assign initial fluxes and calculate FBA fluxes for direction
 FBAmodel.bmrxn = find(strcmpi(FBAmodel.rxns,'exPYR'));
 FBAmodel = FBAfluxes(FBAmodel,'any',ess_rxn,Vup_struct);
 
 
-%calculate delGr if concentrations cannot be sampled
+% calculate delGr if concentrations cannot be sampled
 rxn_add = {'GLCpts','NADH16','ATPS4r','CYTBD'};
 % bounds = setupMetLP_g6p(FBAmodel,rxn_add,mc);
 % [lnmc,assignFlag,delGr,vCorrectFlag] = assignConc(log(bounds.mc),FBAmodel,bounds);  
@@ -53,9 +53,12 @@ end
 % FBAmodel.rxn_add = rxn_add;
 rxn_add = {'GLCpts'};
 rxn_excep = {'NADH16','ATPS4r','CYTBD','H2Ot'};
+FBAmodel.bmrxn = [];
 ensb = parallel_ensemble(FBAmodel,mc,parameter,rxn_add,rxn_excep);
 
 %serially solve ODE of model to steady state
+FBAmodel.rxn_add = rxn_add;
+FBAmodel.rxn_excep = rxn_excep;
 if ensb{1,2}.feasible    
     sol = IntegrateModel(FBAmodel,ensb,ensb{1,1});
 else
