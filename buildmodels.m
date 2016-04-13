@@ -90,13 +90,12 @@ for irxn = 1:nrxn
 % %     flux = ETCflux(model,mc,flux);
 end
 
-%calculate fluxes for ETC reactions
-flux = ETCflux(model,mc,flux);
-
 %other reactions 
 %transport reactions x[e] <==> x[c]
-Vex = model.Vex;
-Vex = setdiff(Vex,Vind); 
+% Vex = model.Vex;
+rxn_excep = union(rxn_excep,model.rxns(Vind));
+Vex = addToVind(model,model.Vex,[],rxn_excep);
+% Vex = setdiff(Vex,Vind); 
 for irxn = 1:length(Vex)
     nmet = size(S,1);
     
@@ -175,37 +174,26 @@ for irxn = 1:length(Vex)
    pvec = estimateKm(pvec,sbid,prid,mc,Kscol,Kpcol,Vex(irxn));
 end
 
-%other reactions - redox balance
-% pvec = samplekcatRedox(model,pvec,mc);
-% 
-% if any(isnan(pvec.kcat_fwd))
-%     pvec.kcat_fwd(isnan(pvec.kcat_fwd)) = 1000;
-% end
-% if any(isnan(pvec.kcat_fwd))
-%     pvec.kcat_fwd(isnan(pvec.kcat_fwd)) = 1000;
-% end
-
-%set irreversible kcats
+% set irreversible kcats
 for irxn = 1:length(model.rxns)
     if ~model.rev(irxn)
         pvec.kcat_bkw(irxn)=0;
     end
 end
 
-%exhcnage reactions
+% exhcnage reactions
 pvec.kcat_fwd(model.VFex) = 0;
 pvec.kcat_bkw(model.VFex) = 0;
 
-%restore Vmax from backup
+% restore Vmax from backup
 pvec.Vmax = newp.Vmax;
 
-%estimate Vmax
-%for Vind
+% estimate Vmax
+% for Vind
 if all(check(Vind)>0)
     pvec.Vmax(pvec.delGr==0) = 0;
-%     pvec = findVmax(model,pvec,mc);
     
-    %simple vmax = vss/ck
+    % simple vmax = vss/ck
     for irxn = 1:length(Vind)
         [~,ck] = CKinetics(model,pvec,mc,Vind(irxn));
         if ck
@@ -215,7 +203,7 @@ if all(check(Vind)>0)
         end
     end
     
-    %other reactions
+    % other reactions
     for irxn = 1:length(Vex)
         [~,tk] = TKinetics(model,pvec,mc,Vex(irxn));
         if tk
@@ -225,38 +213,24 @@ if all(check(Vind)>0)
         end
     end  
     
+    % calculate fluxes for ETC reactions
+    [~,etck] = ETCflux(model,pvec,mc,flux);
+    rnlst = {'ATPS4r','NADH16','CYTBD'};
+%     Vetc = zeros(length(rnlst),1);
+    for irxn = 1:length(rnlst)
+        tfr = strcmpi(model.rxns,rnlst{irxn});
+        if any(tfr)
+            pvec.Vmax(tfr) = model.Vss(tfr)/etck(tfr);
+        end
+    end    
        
     %atp maintanance - include in Vind so calculated using CKinetics
 %     atp = strcmpi(model.mets,'atp[c]');
 %     if any(atp) && any(strcmpi(model.rxns,'atpm'))
 %         pvec.Vmax(strcmpi(model.rxns,'atpm')) =...
 %         model.Vss(strcmpi(model.rxns,'atpm'))/(mc(atp)/1e-5/(1+mc(atp)/1e-5))/3600;
-%     end
-    %for redox reactions    
-%     [~,rk,vred] = RedoxKinetics(model,pvec,mc,flux);
-%     pvec = getRKparameter(model,pvec,mc,vred);
-%     for irxn = 1:length(vred)
-%         if rk(irxn)
-%             pvec.Vmax(vred(irxn)) = model.Vss(vred(irxn))/rk(irxn);
-%         else
-%             pvec.Vmax(vred(irxn)) = 1;
-%         end
-%     end   
-    
-    %for trasnport fluxes
-%     Vex = model.Vex;
-%     Vex = setdiff(Vex,Vind);    
-%     pvec = getTKparameter(model,pvec,mc,Vex);
-%     pvec.Vmax(Vex) = 1;
-%     for irxn = 1:length(Vex)
-%         [~,tk] = TKinetics(model,pvec,mc,Vex(irxn));
-%         if tk
-%             pvec.Vmax(Vex(irxn)) = model.Vss(Vex(irxn))/tk;
-%         else
-%             pvec.Vmax(Vex(irxn)) = 1;
-%         end
-%     end   
-    
+%     end      
+
     pvec.Vmax(model.VFex) = 1;    
     pvec.Vmax(model.Vss==0) = 0;
     pvec.feasible = 1;

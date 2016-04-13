@@ -52,7 +52,8 @@ end
 % get parameter estimates - estimate kinetic parameters in an ensemble
 % FBAmodel.rxn_add = rxn_add;
 rxn_add = {'GLCpts'};
-ensb = parallel_ensemble(FBAmodel,mc,parameter,rxn_add);
+rxn_excep = {'NADH16','ATPS4r','CYTBD','H2Ot'};
+ensb = parallel_ensemble(FBAmodel,mc,parameter,rxn_add,rxn_excep);
 
 %serially solve ODE of model to steady state
 if ensb{1,2}.feasible    

@@ -12,7 +12,7 @@ newmodel.Vss = model.Vss;
 newmodel.rxns = model.rxns;
 newmodel.CMPS = model.CMPS;
 
-% newmodel = addremoveRxns(newmodel,{'ATPS4r'});
+% newmodel = addremoveRxns(newmodel,{'NADH16','CYTBD'});
 
 %% %remove reactions with zero fluxes
 newmodel.S(:,abs(newmodel.Vss)<1e-7) = [];
@@ -80,7 +80,7 @@ ub(ub==0) = log(3e-2);
 
 %concentrations in M = mole/L, Bennett et al., 2009
 lb(strcmpi(newmodel.mets,'glc[e]')) = log(mc(strcmpi(model.mets,'glc[e]')));
-lb(strcmpi(newmodel.mets,'o2[c]')) = log(mc(strcmpi(model.mets,'o2[c]')));
+lb(strcmpi(newmodel.mets,'o2[c]')) = log(1e-5); % log(mc(strcmpi(model.mets,'o2[c]')));
 lb(strcmpi(newmodel.mets,'pyr[c]')) = log(1e-6);
 lb(strcmpi(newmodel.mets,'atp[c]')) = log(1e-5);
 lb(strcmpi(newmodel.mets,'adp[c]')) = log(1e-5);
@@ -94,7 +94,7 @@ lb(strcmpi(newmodel.mets,'nadh[c]')) = log(1e-5);
 lb(strcmpi(newmodel.mets,'q8h2[c]')) = log(1e-5);
 
 ub(strcmpi(newmodel.mets,'glc[e]')) = log(mc(strcmpi(model.mets,'glc[e]')));
-ub(strcmpi(newmodel.mets,'o2[c]')) = log(mc(strcmpi(model.mets,'o2[c]')));
+ub(strcmpi(newmodel.mets,'o2[c]')) = log(1.8e-5); % log(mc(strcmpi(model.mets,'o2[c]')));
 ub(strcmpi(newmodel.mets,'dhap[c]')) = log(3e-4);
 ub(strcmpi(newmodel.mets,'h[c]')) = log(1.1e-7);
 ub(strcmpi(newmodel.mets,'h[e]')) = log(1.6e-1);
@@ -121,16 +121,13 @@ R = 0.008314; % kJ/mol K
 T = 298;
 F = 0.0965; % kJ/mol mV
 Z = R*T/F;
-% hc = find(strcmpi(newmodel.mets,'h[c]'));
-% he = find(strcmpi(newmodel.mets,'h[e]'));
-A(strcmpi(newmodel.rxns,'NADH16'),[hc he]) = [-4/0.3 4/0.3];
-b_ub(strcmpi(newmodel.rxns,'NADH16')) = 390*2/Z;
+if any(strcmpi(newmodel.rxns,'NADH16'))
+    A(strcmpi(newmodel.rxns,'NADH16'),[hc he]) = [-4/0.3 4/0.3];
+    b_ub(strcmpi(newmodel.rxns,'NADH16')) = 390*2/Z;
+end
 
 % ATPS4r
 if any(strcmpi(newmodel.rxns,'ATPS4r'))
-%     hc = find(strcmpi(newmodel.mets,'h[c]'));
-%     he = find(strcmpi(newmodel.mets,'h[e]'));
-%    A(strcmpi(newmodel.rxns,'ATPS4r'),[hc he]) = [4 -4];
    delG_atphydro = -30.5; % kJ/mol.K
    A(strcmpi(newmodel.rxns,'ATPS4r'),[hc he]) = [3/0.3 -3/0.3];
    b_ub(strcmpi(newmodel.rxns,'ATPS4r')) = delG_atphydro/(R*T);

@@ -1,4 +1,7 @@
 function pvec = estimateKm(pvec,sbid,prid,mc,Ksbackup,Kpbackup,Vind,rerun)
+if nargin<8
+    rerun = 0;
+end
 sbfn = find(sbid);
 prfn = find(prid);
 
