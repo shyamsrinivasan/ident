@@ -34,19 +34,23 @@ end
 % toy model
 [model,solverP,saveData] = imodel(model,500);
 
-% model.Vuptake = zeros(model.nt_rxn,1);
-% h2o = find(strcmpi(model.rxns,'exH2O'));
-% pi =  find(strcmpi(model.rxns,'exPI'));
+% remove water and protons (held constant) from consideration in the model
+% integration phase
+[model,pvec,mc] = addremoveMets(model,{'h2o[c]','h2o[e]'},pvec,mc);
 
-%ecoli model
+
+% model.Vuptake = zeros(model.nt_rxn,1);
+
+
+% ecoli model
 % h = find(strcmpi(model.rxns,'exH'));
 % model.Vuptake([h]) = [1000];
 
-%noramlize concentration vector to intial state
+% noramlize concentration vector to intial state
 Nimc = mc;%imc./imc;
 Nimc(imc==0) = 0;
 
-%intorduce perturbation in initial conditions
+% intorduce perturbation in initial conditions
 % met.glc_e = 10;
 % Nimc(strcmpi(model.mets,'glc[e]')) = 1.1;
 % if ~isempty(change_pos)

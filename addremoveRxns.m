@@ -5,7 +5,7 @@ end
 
 newmodel = model;
 
-%try only pyk
+% try only pyk
 vpyk = strcmpi(newmodel.rxns,'pyk');
 vpts = strcmpi(newmodel.rxns,'glcpts');
 vpgi = strcmpi(newmodel.rxns,'pgi');
