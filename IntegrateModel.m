@@ -13,13 +13,9 @@ end
 if nargin<4
     ess_rxn = {};
 end
-
 % check if concentrations are initialized
 if nargin < 3
-    % reinitialize concentrations
-    imc = zeros(model.nt_metab,1);
-else
-    imc = ones(length(mc),1);%mc;
+    error('getiest:NoA','No initial concentrations');
 end
 if nargin<2
     error('getiest:NoA','No parameter vector');
@@ -38,6 +34,8 @@ end
 % integration phase
 [model,pvec,mc] = addremoveMets(model,{'h2o[c]','h2o[e]'},pvec,mc);
 
+imc = zeros(size(model.S,1),1);
+imc(imc==0) = 1;
 
 % model.Vuptake = zeros(model.nt_rxn,1);
 
@@ -62,7 +60,7 @@ Nimc(imc==0) = 0;
 
 model.imc = imc;
 model.imc(model.imc==0) = 1;
-%calculate initial flux
+% calculate initial flux
 flux = iflux(model,pvec,Nimc.*imc);
 
 % ecoli model

@@ -78,6 +78,8 @@ newmodel.Vind = Vind;
 newmodel.VFex = VFex;
 newmodel.Vex = Vex;
 newmodel.bmrxn = bmrxn;
+newmodel.nt_metab = length(newmodel.mets);
+newmodel.nt_rxn = length(newmodel.rxns);
 
 
 if ~isempty(mc)
