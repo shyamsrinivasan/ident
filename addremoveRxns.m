@@ -1,4 +1,14 @@
-function newmodel = addremoveRxns(model,rmvrxn)
+function [newmodel,newpvec,newmc] = addremoveRxns(model,rmvrxn,pvec,mc)
+if nargin<4
+    mc = [];
+else
+    newmc = mc;
+end
+if nargin<3
+    newpvec = struct([]);
+else
+    newpvec = pvec;
+end
 if nargin<2
     rmvrxn = {};
 end
@@ -59,9 +69,103 @@ else
 end
 
 newmodel.S = newmodel.S(:,list);
+newmodel.SI = newmodel.SI(:,list);
 newmodel.Keq = newmodel.Keq(list);
 newmodel.rxns = newmodel.rxns(list);
 newmodel.CMPS = newmodel.CMPS(:,list);
 newmodel.Vss = newmodel.Vss(list);
+if isfield(newmodel,'delSGr')
+    newmodel.delSGr = newmodel.delSGr(list);
+end
+if isfield(newmodel,'delGlb')    
+    newmodel.delGlb = newmodel.delGlb(list);
+end
+if isfield(newmodel,'delGub')
+    newmodel.delGub = newmodel.delGub(list);
+end
+if isfield(newmodel,'rev')
+    newmodel.rev = newmodel.rev(list);
+end
+if isfield(newmodel,'c')
+    newmodel.c = newmodel.c(list);
+end
+if isfield(newmodel,'vl')
+    newmodel.vl = newmodel.vl(list);
+end
+if isfield(newmodel,'vu')
+    newmodel.vu = newmodel.vu(list);
+end
+if isfield(newmodel,'Vuptake')
+    newmodel.Vuptake = newmodel.Vuptake(list);
+end
+if ~isempty(rmvrxn)
+    if ~isempty(newpvec)
+        newpvec.K = newpvec.K(:,list);
+        newpvec.Klb = newpvec.Klb(:,list);
+        newpvec.Kub = newpvec.Kub(:,list);
+        newpvec.KIact = newpvec.KIact(:,list);
+        newpvec.KIihb = newpvec.KIihb(:,list); 
+        newpvec.Vmax = newpvec.Vmax(list);
+        newpvec.kcat_fwd = newpvec.kcat_fwd(list);
+        newpvec.kcat_bkw = newpvec.kcat_bkw(list);
+        newpvec.delGr = newpvec.delGr(list);   
+    end
+end
 
+% remove empty rows from matrices nmet x nrxn or vectors nmet x 1
+if isfield(newmodel,'mets')
+    newmodel.mets = newmodel.mets(logical(sum(logical(newmodel.S),2)));
+end
+if isfield(newmodel,'SI')
+    newmodel.SI = newmodel.SI(logical(sum(logical(newmodel.S),2)),:);
+end
+if isfield(newmodel,'CMPS')
+    newmodel.CMPS = newmodel.CMPS(logical(sum(logical(newmodel.S),2)),:);
+end
+if isfield(newmodel,'MClow')
+    newmodel.MClow = newmodel.MClow(logical(sum(logical(newmodel.S),2)));
+end
+if isfield(newmodel,'MChigh')
+    newmodel.MChigh = newmodel.MChigh(logical(sum(logical(newmodel.S),2)));
+end
+if isfield(newmodel,'MolWt')
+    newmodel.MolWt = newmodel.MolWt(logical(sum(logical(newmodel.S),2)));
+end
+
+% remove corepsonding rows in pvec
+if ~isempty(newpvec)
+    newpvec.K = newpvec.K(logical(sum(logical(newmodel.S),2)),:);
+    newpvec.Klb = newpvec.Klb(logical(sum(logical(newmodel.S),2)),:);
+    newpvec.Kub = newpvec.Kub(logical(sum(logical(newmodel.S),2)),:);
+    newpvec.KIact = newpvec.KIact(logical(sum(logical(newmodel.S),2)),:);
+    newpvec.KIihb = newpvec.KIihb(logical(sum(logical(newmodel.S),2)),:);     
+end
+
+if ~isempty(mc)
+    newmc = newmc(logical(sum(logical(newmodel.S),2)));
+end
+
+newmodel.S = newmodel.S(logical(sum(logical(newmodel.S),2)),:);
+% calculate new reaction indices
+[Vind,VFex,Vex,bmrxn] = fluxIndex(newmodel,size(newmodel.S,2),newmodel.S);
+if isfield(newmodel,'Vind')
+    newmodel.Vind = Vind;
+end
+if isfield(newmodel,'VFex')
+    newmodel.VFex = VFex;
+end
+if isfield(newmodel,'Vex')
+    newmodel.Vex = Vex;
+end
+if isfield(newmodel,'bmrxn')
+    newmodel.bmrxn = bmrxn;
+end
+if isfield(newmodel,'nt_metab')
+    newmodel.nt_metab = length(newmodel.mets);
+end
+if isfield(newmodel,'nt_rxn')
+    newmodel.nt_rxn = length(newmodel.rxns);
+end
+
+    
 

@@ -28,6 +28,9 @@ newmodel.MClow = newmodel.MClow(list);
 newmodel.MChigh = newmodel.MChigh(list);
 newmodel.MolWt = newmodel.MolWt(list);
 newmodel.b = newmodel.b(list);
+if ~isempty(mc)
+    newmc = newmc(list);
+end
 
 if ~isempty(rmvmet)
     if ~isempty(newpvec)
@@ -70,7 +73,7 @@ end
 newmodel.S = newmodel.S(:,logical(sum(logical(newmodel.S),1)));
 
 % separate cytosolic from external metabolites
-[newmodel,newpvec] = separate_cex(newmodel,newpvec);
+[newmodel,newpvec,newmc] = separate_cex(newmodel,newpvec,newmc);
 
 % calculate new reaction indices
 [Vind,VFex,Vex,bmrxn] = fluxIndex(newmodel,size(newmodel.S,2),newmodel.S);
@@ -82,6 +85,3 @@ newmodel.nt_metab = length(newmodel.mets);
 newmodel.nt_rxn = length(newmodel.rxns);
 
 
-if ~isempty(mc)
-    newmc = newmc(list);
-end

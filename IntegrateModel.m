@@ -33,8 +33,12 @@ end
 % remove water and protons (held constant) from consideration in the model
 % integration phase
 [model,pvec,mc] = addremoveMets(model,{'h2o[c]','h2o[e]'},pvec,mc);
+[newmodel,newpvec,newmc,cnstmet] = remove_eMets(model,pvec,mc,[model.Vind model.Vex],...
+                           {'glc[e]','o2[e]','h[e]','h[c]','pi[e]','pyr[e]'});
 
-imc = zeros(size(model.S,1),1);
+% only initialize for varmets   
+nvar = length(newmodel.mets)-length(find(cnstmet));
+imc = zeros(nvar,1);
 imc(imc==0) = 1;
 
 % model.Vuptake = zeros(model.nt_rxn,1);
@@ -45,7 +49,8 @@ imc(imc==0) = 1;
 % model.Vuptake([h]) = [1000];
 
 % noramlize concentration vector to intial state
-Nimc = mc;%imc./imc;
+Nimc = newmc(1:nvar);%imc./imc;
+Pimc = newmc(nvar+1:end);
 Nimc(imc==0) = 0;
 
 % intorduce perturbation in initial conditions
@@ -58,16 +63,17 @@ Nimc(imc==0) = 0;
 %     Nimc = changeInitialCondition(mdoel,Nimc,[],change_neg);
 % end
 
-model.imc = imc;
-model.imc(model.imc==0) = 1;
+newmodel.imc = imc;
+newmodel.imc(newmodel.imc==0) = 1;
+newmodel.Pimc = Pimc;
 % calculate initial flux
-flux = iflux(model,pvec,Nimc.*imc);
+flux = iflux(newmodel,newpvec,[Nimc.*imc;Pimc]);
 
 % ecoli model
 % dXdt = ODEmodel(0,Nimc,[],model,pvec);
 
 % toy model
-dXdt = ToyODEmodel(0,Nimc,[],model,pvec);
+dXdt = ToyODEmodel(0,Nimc,[],newmodel,newpvec);
 
 % %call to ADmat for stability/jacobian info
 % [Y,Jac] = stabilityADMAT(model,pvec,Nimc.*imc);
@@ -86,7 +92,7 @@ dXdt = ToyODEmodel(0,Nimc,[],model,pvec);
 % Jac = getydot(dXdtADMAT);
 
 %integrate model
-[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
+[sol,finalSS,status] = callODEsolver(newmodel,newpvec,Nimc,solverP);
 
 
 %introduce perturbation
