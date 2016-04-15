@@ -32,7 +32,7 @@ function metCurves(name,y)
         for in = 1:nplots
             tfm = strcmpi(model.mets,name{in});
             if any(tfm)
-                %create new figure
+                % create new figure
                 if isempty(findobj('type','figure','Name','metabolites'))
                     hfig = figure('Name','metabolites');
                 else
@@ -69,7 +69,7 @@ function fluxCurves(name,y)
         for in = 1:nplots
             tff = strcmpi(model.rxns,name{in});
             if any(tff)
-                %create new figure
+                % create new figure
                 if isempty(findobj('type','figure','Name','fluxes'))
                     hfig = figure('Name','fluxes');
                 else

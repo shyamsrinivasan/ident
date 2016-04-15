@@ -44,7 +44,7 @@ for ic = 1:nc
         flux(Vex,ic) = TKinetics(model,pvec,mc(:,ic),Vex);
         
         % ETC fluxes
-        flux = ETCflux(model,pvec,mc(:,ic),flux);
+        flux(:,ic) = ETCflux(model,pvec,mc(:,ic),flux(:,ic));
 
         % other fixed exchaged fluxes - currently sets them to 0  
         flux(VFex,ic) = EKinetics(model,pvec,mc(:,ic),VFex,flux(:,ic));

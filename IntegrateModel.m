@@ -41,15 +41,13 @@ nvar = length(newmodel.mets)-length(find(cnstmet));
 imc = zeros(nvar,1);
 imc(imc==0) = 1;
 
-% model.Vuptake = zeros(model.nt_rxn,1);
-
-
 % ecoli model
 % h = find(strcmpi(model.rxns,'exH'));
 % model.Vuptake([h]) = [1000];
 
 % noramlize concentration vector to intial state
 Nimc = newmc(1:nvar);%imc./imc;
+% Nimc(4) = 20;
 Pimc = newmc(nvar+1:end);
 Nimc(imc==0) = 0;
 
