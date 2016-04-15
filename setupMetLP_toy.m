@@ -24,9 +24,9 @@ vmet= [];
 
 %find all exchnage and transport reactions in newmodel
 [Vind,VFex,Vex,bmrxn] = fluxIndex(newmodel);
-Vind = ToColumnVector(Vind);
-VFex = ToColumnVector(VFex);
-Vex = ToColumnVector(Vex);
+% Vind = ToColumnVector(Vind);
+% VFex = ToColumnVector(VFex);
+% Vex = ToColumnVector(Vex);
 Vind = [Vind vspl find(strcmpi(newmodel.rxns,'Ain'))]; 
 Vex = setdiff(Vex,Vind);     
 

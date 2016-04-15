@@ -28,12 +28,19 @@ old_mc = mc;
 
 %concentration increase
 if ~isempty(change_pos)
-    new_mc = changeInitialCondition(model,old_mc,change_pos);
+     new_mc = changeInitialCondition(model,old_mc,change_pos);
 end
 %concentration decrease
 if ~isempty(change_neg)
     new_mc = changeInitialCondition(mdoel,old_mc,[],change_neg);
 end
+
+if isempty(change_pos) && isempty(change_neg) && isempty(idx) 
+    allMets = 1;
+    new_mc = changeInitialCondition(model,old_mc,[],[],allMets);
+end
+    
+   
 
 
  

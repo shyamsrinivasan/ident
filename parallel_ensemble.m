@@ -2,21 +2,17 @@ function ensb = parallel_ensemble(model,mc,pvec,rxn_add,rxn_excep,nmodels,smp)
 if nargin<7
     smp={};
 end
-
 %# models from the ensemble
 if nargin<6    
     nmodels=1;
 end
-
 %if no rxn exceptions for Vind in buildmodels
 if nargin < 5
     rxn_excep = {};
 end
-
 if nargin < 4
     rxn_add = {};
 end
-
 %# metabolite concentration samples available
 if ~isempty(smp)
     nsamples = size(smp,1);
@@ -25,11 +21,12 @@ else
 end
 
 if (nsamples==1 && nmodels==1)
-    fprintf('\nGenerating a single model in the ensemble\n');
+    fprintf('\nGenerating a single parameter set in the ensemble...\n');
     ensb = cell(nmodels,2);
     model_ens = cell(nmodels,1);     
     ensb{1,1} = mc;
     model_ens{1} = buildmodels(model,pvec,mc,rxn_add,rxn_excep);    
+    fprintf('Parameter generation complete\n\n');
 elseif nsamples==1 && nmodels>1
     ensb = cell(nmodels,2);
     model_ens = cell(1,nmodels);
