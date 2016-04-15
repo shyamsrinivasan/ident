@@ -7,7 +7,7 @@ if nargin<5
     %FBA uptake rates
     Vup_struct = ([]);
 end
-if nargin <4
+if nargin <4 || isempty(prxnid)
     prxnid = 0;
 end
 if nargin <3
@@ -87,8 +87,11 @@ end
 % pps = strcmpi('PPS',model.rxns);
 % vl(pps) = 0;
 % vu(pps) = 0;
-
-cprod = sparse(1,prxnid,1,1,nr);
+if prxnid
+    cprod = sparse(1,prxnid,1,1,nr);
+else
+    cprod = sparse(1,nr);
+end
 
 %maximization
 [vmax,vobj,Maxflag] = cplexlp(-cprod(:),[],[],S,b,vl,vu);

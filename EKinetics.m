@@ -7,7 +7,9 @@ kcatfwd = pvec.kcat_fwd;
 % flux = zeros(model.nt_rxn,1);
 % model.Vuptake = zeros(model.nt_rxn,1);
 % model.Vuptake(VFex) = -model.Vss(VFex);
-Vuptake = model.Vuptake;
+if isfield(model,'Vuptake')
+    Vuptake = model.Vuptake;
+end
 
 vh = [find(strcmpi(model.rxns,'exH'));...
       find(strcmpi(model.rxns,'exH2O'));...

@@ -1,15 +1,22 @@
-function [pts,assignFlag,delGr,vCorrectFlag] = ACHRmetSampling(model,nFiles,nptsPerFile,stepsPerPnt)
-if nargin<4
+function [pts,assignFlag,delGr,vCorrectFlag] =...
+         ACHRmetSampling(model,setupfun,mc,rxn_add,nFiles,nptsPerFile,stepsPerPnt)
+if nargin<7
     stepsPerPnt = 199;
 end
-
-if nargin<3
+if nargin<6
     nptsPerFile=1000;
 end
-
-if nargin<2
+if nargin<5
     nFiles = 10;
 end
+if nargin<4
+    rxn_add = {};
+end
+if nargin<3
+    mc = [];
+end
+fprintf('\nGenerating %d concentration samples using ACHR\n',nptsPerFile);
+tic;
 
 %distance closest constraint
 maxMinTol = 1e-9;
@@ -21,15 +28,17 @@ uTol = 1e-9;
 dTol = 1e-14;
 
 %create warmup points for ACHR - temporary call
-bounds = setupMetLP(model);
+fh = str2func(setupfun);
+bounds = fh(model,rxn_add,mc);
 if size(bounds.A,2)==length(bounds.mets)
     %setup slack problem
     bounds = setupSlackVariables(bounds);
     warmUpPts = createWarmupPoints(model,bounds,2000);   
 end
 
-lb = separate_slack(bounds.lb,model,bounds);
-ub = separate_slack(bounds.ub,model,bounds);
+bounds.A = separate_slack(bounds.A,bounds);
+bounds.lb = separate_slack(bounds.lb,bounds);
+bounds.ub = separate_slack(bounds.ub,bounds);
 
 [nmets,npts] = size(warmUpPts);
 
@@ -64,8 +73,8 @@ for i=1:nFiles
             u = u/norm(u);
             
             %distance to upper and lower bound
-            distUb = ub-prevPt;
-            distLb = prevPt-lb;
+            distUb = bounds.ub-prevPt;
+            distLb = prevPt-bounds.lb;
             
             %determine if too close to boundary
             validDir = ((distUb>dTol) & (distLb>dTol));
@@ -111,12 +120,12 @@ for i=1:nFiles
             %print errors to file
             
             %print step information
-%             overInd = find(ub-curPt>0);
-%             underInd = find(curPt-lb<0);
+%             overInd = find(bounds.ub-curPt>0);
+%             underInd = find(curPt-bounds.lb<0);
             
-            if (any((ub-curPt) < 0) || any((curPt-lb)< 0))
-               curPt(ub-curPt>0) = ub(ub-curPt>0);
-               curPt(curPt-lb<0) = lb(curPt-lb<0);             
+            if (any((bounds.ub-curPt) < 0) || any((curPt-bounds.lb)< 0))
+               curPt(bounds.ub-curPt>0) = bounds.ub(bounds.ub-curPt>0);
+               curPt(curPt-bounds.lb<0) = bounds.lb(curPt-bounds.lb<0);             
             end
             
 %             if mod(totalStepcnt,2000)==0
@@ -139,27 +148,42 @@ for i=1:nFiles
         ptcnt = ptcnt+1;
     end %points per cycle
     
-    %re-assign concentrations to model.mets
+    % re-assign concentrations to model.mets
     [pts,assignFlag,delGr,vCorrectFlag] = assignConc(pts,model,bounds); 
-    [delGr,assignFlux] = assignRxns(delGr,model,bounds);
-    
-    mc = exp(pts);
-    mc(pts==0)=0;
-    pts = mc;
+    if ~all(prod(vCorrectFlag,1))
+        fprintf('Not all samples are thermodynamically consistent with the desired flux direction\n');
+        fprintf('Use caution when using the samples\n');
+        
+        % Need to add filters to remove thermodynamically inconsistent
+        % samples - re-checking delGr and concentrations for thermodynamic 
+        % feasibility
+        pts = pts(:,prod(vCorrectFlag,1)~=0);
+        delGr = delGr(:,prod(vCorrectFlag,1)~=0);
+    end
+    if ~isempty(pts)
+        [delGr,assignFlux] = assignRxns(delGr,model,bounds);    
+        mc = exp(pts);
+        mc(pts==0)=0;
+        pts = mc;
+    else
+        fprintf('No thermodynamically feasible samples found\n');
+        error('ACHRSampler:ThermInfeas',...
+        'Rerun simulation to obtain thermodynamically feasible samples\n');
+    end
     
     %re-checking delGr and concentrations for thermodynamic feasibility
-    vSpl = zeros(length(model.rxns),1);
-    for ir = 1:length(bounds.rxns)
-        vSpl(ir) = length(find(vCorrectFlag(ir,:)));
-        if all(vCorrectFlag(ir,:))
-            fprintf('%d. %s\n',ir,model.rxns{ir});
-        end
-    end
-    for is = 1:length(pts(1,:))
-        if all(vCorrectFlag(:,is))
-            fprintf('Sample %d\n',is);
-        end
-    end           
+%     vSpl = zeros(length(model.rxns),1);
+%     for ir = 1:length(bounds.rxns)
+%         vSpl(ir) = length(find(vCorrectFlag(ir,:)));
+%         if all(vCorrectFlag(ir,:))
+%             fprintf('%d. %s\n',ir,model.rxns{ir});
+%         end
+%     end
+%     for is = 1:length(pts(1,:))
+%         if all(vCorrectFlag(:,is))
+%             fprintf('Sample %d\n',is);
+%         end
+%     end           
           
 %     [delGr
 %     for ipt = 1:length(pts(1,:))
@@ -169,4 +193,5 @@ for i=1:nFiles
 %     end
     %save current points to file
 end
+fprintf('estimated time: %f\n',toc);
             

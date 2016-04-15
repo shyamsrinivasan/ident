@@ -1,5 +1,8 @@
-function Vind = addToVind(model,rxn_add,rxn_excep)
-Vind = model.Vind;
+function Vind = addToVind(model,Vind,rxn_add,rxn_excep)
+if nargin<4
+    rxn_excep = {};
+end
+% Vind = model.Vind;
 
 for irxn = 1:length(rxn_add)
     Vind = union(Vind,find(strcmpi(model.rxns,rxn_add{irxn})));

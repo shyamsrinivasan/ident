@@ -1,0 +1,9 @@
+Metab	Mc (mM)
+glc[e]	2
+pyr[e]	0.00E+00
+pi[e]	1.00E-04
+h2o[c]	55
+h2o[e] 	55
+o2[e]	2.73E-01
+o2[c]	1.00E-01
+	

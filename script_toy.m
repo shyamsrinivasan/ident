@@ -2,11 +2,12 @@
 clc
 
 addpath(genpath('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel'));
-rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\N2mD_test.txt';
+rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\N2mClose.txt';
 
 %create model structure
 [FBAmodel,parameter,variable,nrxn,nmetab] = modelgen(rxfname);
 
+[SBMLmodel,result] = CRNTanalysis(FBAmodel);
 %add rxn
 % rxn.equation = 'atp[c] <==>';
 % FBAmodel = addRxn(FBAmodel,parameter,rxn);

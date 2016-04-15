@@ -7,8 +7,8 @@ else
 end
 
 %appending mets with same lb and ub
-x = [x;repmat(bounds.x,1,size(x,2))];
-bounds.A = [bounds.A(:,1:length(bounds.mets)) bounds.A_kn];
+x = [x;repmat(bounds.x_kn,1,size(x,2))];
+bounds.A = [bounds.A bounds.A_kn];
 bounds.mets = [bounds.mets;bounds.mets_kn];
 
 %check for delGr values
@@ -24,6 +24,12 @@ for im = 1:length(bounds.mets)
         mc(tfm,:) = x(im,:);
         assignFlag(tfm) = 1;
     end
+end
+assignFlag = logical(assignFlag);
+vCorrectFlag = logical(vCorrectFlag);
+
+if ~isempty(delGr)
+    delGr = assignRxns(delGr,model,bounds);
 end
 
 %assign same concentrations to intra and extracellular co2,o2,h,pi and h2o

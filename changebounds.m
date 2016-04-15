@@ -4,20 +4,17 @@ if nargin < 4
     fixgrowth = 0;
 end
 model.rev(strcmpi(model.rxns,'NADTRHD')) = 0;
+if isfield(model,'Vuptake')
+    Vuptake = model.Vuptake;
+end
 if nargin < 3
-    bounds = struct();
-    if isfield(model,'Vuptake')
-        Vuptake = model.Vuptake;
-    end
+    bounds = struct();    
     nr = size(model.S,2);
     vl = zeros(nr,1);        
     vl(logical(model.rev)) = -100;
     vu = zeros(nr,1);          
     vu(vu==0) = 100;
-else
-    if isfield(bounds,'Vuptake')
-        Vuptake = bounds.Vuptake;
-    end
+else    
     vl = bounds.vl;
     vu = bounds.vu;    
 end
@@ -37,15 +34,20 @@ end
 % vl(strcmpi(model.rxns,'ATPS4r')) = -100;
 % vu(strcmpi(model.rxns,'ATPS4r')) = 0;
 vl(strcmpi(model.rxns,'NADTRHD')) = 0;
-vu(strcmpi(model.rxns,'NADTRHD')) = 100;
+vu(strcmpi(model.rxns,'NADTRHD')) = 500;
 vl(strcmpi(model.rxns,'THD2')) = 0;
 vu(strcmpi(model.rxns,'THD2')) = 0;
 vu(strcmpi(model.rxns,'SUCCt2_2')) = 0;
 vu(strcmpi(model.rxns,'FORt2')) = 0;
+vl(strcmpi(model.rxns,'PPC')) = 0;
+
+vu(strcmpi(model.rxns,'ATPS4r')) = 200;
+
 
 %Uptake Fluxes
 if any(Vuptake)
     vl(logical(Vuptake)) = -Vuptake(logical(Vuptake));
+%     vu(logical(Vuptake)) = -Vuptake(logical(Vuptake));
 end
 
 %change bounds for exchange metabolites
@@ -61,7 +63,7 @@ end
 
 %atp maintanance
 vl(strcmpi(model.rxns,'ATPM')) = 8.39;
-vu(strcmpi(model.rxns,'ATPM')) = 100;
+vu(strcmpi(model.rxns,'ATPM')) = 200;
 
 %Growth Fluxes
 if fixgrowth
@@ -69,6 +71,8 @@ if fixgrowth
         if isfield(model,'gmax')
             vl(model.bmrxn) = model.gmax;
             vu(model.bmrxn) = model.gmax;
+        else
+            error('Nogmax:changebounds','No field gmax found in model. Cannot fix growth');
         end
     end
 else

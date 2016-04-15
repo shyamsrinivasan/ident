@@ -1,0 +1,8 @@
+Reaction	Positive Effectors FWD	Negative Effectors FWD	Positive Effectors REV	Negative Effectors REV
+A[c] ---> B[c]	A[c]			
+A[c] ---> C[c]	A[c]			
+B[c] ---> Pr[c]	B[c]			
+C[c] ---> B[c]	C[c]			
+A[c] <==> D[c]	A[c]		D[c]	
+C[c] + D[c] <==> Pr[c] + E[c]	"C[c], D[c]"		"Pr[c], E[c]"	
+C[c] ---> B[c]	C[c]			

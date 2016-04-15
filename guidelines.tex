@@ -1,0 +1,22 @@
+\documentclass[10pt]{report}
+
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\begin{document}
+	\textbf{Information about the model code in MATLAB}\\
+	
+	1. Model generation is carried out from a excel/text file using modelgen.m\\
+	
+	2. Using FBA to calculate the steady state fluxes is optional (what if it is a toy model?)\\
+	
+		2a. If using FBA or PFBA, fix uptake fluxes, reaction bounds and essential and nonessential exchange reactions in the model.\\
+		
+		2b. For toy model steady state fluxes can be alternatively specified in the excel/text file\\	
+			
+	3. Specify metabolite concentrations that you may know\\
+		
+		3a. Sample the other metabolite concentrations using ACHR within a constrained space.\\
+		
+		3b. If not sampling, assign metabolites a concentration either using a file or in the script file.\\
+			
+\end{document}

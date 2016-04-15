@@ -1,12 +1,14 @@
-function [x,assignFlag,delGr,model,vCorrectFlag] = getiConEstimate(model,setupfun)
-
+function [mc,assignFlag,delGr,model,vCorrectFlag] =...
+         getiConEstimate(model,setupfun,mc,rxn_add)
 %setup problem with default constraints for thermodynamically active
-%reaction
+%reactions
 % delG > or < 0 and Vss < or > 0
+fprintf('Generating single feasible concentration sample...\n');
+
 fh = str2func(setupfun);
 % bounds = setupMetLP(model);
 % bounds = setupMetLP_toy(model);
-bounds = fh(model);
+bounds = fh(model,rxn_add,mc);
 
 %check
 if ~isfield(bounds,'A') 
@@ -21,25 +23,27 @@ if size(bounds.A,2) == length(bounds.mets)
     LPmax = solvemetLP(bounds);
     if LPmax.flag>0 
         %do not include slack variables
-        x = separate_slack(LPmax.x,model,bounds);
+        lnmc = separate_slack(LPmax.x,bounds);
+        bounds.A = separate_slack(bounds.A,bounds);
+        bounds.lb = separate_slack(bounds.lb,bounds);
+        bounds.ub = separate_slack(bounds.ub,bounds);
 %         check_1(bounds,x);
         %get mc for model and check for delGr values
-        if ~isempty(x)
-            [x,assignFlag,delGr,vCorrectFlag] = assignConc(x,model,bounds);        
-        end
-        lb = separate_slack(bounds.lb,model,bounds);
-        model.lb = exp(assignConc(lb,model,bounds));
-        ub = separate_slack(bounds.ub,model,bounds);
-        model.ub = exp(assignConc(ub,model,bounds));
-        if ~isempty(delGr)
-            [delGr,assignFlux] = assignRxns(delGr,model,bounds);
+        if ~isempty(lnmc)
+            [lnmc,assignFlag,delGr,vCorrectFlag] = assignConc(lnmc,model,bounds);        
         end
         
-        mc = exp(x);
-        mc(x==0)=0;
-        x = mc;
-    else
-        error('mcEst:LPinfeas',...
+        model.lb = exp(assignConc(bounds.lb,model,bounds));        
+        model.ub = exp(assignConc(bounds.ub,model,bounds));
+%         if ~isempty(delGr)
+%             [delGr,assignFlux] = assignRxns(delGr,model,bounds);
+%         end        
+        mc = exp(lnmc);
+        mc(lnmc==0)=0;
+%         lnmc = mc;
+        fprintf('Sample generation Complete\n\n');
+    elseif LPmax.flag<0
+        error('metLP:Infeas',...
             'LP for thermodynamic metabolite conentrations is infeasible');
     end
 else
