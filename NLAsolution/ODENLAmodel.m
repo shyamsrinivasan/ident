@@ -1,5 +1,6 @@
-function [sol] =...
-IntegrateNLASSmodel(model,ensb,mc,ess_rxn,Vup_struct,change_pos,change_neg)
+function sol =...
+ODENLAmodel(model,ensb,mc,ess_rxn,Vup_struct,change_pos,change_neg)
+% change in initial conditions
 if nargin<7
     change_neg = struct([]);
 end
@@ -12,6 +13,7 @@ end
 if nargin<4
     ess_rxn = {};
 end
+% check if concentrations are initialized
 if nargin < 3
     error('getiest:NoA','No initial concentrations');
 end
@@ -21,11 +23,11 @@ else
     pvec = ensb{1,2};
 end
 
-% initialize solver parameters for NLASS solution
+% solution to ODE
+% initialize solver properties
 % toy model
-[model,solverP,saveData] = imodel(model,'nla');
+[model,ODEoptions,saveData] = imodel(model,'ode',500);
 
-% adjust model for solution
 % remove water and protons (held constant) from consideration in the model
 % integration phase
 [model,pvec,mc] = addremoveMets(model,{'h2o[c]','h2o[e]'},pvec,mc);
@@ -39,6 +41,7 @@ imc(imc==0) = 1;
 
 % noramlize concentration vector to intial state
 Nimc = newmc(1:nvar);%imc./imc;
+Nimc(3) = 0.2;
 Pimc = newmc(nvar+1:end);
 Nimc(imc==0) = 0;
 newmodel.imc = imc;
@@ -48,11 +51,16 @@ newmodel.Pimc = Pimc;
 % calculate initial flux
 flux = iflux(newmodel,newpvec,[Nimc.*imc;Pimc]);
 
-% calculate rhs of 0 = dx/dt = f(x)
-dXdt = ToyNLAmodel(Nimc,newmodel,newpvec);
+% toy model
+dXdt = ToyODEmodel(0,Nimc,[],newmodel,newpvec);
+
+% integrate model
+% [sol,finalSS,status] = callODEsolver(newmodel,newpvec,Nimc,ODEoptions);
+
+% solution to NLA
+% initialize solver parameters for NLASS solution
+% toy model
+[newmodel,NLAoptions,saveData] = imodel(newmodel,'nla');
 
 % solve NLA model
-[sol,finalSS,status] = callNLAsolver(newmodel,newpvec,Nimc,solverP);
-
-
-
+[sol,finalSS,status] = callNLAsolver(newmodel,newpvec,Nimc,NLAoptions);

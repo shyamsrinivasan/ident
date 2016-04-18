@@ -1,4 +1,4 @@
-function [dXdt,flag,newdata] = ToyODEmodel(t,mc,data,model,pvec)
+function [dXdt,flag] = ToyNLAmodel(mc,model,pvec)
 
 nvar = length(mc);
 dXdt = zeros(nvar,1);
@@ -23,12 +23,12 @@ dXdt(1:nvar) = (1./model.imc).*(model.S(1:nvar,:)*flux);
 % dXdt(nin_m+1:nt_m) = 0;%
 
 %% staus check for CVODE in SUNDIALS TB
-if any(mc<0)
-    flag = -1;
-else
+% if any(mc<0)
+%     flag = -1;
+% else
     flag = 0;
-end
-newdata = data;
-newdata.flux = flux;
-newdata.Y = mc;
-newdata.t = t;
+% end
+% newdata = data;
+% newdata.flux = flux;
+% newdata.Y = mc;
+% newdata.t = t;

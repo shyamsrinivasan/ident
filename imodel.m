@@ -27,6 +27,7 @@ switch type
         solverP.KrylovMaxDim = 10;
         solverP.MaxNumRestarts = 2;
         solverP.MaxNumSetups = 5;
+        solverP.MaxNumSteps = 500;
         solverP.Verbose = true;
 end
 
