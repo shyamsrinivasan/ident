@@ -1,0 +1,7 @@
+Metab	Mc (M)
+ac[e]	0.1
+pep[c]	1.00E-03
+fdp[c]	1.00E+01
+enz[c]	1
+	
+	

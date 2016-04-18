@@ -275,62 +275,32 @@ for irxn = 1:nt_rxn
     end
 end
 
-%Separate External & Internal mets
+% Separate External & Internal mets
 % exter_mind = ~cellfun('isempty',regexp(model.mets,'\w(?:xt)$'));
-exter_mind = ~cellfun('isempty',regexp(model.mets,'\w(?:\[e\])$'));
-inter_mind = ~exter_mind;
-bm_ind = strcmpi(model.mets,'Biomass[c]');
-if any(bm_ind)
-    model.mets{bm_ind} = 'Biomass';
-end
-% bm_mind = ~cellfun('isempty',regexp(model.mets,'Biomass'));
-inter_mind(bm_ind)=0;
+newmodel = separate_cex(model);
+model_data.mets = newmodel.mets;                   
 
-model_data.mets = [model.mets(inter_mind,1);...
-                          model.mets(exter_mind,1);...
-                          model.mets(bm_ind,1)];                   
-newS = [model.S(inter_mind,:);model.S(exter_mind,:);model.S(bm_ind,:)];
-newSI = [model.SI(inter_mind,:);model.SI(exter_mind,:);model.SI(bm_ind,:)];
-newK = [model.K(inter_mind,:);model.K(exter_mind,:);model.K(bm_ind,:)];
-newKl = [model.Klb(inter_mind,:);model.Klb(exter_mind,:);model.Klb(bm_ind,:)];
-newKu = [model.Kub(inter_mind,:);model.Kub(exter_mind,:);model.Kub(bm_ind,:)];
-% newKI = [model.KI(inter_mind,:);model.KI(exter_mind,:);model.KI(bm_ind,:)];
-newKIa = [model.KIact(inter_mind,:);...
-          model.KIact(exter_mind,:);...
-          model.KIact(bm_ind,:)];
-newKIi = [model.KIihb(inter_mind,:);...
-          model.KIihb(exter_mind,:);...
-          model.KIihb(bm_ind,:)];
-
-%Identify Reaction Indices
-% Vuptake = [];
-% Vexind = [];
+% Identify Reaction Indices
 model_data.rxns = model.enzName;
-[Vind,VFex,Vex,bmrxn] = fluxIndex(model_data,nt_rxn,newS);
-% [Vind,Vuptake,VFup,VFex,Vex,bmrxn] = fluxIndex(model_data,nt_rxn,newS);
-% try
-%     Vext = [VFup' VFex'];
-% catch
-%     Vext = [VFup;VFex];
-% end
+[Vind,VFex,Vex,bmrxn] = fluxIndex(model_data,nt_rxn,newmodel.S);
 
-%Append appropriate rows/columns corresponding to enzss/fluxes
+% Append appropriate rows/columns corresponding to enzss/fluxes
 nenz = length(model.enzName);
 other_ind = setdiff(1:nenz,[ToColumnVector(Vind)...                            
                             ToColumnVector(Vex)...
                             ToColumnVector(VFex)...
                             bmrxn]);
-[mS,~] = size(newS);
+[mS,~] = size(newmodel.S);
 model_data.enzs = [model.enzName(setdiff(1:nenz,other_ind),1);...
                      model.enzName(other_ind,1)];
 model_data.rxns = model_data.enzs;    
-newS = [newS,sparse(mS,length(other_ind))];
-newSI = [newSI,sparse(mS,length(other_ind))];
-newK = [newK,sparse(mS,length(other_ind))];
-newKl = [newKl,sparse(mS,length(other_ind))];
-newKu = [newKu,sparse(mS,length(other_ind))];
-newKIa = [newKIa,sparse(mS,length(other_ind))];
-newKIi = [newKIi,sparse(mS,length(other_ind))];
+newmodel.S = [newmodel.S,sparse(mS,length(other_ind))];
+newmodel.SI = [newmodel.SI,sparse(mS,length(other_ind))];
+newmodel.K = [newmodel.K,sparse(mS,length(other_ind))];
+newmodel.Klb = [newmodel.Klb,sparse(mS,length(other_ind))];
+newmodel.Kub = [newmodel.Kub,sparse(mS,length(other_ind))];
+newmodel.KIact = [newmodel.KIact,sparse(mS,length(other_ind))];
+newmodel.KIihb = [newmodel.KIihb,sparse(mS,length(other_ind))];
 newVss = [model.Vss;zeros(length(other_ind),1)];
 delSGr = [model.delG;zeros(length(other_ind),1)];
 delGlb = [model.delGlb;zeros(length(other_ind),1)];
@@ -340,9 +310,9 @@ newkcfwd = [model.kcat_fwd;zeros(length(other_ind),1)];
 newkcbkw = [model.kcat_bkw;zeros(length(other_ind),1)];
 newreverse = [model.reversible;zeros(length(other_ind),1)];
 
-%compensated metabolites
+% compensated metabolites
 model_data.CMPS = sparse(length(model_data.mets),length(model_data.rxns));
-%compensated species
+% compensated species
 for irxn = 1:nt_rxn
     rxnstring = C{3}{irxn};
     k = strfind(rxnstring, ':');
@@ -372,29 +342,24 @@ for irxn = 1:nt_rxn
     end
 end
 
-%New Indices
-[Vind,VFex,Vex,bmrxn] = fluxIndex(model_data,nt_rxn,newS);
+% New Indices
+[Vind,VFex,Vex,bmrxn] = fluxIndex(model_data,nt_rxn,newmodel.S);
 % [Vind,Vuptake,VFup,VFex,Vex,bmrxn,Vup,Vdn] = fluxIndex(model_data,nt_rxn,newS);
 model_data.Vind = Vind;
-% model_data.Vupind = Vuptake;
-% model_data.Vexind = Vexind;
 model_data.Vex = Vex;
-% model_data.VFup = VFup;
 model_data.VFex = VFex;
 model_data.bmrxn = bmrxn;
-% model_data.Vup = Vup;
-% model_data.Vdn = Vdn;
-%Identify activated reactions
-[~,allactrxn] = find(newSI(:,1:nt_rxn)>0);
+% Identify activated reactions
+[~,allactrxn] = find(newmodel.SI(:,1:nt_rxn)>0);
 Vact_ind = unique(allactrxn);
-%Identify Inhibited reactions
-[~,allihbrxn] = find(newSI(:,1:nt_rxn)<0);
+% Identify Inhibited reactions
+[~,allihbrxn] = find(newmodel.SI(:,1:nt_rxn)<0);
 Vihb_ind = unique(allihbrxn);
-%K and KI are written as vectors as opposed to matrices
+% K and KI are written as vectors as opposed to matrices
 parameter = struct();
-model_data.S = newS;
+model_data.S = newmodel.S;
 % model_data.CMPS = newCMPS;
-model_data.SI = newSI;
+model_data.SI = newmodel.SI;
 model_data.Vss = newVss;
 model_data.delSGr = delSGr;
 model_data.delGlb = delGlb;
@@ -408,14 +373,14 @@ model_data.bmrxn = bmrxn;
 
 model_data.n_rxn = length(model_data.Vind);
 model_data.nt_metab = nt_metab;
-model_data.next_metab = length(find(exter_mind));
-model_data.nint_metab = length(find(inter_mind));
+model_data.next_metab = newmodel.next_metab;
+model_data.nint_metab = newmodel.nint_metab;
 
-parameter.K = newK;
-parameter.Klb = newKl;
-parameter.Kub = newKu;
-parameter.KIact = newKIa;
-parameter.KIihb = newKIi;
+parameter.K = newmodel.K;
+parameter.Klb = newmodel.Klb;
+parameter.Kub = newmodel.Kub;
+parameter.KIact = newmodel.KIact;
+parameter.KIihb = newmodel.KIihb;
 parameter.Vmax = model.Vmax;
 parameter.kcat_fwd = newkcfwd;
 parameter.kcat_bkw = newkcbkw;
@@ -465,10 +430,10 @@ end
 model_data.b = zeros(nt_metab,1);
 model_data.c = sparse(1,bmrxn,1,1,nt_rxn)';
 model_data.vl = zeros(nt_rxn,1);
-model_data.vl(model_data.vl==0) = -100;
+model_data.vl(model_data.vl==0) = -500;
 model_data.vl(bmrxn) = 0;
 model_data.vu = zeros(nt_rxn,1);
-model_data.vu(model_data.vu==0) = 100;
+model_data.vu(model_data.vu==0) = 500;
 
 %if runFBA
     %build FBA matrices
