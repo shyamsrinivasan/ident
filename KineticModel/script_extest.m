@@ -22,7 +22,6 @@ ess_rxn = {'exCO2','exH','exH2O','exPI','exO2','exGLC'};
 FBAmodel.bmrxn = find(strcmpi(FBAmodel.rxns,'exPYR'));
 FBAmodel = FBAfluxes(FBAmodel,'any',ess_rxn,Vup_struct);
 
-
 % calculate delGr if concentrations cannot be sampled
 rxn_add = {'GLCpts','NADH16','ATPS4r','CYTBD'};
 % bounds = setupMetLP_g6p(FBAmodel,rxn_add,mc);
