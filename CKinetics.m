@@ -2,8 +2,11 @@ function [flux,vflux] = CKinetics(model,pvec,mc,Vind)
 [~,nc] = size(mc);
 allmc = mc;
 S = model.S;
+SI = model.SI;
 nrxn = model.nt_rxn;
 K = pvec.K;
+KIact = pvec.KIact;
+KIihb = pvec.KIihb;
 kfwd = pvec.kcat_fwd;
 kbkw = pvec.kcat_bkw;
 Vmax = pvec.Vmax;
@@ -90,6 +93,23 @@ for ic = 1:nc
             dr_pr = 1;
         end
         
+        % regulation        
+        if any(SI(:,Vind(irxn)))
+            % activation
+            if any(SI(:,Vind(irxn))>0)
+                acid = SI(:,Vind(irxn))>0;
+                sac = SI(acid,Vind(irxn));
+                nr_flux = nr_flux*prod((mc(acid)./KIact(acid,Vind(irxn))).^sac./...
+                          (1+(mc(acid)./KIact(acid,Vind(irxn))).^sac));        
+            end
+            % inhibition
+            if any(SI(:,Vind(irxn))<0)
+                ihid = SI(:,Vind(irxn))<0;
+                sih = SI(ihid,Vind(irxn));
+                nr_flux =...
+                nr_flux*prod(1./(1+(mc(ihid)./KIihb(ihid,Vind(irxn))).^sih));
+            end
+        end  
 
         if any(sbid) && any(prid)
             dr_flux = prod(dr_sb)+prod(dr_pr)-1;
