@@ -17,7 +17,8 @@ function dM = fun_eval(t,kmrgd,pvec,acetate,d)
 dM = zeros(3,1);
 
 % substitute with Convenience Kinetics
-flux = Kotte_glycolysisflux(kmrgd,pvec);
+flux = CKinetics(model,pvec,kmrgd,[1 2 3]);
+flux = Kotte_glycolysisflux(kmrgd,pvec,flux,model);
                      
 % %J(E, acetate)
 % flux(1) = kEcat.*kmrgd(1).*acetate./(acetate+KEacetate);
@@ -30,7 +31,10 @@ flux = Kotte_glycolysisflux(kmrgd,pvec);
 % %E(FBP) for J (%FBP ---| Cra and Cra ---> E)
 % flux(4) = vemax.*(1-1./(1+(KeFBP./kmrgd(3)).^ne));
 
-%differential equations
+% differential equations
+tfm = cellfun(@(x)strcmpi(model.mets,x),{'fdp[c]','pep[c]'});
+tfm = [find(strcmpi(model.mets,'fdp[c]'),strcmpi(model.mets
+dM([1 2]) = model.S([1 2],:)*flux;
 %enzymes
 %E
 dM(1) = flux(4) - d*kmrgd(1);
