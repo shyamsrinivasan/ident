@@ -36,11 +36,11 @@ flux = Kotte_glycolysisflux(kmrgd,pvec);
 %differential equations
 %enzymes
 %E
-dM(1) = flux(4) - d*kmrgd(1);
+dM(1) = flux(2) - d*kmrgd(1);
 %PEP
-dM(2) = flux(1) - flux(2);
+dM(2) = flux(1) - flux(4);
 %FBP
-dM(3) = flux(2) - flux(3);
+dM(3) = flux(4) - flux(3);
 %acetate
 % dM(4) = 0;
 

@@ -2,8 +2,11 @@ function [flux,vflux] = CKinetics(model,pvec,mc,Vind)
 [~,nc] = size(mc);
 allmc = mc;
 S = model.S;
+SI = model.SI;
 nrxn = model.nt_rxn;
 K = pvec.K;
+KIact = pvec.KIact;
+KIihb = pvec.KIihb;
 kfwd = pvec.kcat_fwd;
 kbkw = pvec.kcat_bkw;
 Vmax = pvec.Vmax;
@@ -54,42 +57,62 @@ for ic = 1:nc
             end    
             if any(sbid) && any(prid)
                 %Denominator - 1.6
-                dr_sb = 1+mc(sbid)./K(sbid,Vind(irxn));
-                for j = 1:length(find(sbid))
-                    for si = 2:Sb(j)
-                        dr_sb(j) = dr_sb(j) + dr_sb(j)^si;                
-                    end
-                end
+                dr_sb = prod((1+mc(sbid)./K(sbid,Vind(irxn))).^Sb);
+                
+%                 for j = 1:length(find(sbid))
+%                     for si = 2:Sb(j)
+%                         dr_sb(j) = dr_sb(j) + dr_sb(j)^si;                
+%                     end
+%                 end
                 %dr_pr
-                dr_pr = 1+mc(prid)./K(prid,Vind(irxn));
-                for j = 1:length(find(prid))
-                    for si = 2:Sp(j)
-                        dr_pr(j) = dr_pr(j)+dr_pr(j)^si;
-                    end
-                end
+                dr_pr = prod((1+mc(prid)./K(prid,Vind(irxn))).^Sp);
+                
+%                 for j = 1:length(find(prid))
+%                     for si = 2:Sp(j)
+%                         dr_pr(j) = dr_pr(j)+dr_pr(j)^si;
+%                     end
+%                 end
             else
                 dr_sb = 1;
                 dr_pr = 1;
             end
         elseif ~model.rev(Vind(irxn))                           
-            if all(mc(sbid)>0)
+%             if all(mc(sbid)>0)
                 nr_flux =...
                 kfwd(Vind(irxn))*prod((mc(sbid)./K(sbid,Vind(irxn))).^Sb);
-            end
+%             end
             if any(sbid) && any(prid)
                 %Denominator - 1.6
-                dr_sb = 1+mc(sbid)./K(sbid,Vind(irxn));
-                for j = 1:length(find(sbid))
-                    for si = 2:Sb(j)
-                        dr_sb(j) = dr_sb(j) + dr_sb(j)^si;                
-                    end
-                end                  
+                dr_sb = prod((1+mc(sbid)./K(sbid,Vind(irxn))).^Sb);
+%                 dr_sb = 1+mc(sbid)./K(sbid,Vind(irxn));
+%                 for j = 1:length(find(sbid))
+%                     for si = 2:Sb(j)
+%                         dr_sb(j) = dr_sb(j) + dr_sb(j)^si;                
+%                     end
+%                 end                  
             else
                 dr_sb = 1;                
             end
             dr_pr = 1;
         end
         
+        % regulation        
+        if any(SI(:,Vind(irxn)))
+            % activation
+            if any(SI(:,Vind(irxn))>0)
+                acid = SI(:,Vind(irxn))>0;
+                sac = SI(acid,Vind(irxn));
+                nr_flux = nr_flux*prod(((mc(acid)./KIact(acid,Vind(irxn))).^sac)./...
+                          ((1+mc(acid)./KIact(acid,Vind(irxn))).^sac));        
+            end
+            % inhibition
+            if any(SI(:,Vind(irxn))<0)
+                ihid = SI(:,Vind(irxn))<0;
+                sih = SI(ihid,Vind(irxn));
+                nr_flux =...
+                nr_flux*prod(1./((1+mc(ihid)./KIihb(ihid,Vind(irxn))).^sih));
+            end
+        end  
 
         if any(sbid) && any(prid)
             dr_flux = prod(dr_sb)+prod(dr_pr)-1;

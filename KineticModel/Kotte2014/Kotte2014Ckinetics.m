@@ -9,44 +9,31 @@ out{7} = [];
 out{8} = [];
 out{9} = [];
 
-function dM = fun_eval(t,kmrgd,pvec,acetate,d)
+function dM = fun_eval(t,kmrgd,model,pvec)
 % pvec = [kEcat,KEacetate,...
 %         KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
 %         vEXmax,KEXPEP,...
 %         vemax,KeFBP,ne,acetate,d];
-dM = zeros(3,1);
+dM = zeros(length(kmrgd),1);
+tfenz = find(strcmpi(model.mets,'enz[c]'));
+
+allmc = [kmrgd;model.PM];
+d = pvec.d;
 
 % substitute with Convenience Kinetics
-flux = CKinetics(model,pvec,kmrgd,[1 2 3]);
-flux = Kotte_glycolysisflux(kmrgd,pvec,flux,model);
+flux = Kotte2014Ckinetics_flux(allmc,model,pvec); 
                      
-% %J(E, acetate)
-% flux(1) = kEcat.*kmrgd(1).*acetate./(acetate+KEacetate);
-% %vFbp(PEP,FBP)
-% ratio = 1+kmrgd(3)/KFbpFBP;
-% flux(3) = vFbpmax.*(ratio-1).*(ratio).^3/(ratio.^4+Lfbp*(1+kmrgd(2)./KFbpPEP).^(-4));
-% %vEX(PEP)
-% flux(2) = vEXmax.*kmrgd(2)./(kmrgd(2)+KEXPEP);
-% %enzyme production fluxes
-% %E(FBP) for J (%FBP ---| Cra and Cra ---> E)
-% flux(4) = vemax.*(1-1./(1+(KeFBP./kmrgd(3)).^ne));
-
 % differential equations
-tfm = cellfun(@(x)strcmpi(model.mets,x),{'fdp[c]','pep[c]'});
-tfm = [find(strcmpi(model.mets,'fdp[c]'),strcmpi(model.mets
-dM([1 2]) = model.S([1 2],:)*flux;
-%enzymes
-%E
-dM(1) = flux(4) - d*kmrgd(1);
-%PEP
-dM(2) = flux(1) - flux(2);
-%FBP
-dM(3) = flux(2) - flux(3);
-%acetate
-% dM(4) = 0;
+tfm = cellfun(@(x)strcmpi(model.mets,x),{'fdp[c]','pep[c]'},'UniformOutput',false);
+tfm = cell2mat(cellfun(@(x)find(x),tfm,'UniformOutput',false));
+dM(tfm) = model.S(tfm,:)*flux;
+
+% enzymes
+% E
+dM(tfenz) = flux(strcmpi(model.rxns,'ENZC')) - d*allmc(tfenz);
 
 function [tspan,y0,options] = init
-handles = feval(Kotte2014glycolysis);
+handles = feval(Kotte2014Ckinetics);
 
 % obtain initial steady states
 M = zeros(3,1);
@@ -54,8 +41,11 @@ M(1)  = 1;      % E
 M(2)  = 0.001;   % PEP
 M(3)  = 10;   % FBP
 
+% rhsfn = handles{2};
+% rhsodefn = @(t,x)rhsfn(t,x,)
+
 % substitute this with SUNDIALS
-[~,yout] = ode45(@Kotte_glycolysis,0:0.1:30,M);
+[~,yout] = ode45(@fun_eval,0:0.1:30,M);
 y0 = yout(end,:);
 options = odeset('Jacobian',handles(3),'JacobianP',handles(4),...
                  'Hessians',handles(4),'HessiansP',handles(5));
