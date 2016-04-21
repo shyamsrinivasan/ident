@@ -49,19 +49,19 @@ end
 % metabolic fluxes
 % J(E, acetate)
 if ~isstruct(pvec) || isempty(model)
-    flux(1) = kEcat.*M(1).*acetate./(acetate+KEacetate);
+    flux(1) = kEcat.*M(3).*acetate./(acetate+KEacetate);
 end
 
 % vEX(PEP)
 if ~isstruct(pvec) || isempty(model)
-    flux(4) = vEXmax.*M(2)./(M(2)+KEXPEP);
+    flux(4) = vEXmax.*M(1)./(M(1)+KEXPEP);
 end
 
 % % vFbp(PEP,FBP)
 
 if ~isstruct(pvec) || isempty(model)
-    ratio = 1+M(3)/KFbpFBP;
-    flux(3) = vFbpmax.*(ratio-1).*(ratio).^3/(ratio.^4+Lfbp*(1+M(2)./KFbpPEP).^(-4));
+    ratio = 1+M(2)/KFbpFBP;
+    flux(3) = vFbpmax.*(ratio-1).*(ratio).^3/(ratio.^4+Lfbp*(1+M(1)./KFbpPEP).^(-4));
 else
 %     tfr = strcmpi(model.rxns,'FBP'); 
 %     tfm = strcmpi(model.mets,'fdp[c]');
@@ -79,7 +79,7 @@ if ~isempty(model)
     ne = 2;
     tfr = strcmpi(model.rxns,'ENZC'); 
     tfrg = strcmpi(model.mets,'fdp[c]');
-    flux(tfr) = pvec.Vmax(tfr).*(1-1./(1+pvec.KIact(tfrg,tfr)./M(tfrg).^ne));
+    flux(tfr) = pvec.Vmax(tfr).*(1-1./(1+(pvec.KIact(tfrg,tfr)./M(tfrg)).^ne));
 else
-    flux(2) = vemax.*(1-1./(1+(KeFBP./M(3)).^ne));
+    flux(2) = vemax.*(1-1./(1+(KeFBP./M(2)).^ne));
 end

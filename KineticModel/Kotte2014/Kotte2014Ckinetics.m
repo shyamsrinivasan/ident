@@ -9,28 +9,18 @@ out{7} = [];
 out{8} = [];
 out{9} = [];
 
-function dM = fun_eval(t,kmrgd,model,pvec)
-% pvec = [kEcat,KEacetate,...
-%         KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
-%         vEXmax,KEXPEP,...
-%         vemax,KeFBP,ne,acetate,d];
-dM = zeros(length(kmrgd),1);
-tfenz = find(strcmpi(model.mets,'enz[c]'));
+function dM = fun_eval(t,kmrgd,model,kEcat,KEacetate,...
+                         KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
+                         vEXmax,KEXPEP,...
+                         vemax,KeFBP,ne,acetate,d)
+pvec = [kEcat,KEacetate,...
+        KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
+        vEXmax,KEXPEP,...
+        vemax,KeFBP,ne,acetate,d];
+    
+dM = Kotte_CNLAE(kmrgd,model,pvec);
 
-allmc = [kmrgd;model.PM];
-d = pvec.d;
 
-% substitute with Convenience Kinetics
-flux = Kotte2014Ckinetics_flux(allmc,model,pvec); 
-                     
-% differential equations
-tfm = cellfun(@(x)strcmpi(model.mets,x),{'fdp[c]','pep[c]'},'UniformOutput',false);
-tfm = cell2mat(cellfun(@(x)find(x),tfm,'UniformOutput',false));
-dM(tfm) = model.S(tfm,:)*flux;
-
-% enzymes
-% E
-dM(tfenz) = flux(strcmpi(model.rxns,'ENZC')) - d*allmc(tfenz);
 
 function [tspan,y0,options] = init
 handles = feval(Kotte2014Ckinetics);

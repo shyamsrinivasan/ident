@@ -9,7 +9,7 @@ out{7} = [];
 out{8} = [];
 out{9} = [];
 
-function dM = fun_eval(t,kmrgd,kEcat,KEacetate,...
+function dM = fun_eval(t,kmrgd,model,kEcat,KEacetate,...
                          KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
                          vEXmax,KEXPEP,...
                          vemax,KeFBP,ne,acetate,d)
@@ -17,32 +17,9 @@ pvec = [kEcat,KEacetate,...
         KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
         vEXmax,KEXPEP,...
         vemax,KeFBP,ne,acetate,d];
-dM = zeros(3,1);
+    
+dM = Kotte_givenNLAE(kmrgd,model,pvec);
 
-% substitute with Convenience Kinetics
-flux = Kotte_glycolysisflux(kmrgd,pvec);
-                     
-% %J(E, acetate)
-% flux(1) = kEcat.*kmrgd(1).*acetate./(acetate+KEacetate);
-% %vFbp(PEP,FBP)
-% ratio = 1+kmrgd(3)/KFbpFBP;
-% flux(3) = vFbpmax.*(ratio-1).*(ratio).^3/(ratio.^4+Lfbp*(1+kmrgd(2)./KFbpPEP).^(-4));
-% %vEX(PEP)
-% flux(2) = vEXmax.*kmrgd(2)./(kmrgd(2)+KEXPEP);
-% %enzyme production fluxes
-% %E(FBP) for J (%FBP ---| Cra and Cra ---> E)
-% flux(4) = vemax.*(1-1./(1+(KeFBP./kmrgd(3)).^ne));
-
-%differential equations
-%enzymes
-%E
-dM(1) = flux(2) - d*kmrgd(1);
-%PEP
-dM(2) = flux(1) - flux(4);
-%FBP
-dM(3) = flux(4) - flux(3);
-%acetate
-% dM(4) = 0;
 
 function [tspan,y0,options] = init
 handles = feval(Kotte2014glycolysis);
