@@ -24,10 +24,18 @@ newmodel.S = newmodel.S(list,:);
 newmodel.mets = newmodel.mets(list);
 newmodel.CMPS = newmodel.CMPS(list,:);
 newmodel.SI = newmodel.SI(list,:);
-newmodel.MClow = newmodel.MClow(list);
-newmodel.MChigh = newmodel.MChigh(list);
-newmodel.MolWt = newmodel.MolWt(list);
-newmodel.b = newmodel.b(list);
+if isfield(newmodel,'MClow')
+    newmodel.MClow = newmodel.MClow(list);
+end
+if isfield(newmodel,'MChigh')
+    newmodel.MChigh = newmodel.MChigh(list);
+end
+if isfield(newmodel,'MolWt')
+    newmodel.MolWt = newmodel.MolWt(list);
+end
+if isfield(newmodel,'b')
+    newmodel.b = newmodel.b(list);
+end
 if ~isempty(mc)
     newmc = newmc(list);
 end
@@ -48,14 +56,30 @@ newmodel.SI = newmodel.SI(:,logical(sum(logical(newmodel.S),1)));
 newmodel.CMPS = newmodel.CMPS(:,logical(sum(logical(newmodel.S),1)));
 newmodel.Keq = newmodel.Keq(logical(sum(logical(newmodel.S),1)));
 newmodel.Vss = newmodel.Vss(logical(sum(logical(newmodel.S),1)));
-newmodel.delSGr = newmodel.delSGr(logical(sum(logical(newmodel.S),1)));
-newmodel.delGlb = newmodel.delGlb(logical(sum(logical(newmodel.S),1)));
-newmodel.delGub = newmodel.delGub(logical(sum(logical(newmodel.S),1)));
-newmodel.rev = newmodel.rev(logical(sum(logical(newmodel.S),1)));
-newmodel.c = newmodel.c(logical(sum(logical(newmodel.S),1)));
-newmodel.vl = newmodel.vl(logical(sum(logical(newmodel.S),1)));
-newmodel.vu = newmodel.vu(logical(sum(logical(newmodel.S),1)));
-newmodel.Vuptake = newmodel.Vuptake(logical(sum(logical(newmodel.S),1)));
+if isfield(newmodel,'delSGr')
+    newmodel.delSGr = newmodel.delSGr(logical(sum(logical(newmodel.S),1)));\
+end
+if isfield(newmodel,'delGlb')
+    newmodel.delGlb = newmodel.delGlb(logical(sum(logical(newmodel.S),1)));
+end
+if isfield(newmodel,'delGub')
+    newmodel.delGub = newmodel.delGub(logical(sum(logical(newmodel.S),1)));
+end
+if isfield(newmodel,'rev')
+    newmodel.rev = newmodel.rev(logical(sum(logical(newmodel.S),1)));
+end
+if isfield(newmodel,'c')
+    newmodel.c = newmodel.c(logical(sum(logical(newmodel.S),1)));
+end
+if isfield(newmodel,'vl')
+    newmodel.vl = newmodel.vl(logical(sum(logical(newmodel.S),1)));
+end
+if isfield(newmodel,'vu')
+    newmodel.vu = newmodel.vu(logical(sum(logical(newmodel.S),1)));
+end
+if isfield(newmodel,'Vuptake');
+    newmodel.Vuptake = newmodel.Vuptake(logical(sum(logical(newmodel.S),1)));
+end
 
 % remove corresponding columns in pvec
 if ~isempty(newpvec)
