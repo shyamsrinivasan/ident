@@ -42,6 +42,10 @@ imc(imc==0) = 1;
 % noramlize concentration vector to intial state
 Nimc = newmc(1:nvar);%imc./imc;
 Nimc(3) = 0.2;
+Nimc(4) = 0.1;
+Nimc(7) = 10;
+Nimc(9) = 0.008;
+Nimc(8) = 0.002;
 Pimc = newmc(nvar+1:end);
 Nimc(imc==0) = 0;
 newmodel.imc = imc;

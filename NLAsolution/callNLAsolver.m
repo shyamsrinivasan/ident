@@ -28,7 +28,10 @@ fscale = ones(nvar,1);
 % [status,y] = KINSol(initval,'LineSearch',yscale,fscale);
 [x,fval,exitflag,output] = fsolve(callRHSfunction,initval,options);
 
-si = KINGetStats;
+sol.y = x;
+sol.fval = fval;
+
+% si = KINGetStats;
 % ls_stats = si.LSInfo;
 % 
 % if status < 0

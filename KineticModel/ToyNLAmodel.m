@@ -9,8 +9,14 @@ flux = iflux(model,pvec,[mc.*model.imc;Pimc]);
 
 %% Metabolites
 % Cytosolic
-dXdt(1:nvar) = (1./model.imc).*(model.S(1:nvar,:)*flux);
-dXdt(1:nvar) = dXdt(1:nvar).^2;
+% dXdt(1:nvar) = (1./model.imc).*(model.S(1:nvar,:)*flux);
+% dXdt(1:nvar) = dXdt(1:nvar).^2;
+
+dXdt = zeros(length(flux),1);
+for irxn = 1:length(flux)
+    dXdt(irxn) = model.Vss(irxn)-flux(irxn)*3600;
+end
+
 
 % h[c] is assume constant
 % hc = strcmpi('h[c]',model.mets);
