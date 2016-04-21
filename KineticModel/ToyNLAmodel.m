@@ -17,18 +17,6 @@ for irxn = 1:length(flux)
     dXdt(irxn) = model.Vss(irxn)-flux(irxn)*3600;
 end
 
-
-% h[c] is assume constant
-% hc = strcmpi('h[c]',model.mets);
-% dXdt(hc) = 0;
-
-% change pi[c]
-% pic = strcmpi('pi[c]',model.mets);
-% dXdt(pic) = dXdt(pic)+0.001;
-
-%Extracellular
-% dXdt(nin_m+1:nt_m) = 0;%
-
 %% staus check for CVODE in SUNDIALS TB
 % if any(mc<0)
 %     flag = -1;

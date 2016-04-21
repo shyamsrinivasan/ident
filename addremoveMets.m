@@ -57,7 +57,7 @@ newmodel.CMPS = newmodel.CMPS(:,logical(sum(logical(newmodel.S),1)));
 newmodel.Keq = newmodel.Keq(logical(sum(logical(newmodel.S),1)));
 newmodel.Vss = newmodel.Vss(logical(sum(logical(newmodel.S),1)));
 if isfield(newmodel,'delSGr')
-    newmodel.delSGr = newmodel.delSGr(logical(sum(logical(newmodel.S),1)));\
+    newmodel.delSGr = newmodel.delSGr(logical(sum(logical(newmodel.S),1)));
 end
 if isfield(newmodel,'delGlb')
     newmodel.delGlb = newmodel.delGlb(logical(sum(logical(newmodel.S),1)));

@@ -73,10 +73,13 @@ FBAmodel.rxn_excep = rxn_excep;
 % end
 
 % solve both ODE and NLA models 
-if ensb{1,2}.feasible
-    sol = ODENLAmodel(FBAmodel,ensb,ensb{1,1});
-else
-    error('No feasible model');
-end
+% if ensb{1,2}.feasible
+%     sol = ODENLAmodel(FBAmodel,ensb,ensb{1,1});
+% else
+%     error('No feasible model');
+% end
+
+% run finite difference to estimate approximate jacobian at x
+finiteD(FBAmodel,mc)
 
 

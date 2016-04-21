@@ -23,11 +23,6 @@ else
     pvec = ensb{1,2};
 end
 
-% solution to ODE
-% initialize solver properties
-% toy model
-[model,ODEoptions,saveData] = imodel(model,'ode',500);
-
 % remove water and protons (held constant) from consideration in the model
 % integration phase
 [model,pvec,mc] = addremoveMets(model,{'h2o[c]','h2o[e]'},pvec,mc);
@@ -58,7 +53,12 @@ flux = iflux(newmodel,newpvec,[Nimc.*imc;Pimc]);
 % toy model
 dXdt = ToyODEmodel(0,Nimc,[],newmodel,newpvec);
 
-% integrate model
+% % solution to ODE
+% % initialize solver properties
+% % toy model
+% [newmodel,ODEoptions,saveData] = imodel(newmodel,'ode',500);
+% 
+% % integrate model
 % [sol,finalSS,status] = callODEsolver(newmodel,newpvec,Nimc,ODEoptions);
 
 % solution to NLA
