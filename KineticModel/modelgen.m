@@ -478,7 +478,7 @@ ident_regulator(model,reg_string,reg_stoich,par,Klb,Kub)%pass par as argument
 
     iregterm = 1;    
     while iregterm <= nterms
-        s1 = regexp(regterms{1}{iregterm},'[(]?([0-9.]+)[)]? ([A-Za-z0-9_\-\[\]]+)','tokens');
+        s1 = regexp(regterms{1}{iregterm},'[(]?(\W*[0-9.]+)[)]? ([A-Za-z0-9_\-\[\]]+)','tokens');
         if ~isempty(s1)
             metabindx = strcmpi(s1{1}{2},model.mets);
             reg = s1{1}{2};
@@ -492,15 +492,15 @@ ident_regulator(model,reg_string,reg_stoich,par,Klb,Kub)%pass par as argument
             model.SI(metabindx,irxn) = rstoich;
             if ~isempty(par)
                 if length(par)==nterms
-                    if rstoich > 0
+                    if reg_stoich > 0
                         model.KIact(metabindx,irxn) = par(ipos);
-                    elseif rstoich < 0
+                    elseif reg_stoich < 0
                         model.KIihb(metabindx,irxn) = par(ineg);
                     end
                 else
-                    if rstoich > 0
+                    if reg_stoich > 0
                         model.KIact(metabindx,irxn) = par(ireg+iregterm);
-                    elseif rstoich < 0
+                    elseif reg_stoich < 0
                         model.KIihb(metabindx,irxn) = par(ireg+iregterm);
                     end
                 end
@@ -525,19 +525,19 @@ ident_regulator(model,reg_string,reg_stoich,par,Klb,Kub)%pass par as argument
             model.mets{imetab} = reg;
             if ~isempty(par)
                 if length(par)==nterms
-                    if rstoich > 0
+                    if reg_stoich > 0
                         model.KIact(imetab,irxn) = par(ipos);
                         model.KIihb(imetab,:) = sparse(1,size(model.KIihb,2));
-                    elseif rstoich < 0
+                    elseif reg_stoich < 0
                         model.KIihb(imetab,irxn) = par(ineg);
                         model.KIact(imetab,:) = sparse(1,size(model.KIact,2));
                     end
                     model.Klb(imetab,irxn) = 0;
                     model.Kub(imetab,irxn) = 0;
                 else
-                    if rstoich > 0
+                    if reg_stoich > 0
                         model.KIact(metabindx,irxn) = par(ireg+iregterm);
-                    elseif rstoich < 0
+                    elseif reg_stoich < 0
                         model.KIihb(metabindx,irxn) = par(ireg+iregterm);
                     end
                 end
@@ -556,9 +556,9 @@ ident_regulator(model,reg_string,reg_stoich,par,Klb,Kub)%pass par as argument
             imetab = imetab + 1;
         end 
         iregterm = iregterm + 1;
-        if rstoich > 0
+        if reg_stoich > 0
             ipos = ipos + 1;
-        elseif rstoich < 0
+        elseif reg_stoich < 0
             ineg = ineg + 1;
         end
     end  

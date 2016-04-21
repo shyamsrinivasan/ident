@@ -57,18 +57,20 @@ for ic = 1:nc
             end    
             if any(sbid) && any(prid)
                 %Denominator - 1.6
-                dr_sb = 1+mc(sbid)./K(sbid,Vind(irxn));
+                dr_sb = mc(sbid)./K(sbid,Vind(irxn));                             
                 for j = 1:length(find(sbid))
                     for si = 2:Sb(j)
                         dr_sb(j) = dr_sb(j) + dr_sb(j)^si;                
                     end
+                    dr_sb(j) = dr_sb(j) + 1;
                 end
                 %dr_pr
-                dr_pr = 1+mc(prid)./K(prid,Vind(irxn));
+                dr_pr = mc(prid)./K(prid,Vind(irxn));                
                 for j = 1:length(find(prid))
                     for si = 2:Sp(j)
                         dr_pr(j) = dr_pr(j)+dr_pr(j)^si;
                     end
+                    dr_pr(j) = dr_pr(j) + 1;
                 end
             else
                 dr_sb = 1;
@@ -81,12 +83,13 @@ for ic = 1:nc
             end
             if any(sbid) && any(prid)
                 %Denominator - 1.6
-                dr_sb = 1+mc(sbid)./K(sbid,Vind(irxn));
+                dr_sb = mc(sbid)./K(sbid,Vind(irxn));                             
                 for j = 1:length(find(sbid))
                     for si = 2:Sb(j)
                         dr_sb(j) = dr_sb(j) + dr_sb(j)^si;                
                     end
-                end                  
+                    dr_sb(j) = dr_sb(j) + 1;
+                end                
             else
                 dr_sb = 1;                
             end
@@ -99,15 +102,15 @@ for ic = 1:nc
             if any(SI(:,Vind(irxn))>0)
                 acid = SI(:,Vind(irxn))>0;
                 sac = SI(acid,Vind(irxn));
-                nr_flux = nr_flux*prod((mc(acid)./KIact(acid,Vind(irxn))).^sac./...
-                          (1+(mc(acid)./KIact(acid,Vind(irxn))).^sac));        
+                nr_flux = nr_flux*...
+                          prod(1 + (mc(acid)./KIact(acid,Vind(irxn))).^sac);                      
             end
             % inhibition
             if any(SI(:,Vind(irxn))<0)
                 ihid = SI(:,Vind(irxn))<0;
                 sih = SI(ihid,Vind(irxn));
                 nr_flux =...
-                nr_flux*prod(1./(1+(mc(ihid)./KIihb(ihid,Vind(irxn))).^sih));
+                nr_flux*prod(1./(1+(mc(ihid)./KIihb(ihid,Vind(irxn))).^sih));                
             end
         end  
 
