@@ -80,6 +80,9 @@ FBAmodel.rxn_excep = rxn_excep;
 % end
 
 % run finite difference to estimate approximate jacobian at x
-finiteD(FBAmodel,mc)
+J = model_Jacobian(FBAmodel,ensb{1,2},mc);
+% J = FDh(Jpatt,x)
+flux = zeros(size(FBAmodel.S,2),1);
+flux(1) = iflux(FBAmodel,ensb{1,2},mc,flux,1);
 
 

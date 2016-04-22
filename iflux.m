@@ -72,15 +72,15 @@ for ic = 1:nc
     else
         %determine which group idx belongs to
         for id = 1:length(idx)
-            if ismemeber(idx(id),Vind)
+            if ismember(idx(id),Vind)
     %         if ismember(idx(id),vcup) || ismember(idx(id),vred)
     %             idflux(idx(id)) = flux(idx(id));
     %         elseif ismember(idx(id),Vind)
-                idflux(idx(id),ic) = CKinetics(model,pvec,mc(:,ic),idx(id));
+                idflux(id,ic) = CKinetics(model,pvec,mc(:,ic),idx(id));
             elseif ismember(idx(id),Vex)
-                idflux(idx(id),ic) = TKinetics(model,pvec,mc(:,ic),idx(id));
+                idflux(id,ic) = TKinetics(model,pvec,mc(:,ic),idx(id));
             elseif ismember(idx(id),VFex)
-                idflux(idx(id),ic) = EKinetics(model,pvec,mc(:,ic),VFex,idflux);
+                idflux(id,ic) = EKinetics(model,pvec,mc(:,ic),VFex,idflux);
             elseif idx(id)==find(strcmpi(model.rxns,'atpm'))
     %             if mc(strcmpi(model.mets,'atp[c]'))>0 &&...
     %                mc(strcmpi(model.mets,'h2o[c]'))>0
@@ -88,17 +88,16 @@ for ic = 1:nc
     %             else
     %                 idflux(idx(id)) = 0;
     %             end
-                idflux(idx(id),ic) = 0;
+                idflux(id,ic) = 0;
             elseif idx(id)==model.bmrxn
                 idflux(id,ic) = 0;
             end        
-        end        
-        idxflux(strcmpi('GLCpts',model.rxns),ic) = 20;        
+        end                       
     end
 end
 
 if ~isempty(idx)
-    flux = idxflux(idx,:);
+    flux = idflux;
 end
 
 % if flux(strcmpi(model.rxns,'atpm'))>=1e-5 &&...
