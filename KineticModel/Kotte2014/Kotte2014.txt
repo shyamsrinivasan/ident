@@ -1,0 +1,7 @@
+Enzymes	Enzyme Name	 equation	Compensated Species	delta G (pH 7.2)	delGlb	delGub	Keq	kcat+(1/s)	kcat-(1/s)	Etot Conc	Vmax	"vss (Gur = -10, O2ur = -1000)"	EC	Substrate Km (mM)	Activators	Inhibitors	Regulator Km (mM)	Metab	Mclow (mM)	Mchigh (mM)
+ACpts		ac[e] ---> pep[c]		-30.5	-50.4	0.9		1	0		1	14.29		"0.1,0.1"				glc[e]	0.0556	0.0556
+GLUX		pep[c] ---> fdp[c]		-30.5				1	0		1			"0.3,0.3"						
+FBP		fdp[c] ---> fdp[e]		-30.5				1	0		1			"0.1,0.1"	4 pep[c]		0.1			
+ENZC		enz1[c] ---> enz[c]		-30.5				1	0		1.1				2 fdp[c]		0.45			
+ACt2r		ac[e] <==>		0				1	1											
+FDPt2r		fdp[e] <==>		0				1	1											

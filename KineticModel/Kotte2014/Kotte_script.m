@@ -1,7 +1,9 @@
 M = zeros(3,1);
-M(1)  = 1;      % E
-M(2)  = 0.001;   % PEP
-M(3)  = 10;   % FBP
+M(1)  = 0.001;   % PEP
+M(2)  = 10;   % FBP
+M(3)  = 1;      % E
+
+
 
 %parameters
 kEcat = 1;

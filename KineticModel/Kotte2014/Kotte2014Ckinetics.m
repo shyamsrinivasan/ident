@@ -1,4 +1,4 @@
-function out = Kotte2014glycolysis
+function out = Kotte2014Ckinetics
 out{1} = @init;
 out{2} = @fun_eval;
 out{3} = [];
@@ -9,7 +9,7 @@ out{7} = [];
 out{8} = [];
 out{9} = [];
 
-function dM = fun_eval(t,kmrgd,kEcat,KEacetate,...
+function dM = fun_eval(t,kmrgd,model,kEcat,KEacetate,...
                          KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
                          vEXmax,KEXPEP,...
                          vemax,KeFBP,ne,acetate,d)
@@ -17,35 +17,13 @@ pvec = [kEcat,KEacetate,...
         KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
         vEXmax,KEXPEP,...
         vemax,KeFBP,ne,acetate,d];
-dM = zeros(3,1);
+    
+dM = Kotte_CNLAE(kmrgd,model,pvec);
 
-% substitute with Convenience Kinetics
-flux = Kotte_glycolysisflux(kmrgd,pvec);
-                     
-% %J(E, acetate)
-% flux(1) = kEcat.*kmrgd(1).*acetate./(acetate+KEacetate);
-% %vFbp(PEP,FBP)
-% ratio = 1+kmrgd(3)/KFbpFBP;
-% flux(3) = vFbpmax.*(ratio-1).*(ratio).^3/(ratio.^4+Lfbp*(1+kmrgd(2)./KFbpPEP).^(-4));
-% %vEX(PEP)
-% flux(2) = vEXmax.*kmrgd(2)./(kmrgd(2)+KEXPEP);
-% %enzyme production fluxes
-% %E(FBP) for J (%FBP ---| Cra and Cra ---> E)
-% flux(4) = vemax.*(1-1./(1+(KeFBP./kmrgd(3)).^ne));
 
-%differential equations
-%enzymes
-%E
-dM(1) = flux(4) - d*kmrgd(1);
-%PEP
-dM(2) = flux(1) - flux(2);
-%FBP
-dM(3) = flux(2) - flux(3);
-%acetate
-% dM(4) = 0;
 
 function [tspan,y0,options] = init
-handles = feval(Kotte2014glycolysis);
+handles = feval(Kotte2014Ckinetics);
 
 % obtain initial steady states
 M = zeros(3,1);
@@ -53,8 +31,11 @@ M(1)  = 1;      % E
 M(2)  = 0.001;   % PEP
 M(3)  = 10;   % FBP
 
+% rhsfn = handles{2};
+% rhsodefn = @(t,x)rhsfn(t,x,)
+
 % substitute this with SUNDIALS
-[~,yout] = ode45(@Kotte_glycolysis,0:0.1:30,M);
+[~,yout] = ode45(@fun_eval,0:0.1:30,M);
 y0 = yout(end,:);
 options = odeset('Jacobian',handles(3),'JacobianP',handles(4),...
                  'Hessians',handles(4),'HessiansP',handles(5));
@@ -94,7 +75,3 @@ function jacp = der5(t,kmrgd,kEcat,KEacetate,...
                          KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
                          vEXmax,KEXPEP,...
                          vemax,KeFBP,ne,acetate,d)                         
-
-
-
-

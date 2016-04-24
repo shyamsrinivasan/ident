@@ -13,13 +13,9 @@ end
 if nargin<4
     ess_rxn = {};
 end
-
 % check if concentrations are initialized
 if nargin < 3
-    % reinitialize concentrations
-    imc = zeros(model.nt_metab,1);
-else
-    imc = ones(length(mc),1);%mc;
+    error('getiest:NoA','No initial concentrations');
 end
 if nargin<2
     error('getiest:NoA','No parameter vector');
@@ -34,19 +30,28 @@ end
 % toy model
 [model,solverP,saveData] = imodel(model,500);
 
-% model.Vuptake = zeros(model.nt_rxn,1);
-% h2o = find(strcmpi(model.rxns,'exH2O'));
-% pi =  find(strcmpi(model.rxns,'exPI'));
+% remove water and protons (held constant) from consideration in the model
+% integration phase
+[model,pvec,mc] = addremoveMets(model,{'h2o[c]','h2o[e]'},pvec,mc);
+[newmodel,newpvec,newmc,cnstmet] = remove_eMets(model,pvec,mc,[model.Vind model.Vex],...
+                           {'glc[e]','o2[e]','h[e]','h[c]','pi[e]','pyr[e]'});
 
-%ecoli model
+% only initialize for varmets   
+nvar = length(newmodel.mets)-length(find(cnstmet));
+imc = zeros(nvar,1);
+imc(imc==0) = 1;
+
+% ecoli model
 % h = find(strcmpi(model.rxns,'exH'));
 % model.Vuptake([h]) = [1000];
 
-%noramlize concentration vector to intial state
-Nimc = mc;%imc./imc;
+% noramlize concentration vector to intial state
+Nimc = newmc(1:nvar);%imc./imc;
+% Nimc(4) = 20;
+Pimc = newmc(nvar+1:end);
 Nimc(imc==0) = 0;
 
-%intorduce perturbation in initial conditions
+% intorduce perturbation in initial conditions
 % met.glc_e = 10;
 % Nimc(strcmpi(model.mets,'glc[e]')) = 1.1;
 % if ~isempty(change_pos)
@@ -56,16 +61,17 @@ Nimc(imc==0) = 0;
 %     Nimc = changeInitialCondition(mdoel,Nimc,[],change_neg);
 % end
 
-model.imc = imc;
-model.imc(model.imc==0) = 1;
-%calculate initial flux
-flux = iflux(model,pvec,Nimc.*imc);
+newmodel.imc = imc;
+newmodel.imc(newmodel.imc==0) = 1;
+newmodel.Pimc = Pimc;
+% calculate initial flux
+flux = iflux(newmodel,newpvec,[Nimc.*imc;Pimc]);
 
 % ecoli model
 % dXdt = ODEmodel(0,Nimc,[],model,pvec);
 
 % toy model
-dXdt = ToyODEmodel(0,Nimc,[],model,pvec);
+dXdt = ToyODEmodel(0,Nimc,[],newmodel,newpvec);
 
 % %call to ADmat for stability/jacobian info
 % [Y,Jac] = stabilityADMAT(model,pvec,Nimc.*imc);
@@ -84,7 +90,7 @@ dXdt = ToyODEmodel(0,Nimc,[],model,pvec);
 % Jac = getydot(dXdtADMAT);
 
 %integrate model
-[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
+[sol,finalSS,status] = callODEsolver(newmodel,newpvec,Nimc,solverP);
 
 
 %introduce perturbation

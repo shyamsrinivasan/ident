@@ -1,7 +1,11 @@
-function flux = Kotte_glycolysisflux(M,pvec,flux)
-if nargin < 3
+function flux = Kotte_givenFlux(M,pvec,model,flux)
+if nargin < 4
     flux = zeros(4,1);
 end
+if nargin < 3
+    model = struct([]);
+end
+
 if nargin < 2    
     fprintf('No parameter vector\n');
     %parameters
@@ -18,7 +22,7 @@ if nargin < 2
     ne = 1;             % or 2
     acetate = 2;        % a.u acetate
 else
-    %parameters
+    % parameters    
     kEcat = pvec(1);
     KEacetate = pvec(2);    % or 0.02
     KFbpFBP = pvec(3);
@@ -30,8 +34,12 @@ else
     vemax = pvec(9);        % for bifurcation analysis: 0.7:0.1:1.3
     KeFBP = pvec(10);        % or 0.45
     ne = pvec(11);             % or 2
-    acetate = pvec(12);        % a.u acetate
 end
+
+pep = strcmpi(model.mets,'pep[c]');
+fdp = strcmpi(model.mets,'fdp[c]');
+enz = strcmpi(model.mets,'enz[c]');
+ac = strcmpi(model.mets,'ac[e]');
 
 %acetate --E--> PEP --vEX--> FBP --Fbp--> Nothing
 % u(1) or M(4) --M(1),flux(1)--> M(2) --vEX,flux(2)--> M(3) --Fbp,flux(3)--> Nothing
@@ -41,16 +49,20 @@ end
 %FBP ---| Cra
 %Cra ---> E
 
-%metabolic fluxes
-%J(E, acetate)
-flux(1) = kEcat.*M(1).*acetate./(acetate+KEacetate);
+% metabolic fluxes
+% J(E, acetate)
+flux(1) = kEcat.*M(enz).*M(ac)./(M(ac)+KEacetate);
 
-%vFbp(PEP,FBP)
-ratio = 1+M(3)/KFbpFBP;
-flux(3) = vFbpmax.*(ratio-1).*(ratio).^3/(ratio.^4+Lfbp*(1+M(2)./KFbpPEP).^(-4));
-%vEX(PEP)
-flux(2) = vEXmax.*M(2)./(M(2)+KEXPEP);
+% enzyme production fluxes
+% E(FBP) for J (%FBP ---| Cra and Cra ---> E)
+flux(2) = vemax.*(1-1./(1+(KeFBP./M(fdp)).^ne));
 
-%enzyme production fluxes
-%E(FBP) for J (%FBP ---| Cra and Cra ---> E)
-flux(4) = vemax.*(1-1./(1+(KeFBP./M(3)).^ne));
+% vFbp(PEP,FBP)
+ratio = 1+M(fdp)/KFbpFBP;
+flux(3) = vFbpmax.*(ratio-1).*(ratio).^3/(ratio.^4+Lfbp*(1+M(pep)./KFbpPEP).^(-4));
+
+% vEX(PEP)
+flux(4) = vEXmax.*M(pep)./(M(pep)+KEXPEP);
+
+
+
