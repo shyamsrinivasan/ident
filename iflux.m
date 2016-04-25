@@ -47,7 +47,7 @@ for ic = 1:nc
         flux(:,ic) = ETCflux(model,pvec,mc(:,ic),flux(:,ic));
 
         % other fixed exchaged fluxes - currently sets them to 0  
-        flux(VFex,ic) = EKinetics(model,pvec,mc(:,ic),VFex,flux(:,ic));
+        flux(VFex,ic) = EKinetics(model,pvec,mc(:,ic),VFex);
         
         % atp maintanance
         tatpm = strcmpi(model.rxns,'ATPM');
@@ -72,28 +72,28 @@ for ic = 1:nc
     else
         %determine which group idx belongs to
         for id = 1:length(idx)
-            if ismemeber(idx(id),Vind)
-    %         if ismember(idx(id),vcup) || ismember(idx(id),vred)
-    %             idflux(idx(id)) = flux(idx(id));
-    %         elseif ismember(idx(id),Vind)
-                idflux(idx(id),ic) = CKinetics(model,pvec,mc(:,ic),idx(id));
+            if ismember(idx(id),Vind)
+                idflux(id,ic) = CKinetics(model,pvec,mc(:,ic),idx(id));
             elseif ismember(idx(id),Vex)
-                idflux(idx(id),ic) = TKinetics(model,pvec,mc(:,ic),idx(id));
+                idflux(id,ic) = TKinetics(model,pvec,mc(:,ic),idx(id));                
             elseif ismember(idx(id),VFex)
-                idflux(idx(id),ic) = EKinetics(model,pvec,mc(:,ic),VFex,idflux);
-            elseif idx(id)==find(strcmpi(model.rxns,'atpm'))
-    %             if mc(strcmpi(model.mets,'atp[c]'))>0 &&...
-    %                mc(strcmpi(model.mets,'h2o[c]'))>0
-    %                 idflux(idx(id)) = 8.39;
-    %             else
-    %                 idflux(idx(id)) = 0;
-    %             end
-                idflux(idx(id),ic) = 0;
+                idflux(id,ic) = EKinetics(model,pvec,mc(:,ic),idx(id));
+            elseif idx(id)==find(strcmpi(model.rxns,'ATPM'))
+                sbid = model.S(:,idx(id))<0;
+                sbid(h2o) = 0;
+                idflux(idx(id),ic) = pvec.Vmax(tatpm)*18.84*...
+                                     mc(sbid,ic)/pvec.K(sbid,tatpm)/...
+                                    (1+mc(sbid,ic)/pvec.K(sbid,tatpm));                
             elseif idx(id)==model.bmrxn
                 idflux(id,ic) = 0;
-            end        
-        end        
-        idxflux(strcmpi('GLCpts',model.rxns),ic) = 20;        
+            end
+            % ETC fluxes
+            ETCrxn = {'ATPS4r','NADH16','CYTBD','SUCDi','FRD7'};
+            if any(strcmpi(ETCrxn,model.rxns{idx(id)}))
+                flux = ETCflux(model,pvec,mc(:,ic),flux(:,ic));
+                idflux(id,ic) = flux(idx(id));
+            end
+        end                       
     end
 end
 

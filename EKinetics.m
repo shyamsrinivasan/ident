@@ -1,7 +1,6 @@
-function flux = EKinetics(model,pvec,mc,VFex,flux)
-if nargin<5
-    flux = zeros(model.nt_rxn,1);
-end
+function flux = EKinetics(model,pvec,mc,VFex)
+flux = zeros(model.nt_rxn,1);
+
 kcatfwd = pvec.kcat_fwd;
 % kcatbkw = pvec.kcat_bkw;
 % flux = zeros(model.nt_rxn,1);
@@ -16,11 +15,11 @@ vh = [find(strcmpi(model.rxns,'exH'));...
       find(strcmpi(model.rxns,'exPI'))];
 
 for irxn = 1:length(VFex)
-    sbid = logical(model.S(:,VFex(irxn))<0);
+%     sbid = logical(model.S(:,VFex(irxn))<0);
 %     if ismember(VFex(irxn),vh)
-        ind = model.Vex(logical(model.S(sbid,model.Vex)));    
-        net_out = -sign(model.S(sbid,VFex(irxn)))*...
-                  (model.S(sbid,ind)*flux(ind));
+%         ind = model.Vex(logical(model.S(sbid,model.Vex)));    
+%         net_out = -sign(model.S(sbid,VFex(irxn)))*...
+%                   (model.S(sbid,ind)*flux(ind));
 %               -model.S(sbid,VFex(irxn))*Vuptake(VFex(irxn)));
         flux(VFex(irxn)) = 0;%scale_flux(net_out);%-Vuptake(VFex(irxn)));
 %         flux(VFex(irxn)) = scale_flux(flux(VFex(irxn)));
