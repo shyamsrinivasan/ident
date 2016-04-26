@@ -55,14 +55,16 @@ rxn_excep = {'NADH16','ATPS4r','CYTBD','H2Ot'};
 FBAmodel.bmrxn = [];
 ensb = parallel_ensemble(FBAmodel,mc,parameter,rxn_add,rxn_excep);
 
-%serially solve ODE of model to steady state
+% serially solve ODE of model to steady state
 FBAmodel.rxn_add = rxn_add;
 FBAmodel.rxn_excep = rxn_excep;
-if ensb{1,2}.feasible    
-    sol = IntegrateModel(FBAmodel,ensb,ensb{1,1});
-else
-    error('No feasible model found');
-end
+% if ensb{1,2}.feasible    
+%     sol = IntegrateModel(FBAmodel,ensb,ensb{1,1});
+% else
+%     error('No feasible model found');
+% end
 
+% draw the staedy state flux solution space using production envelopes
+FluxEnvelope(FBAmodel,{'exPYR'},{'exH2O'},ess_rxn,{'PGI','PFK'});
 
 
