@@ -65,6 +65,6 @@ FBAmodel.rxn_excep = rxn_excep;
 % end
 
 % draw the staedy state flux solution space using production envelopes
-FluxEnvelope(FBAmodel,{'exPYR'},{'exH2O'},ess_rxn,{'PGI','PFK'});
+FluxEnvelope(FBAmodel,{'PGI','exPYR';'PFK','exPYR'},ess_rxn);
 
 
