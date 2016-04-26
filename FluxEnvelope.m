@@ -1,22 +1,26 @@
 
-function [hsubfig,prxnid,flag] = FluxEnvelope(model,varname,prodid)
+function [hsubfig,prxnid,flag] = FluxEnvelope(model,flux1id,flux2id,ess_rxn,varname)
+if nargin < 5
+    rxnid = 1:model.nt_rxn;    
+else   
+    rxnid = cellfun(@(x)strcmpi(x,varname),model.rxns,'UniformOutput',false);
+    rxnid = cell2mat(cellfun(@(x)any(x),rxnid,'UniformOutput',false));
+    rxnid = find(rxnid);    
+end
+if nargin < 4
+    ess_rxn = {};
+end
 if nargin < 3
-    prxnid = strcmpi('Pex',model.rxns);
-else
-    prxnid = prodid;
+    error('flenlope:flux2id','Need atleast 2 fluxes 2 draw an envelope');
 end
 
-if nargin < 2
-    rxnid = setdiff(1:model.nt_rxn,model.VFup);    
-else
-    rxnid = [];
-    for iv = 1:length(varname)
-        tfp = strcmpi(varname{iv},model.rxns);
-        if any(tfp)
-            rxnid = union(rxnid,find(tfp));
-        end
-    end   
+if iscell(flux1id)
+    flux1id = find(strcmpi(model.rxns,flux1id{1}));
 end
+if iscell(flux2id)
+    flux2id = find(strcmpi(model.rxns,flux2id{1}));
+end
+
 nrxn = length(rxnid);
     
 flag = 1;
@@ -32,49 +36,40 @@ Maxtarget = zeros(1,npts,nrxn);
 Mintarget = zeros(1,npts,nrxn);
 flval = zeros(npts,nrxn);
 
-%Find maximum/minimum allowable growth rate
-%Uptake Flux
-bounds.Vuptake = model.Vuptake;
-bounds.vl = zeros(model.nt_rxn,1);
-% bounds.vl(bounds.vl==0) = -1;
-% bounds.vl(bounds.vl==0) = -100;
-bounds.vl(logical(model.rev)) = -100;%bounds.Vuptake;
-bounds.vu = zeros(model.nt_rxn,1);          
-%Corresponding flux bounds
-bounds.vu(bounds.vu==0) = 100;%bounds.Vuptake;
-[gMax,gMin,~,~,Maxflag,Minflag] = solveLP(model,'','',bounds,model.bmrxn);
-if Maxflag > 0 && Minflag > 0
-    fprintf('\nMaximum Allowable growth Rate = %2.3g h-1\n',-gMax);    
-    fprintf('Minimum Allowable growth Rate = %2.3g h-1\n',gMin);
-end
-if model.gmax > -gMax
-    model.gmax = -gMax;
-end
+% fix flux bounds as in FBA for uptake fluxes
+[model,bounds] = changebounds(model,ess_rxn);
 
-%Find maximum/minimum allowable growth rate
+% Find maximum/minimum allowable flux 1 (x-axis for envelope)
+[LP1max,LP1min] = solveLP(model,bounds,ess_rxn,flux1id);
+if LP1max.flag > 0 && LP1min.flag > 0
+    fprintf('\nMaximum Allowable %s flux = %2.3g h-1\n',model.rxns{flux1id},-LP1max.obj);    
+    fprintf('Minimum Allowable %s flux = %2.3g h-1\n',model.rxns{flux1id},LP1min.obj);
+end
+% if model.gmax > -gMax
+%     model.gmax = -gMax;
+% end
 
-[pMax,pMin,~,~,Maxflag,Minflag] = solveLP(model,'','',bounds,find(prxnid));
-if Maxflag > 0 && Minflag > 0
-    fprintf('\nMaximum allowable product flux = %2.3g h-1\n',-pMax);    
-    fprintf('Minimum allowable product flux = %2.3g h-1\n',pMin);
+% Find maximum/minimum allowable flux 2 (y-axis for envelope)
+[LP2max,LP2min] = solveLP(model,bounds,ess_rxn,flux2id);
+if LP2max.flag > 0 && LP2min.flag > 0
+    fprintf('\nMaximum allowable %s flux = %2.3g h-1\n',model.rxns{flux2id},-LP2max.obj);    
+    fprintf('Minimum allowable %s flux = %2.3g h-1\n',model.rxns{flux2id},LP2min.obj);
 end
     
-% Max_flag = zeros(1,length(flval),model.nt_rxn);
-% Min_flag = zeros(1,length(flval),model.nt_rxn);
 for ifl = 1:nrxn
     %Uptake Flux
-    bounds.Vuptake = model.Vuptake;
-    bounds.vl = zeros(model.nt_rxn,1);
-    % bounds.vl(bounds.vl==0) = -1;
-%     bounds.vl(logical(model.rev)) = -100;
-    bounds.vl(bounds.vl==0) = -100;   
-    bounds.vu = zeros(model.nt_rxn,1);          
-    %Corresponding flux bounds
-    bounds.vu(bounds.vu==0) = 100;
-    %Determine Max and Min for flux to be constrained with =
-    [vMax,vMin,~,~,Maxflag,Minflag] = solveLP(model,'','',bounds,rxnid(ifl));
-    if Maxflag > 0 && Minflag > 0
-        flval(:,ifl) = linspace(vMin,-vMax,npts);
+%     bounds.Vuptake = model.Vuptake;
+%     bounds.vl = zeros(model.nt_rxn,1);
+%     % bounds.vl(bounds.vl==0) = -1;
+% %     bounds.vl(logical(model.rev)) = -100;
+%     bounds.vl(bounds.vl==0) = -100;   
+%     bounds.vu = zeros(model.nt_rxn,1);          
+%     %Corresponding flux bounds
+%     bounds.vu(bounds.vu==0) = 100;
+    % Determine Max and Min for flux to be constrained with =
+    [LPmax,LPmin] = solveLP(model,bounds,ess_rxn,rxnid(ifl));
+    if LPmax.flag > 0 && LPmin.flag > 0
+        flval(:,ifl) = linspace(LPmin.obj,-LPmax.obj,npts);
     else
         flval(:,ifl) = [];
     end
@@ -82,18 +77,14 @@ for ifl = 1:nrxn
         bounds.vl(rxnid(ifl)) = flval(iv,ifl);
         bounds.vu(rxnid(ifl)) = flval(iv,ifl);        
 
-%         prxnid = strcmpi('Pex',model.rxns);
-        [fmax,fmin,vLPmax,vLPmin,Maxflag,Minflag] =...
-        solveLP(model,'P','P5',bounds,find(prxnid));
-%         Max_flag(1,iv,ifl) = Maxflag;
-%         Min_flag(1,iv,ifl) = Minflag;
-        if ~isempty(vLPmax) && Maxflag > 0
-            vLPmxAll(:,iv,ifl) = vLPmax(1:model.nt_rxn);
-            Maxtarget(1,iv,ifl) = fmax;            
+        [LPmax,LPmin] = solveLP(model,bounds,ess_rxn,flux2id);
+        if ~isempty(LPmax.v) && LPmax.flag > 0
+            vLPmxAll(:,iv,ifl) = LPmax.v(1:model.nt_rxn);
+            Maxtarget(1,iv,ifl) = -LPmax.obj;            
         end
-        if ~isempty(vLPmin) && Minflag > 0
-            vLPmnAll(:,iv,ifl) = vLPmin(1:model.nt_rxn);
-            Mintarget(1,iv,ifl) = fmin;
+        if ~isempty(LPmin.v) && LPmin.flag > 0
+            vLPmnAll(:,iv,ifl) = LPmin.v(1:model.nt_rxn);
+            Mintarget(1,iv,ifl) = LPmin.obj;
         end
         vLPmax = [];
         vLPmin = [];
