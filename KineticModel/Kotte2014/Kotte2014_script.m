@@ -67,46 +67,46 @@ options = optimoptions('fsolve','Display','iter','TolFun',1e-10,'TolX',1e-10);
 fgout = Kotte_givenFlux([x1;model.PM],pvec,model);
 
 % Kotte_Cscript
-allhandles = feval(@Kotte2014Ckinetics);
-rhsfunc = allhandles{2};
-CModel = @(t,x)rhsfunc(t,x,model,kEcat,KEacetate,...
-        KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
-        vEXmax,KEXPEP,...
-        vemax,KeFBP,ne,acetate,d);
-fluxC = Kotte_CFlux([x1;model.PM],pvec,model);
-dMdtC = CModel(0,x1);
+% allhandles = feval(@Kotte2014Ckinetics);
+% rhsfunc = allhandles{2};
+% CModel = @(t,x)rhsfunc(t,x,model,kEcat,KEacetate,...
+%         KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
+%         vEXmax,KEXPEP,...
+%         vemax,KeFBP,ne,acetate,d);
+% fluxC = Kotte_CFlux([x1;model.PM],pvec,model);
+% dMdtC = CModel(0,x1);
 
 % C model fsolve
-cfun = @(x)Kotte_CNLAE(x,model,pvec);
-dMc = cfun(x1);
-options = optimoptions('fsolve','Display','iter',...
-                       'TolFun',1e-10,...
-                       'TolX',1e-10,...
-                       'MaxFunEvals',1000000,...
-                       'MaxIter',50000);
-[x2,fval,exitflag,output,jacobian] = fsolve(cfun,x1,options);
-fcout = Kotte_CFlux([M;model.PM],pvec,model);    
-
-% C model SS
-opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
-[tout,yout] = ode45(CModel,0:0.1:60,M,opts);
-fout = zeros(length(tout),4);
-for it = 1:length(tout)
-    fout(it,:) = Kotte_givenFlux([yout(it,:)';model.PM],pvec,model);
-end
+% cfun = @(x)Kotte_CNLAE(x,model,pvec);
+% dMc = cfun(x1);
+% options = optimoptions('fsolve','Display','iter',...
+%                        'TolFun',1e-10,...
+%                        'TolX',1e-10,...
+%                        'MaxFunEvals',1000000,...
+%                        'MaxIter',50000);
+% [x2,fval,exitflag,output,jacobian] = fsolve(cfun,x1,options);
+% fcout = Kotte_CFlux([M;model.PM],pvec,model);    
+% 
+% % C model SS
+% opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
+% [tout,yout] = ode45(CModel,0:0.1:60,M,opts);
+% fout = zeros(length(tout),4);
+% for it = 1:length(tout)
+%     fout(it,:) = Kotte_givenFlux([yout(it,:)';model.PM],pvec,model);
+% end
 
 % pvec.d = 0.25;
 % allhandles = feval(@Kotte2014Ckinetics);
 % rhsfunc = allhandles{2};
 % func = @(t,x)KotteCkinetics(t,x,model,pvec);
 % dMdt = func(0,M);
-allmc = [M;model.PM];
-
-fun = @(x)KotteCkinetics(x,pvec,model);
-dMdt = fun(M);
-
-
-[x1,fval,exitflag,output,jacobian] = fsolve(fun,M,options);
+% allmc = [M;model.PM];
+% 
+% fun = @(x)KotteCkinetics(x,pvec,model);
+% dMdt = fun(M);
+% 
+% 
+% [x1,fval,exitflag,output,jacobian] = fsolve(fun,M,options);
 
 % opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
 % [tout,yout] = ode45(func,0:0.1:60,M,opts);
@@ -141,6 +141,3 @@ dMdt = fun(M);
 
 
 
-plot(tout,yout);
-
-plotKotteVariables(tout,yout,1);
