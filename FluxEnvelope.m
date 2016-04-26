@@ -1,6 +1,7 @@
 % draw production envelope between any 2 fluxes 'flux1'(x-axis - typically 
 % biomass) and 'flux2'(y-axis - typically target)
 % flux1 and flux2 can be a cell array of strings or just double indices 
+% eg call: FluxEnvelope(FBAmodel,{'PGI','exPYR';'PFK','exPYR'},ess_rxn);
 
 function [hsubfig,prxnid,flag] = FluxEnvelope(model,fluxid,ess_rxn)
 if nargin < 3
