@@ -6,3 +6,4 @@ ENZC		enz1[c] ---> enz[c]		-30.5				1	0		1.1				2 fdp[c]		0.45
 ACt2r		ac[e] <==>		0				1	1											
 FDPt2r		fdp[e] <==>		0				1	1											
 ENZt2r		enz1[c] <==>		0				1	1											
+ENZtr		enz[c] <==>		0				1	1											

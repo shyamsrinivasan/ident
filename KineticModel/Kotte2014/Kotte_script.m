@@ -3,8 +3,6 @@ M(1)  = 0.001;   % PEP
 M(2)  = 10;   % FBP
 M(3)  = 1;      % E
 
-
-
 %parameters
 kEcat = 1;
 KEacetate = 0.1;    % or 0.02
@@ -213,7 +211,6 @@ n = 100000;
 % xNLEout(min(xNLEout,[],2)<0,:) = [];
 
 % continuation and dynamical systems analysis using MATCONT
-
 global sys
 sys.gui.pausespecial=0;  %Pause at special points 
 sys.gui.pausenever=1;    %Pause never 

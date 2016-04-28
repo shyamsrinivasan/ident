@@ -1,4 +1,7 @@
-function bifurcationPlot(y,p,s1,f1,idx,ipx)
+function bifurcationPlot(y,p,s1,f1,idx,ipx,hfig)
+if nargin<7
+    hfig = [];
+end
 
 % nvar = size(f1,1);
 % npar = size(x1,1)-size(f1,1);
@@ -25,8 +28,15 @@ elseif any(evalRe(:,xindex(1))>=0) && any(evalRe(:,xindex(2))<0)
     LineP.Color = 'k';
 end
 % plot data
-plot(pval,yval,'LineStyle',LineP.LineStyle,'Color',LineP.Color,'LineWidth',3);
-hold on
+if ~isempty(hfig)
+    axes(hfig);
+    set(gca,'NextPlot','add');
+    plot(pval,yval,'LineStyle',LineP.LineStyle,'Color',LineP.Color,'LineWidth',3);
+    hold on
+else
+    plot(pval,yval,'LineStyle',LineP.LineStyle,'Color',LineP.Color,'LineWidth',3);
+    hold on
+end
 
 for ip = 1:length(xindex)
     if ip<length(xindex)

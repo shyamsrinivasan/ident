@@ -3,7 +3,7 @@
 % flux1 and flux2 can be a cell array of strings or just double indices 
 % eg call: FluxEnvelope(FBAmodel,{'PGI','exPYR';'PFK','exPYR'},ess_rxn);
 
-function [hsubfig,prxnid,flag] = FluxEnvelope(model,fluxid,ess_rxn)
+function [hsubfig,flux2id,flag] = FluxEnvelope(model,fluxid,ess_rxn)
 if nargin < 3
     ess_rxn = {};
 end
@@ -141,7 +141,7 @@ while ifl <= nrxn
     end    
     ylabel = sprintf('Flux %s \n mmole/mmole uptake',model.rxns{flux2id(ifl)});
     hline = plot([flval(:,ifl)' fliplr(flval(:,ifl)')],...
-             [-Maxtarget(1,:,ifl) fliplr(Mintarget(1,:,ifl))]);
+             [Maxtarget(1,:,ifl) fliplr(Mintarget(1,:,ifl))]);
     xlabel = sprintf('Flux %s \n mmole/mmole uptake',model.rxns{flux1id(ifl)});
     set(hline,'LineWidt',2,...
               'Color',[0 0 0]);

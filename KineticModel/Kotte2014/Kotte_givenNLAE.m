@@ -2,7 +2,11 @@ function dM = Kotte_givenNLAE(kmrgd,model,pvec)
 
 d = pvec(13);
 dM = zeros(3,1);
-allmc = [kmrgd;model.PM];
+if ~isempty(model)
+    allmc = [kmrgd;model.PM];
+else
+    allmc = kmrgd;
+end
 flux = Kotte_givenFlux(allmc,pvec,model);
 % differential equations
 % PEP
