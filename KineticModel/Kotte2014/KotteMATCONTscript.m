@@ -48,7 +48,7 @@ dMdtg = givenModel(0,M);
 % given model SS
 opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
 [tout,yout] = ode45(givenModel,0:0.1:200,M,opts);
-fout = zeros(length(tout),4);
+fout = zeros(length(tout),5);
 for it = 1:length(tout)
     fout(it,:) = Kotte_givenFlux([yout(it,:)';model.PM],pvec,model);
 end
@@ -85,7 +85,7 @@ opt = contset(opt,'Eigenvalues',1);
 [x1,v1,s1,h1,f1] = cont(@equilibrium,x0,v0,opt); 
 
 % flux calculation
-flux1 = zeros(4,size(x1,2));
+flux1 = zeros(5,size(x1,2));
 y = x1(1:length(xeq),:);
 p = x1(length(xeq)+1:end,:);
 for it = 1:size(x1,2)
@@ -110,6 +110,24 @@ subplot(224)
 bifurcationPlot(flux1,p,s1,f1,1,1);
 xlabel('Acetate');
 ylabel('flux J');
+
+figure
+subplot(221);
+bifurcationPlot(flux1,flux1,s1,f1,2,1);
+xlabel('Acetate Flux In');
+ylabel('Enzyme production');
+subplot(222);
+mssval = bifurcationPlot(flux1,flux1,s1,f1,5,1);
+xlabel('Acetate Flux In');
+ylabel('PEP Excretion');
+subplot(223);
+bifurcationPlot(flux1,flux1,s1,f1,4,1);
+xlabel('Acetate Flux In');
+ylabel('GLUX');
+subplot(224);
+mssval = bifurcationPlot(flux1,flux1,s1,f1,5,3);
+ylabel('PEP Excretion');
+xlabel('ECbiomass');
 
 % figure
 % bifurcationPlot(flux1,flux1,s1,f1,2,1);

@@ -1,6 +1,6 @@
 function flux = Kotte_givenFlux(M,pvec,model,flux)
 if nargin < 4
-    flux = zeros(4,1);
+    flux = zeros(5,1);
 end
 if nargin < 3
     model = struct([]);
@@ -63,6 +63,9 @@ flux(3) = vFbpmax.*(ratio-1).*(ratio).^3/(ratio.^4+Lfbp*(1+M(pep)./KFbpPEP).^(-4
 
 % vEX(PEP)
 flux(4) = vEXmax.*M(pep)./(M(pep)+KEXPEP);
+
+% vPEPout
+flux(5) = 0.2*M(pep);
 
 
 

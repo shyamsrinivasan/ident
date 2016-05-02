@@ -4,11 +4,11 @@ GLUX		pep[c] ---> fdp[c]		-30.5				1	0		1			"0.3,0.3"
 EC_Biomass		fdp[c] ---> bm[c]		-30.5				1	0		1			"0.1,0.1"	4 pep[c]		0.1			
 ENZC		enz1[c] ---> enz[c]		-30.5				1	0		1.1				2 fdp[c]		0.45			
 ACt2r		ac[e] <==>		0				1	1											
-FDPt2r		bm[c] ---> bm[e]		0				1	1											
+bmt2r		bm[c] ---> bm[e]		0				1	1											
 ENZt2r		enz1[c] <==> enz1[e]		0				1	1											
-ENZtr		enz[c] <==> enz[e]		0				1	1											
-PEPt2r		pep[c] <==> pep[e]		0				1	1											
+ENZtr		enz[c] ---> enz[e]		0				1	1											
+PEPt2r		pep[c] ---> pep[e]		0				1	1											
 PEPex		pep[e] <==>		0				1	1											
 ENZ1ex		enz1[e] <==> 																		
 ENZex		enz[e] <==>																		
-FDex		bm[e] <==>																		
+bmex		bm[e] <==>																		
