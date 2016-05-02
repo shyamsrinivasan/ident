@@ -3,8 +3,6 @@ M(1)  = 0.001;   % PEP
 M(2)  = 10;   % FBP
 M(3)  = 1;      % E
 
-
-
 %parameters
 kEcat = 1;
 KEacetate = 0.1;    % or 0.02
@@ -47,6 +45,7 @@ close all
 % positive perturbations
 % t = linspace(0,60,1000);
 % allYout = zeros(length(t),3,1000);
+% Nxeq = eqsolperturbation(xeq,n,'pos');
 % Nxeq = repmat(xeq,1,1000)+...
 %        repmat(xeq,1,1000).*random(makedist('Uniform'),length(xeq),1000);
 % for i = 1:1000    
@@ -57,6 +56,7 @@ close all
 % negative perturbations
 % t = linspace(0,60,1000);
 % allYout = zeros(length(t),3,1000);
+% Nxeq = eqsolperturbation(xeq,n,'neg');
 % Pxeq = zeros(3,1000);
 % Nxeq = repmat(xeq,1,1000)-...
 %        repmat(xeq,1,1000).*random(makedist('Uniform'),length(xeq),1000);
@@ -70,6 +70,7 @@ close all
 n = 100000;
 % t = linspace(0,60,1000);
 % allYout = zeros(length(t),3,n);
+% Nxeq = eqsolperturbation(xeq,n,'rnd');
 % Pxeq = zeros(3,n);
 % Nxeq = repmat(xeq,1,n)+...
 %        randi([-1 1],3,n).*repmat(xeq,1,n).*(2*random(makedist('Uniform'),length(xeq),n));
@@ -120,6 +121,7 @@ n = 100000;
 % allFlag = zeros(n,1);
 % Nxeq = repmat(lb,1,n) + (repmat(ub,1,n)-repmat(lb,1,n)).*...
 %        random(makedist('Uniform'),length(xeq),n);
+% Nxeq = ivalueperturbation(lb,ub,n);
 % options = optimoptions(options,'Display','off');   
 % for i = 1:n
 %     fprintf('Iteration : %d\n\n',i);
@@ -211,7 +213,6 @@ n = 100000;
 % xNLEout(min(xNLEout,[],2)<0,:) = [];
 
 % continuation and dynamical systems analysis using MATCONT
-
 global sys
 sys.gui.pausespecial=0;  %Pause at special points 
 sys.gui.pausenever=1;    %Pause never 

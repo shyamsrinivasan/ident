@@ -8,105 +8,147 @@ cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\Kine
 % obtain conentrations from file
 [mc,FBAmodel,met] = readCNCfromFile(cnfname,FBAmodel);
 
+% run FBA
+Vup_struct.ACt2r = 10;
+Vup_struct.ENZ1ex = 10;
+FBAmodel = FBAfluxes(FBAmodel,'fba',{'ACt2r','ENZ1ex'},Vup_struct,...
+                    [find(strcmpi(FBAmodel.rxns,'FDex'))...
+                     find(strcmpi(FBAmodel.rxns,'PEPex'))]);
+                 
+% flux envelope
+[hsubfig,prxnid,flag] = FluxEnvelope(FBAmodel,...
+                        {'FDex','PEPex'},...
+                        {'ACt2r','ENZ1ex'});
+
+% call to bifurcation analysis script using MATCONT
+% KotteMATCONTscript
+                    
 % remove metabolites held constant from consideration in the model
 % integration phase
 [model,pvec,newmc,cnstmet] =...
 remove_eMets(FBAmodel,parameter,mc,[FBAmodel.Vind FBAmodel.Vex],...
-{'enz1[c]','ac[e]','fdp[e]'});
+{'enz1[c]','enz1[e]','enz[e]','ac[e]','bm[c]','bm[e]','pep[e]'});
 
-% only initialize for varmets   
-nvar = length(model.mets)-length(find(cnstmet));
-M = newmc(1:nvar);
-PM = newmc(nvar+1:end);
-model.PM = PM;
+% change bunds for FBAmodel
+[FBAmodel,bounds] = changebounds(FBAmodel,{'ACt2r','ENZ1ex'});
+FBAmodel.vl = bounds.vl;
+FBAmodel.vu = bounds.vu;
 
-% parameters
-clear pvec
-kEcat = 1;
-KEacetate = 0.1;    % or 0.02
-KFbpFBP = 0.1;
-vFbpmax = 1;
-Lfbp = 4e6;
-KFbpPEP = 0.1;
-vEXmax = 1;
-KEXPEP = 0.3;
-vemax = 1.1;        % for bifurcation analysis: 0.7:0.1:1.3
-KeFBP = 0.45;       % or 0.45
-ne = 2;             % or 2
-acetate = 0.1;      % a.u acetate
-d = 0.25;           % or 0.25 or 0.35
-pvec = [kEcat,KEacetate,...
-        KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
-        vEXmax,KEXPEP,...
-        vemax,KeFBP,ne,acetate,d];
-    
-    
-% Kotte_givenscript
-allhandles = feval(@Kotte2014glycolysis);
-rhsfunc = allhandles{2};
-givenModel = @(t,x)rhsfunc(t,x,model,kEcat,KEacetate,...
-        KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
-        vEXmax,KEXPEP,...
-        vemax,KeFBP,ne,acetate,d);
-fluxg = Kotte_givenFlux([M;model.PM],pvec,model);
-dMdtg = givenModel(0,M);
+FBAmodel = FBAfluxes(FBAmodel,'fba',{'ACt2r','ENZ1ex'},Vup_struct,...
+                     find(strcmpi(FBAmodel.rxns,'EC_Biomass')));
 
-% given model SS
-opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
-[tout,yout] = ode45(givenModel,0:0.1:200,M,opts);
-fout = zeros(length(tout),4);
-for it = 1:length(tout)
-    fout(it,:) = Kotte_givenFlux([yout(it,:)';model.PM],pvec,model);
-end
+% EM analysis using Cell Net Analyzer (CNA)
+% convert model to conform to CNA form
 
-% given model fsolve
-gfun = @(x)Kotte_givenNLAE(x,model,pvec);
-dMg = gfun(M);
-options = optimoptions('fsolve','Display','iter','TolFun',1e-10,'TolX',1e-10);
-[x1,fval,exitflag,output,jacobian] = fsolve(gfun,M,options);
-fgout = Kotte_givenFlux([x1;model.PM],pvec,model);
+% mfn = CNAloadNetwork(1,true,true);
+
+% FBAmodel.rxns(cellfun(@(x)strcmpi(x,'EC_Biomass'),FBAmodel.rxns)) = {'mue'};
+spec = ones(size(FBAmodel.S,1),1)';
+spec(1:FBAmodel.nint_metab) = 0;
+cnap.has_gui = 0;
+cnap.net_var_name = 'KotteGmodel';
+cnap.type = 1;
+cnap.specID = char(FBAmodel.mets); 
+cnap.specLongName = char(FBAmodel.mets);
+cnap.specExternal = spec;
+cnap.specInternal = find(~cnap.specExternal);
+cnap.nums = size(FBAmodel.S,1);
+cnap.numis = size(cnap.specInternal,2);
+cnap.macroID = 'BC1';
+cnap.macroLongName = 'BC1';
+cnap.macroComposition =...
+sparse(find(strcmpi(FBAmodel.mets,'bm[c]')),1,1,length(FBAmodel.mets),1);
+cnap.macroDefault = 1;
+cnap.nummac = 1;
+cnap.stoichMat = [full(FBAmodel.S) zeros(length(FBAmodel.mets),1)];
+cnap.numr = size(cnap.stoichMat,2);
+cnap.reacID = char([FBAmodel.rxns;'mue']);
+cnap.objFunc = zeros(cnap.numr,1);
+cnap.reacMin = [FBAmodel.vl;0];
+cnap.reacMax = [FBAmodel.vu;100];
+
+
+[cnap,errval] = CNAgenerateMFNetwork(cnap);
+
+cnap.path =...
+'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\Kotte2014\KotteGmodel';
+cnap = CNAsaveNetwork(cnap);
+
+% flux optimization
+% constr = zeros(cnap.numr,1);
+% constr(constr==0) = NaN;
+% constr(1) = 10;
+% constr(4) = 10;
+% constr(9) = 0;
+% constr(14) = 9;
+% [flux,success,status] = CNAoptimizeFlux(cnap,constr,cnap.macroDefault,2,2);
+
+% flux variablity
+reacval = zeros(cnap.numr,1);
+reacval(reacval==0) = NaN;
+reacval(5) = -10;
+reacval(11) = -10;
+% [minFlux,maxFlux,success,status] =...
+% CNAfluxVariability(cnap,reacval,cnap.macroDefault,2);
+
+% remove conserved quantities
+% [cnap,delspec] = CNAremoveConsRel(cnap,1,0,0);
+
+% phase plane analysis
+status = CNAplotPhasePlane(cnap,reacval,cnap.macroDefault,[14;10;12;13],2);
+
+% EFM calculation
+constr = zeros(cnap.numr,4);
+constr(constr==0) = NaN;
+% constr(5,2) = -10;
+% constr(5,3) = 0;
+[efm,rev,idx,ray] = CNAcomputeEFM(cnap,constr,3,1,0,0,cnap.macroDefault);
+
+% cut set calculation
+cutsets = CNAcomputeCutsets(efm,Inf,cnap.reacID);
+
 
 % Kotte_Cscript
-allhandles = feval(@Kotte2014Ckinetics);
-rhsfunc = allhandles{2};
-CModel = @(t,x)rhsfunc(t,x,model,kEcat,KEacetate,...
-        KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
-        vEXmax,KEXPEP,...
-        vemax,KeFBP,ne,acetate,d);
-fluxC = Kotte_CFlux([x1;model.PM],pvec,model);
-dMdtC = CModel(0,x1);
+% allhandles = feval(@Kotte2014Ckinetics);
+% rhsfunc = allhandles{2};
+% CModel = @(t,x)rhsfunc(t,x,model,kEcat,KEacetate,...
+%         KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
+%         vEXmax,KEXPEP,...
+%         vemax,KeFBP,ne,acetate,d);
+% fluxC = Kotte_CFlux([x1;model.PM],pvec,model);
+% dMdtC = CModel(0,x1);
 
 % C model fsolve
-cfun = @(x)Kotte_CNLAE(x,model,pvec);
-dMc = cfun(x1);
-options = optimoptions('fsolve','Display','iter',...
-                       'TolFun',1e-10,...
-                       'TolX',1e-10,...
-                       'MaxFunEvals',1000000,...
-                       'MaxIter',50000);
-[x2,fval,exitflag,output,jacobian] = fsolve(cfun,x1,options);
-fcout = Kotte_CFlux([M;model.PM],pvec,model);    
-
-% C model SS
-opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
-[tout,yout] = ode45(CModel,0:0.1:60,M,opts);
-fout = zeros(length(tout),4);
-for it = 1:length(tout)
-    fout(it,:) = Kotte_givenFlux([yout(it,:)';model.PM],pvec,model);
-end
+% cfun = @(x)Kotte_CNLAE(x,model,pvec);
+% dMc = cfun(x1);
+% options = optimoptions('fsolve','Display','iter',...
+%                        'TolFun',1e-10,...
+%                        'TolX',1e-10,...
+%                        'MaxFunEvals',1000000,...
+%                        'MaxIter',50000);
+% [x2,fval,exitflag,output,jacobian] = fsolve(cfun,x1,options);
+% fcout = Kotte_CFlux([M;model.PM],pvec,model);    
+% 
+% % C model SS
+% opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
+% [tout,yout] = ode45(CModel,0:0.1:60,M,opts);
+% fout = zeros(length(tout),4);
+% for it = 1:length(tout)
+%     fout(it,:) = Kotte_givenFlux([yout(it,:)';model.PM],pvec,model);
+% end
 
 % pvec.d = 0.25;
 % allhandles = feval(@Kotte2014Ckinetics);
 % rhsfunc = allhandles{2};
 % func = @(t,x)KotteCkinetics(t,x,model,pvec);
 % dMdt = func(0,M);
-allmc = [M;model.PM];
-
-fun = @(x)KotteCkinetics(x,pvec,model);
-dMdt = fun(M);
-
-
-[x1,fval,exitflag,output,jacobian] = fsolve(fun,M,options);
+% allmc = [M;model.PM];
+% 
+% fun = @(x)KotteCkinetics(x,pvec,model);
+% dMdt = fun(M);
+% 
+% 
+% [x1,fval,exitflag,output,jacobian] = fsolve(fun,M,options);
 
 % opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
 % [tout,yout] = ode45(func,0:0.1:60,M,opts);
@@ -141,6 +183,3 @@ dMdt = fun(M);
 
 
 
-plot(tout,yout);
-
-plotKotteVariables(tout,yout,1);
