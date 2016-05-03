@@ -121,23 +121,24 @@ if isempty(findobj('type','figure','Name',fig_name))
     hfig = figure('Name',fig_name); 
     figure(hfig);
 end
-hsubfig = zeros(nt_rxn,1);
+% hsubfig = zeros(nt_rxn,1);
+hsubfig = zeros(nrxn,1);
 ifl = 1; % 1,2,3...,nplots
 
 while ifl <= nrxn
 % for ifl = 2:(nrxn)
-    if hsubfig(flux1id(ifl)) ~= 0
+    if hsubfig(ifl) ~= 0
 %     if hsubfig(ifl) ~= 0
-        hca = findobj(hsubfig(flux1id(ifl)),'type','axes');
+        hca = findobj(hsubfig(ifl),'type','axes');
 %         hca = findobj(hsubfig(ifl),'type','axes');
         set(hfig,'CurrentAxes',hca);  
     else % subplot is unassigned
-        hsubfig(flux1id(ifl)) = subplot(nrows,ncol,ifl);
+        hsubfig(ifl) = subplot(nrows,ncol,ifl);
 %         hsubfig(ifl) = subplot(nrows,2,ifl-1);   
         hca = gca;
         % Make sure more plots can be added at end of loop
         set(hca,'NextPlot','add');     
-        set(hsubfig(flux1id(ifl)),'NextPlot','add');
+        set(hsubfig(ifl),'NextPlot','add');
     end    
     ylabel = sprintf('Flux %s \n mmole/mmole uptake',model.rxns{flux2id(ifl)});
     hline = plot([flval(:,ifl)' fliplr(flval(:,ifl)')],...
