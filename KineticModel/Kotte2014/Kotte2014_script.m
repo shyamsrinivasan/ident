@@ -74,7 +74,7 @@ pub = zeros(length(pvec),1);
 idp = [1;4;7];
 plb(idp) = [0.01;0.01;0.01];
 pub(idp) = [100;100;100];
-npts = 10000;
+npts = 1000;
 
 allpvec = sampleEKP(pvec,plb,pub,idp,npts);
 
@@ -84,13 +84,47 @@ fluxg = Kotte_givenFlux([M;model.PM],pvec,model);
 dMdtg = givenModel(0,M);
 
 opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
-[tout,yout] = ode45(givenModel,0:0.1:200,M,opts);
-out = zeros(length(tout),4);
+tspan = 0:0.1:200;
+[tout,yout] = ode45(givenModel,tspan,M,opts);
+fout = zeros(length(tout),length(fluxg));
 for it = 1:length(tout)
-    fout(it,:) = Kotte_glycolysisflux(yout(it,:),pvec);
+    fout(it,:) = Kotte_givenFlux([yout(it,:)';model.PM],pvec,model);
 end
 plotKotteVariables(tout,yout,1);
 plotKotteVariables(tout,fout,2);
+
+% ode for different parameter sets
+% vary all parameters simulataneously
+allyout = zeros(length(tspan),length(M),npts);
+allyoutss = zeros(length(M),npts);
+allfout = zeros(length(tspan),length(fluxg),npts);
+for ipt = 1:npts
+    fprintf('Iteration #%d...',ipt);
+    pvec = allpvec(ipt,:);
+    givenModel = @(t,x)KotteODE(t,x,model,pvec);
+    [tout,yout] = ode45(givenModel,tspan,M,opts);
+    allyout(:,:,ipt) = yout;
+    allyoutss(:,ipt) = yout(end,:)';
+    fprintf('Complete\n');
+end
+plotKotteVariables(tout,allyout,1);
+plotKotteVariables(allpvec(:,idp)',allyoutss,3);
+
+% changing individual parameters
+plb =  zeros(length(pvec),1);
+pub = zeros(length(pvec),1);
+
+idp = [1;4;7];
+
+plb(idp) = [0.01;0.01;0.01];
+pub(idp) = [100;100;100];
+npts = 1000;
+
+
+
+    
+    
+    
 
 % mfn = CNAloadNetwork(1,true,true);
 

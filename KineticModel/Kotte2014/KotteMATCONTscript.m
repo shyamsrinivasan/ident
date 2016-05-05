@@ -121,13 +121,36 @@ mssval = bifurcationPlot(flux1,flux1,s1,f1,5,1);
 xlabel('Acetate Flux In');
 ylabel('PEP Excretion');
 subplot(223);
-bifurcationPlot(flux1,flux1,s1,f1,4,1);
-xlabel('Acetate Flux In');
-ylabel('GLUX');
+bifurcationPlot(flux1,p,s1,f1,5,1);
+xlabel('Acetate');
+ylabel('PEP Excretion');
 subplot(224);
 mssval = bifurcationPlot(flux1,flux1,s1,f1,5,3);
 ylabel('PEP Excretion');
 xlabel('ECbiomass');
+
+% run MATCONT on a multiple sets of parameters
+% sample parameters indicated by indices in idp
+plb =  zeros(length(pvec),1);
+pub = zeros(length(pvec),1);
+idp = [1;4;7];
+plb(idp) = [0.01;0.01;0.01];
+pub(idp) = [100;100;100];
+npts = 10;
+allpvec = sampleEKP(pvec,plb,pub,idp,npts);
+
+for ipt = 1:npts
+    % change in pvec
+    pvec = allpvec(ipt,:);
+    
+    % continuation from initial equilibrium - initialization
+    ap = 12; % index for parameter to be continued on     
+    [x0,v0] = init_EP_EP(@KotteMATCONT,xeq,pvec,ap);
+    
+    % Equilibrium Continuation
+    [x1,v1,s1,h1,f1] = cont(@equilibrium,x0,v0,opt);
+end
+
 
 % figure
 % bifurcationPlot(flux1,flux1,s1,f1,2,1);

@@ -10,7 +10,7 @@ end
 flux = Kotte_givenFlux(allmc,pvec,model);
 % differential equations
 % PEP
-dM(1) = flux(1) - flux(4);
+dM(1) = flux(1) - flux(4) - flux(5);
 % FBP
 dM(2) = flux(4) - flux(3);
 % enzymes
