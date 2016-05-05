@@ -3,7 +3,7 @@
 % flux1 and flux2 can be a cell array of strings or just double indices 
 % eg call: FluxEnvelope(FBAmodel,{'PGI','exPYR';'PFK','exPYR'},ess_rxn);
 
-function [hsubfig,flux2id,flag] = FluxEnvelope(model,fluxid,ess_rxn)
+function [hsubfig,fluxid,flag] = FluxEnvelope(model,fluxid,ess_rxn)
 if nargin < 3
     ess_rxn = {};
 end
@@ -94,11 +94,14 @@ for irxn = 1:nrxn
         end
     end
 end
+
+if iscell(fluxid)
+    fluxid = [flux1id flux2id];
+end
     
 %Infeasible Problem
 if ~any(Maxtarget)
-    hsubfig = [];
-    prxnid = [];
+    hsubfig = [];    
     flag = -1;
     return
 end
@@ -126,15 +129,11 @@ hsubfig = zeros(nrxn,1);
 ifl = 1; % 1,2,3...,nplots
 
 while ifl <= nrxn
-% for ifl = 2:(nrxn)
     if hsubfig(ifl) ~= 0
-%     if hsubfig(ifl) ~= 0
         hca = findobj(hsubfig(ifl),'type','axes');
-%         hca = findobj(hsubfig(ifl),'type','axes');
         set(hfig,'CurrentAxes',hca);  
     else % subplot is unassigned
         hsubfig(ifl) = subplot(nrows,ncol,ifl);
-%         hsubfig(ifl) = subplot(nrows,2,ifl-1);   
         hca = gca;
         % Make sure more plots can be added at end of loop
         set(hca,'NextPlot','add');     

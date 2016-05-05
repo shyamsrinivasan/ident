@@ -9,6 +9,6 @@ ENZt2r		enz1[c] <==> enz1[e]		0				1	1
 ENZtr		enz[c] ---> enz[e]		0				1	1											
 PEPt2r		pep[c] ---> pep[e]		0				1	1											
 PEPex		pep[e] <==>		0				1	1											
-ENZ1ex		enz1[e] <==> 																		
-ENZex		enz[e] <==>																		
-bmex		bm[e] <==>																		
+ENZ1ex		enz1[e] <==> 		0																
+ENZex		enz[e] <==>		0																
+bmex		bm[e] <==>		0																
