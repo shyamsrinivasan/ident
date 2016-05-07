@@ -23,10 +23,12 @@ opt = contset(opt,'Eigenvalues',1);
 [x1,v1,s1,h1,f1] = cont(@equilibrium,x0,v0,opt); 
 
 % flux calculation
-flux1 = zeros(5,size(x1,2));
-y = x1(1:length(xeq),:);
-p = x1(length(xeq)+1:end,:);
-for it = 1:size(x1,2)
-    pvec(ap) = p(it);
-    flux1(:,it) = KotteMATCONTflux(y(:,it),pvec);
+if ~isempty(s1)
+    flux1 = zeros(5,size(x1,2));
+    y = x1(1:length(xeq),:);
+    p = x1(length(xeq)+1:end,:);
+    for it = 1:size(x1,2)
+        pvec(ap) = p(it);
+        flux1(:,it) = KotteMATCONTflux(y(:,it),pvec);
+    end
 end

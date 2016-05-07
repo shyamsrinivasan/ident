@@ -25,9 +25,9 @@ FBAmodel = FBAfluxes(FBAmodel,'fba',{'ACt2r','ENZ1ex'},Vup_struct,...
 %                      find(strcmpi(FBAmodel.rxns,'EC_Biomass')));                 
                  
 % flux envelope
-[hsubfig,prxnid,flag] = FluxEnvelope(FBAmodel,...
-                        {'bmt2r','PEPt2r'},...
-                        {'ACt2r','ENZ1ex'});
+% [hsubfig,prxnid,flag] = FluxEnvelope(FBAmodel,...
+%                         {'bmt2r','PEPt2r'},...
+%                         {'ACt2r','ENZ1ex'});
                     
 % call to bifurcation analysis script using MATCONT
 % KotteMATCONTscript         
@@ -75,7 +75,6 @@ idp = [1;4;7];
 plb(idp) = [0.01;0.01;0.01];
 pub(idp) = [100;100;100];
 npts = 1000;
-
 allpvec = sampleEKP(pvec,plb,pub,idp,npts);
 
 % systems check
@@ -90,39 +89,102 @@ fout = zeros(length(tout),length(fluxg));
 for it = 1:length(tout)
     fout(it,:) = Kotte_givenFlux([yout(it,:)';model.PM],pvec,model);
 end
-plotKotteVariables(tout,yout,1);
-plotKotteVariables(tout,fout,2);
+% plotKotteVariables(tout,yout,1);
+% plotKotteVariables(tout,fout,2);
+
+% run MATCONT on a multiple sets of parameters
+% sample parameters indicated by indices in idp
+% changing individual parameters
+pvec = [kEcat,KEacetate,...
+        KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
+        vEXmax,KEXPEP,...
+        vemax,KeFBP,ne,acetate,d];
+idp = [1;4;7];
+vals = [0.01 0.1 1 10 100];
+npts = 200;
+allpvec = discreteEKPsample(pvec,vals,idp,npts);
+
+xeq = yout(end,:)';
+runMATCONT
+sint = s1;
+xinit = x1;
+finit = f1;
+
+tspan = 0:0.1:6000;
+allyoutss = zeros(length(M),npts);
+allxeq = zeros(length(M),npts);
+allxf = zeros(length(M),npts);
+allflag = zeros(1,npts);
+for ipt = 1:npts
+    fprintf('Iteration #%d Equilibrium Integration...',ipt);
+    % change in pvec
+    pvec = allpvec(ipt,:);
+    
+    % new equilibrium solution
+    givenModel = @(t,x)KotteODE(t,x,model,pvec);
+    [tout,yout] = ode45(givenModel,tspan,M,opts);
+    allyoutss(:,ipt) = yout(end,:)';    
+    plotKotteVariables(tout,yout,1);    
+    
+    gfun = @(x)Kotte_givenNLAE(x,model,pvec);
+    options = optimoptions('fsolve','Display','iter',...
+                                    'TolFun',1e-12,'TolX',1e-12,...
+                                    'MaxFunEvals',10000,...
+                                    'MaxIter',5000);
+%     [xf,fval,exitflag,output,jacobian] = fsolve(gfun,M,options);
+    xeq = allyoutss(:,ipt);
+    allxeq(:,ipt) = xeq;
+%     allxf(:,ipt) = xf;
+%     allflag(1,ipt) = exitflag;
+%     xeq = xf;
+    
+    fprintf('Complete\n');
+    
+    % continuation from initial equilibrium - initialization
+    fprintf('Iteration #%d Equilibrium Continuation...',ipt);
+    % run MATCONT
+    runMATCONT
+    
+    % save MATCONT results
+    s.(['pt' num2str(ipt)]).s1 = s1;
+    s.(['pt' num2str(ipt)]).x1 = x1;
+    s.(['pt' num2str(ipt)]).f1 = f1;
+    
+    fprintf('Complete\n');
+end
+
+% check which solutions have mss
+mssid = [];
+for ipt = 1:npts
+    s1 = s.(['pt' num2str(ipt)]).s1;
+    nLP = size(s1,1);
+    if nLP > 2
+        fprintf('Vector %d has %d Steady States\n',ipt,nLP);
+        mssid = union(mssid,ipt);
+    end
+end
+
+% plot solutions that have mss
+
 
 % ode for different parameter sets
 % vary all parameters simulataneously
-allyout = zeros(length(tspan),length(M),npts);
-allyoutss = zeros(length(M),npts);
-allfout = zeros(length(tspan),length(fluxg),npts);
-for ipt = 1:npts
-    fprintf('Iteration #%d...',ipt);
-    pvec = allpvec(ipt,:);
-    givenModel = @(t,x)KotteODE(t,x,model,pvec);
-    [tout,yout] = ode45(givenModel,tspan,M,opts);
-    allyout(:,:,ipt) = yout;
-    allyoutss(:,ipt) = yout(end,:)';
-    fprintf('Complete\n');
-end
-plotKotteVariables(tout,allyout,1);
-plotKotteVariables(allpvec(:,idp)',allyoutss,3);
+% allyout = zeros(length(tspan),length(M),npts);
+% allyoutss = zeros(length(M),npts);
+% allfout = zeros(length(tspan),length(fluxg),npts);
+% for ipt = 1:npts
+%     fprintf('Iteration #%d...',ipt);
+%     pvec = allpvec(ipt,:);
+%     givenModel = @(t,x)KotteODE(t,x,model,pvec);
+%     [tout,yout] = ode45(givenModel,tspan,M,opts);
+%     allyout(:,:,ipt) = yout;
+%     allyoutss(:,ipt) = yout(end,:)';
+%     fprintf('Complete\n');
+% end
+% plotKotteVariables(tout,allyout,1);
+% plotKotteVariables(allpvec(:,idp)',allyoutss,3);
 
-% changing individual parameters
-plb =  zeros(length(pvec),1);
-pub = zeros(length(pvec),1);
-
-idp = [1;4;7];
-
-plb(idp) = [0.01;0.01;0.01];
-pub(idp) = [100;100;100];
-npts = 1000;
-
-
-
-    
+  
     
     
 
