@@ -101,14 +101,37 @@ pvec = [kEcat,KEacetate,...
         vemax,KeFBP,ne,acetate,d];
 idp = [1;4;7];
 vals = [0.01 0.1 1 10 100];
-npts = 200;
+npts = 500;
 allpvec = discreteEKPsample(pvec,vals,idp,npts);
 
 xeq = yout(end,:)';
-runMATCONT
-sint = s1;
-xinit = x1;
-finit = f1;
+% runMATCONT % run MATCONT from script
+% sint = s1;
+% xinit = x1;
+% finit = f1;
+
+% use ADMAT to calculate jacobians
+admatfun = @(x)Kotte_givenNLAE(x,model,pvec);
+% x = ones(length(M),1);
+xADMATobj = deriv(M,eye(3));
+xADMATres = admatfun(xADMATobj);
+F = getval(xADMATres);
+J = getydot(xADMATres);
+
+
+Jxact = KottegivenJacobian(M,pvec,model);
+
+% permutations
+ps = nchoosek([0.01 0.1 1 10 100],3);
+vs = zeros(3,0);
+for ip = 1:size(ps,1)
+    vp = perms(ps(ip,:));
+    vs = [vs vp'];
+end
+vs = unique(vs','rows');
+
+npts = size(vs,1);
+npts = 1;
 
 tspan = 0:0.1:6000;
 allyoutss = zeros(length(M),npts);
@@ -118,13 +141,14 @@ allflag = zeros(1,npts);
 for ipt = 1:npts
     fprintf('Iteration #%d Equilibrium Integration...',ipt);
     % change in pvec
-    pvec = allpvec(ipt,:);
+%     pvec = allpvec(ipt,:);
+    pvec(idp) = vs(ipt,:);
     
     % new equilibrium solution
     givenModel = @(t,x)KotteODE(t,x,model,pvec);
     [tout,yout] = ode45(givenModel,tspan,M,opts);
     allyoutss(:,ipt) = yout(end,:)';    
-    plotKotteVariables(tout,yout,1);    
+%     plotKotteVariables(tout,yout,1);    
     
     gfun = @(x)Kotte_givenNLAE(x,model,pvec);
     options = optimoptions('fsolve','Display','iter',...
@@ -162,6 +186,13 @@ for ipt = 1:npts
         fprintf('Vector %d has %d Steady States\n',ipt,nLP);
         mssid = union(mssid,ipt);
     end
+end
+
+% calculation of fluxes for allxeq
+allfeq = zeros(length(fluxg),npts);
+for ipt = 1:npts
+    pvec(idp) = vs(ipt,:);
+    allfeq(:,ipt) = Kotte_givenFlux([allxeq(:,ipt);model.PM],pvec,model);
 end
 
 % plot solutions that have mss

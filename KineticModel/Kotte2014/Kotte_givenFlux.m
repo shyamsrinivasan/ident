@@ -1,6 +1,7 @@
 function flux = Kotte_givenFlux(M,pvec,model,flux)
 if nargin < 4
     flux = zeros(5,1);
+    flux = cons(flux,M);
 end
 if nargin < 3
     model = struct([]);
@@ -40,6 +41,7 @@ pep = strcmpi(model.mets,'pep[c]');
 fdp = strcmpi(model.mets,'fdp[c]');
 enz = strcmpi(model.mets,'enz[c]');
 ac = strcmpi(model.mets,'ac[e]');
+
 
 %acetate --E--> PEP --vEX--> FBP --Fbp--> Nothing
 % u(1) or M(4) --M(1),flux(1)--> M(2) --vEX,flux(2)--> M(3) --Fbp,flux(3)--> Nothing
