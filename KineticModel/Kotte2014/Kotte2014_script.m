@@ -105,10 +105,10 @@ npts = 500;
 allpvec = discreteEKPsample(pvec,vals,idp,npts);
 
 xeq = yout(end,:)';
-% runMATCONT % run MATCONT from script
-% sint = s1;
-% xinit = x1;
-% finit = f1;
+runMATCONT % run MATCONT from script
+sint = s1;
+xinit = x1;
+finit = f1;
 
 % use ADMAT to calculate jacobians
 admatfun = @(x)Kotte_givenNLAE(x,model,pvec);
@@ -129,11 +129,11 @@ for ip = 1:size(ps,1)
     vs = [vs vp'];
 end
 vs = unique(vs','rows');
+vs = [0.01 0.01 0.01;.1 .1 .1;10 10 10;100 100 100];
 
 npts = size(vs,1);
-npts = 1;
 
-tspan = 0:0.1:6000;
+tspan = 0:0.1:50000;
 allyoutss = zeros(length(M),npts);
 allxeq = zeros(length(M),npts);
 allxf = zeros(length(M),npts);
@@ -148,7 +148,7 @@ for ipt = 1:npts
     givenModel = @(t,x)KotteODE(t,x,model,pvec);
     [tout,yout] = ode45(givenModel,tspan,M,opts);
     allyoutss(:,ipt) = yout(end,:)';    
-%     plotKotteVariables(tout,yout,1);    
+    plotKotteVariables(tout,yout,1);    
     
     gfun = @(x)Kotte_givenNLAE(x,model,pvec);
     options = optimoptions('fsolve','Display','iter',...
