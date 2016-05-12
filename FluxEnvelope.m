@@ -3,7 +3,7 @@
 % flux1 and flux2 can be a cell array of strings or just double indices 
 % eg call: FluxEnvelope(FBAmodel,{'PGI','exPYR';'PFK','exPYR'},ess_rxn);
 
-function [hsubfig,fluxid,flag] = FluxEnvelope(model,fluxid,ess_rxn)
+function [hfig,hsubfig,fluxid,flag] = FluxEnvelope(model,fluxid,ess_rxn)
 if nargin < 3
     ess_rxn = {};
 end
@@ -15,22 +15,29 @@ else
     end
 end
 if iscell(fluxid)
+    nfig = size(fluxid,1);
     flux1id = fluxid(:,1);    
-    flux1id = cellfun(@(x)strcmpi(x,flux1id),model.rxns,'UniformOutput',false);
-    flux1id = cell2mat(cellfun(@(x)any(x),flux1id,'UniformOutput',false));
-    flux1id = find(flux1id);
-    
     flux2id = fluxid(:,2);
-    flux2id = cellfun(@(x)strcmpi(x,flux2id),model.rxns,'UniformOutput',false);
-    flux2id = cell2mat(cellfun(@(x)any(x),flux2id,'UniformOutput',false));
-    flux2id = find(flux2id);
-    
-    if length(flux2id)<length(flux1id)
-        flux2id = repmat(flux2id,length(flux1id),1);
+    for ifig = 1:nfig
+        flux1id{ifig} = find(strcmpi(model.rxns,flux1id{ifig}));
+        flux2id{ifig} = find(strcmpi(model.rxns,flux2id{ifig}));
     end
-    if length(flux1id)<length(flux2id)
-        flux1id = repmat(flux1id,length(flux2id),1);
-    end
+    flux1id = cell2mat(flux1id);
+    flux2id = cell2mat(flux2id);
+%     flux1id = cellfun(@(x)strcmpi(x,flux1id),model.rxns,'UniformOutput',false);
+%     flux1id = cell2mat(cellfun(@(x)any(x),flux1id,'UniformOutput',false));
+%     flux1id = find(flux1id);   
+%     
+%     flux2id = cellfun(@(x)strcmpi(x,flux2id),model.rxns,'UniformOutput',false);
+%     flux2id = cell2mat(cellfun(@(x)any(x),flux2id,'UniformOutput',false));
+%     flux2id = find(flux2id);
+%     
+%     if length(flux2id)<length(flux1id)
+%         flux2id = repmat(flux2id,length(flux1id),1);
+%     end
+%     if length(flux1id)<length(flux2id)
+%         flux1id = repmat(flux1id,length(flux2id),1);
+%     end
 elseif ~iscell(fluxid)
     flux1id = fluxid(:,1);
     flux2id = fluxid(:,2);
@@ -48,11 +55,18 @@ Maxtarget = zeros(1,npts,nrxn);
 Mintarget = zeros(1,npts,nrxn);
 flval = zeros(npts,nrxn);
 
-% fix flux bounds as in FBA for uptake fluxes
-[model,bounds] = changebounds(model,ess_rxn);
-
 for irxn = 1:nrxn
     
+    % fix flux bounds as in FBA for uptake fluxes
+    [model,bounds] = changebounds(model,ess_rxn);
+    
+    if bounds.vl(flux1id(irxn))==bounds.vu(flux1id(irxn))
+        if bounds.vu(flux1id(irxn)) > 0
+            bounds.vl(flux1id(irxn))= 0;
+        elseif bounds.vu(flux1id(irxn)) == 0
+            bounds.vl(flux1id(irxn))= -1;
+        end
+    end
     % Find maximum/minimum allowable flux 1 (x-axis for envelope)
     [LP1max,LP1min] = solveLP(model,bounds,ess_rxn,flux1id(irxn));
     if LP1max.flag > 0 && LP1min.flag > 0
@@ -62,6 +76,13 @@ for irxn = 1:nrxn
             model.rxns{flux1id(irxn)},LP1min.obj);
     end
     
+    if bounds.vl(flux2id(irxn))==bounds.vu(flux2id(irxn))
+        if bounds.vu(flux2id(irxn)) > 0
+            bounds.vl(flux2id(irxn))= 0;
+        elseif bounds.vu(flux2id(irxn)) == 0
+            bounds.vl(flux2id(irxn))= -1;
+        end
+    end
     % Find maximum/minimum allowable flux 2 (y-axis for envelope)
     [LP2max,LP2min] = solveLP(model,bounds,ess_rxn,flux2id(irxn));
     if LP2max.flag > 0 && LP2min.flag > 0
@@ -122,6 +143,9 @@ end
 fig_name = sprintf('Flux Envelope');
 if isempty(findobj('type','figure','Name',fig_name))
     hfig = figure('Name',fig_name); 
+    figure(hfig);
+else
+    hfig = findobj('type','figure','Name',fig_name);
     figure(hfig);
 end
 % hsubfig = zeros(nt_rxn,1);
