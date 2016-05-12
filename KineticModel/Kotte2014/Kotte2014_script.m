@@ -1,3 +1,4 @@
+% build stoichioemtrc matrices
 addpath(genpath('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel'));
 rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\Kotte2014\Kotte2014.txt';
 cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\Kotte2014\Kotte2014C.txt';
@@ -9,103 +10,235 @@ cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\Kine
 [mc,FBAmodel,met] = readCNCfromFile(cnfname,FBAmodel);
 
 % run FBA
-Vup_struct.ACt2r = 10;
-Vup_struct.ENZ1ex = 10;
+Vup_struct.ACt2r = 1;
+Vup_struct.ENZ1ex = 1;
 FBAmodel = FBAfluxes(FBAmodel,'fba',{'ACt2r','ENZ1ex'},Vup_struct,...
                     [find(strcmpi(FBAmodel.rxns,'FDex'))...
                      find(strcmpi(FBAmodel.rxns,'PEPex'))]);
                  
+% change bunds for FBAmodel and re run FBA
+% [FBAmodel,bounds] = changebounds(FBAmodel,{'ACt2r','ENZ1ex'});
+% FBAmodel.vl = bounds.vl;
+% FBAmodel.vu = bounds.vu;
+% 
+% FBAmodel = FBAfluxes(FBAmodel,'fba',{'ACt2r','ENZ1ex'},Vup_struct,...
+%                      find(strcmpi(FBAmodel.rxns,'EC_Biomass')));                 
+                 
 % flux envelope
-[hsubfig,prxnid,flag] = FluxEnvelope(FBAmodel,...
-                        {'FDex','PEPex'},...
-                        {'ACt2r','ENZ1ex'});
-
-% call to bifurcation analysis script using MATCONT
-% KotteMATCONTscript
+% [hsubfig,prxnid,flag] = FluxEnvelope(FBAmodel,...
+%                         {'bmt2r','PEPt2r'},...
+%                         {'ACt2r','ENZ1ex'});
                     
+% call to bifurcation analysis script using MATCONT
+% KotteMATCONTscript         
+
 % remove metabolites held constant from consideration in the model
 % integration phase
 [model,pvec,newmc,cnstmet] =...
 remove_eMets(FBAmodel,parameter,mc,[FBAmodel.Vind FBAmodel.Vex],...
 {'enz1[c]','enz1[e]','enz[e]','ac[e]','bm[c]','bm[e]','pep[e]'});
 
-% change bunds for FBAmodel
-[FBAmodel,bounds] = changebounds(FBAmodel,{'ACt2r','ENZ1ex'});
-FBAmodel.vl = bounds.vl;
-FBAmodel.vu = bounds.vu;
+% only initialize for varmets   
+nvar = length(model.mets)-length(find(cnstmet));
+M = newmc(1:nvar);
+PM = newmc(nvar+1:end);
+model.PM = PM;
 
-FBAmodel = FBAfluxes(FBAmodel,'fba',{'ACt2r','ENZ1ex'},Vup_struct,...
-                     find(strcmpi(FBAmodel.rxns,'EC_Biomass')));
+% call to stoichioemtric analysis script
+% Kotte_StoichiometricAnalysisScript
 
-% EM analysis using Cell Net Analyzer (CNA)
-% convert model to conform to CNA form
+% call to parameter sampling script for analysis of mss
+% parameters
+clear pvec
+kEcat = 1;
+KEacetate = 0.1;    % or 0.02
+KFbpFBP = 0.1;
+vFbpmax = 1;
+Lfbp = 4e6;
+KFbpPEP = 0.1;
+vEXmax = 1;
+KEXPEP = 0.3;
+vemax = 1.1;        % for bifurcation analysis: 0.7:0.1:1.3
+KeFBP = 0.45;       % or 0.45
+ne = 2;             % or 2
+acetate = 0.1;      % a.u acetate
+d = 0.25;           % or 0.25 or 0.35
+pvec = [kEcat,KEacetate,...
+        KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
+        vEXmax,KEXPEP,...
+        vemax,KeFBP,ne,acetate,d];
+    
+% sample parameters indicated by indices in idp
+plb =  zeros(length(pvec),1);
+pub = zeros(length(pvec),1);
+idp = [1;4;7];
+plb(idp) = [0.01;0.01;0.01];
+pub(idp) = [100;100;100];
+npts = 1000;
+allpvec = sampleEKP(pvec,plb,pub,idp,npts);
+
+% systems check
+givenModel = @(t,x)KotteODE(t,x,model,pvec);
+fluxg = Kotte_givenFlux([M;model.PM],pvec,model);
+dMdtg = givenModel(0,M);
+
+opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
+tspan = 0:0.1:200;
+[tout,yout] = ode45(givenModel,tspan,M,opts);
+fout = zeros(length(tout),length(fluxg));
+for it = 1:length(tout)
+    fout(it,:) = Kotte_givenFlux([yout(it,:)';model.PM],pvec,model);
+end
+% plotKotteVariables(tout,yout,1);
+% plotKotteVariables(tout,fout,2);
+
+% run MATCONT on a multiple sets of parameters
+% sample parameters indicated by indices in idp
+% changing individual parameters
+pvec = [kEcat,KEacetate,...
+        KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
+        vEXmax,KEXPEP,...
+        vemax,KeFBP,ne,acetate,d];
+idp = [1;4;7];
+vals = [0.01 0.1 1 10 100];
+npts = 500;
+allpvec = discreteEKPsample(pvec,vals,idp,npts);
+
+xeq = yout(end,:)';
+runMATCONT % run MATCONT from script
+sint = s1;
+xinit = x1;
+finit = f1;
+
+% use ADMAT to calculate jacobians
+admatfun = @(x)Kotte_givenNLAE(x,model,pvec);
+% x = ones(length(M),1);
+xADMATobj = deriv(M,eye(3));
+xADMATres = admatfun(xADMATobj);
+F = getval(xADMATres);
+J = getydot(xADMATres);
+
+
+Jxact = KottegivenJacobian(M,pvec,model);
+
+% permutations
+ps = nchoosek([0.01 0.1 1 10 100],3);
+vs = zeros(3,0);
+for ip = 1:size(ps,1)
+    vp = perms(ps(ip,:));
+    vs = [vs vp'];
+end
+vs = unique(vs','rows');
+vs = [0.01 0.01 0.01;.1 .1 .1;10 10 10;100 100 100];
+
+npts = size(vs,1);
+
+tspan = 0:0.1:50000;
+allyoutss = zeros(length(M),npts);
+allxeq = zeros(length(M),npts);
+allxf = zeros(length(M),npts);
+allflag = zeros(1,npts);
+for ipt = 1:npts
+    fprintf('Iteration #%d Equilibrium Integration...',ipt);
+    % change in pvec
+%     pvec = allpvec(ipt,:);
+    pvec(idp) = vs(ipt,:);
+    
+    % new equilibrium solution
+    givenModel = @(t,x)KotteODE(t,x,model,pvec);
+    [tout,yout] = ode45(givenModel,tspan,M,opts);
+    allyoutss(:,ipt) = yout(end,:)';    
+    plotKotteVariables(tout,yout,1);    
+    
+    gfun = @(x)Kotte_givenNLAE(x,model,pvec);
+    options = optimoptions('fsolve','Display','iter',...
+                                    'TolFun',1e-12,'TolX',1e-12,...
+                                    'MaxFunEvals',10000,...
+                                    'MaxIter',5000);
+%     [xf,fval,exitflag,output,jacobian] = fsolve(gfun,M,options);
+    xeq = allyoutss(:,ipt);
+    allxeq(:,ipt) = xeq;
+%     allxf(:,ipt) = xf;
+%     allflag(1,ipt) = exitflag;
+%     xeq = xf;
+    
+    fprintf('Complete\n');
+    
+    % continuation from initial equilibrium - initialization
+    fprintf('Iteration #%d Equilibrium Continuation...',ipt);
+    % run MATCONT
+    runMATCONT
+    
+    % save MATCONT results
+    s.(['pt' num2str(ipt)]).s1 = s1;
+    s.(['pt' num2str(ipt)]).x1 = x1;
+    s.(['pt' num2str(ipt)]).f1 = f1;
+    
+    fprintf('Complete\n');
+end
+
+% check which solutions have mss
+mssid = [];
+for ipt = 1:npts
+    s1 = s.(['pt' num2str(ipt)]).s1;
+    nLP = size(s1,1);
+    if nLP > 2
+        fprintf('Vector %d has %d Steady States\n',ipt,nLP);
+        mssid = union(mssid,ipt);
+    end
+end
+
+% calculation of fluxes for allxeq
+allfeq = zeros(length(fluxg),npts);
+for ipt = 1:npts
+    pvec(idp) = vs(ipt,:);
+    allfeq(:,ipt) = Kotte_givenFlux([allxeq(:,ipt);model.PM],pvec,model);
+end
+
+% plot solutions that have mss
+
+
+% ode for different parameter sets
+% vary all parameters simulataneously
+% allyout = zeros(length(tspan),length(M),npts);
+% allyoutss = zeros(length(M),npts);
+% allfout = zeros(length(tspan),length(fluxg),npts);
+% for ipt = 1:npts
+%     fprintf('Iteration #%d...',ipt);
+%     pvec = allpvec(ipt,:);
+%     givenModel = @(t,x)KotteODE(t,x,model,pvec);
+%     [tout,yout] = ode45(givenModel,tspan,M,opts);
+%     allyout(:,:,ipt) = yout;
+%     allyoutss(:,ipt) = yout(end,:)';
+%     fprintf('Complete\n');
+% end
+% plotKotteVariables(tout,allyout,1);
+% plotKotteVariables(allpvec(:,idp)',allyoutss,3);
+
+  
+    
+    
 
 % mfn = CNAloadNetwork(1,true,true);
 
 % FBAmodel.rxns(cellfun(@(x)strcmpi(x,'EC_Biomass'),FBAmodel.rxns)) = {'mue'};
-spec = ones(size(FBAmodel.S,1),1)';
-spec(1:FBAmodel.nint_metab) = 0;
-cnap.has_gui = 0;
-cnap.net_var_name = 'KotteGmodel';
-cnap.type = 1;
-cnap.specID = char(FBAmodel.mets); 
-cnap.specLongName = char(FBAmodel.mets);
-cnap.specExternal = spec;
-cnap.specInternal = find(~cnap.specExternal);
-cnap.nums = size(FBAmodel.S,1);
-cnap.numis = size(cnap.specInternal,2);
-cnap.macroID = 'BC1';
-cnap.macroLongName = 'BC1';
-cnap.macroComposition =...
-sparse(find(strcmpi(FBAmodel.mets,'bm[c]')),1,1,length(FBAmodel.mets),1);
-cnap.macroDefault = 1;
-cnap.nummac = 1;
-cnap.stoichMat = [full(FBAmodel.S) zeros(length(FBAmodel.mets),1)];
-cnap.numr = size(cnap.stoichMat,2);
-cnap.reacID = char([FBAmodel.rxns;'mue']);
-cnap.objFunc = zeros(cnap.numr,1);
-cnap.reacMin = [FBAmodel.vl;0];
-cnap.reacMax = [FBAmodel.vu;100];
 
 
-[cnap,errval] = CNAgenerateMFNetwork(cnap);
 
-cnap.path =...
-'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\Kotte2014\KotteGmodel';
-cnap = CNAsaveNetwork(cnap);
 
-% flux optimization
-% constr = zeros(cnap.numr,1);
-% constr(constr==0) = NaN;
-% constr(1) = 10;
-% constr(4) = 10;
-% constr(9) = 0;
-% constr(14) = 9;
-% [flux,success,status] = CNAoptimizeFlux(cnap,constr,cnap.macroDefault,2,2);
 
-% flux variablity
-reacval = zeros(cnap.numr,1);
-reacval(reacval==0) = NaN;
-reacval(5) = -10;
-reacval(11) = -10;
-% [minFlux,maxFlux,success,status] =...
-% CNAfluxVariability(cnap,reacval,cnap.macroDefault,2);
 
-% remove conserved quantities
-% [cnap,delspec] = CNAremoveConsRel(cnap,1,0,0);
+% ffca - feasibility flux coupling analysis
+% network.stoichiometricMatrix = FBAmodel.S;
+% network.reversibilityVector = FBAmodel.rev;
+% network.Reactions = FBAmodel.rxns;
+% network.Metabolites = FBAmodel.mets;
+% 
+% [fctable,blocked] = FFCA('glpk',network);
 
-% phase plane analysis
-status = CNAplotPhasePlane(cnap,reacval,cnap.macroDefault,[14;10;12;13],2);
+% efms using METATOOLS
+% rd_ems = nsa_em(full(FBAmodel.S),~FBAmodel.rev');
 
-% EFM calculation
-constr = zeros(cnap.numr,4);
-constr(constr==0) = NaN;
-% constr(5,2) = -10;
-% constr(5,3) = 0;
-[efm,rev,idx,ray] = CNAcomputeEFM(cnap,constr,3,1,0,0,cnap.macroDefault);
-
-% cut set calculation
-cutsets = CNAcomputeCutsets(efm,Inf,cnap.reacID);
 
 
 % Kotte_Cscript
