@@ -64,6 +64,15 @@ fgout = Kotte_givenFlux([x1;model.PM],pvec,model);
 % continuation and dynamical systems analysis using MATCONT
 runMATCONT
 
+% calculate flux
+if ~isempty(s1)
+    flux1 = zeros(5,size(x1,2));
+    for it = 1:size(x1,2)
+        pvec(ap) = p(it);
+        flux1(:,it) = KotteMATCONTflux(y(:,it),pvec);
+    end
+end
+
 figure
 subplot(221)
 bifurcationPlot(y,p,s1,f1,1,1)
@@ -88,7 +97,7 @@ bifurcationPlot(flux1,flux1,s1,f1,2,1);
 xlabel('Acetate Flux In');
 ylabel('Enzyme production');
 subplot(222);
-mssval = bifurcationPlot(flux1,flux1,s1,f1,5,1);
+bifurcationPlot(flux1,flux1,s1,f1,5,1);
 xlabel('Acetate Flux In');
 ylabel('PEP Excretion');
 subplot(223);
@@ -96,7 +105,7 @@ bifurcationPlot(flux1,p,s1,f1,5,1);
 xlabel('Acetate');
 ylabel('PEP Excretion');
 subplot(224);
-mssval = bifurcationPlot(flux1,flux1,s1,f1,5,3);
+bifurcationPlot(flux1,flux1,s1,f1,5,3);
 ylabel('PEP Excretion');
 xlabel('ECbiomass');
 

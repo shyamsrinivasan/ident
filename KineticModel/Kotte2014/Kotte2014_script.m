@@ -25,9 +25,12 @@ FBAmodel = FBAfluxes(FBAmodel,'fba',{'ACt2r','ENZ1ex'},Vup_struct,...
 %                      find(strcmpi(FBAmodel.rxns,'EC_Biomass')));                 
                  
 % flux envelope
-% [hsubfig,prxnid,flag] = FluxEnvelope(FBAmodel,...
-%                         {'bmt2r','PEPt2r'},...
-%                         {'ACt2r','ENZ1ex'});
+[hfig,hsubfig,prxnid,flag] = FluxEnvelope(FBAmodel,...
+                        {'bmt2r','PEPt2r';...
+                        'ACpts','ENZtr';...
+                        'EC_Biomass','ACpts';...
+                        'ACpts','PEPt2r'},...
+                        {'ACt2r','ENZ1ex'});
                     
 % call to bifurcation analysis script using MATCONT
 % KotteMATCONTscript         
@@ -106,9 +109,30 @@ allpvec = discreteEKPsample(pvec,vals,idp,npts);
 
 xeq = yout(end,:)';
 runMATCONT % run MATCONT from script
-sint = s1;
+sinit = s1;
 xinit = x1;
 finit = f1;
+
+% get the mss for y and p
+[yss,iyval,fyval] = parseMATCONTresult(sinit,y);
+[pss,ipval,fpval] = parseMATCONTresult(sinit,p);
+
+nss = size(yss,2);
+flux1 = zeros(5,nss);
+for iss = 1:nss
+    pvec(ap) = p(iss);
+    flux1(:,iss) = KotteMATCONTflux(yss(:,iss),pvec);
+end
+
+plotPointsonFluxEnvelope(hfig,hsubfig,[3 5;1 2;3 1;1 5],flux1)
+
+% use CNA to calculate EFMs and plot them on the envelope
+% call to stoichioemtric analysis script
+Kotte_StoichiometricAnalysisScript
+
+% Caluclate yield with MCS
+nmcs = size(mcs,1);
+
 
 % use ADMAT to calculate jacobians
 admatfun = @(x)Kotte_givenNLAE(x,model,pvec);

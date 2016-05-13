@@ -1,4 +1,4 @@
-function mssval = bifurcationPlot(y,p,s1,f1,idx,ipx,hfig)
+function bifurcationPlot(y,p,s1,f1,idx,ipx,hfig)
 if nargin<7
     hfig = [];
 end
@@ -38,7 +38,7 @@ else
     hold on
 end
 
-mssval = zeros(length(xindex),2);
+% mssval = zeros(length(xindex),2);
 for ip = 1:length(xindex)
     if ip<length(xindex)
         pval = p(ipx,xindex(ip)+1:xindex(ip+1));
@@ -65,8 +65,8 @@ for ip = 1:length(xindex)
 %         if any(evalRe(:,xindex(ip))<0) && any(evalRe(:,xindex(ip+1))>=0)
         % entering unstable from stable region 
     
-    mssval(ip,1) = y(idx,xindex(ip));
-    mssval(ip,2) = p(ipx,xindex(ip));
+%     mssval(ip,1) = y(idx,xindex(ip));
+%     mssval(ip,2) = p(ipx,xindex(ip));
     plot(pval,yval,'LineStyle',LineP.LineStyle,'Color',LineP.Color,'LineWidth',3);
     line(p(ipx,xindex(ip)),y(idx,xindex(ip)),'LineStyle','none',...
                              'Marker','o','MarkerEdgeColor','r',...
