@@ -25,12 +25,12 @@ FBAmodel = FBAfluxes(FBAmodel,'fba',{'ACt2r','ENZ1ex'},Vup_struct,...
 %                      find(strcmpi(FBAmodel.rxns,'EC_Biomass')));                 
                  
 % flux envelope
-[hfig,hsubfig,prxnid,flag] = FluxEnvelope(FBAmodel,...
-                        {'bmt2r','PEPt2r';...
-                        'ACpts','ENZtr';...
-                        'EC_Biomass','ACpts';...
-                        'ACpts','PEPt2r'},...
-                        {'ACt2r','ENZ1ex'});
+% [hfig,hsubfig,prxnid,flag] = FluxEnvelope(FBAmodel,...
+%                         {'bmt2r','PEPt2r';...
+%                         'ACpts','ENZtr';...
+%                         'bmt2r','ACpts';...
+%                         'ACpts','PEPt2r'},...
+%                         {'ACt2r','ENZ1ex'});
                     
 % call to bifurcation analysis script using MATCONT
 % KotteMATCONTscript         
@@ -66,10 +66,11 @@ KeFBP = 0.45;       % or 0.45
 ne = 2;             % or 2
 acetate = 0.1;      % a.u acetate
 d = 0.25;           % or 0.25 or 0.35
+kPEPout = 0.2;
 pvec = [kEcat,KEacetate,...
         KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
         vEXmax,KEXPEP,...
-        vemax,KeFBP,ne,acetate,d];
+        vemax,KeFBP,ne,acetate,d,kPEPout];
     
 % sample parameters indicated by indices in idp
 plb =  zeros(length(pvec),1);
@@ -101,7 +102,7 @@ end
 pvec = [kEcat,KEacetate,...
         KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
         vEXmax,KEXPEP,...
-        vemax,KeFBP,ne,acetate,d];
+        vemax,KeFBP,ne,acetate,d,kPEPout];
 idp = [1;4;7];
 vals = [0.01 0.1 1 10 100];
 npts = 500;
@@ -120,18 +121,20 @@ finit = f1;
 nss = size(yss,2);
 flux1 = zeros(5,nss);
 for iss = 1:nss
-    pvec(ap) = p(iss);
+    pvec(ap) = pss(iss);
     flux1(:,iss) = KotteMATCONTflux(yss(:,iss),pvec);
 end
 
-plotPointsonFluxEnvelope(hfig,hsubfig,[3 5;1 2;3 1;1 5],flux1)
+% plotPointsonFluxEnvelope(hfig,hsubfig,[3 5;1 2;3 1;1 5],flux1)
 
 % use CNA to calculate EFMs and plot them on the envelope
-% call to stoichioemtric analysis script
-Kotte_StoichiometricAnalysisScript
+% change model to be CNA compliant
+% [cnap,errval] = getCNAmodel(FBAmodel);
+% call to stoichioemtric analysis script for calculating EFMs
+% Kotte_StoichiometricAnalysisScript
 
 % Caluclate yield with MCS
-nmcs = size(mcs,1);
+% nmcs = size(mcs,1);
 
 
 % use ADMAT to calculate jacobians
@@ -153,11 +156,11 @@ for ip = 1:size(ps,1)
     vs = [vs vp'];
 end
 vs = unique(vs','rows');
-vs = [0.01 0.01 0.01;.1 .1 .1;10 10 10;100 100 100];
+vs = [0.001 0.001 0.001;0.01 0.01 0.01;.1 .1 .1;1 1 1;10 10 10];
 
 npts = size(vs,1);
 
-tspan = 0:0.1:50000;
+tspan = 0:0.1:200000;
 allyoutss = zeros(length(M),npts);
 allxeq = zeros(length(M),npts);
 allxf = zeros(length(M),npts);
@@ -218,6 +221,8 @@ for ipt = 1:npts
     pvec(idp) = vs(ipt,:);
     allfeq(:,ipt) = Kotte_givenFlux([allxeq(:,ipt);model.PM],pvec,model);
 end
+
+% convert Kotte flux to model flux
 
 % plot solutions that have mss
 

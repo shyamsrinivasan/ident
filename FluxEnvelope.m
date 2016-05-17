@@ -149,6 +149,7 @@ else
     figure(hfig);
 end
 % hsubfig = zeros(nt_rxn,1);
+hfig = figure;
 hsubfig = zeros(nrxn,1);
 ifl = 1; % 1,2,3...,nplots
 
