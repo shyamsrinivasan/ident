@@ -46,26 +46,26 @@ end
 
 
 
-while ifig <= ndp
-    hsubfig = subplot(nrows,ncol,ifig);    
-    line(pvec(),x(idp(ifig),:),'LineStyle','none',...
-                             'Marker','o','MarkerEdgeColor','k',...
-                             'MarkerFaceColor','k','MarkerSize',7);
-    switch idp(ifig)
-        case 1
-            ylabel = sprintf('ACpts mmole/h');
-        case 2
-            ylabel = sprintf('ENZC mmole/h');
-        case 3
-            ylabel = sprintf('ECbiomass(FDP) mmole/h');
-        case 4
-            ylabel = sprintf('GLUX mmole/h');
-        case 5
-            ylabel = sprintf('PEPout mmole/h');
-    end        
-    xlabel = sprintf('Parameter Values');
-    set(get(gca,'YLabel'),'String',ylabel);
-    set(get(gca,'XLabel'),'String',xlabel);
-%     ht = text(
-    ifig = ifig+1;    
-end
+% while ifig <= ndp
+%     hsubfig = subplot(nrows,ncol,ifig);    
+%     line(pvec(),x(idp(ifig),:),'LineStyle','none',...
+%                              'Marker','o','MarkerEdgeColor','k',...
+%                              'MarkerFaceColor','k','MarkerSize',7);
+%     switch idp(ifig)
+%         case 1
+%             ylabel = sprintf('ACpts mmole/h');
+%         case 2
+%             ylabel = sprintf('ENZC mmole/h');
+%         case 3
+%             ylabel = sprintf('ECbiomass(FDP) mmole/h');
+%         case 4
+%             ylabel = sprintf('GLUX mmole/h');
+%         case 5
+%             ylabel = sprintf('PEPout mmole/h');
+%     end        
+%     xlabel = sprintf('Parameter Values');
+%     set(get(gca,'YLabel'),'String',ylabel);
+%     set(get(gca,'XLabel'),'String',xlabel);
+% %     ht = text(
+%     ifig = ifig+1;    
+% end

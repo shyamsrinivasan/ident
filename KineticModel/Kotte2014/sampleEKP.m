@@ -1,12 +1,12 @@
-function allsmplepar = sampleEKP(pvec,lb,ub,ap,npts)
+function allsmplepar = sampleEKP(pvec,lb,ub,idp,npts)
 
-nps = length(ap);
+nps = length(idp);
 Nxeq = zeros(nps,npts);
 for ip = 1:nps
-    Nxeq(ip,:) = ivalueperturbation(lb(ap(ip)),ub(ap(ip)),npts);
+    Nxeq(ip,:) = ivalueperturbation(lb(ip),ub(ip),npts);
 end
 
 allsmplepar = repmat(pvec,npts,1);
-allsmplepar(:,ap) = Nxeq(:,:)';
+allsmplepar(:,idp) = Nxeq(:,:)';
 
 

@@ -72,27 +72,59 @@ pvec = [kEcat,KEacetate,...
         vEXmax,KEXPEP,...
         vemax,KeFBP,ne,acetate,d,kPEPout];
     
+% permutations of parameter values 
+% ps = nchoosek([0.01 0.1 1 10 100],3);
+% vs = zeros(3,0);
+% for ip = 1:size(ps,1)
+%     vp = perms(ps(ip,:));
+%     vs = [vs vp'];
+% end
+% vs = unique(vs','rows');
+% vs = [0.001 0.001 0.001;0.01 0.01 0.01;.1 .1 .1;1 1 1;10 10 10];
+% npts = size(vs,1);
+
 % sample parameters indicated by indices in idp
-plb =  zeros(length(pvec),1);
-pub = zeros(length(pvec),1);
-idp = [1;4;7];
-plb(idp) = [0.01;0.01;0.01];
-pub(idp) = [100;100;100];
+idp = [14];
 npts = 1000;
-allpvec = sampleEKP(pvec,plb,pub,idp,npts);
 
 % systems check
 givenModel = @(t,x)KotteODE(t,x,model,pvec);
 fluxg = Kotte_givenFlux([M;model.PM],pvec,model);
 dMdtg = givenModel(0,M);
 
+tspan = 0:0.1:500;
+allyoutss = zeros(length(M),npts);
+allxeq = zeros(length(M),npts);
+allxf = zeros(length(M),npts);
+% allflag = zeros(1,npts);
+
 opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
-tspan = 0:0.1:200;
-[tout,yout] = ode45(givenModel,tspan,M,opts);
-fout = zeros(length(tout),length(fluxg));
-for it = 1:length(tout)
-    fout(it,:) = Kotte_givenFlux([yout(it,:)';model.PM],pvec,model);
+for iid = 1:length(idp)    
+    plb = 0;
+    pub = 1;    
+    fprintf('Parameter #%d\n',iid);
+    allpvec = sampleEKP(pvec,plb,pub,idp(iid),npts);    
+    % run equilibrium solution followed by MATCONT
+    solveEquilibriumODE
 end
+
+% calculation of fluxes for allxeq
+allfeq = zeros(length(fluxg),npts);
+for ipt = 1:npts
+    pvec = allpvec(ipt,:);
+    allfeq(:,ipt) = Kotte_givenFlux([allxeq(:,ipt);model.PM],pvec,model);    
+end
+
+
+
+
+
+% tspan = 0:0.1:200;
+% [tout,yout] = ode45(givenModel,tspan,M,opts);
+% fout = zeros(length(tout),length(fluxg));
+% for it = 1:length(tout)
+%     fout(it,:) = Kotte_givenFlux([yout(it,:)';model.PM],pvec,model);
+% end
 % plotKotteVariables(tout,yout,1);
 % plotKotteVariables(tout,fout,2);
 
@@ -148,79 +180,8 @@ J = getydot(xADMATres);
 
 Jxact = KottegivenJacobian(M,pvec,model);
 
-% permutations
-ps = nchoosek([0.01 0.1 1 10 100],3);
-vs = zeros(3,0);
-for ip = 1:size(ps,1)
-    vp = perms(ps(ip,:));
-    vs = [vs vp'];
-end
-vs = unique(vs','rows');
-vs = [0.001 0.001 0.001;0.01 0.01 0.01;.1 .1 .1;1 1 1;10 10 10];
 
-npts = size(vs,1);
 
-tspan = 0:0.1:200000;
-allyoutss = zeros(length(M),npts);
-allxeq = zeros(length(M),npts);
-allxf = zeros(length(M),npts);
-allflag = zeros(1,npts);
-for ipt = 1:npts
-    fprintf('Iteration #%d Equilibrium Integration...',ipt);
-    % change in pvec
-%     pvec = allpvec(ipt,:);
-    pvec(idp) = vs(ipt,:);
-    
-    % new equilibrium solution
-    givenModel = @(t,x)KotteODE(t,x,model,pvec);
-    [tout,yout] = ode45(givenModel,tspan,M,opts);
-    allyoutss(:,ipt) = yout(end,:)';    
-    plotKotteVariables(tout,yout,1);    
-    
-    gfun = @(x)Kotte_givenNLAE(x,model,pvec);
-    options = optimoptions('fsolve','Display','iter',...
-                                    'TolFun',1e-12,'TolX',1e-12,...
-                                    'MaxFunEvals',10000,...
-                                    'MaxIter',5000);
-%     [xf,fval,exitflag,output,jacobian] = fsolve(gfun,M,options);
-    xeq = allyoutss(:,ipt);
-    allxeq(:,ipt) = xeq;
-%     allxf(:,ipt) = xf;
-%     allflag(1,ipt) = exitflag;
-%     xeq = xf;
-    
-    fprintf('Complete\n');
-    
-    % continuation from initial equilibrium - initialization
-    fprintf('Iteration #%d Equilibrium Continuation...',ipt);
-    % run MATCONT
-    runMATCONT
-    
-    % save MATCONT results
-    s.(['pt' num2str(ipt)]).s1 = s1;
-    s.(['pt' num2str(ipt)]).x1 = x1;
-    s.(['pt' num2str(ipt)]).f1 = f1;
-    
-    fprintf('Complete\n');
-end
-
-% check which solutions have mss
-mssid = [];
-for ipt = 1:npts
-    s1 = s.(['pt' num2str(ipt)]).s1;
-    nLP = size(s1,1);
-    if nLP > 2
-        fprintf('Vector %d has %d Steady States\n',ipt,nLP);
-        mssid = union(mssid,ipt);
-    end
-end
-
-% calculation of fluxes for allxeq
-allfeq = zeros(length(fluxg),npts);
-for ipt = 1:npts
-    pvec(idp) = vs(ipt,:);
-    allfeq(:,ipt) = Kotte_givenFlux([allxeq(:,ipt);model.PM],pvec,model);
-end
 
 % convert Kotte flux to model flux
 
