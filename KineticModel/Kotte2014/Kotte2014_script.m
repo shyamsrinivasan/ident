@@ -93,27 +93,50 @@ fluxg = Kotte_givenFlux([M;model.PM],pvec,model);
 dMdtg = givenModel(0,M);
 
 tspan = 0:0.1:500;
-allyoutss = zeros(length(M),npts);
-allxeq = zeros(length(M),npts);
-allxf = zeros(length(M),npts);
 % allflag = zeros(1,npts);
 
 opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
-for iid = 1:length(idp)    
+alliidpvec = zeros(npts,length(pvec),length(idp));
+alliidxeq = zeros(length(M),npts,length(idp));
+alliidxdyn = zeros(length(M),length(tspan),npts,length(idp));
+alliidfeq = zeros(length(fluxg),npts,length(idp));
+alliidfdyn = zeros(length(fluxg),length(tspan),npts,length(idp));
+for iid = 1:length(idp)
+    % reset pvec
+    pvec = [kEcat,KEacetate,...
+            KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
+            vEXmax,KEXPEP,... 
+            vemax,KeFBP,ne,acetate,d,kPEPout];
     plb = 0;
     pub = 1;    
     fprintf('Parameter #%d\n',iid);
     allpvec = sampleEKP(pvec,plb,pub,idp(iid),npts);    
+    
     % run equilibrium solution followed by MATCONT
+    allxeq = zeros(length(M),npts);
+    allxdyn = zeros(length(M),length(tspan),npts);
+    allxf = zeros(length(M),npts);
+    allfeq = zeros(length(fluxg),npts);
+    allfdyn = zeros(length(fluxg),length(tspan),npts);
     solveEquilibriumODE
+    
+    % save solution
+    alliidpvec(:,:,iid) = allpvec;
+    alliidxeq(:,:,iid) = allxeq;
+    alliidxdyn(:,:,:,iid) = allxdyn;
+    alliidfeq(:,:,iid) = allfeq;
+    alliidfdyn(:,:,:,iid) = allfdyn;
+    
+    siid.(['iid' num2str(iid)]) = s;
+    allmssid.(['iid' num2str(iid)]) = mssid;
 end
 
 % calculation of fluxes for allxeq
-allfeq = zeros(length(fluxg),npts);
-for ipt = 1:npts
-    pvec = allpvec(ipt,:);
-    allfeq(:,ipt) = Kotte_givenFlux([allxeq(:,ipt);model.PM],pvec,model);    
-end
+% allfeq = zeros(length(fluxg),npts);
+% for ipt = 1:npts
+%     pvec = allpvec(ipt,:);
+%     allfeq(:,ipt) = Kotte_givenFlux([allxeq(:,ipt);model.PM],pvec,model);    
+% end
 
 
 
@@ -131,31 +154,31 @@ end
 % run MATCONT on a multiple sets of parameters
 % sample parameters indicated by indices in idp
 % changing individual parameters
-pvec = [kEcat,KEacetate,...
-        KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
-        vEXmax,KEXPEP,...
-        vemax,KeFBP,ne,acetate,d,kPEPout];
-idp = [1;4;7];
-vals = [0.01 0.1 1 10 100];
-npts = 500;
-allpvec = discreteEKPsample(pvec,vals,idp,npts);
-
-xeq = yout(end,:)';
-runMATCONT % run MATCONT from script
-sinit = s1;
-xinit = x1;
-finit = f1;
+% pvec = [kEcat,KEacetate,...
+%         KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
+%         vEXmax,KEXPEP,...
+%         vemax,KeFBP,ne,acetate,d,kPEPout];
+% idp = [1;4;7];
+% vals = [0.01 0.1 1 10 100];
+% npts = 500;
+% allpvec = discreteEKPsample(pvec,vals,idp,npts);
+% 
+% xeq = yout(end,:)';
+% runMATCONT % run MATCONT from script
+% sinit = s1;
+% xinit = x1;
+% finit = f1;
 
 % get the mss for y and p
-[yss,iyval,fyval] = parseMATCONTresult(sinit,y);
-[pss,ipval,fpval] = parseMATCONTresult(sinit,p);
-
-nss = size(yss,2);
-flux1 = zeros(5,nss);
-for iss = 1:nss
-    pvec(ap) = pss(iss);
-    flux1(:,iss) = KotteMATCONTflux(yss(:,iss),pvec);
-end
+% [yss,iyval,fyval] = parseMATCONTresult(sinit,y);
+% [pss,ipval,fpval] = parseMATCONTresult(sinit,p);
+% 
+% nss = size(yss,2);
+% flux1 = zeros(5,nss);
+% for iss = 1:nss
+%     pvec(ap) = pss(iss);
+%     flux1(:,iss) = KotteMATCONTflux(yss(:,iss),pvec);
+% end
 
 % plotPointsonFluxEnvelope(hfig,hsubfig,[3 5;1 2;3 1;1 5],flux1)
 
@@ -170,15 +193,13 @@ end
 
 
 % use ADMAT to calculate jacobians
-admatfun = @(x)Kotte_givenNLAE(x,model,pvec);
-% x = ones(length(M),1);
-xADMATobj = deriv(M,eye(3));
-xADMATres = admatfun(xADMATobj);
-F = getval(xADMATres);
-J = getydot(xADMATres);
-
-
-Jxact = KottegivenJacobian(M,pvec,model);
+% admatfun = @(x)Kotte_givenNLAE(x,model,pvec);
+% % x = ones(length(M),1);
+% xADMATobj = deriv(M,eye(3));
+% xADMATres = admatfun(xADMATobj);
+% F = getval(xADMATres);
+% J = getydot(xADMATres); 
+% Jxact = KottegivenJacobian(M,pvec,model);
 
 
 

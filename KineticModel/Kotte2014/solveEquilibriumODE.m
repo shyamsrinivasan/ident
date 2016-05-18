@@ -11,7 +11,8 @@ for ipt = 1:npts
     % new equilibrium solution
     givenModel = @(t,x)KotteODE(t,x,model,pvec);
     [tout,yout] = ode45(givenModel,tspan,M,opts);
-    allyoutss(:,ipt) = yout(end,:)';    
+    allxdyn(:,:,ipt) = yout';
+    allxeq(:,ipt) = yout(end,:)';    
 %     plotKotteVariables(tout,yout,1);    
     
     gfun = @(x)Kotte_givenNLAE(x,model,pvec);
@@ -20,12 +21,16 @@ for ipt = 1:npts
                                     'MaxFunEvals',10000,...
                                     'MaxIter',5000);
 %     [xf,fval,exitflag,output,jacobian] = fsolve(gfun,M,options);
-    xeq = allyoutss(:,ipt);
-    allxeq(:,ipt) = xeq;
+    xeq = yout(end,:)';
+     
 %     allxf(:,ipt) = xf;
 %     allflag(1,ipt) = exitflag;
 %     xeq = xf;
     
+    allfeq(:,ipt) = Kotte_givenFlux([allxeq(:,ipt);model.PM],pvec,model); 
+    for itout = 1:length(tout)
+        allfdyn(:,itout,ipt) = Kotte_givenFlux([allxdyn(:,itout,ipt);model.PM],pvec,model); 
+    end
     fprintf('Complete\n');
     
     % continuation from initial equilibrium - initialization
