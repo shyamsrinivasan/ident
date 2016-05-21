@@ -18,9 +18,13 @@ opt = contset(opt,'MaxNumPoints',500);
 opt = contset(opt,'MaxStepsize',.01);
 opt = contset(opt,'Singularities',1);
 opt = contset(opt,'Eigenvalues',1);
+% opt = contset(opt,'Backward',1);
 
 % Equilibrium Continuation
 [x1,v1,s1,h1,f1] = cont(@equilibrium,x0,v0,opt); 
+
+ 
+
 
 % separation of variable and parameter vectors
 if ~isempty(s1)    

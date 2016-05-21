@@ -129,6 +129,7 @@ for iid = 1:length(idp)
     
     siid.(['iid' num2str(iid)]) = s;
     allmssid.(['iid' num2str(iid)]) = mssid;
+    allnss.(['iid' num2str(iid)]) = nss;
 end
 
 % calculation of fluxes for allxeq

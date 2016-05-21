@@ -2,6 +2,7 @@
 % script for running ODEs and MATCONT for multiple sets of parameters
 % regardless of the source of parameter samples
 % should be run from Kotte2014_Script
+ac = find(strcmpi(model.mets,'ac[e]'));
 for ipt = 1:npts
     fprintf('Iteration #%d Equilibrium Integration...',ipt);
     % change in pvec
@@ -38,21 +39,30 @@ for ipt = 1:npts
     % run MATCONT
     runMATCONT
     
+    flux1 = zeros(length(fluxg),size(x1,2));
+    for icp = 1:size(x1,2)
+        pvec(ap) = p(icp);
+        model.PM(ac-length(xeq)) = p(icp);
+        flux1(:,icp) = Kotte_givenFlux([x1(1:length(xeq),icp);model.PM],pvec,model);
+    end
     % save MATCONT results
     s.(['pt' num2str(ipt)]).s1 = s1;
     s.(['pt' num2str(ipt)]).x1 = x1;
     s.(['pt' num2str(ipt)]).f1 = f1;
+    s.(['pt' num2str(ipt)]).flux = flux1;
     
     fprintf('Equilibrium Continuation Complete\n');
 end
 
 % check which solutions have mss
 mssid = [];
+nss = zeros(npts,1);
 for ipt = 1:npts
     s1 = s.(['pt' num2str(ipt)]).s1;
     nLP = size(s1,1);
     if nLP > 2
         fprintf('Vector %d has %d Steady States\n',ipt,nLP);
         mssid = union(mssid,ipt);
+        nss(ipt) = nLP;
     end
 end
