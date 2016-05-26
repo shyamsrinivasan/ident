@@ -66,11 +66,15 @@ KeFBP = 0.45;       % or 0.45
 ne = 2;             % or 2
 acetate = 0.1;      % a.u acetate
 d = 0.25;           % or 0.25 or 0.35
-kPEPout = 0.2;
+kPEPout = 2.0004e-4;
 pvec = [kEcat,KEacetate,...
         KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
         vEXmax,KEXPEP,...
         vemax,KeFBP,ne,acetate,d,kPEPout];
+
+% npts = 1;
+% allpvec = pvec;
+% solveEquilibriumODE
     
 % permutations of parameter values 
 % ps = nchoosek([0.01 0.1 1 10 100],3);
@@ -85,7 +89,7 @@ pvec = [kEcat,KEacetate,...
 
 % sample parameters indicated by indices in idp
 idp = [14];
-npts = 1000;
+npts = 5000;
 
 % systems check
 givenModel = @(t,x)KotteODE(t,x,model,pvec);
@@ -110,7 +114,9 @@ for iid = 1:length(idp)
     plb = 0;
     pub = 1;    
     fprintf('Parameter #%d\n',iid);
-    allpvec = sampleEKP(pvec,plb,pub,idp(iid),npts);    
+    allpvec = sampleEKP(pvec,plb,pub,idp(iid),npts); 
+    smp_pvec = linspace(0,1,5000);
+    allpvec(:,idp(iid)) = smp_pvec';
     
     % run equilibrium solution followed by MATCONT
     allxeq = zeros(length(M),npts);

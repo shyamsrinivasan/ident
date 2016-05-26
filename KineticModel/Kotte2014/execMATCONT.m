@@ -1,12 +1,14 @@
+function [data,y,p] = execMATCONT(xeq,pvec,ap,fluxg,model)
 % runMATCONT
 % continuation and dynamical systems analysis using MATCONT
+
 global sys
 sys.gui.pausespecial=0;  %Pause at special points 
 sys.gui.pausenever=1;    %Pause never 
 sys.gui.pauseeachpoint=0; %Pause at each point
 
 % continuation from initial equilibrium - initialization
-ap = 12; % index for parameter to be continued on     
+% ap = 12; % index for parameter to be continued on     
 [x0,v0] = init_EP_EP(@KotteMATCONT,xeq,pvec,ap);
 
 % MATCONT options
@@ -30,6 +32,7 @@ if ~isempty(s1)
 end
 
 % calculation  of fluxes
+ac = find(strcmpi(model.mets,'ac[e]'));
 flux1 = zeros(length(fluxg),size(x1,2));
 for icp = 1:size(x1,2)
     pvec(ap) = p(icp);

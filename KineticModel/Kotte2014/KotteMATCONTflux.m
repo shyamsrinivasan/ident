@@ -1,9 +1,6 @@
 function flux = KotteMATCONTflux(M,pvec,flux)
-if nargin < 4
-    flux = zeros(5,1);
-end
 if nargin < 3
-    model = struct([]);
+    flux = zeros(5,1);
 end
 
 if nargin < 2    
