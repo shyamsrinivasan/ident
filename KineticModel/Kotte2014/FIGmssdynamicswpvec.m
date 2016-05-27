@@ -1,5 +1,6 @@
 function FIGmssdynamicswpvec(y,tout,pvec,idx,idp,jpts,type)
-
+% function to plot dynamic time profiles of flux/concentration for systems
+% whose multistationarity has been evaluated using MATCONT
 switch type
     case 'flux'
         type = 1;
