@@ -29,18 +29,27 @@ opt = contset(opt,'Eigenvalues',1);
 if ~isempty(s1)    
     y = x1(1:length(xeq),:);
     p = x1(length(xeq)+1:end,:);    
+else
+    y = [];
+    p = [];
 end
 
 % calculation  of fluxes
 ac = find(strcmpi(model.mets,'ac[e]'));
 flux1 = zeros(length(fluxg),size(x1,2));
-for icp = 1:size(x1,2)
-    pvec(ap) = p(icp);
-    model.PM(ac-length(xeq)) = p(icp);
-    flux1(:,icp) = Kotte_givenFlux([x1(1:length(xeq),icp);model.PM],pvec,model);
+if ~isempty(x1)
+    for icp = 1:size(x1,2)
+        pvec(ap) = p(icp);
+        model.PM(ac-length(xeq)) = p(icp);
+        flux1(:,icp) = Kotte_givenFlux([x1(1:length(xeq),icp);model.PM],pvec,model);
+    end
 end
 
-data.s1 = s1;
-data.x1 = x1;
-data.f1 = f1;
-data.flux = flux1;
+if ~isempty(s1)
+    data.s1 = s1;
+    data.x1 = x1;
+    data.f1 = f1;
+    data.flux = flux1;
+else
+    data = [];
+end
