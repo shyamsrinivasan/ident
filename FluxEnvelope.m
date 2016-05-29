@@ -168,10 +168,14 @@ while ifl <= nrxn
     hline = plot([flval(:,ifl)' fliplr(flval(:,ifl)')],...
              [Maxtarget(1,:,ifl) fliplr(Mintarget(1,:,ifl))]);
     xlabel = sprintf('Flux %s \n mmole/mmole uptake',model.rxns{flux1id(ifl)});
-    set(hline,'LineWidt',2,...
+    set(hline,'LineWidt',3,...
               'Color',[0 0 0]);
     set(get(gca,'YLabel'),'String',ylabel);
+    set(get(gca,'YLabel'),'FontName','FixedWidth');   
+    set(get(gca,'YLabel'),'FontSize',22); 
     set(get(gca,'XLabel'),'String',xlabel);
+    set(get(gca,'XLabel'),'FontName','FixedWidth');   
+    set(get(gca,'XLabel'),'FontSize',22);
     axis tight;   
     ifl = ifl + 1;
 end
