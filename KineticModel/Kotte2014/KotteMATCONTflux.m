@@ -1,9 +1,6 @@
 function flux = KotteMATCONTflux(M,pvec,flux)
-if nargin < 4
-    flux = zeros(5,1);
-end
 if nargin < 3
-    model = struct([]);
+    flux = zeros(5,1);
 end
 
 if nargin < 2    
@@ -21,6 +18,7 @@ if nargin < 2
     KeFBP = 0.1;        % or 0.45
     ne = 1;             % or 2
     acetate = 2;        % a.u acetate
+    kPEPout = 0.2;
 else
     % parameters    
     kEcat = pvec(1);
@@ -34,7 +32,8 @@ else
     vemax = pvec(9);        % for bifurcation analysis: 0.7:0.1:1.3
     KeFBP = pvec(10);        % or 0.45
     ne = pvec(11);             % or 2
-    acetate = pvec(12);
+    acetate = pvec(12);    
+    kPEPout = pvec(14);
 end
 
 %acetate --E--> PEP --vEX--> FBP --Fbp--> Nothing
@@ -61,7 +60,7 @@ flux(3) = vFbpmax.*(ratio-1).*(ratio).^3/(ratio.^4+Lfbp*(1+M(1)./KFbpPEP).^(-4))
 flux(4) = vEXmax.*M(1)./(M(1)+KEXPEP);
 
 % vPEPout(PEP)
-flux(5) = 0.2*M(1);
+flux(5) = kPEPout*M(1);
 
 
 

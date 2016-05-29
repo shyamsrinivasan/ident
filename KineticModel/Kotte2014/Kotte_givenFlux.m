@@ -22,6 +22,7 @@ if nargin < 2
     KeFBP = 0.1;        % or 0.45
     ne = 1;             % or 2
     acetate = 2;        % a.u acetate
+    kPEPout = 0.2;
 else
     % parameters    
     kEcat = pvec(1);
@@ -35,6 +36,7 @@ else
     vemax = pvec(9);        % for bifurcation analysis: 0.7:0.1:1.3
     KeFBP = pvec(10);        % or 0.45
     ne = pvec(11);             % or 2
+    kPEPout = pvec(14);
 end
 
 pep = strcmpi(model.mets,'pep[c]');
@@ -67,7 +69,7 @@ flux(3) = vFbpmax.*(ratio-1).*(ratio).^3/(ratio.^4+Lfbp*(1+M(pep)./KFbpPEP).^(-4
 flux(4) = vEXmax.*M(pep)./(M(pep)+KEXPEP);
 
 % vPEPout
-flux(5) = 0.2*M(pep);
+flux(5) = kPEPout*M(pep);
 
 
 
