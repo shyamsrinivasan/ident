@@ -43,15 +43,24 @@ for ifl = 1:nrxn
     set(hsubfig(ifl),'NextPlot','add');
     
     for iss = 1:size(flux,2)
-        cid = chooseColors(1,'cyan');
+        cid = chooseColors(1,'blue');
         line(flux(flux1id(ifl),iss),flux(flux2id(ifl),iss),'LineStyle','none',...
                              'Marker','.','MarkerEdgeColor',cid{1},...
-                             'MarkerFaceColor',cid{1},'MarkerSize',22);
+                             'MarkerFaceColor',cid{1},'MarkerSize',30);
         ptid = ['SS' num2str(iss)];
         ht = text(flux(flux1id(ifl),iss),flux(flux2id(ifl),iss),ptid,...
              'HorizontalAlignment','right',...
              'VerticalAlignment','bottom','Interpreter','latex');
-         set(ht,'FontSize',22,'FontName','FixedWidth',...
+         set(ht,'FontSize',22,'FontName','Arial',...
              'FontWeight','bold');
     end
+    axesP.FontName  = 'Arial';
+    axesP.FontSize = 22;
+    axesP.LineWidth = 1.5;
+    axesP.TickLength = [0.01 0.01];
+    axesP.XColor = [.1 .1 .1];
+    axesP.YColor = [.1 .1 .1];
+    set(gca,axesP);
 end
+
+

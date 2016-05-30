@@ -47,6 +47,13 @@ if size(fluxid,1) ~= length(hsfig)
     error('EFMyield:szmatch',...
     'Size mismatch between number of available figures and number of flux IDs');
 end
+% figure axes properties set at the end
+axesP.FontName  = 'Arial';
+axesP.FontSize = 22;
+axesP.LineWidth = 1.5;
+axesP.TickLength = [0.01 0.01];
+axesP.XColor = [.1 .1 .1];
+axesP.YColor = [.1 .1 .1];
 
 nfig = size(flux1id,1);
 yield = zeros(nefm,nrxn);
@@ -63,17 +70,26 @@ for ifl = 1:nfig
             yield(iefm,isinf(yield(iefm,:))) = 0;
         end
         line(yield(iefm,flux1id(ifl)),yield(iefm,flux2id(ifl)),...
-             'LineStyle','none','Marker','o','MarkerEdgeColor','r',...
-             'MarkerFaceColor','r','MarkerSize',6); 
+             'LineStyle','none','Marker','.','MarkerEdgeColor','r',...
+             'MarkerFaceColor','r','MarkerSize',25); 
         ptid = ['EV' num2str(iefm)];
         ht = text(yield(iefm,flux1id(ifl)),yield(iefm,flux2id(ifl)),ptid,...
              'HorizontalAlignment','right',...
              'VerticalAlignment','baseline','Interpreter','latex');
-        set(ht,'FontSize',12,'FontName','FixedWidth',...
-             'FontWeight','bold');
-%         textstr{iefm} = sprintf('EV %d',iefm);        
+        set(ht,'FontSize',22,'FontName','Arial');
+%         textstr{iefm} = sprintf('EV %d',iefm);
+         
+        set(get(gca,'YLabel'),'FontName','Arial');   
+        set(get(gca,'YLabel'),'FontSize',22); 
+        
+        set(get(gca,'XLabel'),'FontName','Arial');   
+        set(get(gca,'XLabel'),'FontSize',22);
+        axis tight;   
+        set(gca,axesP);
     end
 end
+
+
 % fig_name = sprintf('Flux Envelope');
 % if isempty(hfig)       
 %     if isempty(findobj('type','figure','Name',fig_name))
