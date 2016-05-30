@@ -25,12 +25,12 @@ FBAmodel = FBAfluxes(FBAmodel,'fba',{'ACt2r','ENZ1ex'},Vup_struct,...
 %                      find(strcmpi(FBAmodel.rxns,'EC_Biomass')));                 
                  
 % flux envelope
-% [hfig,hsubfig,prxnid,flag] = FluxEnvelope(FBAmodel,...
-%                         {'bmt2r','PEPt2r';...
-%                         'ACpts','ENZtr';...
-%                         'bmt2r','ACpts';...
-%                         'ACpts','PEPt2r'},...
-%                         {'ACt2r','ENZ1ex'});
+[hfig,hsubfig,prxnid,flag] = FluxEnvelope(FBAmodel,...
+                        {'bmt2r','PEPt2r';...
+                        'ACpts','ENZtr';...
+                        'bmt2r','ACpts';...
+                        'ACpts','PEPt2r'},...
+                        {'ACt2r','ENZ1ex'});
                     
 % call to bifurcation analysis script using MATCONT
 % KotteMATCONTscript         
@@ -47,7 +47,10 @@ M = newmc(1:nvar);
 PM = newmc(nvar+1:end);
 model.PM = PM;
 
-% call to stoichioemtric analysis script
+% use CNA to calculate EFMs and plot them on the envelope
+% change model to be CNA compliant
+% [cnap,errval] = getCNAmodel(FBAmodel);
+% call to stoichioemtric analysis script for calculating EFMs
 % Kotte_StoichiometricAnalysisScript
 
 % call to parameter sampling script for analysis of mss
@@ -138,16 +141,6 @@ for iid = 1:length(idp)
     allnss.(['iid' num2str(iid)]) = nss;
 end
 
-% calculation of fluxes for allxeq
-% allfeq = zeros(length(fluxg),npts);
-% for ipt = 1:npts
-%     pvec = allpvec(ipt,:);
-%     allfeq(:,ipt) = Kotte_givenFlux([allxeq(:,ipt);model.PM],pvec,model);    
-% end
-
-
-
-
 
 % tspan = 0:0.1:200;
 % [tout,yout] = ode45(givenModel,tspan,M,opts);
@@ -157,37 +150,6 @@ end
 % end
 % plotKotteVariables(tout,yout,1);
 % plotKotteVariables(tout,fout,2);
-
-% run MATCONT on a multiple sets of parameters
-% sample parameters indicated by indices in idp
-% changing individual parameters
-% pvec = [kEcat,KEacetate,...
-%         KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
-%         vEXmax,KEXPEP,...
-%         vemax,KeFBP,ne,acetate,d,kPEPout];
-% idp = [1;4;7];
-% vals = [0.01 0.1 1 10 100];
-% npts = 500;
-% allpvec = discreteEKPsample(pvec,vals,idp,npts);
-% 
-% xeq = yout(end,:)';
-% runMATCONT % run MATCONT from script
-% sinit = s1;
-% xinit = x1;
-% finit = f1;
-
-% get the mss for y and p
-% [yss,iyval,fyval] = parseMATCONTresult(sinit,y);
-% [pss,ipval,fpval] = parseMATCONTresult(sinit,p);
-% 
-% nss = size(yss,2);
-% flux1 = zeros(5,nss);
-% for iss = 1:nss
-%     pvec(ap) = pss(iss);
-%     flux1(:,iss) = KotteMATCONTflux(yss(:,iss),pvec);
-% end
-
-% plotPointsonFluxEnvelope(hfig,hsubfig,[3 5;1 2;3 1;1 5],flux1)
 
 % use CNA to calculate EFMs and plot them on the envelope
 % change model to be CNA compliant
