@@ -23,7 +23,7 @@ else
     pvec = ensb{1,2};
 end
 
-%initialize solver properties
+% initialize solver properties
 % ecoli model
 % [model,solverP,saveData] = imodel(model,1e9,ess_rxn,Vup_struct);
 

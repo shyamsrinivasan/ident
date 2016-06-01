@@ -22,7 +22,6 @@ ess_rxn = {'exCO2','exH','exH2O','exPI','exO2','exGLC'};
 FBAmodel.bmrxn = find(strcmpi(FBAmodel.rxns,'exPYR'));
 FBAmodel = FBAfluxes(FBAmodel,'any',ess_rxn,Vup_struct);
 
-
 % calculate delGr if concentrations cannot be sampled
 rxn_add = {'GLCpts','NADH16','ATPS4r','CYTBD'};
 % bounds = setupMetLP_g6p(FBAmodel,rxn_add,mc);
@@ -64,6 +63,7 @@ FBAmodel.rxn_excep = rxn_excep;
 % else
 %     error('No feasible model found');
 % end
+<<<<<<< HEAD
 
 % solve NLA model for dx/dt = f(x) = 0
 % if ensb{1,2}.feasible
@@ -84,5 +84,9 @@ J = model_Jacobian(FBAmodel,ensb{1,2},mc);
 % J = FDh(Jpatt,x)
 flux = zeros(size(FBAmodel.S,2),1);
 flux(1) = iflux(FBAmodel,ensb{1,2},mc,flux,1);
+
+% draw the staedy state flux solution space using production envelopes
+FluxEnvelope(FBAmodel,{'PGI','exPYR';'PFK','exPYR'},ess_rxn);
+
 
 

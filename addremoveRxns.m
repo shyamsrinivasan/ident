@@ -108,7 +108,9 @@ if ~isempty(rmvrxn)
         newpvec.Vmax = newpvec.Vmax(list);
         newpvec.kcat_fwd = newpvec.kcat_fwd(list);
         newpvec.kcat_bkw = newpvec.kcat_bkw(list);
-        newpvec.delGr = newpvec.delGr(list);   
+        if isfield(newpvec,'delGr')
+            newpvec.delGr = newpvec.delGr(list);   
+        end
     end
 end
 
