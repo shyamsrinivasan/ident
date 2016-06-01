@@ -34,14 +34,24 @@ VFex = ex_rxn(rxn);
 %A[e] + B[c] ---> A[c] + D[c] 
 %and Matching VFex with Vex for met[e]
 Vex = [];
-for ivf = 1:length(VFex)
-    %Find met[e]
-    metid = logical(newS(:,VFex(ivf))~=0);
-    %Find Vex for met[e]
-    noex_rxn = setdiff(1:nt_rxn,VFex(ivf));
-    [~,rxn] = find(newS(metid,noex_rxn)~=0);
+% find met[e]
+exmid = find(~cellfun('isempty',regexp(model.mets,'\w(?:\[e\])$')));
+for ivm = 1:length(exmid)
+    % find VFex for met[e]
+    notrxn = VFex(logical(newS(exmid(ivm),VFex)));
+    % find Vex for met[e]
+    noex_rxn = setdiff(1:nt_rxn,notrxn);
+    [~,rxn] = find(newS(exmid(ivm),noex_rxn)~=0);
     Vex = union(Vex,noex_rxn(rxn));
 end
+% for ivf = 1:length(VFex)
+%     %Find met[e]
+%     metid = logical(newS(:,VFex(ivf))~=0);
+%     %Find Vex for met[e]
+%     noex_rxn = setdiff(1:nt_rxn,VFex(ivf));
+%     [~,rxn] = find(newS(metid,noex_rxn)~=0);
+%     Vex = union(Vex,noex_rxn(rxn));
+% end
 
 % noex_rxn = setdiff(1:nt_rxn,ex_rxn);
 % [~,rxn] = find(newS(exind,noex_rxn)~=0);

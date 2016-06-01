@@ -2,8 +2,8 @@
 % biomass) and 'flux2'(y-axis - typically target)
 % flux1 and flux2 can be a cell array of strings or just double indices 
 % eg call: FluxEnvelope(FBAmodel,{'PGI','exPYR';'PFK','exPYR'},ess_rxn);
-
 function [hfig,hsubfig,fluxid,flag] = FluxEnvelope(model,fluxid,ess_rxn)
+
 if nargin < 3
     ess_rxn = {};
 end
@@ -67,6 +67,7 @@ for irxn = 1:nrxn
             bounds.vl(flux1id(irxn))= -1;
         end
     end
+
     % Find maximum/minimum allowable flux 1 (x-axis for envelope)
     [LP1max,LP1min] = solveLP(model,bounds,ess_rxn,flux1id(irxn));
     if LP1max.flag > 0 && LP1min.flag > 0
@@ -74,8 +75,8 @@ for irxn = 1:nrxn
             model.rxns{flux1id(irxn)},-LP1max.obj);    
         fprintf('Minimum Allowable %s flux = %2.3g h-1\n',...
             model.rxns{flux1id(irxn)},LP1min.obj);
-    end
-    
+    end    
+
     if bounds.vl(flux2id(irxn))==bounds.vu(flux2id(irxn))
         if bounds.vu(flux2id(irxn)) > 0
             bounds.vl(flux2id(irxn))= 0;
@@ -83,6 +84,7 @@ for irxn = 1:nrxn
             bounds.vl(flux2id(irxn))= -1;
         end
     end
+
     % Find maximum/minimum allowable flux 2 (y-axis for envelope)
     [LP2max,LP2min] = solveLP(model,bounds,ess_rxn,flux2id(irxn));
     if LP2max.flag > 0 && LP2min.flag > 0
@@ -156,6 +158,7 @@ else
     hfig = findobj('type','figure','Name',fig_name);
     figure(hfig);
 end
+
 % hsubfig = zeros(nt_rxn,1);
 hfig = figure;
 hsubfig = zeros(nrxn,1);

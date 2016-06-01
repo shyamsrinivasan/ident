@@ -1,26 +1,26 @@
 function [dXdt,flag,newdata] = ToyODEmodel(t,mc,data,model,pvec)
 
-nt_m = model.nt_metab;
-nin_m = model.nint_metab;
-dXdt = zeros(nt_m,1);
+nvar = length(mc);
+dXdt = zeros(nvar,1);
+Pimc = model.Pimc;
 
 %% Fluxes
-flux = iflux(model,pvec,mc.*model.imc);
+flux = iflux(model,pvec,[mc.*model.imc;Pimc]);
 
 %% Metabolites
-%Cytosolic
-dXdt(1:nin_m) = (1./model.imc(1:nin_m)).*(model.S(1:nin_m,:)*flux);
+% Cytosolic
+dXdt(1:nvar) = (1./model.imc).*(model.S(1:nvar,:)*(flux*3600));
 
-%h[c] is assume constant
-hc = strcmpi('h[c]',model.mets);
-dXdt(hc) = 0;
+% h[c] is assume constant
+% hc = strcmpi('h[c]',model.mets);
+% dXdt(hc) = 0;
 
-%change pi[c]
+% change pi[c]
 % pic = strcmpi('pi[c]',model.mets);
 % dXdt(pic) = dXdt(pic)+0.001;
 
 %Extracellular
-dXdt(nin_m+1:nt_m) = 0;%
+% dXdt(nin_m+1:nt_m) = 0;%
 
 %% staus check for CVODE in SUNDIALS TB
 % if any(mc<0)
