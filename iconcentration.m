@@ -26,7 +26,7 @@ if ~isempty(VMC)
         end
         
         tfm = strcmpi(model.mets,[kmet{jmc} cmp]);    
-        if any(tfm) %&& ~assignFlag(tfm)
+        if any(tfm) && ~assignFlag(tfm)
             if length(VMC)>1
                 mc_lb(tfm,:) = VMC(1).(mets{jmc});
                 mc_ub(tfm,:) = VMC(2).(mets{jmc});

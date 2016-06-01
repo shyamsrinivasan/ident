@@ -18,16 +18,12 @@ if isfield(model,'rxn_excep')
 else
     rxn_excep = {};
 end
-% Vind = [model.Vind find(strcmpi(model.rxns,'GLCpts'))];
-% Vind = [Vind find(strcmpi(model.rxns,'NADH16'))];
-% Vind = [Vind find(strcmpi(model.rxns,'ATPS4r'))];
-% Vind = [Vind find(strcmpi(model.rxns,'NADTRHD'))];
-% Vind = [Vind find(strcmpi(model.rxns,'THD2'))];
-% Vind = [Vind find(strcmpi(model.rxns,'CYTBD'))];
-% 
-% Vind = setdiff(Vind,find(strcmpi(model.rxns,'ATPM')));
+
+h2o = strcmpi(model.mets,'h2o[c]');
 
 Vind = addToVind(model,model.Vind,rxn_add,rxn_excep);
+rxn_excep = union(rxn_excep,model.rxns(Vind));
+Vex = addToVind(model,model.Vex,[],rxn_excep);
 
 %carbon uptake fluxes
 % [flux,~,vcup] = CarbonKinetics(model,pvec,mc,flux);
@@ -35,20 +31,20 @@ Vind = addToVind(model,model.Vind,rxn_add,rxn_excep);
 %redox reaction fluxes in vrem
 % [flux,~,vred] = RedoxKinetics(model,pvec,mc,flux);
 
-%transport fluxes
-Vex = model.Vex;
-Vex = setdiff(Vex,Vind);
-
 %other fixed exchaged fluxes
 VFex = model.VFex;
 
 for ic = 1:nc
     if isempty(idx)
 
+        % cytosolic fluxes
         flux(Vind,ic) = CKinetics(model,pvec,mc(:,ic),Vind);
-
-        %transport fluxes    
+        
+        % transport fluxes    
         flux(Vex,ic) = TKinetics(model,pvec,mc(:,ic),Vex);
+        
+        % ETC fluxes
+        flux(:,ic) = ETCflux(model,pvec,mc(:,ic),flux(:,ic));
 
         % other fixed exchaged fluxes - currently sets them to 0  
         flux(VFex,ic) = EKinetics(model,pvec,mc(:,ic),VFex);
@@ -66,18 +62,6 @@ for ic = 1:nc
     %     else
     %         flux(strcmpi(model.rxns,'atpm')) = 0;
     %     end
-        
-        %atp maintanance
-        atp = strcmpi(model.mets,'atp[c]');
-        if any(atp) && any(strcmpi(model.rxns,'atpm'))
-    %     flux(strcmpi(model.rxns,'atpm')) = 8.39;        
-%         flux(strcmpi(model.rxns,'atpm'),ic) = 8.39*logical(mc(atp,ic));%*mc(atp)/1e-5/(1+mc(atp)/1e-5);
-            flux(strcmpi(model.rxns,'atpm'),ic) =...
-            pvec.Vmax(strcmpi(model.rxns,'atpm'))*...
-            mc(atp)/1e-5/(1+mc(atp)/1e-5);
-        end
-        %vatp = 
-
     %     if all(mc(logical(model.S(:,model.bmrxn)<0))>1e-5)
     %         flux(model.bmrxn) = model.Vss(model.bmrxn);%0.01;
     %     elseif any(mc(logical(model.S(:,model.bmrxn)<0))<1e-5)
@@ -114,7 +98,7 @@ for ic = 1:nc
 end
 
 if ~isempty(idx)
-    flux = idxflux(idx,:);
+    flux = idflux;
 end
 
 % if flux(strcmpi(model.rxns,'atpm'))>=1e-5 &&...

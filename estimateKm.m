@@ -1,4 +1,7 @@
-function pvec = estimateKm(pvec,sbid,prid,mc,Kscol,Kpcol,Vind)
+function pvec = estimateKm(pvec,sbid,prid,mc,Ksbackup,Kpbackup,Vind,rerun)
+if nargin<8
+    rerun = 0;
+end
 sbfn = find(sbid);
 prfn = find(prid);
 
@@ -7,6 +10,9 @@ przro = prfn(mc(prfn)==0);
     
 nsb = length(find(sbid));
 npr = length(find(prid));
+
+Kscol = zeros(length(sbid),1);
+Kpcol = zeros(length(prid),1);
 
 for irxn = 1:length(Vind)
     %enzyme saturation
@@ -19,9 +25,14 @@ for irxn = 1:length(Vind)
     if ~isempty(find(sbid,1))
         sb_rat = sigma(1:nsb)./(1-sigma(1:nsb));
         Ksb = mc(logical(sbid))./sb_rat;
-        Kscol(logical(sbid),1) = pvec.K(logical(sbid),Vind(irxn));
+        if rerun
+            Kscol(logical(sbid),1) = Ksbackup;
+        else
+            Kscol(logical(sbid),1) = pvec.K(logical(sbid),Vind(irxn));
+        end
         if any(Kscol==1)
-            pvec.K(Kscol==1,Vind(irxn))=Ksb(pvec.K(logical(sbid),Vind(irxn))==1);
+            pvec.K(Kscol==1,Vind(irxn))=Ksb(Kscol(logical(sbid),1)==1);
+            % pvec.K(logical(sbid),Vind(irxn))
             pvec.K(sbzro,Vind(irxn)) = 1;
             pvec.Kind(Kscol==1,Vind(irxn))=1;
         end
@@ -31,9 +42,13 @@ for irxn = 1:length(Vind)
     if ~isempty(find(prid,1))
         pr_rat = sigma(nsb+1:nsb+npr)./(1-sigma(nsb+1:nsb+npr));
         Kpr = mc(logical(prid))./pr_rat;
-        Kpcol(logical(prid),1) = pvec.K(logical(prid),Vind(irxn));
+        if rerun
+            Kpcol(logical(prid),1) = Kpbackup;
+        else
+            Kpcol(logical(prid),1) = pvec.K(logical(prid),Vind(irxn));
+        end
         if any(Kpcol==1)
-            pvec.K(Kpcol==1,Vind(irxn))=Kpr(pvec.K(logical(prid),Vind(irxn))==1);
+            pvec.K(Kpcol==1,Vind(irxn))=Kpr(Kpcol(logical(prid),1)==1);
             pvec.K(przro,Vind(irxn)) = 1;
             pvec.Kind(Kpcol==1,Vind(irxn))=1;
         end

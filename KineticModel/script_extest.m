@@ -22,7 +22,6 @@ ess_rxn = {'exCO2','exH','exH2O','exPI','exO2','exGLC'};
 FBAmodel.bmrxn = find(strcmpi(FBAmodel.rxns,'exPYR'));
 FBAmodel = FBAfluxes(FBAmodel,'any',ess_rxn,Vup_struct);
 
-
 % calculate delGr if concentrations cannot be sampled
 rxn_add = {'GLCpts','NADH16','ATPS4r','CYTBD'};
 % bounds = setupMetLP_g6p(FBAmodel,rxn_add,mc);
@@ -32,7 +31,8 @@ rxn_add = {'GLCpts','NADH16','ATPS4r','CYTBD'};
 % and/or
 
 % sample initial metabolite concentrations for estimating kinetic parameters
-[mc,parameter,smp] = parallel_sampling(FBAmodel,parameter,'setupMetLP_red',met,mc,rxn_add);
+[mc,parameter,smp] =...
+ parallel_sampling(FBAmodel,parameter,'setupMetLP_red',met,mc,rxn_add);
 if isempty(mc)
     % multiple saples are being supplied
     mc = smp{1,1};
@@ -56,6 +56,7 @@ rxn_excep = {'NADH16','ATPS4r','CYTBD','H2Ot'};
 FBAmodel.bmrxn = [];
 ensb = parallel_ensemble(FBAmodel,mc,parameter,rxn_add,rxn_excep);
 
+
 %serially solve ODE of model to steady state
 FBAmodel.rxn_add = rxn_add;
 FBAmodel.rxn_excep = rxn_excep;
@@ -64,6 +65,30 @@ if ensb{1,2}.feasible
 else
     error('No feasible model found');
 end
+
+% solve NLA model for dx/dt = f(x) = 0
+% if ensb{1,2}.feasible
+%     [sol] = IntegrateNLASSmodel(FBAmodel,ensb,mc);
+% else
+%     error('No feasible model');
+% end
+
+% solve both ODE and NLA models 
+% if ensb{1,2}.feasible
+%     sol = ODENLAmodel(FBAmodel,ensb,ensb{1,1});
+% else
+%     error('No feasible model');
+% end
+
+% run finite difference to estimate approximate jacobian at x
+J = model_Jacobian(FBAmodel,ensb{1,2},mc);
+% J = FDh(Jpatt,x)
+flux = zeros(size(FBAmodel.S,2),1);
+flux(1) = iflux(FBAmodel,ensb{1,2},mc,flux,1);
+
+% draw the staedy state flux solution space using production envelopes
+FluxEnvelope(FBAmodel,{'PGI','exPYR';'PFK','exPYR'},ess_rxn);
+
 
 
 
