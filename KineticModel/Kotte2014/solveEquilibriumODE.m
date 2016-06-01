@@ -16,8 +16,7 @@ for ipt = 1:npts
     givenModel = @(t,x)KotteODE(t,x,model,pvec);
     [tout,yout] = ode45(givenModel,tspan,M,opts);
     allxdyn(:,:,ipt) = yout';
-    allxeq(:,ipt) = yout(end,:)';    
-%     plotKotteVariables(tout,yout,1);    
+    allxeq(:,ipt) = yout(end,:)';       
     
     gfun = @(x)Kotte_givenNLAE(x,model,pvec);
     options = optimoptions('fsolve','Display','iter',...
@@ -31,10 +30,13 @@ for ipt = 1:npts
 %     allflag(1,ipt) = exitflag;
 %     xeq = xf;
     
+    % calculation of fluxes for allxeq
     allfeq(:,ipt) = Kotte_givenFlux([allxeq(:,ipt);model.PM],pvec,model); 
     for itout = 1:length(tout)
         allfdyn(:,itout,ipt) = Kotte_givenFlux([allxdyn(:,itout,ipt);model.PM],pvec,model); 
     end
+%     plotKotteVariables(tout,yout,1);
+%     plotKotteVariables(tout,allfdyn(:,:,ipt)',2);
     fprintf('Complete\n');
     
     % continuation from initial equilibrium - initialization
@@ -48,11 +50,11 @@ for ipt = 1:npts
     % save MATCONT results
     s.(['pt' num2str(ipt)]) = data;
     
-%     s.(['pt' num2str(ipt)]).s1 = s1;
-%     s.(['pt' num2str(ipt)]).x1 = x1;
-%     s.(['pt' num2str(ipt)]).f1 = f1;
-%     s.(['pt' num2str(ipt)]).flux = flux1;
-    
+    % get the mss for y and p
+    [yss,iyval,fyval] = parseMATCONTresult(data.s1,y);
+    [pss,ipval,fpval] = parseMATCONTresult(data.s1,p);
+    [fss,ifval,ffval] = parseMATCONTresult(data.s1,data.flux);
+        
     fprintf('Equilibrium Continuation Complete\n');
 end
 

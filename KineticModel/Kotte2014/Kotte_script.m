@@ -164,6 +164,7 @@ n = 100000;
 % plotKotteVariables(Pxeq,allNLy,3);  
 
 
+
 % change in acetate concentration
 % acetate = linspace(0.001,3,n);
 % xNLEout = zeros(n,3);
@@ -177,6 +178,7 @@ n = 100000;
 %     fNLEout(i,:) = flux;
 %     allFlag(i) = exitflag;
 % end
+
 % figure
 % plot(acetate,fNLEout(:,1));
 

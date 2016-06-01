@@ -129,7 +129,7 @@ for ip = 1:ndp
             % line properties
             Point(iss).MarkerEdgeColor = colorSpec{iss};
             Point(iss).MarkerFaceColor = [1 1 1]; % colorSpec{iss};
-            Point(iss).MarkerSize = 10;
+            Point(iss).MarkerSize = 11;
             Point(iss).Marker = 'o';
             Point(iss).LineStyle = 'none'; 
             % plot data as per # mss
@@ -159,18 +159,18 @@ end
 % set axis properties
 set(get(gca,'YLabel'),'String',ylabel);  
 set(get(gca,'YLabel'),'FontName','Arial');   
-set(get(gca,'YLabel'),'FontSize',18); 
+set(get(gca,'YLabel'),'FontSize',22); 
 set(get(gca,'XLabel'),'String',xlabel);  
 set(get(gca,'XLabel'),'FontName','Arial');   
-set(get(gca,'XLabel'),'FontSize',18);
+set(get(gca,'XLabel'),'FontSize',22);
 if plotype == 3
     set(get(gca,'ZLabel'),'String',zlabel);  
     set(get(gca,'ZLabel'),'FontName','Arial');   
-    set(get(gca,'ZLabel'),'FontSize',18);
+    set(get(gca,'ZLabel'),'FontSize',22);
     axesP.ZColor = [.1 .1 .1];
 end
 axesP.FontName  = 'Arial';
-axesP.FontSize = 18;
+axesP.FontSize = 22;
 axesP.LineWidth = 1.5;
 axesP.TickLength = [0.01 0.01];
 axesP.XColor = [.1 .1 .1];

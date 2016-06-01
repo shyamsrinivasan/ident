@@ -7,28 +7,28 @@ switch cnt
             for ip = 1:np
                 subplot(2,2,1);
                 plot(xdata,ydata(:,1,ip),'Color','k','LineWidth',2);
-                ylabel('super Enzyme E');
+                ylabel('PEP');
                 hold on
                 subplot(2,2,2);
                 plot(xdata,ydata(:,2,ip),'Color','k','LineWidth',2);
-                ylabel('PEP');
+                ylabel('FBP');
                 hold on
                 subplot(2,2,3);
                 plot(xdata,ydata(:,3,ip),'Color','k','LineWidth',2);
-                ylabel('FBP');
+                ylabel('super Enzyme E');                
                 xlabel('time');
                 hold on
             end
         else
             subplot(2,2,1);
             plot(xdata,ydata(:,1),'Color','k','LineWidth',2);
-            ylabel('super Enzyme E');    
+            ylabel('PEP');    
             subplot(2,2,2);
             plot(xdata,ydata(:,2),'Color','k','LineWidth',2);
-            ylabel('PEP');    
+            ylabel('FBP');
             subplot(2,2,3);
             plot(xdata,ydata(:,3),'Color','k','LineWidth',2);
-            ylabel('FBP');
+            ylabel('super Enzyme E');    
             xlabel('time');    
         end
     case 2 % fluxes
@@ -37,7 +37,7 @@ switch cnt
             for ip = 1:np
                 subplot(2,3,1);
                 plot(xdata,ydata(:,1,ip),'Color','k','LineWidth',2);
-                ylabel('super Enzyme E,J');
+                ylabel('v1');
                 hold on
                 subplot(2,3,2);
                 plot(xdata,ydata(:,2,ip),'Color','k','LineWidth',2);
@@ -45,38 +45,38 @@ switch cnt
                 hold on
                 subplot(2,3,3);
                 plot(xdata,ydata(:,3,ip),'Color','k','LineWidth',2);
-                ylabel('vFbp');
+                ylabel('v3');
                 xlabel('time');
                 hold on
                 subplot(2,3,4)
                 plot(xdata,ydata(:,4,ip),'Color','k','LineWidth',2);
-                ylabel('vEX');
+                ylabel('v2');
                 xlabel('time');
                 hold on
                 subplot(2,3,5)
                 plot(xdata,ydata(:,5,ip),'Color','k','LineWidth',2);
-                ylabel('PEPout');
+                ylabel('v4');
                 xlabel('time');
                 hold on
             end
         else            
             subplot(2,3,1);
             plot(xdata,ydata(:,1),'Color','k','LineWidth',2);
-            ylabel('super Enzyme E,J');
+            ylabel('v1');
             subplot(2,3,2);
             plot(xdata,ydata(:,2),'Color','k','LineWidth',2);
             ylabel('E(FBP)');
             subplot(2,3,3);
             plot(xdata,ydata(:,3),'Color','k','LineWidth',2);
-            ylabel('vFbp');
+            ylabel('v3');
             xlabel('time');  
             subplot(2,3,4)
             plot(xdata,ydata(:,4),'Color','k','LineWidth',2);
-            ylabel('vEX');            
+            ylabel('v2');            
             xlabel('time');
             subplot(2,3,5);
             plot(xdata,ydata(:,5),'Color','k','LineWidth',2);
-            ylabel('PEPout');
+            ylabel('v4');
             xlabel('time');
         end
     case 3 % scatter 

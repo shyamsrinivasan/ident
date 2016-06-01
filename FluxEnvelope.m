@@ -128,6 +128,14 @@ if ~any(Maxtarget)
 end
 
 %Plot Envelope
+% figure axes properties set at the end
+axesP.FontName  = 'Arial';
+axesP.FontSize = 22;
+axesP.LineWidth = 1.5;
+axesP.TickLength = [0.01 0.01];
+axesP.XColor = [.1 .1 .1];
+axesP.YColor = [.1 .1 .1];
+
 if rem(nrxn,2) == 0
     nplots = nrxn;
 else
@@ -164,15 +172,20 @@ while ifl <= nrxn
         set(hca,'NextPlot','add');     
         set(hsubfig(ifl),'NextPlot','add');
     end    
-    ylabel = sprintf('Flux %s \n mmole/mmole uptake',model.rxns{flux2id(ifl)});
+    ylabel = sprintf('Flux %s mmole/h',model.rxns{flux2id(ifl)});
     hline = plot([flval(:,ifl)' fliplr(flval(:,ifl)')],...
              [Maxtarget(1,:,ifl) fliplr(Mintarget(1,:,ifl))]);
-    xlabel = sprintf('Flux %s \n mmole/mmole uptake',model.rxns{flux1id(ifl)});
-    set(hline,'LineWidt',2,...
+    xlabel = sprintf('Flux %s mmole/h',model.rxns{flux1id(ifl)});
+    set(hline,'LineWidt',3,...
               'Color',[0 0 0]);
     set(get(gca,'YLabel'),'String',ylabel);
+    set(get(gca,'YLabel'),'FontName','Arial');   
+    set(get(gca,'YLabel'),'FontSize',22); 
     set(get(gca,'XLabel'),'String',xlabel);
-    axis tight;   
+    set(get(gca,'XLabel'),'FontName','Arial');   
+    set(get(gca,'XLabel'),'FontSize',22);
+    axis tight;
+    set(gca,axesP);
     ifl = ifl + 1;
 end
 
