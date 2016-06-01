@@ -63,8 +63,30 @@ FBAmodel.rxn_excep = rxn_excep;
 % else
 %     error('No feasible model found');
 % end
+<<<<<<< HEAD
+
+% solve NLA model for dx/dt = f(x) = 0
+% if ensb{1,2}.feasible
+%     [sol] = IntegrateNLASSmodel(FBAmodel,ensb,mc);
+% else
+%     error('No feasible model');
+% end
+
+% solve both ODE and NLA models 
+% if ensb{1,2}.feasible
+%     sol = ODENLAmodel(FBAmodel,ensb,ensb{1,1});
+% else
+%     error('No feasible model');
+% end
+
+% run finite difference to estimate approximate jacobian at x
+J = model_Jacobian(FBAmodel,ensb{1,2},mc);
+% J = FDh(Jpatt,x)
+flux = zeros(size(FBAmodel.S,2),1);
+flux(1) = iflux(FBAmodel,ensb{1,2},mc,flux,1);
 
 % draw the staedy state flux solution space using production envelopes
 FluxEnvelope(FBAmodel,{'PGI','exPYR';'PFK','exPYR'},ess_rxn);
+
 
 

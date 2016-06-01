@@ -98,7 +98,7 @@ for ic = 1:nc
 end
 
 if ~isempty(idx)
-    flux = idxflux(idx,:);
+    flux = idflux;
 end
 
 % if flux(strcmpi(model.rxns,'atpm'))>=1e-5 &&...
