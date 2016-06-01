@@ -60,11 +60,15 @@ end
 mssid = [];
 nss = zeros(npts,1);
 for ipt = 1:npts
-    s1 = s.(['pt' num2str(ipt)]).s1;
-    nLP = size(s1,1);
-    if nLP > 2
-        fprintf('Vector %d has %d Steady States\n',ipt,nLP);
-        mssid = union(mssid,ipt);
-        nss(ipt) = nLP;
+    if ~isempty(s.(['pt' num2str(ipt)]))
+        s1 = s.(['pt' num2str(ipt)]).s1;
+        nLP = size(s1,1);
+        if nLP > 2
+            fprintf('Vector %d has %d Steady States\n',ipt,nLP);
+            mssid = union(mssid,ipt);
+            nss(ipt) = nLP;
+        end
+    else
+        fprintf('No convergence at %d\n',ipt);
     end
 end
