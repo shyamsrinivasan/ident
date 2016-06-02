@@ -46,10 +46,9 @@ ne = 2;             % or 2
 acetate = 0.1;      % a.u acetate
 d = 0.25;           % or 0.25 or 0.35
 kPEPout = 2.0004e-4;
-pvec = [kEcat,KEacetate,...
-        KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
-        vEXmax,KEXPEP,...
-        vemax,KeFBP,ne,acetate,d,kPEPout];
+pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
+        KEXPEP,vemax,KeFBP,ne,acetate,d,...
+        kPEPout,kEcat,vFbpmax,vEXmax];
     
 % calculate model jacobian
 % Method 1 use ADMAT to calculate jacobians
@@ -73,7 +72,12 @@ fJrow = @(i,x)KotteSvrow(i,x,model,pvec);
 Jfd = model_Jacobian(model,[M;model.PM],fJrow,Jpatt(1:3,1:3));
 
 % necessities for nonlinear constrained optimization
-fhandle = OptFunc(x,model);
+% x = [pep,fdp,enz,kEcat,vFbpmax,vEXmax];
+x = [M;kEcat;vFbpmax;vEXmax]'; 
+pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
+        KEXPEP,vemax,KeFBP,ne,acetate,d,...
+        kPEPout];
+fhandle = OptFunc(x,model,pvec);
 % objective function  - func
 obj = fhandle{1};
 % gradient of objective function - grad(func)
