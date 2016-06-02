@@ -105,7 +105,7 @@ lbpar = zeros(3,1);
 lbpar(lbpar==0) = 0.01;
 lb = [lbmet;lbpar];
 ubmet = zeros(length(M),1);
-ubmet(ubmet==0) = 50;
+ubmet(ubmet==0) = 20;
 ubpar = zeros(3,1);
 ubpar(ubpar==0) = 100;
 ub = [ubmet;ubpar];
@@ -120,11 +120,35 @@ A = nlcon(x);
 A_jac = nljac(x);
 A_jacstr = nljacstr();
 
+fprintf('\nRunning optiimzation Problem...');
+
 % build OPTI problem object
+tstr = tic;
 Opt = opti('fun',obj,'grad',grad,...
            'nlmix',nlcon,nlrhs,nle,'nljac',nljac,'nljacstr',nljacstr,...
            'bounds',lb,ub);
 [x,fval,exitflag,info] = solve(Opt,x0);
+tend = toc(tstr);
+fprintf('Complete\n');
+fprintf('Time elapsed %4.2f\n',tend);
+
+% test whether solution produces multiple steady states using 
+% equilibrium solution analysis
+M = x(1:nvar);
+allpvec = [pvec x(4:end)'];
+npts = 1;
+opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
+tspan = 0:0.1:1000;
+
+fluxg = Kotte_givenFlux([M;model.PM],allpvec(1,:),model);
+allxeq = zeros(length(M),npts);
+allxdyn = zeros(length(M),length(tspan),npts);
+allfeq = zeros(length(fluxg),npts);
+allfdyn = zeros(length(fluxg),length(tspan),npts);
+solveEquilibriumODE
+
+
+
 
 
 

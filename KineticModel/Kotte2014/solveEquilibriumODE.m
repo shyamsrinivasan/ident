@@ -7,7 +7,7 @@
               allxdyn,allxeq,allfdyn,allfeq);
 
 for ipt = 1:npts
-    fprintf('Iteration #%d Equilibrium Continuation...\n',ipt);
+    fprintf('\nIteration #%d Equilibrium Continuation...\n',ipt);
     
     ap = 9;
     xeq = allxeq(:,ipt);
