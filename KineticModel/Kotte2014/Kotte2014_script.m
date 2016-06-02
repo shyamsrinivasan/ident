@@ -91,7 +91,7 @@ pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
 
 % sample parameters indicated by indices in idp
 idp = [11];
-npts = 5000;
+npts = 10;
 
 % systems check
 givenModel = @(t,x)KotteODE(t,x,model,pvec);
@@ -117,8 +117,8 @@ for iid = 1:length(idp)
     pub = 1;    
     fprintf('Parameter #%d\n',iid);
     allpvec = sampleEKP(pvec,plb,pub,idp(iid),npts); 
-    smp_pvec = linspace(0,1,5000);
-    allpvec(:,idp(iid)) = smp_pvec';
+%     smp_pvec = linspace(0,1,5000);
+%     allpvec(:,idp(iid)) = smp_pvec';
     
     % run equilibrium solution followed by MATCONT
     allxeq = zeros(length(M),npts);
