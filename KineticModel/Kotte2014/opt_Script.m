@@ -45,7 +45,7 @@ KeFBP = 0.45;       % or 0.45
 ne = 2;             % or 2
 acetate = 0.1;      % a.u acetate
 d = 0.25;           % or 0.25 or 0.35
-kPEPout = 2.0004e-4;
+kPEPout = 0.2;
 pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
         KEXPEP,vemax,KeFBP,ne,acetate,d,...
         kPEPout,kEcat,vFbpmax,vEXmax];
@@ -60,60 +60,74 @@ F = getval(xADMATres);
 J = getydot(xADMATres); 
 
 % Method 2 exact Jacobian
-Jxact = KottegivenJacobian(M,pvec,model);
+% Jxact = KottegivenJacobian(M,pvec,model);
 
-% Method 3 finite difference approximation Jacobian
+% Method 3 finite difference approximation Jacobian using sparsity pattern
 % get Jacobian sparsity pattern from S and SI matrices
-Jpatt = modelSparsity(model);
+% Jpatt = modelSparsity(model);
 
 % obtain function handle for f(X) in Jacobian calculation
-fJrow = @(i,x)KotteSvrow(i,x,model,pvec);
-
-Jfd = model_Jacobian(model,[M;model.PM],fJrow,Jpatt(1:3,1:3));
+% fJrow = @(i,x)KotteSvrow(i,x,model,pvec);
+% Jfd = model_Jacobian(model,[M;model.PM],fJrow,Jpatt(1:3,1:3));
 
 % necessities for nonlinear constrained optimization
 % x = [pep,fdp,enz,kEcat,vFbpmax,vEXmax];
-x = [M;kEcat;vFbpmax;vEXmax]'; 
+x = [M;kEcat;vFbpmax;vEXmax]; 
 pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
         KEXPEP,vemax,KeFBP,ne,acetate,d,...
         kPEPout];
-fhandle = OptFunc(x,model,pvec);
+    
+fhandle = OptFunc(model,pvec);
 % objective function  - func
 obj = fhandle{1};
+
 % gradient of objective function - grad(func)
 grad = fhandle{2};
+
 % nonlinear constraints - nlcon
 nlcon = fhandle{3};
+
 % nonlinear constraint jacobian - grad(nlcon)
 nljac = fhandle{4};
+
 % nonlinear constraint jacobian sparsity - Jpatt(nlcon)
 nljacstr = fhandle{5};
+
 % nonlinear constraint rhs - nlrhs
 nlrhs = zeros(nvar,1);
+
 % nonlinear constraint type - nle
 nle = zeros(nvar,1);
+
 % variable bounds - lb, ub
-lb
+lbmet = zeros(length(M),1);
+lbpar = zeros(3,1);
+lbpar(lbpar==0) = 0.01;
+lb = [lbmet;lbpar];
+ubmet = zeros(length(M),1);
+ubmet(ubmet==0) = 50;
+ubpar = zeros(3,1);
+ubpar(ubpar==0) = 100;
+ub = [ubmet;ubpar];
+
 % initial value - x0
+x0 = [M;kEcat;vFbpmax;vEXmax]; 
 
-cplexlp
-Opt = opti('fun',fun,'bounds',lb,ub,'x0',x0);
+% test functions obtained above from function handles
+z = obj(x);
+z_grad = grad(x);
+A = nlcon(x);
+A_jac = nljac(x);
+A_jacstr = nljacstr();
 
-Opt = opti('f',f,'ineq',A,b,'bounds',lb,ub);
-% f = c;
-% A = [a11 a12;a21 a22];
-% b = [0;0];
-% lb = [0;0];
-% ub = [0;0];
-[x,fval,exitflag,info] = solve(Opt);
-
-% fun - nonlinear objective function
-Opt = opti('f',f,'nlmix',nlcon,nlrhs,nle,'nljac',nljac,'nljacstr',nljacstr);
-
+% build OPTI problem object
+Opt = opti('fun',obj,'grad',grad,...
+           'nlmix',nlcon,nlrhs,nle,'nljac',nljac,'nljacstr',nljacstr,...
+           'bounds',lb,ub);
 [x,fval,exitflag,info] = solve(Opt,x0);
 
-% use ADMAT to calculate jacobians
-fun = ADfun('',length(M));
-y = deriv(M,diag(ones(3,1)));
+
+
+
 
 
