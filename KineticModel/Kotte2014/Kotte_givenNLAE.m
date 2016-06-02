@@ -1,6 +1,6 @@
 function dM = Kotte_givenNLAE(kmrgd,model,pvec)
 
-d = pvec(13);
+d = pvec(10);
 dM = zeros(3,1);
 if ~isempty(model)
     PM = cons(model.PM,kmrgd);

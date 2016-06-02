@@ -35,7 +35,7 @@ for ipt = 1:npts
     for itout = 1:length(tout)
         allfdyn(:,itout,ipt) = Kotte_givenFlux([allxdyn(:,itout,ipt);model.PM],pvec,model); 
     end
-%     plotKotteVariables(tout,yout,1);
+    plotKotteVariables(tout,yout,1);
 %     plotKotteVariables(tout,allfdyn(:,:,ipt)',2);
     fprintf('Complete\n');
     
@@ -43,7 +43,7 @@ for ipt = 1:npts
     fprintf('Iteration #%d Equilibrium Continuation...\n',ipt);
     % run MATCONT
 %     clear sys x0 v0 ap opt x1 v1 s1 h1 f1
-    ap = 12; % index for parameter to be continued on     
+    ap = 9; % index for parameter to be continued on     
 %     runMATCONT
     [data,y,p] = execMATCONT(xeq,pvec,ap,fluxg,model);
     

@@ -70,10 +70,9 @@ ne = 2;             % or 2
 acetate = 0.1;      % a.u acetate
 d = 0.25;           % or 0.25 or 0.35
 kPEPout = 2.0004e-4;
-pvec = [kEcat,KEacetate,...
-        KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
-        vEXmax,KEXPEP,...
-        vemax,KeFBP,ne,acetate,d,kPEPout];
+pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
+        KEXPEP,vemax,KeFBP,ne,acetate,d,...
+        kPEPout,kEcat,vFbpmax,vEXmax];
 
 % npts = 1;
 % allpvec = pvec;
@@ -91,7 +90,7 @@ pvec = [kEcat,KEacetate,...
 % npts = size(vs,1);
 
 % sample parameters indicated by indices in idp
-idp = [14];
+idp = [11];
 npts = 5000;
 
 % systems check
@@ -110,10 +109,10 @@ alliidfeq = zeros(length(fluxg),npts,length(idp));
 alliidfdyn = zeros(length(fluxg),length(tspan),npts,length(idp));
 for iid = 1:length(idp)
     % reset pvec
-    pvec = [kEcat,KEacetate,...
-            KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
-            vEXmax,KEXPEP,... 
-            vemax,KeFBP,ne,acetate,d,kPEPout];
+    pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
+            KEXPEP,vemax,KeFBP,ne,acetate,d,...
+            kPEPout,kEcat,vFbpmax,vEXmax];
+    
     plb = 0;
     pub = 1;    
     fprintf('Parameter #%d\n',iid);

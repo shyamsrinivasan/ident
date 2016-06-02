@@ -21,19 +21,19 @@ if nargin < 2
     kPEPout = 0.2;
 else
     % parameters    
-    kEcat = pvec(1);
-    KEacetate = pvec(2);    % or 0.02
-    KFbpFBP = pvec(3);
-    vFbpmax = pvec(4);
-    Lfbp = pvec(5);
-    KFbpPEP = pvec(6);
-    vEXmax = pvec(7);
-    KEXPEP = pvec(8);
-    vemax = pvec(9);        % for bifurcation analysis: 0.7:0.1:1.3
-    KeFBP = pvec(10);        % or 0.45
-    ne = pvec(11);             % or 2
-    acetate = pvec(12);    
-    kPEPout = pvec(14);
+    KEacetate = pvec(1);    % or 0.02
+    KFbpFBP = pvec(2);
+    Lfbp = pvec(3);
+    KFbpPEP = pvec(4);
+    KEXPEP = pvec(5);
+    vemax = pvec(6);        % for bifurcation analysis: 0.7:0.1:1.3
+    KeFBP = pvec(7);        % or 0.45
+    ne = pvec(8);             % or 2
+    acetate = pvec(9);
+    kPEPout = pvec(11);
+    kEcat = pvec(12);   
+    vFbpmax = pvec(13);    
+    vEXmax = pvec(14);   
 end
 
 %acetate --E--> PEP --vEX--> FBP --Fbp--> Nothing
