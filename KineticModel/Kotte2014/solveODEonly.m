@@ -1,0 +1,47 @@
+function [allxdyn,allxeq,allfdyn,allfeq] =...
+         solveODEonly(npts,ival,model,allpvec,opts,tspan,...
+                      allxdyn,allxeq,allfdyn,allfeq)
+
+if nargin<10     
+    allfeq =...
+    zeros(length(Kotte_givenFlux([ival;model.PM],allpvec(1,:),model)),npts);
+end
+if nargin<9
+    allfdyn =...
+    zeros(length(Kotte_givenFlux([ival;model.PM],allpvec(1,:),model)),...
+          length(tspan),npts);
+end
+if nargin<8
+    allxeq = zeros(length(ival),npts);
+end
+if nargin<7
+    allxdyn = zeros(length(ival),length(tspan),npts);
+end
+                 
+
+for ipt = 1:npts
+    fprintf('\nIteration #%d Equilibrium Integration...',ipt);
+    
+    % change in pvec
+    pvec = allpvec(ipt,:);
+    
+    % new equilibrium solution
+    givenModel = @(t,x)KotteODE(t,x,model,pvec);
+    [tout,yout] = ode45(givenModel,tspan,ival,opts);
+    allxdyn(:,:,ipt) = yout';
+    allxeq(:,ipt) = yout(end,:)';   
+    
+%     xeq = yout(end,:)';
+    
+    % calculation of fluxes for allxeq
+    allfeq(:,ipt) = Kotte_givenFlux([allxeq(:,ipt);model.PM],pvec,model); 
+    for itout = 1:length(tout)
+        allfdyn(:,itout,ipt) = Kotte_givenFlux([allxdyn(:,itout,ipt);model.PM],pvec,model); 
+    end
+    
+    % optional  - plot information
+     plotKotteVariables(tout,yout,1);
+%     plotKotteVariables(tout,allfdyn(:,:,ipt)',2);
+
+    fprintf('Complete\n');
+end
