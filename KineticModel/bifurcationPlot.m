@@ -1,6 +1,6 @@
 function bifurcationPlot(y,p,s1,f1,idx,ipx,hfig)
 if nargin<7
-    hfig = [];
+    hfig = figure;
 end
 
 % nvar = size(f1,1);
