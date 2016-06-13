@@ -186,7 +186,8 @@ for iy = 1:length(idx)
     if hsfig(ifig) == 0
         hsfig(ifig) = subplot(nrows,ncol,ifig);
     else
-        axes(hsfig(ifig));
+%         axes(hsfig(ifig));
+        set(hfig,'CurrentAxes',hsfig(ifig));
     end
     set(hsfig(ifig),'NextPlot','add');
 %     Line.Color = [0 0 0];
