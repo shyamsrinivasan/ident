@@ -11,7 +11,46 @@ if length(idx) >= 3
     [hfig,ha] =...
     plot3Dtrajectories(ival,xeq,xdyn,idx,datatype,hfig,ha,Line,Point);
 elseif length(idx) >= 2
-    plot2Dtrajectories()
+    [hfig,ha] =...
+    plot2Dtrajectories(ival,xeq,xdyn,idx,datatype,hfig,ha,Line,Point);
+end
+
+end
+
+function [heqfig,ha] =...
+plot2Dtrajectories(ival,xeq,xdyn,idx,datatype,heqfig,ha,Line,Point)
+
+if length(idx)>2 % get combination of 3 data points
+    ncomb = nchoosek(idx,2);
+else
+    ncomb = idx;
+end
+for icomb = 1:size(ncomb,1)
+    if isempty(heqfig)
+        heqfig = figure;
+    end
+    data = xdyn(ncomb(icomb,:),:);
+    xdata = data(1,:);
+    ydata = data(2,:);
+        
+    % plot trajectory
+    if isempty(ha)
+        hline = plot(xdata,ydata);
+        ha = get(hline,'Parent');
+    else
+        hline = plot(ha,xdata,ydata);
+    end
+    hold on
+    
+    % set line properties
+    if ~isempty(Line)
+        set(hline,Line);
+    end    
+    
+    % plot the points (initial va;ue and final equilibrium  
+    % and set properties
+%     [heqfig,ha] =...
+%     FIGmssEqIvalPerturbations(ival,xeq,datatype,ncomb(icomb,:),heqfig,ha,Point);
 end
 
 end
@@ -108,6 +147,3 @@ else
 end
 end
 
-function plot2Dtrajectories
-
-end
