@@ -1,4 +1,4 @@
-function [allxdyn,allxeq,allfdyn,allfeq] =...
+function [allxdyn,allxeq,allfdyn,allfeq,slope] =...
          solveODEonly(npts,ival,model,allpvec,opts,tspan,...
                       allxdyn,allxeq,allfdyn,allfeq)
 
@@ -35,6 +35,18 @@ for ipt = 1:npts
     end
     allxdyn(:,:,ipt) = yout';
     allxeq(:,ipt) = yout(end,:)';   
+    
+    % slope of ODE trajectory (dx/dt) at each tout using ADMAT        
+    slope = zeros(size(yout,2),length(tout));
+    for it = 1:length(tout)
+        slope(:,it) = givenModel(tout(it),yout(it,:)');        
+    end
+%     slope = [];
+    
+%     Jxact = KottegivenJacobian(ival,pvec,model);
+    
+%     dX = zeros(length(tout),
+%     dX = givenModel(
     
 %     xeq = yout(end,:)';
     
