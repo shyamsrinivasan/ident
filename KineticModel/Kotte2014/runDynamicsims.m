@@ -16,7 +16,37 @@ ndp = size(alliidpvec,3);
 opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
 colorSpec = chooseColors(4,{'Green','Purple','Red','Orange'});
 
+% choose nxsspts random points for poseeigind within bounds in
+% xLPval
+% preliminary evaluation to pre allocate memory for collecting ode sim data
+nxsspts = 3;
+nsols = zeros(ndp,1);
+for idp = 1:ndp
+    % changed parameters    
+    if isfield(allnss,sprintf('iid%d',idp));
+        msspts = find(allnss.(['iid' num2str(idp)]));
+        sslps = allnss.(['iid' num2str(idp)])(msspts);
+        ss = unique(sslps);
+        nss = length(ss);
+        % number of different mss
+        for iss = 1:nss
+            allmsspts = msspts(sslps==ss(iss));
+            nmsspts = length(allmsspts);
+            % collect corresponding limit points
+            for ipt = 1:nmsspts
+                index =...
+                cat(1,siid.(['iid' num2str(idp)]).(['pt' num2str(allmsspts(ipt))]).s1.index);
+                nindexpts = length(index);
+                nsols(idp) = nsols(idp)+(nindexpts-1)*nxsspts;
+            end
+        end
+    end
+end
+
+
+
 % determine the #parameters/combinations that have been changed
+isol = 1;
 for idp = 1:ndp
     % determine actual # parameters that have been changed
     npar = length(alliidpvec(1,:,idp));
@@ -26,8 +56,10 @@ for idp = 1:ndp
     hfig = [];
     hsfig = [];
     hline = [];    
-    allival = [];
-    everyxeq = [];
+    allival = zeros(nvar,nsols(idp));
+    allxeq = zeros(nvar,nsols(idp));
+    allxdyn = zeros(nvar,length(tout),nsols(idp));
+    allslope = zeros(nvar,length(tout),nsols(idp));
     
     % choose/determine points that have mss
     if isfield(allnss,sprintf('iid%d',idp));
@@ -52,14 +84,18 @@ for idp = 1:ndp
             for ipt = 1:nmsspts
                 index =...
                 cat(1,siid.(['iid' num2str(idp)]).(['pt' num2str(allmsspts(ipt))]).s1.index);
-                s1 = siid.(['iid' num2str(idp)]).(['pt' num2str(allmsspts(ipt))]).s1;
+                s1 =...
+                siid.(['iid' num2str(idp)]).(['pt' num2str(allmsspts(ipt))]).s1;
                 x1ind =...
                 siid.(['iid' num2str(idp)]).(['pt' num2str(allmsspts(ipt))]).x1(:,index);
-                x1 = siid.(['iid' num2str(idp)]).(['pt' num2str(allmsspts(ipt))]).x1;
-                flux1 = siid.(['iid' num2str(idp)]).(['pt' num2str(allmsspts(ipt))]).flux;
+                x1 =...
+                siid.(['iid' num2str(idp)]).(['pt' num2str(allmsspts(ipt))]).x1;
+                flux1 =...
+                siid.(['iid' num2str(idp)]).(['pt' num2str(allmsspts(ipt))]).flux;
                 eigind =...
                 siid.(['iid' num2str(idp)]).(['pt' num2str(allmsspts(ipt))]).f1(:,index);
-                f1 = siid.(['iid' num2str(idp)]).(['pt' num2str(allmsspts(ipt))]).f1;
+                f1 =...
+                siid.(['iid' num2str(idp)]).(['pt' num2str(allmsspts(ipt))]).f1;
                 xLPval = x1ind(1:nvar,:);
                 pLPval = x1ind(nvar+1:end,:);
                 pvec = allisspvec(1,:);
@@ -80,24 +116,24 @@ for idp = 1:ndp
                     end                
                 end
                 
-                % test code for quiver3 - run on server - memory intensive
-                % abandon
-                pvec(ap) = 0.1450;
-                [X, Y, Z] = meshgrid(0:0.1:6, 0:0.1:2,0:0.1:4);
-                givenModel = @(t,x)KotteODE(t,x,model,pvec);
-                DX = zeros(size(X,1),size(X,2),size(X,3));
-                DY = zeros(size(Y,1),size(Y,2),size(Y,3));
-                DZ = zeros(size(Z,1),size(Z,2),size(Z,3));
-                for i = 1:size(X,1)
-                    for j = 1:size(X,2)
-                        for k = 1:size(X,3)
-                            dX = givenModel(0,[X(i,j,k);Y(i,j,k);Z(i,j,k)]);
-                            DX(i,j,k) = dX(1);
-                            DY(i,j,k) = dX(2);
-                            DZ(i,j,k) = dX(3);
-                        end
-                    end
-                end
+%                 test code for quiver3 - run on server - memory intensive
+%                 abandon
+%                 pvec(ap) = 0.1450;
+%                 [X, Y, Z] = meshgrid(0:0.1:6, 0:0.1:2,0:0.1:4);
+%                 givenModel = @(t,x)KotteODE(t,x,model,pvec);
+%                 DX = zeros(size(X,1),size(X,2),size(X,3));
+%                 DY = zeros(size(Y,1),size(Y,2),size(Y,3));
+%                 DZ = zeros(size(Z,1),size(Z,2),size(Z,3));
+%                 for i = 1:size(X,1)
+%                     for j = 1:size(X,2)
+%                         for k = 1:size(X,3)
+%                             dX = givenModel(0,[X(i,j,k);Y(i,j,k);Z(i,j,k)]);
+%                             DX(i,j,k) = dX(1);
+%                             DY(i,j,k) = dX(2);
+%                             DZ(i,j,k) = dX(3);
+%                         end
+%                     end
+%                 end
 %                 [gradX,gradY,gradZ] = gradient(DX,0.1,0.1,0.1);
                                 
 %                 bifurcationPlot(x1,x1(nvar+1:end,:),s1,f1,2,1);
@@ -108,8 +144,7 @@ for idp = 1:ndp
                 nindexpts = length(index);
                 
                 % choose nxsspts random points for poseeigind within bounds in
-                % xLPval
-                nxsspts = 25;
+                % xLPval                
                 for kindexpts = 1:(nindexpts-1)
                     pxLPval =...
                     sampleEKP(xLPval(:,kindexpts)',xLPval(:,kindexpts),...
@@ -122,10 +157,14 @@ for idp = 1:ndp
                     for ixsspt = 1:nxsspts
                         ival = pxLPval(:,ixsspt); 
                         pvec(ap) = ppLPval(ixsspt);
-                        [xdyn,xeq,fdyn,feq,jac] =...
+                        [xdyn,xeq,fdyn,feq,slope] =...
                         solveODEonly(1,ival,model,pvec,opts,tout); 
-%                         allival = [allival ival];
-%                         everyxeq = [everyxeq xeq];
+                        allival(:,ipt) = ival;
+                        allxeq(:,isol) = xeq;
+                        allxdyn(:,:,isol) = xdyn;
+                        allslope(:,:,isol) = slope;
+                        isol = isol+1;
+                        
                         Line.DisplayName =...
                         ['pt' num2str(ipt) 'smp' num2str(ixsspt)];       
                     
