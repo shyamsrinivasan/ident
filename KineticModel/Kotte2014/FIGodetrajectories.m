@@ -29,6 +29,7 @@ for icomb = 1:size(ncomb,1)
     if isempty(heqfig)
         heqfig = figure;
     end
+    set(0,'CurrentFigure',heqfig);
     data = xdyn(ncomb(icomb,:),:);
     xdata = data(1,:);
     ydata = data(2,:);
@@ -51,6 +52,9 @@ for icomb = 1:size(ncomb,1)
     % and set properties
 %     [heqfig,ha] =...
 %     FIGmssEqIvalPerturbations(ival,xeq,datatype,ncomb(icomb,:),heqfig,ha,Point);
+    
+    [xlabel,ylabel] = getaxislabels(2,datatype,idx);
+    setproperties(2,ha,xlabel,ylabel)
 end
 
 end
@@ -88,8 +92,11 @@ for icomb = 1:size(ncomb,1)
     
     % plot the points (initial va;ue and final equilibrium  
     % and set properties
-    [heqfig,ha] =...
-    FIGmssEqIvalPerturbations(ival,xeq,datatype,ncomb(icomb,:),heqfig,ha,Point);
+%     [heqfig,ha] =...
+%     FIGmssEqIvalPerturbations(ival,xeq,datatype,ncomb(icomb,:),heqfig,ha,Point);
+
+    [xlabel,ylabel,zlabel] = getaxislabels(3,datatype,idx);
+    setproperties(3,ha,xlabel,ylabel,zlabel)
 end
 end
 
@@ -110,10 +117,20 @@ if plotype == 3
 %         zlabel = fluxlist(idx);
 %         ylabel = parlist(idp(2));
     elseif datatype == 2
-        xlabel = cnclist(1);
-        ylabel = cnclist(2);
-        zlabel = cnclist(3);
+        xlabel = cnclist(idx(1));
+        ylabel = cnclist(idx(2));
+        zlabel = cnclist(idx(3));
     end
+elseif plotype ==2
+    if datatype == 1
+        [xlabel,ylabel] = deal(fluxlist(idx));
+%         zlabel = fluxlist(idx);
+%         ylabel = parlist(idp(2));
+    elseif datatype == 2
+        xlabel = cnclist(idx(1));
+        ylabel = cnclist(idx(2));        
+    end
+    zlabel = {};
 end
 end
 
