@@ -1,6 +1,6 @@
 function flux = Kotte_givenFlux(M,pvec,model,flux)
 if nargin < 4
-    flux = zeros(5,1);
+    flux = zeros(5,size(M,2));
     flux = cons(flux,M);
 end
 if nargin < 3
@@ -55,21 +55,21 @@ ac = strcmpi(model.mets,'ac[e]');
 
 % metabolic fluxes
 % J(E, acetate)
-flux(1) = kEcat.*M(enz).*M(ac)./(M(ac)+KEacetate);
+flux(1,:) = kEcat.*M(enz,:).*M(ac,:)./(M(ac,:)+KEacetate);
 
 % enzyme production fluxes
 % E(FBP) for J (%FBP ---| Cra and Cra ---> E)
-flux(2) = vemax.*(1-1./(1+(KeFBP./M(fdp)).^ne));
+flux(2,:) = vemax.*(1-1./(1+(KeFBP./M(fdp,:)).^ne));
 
 % vFbp(PEP,FBP)
-ratio = 1+M(fdp)/KFbpFBP;
-flux(3) = vFbpmax.*(ratio-1).*(ratio).^3/(ratio.^4+Lfbp*(1+M(pep)./KFbpPEP).^(-4));
+ratio = 1+M(fdp,:)./KFbpFBP;
+flux(3,:) = vFbpmax.*(ratio-1).*(ratio).^3./(ratio.^4+Lfbp.*(1+M(pep,:)./KFbpPEP).^(-4));
 
 % vEX(PEP)
-flux(4) = vEXmax.*M(pep)./(M(pep)+KEXPEP);
+flux(4,:) = vEXmax.*M(pep,:)./(M(pep,:)+KEXPEP);
 
 % vPEPout
-flux(5) = kPEPout*M(pep);
+flux(5,:) = kPEPout*M(pep,:);
 
 
 
