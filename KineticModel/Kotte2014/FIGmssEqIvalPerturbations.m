@@ -106,7 +106,7 @@ if ~isempty(Point)
     set(hline,Point);
 end
 
-[xlabel,ylabel,zlabel] = getaxislabels(3,datatype);
+[xlabel,ylabel,zlabel] = getaxislabels(3,datatype,idx);
 
 setproperties(3,ha,xlabel,ylabel,zlabel)
 end
