@@ -29,8 +29,8 @@ for idp = 1:ndp
         ss = unique(sslps);
         nss = length(ss);
         styles = {':','--','-.','-'};      
-        heqfig = figure;
-        heqfig2 = figure;
+        heqfig = [];
+        heqfig2 = [];
         heqfig3 = [];
         htfig = [];
         htfig2 = [];
@@ -73,9 +73,9 @@ for idp = 1:ndp
                 % find the 2 or more steady states from the LPs
                 LPxeq = [];
                 for it = 1:size(xLPval,2)
-                    ival = xLPval(:,it); 
+                    ival = xLPval(:,it);
                     pvec(ap) = pLPval(it);
-%                     model.PM(ac-length(ival)) = pLPval(it);
+                    model.PM(ac-length(ival)) = pLPval(it);
                     [~,xeq] =...
                     solveODEonly(1,ival,model,pvec,opts,tout); 
                     if ~isempty(LPxeq)
@@ -85,8 +85,8 @@ for idp = 1:ndp
                     else
                         LPxeq = xeq;
                     end                
-                end   
-                bifurcationPlot(x1,x1,s1,f1,2,1,7);
+                end
+                bifurcationPlot(x1,s1,f1,[3,1]);                
             end              
         end
         for isol = 1:150
