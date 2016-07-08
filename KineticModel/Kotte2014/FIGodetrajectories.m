@@ -6,6 +6,12 @@ end
 if nargin < 8
     Line = [];
 end
+if nargin < 7
+    ha = [];
+end
+if nargin < 6
+    hfig = [];
+end
 
 if length(idx) >= 3
     [hfig,ha] =...
@@ -135,6 +141,15 @@ end
 end
 
 function setproperties(plotype,hsfig,xlabel,ylabel,zlabel)
+if nargin < 8
+    zdata = [];
+end
+if nargin < 7
+    ydata = [];
+end
+if nargin < 6
+    xdata = [];
+end
 if nargin < 5
     zlabel = {};
 end
@@ -157,6 +172,15 @@ axesP.LineWidth = 1.5;
 axesP.TickLength = [0.01 0.01];
 axesP.XColor = [.1 .1 .1];
 axesP.YColor = [.1 .1 .1];
+% if ~isempty(xdata)
+%     axesP.XLim = [0 max(xdata)];
+% end
+% if ~isempty(ydata)
+%     axesP.YLim = [0 max(ydata)];
+% end
+% if ~isempty(zdata)
+%     axesP.ZLim = [0 max(zdata)];
+% end
 if plotype == 3
     set(gca,axesP);
 else
