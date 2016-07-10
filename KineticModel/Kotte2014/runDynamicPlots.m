@@ -64,12 +64,19 @@ for idp = 1:ndp
                 siid.(['iid' num2str(idp)]).(['pt' num2str(allmsspts(ipt))]).flux;
                 eigind =...
                 siid.(['iid' num2str(idp)]).(['pt' num2str(allmsspts(ipt))]).f1(:,index);
-                f1 =...
+                eval =...
                 siid.(['iid' num2str(idp)]).(['pt' num2str(allmsspts(ipt))]).f1;
                 xLPval = x1ind(1:nvar,:);
                 pLPval = x1ind(nvar+1:end,:);
                 pvec = allisspvec(1,:);
+
+                % nullclines
+                % [fdp,e,allpep,allfdp,a,b,c,DX,DY,DZ] = nullclines(model,pvec);
                 
+                % separatrix curves through numerical approximation from
+                % saddle
+                NumericalSeparatrix(model,pvec,opts,xLPval,pLPval,ap,s1,x1);
+
                 % find the 2 or more steady states from the LPs
                 LPxeq = [];
                 for it = 1:size(xLPval,2)
@@ -84,9 +91,9 @@ for idp = 1:ndp
                         end
                     else
                         LPxeq = xeq;
-                    end                
-                end
-                bifurcationPlot(x1,s1,f1,[3,1]);                
+                    end
+                end   
+                bifurcationPlot(x1,s1,eval,[4,1]);
             end              
         end
         for isol = 1:150
