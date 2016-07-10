@@ -85,7 +85,12 @@ else
     set(hl,'LineWidth',3);
 end
 
-[xlabel,ylabel] = getaxislabels(2,2,[xid yid]);
+if xid > 3
+    [xlabel,ylabel] = getaxislabels(2,3,[xid yid]);
+else
+    [xlabel,ylabel] = getaxislabels(2,2,[xid yid]);
+end
+    
 
 % plot bifurcation points
 line(LPval(xid,:),LPval(yid,:),'LineStyle','none',...
@@ -125,8 +130,7 @@ end
 fluxlist = {'ACpts mmole/h','ENZC mmole/h','ECbiomass(FDP) mmole/h',...
            'GLUX mmole/h','PEPout mmole/h'};
 cnclist = {'PEP','FDP','ENZ'};  
-parlist = {'kEcat','KEacetate','KFbpFBP','vFbpmax','Lfbp','KFbpPEP',...
-           'vEXmax','KEXPEP','vemax','KeFBP','ne','acetate','d','kPEPout'};
+parlist = {'acetate'};
 
 if plotype == 3    
     if datatype == 1
@@ -147,7 +151,10 @@ elseif plotype ==2
         xlabel = cnclist(idx(1));
         ylabel = cnclist(idx(2));        
     elseif datatype == 3
-        xlabel = parlist(idx(1));
+        xlabel = parlist(idx(1)-length(cnclist));
+        ylabel = cnclist(idx(2));
+    elseif datatype == 4
+        xlabel = parlist(idx(1)-length(fluxlist));
         ylabel = cnclist(idx(2));
     end
     zlabel = {};
