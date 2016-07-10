@@ -1,10 +1,11 @@
-function [hfig,ha] =...
-FIGodetrajectories(xdyn,ival,xeq,datatype,idx,hfig,ha,Line,Point)
+function [hfig,ha,hline] =...
+FIGodetrajectories(xdyn,ival,xeq,datatype,idx,hfig,ha,line,point)
+global Line Point
 if nargin < 9
-    Point = [];
+    point = [];
 end
 if nargin < 8
-    Line = [];
+    line = [];
 end
 if nargin < 7
     ha = [];
@@ -12,20 +13,21 @@ end
 if nargin < 6
     hfig = [];
 end
-
+Line = line;
+Point = point;
 if length(idx) >= 3
-    [hfig,ha] =...
-    plot3Dtrajectories(ival,xeq,xdyn,idx,datatype,hfig,ha,Line,Point);
+    [hfig,ha,hline] =...
+    plot3Dtrajectories(ival,xeq,xdyn,idx,datatype,hfig,ha);
 elseif length(idx) >= 2
-    [hfig,ha] =...
-    plot2Dtrajectories(ival,xeq,xdyn,idx,datatype,hfig,ha,Line,Point);
+    [hfig,ha,hline] =...
+    plot2Dtrajectories(ival,xeq,xdyn,idx,datatype,hfig,ha);
 end
 
 end
 
-function [heqfig,ha] =...
-plot2Dtrajectories(ival,xeq,xdyn,idx,datatype,heqfig,ha,Line,Point)
-
+function [heqfig,ha,hline] =...
+plot2Dtrajectories(ival,xeq,xdyn,idx,datatype,heqfig,ha)
+global Line Point
 if length(idx)>2 % get combination of 3 data points
     ncomb = nchoosek(idx,2);
 else
@@ -65,9 +67,9 @@ end
 
 end
 
-function [heqfig,ha] =...
-plot3Dtrajectories(ival,xeq,xdyn,idx,datatype,heqfig,ha,Line,Point)
-
+function [heqfig,ha,hline] =...
+plot3Dtrajectories(ival,xeq,xdyn,idx,datatype,heqfig,ha)
+global Line Point
 if length(idx)>3 % get combination of 3 data points
     ncomb = nchoosek(idx,3);
 else
