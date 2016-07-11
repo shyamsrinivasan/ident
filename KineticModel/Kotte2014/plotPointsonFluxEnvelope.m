@@ -43,7 +43,7 @@ for ifl = 1:nrxn
     set(hsubfig(ifl),'NextPlot','add');
     
     for iss = 1:size(flux,2)
-        cid = chooseColors(1,'blue');
+        cid = chooseColors(1,{'blue'});
         line(flux(flux1id(ifl),iss),flux(flux2id(ifl),iss),'LineStyle','none',...
                              'Marker','.','MarkerEdgeColor',cid{1},...
                              'MarkerFaceColor',cid{1},'MarkerSize',30);
