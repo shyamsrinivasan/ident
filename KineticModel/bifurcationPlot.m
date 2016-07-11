@@ -85,10 +85,18 @@ else
     set(hl,'LineWidth',3);
 end
 
-if xid > 3
-    [xlabel,ylabel] = getaxislabels(2,3,[xid yid]);
+if size(LPval,1)>4
+    if xid > 5
+        [xlabel,ylabel] = getaxislabels(2,4,[xid yid]);
+    else
+        [xlabel,ylabel] = getaxislabels(2,1,[xid yid]);
+    end
 else
-    [xlabel,ylabel] = getaxislabels(2,2,[xid yid]);
+    if xid > 3
+        [xlabel,ylabel] = getaxislabels(2,3,[xid yid]);
+    else
+        [xlabel,ylabel] = getaxislabels(2,2,[xid yid]);
+    end
 end
     
 
@@ -144,7 +152,8 @@ if plotype == 3
     end
 elseif plotype ==2
     if datatype == 1
-        [xlabel,ylabel] = deal(fluxlist(idx));
+        xlabel = fluxlist(idx(1));
+        ylabel = fluxlist(idx(2));
 %         zlabel = fluxlist(idx);
 %         ylabel = parlist(idp(2));
     elseif datatype == 2
@@ -155,7 +164,7 @@ elseif plotype ==2
         ylabel = cnclist(idx(2));
     elseif datatype == 4
         xlabel = parlist(idx(1)-length(fluxlist));
-        ylabel = cnclist(idx(2));
+        ylabel = fluxlist(idx(2));
     end
     zlabel = {};
 end
