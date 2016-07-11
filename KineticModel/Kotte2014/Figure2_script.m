@@ -11,7 +11,7 @@ cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\Kine
 [mc,FBAmodel,met] = readCNCfromFile(cnfname,FBAmodel);
 
 % run FBA
-Vup_struct.ACt2r = 1;
+Vup_struct.ACt2r = 2;
 Vup_struct.ENZ1ex = 1;
 FBAmodel = FBAfluxes(FBAmodel,'fba',{'ACt2r','ENZ1ex'},Vup_struct,...
                     [find(strcmpi(FBAmodel.rxns,'FDex'))...
