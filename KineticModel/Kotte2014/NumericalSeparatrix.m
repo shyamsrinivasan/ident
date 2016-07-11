@@ -6,18 +6,21 @@ model = varargin{1};
 pvec = varargin{2};
 opts = varargin{3};
 % 1. calculate equilibirum points
-eqpts = varargin{4};
-eqcontvar = varargin{5};
 contvarid = varargin{6};
 s1 = varargin{7};
 x1 = varargin{8};
+if nargin<9
+    eps1 = [];
+else
+    eps1 = varargin{9};
+end
 ac = find(strcmpi(model.mets,'ac[e]'));
 
 % 2. determine the saddle node/limit point
 % calculate jacobian at each equilibirum point
 saddle = [];
 eps = 1e-4;
-tspanr = [0,-15];
+tspanr = [0,-8];
 tspanf = 0:0.1:2000;
 ht12fig = [];
 ha12 = [];
@@ -29,29 +32,7 @@ hf3 = [];
 ha3 = [];
 
 % get saddle point
-id = cat(1,s1.index);
-if length(id)>2
-    id = id(2:end-1);
-end
-eqcontvar = x1(end,id);
-% pick smallest and largest parameter value and position
-[mineqvar,minid] = min(eqcontvar);
-[maxeqvar,maxid] = max(eqcontvar);
-minid = id(minid);
-maxid = id(maxid);
-% pick a midpoint parameter value
-midpt = mineqvar+(maxeqvar-mineqvar)/2;
-% get all data between minid and maxid
-reldata = x1(:,min([minid maxid]):max([minid maxid]));
-% search for parameter value closest to midpoint 
-if any(abs(midpt-reldata(end,:))<=1e-3)
-    index = find(abs(midpt-reldata(end,:))<=1e-3,1,'first');
-    if ~isempty(index)
-        saddle = reldata(:,index);
-        saddlepar = saddle(end);
-        saddle(end) = [];
-    end
-end
+[saddle,saddlepar] = getsaddlenode(s1,x1,eps1);
 
 % calculate characteristics at saddle point for confirmation
 if ~isempty(saddle)
@@ -70,6 +51,7 @@ else
 end
 
 colorSpec = chooseColors(4,{'Green','Purple','Red','Orange'});
+% Line.LineWidth = 2.5;
 % reverse integration from saddle point in the direction of eigen vectors w
 % at the saddle point
 if unstablept
@@ -117,7 +99,7 @@ if unstablept
             p1execflag = 1;
         end
         
-        xdynr = solveODEonly(1,zj,model,pvec,opts,[0 -9]);
+        xdynr = solveODEonly(1,zj,model,pvec,opts,[0 -8]);
         [xdynf,xeq] = solveODEonly(1,zj,model,pvec,opts,tspanf);
         Line.Color = colorSpec{1};
         [hf3,ha3] = FIGodetrajectories(real(xdynr),saddle,saddle,2,[1 2 3],hf3,ha3,Line);
