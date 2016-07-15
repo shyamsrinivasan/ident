@@ -69,9 +69,9 @@ if ~isempty(Point)
     set(hlval2,Point);
 end
 
-[xlabel,ylabel] = getaxislabels(2,datatype,idx);
+[xlabel,ylabel] = getKotteaxislabels(2,datatype,idx);
 
-setproperties(3,ha,xlabel,ylabel)
+setKotteproperties(3,ha,xlabel,ylabel)
 hlval = [hlval1 hlval2];
 end
 
@@ -128,72 +128,8 @@ if ~isempty(Point)
     set(hlval1,Point);
 end
 
-[xlabel,ylabel,zlabel] = getaxislabels(3,datatype,idx);
+[xlabel,ylabel,zlabel] = getKotteaxislabels(3,datatype,idx);
 
-setproperties(3,ha,xlabel,ylabel,zlabel)
+setKotteproperties(3,ha,xlabel,ylabel,zlabel)
 hlval = [hlval1 hlval2];
-end
-
-function [xlabel,ylabel,zlabel] = getaxislabels(plotype,datatype,idx)
-if nargin <3
-    idx = [];
-end
-
-fluxlist = {'ACpts mmole/h','ENZC mmole/h','ECbiomass(FDP) mmole/h',...
-           'GLUX mmole/h','PEPout mmole/h'};
-cnclist = {'PEP','FDP','ENZ'};  
-% parlist = {'Parameter 1, kEcat','','','Parameter 2, vFbpmax','','',...
-%            'Parameter 3, vEXmax','','','','','','','Parameter 4, kPEPout'};
-
-if plotype == 3    
-    if datatype == 1
-        [xlabel,ylabel,zlabel] = deal(fluxlist(idx));
-%         zlabel = fluxlist(idx);
-%         ylabel = parlist(idp(2));
-    elseif datatype == 2
-        xlabel = cnclist(idx(1));
-        ylabel = cnclist(idx(2));
-        zlabel = cnclist(idx(3));
-    end
-elseif plotype == 2
-    if datatype == 1
-        [xlabel,ylabel] = deal(fluxlist(idx));
-%         zlabel = fluxlist(idx);
-%         ylabel = parlist(idp(2));
-    elseif datatype == 2
-        xlabel = cnclist(idx(1));
-        ylabel = cnclist(idx(2));        
-    end
-    zlabel = {};
-end
-end
-
-function setproperties(plotype,hsfig,xlabel,ylabel,zlabel)
-if nargin < 5
-    zlabel = {};
-end
-% set axis properties
-set(get(gca,'YLabel'),'String',ylabel);  
-set(get(gca,'YLabel'),'FontName','Arial');   
-set(get(gca,'YLabel'),'FontSize',22); 
-set(get(gca,'XLabel'),'String',xlabel);  
-set(get(gca,'XLabel'),'FontName','Arial');   
-set(get(gca,'XLabel'),'FontSize',22);
-if plotype == 3
-    set(get(gca,'ZLabel'),'String',zlabel);  
-    set(get(gca,'ZLabel'),'FontName','Arial');   
-    set(get(gca,'ZLabel'),'FontSize',22);
-    axesP.ZColor = [.1 .1 .1];
-end
-axesP.FontName  = 'Arial';
-axesP.FontSize = 22;
-axesP.LineWidth = 1.5;
-axesP.TickLength = [0.01 0.01];
-axesP.XColor = [.1 .1 .1];
-axesP.YColor = [.1 .1 .1];
-if plotype == 3
-    set(gca,axesP);
-else
-    set(hsfig,axesP);
-end
 end
