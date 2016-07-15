@@ -2,8 +2,16 @@
 % simulate from one or more limit points or within their boundaries 
 % as initial conditions to test stability/dynamic behaviour of points
 % load the relevant simulation dataset
+% change to simulate from any given/multiple saddle nodes (points on the
+% bistable line)
 % load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\VmaxVariation_Jun01.mat');
 % Plot trajectories and trialing sepratrix vector plots
+
+% change order of parameters to suit new order
+% apold = ap;
+% alliidpvecold = alliidpvec;
+ap = changeparamsorder('old2newid',apold);
+alliidpvec = changeparamsorder('old2new',alliidpvecold);
 
 % needed variables: alliidpvec,alliidxeq,alliidfeq,tout,ap;
 npts = size(alliidpvec,1);
@@ -15,6 +23,8 @@ ndp = size(alliidpvec,3);
 
 opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
 colorSpec = chooseColors(4,{'Green','Purple','Red','Orange'});
+
+ac = find(strcmpi(model.mets,'ac[e]'));
 
 % choose nxsspts random points for poseeigind within bounds in
 % xLPval
@@ -68,7 +78,7 @@ for idp = 1:ndp
         ss = unique(sslps);
         nss = length(ss);
         styles = {':','--','-.','-'};      
-        heqfig = figure;
+        heqfig = [];
         htfig = [];
         h3a = [];
         ha = [];
@@ -100,21 +110,41 @@ for idp = 1:ndp
                 pLPval = x1ind(nvar+1:end,:);
                 pvec = allisspvec(1,:);
                 
-                % find the 2 or more steady states from the LPs
-                LPxeq = [];
-                for it = 1:size(xLPval,2)
-                    ival = xLPval(:,it); 
-                    pvec(ap) = pLPval(it);
-                    [~,xeq] =...
-                    solveODEonly(1,ival,model,pvec,opts,tout); 
-                    if ~isempty(LPxeq)
-                        if ~any(abs(LPxeq-repmat(xeq,1,size(LPxeq,2)))<=1e-8)
-                            LPxeq = [LPxeq xeq];
+                % get saddle point
+                eps1 = 1e-3;
+                saddle = [];
+                while isempty(saddle)
+                    [saddle,saddlepar] = getsaddlenode(s1,x1,eps1);
+                    eps1 = eps1/10;
+                end
+                
+                % get eigen value and eigne vector at saddle
+                pvec(ap) = saddlepar;
+                model.PM(ac-length(saddle)) = saddlepar;
+                [~,lambda,w] = getKotteJacobian(saddle,pvec,model);
+                
+                % get 2 steady states by perturbing initial states from
+                % saddle
+                SAxeq = [];
+                iter = 1;
+                while iter <= 2
+                    delx = [1 -1;1 -1;1 -1];
+                    ival = saddle+1e-4*delx(:,iter);
+                    [~,xeq] = solveODEonly(1,ival,model,pvec,opts,tout);
+                    if ~isempty(SAxeq)
+                        if ~any(abs(SAxeq-repmat(xeq,1,size(SAxeq,2)))<=1e-8)
+                            SAxeq = [SAxeq xeq];
                         end
                     else
-                        LPxeq = xeq;
-                    end                
+                        SAxeq = xeq;
+                    end  
+                    iter = iter+1;
                 end
+                
+                % separatrix curves through numerical approximation from
+                % saddle
+                NumericalSeparatrix(model,pvec,opts,ap,s1,x1,SAxeq);
+                  
                 
 %                 test code for quiver3 - run on server - memory intensive
 %                 abandon
