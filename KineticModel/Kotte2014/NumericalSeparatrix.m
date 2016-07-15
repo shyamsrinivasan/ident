@@ -39,9 +39,7 @@ if ~isempty(saddle)
     unstablept = 0;
     pvec(contvarid) = saddlepar;
     model.PM(ac-length(saddle)) = saddlepar;
-    jacobian = getJacobian(saddle);
-    [w,lambda] = eig(jacobian);
-    lambda = diag(lambda);
+    [~,lambda,w] = getKotteJacobian(saddle,pvec,model);
     if any(real(lambda)>=0)
         unstablept = 1;
     end
@@ -161,18 +159,3 @@ FIGodetrajectories(real(xdynf),saddle,xeq,2,[1 2 3],hf,ha,Line);
 FIGodetrajectories(real(xdynf),saddle,xeq,2,[1 2],hf12,ha12,Line);
 FIGodetrajectories(real(xdynf),saddle,xeq,2,[2 3],hf23,ha23,Line);
 FIGodetrajectories(real(xdynf),saddle,xeq,2,[1 3],hf13,ha13,Line);
-
-function J = getJacobian(M)
-global model pvec
-
-% exact jacobian - for diagnostics only
-Jxact = KottegivenJacobian(M,pvec,model);
-
-% use ADMAT to calculate jacobians
-admatfun = @(x)Kotte_givenNLAE(x,model,pvec);
-
-xADMATobj = deriv(M,eye(3));
-xADMATres = admatfun(xADMATobj);
-% F = getval(xADMATres);
-J = getydot(xADMATres); 
-
