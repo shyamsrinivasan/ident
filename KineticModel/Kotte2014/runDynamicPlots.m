@@ -1,6 +1,6 @@
 % plot figures from sims data
 % load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\VmaxVariation_Jun01.mat');
-% load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\VmaxVariation_Jun01_PerturbationSims_Jun17.mat');
+load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\VmaxVariation_Jun01_PerturbationSims_Jun17.mat');
 npts = size(alliidpvec,1);
 nvar = size(alliidxeq,1);
 ndp = 1;
@@ -75,7 +75,7 @@ for idp = 1:ndp
                 
                 % separatrix curves through numerical approximation from
                 % saddle
-                NumericalSeparatrix(model,pvec,opts,xLPval,pLPval,ap,s1,x1);
+                NumericalSeparatrix(model,pvec,opts,ap,s1,x1,LPxeq);
 
                 % find the 2 or more steady states from the LPs
                 LPxeq = [];
