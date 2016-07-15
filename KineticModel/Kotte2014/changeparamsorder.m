@@ -29,11 +29,15 @@ switch type
         varargout{1} = oldpvec;
     case 'old2new'
         oldpvec = pvec;
-        [rdim,cdim] = size(oldpvec);
-        if cdim ~= npar
-            oldpvec = oldpvec';
-            [rdim,cdim] = size(oldpvec);
-            if cdim ~= npar
+        [rdim,cdim,pdim] = size(oldpvec);
+        newpvec = zeros(rdim,cdim,pdim);
+        % check if rdim or cdim == npar        
+        for ipdim = 1:pdim
+            if rdim == npar 
+                newpvec(1:npar,:,ipdim) = oldpvec(old2new,:,ipdim);
+            elseif cdim == npar
+                newpvec(:,1:npar,ipdim) = oldpvec(:,old2new,ipdim);
+            else
                 varargout{1} = [];
                 return
             end
