@@ -45,11 +45,11 @@ switch type
         varargout{1} = newpvec;
     case 'new2oldid'
         newid = pvec;
-        oldid = find(new2old(new2old==newid));
+        oldid = find(new2old==repmat(newid,size(new2old,1),1));
         varargout{1} = oldid;
     case 'old2newid'
         oldid = pvec;
-        newid = find(old2new(old2new==oldid));
+        newid = find(old2new==repmat(oldid,size(old2new,1),1));
         varargout{1} = newid;
 end
     
