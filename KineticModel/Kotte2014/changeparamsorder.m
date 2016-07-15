@@ -26,20 +26,6 @@ switch type
         end
         oldpvec = zeros(rdim,npar);        
         oldpvec(:,1:npar) = newpvec(:,new2old);
-%         oldpvec(1) = newpvec(12);
-%         oldpvec(2) = newpvec(1);
-%         oldpvec(3) = newpvec(2);
-%         oldpvec(4) = newpvec(13);
-%         oldpvec(5) = newpvec(3);
-%         oldpvec(6) = newpvec(4);
-%         oldpvec(7) = newpvec(14);
-%         oldpvec(8) = newpvec(5);
-%         oldpvec(9) = newpvec(6);
-%         oldpvec(10) = newpvec(7);
-%         oldpvec(11) = newpvec(8);
-%         oldpvec(12) = newpvec(9);
-%         oldpvec(13) = newpvec(10);
-%         oldpvec(14) = newpvec(11);
         varargout{1} = oldpvec;
     case 'old2new'
         oldpvec = pvec;
