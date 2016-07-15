@@ -15,7 +15,9 @@ if nargin<8
     allxeq = zeros(length(ival),npts);
 end
 if nargin<7
-    allxdyn = zeros(length(ival),length(tspan),npts);
+    if length(tspan)>2
+        allxdyn = zeros(length(ival),length(tspan),npts);
+    end        
 end
                  
 
@@ -28,6 +30,9 @@ for ipt = 1:npts
     % new equilibrium solution
     givenModel = @(t,x)KotteODE(t,x,model,pvec);
     [tout,yout] = ode45(givenModel,tspan,ival,opts);
+    if ~exist('allxdyn','var')
+        allxdyn = zeros(length(ival),length(tout),npts);
+    end
     allxdyn(:,:,ipt) = yout';
     allxeq(:,ipt) = yout(end,:)';   
     
