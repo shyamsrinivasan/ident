@@ -1,6 +1,6 @@
-function bifurcationPlot(y,s1,f1,idx,hfig)
+function hfig = bifurcationPlot(y,s1,f1,idx,hfig)
 % idx - [x-axis y-axis z-axis] index values
-if nargin<7
+if nargin<5
     hfig = figure;
 end
 
@@ -89,7 +89,7 @@ if size(LPval,1)>4
     if xid > 5
         [xlabel,ylabel] = getaxislabels(2,4,[xid yid]);
     else
-        [xlabel,ylabel] = getaxislabels(2,1,[xid yid]);
+        [xlabel,ylabel] = getKotteaxislabels(2,1,[xid yid]);
     end
 else
     if xid > 3
@@ -135,10 +135,10 @@ if nargin <3
     idx = [];
 end
 
-fluxlist = {'ACpts mmole/h','ENZC mmole/h','ECbiomass(FDP) mmole/h',...
-           'GLUX mmole/h','PEPout mmole/h'};
-cnclist = {'PEP','FDP','ENZ'};  
-parlist = {'acetate'};
+fluxlist = {'ACpts a,u','ENZC a.u','ECbiomass(FDP) a.u',...
+           'GLUX a.u','PEPout a.u'};
+cnclist = {'PEP a.u','FDP a.u','ENZ a.u'};  
+parlist = {'acetate a.u'};
 
 if plotype == 3    
     if datatype == 1
