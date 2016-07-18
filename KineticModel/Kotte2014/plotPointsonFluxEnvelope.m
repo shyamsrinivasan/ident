@@ -39,6 +39,7 @@ end
 
 nrxn = size(fluxid,1);
 for ifl = 1:nrxn
+    set(0,'CurrentFigure',hfig);
     set(hfig,'CurrentAxes',hsubfig(ifl));
     set(hsubfig(ifl),'NextPlot','add');
     
