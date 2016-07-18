@@ -52,10 +52,9 @@ ne = 2;             % or 2
 acetate = 0.1;      % a.u acetate
 d = 0.25;           % or 0.25 or 0.35
 kPEPout = 0.2;
-pvec = [kEcat,KEacetate,...
-        KFbpFBP,vFbpmax,Lfbp,KFbpPEP,...
-        vEXmax,KEXPEP,...
-        vemax,KeFBP,ne,acetate,d,kPEPout];
+pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
+        KEXPEP,vemax,KeFBP,ne,acetate,d,...
+        kPEPout,kEcat,vFbpmax,vEXmax];
 
 % systems check
 givenModel = @(t,x)KotteODE(t,x,model,pvec);
@@ -78,7 +77,7 @@ solveEquilibriumODE
 
 % get saddle node
 [saddle,saddlepar] = getsaddlenode(data.s1,data.x1,5e-3);
-pvec(12) = saddlepar;
+pvec(9) = saddlepar;
 model.PM(ac-length(saddle)) = saddlepar;
 
 % perturb saddle to get steady states
@@ -104,4 +103,4 @@ elseif size(fss,2)>=1
     plotPointsonFluxEnvelope(hfig,hsubfig,fid,[ifval fss ffval]);
 end
 
-NumericalSeparatrix(model,pvec,opts,[],[],ap,data.s1,data.x1,5e-3);
+NumericalSeparatrix(model,pvec,opts,ap,data.s1,data.x1,[xeq1 xeq2],5e-3);
