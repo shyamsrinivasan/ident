@@ -25,12 +25,12 @@ FBAmodel = FBAfluxes(FBAmodel,'fba',{'ACt2r','ENZ1ex'},Vup_struct,...
 %                      find(strcmpi(FBAmodel.rxns,'EC_Biomass')));                 
                  
 % flux envelope
-[hfig,hsubfig,prxnid,flag] = FluxEnvelope(FBAmodel,...
-                        {'bmt2r','PEPt2r';...
-                        'ACpts','ENZtr';...
-                        'bmt2r','ACpts';...
-                        'ACpts','PEPt2r'},...
-                        {'ACt2r','ENZ1ex'});
+% [hfig,hsubfig,prxnid,flag] = FluxEnvelope(FBAmodel,...
+%                         {'bmt2r','PEPt2r';...
+%                         'ACpts','ENZtr';...
+%                         'bmt2r','ACpts';...
+%                         'ACpts','PEPt2r'},...
+%                         {'ACt2r','ENZ1ex'});
                     
 % call to bifurcation analysis script using MATCONT
 % KotteMATCONTscript         
@@ -69,7 +69,7 @@ KeFBP = 0.45;       % or 0.45
 ne = 2;             % or 2
 acetate = 0.1;      % a.u acetate
 d = 0.25;           % or 0.25 or 0.35
-kPEPout = 2.0004e-4;
+kPEPout = 0.2;
 pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
         KEXPEP,vemax,KeFBP,ne,acetate,d,...
         kPEPout,kEcat,vFbpmax,vEXmax];
@@ -90,15 +90,15 @@ pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
 % npts = size(vs,1);
 
 % sample parameters indicated by indices in idp
-idp = [11];
-npts = 10;
+idp = 12;
+npts = 17;
 
 % systems check
 givenModel = @(t,x)KotteODE(t,x,model,pvec);
 fluxg = Kotte_givenFlux([M;model.PM],pvec,model);
 dMdtg = givenModel(0,M);
 
-tspan = 0:0.1:500;
+tspan = 0:0.1:2000;
 % allflag = zeros(1,npts);
 
 opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
@@ -107,6 +107,13 @@ alliidxeq = zeros(length(M),npts,length(idp));
 alliidxdyn = zeros(length(M),length(tspan),npts,length(idp));
 alliidfeq = zeros(length(fluxg),npts,length(idp));
 alliidfdyn = zeros(length(fluxg),length(tspan),npts,length(idp));
+allpvec = repmat(pvec,npts,1);
+cmb = [1 1 1;.25 1 1;1 .25 1;1 1 .25;.25 .25 .25;...
+       .5 1 1;1 .5 1;1 1 .5;.5 .5 .5;...
+       2 1 1;1 2 1;1 1 2;2 2 2;...
+       4 1 1;1 4 1;1 1 4;4 4 4];
+allpvec(:,[12 13 14]) = cmb;
+   
 for iid = 1:length(idp)
     % reset pvec
     pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
@@ -115,8 +122,9 @@ for iid = 1:length(idp)
     
     plb = 0;
     pub = 1;    
-    fprintf('Parameter #%d\n',iid);
-    allpvec = sampleEKP(pvec,plb,pub,idp(iid),npts); 
+    fprintf('Parameter Combination #%d\n',iid);
+    
+%     allpvec = sampleEKP(pvec,plb,pub,idp(iid),npts); 
 %     smp_pvec = linspace(0,1,5000);
 %     allpvec(:,idp(iid)) = smp_pvec';
     
