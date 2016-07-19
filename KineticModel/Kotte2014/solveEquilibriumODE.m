@@ -7,7 +7,7 @@
               allxdyn,allxeq,allfdyn,allfeq);
 
 for ipt = 1:npts
-    fprintf('\nIteration #%d Equilibrium Continuation...\n',ipt);
+    fprintf('\nIteration #%d of %d Equilibrium Continuation...\n',ipt,npts);
     
     ap = 9;
     xeq = allxeq(:,ipt);
@@ -15,18 +15,22 @@ for ipt = 1:npts
     
     % run MATCONT
     [data,y,p] = execMATCONT(xeq,pvec,ap,fluxg,model);
-    bifurcationPlot(data.flux,data.s1,data.f1,[5,3]);
-    bifurcationPlot(data.x1,data.s1,data.f1,[4,1]);    
-    bifurcationPlot(data.x1,data.s1,data.f1,[4,2]);
-    bifurcationPlot([data.flux;data.x1(end,:)],data.s1,data.f1,[6,5]);
+    if ~isempty(data) && size(data.s1,1)>2
+        bifurcationPlot(data.flux,data.s1,data.f1,[5,3]);
+        bifurcationPlot(data.x1,data.s1,data.f1,[4,1]);    
+        bifurcationPlot(data.x1,data.s1,data.f1,[4,2]);
+        bifurcationPlot([data.flux;data.x1(end,:)],data.s1,data.f1,[6,5]);
+    end
     
     % save MATCONT results
     s.(['pt' num2str(ipt)]) = data;
     
     % get the mss for y and p
-    [yss,iyval,fyval] = parseMATCONTresult(data.s1,y);
-    [pss,ipval,fpval] = parseMATCONTresult(data.s1,p);
-    [fss,ifval,ffval] = parseMATCONTresult(data.s1,data.flux);
+    if ~isempty(data)
+        [yss,iyval,fyval] = parseMATCONTresult(data.s1,y);
+        [pss,ipval,fpval] = parseMATCONTresult(data.s1,p);
+        [fss,ifval,ffval] = parseMATCONTresult(data.s1,data.flux);
+    end
         
     fprintf('Equilibrium Continuation Complete\n');
 end
