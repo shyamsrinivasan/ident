@@ -4,19 +4,20 @@
 % load the relevant simulation dataset
 % change to simulate from any given/multiple saddle nodes (points on the
 % bistable line)
-% load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\VmaxVariation_Jun01.mat');
+% load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\VmaxVariation_July19.mat');
 % Plot trajectories and trialing sepratrix vector plots
 
 % change order of parameters to suit new order
 % apold = ap;
 % alliidpvecold = alliidpvec;
-ap = changeparamsorder('old2newid',apold);
-alliidpvec = changeparamsorder('old2new',alliidpvecold);
+% ap = changeparamsorder('old2newid',apold);
+% alliidpvec = changeparamsorder('old2new',alliidpvecold);
 
 % needed variables: alliidpvec,alliidxeq,alliidfeq,tout,ap;
 npts = size(alliidpvec,1);
 nvar = size(alliidxeq,1);
 ndp = size(alliidpvec,3);
+tout = tspan;
 
 % FIGmssdynamicswpvec(alliidxdyn,tout,alliidpvec,1,1,1:1000,'conc',...
 %                     1:find(tout==100))
@@ -111,11 +112,11 @@ for idp = 1:ndp
                 pvec = allisspvec(1,:);
                 
                 % get saddle point
-                eps1 = 1e-3;
+                eps1 = 1e-4;
                 saddle = [];
                 while isempty(saddle)
                     [saddle,saddlepar] = getsaddlenode(s1,x1,eps1);
-                    eps1 = eps1/10;
+                    eps1 = eps1*10;
                 end
                 
                 % get eigen value and eigne vector at saddle
@@ -129,7 +130,7 @@ for idp = 1:ndp
                 iter = 1;
                 while iter <= 2
                     delx = [1 -1;1 -1;1 -1];
-                    ival = saddle+1e-4*delx(:,iter);
+                    ival = saddle+1e-2*delx(:,iter);
                     [~,xeq] = solveODEonly(1,ival,model,pvec,opts,tout);
                     if ~isempty(SAxeq)
                         if ~any(abs(SAxeq-repmat(xeq,1,size(SAxeq,2)))<=1e-8)
@@ -137,13 +138,28 @@ for idp = 1:ndp
                         end
                     else
                         SAxeq = xeq;
-                    end  
+                    end   
+                    if abs(xeq-SAxeq(:,1))<1e-8
+                        Line.Color = colorSpec{1};
+                        Point.MarkerEdgeColor = [0 0 0];
+                        Point.MarkerFaceColor = colorSpec{1};
+                    elseif size(SAxeq,2)>1 & abs(xeq-SAxeq(:,2))<1e-8
+                        Line.Color = colorSpec{2};
+                        Point.MarkerEdgeColor = [0 0 0];
+                        Point.MarkerFaceColor = colorSpec{2};
+                    else
+                        Point = [];
+                    end 
+                    [heqfig,h3a] =...
+                    FIGmssEqIvalPerturbations(ival,xeq,2,[1 2],heqfig,h3a,Point); 
                     iter = iter+1;
                 end
                 
+                
+                
                 % separatrix curves through numerical approximation from
                 % saddle
-                NumericalSeparatrix(model,pvec,opts,ap,s1,x1,SAxeq);
+%                 NumericalSeparatrix(model,pvec,opts,ap,s1,x1,SAxeq);
                   
                 
 %                 test code for quiver3 - run on server - memory intensive
@@ -175,63 +191,63 @@ for idp = 1:ndp
                 
                 % choose nxsspts random points for poseeigind within bounds in
                 % xLPval                
-                for kindexpts = 1:(nindexpts-1)
-                    pxLPval =...
-                    sampleEKP(xLPval(:,kindexpts)',xLPval(:,kindexpts),...
-                              xLPval(:,kindexpts+1),[1 2 3],nxsspts)';
-                    ppLPval =...
-                    sampleEKP(pLPval(:,kindexpts)',pLPval(1,kindexpts),...
-                              pLPval(1,kindexpts+1),1,nxsspts);
+%                 for kindexpts = 1:(nindexpts-1)
+%                     pxLPval =...
+%                     sampleEKP(xLPval(:,kindexpts)',xLPval(:,kindexpts),...
+%                               xLPval(:,kindexpts+1),[1 2 3],nxsspts)';
+%                     ppLPval =...
+%                     sampleEKP(pLPval(:,kindexpts)',pLPval(1,kindexpts),...
+%                               pLPval(1,kindexpts+1),1,nxsspts);
                     
                     % subject these points to perturbations  
-                    for ixsspt = 1:nxsspts
-                        ival = pxLPval(:,ixsspt); 
-                        pvec(ap) = ppLPval(ixsspt);
-                        [xdyn,xeq,fdyn,feq,slope] =...
-                        solveODEonly(1,ival,model,pvec,opts,tout); 
-                        allival(:,ipt) = ival;
-                        allxeq(:,isol) = xeq;
-                        allxdyn(:,:,isol) = xdyn;
-                        allslope(:,:,isol) = slope;
-                        isol = isol+1;
+%                     for ixsspt = 1:nxsspts
+%                         ival = pxLPval(:,ixsspt); 
+%                         pvec(ap) = ppLPval(ixsspt);
+%                         [xdyn,xeq,fdyn,feq,slope] =...
+%                         solveODEonly(1,ival,model,pvec,opts,tout); 
+%                         allival(:,ipt) = ival;
+%                         allxeq(:,isol) = xeq;
+%                         allxdyn(:,:,isol) = xdyn;
+%                         allslope(:,:,isol) = slope;
+%                         isol = isol+1;
+%                         
+%                         Line.DisplayName =...
+%                         ['pt' num2str(ipt) 'smp' num2str(ixsspt)];       
+%                     
+%                         if abs(xeq-LPxeq(:,1))<1e-8
+%                             Line.Color = colorSpec{1};
+%                             Point.MarkerEdgeColor = [0 0 0];
+%                             Point.MarkerFaceColor = colorSpec{1};
+%                         elseif abs(xeq-LPxeq(:,2))<1e-8
+%                             Line.Color = colorSpec{2};
+%                             Point.MarkerEdgeColor = [0 0 0];
+%                             Point.MarkerFaceColor = colorSpec{2};
+%                         end  
                         
-                        Line.DisplayName =...
-                        ['pt' num2str(ipt) 'smp' num2str(ixsspt)];       
-                    
-                        if abs(xeq-LPxeq(:,1))<1e-8
-                            Line.Color = colorSpec{1};
-                            Point.MarkerEdgeColor = [0 0 0];
-                            Point.MarkerFaceColor = colorSpec{1};
-                        elseif abs(xeq-LPxeq(:,2))<1e-8
-                            Line.Color = colorSpec{2};
-                            Point.MarkerEdgeColor = [0 0 0];
-                            Point.MarkerFaceColor = colorSpec{2};
-                        end  
-                        
-                        [heqfig,h3a] =...
-                        FIGmssEqIvalPerturbations(ival,xeq,2,[],heqfig,h3a,Point); 
+%                         [heqfig,h3a] =...
+%                         FIGmssEqIvalPerturbations(ival,xeq,2,[],heqfig,h3a,Point); 
                         
                         % plot dynbamic trajectories
-                        [htfig,ha] =...
-                        FIGodetrajectories(xdyn,ival,xeq,2,[1 2],htfig,ha,[],Point);
+%                         [htfig,ha] =...
+%                         FIGodetrajectories(xdyn,ival,xeq,2,[1 2],htfig,ha,[],Point);
                         
                         % Plot all dynamic information
 %                         [hfig,hsfig,hline] =...
 %                         FIGmssdynamicswpvec(xdyn,tout,pvec,[1 2 3],1,1,2,1:find(tout==100),Line,hfig,hsfig,hline);
-                    end
-                end                
+%                     end
+%                 end                
             end            
         end
         % print the equlibrium points in different color
         % plot3 returns line object handles        
 
-        for ixeq = 1:size(LPxeq,2)
-            plot3(h3a,LPxeq(1,ixeq),LPxeq(2,ixeq),LPxeq(3,ixeq),...
-                                              'Marker','o',...
-                                              'MarkerSize',10,...
-                                              'MarkerFaceColor','r',...
-                                              'MarkerEdgeColor','r');
-        end
+%         for ixeq = 1:size(LPxeq,2)
+%             plot3(h3a,LPxeq(1,ixeq),LPxeq(2,ixeq),LPxeq(3,ixeq),...
+%                                               'Marker','o',...
+%                                               'MarkerSize',10,...
+%                                               'MarkerFaceColor','r',...
+%                                               'MarkerEdgeColor','r');
+%         end
 % Figures from simulation due to changes in parameters - equilibrium and dynamic
 % Plot trajectories and trialing sepratrix vector plots
     end
