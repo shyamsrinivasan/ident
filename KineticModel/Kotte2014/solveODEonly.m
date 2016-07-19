@@ -22,7 +22,7 @@ end
                  
 
 for ipt = 1:npts
-    fprintf('\nIteration #%d Equilibrium Integration...',ipt);
+    fprintf('\nIteration #%d of %d Equilibrium Integration...',ipt,npts);
     
     % change in pvec
     pvec = allpvec(ipt,:);
@@ -30,9 +30,9 @@ for ipt = 1:npts
     % new equilibrium solution
     givenModel = @(t,x)KotteODE(t,x,model,pvec);
     [tout,yout] = ode45(givenModel,tspan,ival,opts);
-    if ~exist('allxdyn','var')
-        allxdyn = zeros(length(ival),length(tout),npts);
-    end
+%     if ~exist('allxdyn','var')
+%         allxdyn = zeros(length(ival),length(tout),npts);
+%     end
     allxdyn(:,:,ipt) = yout';
     allxeq(:,ipt) = yout(end,:)';   
     
