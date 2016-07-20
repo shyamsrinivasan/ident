@@ -69,6 +69,8 @@ tout = tspan;
 for iid = 1:ndp
     hf1 = [];
     ha1 = [];
+    hf2 = [];
+    ha2 = [];
     % collect points capable of mss
     if isfield(allnss,sprintf('iid%d',iid))
         msspts = find(allnss.(['iid' num2str(iid)]));
@@ -108,6 +110,8 @@ for iid = 1:ndp
                     Point.MarkerSize = 20;
                     [hf1,ha1] =...
                     FIGmssEqIvalPerturbations(ival1,xeq1,2,[1 2],hf1,ha1,Point);
+                    [hf2,ha2] =...
+                    FIGmssEqIvalPerturbations(ival1,xeq1,2,[1 3],hf2,ha2,Point);
                 
                     % perturbation from 2nd ss
                     ival2 = xss(:,2);
@@ -129,6 +133,8 @@ for iid = 1:ndp
                     Point.MarkerSize = 20;             
                     [hf1,ha1] =...
                     FIGmssEqIvalPerturbations(ival2,xeq2,2,[1 2],hf1,ha1,Point); 
+                    [hf2,ha2] =...
+                    FIGmssEqIvalPerturbations(ival2,xeq2,2,[1 3],hf2,ha2,Point);
                 else
                     s1 =...
                     siid.(['iid' num2str(iid)]).(['pt' num2str(ipt)]).s1;
@@ -171,6 +177,8 @@ for iid = 1:ndp
                     Point.MarkerSize = 20;
                     [hf1,ha1] =...
                     FIGmssEqIvalPerturbations(ival1,xeq1,2,[1 2],hf1,ha1,Point); 
+                    [hf2,ha2] =...
+                    FIGmssEqIvalPerturbations(ival1,xeq1,2,[1 3],hf2,ha2,Point);
                     
                     % negative pertrubation from saddle
                     ival2 = saddle-1e-2*[1;1;1];
@@ -190,9 +198,27 @@ for iid = 1:ndp
                     Point.Marker = '.';
                     Point.MarkerSize = 20;
                     [hf1,ha1] =...
-                    FIGmssEqIvalPerturbations(ival2,xeq2,2,[1 2],hf1,ha1,Point);                     
+                    FIGmssEqIvalPerturbations(ival2,xeq2,2,[1 2],hf1,ha1,Point); 
+                    [hf2,ha2] =...
+                    FIGmssEqIvalPerturbations(ival2,xeq2,2,[1 3],hf2,ha2,Point);
                 end                
             end          
         end
     end
 end
+
+% hobj = get(ha1,'Children');
+% set(0,'CurrentFigure',hf1);
+% set(hf1,'CurrentAxes',ha1);
+% iter = 0;
+% pid = 1;
+% while 2*iter+1 <= length(hobj)
+%     xdata = get(hobj(2*iter+1),'XData');
+%     ydata = get(hobj(2*iter+1),'YData');
+%     if rem(2*iter+1,4)==0
+%         pid = pid+1;
+%     end
+%     ptid = [P num2str(pid)];
+%     text(xdata,ydata,ptid);
+%     iter = iter+1;    
+% end
