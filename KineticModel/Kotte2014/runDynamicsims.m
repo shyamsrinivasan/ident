@@ -4,7 +4,7 @@
 % load the relevant simulation dataset
 % change to simulate from any given/multiple saddle nodes (points on the
 % bistable line)
-% load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\VmaxVariation_July19.mat');
+load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\VmaxVariation_July19.mat');
 % Plot trajectories and trialing sepratrix vector plots
 
 % change order of parameters to suit new order
@@ -32,11 +32,11 @@ ac = find(strcmpi(model.mets,'ac[e]'));
 % preliminary evaluation to pre allocate memory for collecting ode sim data
 nxsspts = 3;
 nsols = zeros(ndp,1);
-for idp = 1:ndp
+for iid = 1:ndp
     % changed parameters    
-    if isfield(allnss,sprintf('iid%d',idp));
-        msspts = find(allnss.(['iid' num2str(idp)]));
-        sslps = allnss.(['iid' num2str(idp)])(msspts);
+    if isfield(allnss,sprintf('iid%d',iid));
+        msspts = find(allnss.(['iid' num2str(iid)]));
+        sslps = allnss.(['iid' num2str(iid)])(msspts);
         ss = unique(sslps);
         nss = length(ss);
         % number of different mss
@@ -46,9 +46,9 @@ for idp = 1:ndp
             % collect corresponding limit points
             for ipt = 1:nmsspts
                 index =...
-                cat(1,siid.(['iid' num2str(idp)]).(['pt' num2str(allmsspts(ipt))]).s1.index);
+                cat(1,siid.(['iid' num2str(iid)]).(['pt' num2str(allmsspts(ipt))]).s1.index);
                 nindexpts = length(index);
-                nsols(idp) = nsols(idp)+(nindexpts-1)*nxsspts;
+                nsols(iid) = nsols(iid)+(nindexpts-1)*nxsspts;
             end
         end
     end
@@ -58,24 +58,24 @@ end
 
 % determine the #parameters/combinations that have been changed
 isol = 1;
-for idp = 1:ndp
+for iid = 1:ndp
     % determine actual # parameters that have been changed
-    npar = length(alliidpvec(1,:,idp));
+    npar = length(alliidpvec(1,:,iid));
     if npts>1
-        diffpar = find(alliidpvec(1,:,idp)~=alliidpvec(2,:,idp));
+        diffpar = find(alliidpvec(1,:,iid)~=alliidpvec(2,:,iid));
     end    
     hfig = [];
     hsfig = [];
     hline = [];    
-    allival = zeros(nvar,nsols(idp));
-    allxeq = zeros(nvar,nsols(idp));
-    allxdyn = zeros(nvar,length(tout),nsols(idp));
-    allslope = zeros(nvar,length(tout),nsols(idp));
+    allival = zeros(nvar,nsols(iid));
+    allxeq = zeros(nvar,nsols(iid));
+    allxdyn = zeros(nvar,length(tout),nsols(iid));
+    allslope = zeros(nvar,length(tout),nsols(iid));
     
     % choose/determine points that have mss
-    if isfield(allnss,sprintf('iid%d',idp));
-        msspts = find(allnss.(['iid' num2str(idp)]));
-        sslps = allnss.(['iid' num2str(idp)])(msspts);
+    if isfield(allnss,sprintf('iid%d',iid))
+        msspts = find(allnss.(['iid' num2str(iid)]));
+        sslps = allnss.(['iid' num2str(iid)])(msspts);
         ss = unique(sslps);
         nss = length(ss);
         styles = {':','--','-.','-'};      
@@ -86,27 +86,27 @@ for idp = 1:ndp
         
         for iss = 1:nss
             allmsspts = msspts(sslps==ss(iss));
-            allisspvec = alliidpvec(allmsspts,:,idp);
-            allissxeq = alliidxeq(:,allmsspts,idp);
+            allisspvec = alliidpvec(allmsspts,:,iid);
+            allissxeq = alliidxeq(:,allmsspts,iid);
             nmsspts = length(allmsspts);
             Line.LineStyle = styles{iss};
                                                
             % collect corresponding limit points
             for ipt = 1:nmsspts
                 index =...
-                cat(1,siid.(['iid' num2str(idp)]).(['pt' num2str(allmsspts(ipt))]).s1.index);
+                cat(1,siid.(['iid' num2str(iid)]).(['pt' num2str(allmsspts(ipt))]).s1.index);
                 s1 =...
-                siid.(['iid' num2str(idp)]).(['pt' num2str(allmsspts(ipt))]).s1;
+                siid.(['iid' num2str(iid)]).(['pt' num2str(allmsspts(ipt))]).s1;
                 x1ind =...
-                siid.(['iid' num2str(idp)]).(['pt' num2str(allmsspts(ipt))]).x1(:,index);
+                siid.(['iid' num2str(iid)]).(['pt' num2str(allmsspts(ipt))]).x1(:,index);
                 x1 =...
-                siid.(['iid' num2str(idp)]).(['pt' num2str(allmsspts(ipt))]).x1;
+                siid.(['iid' num2str(iid)]).(['pt' num2str(allmsspts(ipt))]).x1;
                 flux1 =...
-                siid.(['iid' num2str(idp)]).(['pt' num2str(allmsspts(ipt))]).flux;
+                siid.(['iid' num2str(iid)]).(['pt' num2str(allmsspts(ipt))]).flux;
                 eigind =...
-                siid.(['iid' num2str(idp)]).(['pt' num2str(allmsspts(ipt))]).f1(:,index);
+                siid.(['iid' num2str(iid)]).(['pt' num2str(allmsspts(ipt))]).f1(:,index);
                 f1 =...
-                siid.(['iid' num2str(idp)]).(['pt' num2str(allmsspts(ipt))]).f1;
+                siid.(['iid' num2str(iid)]).(['pt' num2str(allmsspts(ipt))]).f1;
                 xLPval = x1ind(1:nvar,:);
                 pLPval = x1ind(nvar+1:end,:);
                 pvec = allisspvec(1,:);
