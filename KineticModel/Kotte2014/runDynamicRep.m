@@ -1,6 +1,7 @@
 % runDynamicsims
 % simulate from any given/multiple saddle nodes (points on the
 % bistable line)
+
 % load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\VmaxVariation_July19.mat');
 
 % perturb new systems from old equilibrium point to detect new steady state
@@ -80,61 +81,20 @@ for iid = 1:ndp
         allmsspts = [];
         for iss = 1:nss
             allmsspts = union(allmsspts,msspts(sslps==ss(iss)));
+            ivalpts = zeros(2*nvar,npts);
             xeqpts = zeros(2*nvar,npts);
             eqid = zeros(2,npts);
             % perturbation for all points
             for ipt = 1:npts
+                pvec = alliidpvec(ipt,:,iid);
+                pvec(9) = orig_saddlepar;
+                model.PM(ac-length(orig_saddle)) = orig_saddlepar;
                 % if point not capable of mss
-                if ~ismember(ipt,allmsspts)
-                    pvec = alliidpvec(ipt,:,iid);
-                    pvec(9) = orig_saddlepar;
-                    model.PM(ac-length(orig_saddle)) = orig_saddlepar;
+                if ~ismember(ipt,allmsspts)                    
                     
-                    % perturbation from 1st ss
-                    ival1 = xss(:,1);
-                    [~,xeq1] =...
-                    solveODEonly(1,ival1,model,pvec,opts,tspanf);
-                    xeqpts(1:nvar,ipt) = xeq1;
-                    if xeq1(1)>xeq1(2)
-                        % if pep > fdp                        
-                        Point.MarkerFaceColor = colorSpec{1};   
-                        Point.MarkerEdgeColor = colorSpec{1}; 
-                        eqid(1,ipt) = 1;
-                    elseif xeq1(2)>xeq1(1)
-                        % if pep < fdp                        
-                        Point.MarkerFaceColor = colorSpec{2}; 
-                        Point.MarkerEdgeColor = colorSpec{2};  
-                        eqid(1,ipt) = 2;
-                    end                    
-                    Point.Marker = '.';
-                    Point.MarkerSize = 20;
-                    [hf1,ha1] =...
-                    FIGmssEqIvalPerturbations(ival1,xeq1,2,[1 2],hf1,ha1,Point);
-                    [hf2,ha2] =...
-                    FIGmssEqIvalPerturbations(ival1,xeq1,2,[1 3],hf2,ha2,Point);
-                
-                    % perturbation from 2nd ss
-                    ival2 = xss(:,2);
-                    [~,xeq2] =...
-                    solveODEonly(1,ival2,model,pvec,opts,tspanf);
-                    xeqpts(nvar+1:end,ipt) = xeq2;
-                    if xeq2(1)>xeq2(2)
-                        % if pep > fdp                        
-                        Point.MarkerFaceColor = colorSpec{1};   
-                        Point.MarkerEdgeColor = colorSpec{1};  
-                        eqid(2,ipt) = 1;
-                    elseif xeq2(2)>xeq2(1)
-                        % if pep < fdp                        
-                        Point.MarkerFaceColor = colorSpec{2}; 
-                        Point.MarkerEdgeColor = colorSpec{2};  
-                        eqid(2,ipt) = 2;
-                    end                    
-                    Point.Marker = '.';
-                    Point.MarkerSize = 20;             
-                    [hf1,ha1] =...
-                    FIGmssEqIvalPerturbations(ival2,xeq2,2,[1 2],hf1,ha1,Point); 
-                    [hf2,ha2] =...
-                    FIGmssEqIvalPerturbations(ival2,xeq2,2,[1 3],hf2,ha2,Point);
+                    % perturbations from ss 
+                    [ivalpts,xeqpts,eqid,hf1,ha1] = ParameterPerturbations(model,pvec,...
+                        xss,ivalpts,xeqpts,eqid,ipt,tspanf,colorSpec,opts,hf1,ha1);
                 else
                     s1 =...
                     siid.(['iid' num2str(iid)]).(['pt' num2str(ipt)]).s1;
@@ -147,60 +107,65 @@ for iid = 1:ndp
                     bifurcationPlot(x1,s1,f1,[4,2]);
                     bifurcationPlot(x1,s1,f1,[4,1]);
                     bifurcationPlot(x1,s1,f1,[4,3]); 
-                    % get saddle node
-                    eps1 = 1e-4;
-                    saddle = [];
-                    while isempty(saddle)
-                        [saddle,saddlepar] = getsaddlenode(s1,x1,eps1);
-                        eps1 = eps1*10;
-                    end
-                    pvec(ap) = saddlepar;
-                    model.PM(ac-length(saddle)) = saddlepar;
-                    [~,lambda,w] = getKotteJacobian(saddle,pvec,model);
                     
-                    % positive perturb around saddle
-                    ival1 = saddle+1e-2*[1;1;1];
-                    [~,xeq1] = solveODEonly(1,ival1,model,pvec,opts,tspanf);
-                    xeqpts(1:nvar,ipt) = xeq1;
-                    if xeq1(1)>xeq1(2)
-                        % if pep > fdp                        
-                        Point.MarkerFaceColor = colorSpec{1};   
-                        Point.MarkerEdgeColor = colorSpec{1}; 
-                        eqid(1,ipt) = 1;
-                    elseif xeq1(2)>xeq1(1)
-                        % if pep < fdp                        
-                        Point.MarkerFaceColor = colorSpec{2}; 
-                        Point.MarkerEdgeColor = colorSpec{2};  
-                        eqid(1,ipt) = 2;
-                    end       
-                    Point.Marker = '.';
-                    Point.MarkerSize = 20;
-                    [hf1,ha1] =...
-                    FIGmssEqIvalPerturbations(ival1,xeq1,2,[1 2],hf1,ha1,Point); 
-                    [hf2,ha2] =...
-                    FIGmssEqIvalPerturbations(ival1,xeq1,2,[1 3],hf2,ha2,Point);
+                    % perturbations from ss 
+                    [xeqpts,eqid,hf1,ha1] = ParameterPerturbations(model,pvec,...
+                        xss,xeqpts,eqid,ipt,tspanf,colorSpec,opts,hf1,ha1);
+                    
+                    % get saddle node
+%                     eps1 = 1e-4;
+%                     saddle = [];
+%                     while isempty(saddle)
+%                         [saddle,saddlepar] = getsaddlenode(s1,x1,eps1);
+%                         eps1 = eps1*10;
+%                     end
+%                     pvec(ap) = saddlepar;
+%                     model.PM(ac-length(saddle)) = saddlepar;
+%                     [~,lambda,w] = getKotteJacobian(saddle,pvec,model);
+%                     
+%                     % positive perturb around saddle
+%                     ival1 = saddle+1e-2*[1;1;1];
+%                     [~,xeq1] = solveODEonly(1,ival1,model,pvec,opts,tspanf);
+%                     xeqpts(1:nvar,ipt) = xeq1;
+%                     if xeq1(1)>xeq1(2)
+%                         % if pep > fdp                        
+%                         Point.MarkerFaceColor = colorSpec{1};   
+%                         Point.MarkerEdgeColor = colorSpec{1}; 
+%                         eqid(1,ipt) = 1;
+%                     elseif xeq1(2)>xeq1(1)
+%                         % if pep < fdp                        
+%                         Point.MarkerFaceColor = colorSpec{2}; 
+%                         Point.MarkerEdgeColor = colorSpec{2};  
+%                         eqid(1,ipt) = 2;
+%                     end       
+%                     Point.Marker = '.';
+%                     Point.MarkerSize = 20;
+%                     [hf1,ha1] =...
+%                     FIGmssEqIvalPerturbations(ival1,xeq1,2,[1 2],hf1,ha1,Point); 
+%                     [hf2,ha2] =...
+%                     FIGmssEqIvalPerturbations(ival1,xeq1,2,[1 3],hf2,ha2,Point);
                     
                     % negative pertrubation from saddle
-                    ival2 = saddle-1e-2*[1;1;1];
-                    [~,xeq2] = solveODEonly(1,ival2,model,pvec,opts,tspanf);
-                    xeqpts(nvar+1:end,ipt) = xeq2;
-                    if xeq2(1)>xeq2(2)
-                        % if pep > fdp                        
-                        Point.MarkerFaceColor = colorSpec{1};   
-                        Point.MarkerEdgeColor = colorSpec{1}; 
-                        eqid(2,ipt) = 1;
-                    elseif xeq2(2)>xeq2(1)
-                        % if pep < fdp                        
-                        Point.MarkerFaceColor = colorSpec{2}; 
-                        Point.MarkerEdgeColor = colorSpec{2};  
-                        eqid(2,ipt) = 2;
-                    end     
-                    Point.Marker = '.';
-                    Point.MarkerSize = 20;
-                    [hf1,ha1] =...
-                    FIGmssEqIvalPerturbations(ival2,xeq2,2,[1 2],hf1,ha1,Point); 
-                    [hf2,ha2] =...
-                    FIGmssEqIvalPerturbations(ival2,xeq2,2,[1 3],hf2,ha2,Point);
+%                     ival2 = saddle-1e-2*[1;1;1];
+%                     [~,xeq2] = solveODEonly(1,ival2,model,pvec,opts,tspanf);
+%                     xeqpts(nvar+1:end,ipt) = xeq2;
+%                     if xeq2(1)>xeq2(2)
+%                         % if pep > fdp                        
+%                         Point.MarkerFaceColor = colorSpec{1};   
+%                         Point.MarkerEdgeColor = colorSpec{1}; 
+%                         eqid(2,ipt) = 1;
+%                     elseif xeq2(2)>xeq2(1)
+%                         % if pep < fdp                        
+%                         Point.MarkerFaceColor = colorSpec{2}; 
+%                         Point.MarkerEdgeColor = colorSpec{2};  
+%                         eqid(2,ipt) = 2;
+%                     end     
+%                     Point.Marker = '.';
+%                     Point.MarkerSize = 20;
+%                     [hf1,ha1] =...
+%                     FIGmssEqIvalPerturbations(ival2,xeq2,2,[1 2],hf1,ha1,Point); 
+%                     [hf2,ha2] =...
+%                     FIGmssEqIvalPerturbations(ival2,xeq2,2,[1 3],hf2,ha2,Point);
                 end                
             end          
         end
