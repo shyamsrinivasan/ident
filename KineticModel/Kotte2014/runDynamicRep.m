@@ -109,8 +109,8 @@ for iid = 1:ndp
                     bifurcationPlot(x1,s1,f1,[4,3]); 
                     
                     % perturbations from ss 
-                    [xeqpts,eqid,hf1,ha1] = ParameterPerturbations(model,pvec,...
-                        xss,xeqpts,eqid,ipt,tspanf,colorSpec,opts,hf1,ha1);
+                    [ivalpts,xeqpts,eqid,hf1,ha1] = ParameterPerturbations(model,pvec,...
+                        xss,ivalpts,xeqpts,eqid,ipt,tspanf,colorSpec,opts,hf1,ha1);
                     
                     % get saddle node
 %                     eps1 = 1e-4;
