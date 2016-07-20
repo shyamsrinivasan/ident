@@ -1,5 +1,5 @@
-function plotKotteVariables(xdata,ydata,cnt)
-figure
+function hf = plotKotteVariables(xdata,ydata,cnt)
+hf = figure;
 switch cnt
     case 1 % concentrations
         [~,~,np] = size(ydata);
