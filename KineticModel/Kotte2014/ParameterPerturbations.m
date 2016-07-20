@@ -91,10 +91,12 @@ while ieq < neq
         eqid(ieq+1,ipt) = 2;
     end                    
     Point.Marker = '.';
-    Point.MarkerSize = 20;
+    Point.MarkerSize = 25;
+    % annotation
+    addanot.text = ['P' num2str(ipt)];
     if f1
         [hf1,ha1] =...
-        FIGmssEqIvalPerturbations(ival1,xeq1,2,[1 2],hf1,ha1,Point);
+        FIGmssEqIvalPerturbations(ival1,xeq1,2,[1 2],hf1,ha1,Point,addanot);
     end
     if f2
         [hf2,ha2] =...
