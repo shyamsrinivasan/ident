@@ -1,5 +1,5 @@
 function [hfig,ha,hline] =...
-FIGmssEqIvalPerturbations(val1,val2,datatype,idx,hfig,ha,Point)
+FIGmssEqIvalPerturbations(val1,val2,datatype,idx,hfig,ha,Point,addanot)
 % val1      - equilibrium/initial value vector
 % val2      - equilibrium/initial value vector
 % datatype  - 1 for flux, 2 for concentrations
@@ -7,6 +7,9 @@ FIGmssEqIvalPerturbations(val1,val2,datatype,idx,hfig,ha,Point)
 % hfig      - figure handle of existing figure (optional)
 % ha        - axis handle of existing figure (optional)
 % Point     - structure of point properties (optional)
+if nargin<8
+    addanot = [];
+end
 if nargin<7
     Point = [];
 end
@@ -26,6 +29,8 @@ end
 if isempty(hfig)
     hfig = figure;
 end
+global annot
+annot = addanot;
 
 if length(idx) >= 3
     [ha,hline] = plot3DeqPoints(val1,val2,idx,datatype,hfig,ha,Point);
@@ -36,13 +41,14 @@ end
 
 function [ha,hlval] = plot2DeqPoints(val1,val2,idx,datatype,hfig,ha,Point)
 % 2D plots of equilibirum points and initial values
+global annot
 set(0,'CurrentFigure',hfig);
 if isempty(ha)
     hlval1 = line(val1(idx(1)),val1(idx(2)),...
-                'Marker','.',...
-                'MarkerSize',25,...
-                'MarkerFaceColor',[.2 0 .9],...
-                'MarkerEdgeColor',[.2 0 .9],...
+                'Marker','o',...
+                'MarkerSize',20,...
+                'MarkerFaceColor',[.2 1 .9],...
+                'MarkerEdgeColor',[.2 1 .9],...
                 'LineStyle','none');  
     ha = get(hlval1,'Parent');
     set(ha,'NextPlot','add');
@@ -55,9 +61,9 @@ if isempty(ha)
 else
     set(hfig,'CurrentAxes',ha);
     hlval1 = line(val1(idx(1)),val1(idx(2)),...
-                'Marker','.',...
-                'MarkerSize',25,...
-                'MarkerFaceColor',[.2 0 .9],...
+                'Marker','o',...
+                'MarkerSize',20,...
+                'MarkerFaceColor',[.2 1 .9],...
                 'MarkerEdgeColor',[.2 1 .9],...
                 'LineStyle','none'); 
     hlval2 = line(val2(idx(1)),val2(idx(2)),...
@@ -67,6 +73,11 @@ else
 end
 if ~isempty(Point)
     set(hlval2,Point);
+end
+% add annotation to data points
+if ~isempty(annot)
+%     text(val1(idx(1)),val1(idx(2)),annot.text);
+    text(val2(idx(1)),val2(idx(2)),annot.text);
 end
 
 [xlabel,ylabel] = getKotteaxislabels(2,datatype,idx);
