@@ -90,9 +90,15 @@ pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
 % npts = size(vs,1);
 
 % sample parameters indicated by indices in idp
+cmb = [1e6;2e6;3e6;4e6;5e6;6e6;7e6;8e6;9e6;1e7];
+% cmb = [.05 1 1;1 .05 1;1 1 .05;.05 .05 .05;...
+%        .25 1 1;1 .25 1;1 1 .25;.25 .25 .25;...
+%        .5 1 1;1 .5 1;1 1 .5;.5 .5 .5;...
+%        2 1 1;1 2 1;1 1 2;2 2 2;...
+%        4 1 1;1 4 1;1 1 4;4 4 4];
 idp = 3;
 type = 'together';
-npts = 10;
+npts = size(cmb,1);
 
 % systems check
 givenModel = @(t,x)KotteODE(t,x,model,pvec);
@@ -117,12 +123,6 @@ else
     alliidfdyn = zeros(length(fluxg),length(tspan),npts,length(idp));
 end
 allpvec = repmat(pvec,npts,1);
-cmb = [1e6;2e6;3e6;4e6;5e6;6e6;7e6;8e6;9e6;1e7];
-% cmb = [.05 1 1;1 .05 1;1 1 .05;.05 .05 .05;...
-%        .25 1 1;1 .25 1;1 1 .25;.25 .25 .25;...
-%        .5 1 1;1 .5 1;1 1 .5;.5 .5 .5;...
-%        2 1 1;1 2 1;1 1 2;2 2 2;...
-%        4 1 1;1 4 1;1 1 4;4 4 4];
 allpvec(:,idp) = cmb;
    
 for iid = 1:1 % length(idp)
