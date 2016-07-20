@@ -16,10 +16,10 @@ for ipt = 1:npts
     % run MATCONT
     [data,y,p] = execMATCONT(xeq,pvec,ap,fluxg,model);
     if ~isempty(data) && size(data.s1,1)>2
-        bifurcationPlot(data.flux,data.s1,data.f1,[5,3]);
-        bifurcationPlot(data.x1,data.s1,data.f1,[4,1]);    
+%         bifurcationPlot(data.flux,data.s1,data.f1,[5,3]);
+%         bifurcationPlot(data.x1,data.s1,data.f1,[4,1]);    
         bifurcationPlot(data.x1,data.s1,data.f1,[4,2]);
-        bifurcationPlot([data.flux;data.x1(end,:)],data.s1,data.f1,[6,5]);
+%         bifurcationPlot([data.flux;data.x1(end,:)],data.s1,data.f1,[6,5]);
     end
     
     % save MATCONT results
