@@ -90,8 +90,9 @@ pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
 % npts = size(vs,1);
 
 % sample parameters indicated by indices in idp
-idp = 12;
-npts = 17;
+idp = [12 13 14];
+type = 'together';
+npts = 20;
 
 % systems check
 givenModel = @(t,x)KotteODE(t,x,model,pvec);
@@ -102,19 +103,28 @@ tspan = 0:0.1:2000;
 % allflag = zeros(1,npts);
 
 opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
-alliidpvec = zeros(npts,length(pvec),length(idp));
-alliidxeq = zeros(length(M),npts,length(idp));
-alliidxdyn = zeros(length(M),length(tspan),npts,length(idp));
-alliidfeq = zeros(length(fluxg),npts,length(idp));
-alliidfdyn = zeros(length(fluxg),length(tspan),npts,length(idp));
+if strcmpi(type,'together')
+    alliidpvec = zeros(npts,length(pvec),size(idp,1));
+    alliidxeq = zeros(length(M),npts,size(idp,1));
+    alliidxdyn = zeros(length(M),length(tspan),npts,size(idp,1));
+    alliidfeq = zeros(length(fluxg),npts,size(idp,1));
+    alliidfdyn = zeros(length(fluxg),length(tspan),npts,size(idp,1));
+else    
+    alliidpvec = zeros(npts,length(pvec),length(idp));
+    alliidxeq = zeros(length(M),npts,length(idp));
+    alliidxdyn = zeros(length(M),length(tspan),npts,length(idp));
+    alliidfeq = zeros(length(fluxg),npts,length(idp));
+    alliidfdyn = zeros(length(fluxg),length(tspan),npts,length(idp));
+end
 allpvec = repmat(pvec,npts,1);
-cmb = [1 1 1;.25 1 1;1 .25 1;1 1 .25;.25 .25 .25;...
+cmb = [.05 1 1;1 .05 1;1 1 .05;.05 .05 .05;...
+       .25 1 1;1 .25 1;1 1 .25;.25 .25 .25;...
        .5 1 1;1 .5 1;1 1 .5;.5 .5 .5;...
        2 1 1;1 2 1;1 1 2;2 2 2;...
        4 1 1;1 4 1;1 1 4;4 4 4];
-allpvec(:,[12 13 14]) = cmb;
+allpvec(:,idp) = cmb;
    
-for iid = 1:length(idp)
+for iid = 1:1 % length(idp)
     % reset pvec
     pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
             KEXPEP,vemax,KeFBP,ne,acetate,d,...
@@ -130,8 +140,7 @@ for iid = 1:length(idp)
     
     % run equilibrium solution followed by MATCONT
     allxeq = zeros(length(M),npts);
-    allxdyn = zeros(length(M),length(tspan),npts);
-    allxf = zeros(length(M),npts);
+    allxdyn = zeros(length(M),length(tspan),npts);    
     allfeq = zeros(length(fluxg),npts);
     allfdyn = zeros(length(fluxg),length(tspan),npts);
     solveEquilibriumODE
