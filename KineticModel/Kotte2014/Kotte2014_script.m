@@ -90,13 +90,16 @@ pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
 % npts = size(vs,1);
 
 % sample parameters indicated by indices in idp
-cmb = [1e6;2e6;3e6;4e6;5e6;6e6;7e6;8e6;9e6;1e7];
+% create a grid of paramter values
+[Lfbp_s,KFbpPEP_s] = meshgrid(1e6:1e6:1e7,[1e-5 1e-4 1e-3 1e-2 1e-1 1]);
+cmb = [Lfbp_s(:),KFbpPEP_s(:)];
+% cmb = [1e6;2e6;3e6;4e6;5e6;6e6;7e6;8e6;9e6;1e7];
 % cmb = [.05 1 1;1 .05 1;1 1 .05;.05 .05 .05;...
 %        .25 1 1;1 .25 1;1 1 .25;.25 .25 .25;...
 %        .5 1 1;1 .5 1;1 1 .5;.5 .5 .5;...
 %        2 1 1;1 2 1;1 1 2;2 2 2;...
 %        4 1 1;1 4 1;1 1 4;4 4 4];
-idp = 3;
+idp = [3 4];
 type = 'together';
 npts = size(cmb,1);
 
