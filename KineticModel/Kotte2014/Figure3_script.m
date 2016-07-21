@@ -189,6 +189,7 @@ for iid = 1:ndp
             ivalpts = zeros(2*nvar,npts);
             xeqpts = zeros(2*nvar,npts);
             eqid = zeros(2,npts);
+            ivalid = zeros(2,npts);
             % perturbation for all points
             for ipt = 1:npts
                 pvec = alliidpvec(ipt,:,iid);
@@ -197,8 +198,8 @@ for iid = 1:ndp
                 % if point not capable of mss
                 if ~ismember(ipt,allmsspts)                   
                     % perturbations from ss 
-                    [ivalpts,xeqpts,eqid,hf1,ha1] = ParameterPerturbations(model,pvec,...
-                        xss,ivalpts,xeqpts,eqid,ipt,tspanf,colorSpec,opts,hf1,ha1);
+                    [ivalpts,ivalid,xeqpts,eqid,hf1,ha1] = ParameterPerturbations(model,pvec,...
+                        xss,ivalpts,ivalid,xeqpts,eqid,ipt,tspanf,colorSpec,opts,hf1,ha1);
                 else
                     s1 =...
                     siid.(['iid' num2str(iid)]).(['pt' num2str(ipt)]).s1;
@@ -209,17 +210,57 @@ for iid = 1:ndp
                     index =...
                     cat(1,siid.(['iid' num2str(iid)]).(['pt' num2str(ipt)]).s1.index);
                     bifurcationPlot(x1,s1,f1,[4,2]);
-                    bifurcationPlot(x1,s1,f1,[4,1]);
-                    bifurcationPlot(x1,s1,f1,[4,3]); 
+%                     bifurcationPlot(x1,s1,f1,[4,1]);
+%                     bifurcationPlot(x1,s1,f1,[4,3]); 
                     
                     % perturbations from ss 
-                    [ivalpts,xeqpts,eqid,hf1,ha1] = ParameterPerturbations(model,pvec,...
-                        xss,ivalpts,xeqpts,eqid,ipt,tspanf,colorSpec,opts,hf1,ha1);
+                    [ivalpts,ivalid,xeqpts,eqid,hf1,ha1] = ParameterPerturbations(model,pvec,...
+                        xss,ivalpts,ivalid,xeqpts,eqid,ipt,tspanf,colorSpec,opts,hf1,ha1);
                 end                
             end          
         end
     end
 end
 
+% print analysis of results - partially complete
+% same final state for both starting states
+samestates = find(eqid(1,:)==eqid(2,:));
+
+% same as strating state
+highstate = find(eqid(1,:)==ivalid(1,1));
+lowstate = find(eqid(2,:)==ivalid(2,1));
+
+% systems restricted to the high state for all ivals
+samehighstate = highstate(ismember(highstate,samestates));
+% systems restricted to the low state for all ivals
+samelowstate = lowstate(ismember(lowstate,samestates));
+% systems not restricted to either of the 2 states - resting state depends
+% on ival
+diffstate = setdiff(1:size(eqid,2),union(samehighstate,samelowstate));
+
+% check ival for diffstate
+% systems were a low state start gets a low state and high state start
+% gets a high state - i.e. maintain bistability
+bistable = all(eqid(:,diffstate)==ivalid(:,diffstate));
+if any(bistable)
+    % no movement/change in separatrix?
+    % no change in ability to remove bistability
+    % system too close to old state?   
+    fprintf('Following perturbations still result in bistability: %s\n'...
+            ,num2str(diffstate(bistable))); 
+    fprintf('Bistable parameter sets:\n');
+    bistates = diffstate(bistable);
+    fprintf('kEcat \t   vFbpmax \t   vEXmax\n');
+    for is = 1:length(bistates)
+        fprintf('%s\n',num2str(alliidpvec(bistates(is),idp),'%4.2e\t'));
+    end
+else
+    fprintf('No perturbation results in a bistable system\n');
+end
+% systems restricted to low state
+fprintf('Systems restricted to the high state:\n')
+fprintf('%s\n',num2str(samehighstate,'%d\t'));
+fprintf('Systems restricted to the low state:\n')
+fprintf('%s\n',num2str(samelowstate,'%d\t'));
 
 
