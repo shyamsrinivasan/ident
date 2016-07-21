@@ -1,37 +1,37 @@
-function [ivalpts,xeqpts,eqid,varargout] =...
-ParameterPerturbations(model,pvec,xss,ivalpts,xeqpts,eqid,ipt,...
+function varargout =...
+ParameterPerturbations(model,pvec,xss,ivalpts,ivalid,xeqpts,eqid,ipt,...
                        tspan,colorSpec,opts,varargin)
-if nargin < 8
+if nargin < 9
     tspan = 1:2000;
 end
-if nargin < 9
+if nargin < 10
     colorSpec = chooseColors(4,{'Green','Purple','Red','Orange'});
 end
-if nargin < 10
+if nargin < 11
     opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
 end
-if nargin > 11
+if nargin > 12
     switch nargin
-        case 12
-            hf1 = varargin{1};
-            ha1 = [];
-            f1 = 1;
-            f2 = 0;
-            f3 = 0;
         case 13
             hf1 = varargin{1};
-            ha1 = varargin{2};
+            ha1 = [];
             f1 = 1;
             f2 = 0;
             f3 = 0;
         case 14
             hf1 = varargin{1};
             ha1 = varargin{2};
+            f1 = 1;
+            f2 = 0;
+            f3 = 0;
+        case 15
+            hf1 = varargin{1};
+            ha1 = varargin{2};
             hf2 = varargin{3};
             f1 = 1;
             f2 = 1;
             f3 = 0;
-        case 15
+        case 16
             hf1 = varargin{1};
             ha1 = varargin{2};
             hf2 = varargin{3};
@@ -40,7 +40,7 @@ if nargin > 11
             f1 = 1;
             f2 = 1;
             f3 = 0;
-        case 16
+        case 17
             hf1 = varargin{1};
             ha1 = varargin{2};
             hf2 = varargin{3};
@@ -50,7 +50,7 @@ if nargin > 11
             f1 = 1;
             f2 = 1;
             f3 = 1;
-        case 17
+        case 18
             hf1 = varargin{1};
             ha1 = varargin{2};
             hf2 = varargin{3};
@@ -79,6 +79,12 @@ while ieq < neq
     solveODEonly(1,ival1,model,pvec,opts,tspan);    
     xeqpts(nvar*ieq+1:nvar*(ieq+1),ipt) = xeq1;
     ivalpts(nvar*ieq+1:nvar*(ieq+1),ipt) = ival1;
+    if ival1(1)>ival1(2)
+        ivalid(ieq+1,ipt) = 1;
+    elseif ival1(2)>ival1(1)
+        ivalid(ieq+1,ipt) = 2;    
+    end
+    
     if xeq1(1)>xeq1(2)
         % if pep > fdp - high ss                        
         Point.MarkerFaceColor = colorSpec{1};   
@@ -109,15 +115,20 @@ while ieq < neq
     ieq = ieq+1;
 end
 
+varargout{1} = ivalpts;
+varargout{2} = ivalid;
+varargout{3} = xeqpts;
+varargout{4} = eqid;
+
 if f1
-    varargout{1} = hf1;
-    varargout{2} = ha1;
+    varargout{5} = hf1;
+    varargout{6} = ha1;
 end
 if f2
-    varargout{3} = hf2;
-    varargout{4} = ha2;
+    varargout{7} = hf2;
+    varargout{8} = ha2;
 end
 if f3
-    varargout{5} = hf3;
-    varargout{6} = ha3;
+    varargout{9} = hf3;
+    varargout{10} = ha3;
 end
