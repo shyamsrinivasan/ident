@@ -80,12 +80,12 @@ while ieq < neq
     xeqpts(nvar*ieq+1:nvar*(ieq+1),ipt) = xeq1;
     ivalpts(nvar*ieq+1:nvar*(ieq+1),ipt) = ival1;
     if xeq1(1)>xeq1(2)
-        % if pep > fdp                        
+        % if pep > fdp - high ss                        
         Point.MarkerFaceColor = colorSpec{1};   
         Point.MarkerEdgeColor = colorSpec{1}; 
         eqid(ieq+1,ipt) = 1;
     elseif xeq1(2)>xeq1(1)
-        % if pep < fdp                        
+        % if pep < fdp - low ss                        
         Point.MarkerFaceColor = colorSpec{2}; 
         Point.MarkerEdgeColor = colorSpec{2};  
         eqid(ieq+1,ipt) = 2;
