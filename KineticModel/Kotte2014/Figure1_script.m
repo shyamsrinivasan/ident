@@ -75,6 +75,27 @@ allfeq = zeros(length(fluxg),npts);
 allfdyn = zeros(length(fluxg),length(tspan),npts);
 solveEquilibriumODE     
 
+% extending existing bifurcation diagram for pep and fdp
+% take last point of data.x1 as par value and initial val
+% integrate until beyond the LP
+% jx1 = 1;
+% acon = data.x1(4,end)+0.0095*jx1;
+% while acon <= data.x1(end,data.s1(2).index)  
+%     acon = data.x1(4,end)+0.0095*jx1;
+%     pvec(ap) = acon;
+%     model.PM(ac-nvar) = acon;
+%     ival = data.x1(1:nvar,end);
+%     [~,xeq1,~,feq1] = solveODEonly(1,ival,model,pvec,opts,0:0.1:2000);
+%     newx1 = [xeq1;pvec(ap)];
+%     data.x1 = [data.x1 newx1];
+%     data.flux = [data.flux feq1];
+%     [~,lambda] = getKotteJacobian(xeq1,pvec,model);
+%     data.f1 = [data.f1 lambda];
+%     jx1 = jx1+1;
+% end
+% bifurcationPlot(data.x1,data.s1,data.f1,[4,1]);    
+% bifurcationPlot(data.x1,data.s1,data.f1,[4,2]);
+
 % get saddle node
 [saddle,saddlepar] = getsaddlenode(data.s1,data.x1,5e-3);
 pvec(9) = saddlepar;
