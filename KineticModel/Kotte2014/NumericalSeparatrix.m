@@ -20,7 +20,7 @@ ac = find(strcmpi(model.mets,'ac[e]'));
 % 2. determine the saddle node/limit point
 % calculate jacobian at each equilibirum point
 eps = 1e-4;
-tspanr = [0,-8];
+tspanr = [0,-8.25];
 tspanf = 0:0.1:2000;
 ht12fig = [];
 ha12 = [];
@@ -103,7 +103,7 @@ if unstablept
             p1execflag = 1;
         end
         % separatrix curve
-        xdynr = solveODEonly(1,zj,model,pvec,opts,[0 -8]);
+        xdynr = solveODEonly(1,zj,model,pvec,opts,[0 -12]);
         % stable manifold
         [~,xeq] = solveODEonly(1,zj,model,pvec,opts,tspanf);
         Line.Color = colorSpec{1};
