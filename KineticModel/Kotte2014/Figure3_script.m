@@ -165,6 +165,19 @@ nival = orig_saddle-eps*[1;1;1];
 fss = [feq1 feq2];
 xss = [xeq1 xeq2];
 
+% get eigenvectors at saddle
+[~,lambda,w] = getKotteJacobian(orig_saddle,pvec,model);
+
+% calculate separatrix from eigen vector based perturbations
+eps = 1e-4;
+for iw = 1:size(w,2)
+    zi = saddle+eps*w(:,iw);
+    zj = saddle-eps*w(:,iw);
+    % separatrix curve
+    xdynr = solveODEonly(1,zi,model,pvec,opts,tspanr);
+    [ht12fig,ha12,hl1] = FIGodetrajectories(real(xdynr),saddle,saddle,2,[1 2],ht12fig,ha12,Line);
+end
+
 % needed variables: alliidpvec,alliidxeq,alliidfeq,tout,ap;
 npts = size(alliidpvec,1);
 nvar = size(alliidxeq,1);
