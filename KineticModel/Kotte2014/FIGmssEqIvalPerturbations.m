@@ -1,7 +1,7 @@
 function [hfig,ha,hline] =...
 FIGmssEqIvalPerturbations(val1,val2,datatype,idx,hfig,ha,Point,addanot)
-% val1      - equilibrium/initial value vector
-% val2      - equilibrium/initial value vector
+% val1      - initial value vector
+% val2      - equilibrium value vector
 % datatype  - 1 for flux, 2 for concentrations
 % idx       - index in val1 and val2 to be plotted (row/column vector)
 % hfig      - figure handle of existing figure (optional)
