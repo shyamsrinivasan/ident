@@ -151,12 +151,18 @@ if nargin<12, ha = []; end
 if nargin<11, hf = []; end  
 
 Line.LineWidth = 2.0;
-% perutbations from the separatrix - fwd integration only
-if ~rem(size(xdynr,2)/2,2)
-    pid = size(xdynr,2)/2;
-else
-    pid = size(xdynr,2)/2+1/2;
-end
+% perutbations from the separatrix - fwd integration only from mid point of
+% separatrix curve
+% if ~rem(size(xdynr,2)/2,2)
+%     pid = size(xdynr,2)/2;
+% else
+%     pid = size(xdynr,2)/2+1/2;
+% end
+% get euclidean distance between saddle and xdynr points
+edist = sqrt(sum((repmat(saddle,1,size(xdynr,2))-real(xdynr)).^2));
+% select point within 5e-4 units from saddle
+pid = find(edist<=5e-4,1,'last');
+
 pival = xdynr(:,pid)+eps*[1;1;1]; % positive perturbation
 [xdynf,xeq] = solveODEonly(1,pival,model,pvec,opts,tspanf);
 if any(abs(Axeq(:,1)-real(xeq))<=1e-8)
