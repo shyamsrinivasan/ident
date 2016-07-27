@@ -87,31 +87,31 @@ while ieq < neq
     
     if xeq1(1)>xeq1(2)
         % if pep > fdp - high ss                        
-        Point.MarkerFaceColor = colorSpec{1};   
-        Point.MarkerEdgeColor = colorSpec{1}; 
+%         Point.MarkerFaceColor = colorSpec{1};   
+%         Point.MarkerEdgeColor = colorSpec{1}; 
         eqid(ieq+1,ipt) = 1;
     elseif xeq1(2)>xeq1(1)
         % if pep < fdp - low ss                        
-        Point.MarkerFaceColor = colorSpec{2}; 
-        Point.MarkerEdgeColor = colorSpec{2};  
+%         Point.MarkerFaceColor = colorSpec{2}; 
+%         Point.MarkerEdgeColor = colorSpec{2};  
         eqid(ieq+1,ipt) = 2;
     end                    
-    Point.Marker = '.';
-    Point.MarkerSize = 25;
+%     Point.Marker = '.';
+%     Point.MarkerSize = 25;
     % annotation
-    addanot.text = ['P' num2str(ipt)];
-    if f1
-        [hf1,ha1] =...
-        FIGmssEqIvalPerturbations(ival1,xeq1,2,[1 2],hf1,ha1,Point,addanot);
-    end
-    if f2
-        [hf2,ha2] =...
-        FIGmssEqIvalPerturbations(ival1,xeq1,2,[2 3],hf2,ha2,Point);
-    end
-    if f3
-        [hf3,ha3] =...
-        FIGmssEqIvalPerturbations(ival1,xeq1,2,[1 3],hf3,ha3,Point);
-    end
+%     addanot.text = ['P' num2str(ipt)];
+%     if f1
+%         [hf1,ha1] =...
+%         FIGmssEqIvalPerturbations(ival1,xeq1,2,[1 2],hf1,ha1,Point,addanot);
+%     end
+%     if f2
+%         [hf2,ha2] =...
+%         FIGmssEqIvalPerturbations(ival1,xeq1,2,[2 3],hf2,ha2,Point);
+%     end
+%     if f3
+%         [hf3,ha3] =...
+%         FIGmssEqIvalPerturbations(ival1,xeq1,2,[1 3],hf3,ha3,Point);
+%     end
     ieq = ieq+1;
 end
 
