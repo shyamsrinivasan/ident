@@ -170,6 +170,7 @@ xss = [xeq1 xeq2];
 
 % calculate separatrix from eigen vector based perturbations
 eps = 1e-4;
+tspanr = [0,-8.25];
 for iw = 1:size(w,2)
     zi = saddle+eps*w(:,iw);
     zj = saddle-eps*w(:,iw);
