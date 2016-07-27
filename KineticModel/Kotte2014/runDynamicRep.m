@@ -50,7 +50,7 @@ solveEquilibriumODE
 pvec(9) = orig_saddlepar;
 model.PM(ac-length(orig_saddle)) = orig_saddlepar;
 
-% perturb saddle to get steady states
+% perturb saddle to get steady states - parameters fixed above
 eps = 1e-4;
 tspanf = 0:0.1:2000;
 pival = orig_saddle+eps*[1;1;1];
@@ -59,6 +59,25 @@ nival = orig_saddle-eps*[1;1;1];
 [~,xeq2,~,feq2] = solveODEonly(1,nival,model,pvec,opts,tspanf);
 fss = [feq1 feq2];
 xss = [xeq1 xeq2];
+
+% get eigenvectors at saddle - parameters fixed above
+% [~,lambda,w] = getKotteJacobian(orig_saddle,pvec,model);
+
+% calculate separatrix from eigen vector based perturbations
+% ht12fig=[];ha12=[];
+% eps = 1e-4;
+% tspanr = [0,-8.25];
+% Line.Color = colorSpec{1};   
+% Line.LineWidth = 2.0;
+% % use only eig vectors with unstable directions
+% iw = find(all(real(w)>0),1,'first');
+% zi = orig_saddle+eps*w(:,iw);
+% zj = orig_saddle-eps*w(:,iw);
+% % separatrix curve
+% xdynr_zi = solveODEonly(1,zi,model,pvec,opts,tspanr);
+% [ht12fig,ha12] = FIGodetrajectories(real(xdynr_zi),orig_saddle,orig_saddle,2,[1 2],ht12fig,ha12,Line);
+% xdynr_zj = solveODEonly(1,zj,model,pvec,opts,tspanr);
+% [ht12fig,ha12] = FIGodetrajectories(real(xdynr_zj),orig_saddle,orig_saddle,2,[1 2],ht12fig,ha12,Line);
 
 % needed variables: alliidpvec,alliidxeq,alliidfeq,tout,ap;
 npts = size(alliidpvec,1);
@@ -84,17 +103,17 @@ for iid = 1:ndp
             ivalpts = zeros(2*nvar,npts);
             xeqpts = zeros(2*nvar,npts);
             eqid = zeros(2,npts);
+            ivalid = zeros(2,npts);
             % perturbation for all points
             for ipt = 1:npts
                 pvec = alliidpvec(ipt,:,iid);
                 pvec(9) = orig_saddlepar;
                 model.PM(ac-length(orig_saddle)) = orig_saddlepar;
                 % if point not capable of mss
-                if ~ismember(ipt,allmsspts)                    
-                    
+                if ~ismember(ipt,allmsspts)                   
                     % perturbations from ss 
-                    [ivalpts,xeqpts,eqid,hf1,ha1] = ParameterPerturbations(model,pvec,...
-                        xss,ivalpts,xeqpts,eqid,ipt,tspanf,colorSpec,opts,hf1,ha1);
+                    [ivalpts,ivalid,xeqpts,eqid,hf1,ha1] = ParameterPerturbations(model,pvec,...
+                        xss,ivalpts,ivalid,xeqpts,eqid,ipt,tspanf,colorSpec,opts,hf1,ha1);
                 else
                     s1 =...
                     siid.(['iid' num2str(iid)]).(['pt' num2str(ipt)]).s1;
@@ -105,12 +124,12 @@ for iid = 1:ndp
                     index =...
                     cat(1,siid.(['iid' num2str(iid)]).(['pt' num2str(ipt)]).s1.index);
                     bifurcationPlot(x1,s1,f1,[4,2]);
-                    bifurcationPlot(x1,s1,f1,[4,1]);
-                    bifurcationPlot(x1,s1,f1,[4,3]); 
+%                     bifurcationPlot(x1,s1,f1,[4,1]);
+%                     bifurcationPlot(x1,s1,f1,[4,3]); 
                     
                     % perturbations from ss 
-                    [ivalpts,xeqpts,eqid,hf1,ha1] = ParameterPerturbations(model,pvec,...
-                        xss,ivalpts,xeqpts,eqid,ipt,tspanf,colorSpec,opts,hf1,ha1);
+                    [ivalpts,ivalid,xeqpts,eqid,hf1,ha1] = ParameterPerturbations(model,pvec,...
+                        xss,ivalpts,ivalid,xeqpts,eqid,ipt,tspanf,colorSpec,opts,hf1,ha1);
                     
                     % get saddle node
 %                     eps1 = 1e-4;
@@ -167,6 +186,61 @@ for iid = 1:ndp
 %                     [hf2,ha2] =...
 %                     FIGmssEqIvalPerturbations(ival2,xeq2,2,[1 3],hf2,ha2,Point);
                 end                
+            end          
+        end
+        % plot points from xeqpts and ivalpts using ivalid and eqid after
+        % normalization
+        normeqpts = xeqpts./repmat(max(xeqpts,[],2),1,size(xeqpts,2));
+        normival = ivalpts./repmat(max(xeqpts,[],2),1,size(ivalpts,2));
+        hf1 = [];
+        ha1 = [];
+        plotpoints = zeros(1,size(xeqpts,2));
+        Point.Marker = '.';
+        Point.MarkerSize = 25;
+        Point2.Marker = '.';
+        Point2.MarkerSize = 25;
+        for ipt = 1:size(xeqpts,2) 
+            addanot.text = ['P' num2str(ipt)];
+            if eqid(1,ipt)==eqid(2,ipt)
+                if eqid(1,ipt)==1
+                    Point.MarkerFaceColor = colorSpec{1};   
+                    Point.MarkerEdgeColor = colorSpec{1}; 
+                elseif eqid(1,ipt)==2
+                    Point.MarkerFaceColor = colorSpec{2};   
+                    Point.MarkerEdgeColor = colorSpec{2}; 
+                end 
+                ival1 = normival(1:nvar,ipt);
+                ival2 = normeqpts(1:nvar,ipt);
+                plotpoints(ipt) = 1;
+            else
+                if eqid(1,ipt)==1
+                    Point.MarkerFaceColor = colorSpec{1};   
+                    Point.MarkerEdgeColor = colorSpec{1};
+                    ival1 = normival(1:nvar,ipt);
+                    ival2 = normeqpts(1:nvar,ipt);
+                elseif eqid(1,ipt)==2
+                    Point.MarkerFaceColor = colorSpec{2};   
+                    Point.MarkerEdgeColor = colorSpec{2};
+                    ival1 = normival(1:nvar,ipt);
+                    ival2 = normeqpts(1:nvar,ipt);
+                end
+                if eqid(2,ipt)==1
+                    Point2.MarkerFaceColor = colorSpec{1};   
+                    Point2.MarkerEdgeColor = colorSpec{1}; 
+                    ival3 = normival(nvar+1:end,ipt);
+                    ival4 = normeqpts(nvar+1:end,ipt);
+                elseif eqid(2,ipt)==2
+                    Point2.MarkerFaceColor = colorSpec{2};   
+                    Point2.MarkerEdgeColor = colorSpec{2};
+                    ival3 = normival(nvar+1:end,ipt);
+                    ival4 = normeqpts(nvar+1:end,ipt);
+                end
+            end
+            [hf1,ha1] =...
+            FIGmssEqIvalPerturbations(ival1,ival2,2,[1 2],hf1,ha1,Point,addanot);    
+            if ~plotpoints(ipt)
+                [hf1,ha1] =...
+                FIGmssEqIvalPerturbations(ival3,ival4,2,[1 2],hf1,ha1,Point2,addanot);    
             end          
         end
     end
