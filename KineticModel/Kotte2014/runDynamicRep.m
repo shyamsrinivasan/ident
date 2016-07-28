@@ -2,7 +2,11 @@
 % simulate from any given/multiple saddle nodes (points on the
 % bistable line)
 
+% Figure 3
 % load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\VmaxVariation_July19.mat');
+
+% Figure 4
+% load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\RegulationVariation_July26.mat');
 
 % perturb new systems from old equilibrium point to detect new steady state
 % get old equilibirum point
