@@ -141,6 +141,7 @@ pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
 colorSpec = chooseColors(4,{'Green','Purple','Red','Orange'});
 ac = find(strcmpi(model.mets,'ac[e]'));
 npts = 1;
+ap = 9;
 
 allxeq = zeros(length(M),npts);
 allxdyn = zeros(length(M),length(tspan),npts);
@@ -152,7 +153,7 @@ solveEquilibriumODE
 
 % get saddle node
 [orig_saddle,orig_saddlepar] = getsaddlenode(data.s1,data.x1,5e-3);
-pvec(9) = orig_saddlepar;
+pvec(ap) = orig_saddlepar;
 model.PM(ac-length(orig_saddle)) = orig_saddlepar;
 
 % perturb saddle to get steady states
@@ -212,7 +213,7 @@ for iid = 1:ndp
             % perturbation for all points
             for ipt = 1:npts
                 pvec = alliidpvec(ipt,:,iid);
-                pvec(9) = orig_saddlepar;
+                pvec(ap) = orig_saddlepar;
                 model.PM(ac-length(orig_saddle)) = orig_saddlepar;
                 % if point not capable of mss
                 if ~ismember(ipt,allmsspts)                   
