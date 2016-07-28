@@ -3,7 +3,7 @@
 % bistable line)
 
 % Figure 3
-% load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\VmaxVariation_July19.mat');
+load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\VmaxVariation_July19.mat');
 
 % Figure 4
 % load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\RegulationVariation_July26.mat');
@@ -111,13 +111,39 @@ for iid = 1:ndp
             % perturbation for all points
             for ipt = 1:npts
                 pvec = alliidpvec(ipt,:,iid);
-                pvec(9) = orig_saddlepar;
-                model.PM(ac-length(orig_saddle)) = orig_saddlepar;
+                pvec(ap) = orig_saddlepar;
+                model.PM(ac-length(orig_saddle)) = orig_saddlepar;                
                 % if point not capable of mss
                 if ~ismember(ipt,allmsspts)                   
                     % perturbations from ss 
                     [ivalpts,ivalid,xeqpts,eqid,hf1,ha1] = ParameterPerturbations(model,pvec,...
                         xss,ivalpts,ivalid,xeqpts,eqid,ipt,tspanf,colorSpec,opts,hf1,ha1);
+                    
+                    % do continuation anyways to confirm
+                    clear pvec
+                    pvec = alliidpvec(ipt,:,iid);
+                    model.PM(ac-length(orig_saddle)) = pvec(ap);
+                    if eqid(1,ipt)~=eqid(2,ipt)                        
+                        fprintf('Point %d is bistable. Performing continuation on\n',ipt);
+                        ieq = 0;
+                        while ieq<2                      
+                            [data,y,p] =...
+                            execMATCONT(xeqpts(nvar*ieq+1:nvar*(ieq+1),ipt),pvec,ap,fluxg,model);
+                            if ~isempty(data) && size(data.s1,1)>2
+                                hbif = bifurcationPlot(data.x1,data.s1,data.f1,[4,1]); 
+                                fprintf('Solution %d...',ieq+1);
+                                fprintf('Figure %d\n',hbif);
+                            end                            
+                            ieq = ieq+1;
+                        end
+                    else
+                        fprintf('Point %d is not bistable.\n',ipt);
+                        [data,y,p] =...
+                        execMATCONT(xeqpts(1:nvar,ipt),pvec,ap,fluxg,model);
+                        if ~isempty(data) && size(data.s1,1)>2
+                            bifurcationPlot(data.x1,data.s1,data.f1,[4,1]);  
+                        end
+                    end                    
                 else
                     s1 =...
                     siid.(['iid' num2str(iid)]).(['pt' num2str(ipt)]).s1;
@@ -127,8 +153,9 @@ for iid = 1:ndp
                     siid.(['iid' num2str(iid)]).(['pt' num2str(ipt)]).f1;
                     index =...
                     cat(1,siid.(['iid' num2str(iid)]).(['pt' num2str(ipt)]).s1.index);
-                    bifurcationPlot(x1,s1,f1,[4,2]);
-%                     bifurcationPlot(x1,s1,f1,[4,1]);
+                    % original bifurcation plot
+%                     bifurcationPlot(x1,s1,f1,[4,2]);
+                    bifurcationPlot(x1,s1,f1,[4,1]);
 %                     bifurcationPlot(x1,s1,f1,[4,3]); 
                     
                     % perturbations from ss 
@@ -198,6 +225,10 @@ for iid = 1:ndp
         normival = ivalpts./repmat(max(xeqpts,[],2),1,size(ivalpts,2));
         hf1 = [];
         ha1 = [];
+        hf2 = [];
+        ha2 = [];
+        hf3 = [];
+        ha3 = [];
         plotpoints = zeros(1,size(xeqpts,2));
         Point.Marker = '.';
         Point.MarkerSize = 25;
@@ -241,11 +272,19 @@ for iid = 1:ndp
                 end
             end
             [hf1,ha1] =...
-            FIGmssEqIvalPerturbations(ival1,ival2,2,[1 2],hf1,ha1,Point,addanot);    
+            FIGmssEqIvalPerturbations(ival1,ival2,2,[1 2],hf1,ha1,Point,addanot); 
+            [hf2,ha2] =...
+            FIGmssEqIvalPerturbations(ival1,ival2,2,[2 3],hf2,ha2,Point,addanot); 
+            [hf3,ha3] =...
+            FIGmssEqIvalPerturbations(ival1,ival2,2,[1 3],hf3,ha3,Point,addanot); 
             if ~plotpoints(ipt)
                 [hf1,ha1] =...
-                FIGmssEqIvalPerturbations(ival3,ival4,2,[1 2],hf1,ha1,Point2,addanot);    
-            end          
+                FIGmssEqIvalPerturbations(ival3,ival4,2,[1 2],hf1,ha1,Point2,addanot); 
+                [hf2,ha2] =...
+                FIGmssEqIvalPerturbations(ival3,ival4,2,[2 3],hf2,ha2,Point2,addanot);
+                [hf3,ha3] =...
+                FIGmssEqIvalPerturbations(ival3,ival4,2,[1 3],hf3,ha3,Point2,addanot);
+            end                 
         end
     end
 end
