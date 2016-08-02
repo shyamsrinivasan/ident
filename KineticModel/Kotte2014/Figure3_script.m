@@ -53,6 +53,7 @@ pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
     
 % sample parameters indicated by indices in idp
 cmb = [.05 1 1;1 .05 1;1 1 .05;.05 .05 .05;...
+       .125 1 1;1 .125 1;1 1 .125;.125 .125 .125;...
        .25 1 1;1 .25 1;1 1 .25;.25 .25 .25;...
        .5 1 1;1 .5 1;1 1 .5;.5 .5 .5;...
        2 1 1;1 2 1;1 1 2;2 2 2;...
@@ -102,6 +103,7 @@ for iid = 1:1 % length(idp)
     allxdyn = zeros(length(M),length(tspan),npts);    
     allfeq = zeros(length(fluxg),npts);
     allfdyn = zeros(length(fluxg),length(tspan),npts);
+    ap = 9;
     solveEquilibriumODE
     
     % save solution
@@ -138,7 +140,7 @@ pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
         KEXPEP,vemax,KeFBP,ne,acetate,d,...
         kPEPout,kEcat,vFbpmax,vEXmax];
 
-colorSpec = chooseColors(4,{'Green','Purple','Red','Orange'});
+colorSpec = chooseColors(4,{'Navy','HotPink','Red','Orange'});
 ac = find(strcmpi(model.mets,'ac[e]'));
 npts = 1;
 ap = 9;
@@ -240,9 +242,9 @@ for iid = 1:ndp
             end          
         end
         % plot points from xeqpts and ivalpts using ivalid and eqid after
-        % normalization
-        normeqpts = xeqpts./repmat(max(xeqpts,[],2),1,size(xeqpts,2));
-        normival = ivalpts./repmat(max(xeqpts,[],2),1,size(ivalpts,2));
+        % normalization or not
+        normeqpts = xeqpts; % ./repmat(max(xeqpts,[],2),1,size(xeqpts,2));
+        normival = ivalpts; % ./repmat(max(xeqpts,[],2),1,size(ivalpts,2));
         hf1 = [];
         ha1 = [];
         hf2 = [];
@@ -344,10 +346,17 @@ if any(bistable)
 else
     fprintf('No perturbation results in a bistable system\n');
 end
-% systems restricted to low state
+% systems restricted to high state
 fprintf('Systems restricted to the high state:\n')
 fprintf('%s\n',num2str(samehighstate,'%d\t'));
+fprintf('High state parameters\n');
+for ih = 1:length(samehighstate)
+    fprintf('%s\n',num2str(alliidpvec(samehighstate(ih),idp),'%4.2e\t'));
+end
+% systems restricted to low state
 fprintf('Systems restricted to the low state:\n')
 fprintf('%s\n',num2str(samelowstate,'%d\t'));
-
+for il = 1:length(samelowstate)
+    fprintf('%s\n',num2str(alliidpvec(samelowstate(il),idp),'%4.2e\t'));
+end
 
