@@ -3,7 +3,7 @@
 % bistable line)
 
 % Figure 3
-load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\VmaxVariation_July19.mat');
+load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\VmaxVariationAllPerturbations_July29.mat');
 
 % Figure 4
 % load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\RegulationVariation_July26.mat');
