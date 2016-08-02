@@ -1,8 +1,16 @@
-function hfig = bifurcationPlot(y,s1,f1,idx,hfig)
+function hfig = bifurcationPlot(y,s1,f1,idx,pid,hfig,addannot)
 % idx - [x-axis y-axis z-axis] index values
-if nargin<5
+if nargin<7
+    addannot = [];
+end
+if nargin<6
     hfig = figure;
 end
+if nargin<5
+    pid = 1;
+end
+global annot
+annot = addannot;
 
 % nvar = size(f1,1);
 % npar = size(x1,1)-size(f1,1);
@@ -50,7 +58,7 @@ for kndex = 1:length(xindex)
             yval = y(idx(2),xindex(kndex):end);
         end
         % plot data
-        hfig = plot2Dbifurcation(xval,yval,idx(1),idx(2),LPval,hfig,LineP);
+        hfig = plot2Dbifurcation(xval,yval,idx(1),idx(2),LPval,pid,hfig,LineP);
     elseif length(idx)<=3
         % plot3D 
         if (kndex+1)<=length(xindex)
@@ -64,18 +72,23 @@ for kndex = 1:length(xindex)
         end
         % plot data
         hfig = plot3Dbifurcation(xval,yval,zval,idx(1),idx(2),idx(3),...
-                                 LPval,hfig,LineP);
+                                 LPval,pid,hfig,LineP);
     end
 end
 end
 
-function hfig = plot2Dbifurcation(xval,yval,xid,yid,LPval,hfig,LineP)
+function hfig = plot2Dbifurcation(xval,yval,xid,yid,LPval,pid,hfig,LineP)
+global annot
 if ~isempty(hfig)
-    figure(hfig);
+    set(0,'CurrentFigure',hfig);    
     set(gca,'NextPlot','add');
-    hl = plot(xval,yval);
+    set(hfig,'CurrentAxes',gca);
+    hl = line(xval,yval);    
 else
-    hl = plot(xval,yval);
+    hfig = figure;
+    set(0,'CurrentFigure',hfig);  
+    hl = line(xval,yval);
+%     hl = plot(xval,yval);
     hfig = gcf;
 end
 
@@ -87,15 +100,15 @@ end
 
 if size(LPval,1)>4
     if xid > 5
-        [xlabel,ylabel] = getaxislabels(2,4,[xid yid]);
+        [xlabel,ylabel] = getaxislabels(2,4,[xid yid pid]);
     else
         [xlabel,ylabel] = getKotteaxislabels(2,1,[xid yid]);
     end
 else
     if xid > 3
-        [xlabel,ylabel] = getaxislabels(2,3,[xid yid]);
+        [xlabel,ylabel] = getKotteaxislabels(2,3,[xid yid pid]);
     else
-        [xlabel,ylabel] = getaxislabels(2,2,[xid yid]);
+        [xlabel,ylabel] = getKotteaxislabels(2,2,[xid yid]);
     end
 end
     
@@ -105,9 +118,13 @@ line(LPval(xid,:),LPval(yid,:),'LineStyle','none',...
                              'Marker','o','MarkerEdgeColor','r',...
                              'MarkerFaceColor','r','MarkerSize',6);
 setproperties(2,gca,xlabel,ylabel);
+
+if ~isempty(annot)
+    text(xval(end),yval(end),annot.text,'FontSize',20);
+end
 end
 
-function hfig = plot3Dbifurcation(xval,yval,zval,xid,yid,zid,LPval,hfig,LineP)
+function hfig = plot3Dbifurcation(xval,yval,zval,xid,yid,zid,LPval,pid,hfig,LineP)
 if ~isempty(hfig)
     figure(hfig);    
     hl = plot3(xval,yval,zval);
