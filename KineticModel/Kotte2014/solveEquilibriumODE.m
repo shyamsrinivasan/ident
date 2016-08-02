@@ -9,7 +9,7 @@
 for ipt = 1:npts
     fprintf('\nIteration #%d of %d Equilibrium Continuation...\n',ipt,npts);
     
-    ap = 9;
+    % ap = 9; - fix it in the calling function from here on out
     xeq = allxeq(:,ipt);
     pvec = allpvec(ipt,:);
     
@@ -17,7 +17,7 @@ for ipt = 1:npts
     [data,y,p] = execMATCONT(xeq,pvec,ap,fluxg,model);
     if ~isempty(data) && size(data.s1,1)>2
 %         bifurcationPlot(data.flux,data.s1,data.f1,[5,3]);
-        hbif1 = bifurcationPlot(data.x1,data.s1,data.f1,[4,1]);    
+        hbif1 = bifurcationPlot(data.x1,data.s1,data.f1,[4,1],ap);    
 %         bifurcationPlot(data.x1,data.s1,data.f1,[4,2]);
 %         bifurcationPlot([data.flux;data.x1(end,:)],data.s1,data.f1,[6,5]);
     end
