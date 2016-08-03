@@ -3,7 +3,9 @@
 % bistable line)
 
 % Figure 3
-load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\VmaxVariationAllPerturbations_July29.mat');
+% load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\VmaxVariationAllPerturbations_July29.mat');
+% Finer detail - Figure 3
+% load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\VmaxVariationAll_Aug02.mat');
 
 % Figure 4
 % load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\RegulationVariation_July26.mat');
@@ -56,7 +58,7 @@ model.PM(ac-length(orig_saddle)) = orig_saddlepar;
 
 % perturb saddle to get steady states - parameters fixed above
 eps = 1e-4;
-tspanf = 0:0.1:2000;
+tspanf = 0:0.1:6000;
 pival = orig_saddle+eps*[1;1;1];
 [~,xeq1,~,feq1] = solveODEonly(1,pival,model,pvec,opts,tspanf);
 nival = orig_saddle-eps*[1;1;1];
