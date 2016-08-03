@@ -93,13 +93,23 @@ pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
 % create a grid of paramter values
 % [Lfbp_s,KFbpPEP_s] = meshgrid(1e6:1e6:1e7,[1e-5 1e-4 1e-3 1e-2 1e-1 1]);
 % cmb = [Lfbp_s(:),KFbpPEP_s(:)];
-cmb = 0.01:0.01:1;
+% cmb = 0.01:0.01:1;
 % cmb = [.05 1 1;1 .05 1;1 1 .05;.05 .05 .05;...
 %        .25 1 1;1 .25 1;1 1 .25;.25 .25 .25;...
 %        .5 1 1;1 .5 1;1 1 .5;.5 .5 .5;...
 %        2 1 1;1 2 1;1 1 2;2 2 2;...
 %        4 1 1;1 4 1;1 1 4;4 4 4];
-idp = [4];
+e_exp = linspace(0.005,4,50);
+cmb = ones(50*4,3);
+i = 0;
+while i<50
+    cmb(1+4*i,1) = e_exp(i+1);
+    cmb(2+4*i,2) = e_exp(i+1);
+    cmb(3+4*i,3) = e_exp(i+1);
+    cmb(4+4*i,1:3) = repmat(e_exp(i+1),1,3);
+    i = i+1;
+end
+idp = [12 13 14];
 type = 'together';
 npts = size(cmb,1);
 
@@ -108,7 +118,7 @@ givenModel = @(t,x)KotteODE(t,x,model,pvec);
 fluxg = Kotte_givenFlux([M;model.PM],pvec,model);
 dMdtg = givenModel(0,M);
 
-tspan = 0:0.1:2000;
+tspan = 0:0.1:6000;
 % allflag = zeros(1,npts);
 
 opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
@@ -147,6 +157,7 @@ for iid = 1:1 % length(idp)
     allxdyn = zeros(length(M),length(tspan),npts);    
     allfeq = zeros(length(fluxg),npts);
     allfdyn = zeros(length(fluxg),length(tspan),npts);
+    ap = 9;
     solveEquilibriumODE
     
     % save solution
