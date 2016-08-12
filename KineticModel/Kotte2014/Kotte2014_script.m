@@ -99,19 +99,21 @@ pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
 %        .5 1 1;1 .5 1;1 1 .5;.5 .5 .5;...
 %        2 1 1;1 2 1;1 1 2;2 2 2;...
 %        4 1 1;1 4 1;1 1 4;4 4 4];
-e_exp = linspace(0.005,4,50);
-cmb = ones(50*4,3);
-i = 0;
-while i<50
-    cmb(1+4*i,1) = e_exp(i+1);
-    cmb(2+4*i,2) = e_exp(i+1);
-    cmb(3+4*i,3) = e_exp(i+1);
-    cmb(4+4*i,1:3) = repmat(e_exp(i+1),1,3);
-    i = i+1;
-end
-idp = [12 13 14];
+% e_exp = linspace(0.005,4,50);
+% cmb = ones(50*4,3);
+% i = 0;
+% while i<50
+%     cmb(1+4*i,1) = e_exp(i+1);
+%     cmb(2+4*i,2) = e_exp(i+1);
+%     cmb(3+4*i,3) = e_exp(i+1);
+%     cmb(4+4*i,1:3) = repmat(e_exp(i+1),1,3);
+%     i = i+1;
+% end
+% idp = [12 13 14];
+% cmb = linspace(0,1,50)';
+idp = [];
 type = 'together';
-npts = size(cmb,1);
+npts = 1; % size(cmb,1);
 
 % systems check
 givenModel = @(t,x)KotteODE(t,x,model,pvec);
@@ -136,13 +138,14 @@ else
     alliidfdyn = zeros(length(fluxg),length(tspan),npts,length(idp));
 end
 allpvec = repmat(pvec,npts,1);
-allpvec(:,idp) = cmb;
+% allpvec(:,idp) = cmb;
    
 for iid = 1:1 % length(idp)
     % reset pvec
     pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
             KEXPEP,vemax,KeFBP,ne,acetate,d,...
             kPEPout,kEcat,vFbpmax,vEXmax];
+    pvec(3) = 3e6;
     
     plb = 0;
     pub = 1;    
@@ -157,7 +160,7 @@ for iid = 1:1 % length(idp)
     allxdyn = zeros(length(M),length(tspan),npts);    
     allfeq = zeros(length(fluxg),npts);
     allfdyn = zeros(length(fluxg),length(tspan),npts);
-    ap = 9;
+    ap = 4;
     solveEquilibriumODE
     
     % save solution
