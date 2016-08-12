@@ -157,7 +157,7 @@ for iid = 1:ndp
                     cat(1,siid.(['iid' num2str(iid)]).(['pt' num2str(ipt)]).s1.index);
                     % original bifurcation plot
 %                     bifurcationPlot(x1,s1,f1,[4,2]);
-                    bifurcationPlot(x1,s1,f1,[4,1]);
+                    bifurcationPlot(x1,s1,f1,[4,1],ap);
 %                     bifurcationPlot(x1,s1,f1,[4,3]); 
                     
                     % perturbations from ss 
@@ -223,8 +223,8 @@ for iid = 1:ndp
         end
         % plot points from xeqpts and ivalpts using ivalid and eqid after
         % normalization
-        normeqpts = xeqpts./repmat(max(xeqpts,[],2),1,size(xeqpts,2));
-        normival = ivalpts./repmat(max(xeqpts,[],2),1,size(ivalpts,2));
+        normeqpts = xeqpts; % ./repmat(max(xeqpts,[],2),1,size(xeqpts,2));
+        normival = ivalpts; % ./repmat(max(xeqpts,[],2),1,size(ivalpts,2));
         hf1 = [];
         ha1 = [];
         hf2 = [];
