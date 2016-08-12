@@ -52,12 +52,22 @@ pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
         kPEPout,kEcat,vFbpmax,vEXmax];
     
 % sample parameters indicated by indices in idp
-cmb = [.05 1 1;1 .05 1;1 1 .05;.05 .05 .05;...
-       .125 1 1;1 .125 1;1 1 .125;.125 .125 .125;...
-       .25 1 1;1 .25 1;1 1 .25;.25 .25 .25;...
-       .5 1 1;1 .5 1;1 1 .5;.5 .5 .5;...
-       2 1 1;1 2 1;1 1 2;2 2 2;...
-       4 1 1;1 4 1;1 1 4;4 4 4];
+% cmb = [.05 1 1;1 .05 1;1 1 .05;.05 .05 .05;...
+%        .125 1 1;1 .125 1;1 1 .125;.125 .125 .125;...
+%        .25 1 1;1 .25 1;1 1 .25;.25 .25 .25;...
+%        .5 1 1;1 .5 1;1 1 .5;.5 .5 .5;...
+%        2 1 1;1 2 1;1 1 2;2 2 2;...
+%        4 1 1;1 4 1;1 1 4;4 4 4];
+e_exp = linspace(0.005,4,50);
+cmb = ones(50*4,3);
+i = 0;
+while i<50
+    cmb(1+4*i,1) = e_exp(i+1);
+    cmb(2+4*i,2) = e_exp(i+1);
+    cmb(3+4*i,3) = e_exp(i+1);
+    cmb(4+4*i,1:3) = repmat(e_exp(i+1),1,3);
+    i = i+1;
+end   
 idp = [12 13 14];
 type = 'together';
 npts = size(cmb,1);
@@ -168,25 +178,6 @@ nival = orig_saddle-eps*[1;1;1];
 fss = [feq1 feq2];
 xss = [xeq1 xeq2];
 
-% get eigenvectors at saddle
-% [~,lambda,w] = getKotteJacobian(orig_saddle,pvec,model);
-
-% calculate separatrix from eigen vector based perturbations
-% ht12fig=[];ha12=[];
-% eps = 1e-4;
-% tspanr = [0,-8.25];
-% Line.Color = colorSpec{1};   
-% Line.LineWidth = 2.0;
-% % use only eig vectors with unstable directions
-% iw = find(all(real(w)>0),1,'first');
-% zi = orig_saddle+eps*w(:,iw);
-% zj = orig_saddle-eps*w(:,iw);
-% % separatrix curve
-% xdynr_zi = solveODEonly(1,zi,model,pvec,opts,tspanr);
-% [ht12fig,ha12] = FIGodetrajectories(real(xdynr_zi),orig_saddle,orig_saddle,2,[1 2],ht12fig,ha12,Line);
-% xdynr_zj = solveODEonly(1,zj,model,pvec,opts,tspanr);
-% [ht12fig,ha12] = FIGodetrajectories(real(xdynr_zj),orig_saddle,orig_saddle,2,[1 2],ht12fig,ha12,Line);
-
 % needed variables: alliidpvec,alliidxeq,alliidfeq,tout,ap;
 npts = size(alliidpvec,1);
 nvar = size(alliidxeq,1);
@@ -216,12 +207,38 @@ for iid = 1:ndp
             for ipt = 1:npts
                 pvec = alliidpvec(ipt,:,iid);
                 pvec(ap) = orig_saddlepar;
-                model.PM(ac-length(orig_saddle)) = orig_saddlepar;
+                model.PM(ac-length(orig_saddle)) = orig_saddlepar;                
                 % if point not capable of mss
                 if ~ismember(ipt,allmsspts)                   
                     % perturbations from ss 
                     [ivalpts,ivalid,xeqpts,eqid,hf1,ha1] = ParameterPerturbations(model,pvec,...
                         xss,ivalpts,ivalid,xeqpts,eqid,ipt,tspanf,colorSpec,opts,hf1,ha1);
+                    
+                    % do continuation anyways to confirm
+                    clear pvec
+                    pvec = alliidpvec(ipt,:,iid);
+                    model.PM(ac-length(orig_saddle)) = pvec(ap);
+                    if eqid(1,ipt)~=eqid(2,ipt)                        
+                        fprintf('Point %d is bistable. Performing continuation on\n',ipt);
+                        ieq = 0;
+                        while ieq<2                      
+                            [data,y,p] =...
+                            execMATCONT(xeqpts(nvar*ieq+1:nvar*(ieq+1),ipt),pvec,ap,fluxg,model);
+                            if ~isempty(data) && size(data.s1,1)>2
+                                hbif = bifurcationPlot(data.x1,data.s1,data.f1,[4,1]); 
+                                fprintf('Solution %d...',ieq+1);
+                                fprintf('Figure %d\n',hbif);
+                            end                            
+                            ieq = ieq+1;
+                        end
+                    else
+                        fprintf('Point %d is not bistable.\n',ipt);
+                        [data,y,p] =...
+                        execMATCONT(xeqpts(1:nvar,ipt),pvec,ap,fluxg,model);
+                        if ~isempty(data) && size(data.s1,1)>2
+                            bifurcationPlot(data.x1,data.s1,data.f1,[4,1]);  
+                        end
+                    end                    
                 else
                     s1 =...
                     siid.(['iid' num2str(iid)]).(['pt' num2str(ipt)]).s1;
@@ -231,8 +248,9 @@ for iid = 1:ndp
                     siid.(['iid' num2str(iid)]).(['pt' num2str(ipt)]).f1;
                     index =...
                     cat(1,siid.(['iid' num2str(iid)]).(['pt' num2str(ipt)]).s1.index);
-                    bifurcationPlot(x1,s1,f1,[4,2]);
-%                     bifurcationPlot(x1,s1,f1,[4,1]);
+                    % original bifurcation plot
+%                     bifurcationPlot(x1,s1,f1,[4,2]);
+                    bifurcationPlot(x1,s1,f1,[4,1],ap);
 %                     bifurcationPlot(x1,s1,f1,[4,3]); 
                     
                     % perturbations from ss 
@@ -242,7 +260,7 @@ for iid = 1:ndp
             end          
         end
         % plot points from xeqpts and ivalpts using ivalid and eqid after
-        % normalization or not
+        % normalization
         normeqpts = xeqpts; % ./repmat(max(xeqpts,[],2),1,size(xeqpts,2));
         normival = ivalpts; % ./repmat(max(xeqpts,[],2),1,size(ivalpts,2));
         hf1 = [];
@@ -306,7 +324,7 @@ for iid = 1:ndp
                 FIGmssEqIvalPerturbations(ival3,ival4,2,[2 3],hf2,ha2,Point2,addanot);
                 [hf3,ha3] =...
                 FIGmssEqIvalPerturbations(ival3,ival4,2,[1 3],hf3,ha3,Point2,addanot);
-            end          
+            end                 
         end
     end
 end
@@ -358,5 +376,82 @@ fprintf('Systems restricted to the low state:\n')
 fprintf('%s\n',num2str(samelowstate,'%d\t'));
 for il = 1:length(samelowstate)
     fprintf('%s\n',num2str(alliidpvec(samelowstate(il),idp),'%4.2e\t'));
+end
+
+% enzymecont
+% enzyme parameter continuation on perturbed systems
+% get original ss and continuation without perturbations
+clear pvec
+kEcat = 1;
+KEacetate = 0.1;    % or 0.02
+KFbpFBP = 0.1;
+vFbpmax = 1;
+Lfbp = 4e6;
+KFbpPEP = 0.1;
+vEXmax = 1;
+KEXPEP = 0.3;
+vemax = 1.1;        % for bifurcation analysis: 0.7:0.1:1.3
+KeFBP = 0.45;       % or 0.45
+ne = 2;             % or 2
+acetate = 0.1;      % a.u acetate
+d = 0.25;           % or 0.25 or 0.35
+kPEPout = 0.2;
+pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
+        KEXPEP,vemax,KeFBP,ne,acetate,d,...
+        kPEPout,kEcat,vFbpmax,vEXmax];
+
+% systems check
+givenModel = @(t,x)KotteODE(t,x,model,pvec);
+fluxg = Kotte_givenFlux([M;model.PM],pvec,model);
+dMdtg = givenModel(0,M);    
+    
+opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
+colorSpec = chooseColors(4,{'Green','Purple','Red','Orange'});
+ac = find(strcmpi(model.mets,'ac[e]'));
+npts = 1;
+
+allxeq = zeros(length(M),npts);
+allxdyn = zeros(length(M),length(tspan),npts);
+allxf = zeros(length(M),npts);
+allfeq = zeros(length(fluxg),npts);
+allfdyn = zeros(length(fluxg),length(tspan),npts);
+allpvec = pvec;
+% continuation on acetate
+ap = 9;
+solveEquilibriumODE 
+% conitnuation on enzyme parameters 12, 13 and 14 for default values of [1
+% 1 1]'
+for ip = 1:length(idp)
+    ap = idp(ip);
+    solveEquilibriumODE 
+end
+% continuation on enzyme parameters 12, 13 and 14 for perturbed values in
+% cmb
+hf1 = [];
+hf2 = [];
+hf3 = [];
+ipt = 3;
+while ipt<size(cmb,1)
+% for ipt = 1:size(cmb,1)
+    xeq = alliidxeq(:,ipt);
+    pvec = alliidpvec(ipt,:);
+    addanot.text = ['E' num2str(ipt)];
+    for ip = 1:length(idp)
+        ap = idp(ip);        
+        % run MATCONT
+        [data,y,p] = execMATCONT(xeq,pvec,ap,fluxg,model);
+        if ~isempty(data) && size(data.s1,1)>2
+            if ap == 12
+                hf1 = bifurcationPlot(data.x1,data.s1,data.f1,[4,1],ap,hf1,addanot);
+            elseif ap == 13
+                hf2 = bifurcationPlot(data.x1,data.s1,data.f1,[4,1],ap,hf2,addanot);
+            elseif ap == 14
+                hf3 = bifurcationPlot(data.x1,data.s1,data.f1,[4,1],ap,hf3,addanot);
+            end            
+        end
+        % save MATCONT results
+        s.(['pt' num2str(ipt)]) = data;
+    end
+    ipt = ipt+4;
 end
 
