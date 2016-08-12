@@ -2,7 +2,7 @@
 
 % data from perturbation continuation on acetate
 % Figure 3
-load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\VmaxVariationAllPerturbations_July29.mat');
+load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\VmaxVariationAllPerturbations_Aug02.mat');
 
 % get original ss and continuation without perturbations
 clear pvec
@@ -54,10 +54,12 @@ end
 hf1 = [];
 hf2 = [];
 hf3 = [];
-for ipt = 1:size(cmb,1)
+ipt = 3;
+while ipt<size(cmb,1)
+% for ipt = 1:size(cmb,1)
     xeq = alliidxeq(:,ipt);
     pvec = alliidpvec(ipt,:);
-    addanot.text = ['P' num2str(ipt)];
+    addanot.text = ['E' num2str(ipt)];
     for ip = 1:length(idp)
         ap = idp(ip);        
         % run MATCONT
@@ -74,5 +76,6 @@ for ipt = 1:size(cmb,1)
         % save MATCONT results
         s.(['pt' num2str(ipt)]) = data;
     end
+    ipt = ipt+4;
 end
     
