@@ -1,4 +1,4 @@
-% load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\RegulationVariation_July30.mat');
+load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\RegulationVariation_July30.mat');
 % idp = [3 4] % sampled together in a mesh grid
 npts = size(alliidpvec,1);
 nvar = size(alliidxeq,1);
