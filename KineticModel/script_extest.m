@@ -63,7 +63,7 @@ FBAmodel.rxn_excep = rxn_excep;
 % else
 %     error('No feasible model found');
 % end
-<<<<<<< HEAD
+
 
 % solve NLA model for dx/dt = f(x) = 0
 % if ensb{1,2}.feasible
