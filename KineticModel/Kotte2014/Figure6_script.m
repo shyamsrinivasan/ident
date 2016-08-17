@@ -53,7 +53,8 @@ pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
     
 idp = 11;
 type = 'together';
-
+cmb = linspace(0,1,50)';
+npts = size(cmb,1);
 
 % systems check
 givenModel = @(t,x)KotteODE(t,x,model,pvec);
@@ -114,7 +115,7 @@ end
 
 %% plot bifurcation on acetate
 % Figure 5 - load data from previous simulation
-load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\kPEPoutVariation_Aug12.mat');
+% load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\kPEPoutVariation_Aug17.mat');
 
 % needed variables: alliidpvec,alliidxeq,alliidfeq,tout,ap;
 npts = size(alliidpvec,1);
