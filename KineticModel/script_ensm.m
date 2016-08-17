@@ -31,3 +31,9 @@ if isempty(mc)
     mc = smp{1,1};
     parameter = smp{1,2};
 end
+
+% get parameter estimates - estimate kinetic parameters in an ensemble
+rxn_add = {};
+rxn_excep = {};
+FBAmodel.bmrxn = [];
+ensb = parallel_ensemble(FBAmodel,mc,parameter,rxn_add,rxn_excep);
