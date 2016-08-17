@@ -1,6 +1,59 @@
+% function [model_data,parameter,variable,nt_rxn,nt_metab,bmrxn] = modelgen(rxfname)
+% Generate Metabolic Network Model from Stoichiometric Reactions in the
+% Metabolic Network
+% Input
+% rxnfname  -   .txt filename in which all model information is stored
+% Output
+% model     - MATLAB model structure with fields
+% nt_rxn    - total number of reactions (n) 
+% mets      - mx1 cell array of all model metabolites
+% rxns      - nx1 cell array of all model reaction names
+% enzs      - 
+% CMPS
+% Vind      - indices of all intracellular reactions
+% Vex       - indices of all transport reactions
+% VFex      - indices of all exchange reactions
+% bmrxn     - biomass reaction index
+% S         - mxn contraint-based stoichiometric matrix
+% SI        - mxn regulatory matrix
+% Vss       - nx1 steady state FBA flux vector
+% delSGr    - nx1 standard reaction gibbs free energy
+% delGub    - nx1 upper bound on reaction gibbs free energy
+% delGlb    - nx1 lower bound on reaction gibbs free energy
+% Keq       - nx1 reaction equilibrium constant as a function of standard gibbs
+%             free energy
+% rev       - nx1 reaction reversibility vector. 1 for reversible and 0 for
+%             irreversible reactions
+% Vact_ind  - index of activated reactions in SI
+% Vihb_ind  - index of inhibited reactions in SI
+% n_rxn     - number of intracellular reactions
+% nt_metab  - total number of metabolites (m)
+% next_metab- number of extracellular metabolites
+% nint_metab- number of intracellular metabolites
+% PTSind
+% MClow
+% MChigh
+% b         - mx1 rhs vector for Sv = 0 for FBA
+% c         - nx1 objective function vector for FBA
+% vl        - nx1 vector of flux lower bounds for FBA
+% vu        - nx1 vector of flux upper bounds for FBA
+% MolWt
+% Vuptake
+% parameter - MATLAB kinetic paramter structre with fields 
+% K         - mxn Michaelis binding constant matrix
+% Klb       - mxn matrix of Michaelis constant lower bounds
+% Kub       - mxn matrix of Michaelis constant upper bounds
+% KIact     - mxn matrix of allosteric activation constants
+% KIihb     - mxn matrix allosteric inhibition constants
+% Vmax      - nx1 vector of reaction Vmax
+% kcat_fwd  - nx1 forward reaction kcat vector
+% kcat_bkw  - nx1 reverse reaction kcat vector. 0 for irreversible reactions
+% variable  -
+% nt_rxn    - total number of reactions in model
+% nt_metab  - total number of metabolites in model
+% bmrxn     - index of biomass rxn in model
 function [model_data,parameter,variable,nt_rxn,nt_metab,bmrxn] = modelgen(rxfname)
-%Generate Metabolic Network Model from Stoichiometric Reactions in the
-%Metabolic Network
+
 
 %Shyam 2014
 fprintf('Creating MATLAB model from model file...\n');
