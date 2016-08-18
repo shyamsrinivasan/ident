@@ -115,13 +115,14 @@ end
 
 %% plot bifurcation on acetate
 % Figure 5 - load data from previous simulation
-% load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\kPEPoutVariation_Aug17.mat');
+load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\kPEPoutVariation_Aug17.mat');
 
 % needed variables: alliidpvec,alliidxeq,alliidfeq,tout,ap;
 npts = size(alliidpvec,1);
 nvar = size(alliidxeq,1);
 ndp = size(alliidpvec,3);
 tout = tspan;
+ap = 9;
 
 for iid = 1:ndp
     if isfield(allnss,sprintf('iid%d',iid))
@@ -152,7 +153,7 @@ for iid = 1:ndp
     end
 end
 
-% continue on kPEPout
+%% continue on kPEPout
 % original system 
 % get original ss and continuation without perturbations
 clear pvec
