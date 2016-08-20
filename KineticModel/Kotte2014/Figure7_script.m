@@ -87,6 +87,7 @@ for iid = 1:ndp
                     % acetate concentrations
                     for iac = 1:length(acetate)
                         % take data from existing information in workspace
+                        saddleac(ipt,iac) = acetate(iac);
                         bistablex(1:nvar,ipt,iac) = allacxeq(:,ipt,iac);
                         bistablex(nvar+1:end,ipt,iac) = allacxeq(:,ipt,iac);
                         bistablef(1:nflux,ipt,iac) = allacfeq(:,ipt,iac);
