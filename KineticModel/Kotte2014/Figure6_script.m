@@ -153,6 +153,45 @@ for iid = 1:ndp
     end
 end
 
+%% find new equilibrium points for changing acetate and kPEPout
+load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\kPEPoutVariation_Aug17.mat');
+
+% needed variables: alliidpvec,alliidxeq,alliidfeq,tout,ap;
+npts = size(alliidpvec,1);
+nvar = size(alliidxeq,1);
+ndp = size(alliidpvec,3);
+tout = tspan;
+
+acetate = linspace(0.1,14,30);
+ap = 9;
+
+for iid = 1:ndp
+    if isfield(allnss,sprintf('iid%d',iid))       
+        msspts = find(allnss.(['iid' num2str(iid)]));
+        sslps = allnss.(['iid' num2str(iid)])(msspts);
+        ss = unique(sslps);
+        nss = length(ss);
+        allmsspts = [];
+        for iss = 1:nss
+            hf1 = [];
+            allmsspts = union(allmsspts,msspts(sslps==ss(iss)));
+            allacxeq = zeros(3,npts,length(allmsspts));
+            allacfeq = zeros(5,npts,length(allmsspts));
+            for ipt = 1:npts
+                if ~ismember(ipt,allmsspts)
+                    pvec = alliidpvec(ipt,:,iid);
+                    for iac = 1:length(acetate)
+                        pvec(ap) = acetate(iac);                        
+                        [~,xeq,~,feq] =...
+                        solveODEonly(1,M,model,pvec,opts,tspan);
+                        allacxeq(:,ipt,iac) = xeq;
+                        allacfeq(:,ipt,iac) = feq;
+                    end
+                end
+            end            
+        end
+    end    
+end
 %% continue on kPEPout
 % original system 
 % get original ss and continuation without perturbations
