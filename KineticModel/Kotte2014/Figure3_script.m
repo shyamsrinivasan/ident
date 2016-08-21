@@ -406,7 +406,7 @@ fluxg = Kotte_givenFlux([M;model.PM],pvec,model);
 dMdtg = givenModel(0,M);    
     
 opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
-colorSpec = chooseColors(4,{'Green','Purple','Red','Orange'});
+colorSpec = chooseColors(5,{'Green','Purple','Red','Navy','HotPink'});
 ac = find(strcmpi(model.mets,'ac[e]'));
 npts = 1;
 
