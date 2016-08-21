@@ -94,52 +94,7 @@ for iid = 1:ndp
                         bistablef(nflux+1:end,ipt,iac) = allacfeq(:,ipt,iac);
                     end
                 end
-                % if point capable of mss
-%                 if ismember(ipt,allmsspts)   
-%                     % calculate high and low states for each point 
-%                     % for diferent acetate concentrations in acetate                    
-%                     
-%                     % calculate saddle for each acetate concentration
-%                     eps = 1e-4;
-%                     for iac = 1:length(acetate)
-%                         saddle = [];
-%                         saddlepar = [];
-%                         while isempty(saddlepar)
-%                             [saddle,saddlepar,status] = geteqcontpt(s1,x1,acetate(iac),eps);
-%                             eps = eps*10;
-%                         end
-%                         if ~isempty(saddle)
-%                             % if acetate(iac) is out of bounds - only high
-%                             % steady state or low steady state
-%                             if ~status
-%                                 pvec(ap) = acetate(iac);
-%                                 saddleac(ipt) = acetate(iac);
-%                                 model.PM(ac-length(saddle)) = acetate(iac);
-%                                 [~,xeq1,~,feq1] =...
-%                                 solveODEonly(1,saddle,model,pvec,opts,tspanf);
-%                                 bistablex(1:nvar,ipt,iac) = xeq1;
-%                                 bistablef(1:nflux,ipt,iac) = feq1;
-%                             % if acetate(iac) within bounds - both high and
-%                             % low steady states from saddle
-%                             elseif status
-%                             end
-%                             
-%                             
-%                             bistablex(1:nvar,ipt,iac) = xeq1;
-%                             bistablex(nvar+1:end,ipt,iac) = xeq2;
-%                             bistablef(1:nflux,ipt,iac) = feq1;
-%                             bistablef(nflux+1:end,ipt,iac) = feq2;
-%                         end
-%                     end             
-%                     allacetate(ipt,:) =...
-%                     siid.(['iid' num2str(iid)]).(['pt' num2str(ipt)]).x1(end,:);
-%                 elseif ~ismember(ipt,allmsspts)
-%                     for iac = 1:length(acetate)
-%                         saddleac(ipt) = acetate(iac);
-%                         unistablex(:,ipt,iac) = allacxeq(:,ipt,iac);
-%                         unistablef(:,ipt,iac) = allacfeq(:,ipt,iac);
-%                     end
-%                 end
+
             end  
             endacetate = min(max(allacetate,[],2));
             % find indices for every row in allacetate close to endacetate
@@ -177,4 +132,39 @@ for iid = 1:ndp
             ylabel('kPEPout a.u');
         end
     end
+end
+
+%% Plot kPEPout vs acetate for region of bistability
+% load data
+load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\kPEPoutVariation_Aug20.mat');
+
+npts = size(alliidpvec,1);
+nvar = size(alliidxeq,1);
+nflux = size(alliidfeq,1);
+ndp = size(alliidpvec,3);
+tout = tspan;
+tspanf = 0:0.1:2000;
+
+figure
+plot(minac,kpepval,'Color','r','LineWidth',2);
+hold on
+plot(maxac,kpepval,'Color','r','LineWidth',2);
+plot([max(minac) max(maxac)],[max(kpepval) max(kpepval)],...
+     'Color','r','LineWidth',2);
+xlabel('acetate a.u');
+ylabel('kPEPout a.u');
+
+%% Plots for kPEPout and acetate vs PEP and v4 flux
+% load data from simulation of previous cell
+load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\kPEPoutVariation_Aug20.mat');
+
+colorSpec = chooseColors(5,{'Green','Purple','Red','Navy','HotPink'});
+figure
+nact = length(acetate);
+for iac = 1:1 % length(acetate)
+    plot(alliidpvec(:,11),reshape(bistablex(1,:,iac),1,npts),...
+        'Color',colorSpec{1},'Marker','.','MarkerSize',15);
+    hold on
+    plot(alliidpvec(:,11),reshape(bistablex(4,:,iac),1,npts),...
+        'Color',colorSpec{2},'Marker','.','MarkerSize',15);
 end
