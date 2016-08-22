@@ -161,10 +161,23 @@ load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\kPEPout
 colorSpec = chooseColors(5,{'Green','Purple','Red','Navy','HotPink'});
 figure
 nact = length(acetate);
-for iac = 1:1 % length(acetate)
+for iac = 3:3 % length(acetate)
     plot(alliidpvec(:,11),reshape(bistablex(1,:,iac),1,npts),...
         'Color',colorSpec{1},'Marker','.','MarkerSize',15);
     hold on
     plot(alliidpvec(:,11),reshape(bistablex(4,:,iac),1,npts),...
         'Color',colorSpec{2},'Marker','.','MarkerSize',15);
 end
+xlabel('kPEPout');
+ylabel('PEP a.u');
+
+figure
+for iac = 3:3 % length(acetate)
+    plot(alliidpvec(:,11),reshape(bistablef(5,:,iac),1,npts),...
+        'Color',colorSpec{1},'Marker','.','MarkerSize',15);
+    hold on
+    plot(alliidpvec(:,11),reshape(bistablef(10,:,iac),1,npts),...
+        'Color',colorSpec{2},'Marker','.','MarkerSize',15);
+end
+xlabel('kPEPout');
+ylabel('v4');
