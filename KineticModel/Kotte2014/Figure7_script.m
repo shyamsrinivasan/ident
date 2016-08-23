@@ -159,25 +159,38 @@ ylabel('kPEPout a.u');
 load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\kPEPoutVariation_Aug20.mat');
 
 colorSpec = chooseColors(5,{'Green','Purple','Red','Navy','HotPink'});
-figure
+
 nact = length(acetate);
-for iac = 3:3 % length(acetate)
+for iac = 1:length(acetate)
+    hc = figure;
     plot(alliidpvec(:,11),reshape(bistablex(1,:,iac),1,npts),...
         'Color',colorSpec{1},'Marker','.','MarkerSize',15);
     hold on
     plot(alliidpvec(:,11),reshape(bistablex(4,:,iac),1,npts),...
         'Color',colorSpec{2},'Marker','.','MarkerSize',15);
+    xlabel('kPEPout');
+    ylabel('PEP a.u');
+    path = 'C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel';
+    filename = [path '\PEPvkPEPout_acetate' num2str(iac)];
+    saveas(hc,filename,'epsc');
+%     savefig(hc,filename);
+    close(hc);
 end
-xlabel('kPEPout');
-ylabel('PEP a.u');
 
-figure
-for iac = 3:3 % length(acetate)
+
+
+for iac = 1:length(acetate)
+    hf = figure;
     plot(alliidpvec(:,11),reshape(bistablef(5,:,iac),1,npts),...
         'Color',colorSpec{1},'Marker','.','MarkerSize',15);
     hold on
     plot(alliidpvec(:,11),reshape(bistablef(10,:,iac),1,npts),...
         'Color',colorSpec{2},'Marker','.','MarkerSize',15);
+    xlabel('kPEPout');
+    ylabel('v4');
+    path = 'C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel';
+    filename = [path '\v4vkPEPout_acetate' num2str(iac)];
+    saveas(hf,filename,'epsc');
+%     savefig(hf,filename);
+    close(hf);
 end
-xlabel('kPEPout');
-ylabel('v4');
