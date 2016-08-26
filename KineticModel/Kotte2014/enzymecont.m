@@ -2,7 +2,7 @@
 
 % data from perturbation continuation on acetate
 % Figure 3
-load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\VmaxVariationAllPerturbations_Aug02.mat');
+load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\VmaxVariationAll_Aug02.mat');
 
 % get original ss and continuation without perturbations
 clear pvec
@@ -51,10 +51,12 @@ for ip = 1:length(idp)
 end
 % continuation on enzyme parameters 12, 13 and 14 for perturbed values in
 % cmb
+% change ipt from 1 through 4 to cycle through different types of perturbations
+% see Table 1 in Methods for the types fo perturbations
 hf1 = [];
 hf2 = [];
 hf3 = [];
-ipt = 3;
+ipt = 1;
 while ipt<size(cmb,1)
 % for ipt = 1:size(cmb,1)
     xeq = alliidxeq(:,ipt);
