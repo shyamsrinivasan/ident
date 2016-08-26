@@ -56,7 +56,7 @@ end
 hf1 = [];
 hf2 = [];
 hf3 = [];
-ipt = 1;
+ipt = 3;
 while ipt<size(cmb,1)
 % for ipt = 1:size(cmb,1)
     xeq = alliidxeq(:,ipt);
