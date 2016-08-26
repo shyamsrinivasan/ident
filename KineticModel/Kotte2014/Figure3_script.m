@@ -128,7 +128,10 @@ for iid = 1:1 % length(idp)
     allnss.(['iid' num2str(iid)]) = nss;
 end
 
-% runDynamicRep
+%% runDynamicRep
+% Figure 3
+load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\VmaxVariationAllPerturbations_July29.mat');
+
 % get figure for para,eter perturbation through initial value perturbation
 % get original ss and continuation without perturbations
 clear pvec
@@ -149,7 +152,12 @@ kPEPout = 0.2;
 pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
         KEXPEP,vemax,KeFBP,ne,acetate,d,...
         kPEPout,kEcat,vFbpmax,vEXmax];
+    
+% systems check
+givenModel = @(t,x)KotteODE(t,x,model,pvec);
+fluxg = Kotte_givenFlux([M;model.PM],pvec,model);
 
+opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
 colorSpec = chooseColors(4,{'Navy','HotPink','Red','Orange'});
 ac = find(strcmpi(model.mets,'ac[e]'));
 npts = 1;
@@ -378,8 +386,11 @@ for il = 1:length(samelowstate)
     fprintf('%s\n',num2str(alliidpvec(samelowstate(il),idp),'%4.2e\t'));
 end
 
+%% Continuation on enzyme parameters - SI Figures or Figure 4?
 % enzymecont
 % enzyme parameter continuation on perturbed systems
+% Finer detail - Figure 3
+% load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\VmaxVariationAll_Aug02.mat');
 % get original ss and continuation without perturbations
 clear pvec
 kEcat = 1;
@@ -427,6 +438,8 @@ for ip = 1:length(idp)
 end
 % continuation on enzyme parameters 12, 13 and 14 for perturbed values in
 % cmb
+% change ipt from 1 through 4 to cycle through different types of perturbations
+% see Table 1 in Methods for the types fo perturbations
 hf1 = [];
 hf2 = [];
 hf3 = [];
