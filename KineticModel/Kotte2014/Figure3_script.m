@@ -51,23 +51,44 @@ pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
         KEXPEP,vemax,KeFBP,ne,acetate,d,...
         kPEPout,kEcat,vFbpmax,vEXmax];
     
+% systems check
+fluxg = Kotte_givenFlux([M;model.PM],pvec,model);
+tspan = 0:0.1:2000;
+opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
+ac = find(strcmpi(model.mets,'ac[e]'));
+npts = 1;
+ap = 9;
+
+allxeq = zeros(length(M),npts);
+allxdyn = zeros(length(M),length(tspan),npts);
+allxf = zeros(length(M),npts);
+allfeq = zeros(length(fluxg),npts);
+allfdyn = zeros(length(fluxg),length(tspan),npts);
+allpvec = pvec;
+
+% find equilibrium solution and run equilibrium continuation
+solveEquilibriumODE;          
+
+% get saddle node
+[orig_saddle,orig_saddlepar] = getsaddlenode(data.s1,data.x1,5e-3);
+%% run enzyme perturbations
 % sample parameters indicated by indices in idp
-% cmb = [.05 1 1;1 .05 1;1 1 .05;.05 .05 .05;...
-%        .125 1 1;1 .125 1;1 1 .125;.125 .125 .125;...
-%        .25 1 1;1 .25 1;1 1 .25;.25 .25 .25;...
-%        .5 1 1;1 .5 1;1 1 .5;.5 .5 .5;...
-%        2 1 1;1 2 1;1 1 2;2 2 2;...
-%        4 1 1;1 4 1;1 1 4;4 4 4];
-e_exp = linspace(0.005,4,50);
-cmb = ones(50*4,3);
-i = 0;
-while i<50
-    cmb(1+4*i,1) = e_exp(i+1);
-    cmb(2+4*i,2) = e_exp(i+1);
-    cmb(3+4*i,3) = e_exp(i+1);
-    cmb(4+4*i,1:3) = repmat(e_exp(i+1),1,3);
-    i = i+1;
-end   
+cmb = [.05 1 1;1 .05 1;1 1 .05;.05 .05 .05;...
+       .125 1 1;1 .125 1;1 1 .125;.125 .125 .125;...
+       .25 1 1;1 .25 1;1 1 .25;.25 .25 .25;...
+       .5 1 1;1 .5 1;1 1 .5;.5 .5 .5;...
+       2 1 1;1 2 1;1 1 2;2 2 2;...
+       4 1 1;1 4 1;1 1 4;4 4 4];
+% e_exp = linspace(0.005,4,50);
+% cmb = ones(50*4,3);
+% i = 0;
+% while i<50
+%     cmb(1+4*i,1) = e_exp(i+1);
+%     cmb(2+4*i,2) = e_exp(i+1);
+%     cmb(3+4*i,3) = e_exp(i+1);
+%     cmb(4+4*i,1:3) = repmat(e_exp(i+1),1,3);
+%     i = i+1;
+% end   
 idp = [12 13 14];
 type = 'together';
 npts = size(cmb,1);
@@ -75,7 +96,6 @@ npts = size(cmb,1);
 % systems check
 givenModel = @(t,x)KotteODE(t,x,model,pvec);
 fluxg = Kotte_givenFlux([M;model.PM],pvec,model);
-dMdtg = givenModel(0,M);
 
 tspan = 0:0.1:2000;
 
@@ -94,27 +114,41 @@ else
     alliidfdyn = zeros(length(fluxg),length(tspan),npts,length(idp));
 end
 
+% set acetate conentration
+pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
+        KEXPEP,vemax,KeFBP,ne,acetate,d,...
+        kPEPout,kEcat,vFbpmax,vEXmax];
+pvec(ap) = orig_saddlepar;
+model.PM(ac-length(orig_saddle)) = orig_saddlepar;    
+
 % set parameters from cmb at idp position(s)
 allpvec = repmat(pvec,npts,1);
 allpvec(:,idp) = cmb;
 
+% save allpvec for ap
+allpvecofap = allpvec(:,ap);
+
 for iid = 1:1 % length(idp)
-    % reset pvec
-    pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
-            KEXPEP,vemax,KeFBP,ne,acetate,d,...
-            kPEPout,kEcat,vFbpmax,vEXmax];
+    fprintf('Parameter Combination #%d\n',iid);    
     
-    plb = 0;
-    pub = 1;    
-    fprintf('Parameter Combination #%d\n',iid);
-    
-    % run equilibrium solution followed by MATCONT
+    % find equilibrium solution followed by MATCONT
     allxeq = zeros(length(M),npts);
     allxdyn = zeros(length(M),length(tspan),npts);    
     allfeq = zeros(length(fluxg),npts);
     allfdyn = zeros(length(fluxg),length(tspan),npts);
+    [allxdyn,allxeq,allfdyn,allfeq] =...
+    solveODEonly(npts,M,model,allpvec,opts,tspan,...
+              allxdyn,allxeq,allfdyn,allfeq);
+          
+    % continue on acetate for all equilibirum solutions to different
+    % parameter combinations
     ap = 9;
-    solveEquilibriumODE
+%     allpvec(:,ap) = 0.01;
+    [s,mssid,nss] = setupMATCONT(allxeq,allpvec,ap,model,fluxg,npts);
+%     solveEquilibriumODE
+    
+    % restore allpvec(ap) after continuation
+    allpvec(:,ap) = allpvecofap;
     
     % save solution
     alliidpvec(:,:,iid) = allpvec;
@@ -126,11 +160,17 @@ for iid = 1:1 % length(idp)
     siid.(['iid' num2str(iid)]) = s;
     allmssid.(['iid' num2str(iid)]) = mssid;
     allnss.(['iid' num2str(iid)]) = nss;
+    
+    % reset pvec for next iteration of iid - need to check before using
+    pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
+            KEXPEP,vemax,KeFBP,ne,acetate,d,...
+            kPEPout,kEcat,vFbpmax,vEXmax];
+    pvec(ap) = orig_saddlepar;    
 end
 
 %% runDynamicRep
 % Figure 3
-load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\VmaxVariationAllPerturbations_July29.mat');
+load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\VmaxVariation_EquilibriumData_Aug30.mat');
 
 % get figure for para,eter perturbation through initial value perturbation
 % get original ss and continuation without perturbations
@@ -213,9 +253,7 @@ for iid = 1:ndp
             ivalid = zeros(2,npts);
             % perturbation for all points
             for ipt = 1:npts
-                pvec = alliidpvec(ipt,:,iid);
-                pvec(ap) = orig_saddlepar;
-                model.PM(ac-length(orig_saddle)) = orig_saddlepar;                
+                pvec = alliidpvec(ipt,:,iid);                            
                 % if point not capable of mss
                 if ~ismember(ipt,allmsspts)                   
                     % perturbations from ss 
@@ -389,6 +427,8 @@ end
 %% Continuation on enzyme parameters - SI Figures or Figure 4?
 % enzymecont
 % enzyme parameter continuation on perturbed systems
+% data for Figure 3
+load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\VmaxVariation_IvalPerturbation_Aug30.mat');
 % Finer detail - Figure 3
 % load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\VmaxVariationAll_Aug02.mat');
 % get original ss and continuation without perturbations
@@ -427,11 +467,16 @@ allxf = zeros(length(M),npts);
 allfeq = zeros(length(fluxg),npts);
 allfdyn = zeros(length(fluxg),length(tspan),npts);
 allpvec = pvec;
+
 % continuation on acetate
 ap = 9;
 solveEquilibriumODE 
+ap1 = ap;
+clear ap
+
 % conitnuation on enzyme parameters 12, 13 and 14 for default values of [1
 % 1 1]'
+model.PM(ac-length(orig_saddle)) = orig_saddlepar;
 for ip = 1:length(idp)
     ap = idp(ip);
     solveEquilibriumODE 
@@ -443,14 +488,19 @@ end
 hf1 = [];
 hf2 = [];
 hf3 = [];
-ipt = 3;
+ipt = 4;
 while ipt<size(cmb,1)
 % for ipt = 1:size(cmb,1)
     xeq = alliidxeq(:,ipt);
     pvec = alliidpvec(ipt,:);
     addanot.text = ['E' num2str(ipt)];
     for ip = 1:length(idp)
-        ap = idp(ip);        
+        ap = idp(ip);   
+        if ap~=14
+            pvec(ap) = 0.01;
+        else
+            pvec(ap) = 5;
+        end
         % run MATCONT
         [data,y,p] = execMATCONT(xeq,pvec,ap,fluxg,model);
         if ~isempty(data) && size(data.s1,1)>2
