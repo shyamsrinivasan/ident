@@ -24,6 +24,7 @@ eps = 1e-3;
 % rows function evaluation
 % columns state variable vector
 nr = size(Jpatt,1);
+nc = size(Jpatt,2); % ideally nr == nc (nr != nc not a real jacobian)
 % evaluate non-sparse indices
 [rw,cl] = find(Jpatt);
 % combine and sort on a row basis
@@ -43,7 +44,7 @@ for irow = 1:size(Jpatt,1)
         cnt = cnt + 1;
     end
 end
-J = sparse(rws(:,1),rws(:,2),Jsp,nr,nr);
+J = sparse(rws(:,1),rws(:,2),Jsp,nr,nc);
 
 % Jij = (f(x+e,p)-f(x,p))/e
 % Jij = (fi([x1 x2 ... xj+e ... xn]) - fi([x1 x2 ... xj ... xn]))/e
