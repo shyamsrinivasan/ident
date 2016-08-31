@@ -1,15 +1,17 @@
-function J = model_Jacobian(model,pvec,mc)
-% get model sparsity pattern
-Jpatt = modelSparsity(model);
+function J = model_Jacobian(model,mc,rhshandle,Jpatt)
+if nargin < 4
+    % get model sparsity pattern
+    Jpatt = modelSparsity(model);
+end
 
 % obtain handle for for finite diference approximations
 fDh = finiteD;
 
 % obtain function handle for f(X) in Jacobian calculation
-fJrow = @(i,x)Svrow(i,x,model,pvec);
+% fJrow = @(i,x)Svrow(i,x,model,pvec);
 
 % execute finite difference approximation of jacobian with fh
-J = fDh(Jpatt,mc,fJrow);
+J = fDh(Jpatt,mc,rhshandle);
 
 
 % nested function

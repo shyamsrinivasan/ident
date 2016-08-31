@@ -6,6 +6,8 @@ end
 model.rev(strcmpi(model.rxns,'NADTRHD')) = 0;
 if isfield(model,'Vuptake')
     Vuptake = model.Vuptake;
+else
+    Vuptake = [];
 end
 if nargin < 3
     bounds = struct();    
@@ -45,7 +47,7 @@ vu(strcmpi(model.rxns,'ATPS4r')) = 200;
 
 
 %Uptake Fluxes
-if any(Vuptake)
+if ~isempty(Vuptake) && any(Vuptake)
     vl(logical(Vuptake)) = -Vuptake(logical(Vuptake));
 %     vu(logical(Vuptake)) = -Vuptake(logical(Vuptake));
 end

@@ -31,7 +31,8 @@ rxn_add = {'GLCpts','NADH16','ATPS4r','CYTBD'};
 % and/or
 
 % sample initial metabolite concentrations for estimating kinetic parameters
-[mc,parameter,smp] = parallel_sampling(FBAmodel,parameter,'setupMetLP_red',met,mc,rxn_add);
+[mc,parameter,smp] =...
+ parallel_sampling(FBAmodel,parameter,'setupMetLP_red',met,mc,rxn_add);
 if isempty(mc)
     % multiple saples are being supplied
     mc = smp{1,1};
@@ -55,7 +56,8 @@ rxn_excep = {'NADH16','ATPS4r','CYTBD','H2Ot'};
 FBAmodel.bmrxn = [];
 ensb = parallel_ensemble(FBAmodel,mc,parameter,rxn_add,rxn_excep);
 
-% serially solve ODE of model to steady state
+
+%serially solve ODE of model to steady state
 FBAmodel.rxn_add = rxn_add;
 FBAmodel.rxn_excep = rxn_excep;
 % if ensb{1,2}.feasible    
@@ -87,6 +89,7 @@ flux(1) = iflux(FBAmodel,ensb{1,2},mc,flux,1);
 
 % draw the staedy state flux solution space using production envelopes
 FluxEnvelope(FBAmodel,{'PGI','exPYR';'PFK','exPYR'},ess_rxn);
+
 
 
 
