@@ -60,11 +60,12 @@ ensb = parallel_ensemble(FBAmodel,mc,parameter,rxn_add,rxn_excep);
 %serially solve ODE of model to steady state
 FBAmodel.rxn_add = rxn_add;
 FBAmodel.rxn_excep = rxn_excep;
-if ensb{1,2}.feasible    
-    sol = IntegrateModel(FBAmodel,ensb,ensb{1,1});
-else
-    error('No feasible model found');
-end
+% if ensb{1,2}.feasible    
+%     sol = IntegrateModel(FBAmodel,ensb,ensb{1,1});
+% else
+%     error('No feasible model found');
+% end
+
 
 % solve NLA model for dx/dt = f(x) = 0
 % if ensb{1,2}.feasible
