@@ -123,21 +123,29 @@ if all(check(Vind)>0)
     % for Vind
     % simple vmax = vss/ck
     for irxn = 1:length(Vind)
-        [~,ck] = CKinetics(model,pvec,mc,Vind(irxn));
-        if ck
-            pvec.Vmax(Vind(irxn)) = model.Vss(Vind(irxn))/(3600*ck);
+        if ~isnan(newp.Vmax(Vind(irxn)))
+            pvec.Vmax(Vind(irxn)) = newp.Vmax(Vind(irxn));
         else
-            pvec.Vmax(Vind(irxn)) = 1;
+            [~,ck] = CKinetics(model,pvec,mc,Vind(irxn));
+            if ck
+                pvec.Vmax(Vind(irxn)) = model.Vss(Vind(irxn))/(3600*ck);
+            else
+                pvec.Vmax(Vind(irxn)) = 1;
+            end
         end
     end
     
     % other reactions
     for irxn = 1:length(Vex)
-        [~,tk] = TKinetics(model,pvec,mc,Vex(irxn));
-        if tk
-            pvec.Vmax(Vex(irxn)) = model.Vss(Vex(irxn))/(3600*tk);
+        if ~isnan(newp.Vmax(Vex(irxn)))
+            pvec.Vmax(Vex(irxn)) = newp.Vmax(Vex(irxn));
         else
-            pvec.Vmax(Vex(irxn)) = 1;
+            [~,tk] = TKinetics(model,pvec,mc,Vex(irxn));
+            if tk
+                pvec.Vmax(Vex(irxn)) = model.Vss(Vex(irxn))/(3600*tk);
+            else
+                pvec.Vmax(Vex(irxn)) = 1;
+            end
         end
     end  
     
@@ -146,22 +154,28 @@ if all(check(Vind)>0)
     rnlst = {'ATPS4r','NADH16','CYTBD'};
     for irxn = 1:length(rnlst)
         tfr = strcmpi(model.rxns,rnlst{irxn});
-        if any(tfr) && etck(tfr)
-            pvec.Vmax(tfr) = model.Vss(tfr)/(3600*etck(tfr));
+        if ~isnan(newp.Vmax(tfr))
+            pvec.Vmax(tfr) = newp.Vmax(tfr);
         else
-            pvec.Vmax(tfr) = 1;
+            if any(tfr) && etck(tfr)
+                pvec.Vmax(tfr) = model.Vss(tfr)/(3600*etck(tfr));
+            else
+                pvec.Vmax(tfr) = 1;
+            end
         end
     end    
        
     % atp maintanance
     tatpm = strcmpi(model.rxns,'ATPM');
-    sbid = model.S(:,tatpm)<0;
-    sbid(h2o) = 0;
-    atpmk = 18.84*mc(sbid)/pvec.K(sbid,tatpm)/(1+mc(sbid)/pvec.K(sbid,tatpm));
-    if logical(atpmk)
-        pvec.Vmax(tatpm) = model.Vss(tatpm)/(3600*atpmk);
-    else
-        pvec.Vmax(tatpm) = 1;
+    if any(tatpm)
+        sbid = model.S(:,tatpm)<0;
+        sbid(h2o) = 0;
+        atpmk = 18.84*mc(sbid)/pvec.K(sbid,tatpm)/(1+mc(sbid)/pvec.K(sbid,tatpm));
+        if logical(atpmk)
+            pvec.Vmax(tatpm) = model.Vss(tatpm)/(3600*atpmk);
+        else
+            pvec.Vmax(tatpm) = 1;
+        end
     end
     
     pvec.Vmax(model.VFex) = 0;    
