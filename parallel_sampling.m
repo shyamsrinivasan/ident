@@ -7,6 +7,9 @@ if nargin<6
 end
 if nargin<5
     mc = [];
+else
+    % backup input mc
+    input_mc = mc;
 end
 if nargin<4 || isempty(met)
     met = struct([]);
@@ -30,8 +33,8 @@ elseif nargin>6
     if ~isempty(pts)
         smp = cell(size(pts,2),1);
         for ism = 1:size(pts,2)
-            %extracellular metabolites in M moles/L
-            %from M to mM
+            % extracellular metabolites in M moles/L
+            % from M to mM
             smp{ism,1} = pts(:,ism)*1000;
             smp{ism,2} = pvec;
             smp{ism,2}.delGr = ptsdelGr(:,ism);        
@@ -46,5 +49,10 @@ elseif nargin>6
         pvec = [];
     end
 end
+
+% assign external metabolites from backup input_mc
+% for single samples
+mc(model.nint_metab+1:end) = input_mc(model.nint_metab+1:end);
+
 % load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\ecoliN1_MC1.mat');
 % load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KineticModel\ecoliN1_pvec1.mat');
