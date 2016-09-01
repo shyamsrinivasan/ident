@@ -28,108 +28,108 @@ h2o = find(strcmpi(model.mets,'h2o[c]'));
 %         find(strcmpi(model.mets,'co2[c]'))];
 
 
-for ic = 1:nc   
-    mc = allmc(:,ic);
-    for irxn = 1:length(Vind)
-        nr_flux = zeros(1,1);
-%         nmet = size(S,1);
-        sbid = S(:,Vind(irxn))<0;
-        prid = S(:,Vind(irxn))>0;   
-        
-        %remove water
-        sbid(h2o) = 0;
-        prid(h2o) = 0;
-        
-        %remove protons
-        sbid([he hc]) = 0;
-        prid([he hc]) = 0;
-        
-        Sb = -S(sbid,Vind(irxn));
-        Sp = S(prid,Vind(irxn));
-
-        if rev(Vind(irxn))          
-            if all(mc(sbid)>0) && all(mc(prid)>0)
-              nr_flux = kfwd(Vind(irxn))*prod((mc(sbid)./K(sbid,Vind(irxn))).^Sb) -...
-                        kbkw(Vind(irxn))*prod((mc(prid)./K(prid,Vind(irxn))).^Sp);
-            elseif all(mc(sbid)>0)
-                nr_flux = kfwd(Vind(irxn))*prod((mc(sbid)./K(sbid,Vind(irxn))).^Sb);
-            elseif all(mc(prid)>0)
-                nr_flux = -kbkw(Vind(irxn))*prod((mc(prid)./K(prid,Vind(irxn))).^Sp);
-            end    
-            if any(sbid) && any(prid)
-                %Denominator - 1.6
-                dr_sb = mc(sbid)./K(sbid,Vind(irxn));                             
-                for j = 1:length(find(sbid))
-                    for si = 2:Sb(j)
-                        dr_sb(j) = dr_sb(j) + dr_sb(j)^si;                
-                    end
-                    dr_sb(j) = dr_sb(j) + 1;
-                end
-                %dr_pr
-                dr_pr = mc(prid)./K(prid,Vind(irxn));                
-                for j = 1:length(find(prid))
-                    for si = 2:Sp(j)
-                        dr_pr(j) = dr_pr(j)+dr_pr(j)^si;
-                    end
-                    dr_pr(j) = dr_pr(j) + 1;
-                end
-            else
-                dr_sb = 1;
-                dr_pr = 1;
-            end
-        elseif ~rev(Vind(irxn))                           
-            if all(mc(sbid)>0)
-                nr_flux =...
-                kfwd(Vind(irxn))*prod((mc(sbid)./K(sbid,Vind(irxn))).^Sb);
-            end
-            if any(sbid) && any(prid)
-                %Denominator - 1.6
-                dr_sb = mc(sbid)./K(sbid,Vind(irxn));                             
-                for j = 1:length(find(sbid))
-                    for si = 2:Sb(j)
-                        dr_sb(j) = dr_sb(j) + dr_sb(j)^si;                
-                    end
-                    dr_sb(j) = dr_sb(j) + 1;
-                end                
-            else
-                dr_sb = 1;                
-            end
-            dr_pr = 1;
-        end
-        
-        % regulation        
-        if any(SI(:,Vind(irxn)))
-            % activation
-            if any(SI(:,Vind(irxn))>0)
-                acid = SI(:,Vind(irxn))>0;
-                sac = SI(acid,Vind(irxn));
-                acflx = prod((0.5+(1-0.5).*mc(acid)./KIact(acid,Vind(irxn))/...
-                        (1+mc(acid)./KIact(acid,Vind(irxn)))).^sac);
-                nr_flux = acflx*nr_flux;
-%                 nr_flux = nr_flux*...
-%                           prod(1 + (mc(acid)./KIact(acid,Vind(irxn))).^sac);                      
-            end
-            % inhibition
-            if any(SI(:,Vind(irxn))<0)
-                ihid = SI(:,Vind(irxn))<0;
-                sih = SI(ihid,Vind(irxn));
-                ibflx = prod((0.5+(1-0.5).*1/...
-                        (1+mc(acid)./KIact(acid,Vind(irxn)))).^sac);
-                nr_flux = ibflx*nr_flux;
+% for ic = 1:nc   
+%     mc = allmc(:,ic);
+%     for irxn = 1:length(Vind)
+%         nr_flux = zeros(1,1);
+% %         nmet = size(S,1);
+%         sbid = S(:,Vind(irxn))<0;
+%         prid = S(:,Vind(irxn))>0;   
+%         
+%         %remove water
+%         sbid(h2o) = 0;
+%         prid(h2o) = 0;
+%         
+%         %remove protons
+%         sbid([he hc]) = 0;
+%         prid([he hc]) = 0;
+%         
+%         Sb = -S(sbid,Vind(irxn));
+%         Sp = S(prid,Vind(irxn));
+% 
+%         if rev(Vind(irxn))          
+%             if all(mc(sbid)>0) && all(mc(prid)>0)
+%               nr_flux = kfwd(Vind(irxn))*prod((mc(sbid)./K(sbid,Vind(irxn))).^Sb) -...
+%                         kbkw(Vind(irxn))*prod((mc(prid)./K(prid,Vind(irxn))).^Sp);
+%             elseif all(mc(sbid)>0)
+%                 nr_flux = kfwd(Vind(irxn))*prod((mc(sbid)./K(sbid,Vind(irxn))).^Sb);
+%             elseif all(mc(prid)>0)
+%                 nr_flux = -kbkw(Vind(irxn))*prod((mc(prid)./K(prid,Vind(irxn))).^Sp);
+%             end    
+%             if any(sbid) && any(prid)
+%                 %Denominator - 1.6
+%                 dr_sb = mc(sbid)./K(sbid,Vind(irxn));                             
+%                 for j = 1:length(find(sbid))
+%                     for si = 2:Sb(j)
+%                         dr_sb(j) = dr_sb(j) + dr_sb(j)^si;                
+%                     end
+%                     dr_sb(j) = dr_sb(j) + 1;
+%                 end
+%                 %dr_pr
+%                 dr_pr = mc(prid)./K(prid,Vind(irxn));                
+%                 for j = 1:length(find(prid))
+%                     for si = 2:Sp(j)
+%                         dr_pr(j) = dr_pr(j)+dr_pr(j)^si;
+%                     end
+%                     dr_pr(j) = dr_pr(j) + 1;
+%                 end
+%             else
+%                 dr_sb = 1;
+%                 dr_pr = 1;
+%             end
+%         elseif ~rev(Vind(irxn))                           
+%             if all(mc(sbid)>0)
 %                 nr_flux =...
-%                 nr_flux*prod(1./(1+(mc(ihid)./KIihb(ihid,Vind(irxn))).^sih));                
-            end
-        end  
-
-        if any(sbid) && any(prid)
-            dr_flux = prod(dr_sb)+prod(dr_pr)-1;
-            vflux(Vind(irxn),ic) = scale_flux(nr_flux/dr_flux);
-        else
-            vflux(Vind(irxn),ic) = 0;
-        end
-        flux(Vind(irxn),ic) = Vmax(Vind(irxn))*vflux(Vind(irxn),ic);
-    end
-end
+%                 kfwd(Vind(irxn))*prod((mc(sbid)./K(sbid,Vind(irxn))).^Sb);
+%             end
+%             if any(sbid) && any(prid)
+%                 %Denominator - 1.6
+%                 dr_sb = mc(sbid)./K(sbid,Vind(irxn));                             
+%                 for j = 1:length(find(sbid))
+%                     for si = 2:Sb(j)
+%                         dr_sb(j) = dr_sb(j) + dr_sb(j)^si;                
+%                     end
+%                     dr_sb(j) = dr_sb(j) + 1;
+%                 end                
+%             else
+%                 dr_sb = 1;                
+%             end
+%             dr_pr = 1;
+%         end
+%         
+%         % regulation        
+%         if any(SI(:,Vind(irxn)))
+%             % activation
+%             if any(SI(:,Vind(irxn))>0)
+%                 acid = SI(:,Vind(irxn))>0;
+%                 sac = SI(acid,Vind(irxn));
+%                 acflx = prod((0.5+(1-0.5).*mc(acid)./KIact(acid,Vind(irxn))/...
+%                         (1+mc(acid)./KIact(acid,Vind(irxn)))).^sac);
+%                 nr_flux = acflx*nr_flux;
+% %                 nr_flux = nr_flux*...
+% %                           prod(1 + (mc(acid)./KIact(acid,Vind(irxn))).^sac);                      
+%             end
+%             % inhibition
+%             if any(SI(:,Vind(irxn))<0)
+%                 ihid = SI(:,Vind(irxn))<0;
+%                 sih = SI(ihid,Vind(irxn));
+%                 ibflx = prod((0.5+(1-0.5).*1/...
+%                         (1+mc(acid)./KIact(acid,Vind(irxn)))).^sac);
+%                 nr_flux = ibflx*nr_flux;
+% %                 nr_flux =...
+% %                 nr_flux*prod(1./(1+(mc(ihid)./KIihb(ihid,Vind(irxn))).^sih));                
+%             end
+%         end  
+% 
+%         if any(sbid) && any(prid)
+%             dr_flux = prod(dr_sb)+prod(dr_pr)-1;
+%             vflux(Vind(irxn),ic) = scale_flux(nr_flux/dr_flux);
+%         else
+%             vflux(Vind(irxn),ic) = 0;
+%         end
+%         flux(Vind(irxn),ic) = Vmax(Vind(irxn))*vflux(Vind(irxn),ic);
+%     end
+% end
 
 % vectorized version of CKinetics for all rxns in Vind - under testing
 for ic = 1:nc
