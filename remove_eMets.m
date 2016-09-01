@@ -1,4 +1,10 @@
 function [newmodel,newpvec,newmc,cnstmet] = remove_eMets(model,pvec,mc,rxnid,metid)
+% Inputs
+% rxnid     rxns that need to be kept in the new model (do not remove these
+%           reactions whatsoever
+% metid     metabolites whose concentrations are to fixed and removed as
+%           variables from the model
+
 if nargout>=4
     cnstmet = [];
 end
