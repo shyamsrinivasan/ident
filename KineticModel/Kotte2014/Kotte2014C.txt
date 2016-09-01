@@ -2,6 +2,7 @@ Metab	Mc (M)
 ac[e]	0.1
 pep[c]	1.00E-03
 fdp[c]	1.00E+01
-enz[c]	1
-	
-	
+enz[c]	10
+fdp[e]	0
+enz1[c]	0.00E+00
+enz1[e]	3.00E+01
