@@ -1,23 +1,30 @@
 % kinetic ensemble modeling script any/all models
 % testing with Kotte model of glucoeneogenesis
 addpath(genpath('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel'));
-rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\gtoy1.txt';
-cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\gtoy1C.txt';
+% rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\gtoy1.txt';
+% cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\gtoy1C.txt';
+rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\Kotte2014\Kotte2014.txt';
+cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\Kotte2014\Kotte2014C.txt';
 % create model structure
 [FBAmodel,parameter,variable,nrxn,nmetab] = modelgen(rxfname);
 
 % obtain conentrations from file
 [mc,FBAmodel,met] = readCNCfromFile(cnfname,FBAmodel);
+
 % FBA or pFBA solution - optional
 % fix flux uptakes for FBA solution
-Vup_struct.exAC = 20;%mmol/gDCW.h
+% Vup_struct.exAC = 20;%mmol/gDCW.h
+Vup_struct.ACt2r = 20;
+Vup_struct.ENZ1ex = 1;
 
 % designate reactions for which uptake should not be zero in FBA
-ess_rxn = {'exH','exPI','exAC'};
+% ess_rxn = {'exH','exPI','exAC'};
+ess_rxn = {'ACt2r','ENZ1ex'};
 
 % assign initial fluxes and calculate FBA fluxes for direction
-FBAmodel.bmrxn = 14;
-FBAmodel = FBAfluxes(FBAmodel,'fba',ess_rxn,Vup_struct);
+% FBAmodel.bmrxn = 14;
+FBAmodel = FBAfluxes(FBAmodel,'fba',ess_rxn,Vup_struct,...
+                     find(strcmpi(FBAmodel.rxns,'EC_Biomass')));
 
 rxn_add = {};
 % Metabolite conecntrations 
@@ -37,3 +44,12 @@ rxn_add = {};
 rxn_excep = {};
 FBAmodel.bmrxn = [];
 ensb = parallel_ensemble(FBAmodel,mc,parameter,rxn_add,rxn_excep);
+
+% serially solve ODE of model to steady state
+FBAmodel.rxn_add = rxn_add;
+FBAmodel.rxn_excep = rxn_excep;
+if ensb{1,2}.feasible    
+    sol = IntegrateModel(FBAmodel,ensb,ensb{1,1});
+else
+    error('No feasible model found');
+end
