@@ -51,10 +51,12 @@ for ic = 1:nc
         
         % atp maintanance
         tatpm = strcmpi(model.rxns,'ATPM');
-        sbid = model.S(:,tatpm)<0;
-        sbid(h2o) = 0;
-        flux(tatpm,ic) = pvec.Vmax(tatpm)*18.84*mc(sbid,ic)/pvec.K(sbid,tatpm)/...
-                      (1+mc(sbid,ic)/pvec.K(sbid,tatpm));
+        if any(tatpm)
+            sbid = model.S(:,tatpm)<0;
+            sbid(h2o) = 0;
+            flux(tatpm,ic) = pvec.Vmax(tatpm)*18.84*mc(sbid,ic)/pvec.K(sbid,tatpm)/...
+                          (1+mc(sbid,ic)/pvec.K(sbid,tatpm));
+        end
         % biomass
     %     if mc(strcmpi(model.mets,'atp[c]'))>0 &&...
     %        mc(strcmpi(model.mets,'h2o[c]'))>0
