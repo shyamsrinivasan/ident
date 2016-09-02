@@ -1,6 +1,6 @@
-function [flux,vflux] = CKinetics(model,pvec,mc,Vind)
-[~,nc] = size(mc);
-allmc = mc;
+function [flux,vflux] = CKinetics(model,pvec,M,Vind)
+[~,nc] = size(M);
+allmc = M;
 S = model.S;
 SI = model.SI;
 nrxn = model.nt_rxn;
@@ -13,7 +13,9 @@ kbkw = pvec.kcat_bkw;
 Vmax = pvec.Vmax;
 
 vflux = zeros(nrxn,nc);   
+vflux = cons(vflux,M);
 flux = zeros(nrxn,nc);
+flux = cons(flux,M);
 
 %eliminate consideration for excess cofators
 %pi[c],pi[e],h[c],h[e],h2o[c]
@@ -133,12 +135,12 @@ h2o = find(strcmpi(model.mets,'h2o[c]'));
 
 % vectorized version of CKinetics for all rxns in Vind - under testing
 for ic = 1:nc
-    mc = allmc(:,ic);
-    vecmc = repmat(mc,1,length(Vind));
+    M = allmc(:,ic);
+    vecmc = repmat(M,1,length(Vind));
     acflx = zeros(model.nt_rxn,1);
     ibflx = zeros(model.nt_rxn,1);
-    acdr = zeros(model.nt_rxn,1);
-    ibdr = zeros(model.nt_rxn,1);
+%     acdr = zeros(model.nt_rxn,1);
+%     ibdr = zeros(model.nt_rxn,1);
     alls = S(:,Vind);allp = S(:,Vind);
     alls(S(:,Vind)>0) = 0;
     allp(S(:,Vind)<0) = 0;
@@ -228,7 +230,6 @@ for ic = 1:nc
     % multiply with Vmax or enzyme concentration
     flux(Vind,ic) = Vmax(Vind,ic).*vflux(Vind,ic);    
 end
-
 
 flux = flux(Vind,:);
 vflux = vflux(Vind,:);

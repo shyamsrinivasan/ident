@@ -1,5 +1,5 @@
-function flux = iflux(model,pvec,mc,flux,idx)
-[~,nc] = size(mc);
+function flux = iflux(model,pvec,M,flux,idx)
+[~,nc] = size(M);
 if nargin <5
     idx = [];
 else
@@ -7,6 +7,7 @@ else
 end
 if nargin<4
     flux = zeros(model.nt_rxn,nc);
+    flux = cons(flux,M);
 end
 % if isfield(model,'rxn_add');
 %     rxn_add = model.rxn_add;
@@ -40,24 +41,24 @@ for ic = 1:nc
     if isempty(idx)
 
         % cytosolic fluxes
-        flux(Vind,ic) = CKinetics(model,pvec,mc(:,ic),Vind);
+        flux(Vind,ic) = CKinetics(model,pvec,M(:,ic),Vind);
         
         % transport fluxes    
-        flux(Vex,ic) = TKinetics(model,pvec,mc(:,ic),Vex);
+        flux(Vex,ic) = TKinetics(model,pvec,M(:,ic),Vex);
         
         % ETC fluxes
-        flux(:,ic) = ETCflux(model,pvec,mc(:,ic),flux(:,ic));
+%         flux(:,ic) = ETCflux(model,pvec,M(:,ic),flux(:,ic));
 
         % other fixed exchaged fluxes - currently sets them to 0  
-        flux(VFex,ic) = EKinetics(model,pvec,mc(:,ic),VFex);
+        flux(VFex,ic) = EKinetics(model,pvec,M(:,ic),VFex);
         
         % atp maintanance
         tatpm = strcmpi(model.rxns,'ATPM');
         if any(tatpm)
             sbid = model.S(:,tatpm)<0;
             sbid(h2o) = 0;
-            flux(tatpm,ic) = pvec.Vmax(tatpm)*18.84*mc(sbid,ic)/pvec.K(sbid,tatpm)/...
-                          (1+mc(sbid,ic)/pvec.K(sbid,tatpm));
+            flux(tatpm,ic) = pvec.Vmax(tatpm)*18.84*M(sbid,ic)/pvec.K(sbid,tatpm)/...
+                          (1+M(sbid,ic)/pvec.K(sbid,tatpm));
         end
         % biomass
     %     if mc(strcmpi(model.mets,'atp[c]'))>0 &&...
@@ -71,31 +72,31 @@ for ic = 1:nc
     %     elseif any(mc(logical(model.S(:,model.bmrxn)<0))<1e-5)
     %         flux(model.bmrxn) = 0;
     %     end
-        flux(model.bmrxn,ic) = BMKinetics(model,pvec,mc,model.bmrxn);
+        flux(model.bmrxn,ic) = BMKinetics(model,pvec,M,model.bmrxn);
 %         flux(model.bmrxn,ic) = model.Vss(model.bmrxn)/3600;
 %         flux(strcmpi('GLCpts',model.rxns),ic) = 10;
     else
         %determine which group idx belongs to
         for id = 1:length(idx)
             if ismember(idx(id),Vind)
-                idflux(id,ic) = CKinetics(model,pvec,mc(:,ic),idx(id));
+                idflux(id,ic) = CKinetics(model,pvec,M(:,ic),idx(id));
             elseif ismember(idx(id),Vex)
-                idflux(id,ic) = TKinetics(model,pvec,mc(:,ic),idx(id));                
+                idflux(id,ic) = TKinetics(model,pvec,M(:,ic),idx(id));                
             elseif ismember(idx(id),VFex)
-                idflux(id,ic) = EKinetics(model,pvec,mc(:,ic),idx(id));
+                idflux(id,ic) = EKinetics(model,pvec,M(:,ic),idx(id));
             elseif idx(id)==find(strcmpi(model.rxns,'ATPM'))
                 sbid = model.S(:,idx(id))<0;
                 sbid(h2o) = 0;
                 idflux(idx(id),ic) = pvec.Vmax(tatpm)*18.84*...
-                                     mc(sbid,ic)/pvec.K(sbid,tatpm)/...
-                                    (1+mc(sbid,ic)/pvec.K(sbid,tatpm));                
+                                     M(sbid,ic)/pvec.K(sbid,tatpm)/...
+                                    (1+M(sbid,ic)/pvec.K(sbid,tatpm));                
             elseif idx(id)==model.bmrxn
                 idflux(id,ic) = 0;
             end
             % ETC fluxes
             ETCrxn = {'ATPS4r','NADH16','CYTBD','SUCDi','FRD7'};
             if any(strcmpi(ETCrxn,model.rxns{idx(id)}))
-                flux = ETCflux(model,pvec,mc(:,ic),flux(:,ic));
+                flux = ETCflux(model,pvec,M(:,ic),flux(:,ic));
                 idflux(id,ic) = flux(idx(id));
             end
         end                       
