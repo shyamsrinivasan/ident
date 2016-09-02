@@ -139,6 +139,8 @@ for ic = 1:nc
     vecmc = repmat(M,1,length(Vind));
     acflx = zeros(model.nt_rxn,1);
     ibflx = zeros(model.nt_rxn,1);
+    sprod = ones(length(Vind),1);
+    pprod = ones(length(Vind),1);
 %     acdr = zeros(model.nt_rxn,1);
 %     ibdr = zeros(model.nt_rxn,1);
     alls = S(:,Vind);allp = S(:,Vind);
@@ -147,8 +149,17 @@ for ic = 1:nc
     allK = K(:,Vind);
     sratio = vecmc(logical(alls))./allK(logical(alls));
     pratio = vecmc(logical(allp))./allK(logical(allp));
-    fwdflx = kfwd(Vind).*prod(sratio.^-alls(logical(alls)),2);
-    revflx = kbkw(Vind).*prod(pratio.^allp(logical(allp)),2);    
+    % non vector implementation for ADMAT
+    for irxn = 1:size(sratio,1)
+        sprod(irxn) = sprod(irxn)*(sratio(irxn,:).^-alls(:,irxn));
+    end
+    for irxn = 1:size(pratio,2)
+        pprod(irxn) = pprod(irxn)*(pratio(irxn,:).^allp(:,irxn));
+    end
+    fwdflx = kfwd(Vind).*sprod;
+    revflx = kbkw(VInd).*pprod;
+%     fwdflx = kfwd(Vind).*prod(sratio.^-alls(logical(alls)),2);
+%     revflx = kbkw(Vind).*prod(pratio.^allp(logical(allp)),2);    
     
     % set reverse flux for zero products = 0
     [~,rxn] = find(vecmc(logical(alls))==0);
@@ -169,9 +180,11 @@ for ic = 1:nc
     nrflx = fwdflx-revflx;
     
     % denominator of kinetics
-    drflx = 1+...
-            prod(sratio.^-alls(logical(alls)),2)+...
-            prod(pratio.^allp(logical(allp)),2);
+    % non vector implementation for ADMAT
+    drflx = 1+sprod+pprod;
+%     drflx = 1+...
+%             prod(sratio.^-alls(logical(alls)),2)+...
+%             prod(pratio.^allp(logical(allp)),2);
     
     % allosteric activation  
     % reaction that have an activation component
