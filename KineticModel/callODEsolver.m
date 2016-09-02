@@ -29,8 +29,8 @@ else
     % time for initial data point
     t0 = tavail(end);
 %     tout = solverP.tmax;
-    tout = tavail(end)+solverP.tout:solverP.tmax/(solverP.MaxDataPoints-1):solverP.tmax;
-    
+%     tout = tavail(end)+solverP.tout:solverP.tmax/(solverP.MaxDataPoints-1):solverP.tmax;
+    tout = tavail(end)+solverP.tout:0.1:solverP.tmax;
     % initial value
     initval = sol.y(:,end);    
     Sol.t = sol.t;%zeros(length(tout),1)];
@@ -63,8 +63,8 @@ mondata.skip = 10;
 % callODEmodel = @(t,Y,data)ODEmodel(t,Y,data,model,pvec);
 
 % toy model
-callODEmodel = @(t,Y,data)ToyODEmodel(t,Y,data,model,pvec);
-CVodeInit(callODEmodel,'BDF','Newton',t0,initval,options);
+callODEmodel = @(t,Y)ToyODEmodel(t,Y,data,model,pvec);
+% CVodeInit(callODEmodel,'BDF','Newton',t0,initval,options);
 % [t,dy] = ode15s(callODEmodel,tout,initval,options);
 %% %Solve ODE
 
@@ -85,7 +85,9 @@ fprintf('Total simulaion time: %4.3g\n',tout(end)-t0);
 %     si = CVodeGetStats;
 %     fprintf('%4.3g\t\n',si.tcur);
 %     [status,t,dY] = CVode(tout,'OneStep');  
-    [status,t,dY] = CVode(tout,'Normal');  
+%     [status,t,dY] = CVode(tout,'Normal');  
+    opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
+    [t,dY] = ode45(callODEmodel,tout,initval,opts);
 %     tstep = tstep+1;
 %     if ~rem(tstep,100)
 %         si = CVodeGetStats;
@@ -111,7 +113,7 @@ fprintf('Total simulaion time: %4.3g\n',tout(end)-t0);
 %     itime = [itime;itfinish];
 % end
 % EWT = CVodeGet('ErrorWeigths');
-CVodeFree;
+% CVodeFree;
 totaltfinish = toc(totaltstart);  
 
 % Get final Steady State
