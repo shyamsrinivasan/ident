@@ -1,39 +1,9 @@
-%function to solve ODE to obtain concentration profiles using SUNDIALS
+% function to solve ODE to obtain concentration profiles using SUNDIALS
 function [Sol,finalSS,status] = callODEsolver(model,pvec,initval,solverP,sol)
 if nargin < 5
     sol = struct([]);
 end
 nvar = length(initval);
-% Initial Value
-% nint_metab = model.nint_metab;
-% next_metab = model.next_metab;
-% nvar = model.nt_metab;%All Metabolites
-% data.flux = zeros(size(model.S,2),1);
-% %Setting initial values for ODE
-% initval = zeros(nvar,1);
-% if ~isemptyr(initialSol)
-%     initval = initialSol.y(:,end);
-% else
-% %     bm_ind = model.bmrxn;
-%     Mbio = strcmpi('biomass',model.mets);
-% %     Mbio = model.S(:,bm_ind)>0;
-% %     nint_metab = nint_metab-length(find(Mbio));
-%     initval(1:(nint_metab-1)) = variable.MC(1:(nint_metab-1));
-%     initval(Mbio) = 0;
-%     initval(nint_metab+1:nint_metab+next_metab) = ...
-%     assign_extconc(batch.init{1},batch.init{2},model);
-% end
-% [initval,initflux] = initializeConcentration(model,pmeter,variable,batch.init{1},...
-%                                              batch.init{2},1,initialSol);
-% initval = initConcentration(model,batch,variable,1,batch.init{1},...
-%                             batch.init{2},initialSol);
-% initval = sample_metabolites(model,initval)*1e-3;                    
-% % initval = zeros(model.nt_metab,1);  
-% initval(initval==0) = 0.001;
-% initflux = initFlux(model,pmeter,initval,1);
-% 
-% data.flux = initflux;                                        
-% initval(nint_metab+1:nt_metab) = model.M*variable.MC;
 
 % Set Scalar Absolute Tolerance
 AbsTol = zeros(nvar,1);
@@ -41,7 +11,7 @@ AbsTol(AbsTol==0) = solverP.MabsTol;
 data = struct();
 % options = odeset('RelTol',solverP.RelTol,'AbsTol',AbsTol);
 
-%Time vector
+% Time vector
 Sol = struct();
 if isempty(sol)
     % time for initial data point
@@ -87,7 +57,7 @@ mondata.skip = 10;
 % mondata.initialized = false;
 % options = CVodeSetOptions(options,'MonitorFn',@MonitorCVodeGraph,...
 %                           'MonitorData',mondata); 
-%ODE Function Called through Anonymous function  
+% ODE Function Called through Anonymous function  
 % ecoli model
 % callODEmodel = @(t,Y,data)ODEmodel(t,Y,data,model,pvec);
 
@@ -143,8 +113,8 @@ fprintf('Total simulaion time: %4.3g\n',tout(end)-t0);
 CVodeFree;
 totaltfinish = toc(totaltstart);  
 
-%Get final Steady State
-%Obtaining final SS values for initial problem 
+% Get final Steady State
+% Obtaining final SS values for initial problem 
 f_flag = 0;
 i = size(Sol.y,2);
 while ~f_flag
@@ -177,6 +147,6 @@ var.mets = {'pep[c]','pyr[c]','atp[c]','adp[c]','g6p[c]',...
 timecourseplots(Sol.t,Sol.y,'c',model,var);
 var1.rxns = model.rxns([1 2 3 4]);
 timecourseplots(Sol.t,Sol.flux,'f',model,var1);
-%plot for debugging purposes only
+% plot for debugging purposes only
 return;
 
