@@ -63,8 +63,8 @@ mondata.skip = 10;
 % callODEmodel = @(t,Y,data)ODEmodel(t,Y,data,model,pvec);
 
 % toy model
-callODEmodel = @(t,Y)ToyODEmodel(t,Y,data,model,pvec);
-% CVodeInit(callODEmodel,'BDF','Newton',t0,initval,options);
+callODEmodel = @(t,Y,data)ToyODEmodel(t,Y,data,model,pvec);
+CVodeInit(callODEmodel,'Adams','Newton',t0,initval,options);
 % [t,dy] = ode15s(callODEmodel,tout,initval,options);
 %% %Solve ODE
 
@@ -85,9 +85,9 @@ fprintf('Total simulaion time: %4.3g\n',tout(end)-t0);
 %     si = CVodeGetStats;
 %     fprintf('%4.3g\t\n',si.tcur);
 %     [status,t,dY] = CVode(tout,'OneStep');  
-%     [status,t,dY] = CVode(tout,'Normal');  
-    opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
-    [t,dY] = ode45(callODEmodel,tout,initval,opts);
+    [status,t,dY] = CVode(tout,'Normal');  
+%     opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
+%     [t,dY] = ode15s(callODEmodel,tout,initval,opts);
 %     tstep = tstep+1;
 %     if ~rem(tstep,100)
 %         si = CVodeGetStats;
