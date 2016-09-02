@@ -17,7 +17,8 @@ if isempty(sol)
     % time for initial data point
     t0 = 0.0;
 %     tout = solverP.tmax;
-    tout = solverP.tout:solverP.tmax/(solverP.MaxDataPoints-1):solverP.tmax;
+%     tout = solverP.tout:solverP.tmax/(solverP.MaxDataPoints-1):solverP.tmax;
+    tout = solverP.tout:0.1:solverP.tmax;
     
     Sol.t = [];%zeros(length(tout)+1,1);
     Sol.y = zeros(nvar,0);
