@@ -1,4 +1,4 @@
-function [sol,jacobian] =...
+function [allsol,jacobian] =...
 IntegrateModel(model,ensb,mc,ess_rxn,Vup_struct,change_pos,change_neg)
 % change in initial conditions
 if nargin<7
@@ -35,6 +35,11 @@ end
 [model,pvec,mc] = addremoveMets(model,{'h2o[c]','h2o[e]'},pvec,mc);
 [newmodel,newpvec,newmc,cnstmet] = remove_eMets(model,pvec,mc,[model.Vind model.Vex],...
                            {'glc[e]','o2[e]','h[e]','h[c]','pi[e]','pyr[e]'});
+
+% preinitialize Vind and Vex to reduce integration overhead in iflux.m                       
+newmodel.Vind = addToVind(newmodel,newmodel.Vind,newmodel.rxn_add,newmodel.rxn_excep);
+newmodel.rxn_excep = union(newmodel.rxn_excep,newmodel.rxns(newmodel.Vind));
+newmodel.Vex = addToVind(newmodel,newmodel.Vex,[],newmodel.rxn_excep);                       
 
 % only initialize for varmets   
 nvar = length(newmodel.mets)-length(find(cnstmet));
@@ -89,16 +94,15 @@ dXdt = ToyODEmodel(0,Nimc,[],newmodel,newpvec);
 % Y = getval(dXdtADMAT);
 % Jac = getydot(dXdtADMAT);
 
-%integrate model
-[sol,finalSS,status] = callODEsolver(newmodel,newpvec,Nimc,solverP);
+% integrate model
+[allsol,allxeq] = callODEsolver(newmodel,newpvec,Nimc,solverP);
 
-
-%introduce perturbation
-Nimc = perturbEqSolution(model,finalSS.y,change_pos,change_neg);
+% introduce perturbation
+Nimc = perturbEqSolution(model,allxeq.y,change_pos,change_neg);
 
 %Perturbation to concentrations
-[sol] =...
-MonteCarloPertrubationIV(model,ess_rxn,Vup_struct,ensb,finalSS.y.*imc,change_pos,[]);
+[allsol] =...
+MonteCarloPertrubationIV(model,ess_rxn,Vup_struct,ensb,allxeq.y.*imc,change_pos,[]);
 
 % sol = MCPerturbationFlux(model,ess_rxn,Vup_struct,ensb,finalSS.y,finalSS.flux,change_pos,[]);
 
@@ -107,16 +111,16 @@ MonteCarloPertrubationIV(model,ess_rxn,Vup_struct,ensb,finalSS.y.*imc,change_pos
 [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e5);
 
 %introduce perturbation
-Nimc = perturbEqSolution(model,finalSS.y,change_pos,[]);
+Nimc = perturbEqSolution(model,allxeq.y,change_pos,[]);
 
 %integrate model
-[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP);
+[allsol,allxeq,status] = callODEsolver(model,pvec,Nimc,solverP);
 
 %initialize solver properties
 [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1.1e5);
 
 %integrate model
-[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP,sol);
+[allsol,allxeq,status] = callODEsolver(model,pvec,Nimc,solverP,allsol);
 
 %initialize solver properties
 % [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,5e3);
@@ -128,7 +132,7 @@ Nimc = perturbEqSolution(model,finalSS.y,change_pos,[]);
 [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,3e5);
 
 %integrate model
-[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP,sol);
+[allsol,allxeq,status] = callODEsolver(model,pvec,Nimc,solverP,allsol);
 
 %initialize solver properties
 % [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,5e4);
@@ -140,31 +144,31 @@ Nimc = perturbEqSolution(model,finalSS.y,change_pos,[]);
 [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,4e5);
 
 %integrate model
-[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP,sol);
+[allsol,allxeq,status] = callODEsolver(model,pvec,Nimc,solverP,allsol);
 
 %initialize solver properties
 [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,5e5);
 
 %integrate model
-[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP,sol);
+[allsol,allxeq,status] = callODEsolver(model,pvec,Nimc,solverP,allsol);
 
 %initialize solver properties
 [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,7e5);
 
 %integrate model
-[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP,sol);
+[allsol,allxeq,status] = callODEsolver(model,pvec,Nimc,solverP,allsol);
 
 %initialize solver properties
 [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,9e5);
 
 %integrate model
-[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP,sol);
+[allsol,allxeq,status] = callODEsolver(model,pvec,Nimc,solverP,allsol);
 
 %initialize solver properties
 [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1e6);
 
 %integrate model
-[sol,finalSS,status] = callODEsolver(model,pvec,Nimc,solverP,sol);
+[allsol,allxeq,status] = callODEsolver(model,pvec,Nimc,solverP,allsol);
 
 
 
