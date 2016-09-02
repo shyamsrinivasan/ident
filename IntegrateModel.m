@@ -78,6 +78,9 @@ flux = iflux(newmodel,newpvec,[Nimc.*imc;Pimc]);
 % toy model
 dXdt = ToyODEmodel(0,Nimc,[],newmodel,newpvec);
 
+% get jacobian and eigen values and eigne vectors
+[J,lambda,w] = getjacobian(Nimc,newpvec,newmodel);
+
 % %call to ADmat for stability/jacobian info
 % [Y,Jac] = stabilityADMAT(model,pvec,Nimc.*imc);
 % [e_vec,e_val] = eig(Jac);
