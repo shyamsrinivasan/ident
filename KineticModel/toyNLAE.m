@@ -5,7 +5,12 @@ dM = zeros(nvar,1);
 PM = cons(model.Pimc,mc);
 imc = cons(model.imc,mc);
 
-allmc = [mc.*imc;repmat(PM,1,size(mc,2))];
+% allmc = [mc.*imc;repmat(PM,1,size(mc,2))];
+if ~isempty(PM)
+    allmc = [mc.*imc;PM];
+else
+    allmc = mc.*imc;
+end
 dM = cons(dM,allmc);
 
 flux = iflux(model,pvec,allmc);
