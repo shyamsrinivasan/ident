@@ -1,4 +1,4 @@
-function [hfig,ha] = timecourseplots(xdata,ally,type,name,model,hfig,ha,LP,addanot)
+function [hfig,ha] = timecourseplots(xdata,ally,datatype,name,lcmodel,hfig,ha,LP,addanot)
 if nargin<9
     addanot = [];
 end
@@ -12,9 +12,15 @@ if nargin<6
     hfig = [];
 end
 
-global Line annot
+global Line annot type model
 Line = LP;
 annot = addanot;
+type = datatype;
+model = lcmodel;
+if isempty(Line)
+    Line.Color = [0 0 0];
+    Line.LineWidth = 2;
+end
 
 switch(type)
     case 1        
@@ -28,7 +34,7 @@ switch(type)
         end    
         % get ydata and plot info
         ydata = ally(yid,:);
-        [hfig,ha,hlval] = plot2Dcourse(xdata,ydata,hfig,ha,LP);
+        [hfig,ha,hlval] = plot2Dcourse(xdata,ydata,yid,hfig,ha);
         drawnow
     case 2
         % get id for fluxes in cell array name
@@ -41,15 +47,15 @@ switch(type)
         end  
         % get ydata and plot info
         ydata = ally(yid,:);
-        [hfig,ha,hlval] = plot2Dcourse(xdata,ydata,hfig,ha,LP); 
+        [hfig,ha,hlval] = plot2Dcourse(xdata,ydata,yid,hfig,ha); 
         drawnow
     otherwise
         fprintf('No suitable plot functions found\n');
 end
 end
 
-function [hfig,ha,hlval] = plot2Dcourse(xdata,ydata,hfig,ha)
-global Line annot
+function [hfig,ha,hlval] = plot2Dcourse(xdata,ydata,idx,hfig,ha)
+global Line annot type model
 if ~isempty(hfig)
     set(0,'CurrentFigure',hfig);
 else
@@ -87,7 +93,13 @@ for ip = 1:nplots
             set(hlval,Line);
         end
         % set axis labels
+        if type==1
+            [xlabel,ylabel] = getaxislabels(2,11,model,[1 idx(ip)]);
+        elseif type==2
+            [xlabel,ylabel] = getaxislabels(2,12,model,[1 idx(ip)]);
+        end
         % set axis properties
+        setproperties(2,ha(ip),xlabel,ylabel);
     else
         break
     end
