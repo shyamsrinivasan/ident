@@ -10,7 +10,7 @@ model.rxn_add = rxn_add;
 model.rxn_excep = rxn_excep;
 
 % reactions to consider for kinetics other than Vind
-Vind = addToVind(model,model.Vind,rxn_add,rxn_excep);
+Vind = addToVind(model.rxns,model.Vind,rxn_add,rxn_excep);
 
 % metabolites that do not affect thermodynamic equilibrium  
 he = find(strcmpi(model.mets,'h[e]'));
@@ -85,7 +85,7 @@ end
 % other reactions 
 % transport reactions x[e] <==> x[c]
 new_excep = union(rxn_excep,model.rxns(Vind));
-Vex = addToVind(model,model.Vex,[],new_excep);
+Vex = addToVind(model.rxns,model.Vex,[],new_excep);
 for irxn = 1:length(Vex)
     nmet = size(S,1);
     
