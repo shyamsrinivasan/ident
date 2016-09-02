@@ -13,10 +13,10 @@ solverP = struct();
 switch type
     case 'ode'
         % ODE Solver parameters
-        solverP.RabsTol = 1e-12;
-        solverP.PabsTol = 1e-12;
-        solverP.MabsTol = 1e-12;
-        solverP.RelTol = 1e-14;
+        solverP.RabsTol = 1e-10;
+        solverP.PabsTol = 1e-10;
+        solverP.MabsTol = 1e-10;
+        solverP.RelTol = 1e-12;
         solverP.MaxIter = 70000;    
         solverP.MaxDataPoints = 500;
         solverP.tmax = tmax;%s
