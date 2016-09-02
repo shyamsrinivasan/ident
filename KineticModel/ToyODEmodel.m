@@ -1,4 +1,4 @@
-function [dXdt,flag,newdata] = ToyODEmodel(t,mc,data,model,pvec)
+function [dXdt] = ToyODEmodel(t,mc,data,model,pvec)
 
 nvar = length(mc);
 dXdt = zeros(nvar,1);
