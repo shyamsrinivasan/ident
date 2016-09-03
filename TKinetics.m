@@ -1,16 +1,21 @@
 function [flux,vflux] = TKinetics(model,pvec,M,Vex)
-flux = zeros(model.nt_rxn,1);
-flux = cons(flux,M);
-vflux = zeros(model.nt_rxn,1);
-vflux = cons(vflux,M);
 Vmax = pvec.Vmax;
+kfwd = pvec.kcat_fwd;
+kbkw = pvec.kcat_bkw;
 K = pvec.K;
 S = model.S;
+rev = model.rev;
+
+nrxn = model.nt_rxn;
+flux = zeros(nrxn,1);
+flux = cons(flux,M);
+vflux = zeros(nrxn,1);
+vflux = cons(vflux,M);
 
 he = find(strcmpi(model.mets,'h[e]'));
 hc = find(strcmpi(model.mets,'h[c]'));
 % h2o = find(strcmpi(model.mets,'h2o[c]'));
-% pie = find(strcmpi(model.mets,'pi[e]'));
+pie = strcmpi(model.mets,'pi[e]');
 % pic = find(strcmpi(model.mets,'pi[c]'));
 % co2 = find(strcmpi(model.mets,'co2[c]'));
     
@@ -37,8 +42,8 @@ hc = find(strcmpi(model.mets,'h[c]'));
 for irxn = 1:length(Vex)    
         
     %kcat
-    kfwd = pvec.kcat_fwd(Vex(irxn));
-    kbkw = pvec.kcat_bkw(Vex(irxn));
+%     kfwd = pvec.kcat_fwd(Vex(irxn));
+%     kbkw = pvec.kcat_bkw(Vex(irxn));
 
     nmet = size(S,1);
     %kinetics - substrate and product
@@ -50,23 +55,23 @@ for irxn = 1:length(Vex)
     prid([he hc]) = 0;
     
     if any(strcmpi(model.rxns{Vex(irxn)},'O2t'))
-        nr_flux = kfwd*prod(M(sbid)./K(sbid,Vex(irxn)))/...
+        nr_flux = kfwd(Vex(irxn))*prod(M(sbid)./K(sbid,Vex(irxn)))/...
                   (1+prod(M(sbid)./K(sbid,Vex(irxn)))+...
                   prod(M(prid)./K(prid,Vex(irxn))));
     elseif any(strcmpi(model.rxns{Vex(irxn)},'PIt2r'))
         Kapie = 0.89; % mM
-        nr_flux = kfwd*prod(M(sbid)./K(sbid,Vex(irxn)))/...
+        nr_flux = kfwd(Vex(irxn))*prod(M(sbid)./K(sbid,Vex(irxn)))/...
                   (1+prod(M(sbid)./K(sbid,Vex(irxn)))+...
                   prod(M(prid)./K(prid,Vex(irxn))))*...
                   1/(1+Kapie/M(sbid));
     else
-        if model.rev(Vex(irxn))
-            nr_flux = kfwd*(prod(M(sbid)./K(sbid,Vex(irxn)))-...
+        if rev(Vex(irxn))
+            nr_flux = kfwd(Vex(irxn))*(prod(M(sbid)./K(sbid,Vex(irxn)))-...
                       prod(M(prid)./K(prid,Vex(irxn))))/...
                       (1+prod(M(sbid)./K(sbid,Vex(irxn)))+...
                       prod(M(prid)./K(prid,Vex(irxn))));
-        elseif ~model.rev(Vex(irxn))
-            nr_flux = kfwd*prod(M(sbid)./K(sbid,Vex(irxn)))/...
+        elseif ~rev(Vex(irxn))
+            nr_flux = kfwd(Vex(irxn))*prod(M(sbid)./K(sbid,Vex(irxn)))/...
                       (1+prod(M(sbid)./K(sbid,Vex(irxn)))+...
                       prod(M(prid)./K(prid,Vex(irxn))));
         end
@@ -125,5 +130,68 @@ for irxn = 1:length(Vex)
     vflux(Vex(irxn)) = scale_flux(vflux(Vex(irxn)));
     flux(Vex(irxn)) = Vmax(Vex(irxn))*vflux(Vex(irxn));
 end
+
+% partial vector implementation to reduce overhead and use with ADMAT
+sprod = ones(length(Vex),1);
+pprod = ones(length(Vex),1);
+vecmc = repmat(M,1,length(Vex));
+alls = S(:,Vex);allp = S(:,Vex);
+alls(S(:,Vex)>0) = 0;allp(S(:,Vex)<0) = 0;
+allK = K(:,Vex);
+
+sratio = vecmc(logical(alls))./allK(logical(alls));
+pratio = vecmc(logical(allp))./allK(logical(allp));
+for irxn = 1:length(Vex)
+    if size(sratio,2)>1
+        sprod(irxn) = prod(sratio(irxn,:));
+        pprod(irxn) = prod(pratio(irxn,:));
+    else
+        sprod(irxn) = sratio(irxn);
+        pprod(irxn) = pratio(irxn);
+    end
+end
+fwdflx = kfwd(Vex).*sprod;
+revflx = kfwd(Vex).*pprod;
+
+% set reverse flux for zero products = 0
+[~,rxn] = find(vecmc(logical(allp))==0);
+if ~isempty(rxn)
+    revflx(rxn) = 0;
+end
+
+% set forwrd flux for zero substrate = 0
+[~,rxn] = find(vecmc(logical(alls))==0);
+if ~isempty(rxn)
+    fwdflx(rxn) = 0;
+end
+
+% set reverse flux for irreversible reactions = 0
+revflx(~rev(Vex)) = 0;
+
+% numerator of kinetics
+nrflx = fwdflx-revflx;
+
+% denominator of kinetics
+% non vector implementation for ADMAT
+drflx = 1+sprod+pprod;
+
+% scale flux
+vflux(Vex) = scale_flux(nrflx./drflx);
+
+% fluxes for O2t and PIt2r from Vex - overwrite nrflx and drflx
+tfo2 = ismember(find(strcmpi(model.rxns,'O2t')),Vex); 
+if ~isempty(tfo2) && any(tfo2)
+    vflux(tfo2) = scale_flux(fwdflx(tfo2)/drflx(tfo2));
+end
+
+tfpit2r = ismember(find(strcmpi(model.rxns,'PIt2r')),Vex); 
+if ~isempty(tfpit2r) && any(tfpit2r)
+    Kapie = 0.89; % mM
+    vflux(tfpit2r) =...
+    scale_flux(fwdflx(tfpit2r)./drflx(tfpit2r).*1./(1+Kapie./vecmc(pie,tfpit2r)));
+end
+        
+flux(Vex) = Vmax(Vex).*vflux(Vex);  
+
 flux = flux(Vex);
 vflux = vflux(Vex);
