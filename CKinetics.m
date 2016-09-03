@@ -151,8 +151,8 @@ for ic = 1:nc
     % non vector implementation for ADMAT
     for irxn = 1:length(Vind)     
         if size(sratio,2)>1
-            sprod(irxn) = sratio(irxn,:).^-alls(logical(alls(:,irxn)),irxn);
-            pprod(irxn) = pratio(irxn,:).^allp(logical(allp(:,irxn)),irxn);
+            sprod(irxn) = prod(sratio(irxn,:).^-alls(logical(alls(:,irxn)),irxn));
+            pprod(irxn) = prod(pratio(irxn,:).^allp(logical(allp(:,irxn)),irxn));
         else
             sprod(irxn) = sratio(irxn).^-alls(logical(alls(:,irxn)),irxn);
             pprod(irxn) = pratio(irxn).^allp(logical(allp(:,irxn)),irxn);
@@ -164,13 +164,13 @@ for ic = 1:nc
 %     revflx = kbkw(Vind).*prod(pratio.^allp(logical(allp)),2);    
     
     % set reverse flux for zero products = 0
-    [~,rxn] = find(vecmc(logical(alls))==0);
+    [~,rxn] = find(vecmc(logical(allp))==0);
     if ~isempty(rxn)
         revflx(rxn) = 0;
     end
     
     % set forwrd flux for zero substrate = 0
-    [~,rxn] = find(vecmc(logical(allp))==0);
+    [~,rxn] = find(vecmc(logical(alls))==0);
     if ~isempty(rxn)
         fwdflx(rxn) = 0;
     end
