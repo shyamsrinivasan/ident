@@ -137,27 +137,29 @@ h2o = find(strcmpi(model.mets,'h2o[c]'));
 for ic = 1:nc
     M = allmc(:,ic);
     vecmc = repmat(M,1,length(Vind));
-    acflx = zeros(model.nt_rxn,1);
-    ibflx = zeros(model.nt_rxn,1);
+    acflx = ones(model.nt_rxn,1);
+    ibflx = ones(model.nt_rxn,1);
     sprod = ones(length(Vind),1);
     pprod = ones(length(Vind),1);
 %     acdr = zeros(model.nt_rxn,1);
 %     ibdr = zeros(model.nt_rxn,1);
     alls = S(:,Vind);allp = S(:,Vind);
-    alls(S(:,Vind)>0) = 0;
-    allp(S(:,Vind)<0) = 0;
+    alls(S(:,Vind)>0) = 0;allp(S(:,Vind)<0) = 0;
     allK = K(:,Vind);
     sratio = vecmc(logical(alls))./allK(logical(alls));
     pratio = vecmc(logical(allp))./allK(logical(allp));
     % non vector implementation for ADMAT
-    for irxn = 1:size(sratio,1)
-        sprod(irxn) = sprod(irxn)*(sratio(irxn,:).^-alls(:,irxn));
-    end
-    for irxn = 1:size(pratio,2)
-        pprod(irxn) = pprod(irxn)*(pratio(irxn,:).^allp(:,irxn));
+    for irxn = 1:length(Vind)     
+        if size(sratio,2)>1
+            sprod(irxn) = sratio(irxn,:).^-alls(logical(alls(:,irxn)),irxn);
+            pprod(irxn) = pratio(irxn,:).^allp(logical(allp(:,irxn)),irxn);
+        else
+            sprod(irxn) = sratio(irxn).^-alls(logical(alls(:,irxn)),irxn);
+            pprod(irxn) = pratio(irxn).^allp(logical(allp(:,irxn)),irxn);
+        end
     end
     fwdflx = kfwd(Vind).*sprod;
-    revflx = kbkw(VInd).*pprod;
+    revflx = kbkw(Vind).*pprod;
 %     fwdflx = kfwd(Vind).*prod(sratio.^-alls(logical(alls)),2);
 %     revflx = kbkw(Vind).*prod(pratio.^allp(logical(allp)),2);    
     
@@ -195,7 +197,15 @@ for ic = 1:nc
     allKIa = KIact(:,Vind);
     acratio = vecmc(logical(allacs))./allKIa(logical(allacs));
     if ~isempty(acratio)
-        acflx(Vact) = prod((0.5+(1-0.5)*acratio/(1+acratio)).^allacs(logical(allacs)),2);
+        idacflx = (0.5+(1-0.5).*acratio./(1+acratio)).^allacs(logical(allacs));
+        for irxn = 1:size(acratio,1)
+            if size(idacflx,2)>1
+                acflx(Vact(irxn)) = prod(idacflx(irxn,:)');
+            else
+                acflx(Vact(irxn)) = idacflx(irxn);
+            end
+        end        
+%         acflx(Vact) = prod((0.5+(1-0.5).*acratio./(1+acratio)).^allacs(logical(allacs)),2);
     else
         acflx(Vact) = 1;
     end
@@ -209,7 +219,15 @@ for ic = 1:nc
     allKIi = KIihb(:,Vind);
     ibratio = vecmc(logical(allibs))./allKIi(logical(allibs));
     if ~isempty(ibratio)
-        ibflx(Vihb) = prod((0.5+(1-0.5)*ibratio/(1+ibratio)).^-allibs(logical(allibs)),2);
+        idibflx = (0.5+(1-0.5).*ibratio./(1+ibratio)).^allibs(logical(allibs));
+        for irxn = 1:size(ibratio,1)
+            if size(idibflx,2)>1
+                ibflx(Vihb(irxn)) = prod(idibflx(irxn,:)');
+            else
+                ibflx(Vihb(irxn)) = idibflx(irxn);
+            end
+        end 
+%         ibflx(Vihb) = prod((0.5+(1-0.5)*ibratio/(1+ibratio)).^-allibs(logical(allibs)),2);
     else
         ibflx(Vihb) = 1;
     end
