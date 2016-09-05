@@ -7,7 +7,7 @@ else
 end
 if nargin<4
     flux = zeros(model.nt_rxn,nc);
-    flux = cons(flux,M);
+%     flux = cons(flux,M);
 end
 % if isfield(model,'rxn_add');
 %     rxn_add = model.rxn_add;
