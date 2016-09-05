@@ -18,4 +18,4 @@ end
 flux = iflux(model,pvec,allmc);
 
 % Cytosolic
-dM(1:nvar) = (1./imc).*(model.S(1:nvar,:)*(flux*3600));
+dM(1:nvar) = (1./imc).*(model.S(1:nvar,:)*(flux));
