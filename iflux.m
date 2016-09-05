@@ -72,7 +72,7 @@ for ic = 1:nc
     %     elseif any(mc(logical(model.S(:,model.bmrxn)<0))<1e-5)
     %         flux(model.bmrxn) = 0;
     %     end
-        flux(model.bmrxn,ic) = BMKinetics(model,pvec,M,model.bmrxn);
+%         flux(model.bmrxn,ic) = BMKinetics(model,pvec,M,model.bmrxn);
 %         flux(model.bmrxn,ic) = model.Vss(model.bmrxn)/3600;
 %         flux(strcmpi('GLCpts',model.rxns),ic) = 10;
     else
