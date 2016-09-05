@@ -1,6 +1,6 @@
 function flux = EKinetics(model,pvec,M,VFex)
 flux = zeros(model.nt_rxn,1);
-flux = cons(flux,M);
+% flux = cons(flux,M);
 
 kcatfwd = pvec.kcat_fwd;
 % kcatbkw = pvec.kcat_bkw;
