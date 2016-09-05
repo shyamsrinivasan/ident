@@ -73,7 +73,7 @@ for irxn = 1:nrxn
         sratio = vecmc(logical(alls),irxn)./K(logical(alls),irxn);
         pratio = vecmc(logical(allp),irxn)./K(logical(allp),irxn);
         thetas = prod(sratio.^-alls(logical(alls)));
-        thetap = prod(pratio.^-allp(logical(allp)));
+        thetap = prod(pratio.^allp(logical(allp)));
         fwdflx = kfwd(irxn)*thetas;
         revflx = kbkw(irxn)*thetap;
         if ~rev(irxn)
