@@ -12,10 +12,10 @@ kfwd = pvec.kcat_fwd;
 kbkw = pvec.kcat_bkw;
 Vmax = pvec.Vmax;
 
-vflux = zeros(nrxn,nc);   
-vflux = cons(vflux,M);
-flux = zeros(nrxn,nc);
-flux = cons(flux,M);
+vflux = zeros(nrxn,1);
+flux = zeros(nrxn,1);
+
+vecmc = repmat(M,1,nrxn);
 
 %eliminate consideration for excess cofators
 %pi[c],pi[e],h[c],h[e],h2o[c]
@@ -134,104 +134,104 @@ h2o = find(strcmpi(model.mets,'h2o[c]'));
 % end
 
 % vectorized version of CKinetics for all rxns in Vind - under testing
-for ic = 1:nc
-    M = allmc(:,ic);
-    vecmc = repmat(M,1,length(Vind));
-    acflx = ones(model.nt_rxn,1);
-    ibflx = ones(model.nt_rxn,1);
-    sprod = ones(length(Vind),1);
-    pprod = ones(length(Vind),1);
-%     acdr = zeros(model.nt_rxn,1);
-%     ibdr = zeros(model.nt_rxn,1);
-    alls = S(:,Vind);allp = S(:,Vind);
-    alls(S(:,Vind)>0) = 0;allp(S(:,Vind)<0) = 0;
-    allK = K(:,Vind);
-    sratio = vecmc(logical(alls))./allK(logical(alls));
-    pratio = vecmc(logical(allp))./allK(logical(allp));
-    % non vector implementation for ADMAT
-    for irxn = 1:length(Vind)     
-        if size(sratio,2)>1
-            sprod(irxn) = prod(sratio(irxn,:).^-alls(logical(alls(:,irxn)),irxn));
-            pprod(irxn) = prod(pratio(irxn,:).^allp(logical(allp(:,irxn)),irxn));
-        else
-            sprod(irxn) = sratio(irxn).^-alls(logical(alls(:,irxn)),irxn);
-            pprod(irxn) = pratio(irxn).^allp(logical(allp(:,irxn)),irxn);
-        end
-    end
-    fwdflx = kfwd(Vind).*sprod;
-    revflx = kbkw(Vind).*pprod;
-%     fwdflx = kfwd(Vind).*prod(sratio.^-alls(logical(alls)),2);
-%     revflx = kbkw(Vind).*prod(pratio.^allp(logical(allp)),2);    
-    
-    % set reverse flux for zero products = 0
-    [~,rxn] = find(vecmc(logical(allp))==0);
-    if ~isempty(rxn)
-        revflx(rxn) = 0;
-    end
-    
-    % set forwrd flux for zero substrate = 0
-    [~,rxn] = find(vecmc(logical(alls))==0);
-    if ~isempty(rxn)
-        fwdflx(rxn) = 0;
-    end
-    
-    % set reverse flux for irreversible reactions = 0
-    revflx(~rev(Vind)) = 0;
-    
-    % numerator of kinetics
-    nrflx = fwdflx-revflx;
-    
-    % denominator of kinetics
-    % non vector implementation for ADMAT
-    drflx = 1+sprod+pprod;
-%     drflx = 1+...
-%             prod(sratio.^-alls(logical(alls)),2)+...
-%             prod(pratio.^allp(logical(allp)),2);
-    
-    % allosteric activation  
-    % reaction that have an activation component
-    [~,rxn] = find(SI(:,Vind)>0);
-    Vact = Vind(rxn);
-    allacs = SI(:,Vind);
-    allacs(SI(:,Vind)<0) = 0;
-    allKIa = KIact(:,Vind);
-    acratio = vecmc(logical(allacs))./allKIa(logical(allacs));
-    if ~isempty(acratio)
-        idacflx = (0.5+(1-0.5).*acratio./(1+acratio)).^allacs(logical(allacs));
-        for irxn = 1:size(acratio,1)
-            if size(idacflx,2)>1
-                acflx(Vact(irxn)) = prod(idacflx(irxn,:)');
-            else
-                acflx(Vact(irxn)) = idacflx(irxn);
-            end
-        end        
-%         acflx(Vact) = prod((0.5+(1-0.5).*acratio./(1+acratio)).^allacs(logical(allacs)),2);
-    else
-        acflx(Vact) = 1;
-    end
-    nrflx(rxn) = acflx(Vact).*nrflx(rxn);
-    
-    % allosteric inhibition
-    [~,rxn] = find(SI(:,Vind)<0);
-    Vihb = Vind(rxn);
-    allibs = SI(:,Vind);
-    allibs(SI(:,Vind)>0) = 0;
-    allKIi = KIihb(:,Vind);
-    ibratio = vecmc(logical(allibs))./allKIi(logical(allibs));
-    if ~isempty(ibratio)
-        idibflx = (0.5+(1-0.5).*ibratio./(1+ibratio)).^allibs(logical(allibs));
-        for irxn = 1:size(ibratio,1)
-            if size(idibflx,2)>1
-                ibflx(Vihb(irxn)) = prod(idibflx(irxn,:)');
-            else
-                ibflx(Vihb(irxn)) = idibflx(irxn);
-            end
-        end 
-%         ibflx(Vihb) = prod((0.5+(1-0.5)*ibratio/(1+ibratio)).^-allibs(logical(allibs)),2);
-    else
-        ibflx(Vihb) = 1;
-    end
-    nrflx(rxn) = ibflx(Vihb).*nrflx(rxn);
+% for ic = 1:nc
+%     M = allmc(:,ic);
+%     vecmc = repmat(M,1,length(Vind));
+%     acflx = ones(model.nt_rxn,1);
+%     ibflx = ones(model.nt_rxn,1);
+%     sprod = ones(length(Vind),1);
+%     pprod = ones(length(Vind),1);
+% %     acdr = zeros(model.nt_rxn,1);
+% %     ibdr = zeros(model.nt_rxn,1);
+%     alls = S(:,Vind);allp = S(:,Vind);
+%     alls(S(:,Vind)>0) = 0;allp(S(:,Vind)<0) = 0;
+%     allK = K(:,Vind);
+%     sratio = vecmc(logical(alls))./allK(logical(alls));
+%     pratio = vecmc(logical(allp))./allK(logical(allp));
+%     % non vector implementation for ADMAT
+%     for irxn = 1:length(Vind)     
+%         if size(sratio,2)>1
+%             sprod(irxn) = prod(sratio(irxn,:).^-alls(logical(alls(:,irxn)),irxn));
+%             pprod(irxn) = prod(pratio(irxn,:).^allp(logical(allp(:,irxn)),irxn));
+%         else
+%             sprod(irxn) = sratio(irxn).^-alls(logical(alls(:,irxn)),irxn);
+%             pprod(irxn) = pratio(irxn).^allp(logical(allp(:,irxn)),irxn);
+%         end
+%     end
+%     fwdflx = kfwd(Vind).*sprod;
+%     revflx = kbkw(Vind).*pprod;
+% %     fwdflx = kfwd(Vind).*prod(sratio.^-alls(logical(alls)),2);
+% %     revflx = kbkw(Vind).*prod(pratio.^allp(logical(allp)),2);    
+%     
+%     % set reverse flux for zero products = 0
+%     [~,rxn] = find(vecmc(logical(allp))==0);
+%     if ~isempty(rxn)
+%         revflx(rxn) = 0;
+%     end
+%     
+%     % set forwrd flux for zero substrate = 0
+%     [~,rxn] = find(vecmc(logical(alls))==0);
+%     if ~isempty(rxn)
+%         fwdflx(rxn) = 0;
+%     end
+%     
+%     % set reverse flux for irreversible reactions = 0
+%     revflx(~rev(Vind)) = 0;
+%     
+%     % numerator of kinetics
+%     nrflx = fwdflx-revflx;
+%     
+%     % denominator of kinetics
+%     % non vector implementation for ADMAT
+%     drflx = 1+sprod+pprod;
+% %     drflx = 1+...
+% %             prod(sratio.^-alls(logical(alls)),2)+...
+% %             prod(pratio.^allp(logical(allp)),2);
+%     
+%     % allosteric activation  
+%     % reaction that have an activation component
+%     [~,rxn] = find(SI(:,Vind)>0);
+%     Vact = Vind(rxn);
+%     allacs = SI(:,Vind);
+%     allacs(SI(:,Vind)<0) = 0;
+%     allKIa = KIact(:,Vind);
+%     acratio = vecmc(logical(allacs))./allKIa(logical(allacs));
+%     if ~isempty(acratio)
+%         idacflx = (0.5+(1-0.5).*acratio./(1+acratio)).^allacs(logical(allacs));
+%         for irxn = 1:size(acratio,1)
+%             if size(idacflx,2)>1
+%                 acflx(Vact(irxn)) = prod(idacflx(irxn,:)');
+%             else
+%                 acflx(Vact(irxn)) = idacflx(irxn);
+%             end
+%         end        
+% %         acflx(Vact) = prod((0.5+(1-0.5).*acratio./(1+acratio)).^allacs(logical(allacs)),2);
+%     else
+%         acflx(Vact) = 1;
+%     end
+%     nrflx(rxn) = acflx(Vact).*nrflx(rxn);
+%     
+%     % allosteric inhibition
+%     [~,rxn] = find(SI(:,Vind)<0);
+%     Vihb = Vind(rxn);
+%     allibs = SI(:,Vind);
+%     allibs(SI(:,Vind)>0) = 0;
+%     allKIi = KIihb(:,Vind);
+%     ibratio = vecmc(logical(allibs))./allKIi(logical(allibs));
+%     if ~isempty(ibratio)
+%         idibflx = (0.5+(1-0.5).*ibratio./(1+ibratio)).^allibs(logical(allibs));
+%         for irxn = 1:size(ibratio,1)
+%             if size(idibflx,2)>1
+%                 ibflx(Vihb(irxn)) = prod(idibflx(irxn,:)');
+%             else
+%                 ibflx(Vihb(irxn)) = idibflx(irxn);
+%             end
+%         end 
+% %         ibflx(Vihb) = prod((0.5+(1-0.5)*ibratio/(1+ibratio)).^-allibs(logical(allibs)),2);
+%     else
+%         ibflx(Vihb) = 1;
+%     end
+%     nrflx(rxn) = ibflx(Vihb).*nrflx(rxn);
     
     % other activation
 %     spacratio = vecmc(SI(:,Vind)>0,Vind)./KIact(SI(:,Vind)>0,Vind);
@@ -248,7 +248,7 @@ for ic = 1:nc
 %     drflx = drflx+ibdr(Vind);
     
     % scale flux
-    vflux(Vind,ic) = scale_flux(nrflx./drflx);
+%     vflux(Vind,ic) = scale_flux(nrflx./drflx);
     
     % scale all ---> A (no substrate) reactions to zero
 %     [met,rxn] = find(S(S(:,Vind)<0,:)==0);
@@ -259,7 +259,67 @@ for ic = 1:nc
 %     vflux(rxn,ic) = 0;
     
     % multiply with Vmax or enzyme concentration
-    flux(Vind,ic) = Vmax(Vind,ic).*vflux(Vind,ic);    
+%     flux(Vind,ic) = Vmax(Vind,ic).*vflux(Vind,ic);    
+% end
+
+% non vectorized version for ease of understanding and jacobina
+% implementation
+for irxn = 1:nrxn
+    if ismember(irxn,Vind)
+        alls = S(:,irxn);allp = S(:,irxn);
+        alls(S(:,irxn)>0) = 0;allp(S(:,irxn)<0) = 0;
+        sratio = vecmc(logical(alls),irxn)./K(logical(alls),irxn);
+        pratio = vecmc(logical(allp),irxn)./K(logical(allp),irxn);
+        thetas = prod(sratio.^-alls(logical(alls)));
+        thetap = prod(pratio.^-allp(logical(allp)));
+        fwdflx = kfwd(irxn)*thetas;
+        revflx = kbkw(irxn)*thetap;
+        if ~rev(irxn)
+            revflx = 0;
+        end
+        nrflx = fwdflx-revflx;
+        drflx = 1+thetas+thetap;
+        
+        % partial activation
+        if any(SI(:,irxn)>0)
+            allac = SI(:,irxn);allac(SI(:,irxn)<0) = 0;
+            acratio = vecmc(logical(allac),irxn)./KIact(logical(allac),irxn);
+            acflx = prod((0.5+(1-0.5).*acratio./(1+acratio)).^allac(logical(allac)));
+        else
+            acflx = 1;
+        end
+        
+        % partial inhibition
+        if any(SI(:,irxn)<0)
+            allib = SI(:,irxn);allib(SI(:,irxn)>0) = 0;
+            ibratio = vecmc(logical(allib),irxn)./KIihb(logical(allib),irxn);
+            ibflx = prod((0.5+(1-0.5)./(1+ibratio)).^-allib(logical(allib)));
+        else
+            ibflx = 1;
+        end
+        nrflx = acflx*ibflx*nrflx;
+        
+        % specific activation
+%         if any(SI(:,irxn)>0)
+%             spac = SI(:,irxn);spac(SI(:,irxn)<0) = 0;
+%             sparatio = vecmc(logical(spac),irxn)./KIact(logical(spac),irxn);
+%             dracflx = sum((1./sparatio).^spac(logical(spac)));
+%         else
+            dracflx = 0;
+%         end
+        
+        % specific inhibition
+%         if any(SI(:,irxn)>0)
+%             spib = SI(:,irxn);spib(SI(:,irxn)>0) = 0;
+%             spiratio = vecmc(logical(spib),irxn)./KIihb(logical(spib),irxn);
+%             dribflx = sum((spiratio).^-spib(logical(spib)));
+%         else
+            dribflx = 0;
+%         end
+        drflx = drflx + dracflx + dribflx;
+        vflux(irxn) = scale_flux(nrflx/drflx);
+        flux(irxn) = Vmax(irxn)*vflux(irxn); 
+    end
 end
 
 flux = flux(Vind,:);
