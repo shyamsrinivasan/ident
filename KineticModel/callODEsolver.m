@@ -66,7 +66,7 @@ t = t0;
 % store initial values
 outsol.t(1) = t;    
 outsol.y(:,1) = initval;
-outsol.flux(:,1) = iflux(model,pvec,[initval.*model.imc;model.Pimc]);
+outsol.flux(:,1) = iflux(model,pvec,[initval.*model.imc;model.PM]);
 
 fprintf('Initial time:\t\t\t %4.3g\n',t0);
 fprintf('Final time:\t\t\t\t %4.3g\n',tspan(end));
@@ -95,11 +95,11 @@ catch
 end
 try
     allmets = [yout.*repmat(model.imc',length(t),1),...
-               repmat(model.Pimc',length(t),1)];
+               repmat(model.PM',length(t),1)];
     allmets = allmets';
 catch
     allmets = [yout'.*repmat(model.imc',1,length(t));...
-               repmat(model.Pimc,1,length(t))];
+               repmat(model.PM,1,length(t))];
 end
 % calculate time course fluxes
 outsol.flux(:,2:end) = iflux(model,pvec,allmets);
