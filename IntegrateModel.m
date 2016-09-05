@@ -28,7 +28,7 @@ end
 % [model,solverP,saveData] = imodel(model,1e9,ess_rxn,Vup_struct);
 
 % toy model
-[model,solverP,saveData] = imodel(model,'ode',10000,ess_rxn,Vup_struct);
+[model,solverP,saveData] = imodel(model,'ode',500,ess_rxn,Vup_struct);
 
 % remove water and protons (held constant) from consideration in the model
 % integration phase
