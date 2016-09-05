@@ -1,8 +1,0 @@
-function [obj,flux] = runOpt(model,flux)
-nrxn = model.nrxn;
-
-biomassind = strcmp('BIOMASS',model.MetabName);
-objind = (model.S(biomassind,:) > 0);
-obj = sparse(find(objind),1,1,nrxn,1);
-
-%m
