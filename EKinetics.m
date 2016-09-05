@@ -1,8 +1,9 @@
 function flux = EKinetics(model,pvec,M,VFex)
-flux = zeros(model.nt_rxn,1);
+[~,nc] = size(M);
+flux = zeros(model.nt_rxn,nc);
 % flux = cons(flux,M);
 
-kcatfwd = pvec.kcat_fwd;
+kfwd = pvec.kcat_fwd;
 % kcatbkw = pvec.kcat_bkw;
 % flux = zeros(model.nt_rxn,1);
 % model.Vuptake = zeros(model.nt_rxn,1);
@@ -22,7 +23,7 @@ for irxn = 1:length(VFex)
 %         net_out = -sign(model.S(sbid,VFex(irxn)))*...
 %                   (model.S(sbid,ind)*flux(ind));
 %               -model.S(sbid,VFex(irxn))*Vuptake(VFex(irxn)));
-        flux(VFex(irxn)) = 0;%scale_flux(net_out);%-Vuptake(VFex(irxn)));
+        flux(VFex(irxn),:) = zeros(1,nc);%scale_flux(net_out);%-Vuptake(VFex(irxn)));
 %         flux(VFex(irxn)) = scale_flux(flux(VFex(irxn)));
 %     else
         
