@@ -1,6 +1,5 @@
 function [flux,vflux] = CKinetics(model,pvec,M,Vind)
 [~,nc] = size(M);
-allmc = M;
 S = model.S;
 SI = model.SI;
 nrxn = model.nt_rxn;
@@ -12,13 +11,13 @@ kfwd = pvec.kcat_fwd;
 kbkw = pvec.kcat_bkw;
 Vmax = pvec.Vmax;
 
-vflux = zeros(nrxn,1);
-flux = zeros(nrxn,1);
+vflux = zeros(nrxn,nc);
+flux = zeros(nrxn,nc);
 
 % vflux = cons(vflux,M);
 % flux = cons(flux,M);
 
-vecmc = repmat(M,1,nrxn);
+% vecmc = repmat(M,1,nrxn);
 
 %eliminate consideration for excess cofators
 %pi[c],pi[e],h[c],h[e],h2o[c]
@@ -73,14 +72,14 @@ for irxn = 1:nrxn
     if ismember(irxn,Vind)
         alls = S(:,irxn);allp = S(:,irxn);
         alls(S(:,irxn)>0) = 0;allp(S(:,irxn)<0) = 0;
-        sratio = vecmc(logical(alls),irxn)./K(logical(alls),irxn);
-        pratio = vecmc(logical(allp),irxn)./K(logical(allp),irxn);
-        thetas = prod(sratio.^-alls(logical(alls)));
-        thetap = prod(pratio.^allp(logical(allp)));
-        fwdflx = kfwd(irxn)*thetas;
-        revflx = kbkw(irxn)*thetap;
+        sratio = M(logical(alls),:)./K(logical(alls),irxn);
+        pratio = M(logical(allp),:)./K(logical(allp),irxn);
+        thetas = prod(sratio.^-alls(logical(alls)),1);
+        thetap = prod(pratio.^allp(logical(allp)),1);
+        fwdflx = kfwd(irxn).*thetas;
+        revflx = kbkw(irxn).*thetap;
         if ~rev(irxn)
-            revflx = 0;
+            revflx = zeros(1,length(revflx));
         end
         nrflx = fwdflx-revflx;
         drflx = 1+thetas+thetap;
@@ -88,21 +87,21 @@ for irxn = 1:nrxn
         % partial activation
         if any(SI(:,irxn)>0)
             allac = SI(:,irxn);allac(SI(:,irxn)<0) = 0;
-            acratio = vecmc(logical(allac),irxn)./KIact(logical(allac),irxn);
-            acflx = prod((0.5+(1-0.5).*acratio./(1+acratio)).^allac(logical(allac)));
+            acratio = M(logical(allac),:)./KIact(logical(allac),irxn);
+            acflx = prod((0.5+(1-0.5).*acratio./(1+acratio)).^allac(logical(allac)),1);
         else
-            acflx = 1;
+            acflx = ones(1,length(nrflx));
         end
         
         % partial inhibition
         if any(SI(:,irxn)<0)
             allib = SI(:,irxn);allib(SI(:,irxn)>0) = 0;
-            ibratio = vecmc(logical(allib),irxn)./KIihb(logical(allib),irxn);
-            ibflx = prod((0.5+(1-0.5)./(1+ibratio)).^-allib(logical(allib)));
+            ibratio = M(logical(allib),:)./KIihb(logical(allib),irxn);
+            ibflx = prod((0.5+(1-0.5)./(1+ibratio)).^-allib(logical(allib)),1);
         else
-            ibflx = 1;
+            ibflx = ones(1,length(nrflx));
         end
-        nrflx = acflx*ibflx*nrflx;
+        nrflx = acflx.*ibflx.*nrflx;
         
         % specific activation
 %         if any(SI(:,irxn)>0)
@@ -110,7 +109,7 @@ for irxn = 1:nrxn
 %             sparatio = vecmc(logical(spac),irxn)./KIact(logical(spac),irxn);
 %             dracflx = sum((1./sparatio).^spac(logical(spac)));
 %         else
-            dracflx = 0;
+            dracflx = zeros(1,length(drflx));
 %         end
         
         % specific inhibition
@@ -119,11 +118,11 @@ for irxn = 1:nrxn
 %             spiratio = vecmc(logical(spib),irxn)./KIihb(logical(spib),irxn);
 %             dribflx = sum((spiratio).^-spib(logical(spib)));
 %         else
-            dribflx = 0;
+            dribflx = zeros(1,length(drflx));
 %         end
         drflx = drflx + dracflx + dribflx;
-        vflux(irxn) = scale_flux(nrflx/drflx);
-        flux(irxn) = Vmax(irxn)*vflux(irxn); 
+        vflux(irxn,:) = scale_flux(nrflx./drflx);
+        flux(irxn,:) = Vmax(irxn).*vflux(irxn,:); 
     end
 end
 
