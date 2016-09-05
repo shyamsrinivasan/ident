@@ -1,16 +1,16 @@
 function [flux,vflux] = TKinetics(model,pvec,M,Vex)
-Vmax = pvec.Vmax;
+S = model.S;
+nrxn = model.nt_rxn;
+rev = model.rev;
+K = pvec.K;
 kfwd = pvec.kcat_fwd;
 kbkw = pvec.kcat_bkw;
-K = pvec.K;
-S = model.S;
-rev = model.rev;
+Vmax = pvec.Vmax;
 
-nrxn = model.nt_rxn;
-flux = zeros(nrxn,1);
-% flux = cons(flux,M);
 vflux = zeros(nrxn,1);
-% vflux = cons(vflux,M);
+flux = zeros(nrxn,1);
+
+vecmc = repmat(M,1,nrxn);
 
 he = find(strcmpi(model.mets,'h[e]'));
 hc = find(strcmpi(model.mets,'h[c]'));
@@ -69,68 +69,37 @@ pie = strcmpi(model.mets,'pi[e]');
 % %         Vmax(Vex(irxn)) = 1;
 %     end
 
-
-% partial vector implementation to reduce overhead and use with ADMAT
-sprod = ones(length(Vex),1);
-pprod = ones(length(Vex),1);
-vecmc = repmat(M,1,length(Vex));
-alls = S(:,Vex);allp = S(:,Vex);
-alls(S(:,Vex)>0) = 0;allp(S(:,Vex)<0) = 0;
-allK = K(:,Vex);
-
-sratio = vecmc(logical(alls))./allK(logical(alls));
-pratio = vecmc(logical(allp))./allK(logical(allp));
-for irxn = 1:length(Vex)
-    if size(sratio,2)>1
-        sprod(irxn) = prod(sratio(irxn,:));
-        pprod(irxn) = prod(pratio(irxn,:));
-    else
-        sprod(irxn) = sratio(irxn);
-        pprod(irxn) = pratio(irxn);
+for irxn = 1:nrxn
+    if ismember(irxn,Vex)
+        alls = S(:,irxn);allp = S(:,irxn);
+        alls(S(:,irxn)>0) = 0;allp(S(:,irxn)<0) = 0;
+        sratio = vecmc(logical(alls),irxn)./K(logical(alls),irxn);
+        pratio = vecmc(logical(allp),irxn)./K(logical(allp),irxn);
+        thetas = prod(sratio.^-alls(logical(alls)));
+        thetap = prod(pratio.^-allp(logical(allp)));
+        fwdflx = kfwd(irxn)*thetas;
+        revflx = kbkw(irxn)*thetap;
+        % set reverse flux for irreversible reactions = 0
+        if ~rev(irxn)
+            revflx = 0;
+        end
+        % numerator of kinetics
+        nrflx = fwdflx-revflx;
+        % denominator of kinetics
+        drflx = 1+thetas+thetap;
+        % scale flux
+        vflux(irxn) = scale_flux(nrflx/drflx);
+        
+        % fluxes for O2t and PIt2r from Vex - overwrite nrflx and drflx
+        if irxn == find(strcmpi(model.rxns,'O2t'))
+        end
+        if irxn == find(strcmpi(model.rxns,'PIt2r'))
+            Kapie = 0.89; % mM
+            vflux(tfpit2r) =...
+            scale_flux(fwdflx/drflx*1/(1+Kapie/vecmc(pie,irxn)));
+        end
+        flux(irxn) = Vmax(irxn)*vflux(irxn); 
     end
 end
-fwdflx = kfwd(Vex).*sprod;
-revflx = kfwd(Vex).*pprod;
-
-% set reverse flux for zero products = 0
-[~,rxn] = find(vecmc(logical(allp))==0);
-if ~isempty(rxn)
-    revflx(rxn) = 0;
-end
-
-% set forwrd flux for zero substrate = 0
-[~,rxn] = find(vecmc(logical(alls))==0);
-if ~isempty(rxn)
-    fwdflx(rxn) = 0;
-end
-
-% set reverse flux for irreversible reactions = 0
-revflx(~rev(Vex)) = 0;
-
-% numerator of kinetics
-nrflx = fwdflx-revflx;
-
-% denominator of kinetics
-% non vector implementation for ADMAT
-drflx = 1+sprod+pprod;
-
-% scale flux
-vflux(Vex) = scale_flux(nrflx./drflx);
-
-% fluxes for O2t and PIt2r from Vex - overwrite nrflx and drflx
-tfo2 = ismember(find(strcmpi(model.rxns,'O2t')),Vex); 
-if ~isempty(tfo2) && any(tfo2)
-    vflux(tfo2) = scale_flux(fwdflx(tfo2)/drflx(tfo2));
-end
-
-tfpit2r = ismember(find(strcmpi(model.rxns,'PIt2r')),Vex); 
-if ~isempty(tfpit2r) && any(tfpit2r)
-    Kapie = 0.89; % mM
-    vflux(tfpit2r) =...
-    scale_flux(fwdflx(tfpit2r)./drflx(tfpit2r).*1./(1+Kapie./vecmc(pie,tfpit2r)));
-end
-        
-flux(Vex) = Vmax(Vex).*vflux(Vex);  
-
 flux = flux(Vex);
 vflux = vflux(Vex);
