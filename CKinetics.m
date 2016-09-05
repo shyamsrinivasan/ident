@@ -15,6 +15,9 @@ Vmax = pvec.Vmax;
 vflux = zeros(nrxn,1);
 flux = zeros(nrxn,1);
 
+% vflux = cons(vflux,M);
+% flux = cons(flux,M);
+
 vecmc = repmat(M,1,nrxn);
 
 %eliminate consideration for excess cofators
