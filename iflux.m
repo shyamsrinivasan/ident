@@ -99,6 +99,9 @@ else
     end                       
 end  
 
+% time factor for fluxes - conversion between seconds <-> hours
+flux = flux.*3600;
+
 if ~isempty(idx)
     flux = idflux;
 end
