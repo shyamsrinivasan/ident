@@ -46,19 +46,24 @@ end
 rxnadd = {};
 rxnexcep = {};
 % FBAmodel.bmrxn = [];
-ensb = parallel_ensemble(FBAmodel,mc,parameter,rxnadd,rxnexcep);
+ensb = parallel_ensemble(FBAmodel,mc,parameter,rxnadd,rxnexcep,10);
 
 % serially solve ODE of model to steady state
 FBAmodel.rxn_add = rxnadd;
 FBAmodel.rxn_excep = rxnexcep;
-if ensb{1,2}.feasible    
-    % setup model for integration 
-    [newmodel,newpvec,Nimc,solverP,flux,dXdt] =...
-    setupKineticODE(FBAmodel,ensb,ensb{1,1},essrxn,Vupstruct,15000);
-    
-    % integrate model
-    [outsol,allxeq] = callODEsolver(newmodel,newpvec,Nimc,solverP);
-%     sol = IntegrateModel(FBAmodel,ensb,ensb{1,1},ess_rxn,Vup_struct);
+
+% setup model for integration 
+[newmodel,newpvec,Nimc,solverP,flux,dXdt] =...
+setupKineticODE(FBAmodel,ensb,ensb{1,1},essrxn,Vupstruct,15000);
+
+% solve only if models are feasible
+if size(ensb,1)>1
+    [outsol,outss] = solveAllpvec(newmodel,newpvec,Nimc,solverP);
 else
-    error('No feasible model found');
+    if ensb{1,2}.feasible    
+        % integrate model
+        [outsol,allxeq] = callODEsolver(newmodel,newpvec,Nimc,solverP);
+    else
+        error('No feasible model found');
+    end
 end
