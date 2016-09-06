@@ -29,13 +29,13 @@ FBAmodel.bmrxn = 3;
 FBAmodel = FBAfluxes(FBAmodel,'fba',ess_rxn,Vup_struct,...
                      find(strcmpi(FBAmodel.rxns,'bmex')));
 
-rxn_add = {};
+rxnadd = {};
 % Metabolite conecntrations 
 % extracellular metabolites in M moles/L
 % met.pi_e = 4e-2;
 
 % sample initial metabolite concentrations for estimating kinetic parameters
-[mc,parameter,smp] = parallel_sampling(FBAmodel,parameter,'setupMetLP_gtoy',met,mc,rxn_add);
+[mc,parameter,smp] = parallel_sampling(FBAmodel,parameter,'setupMetLP_gtoy',met,mc,rxnadd);
 if isempty(mc)
     % multiple saples are being supplied
     mc = smp{1,1};
@@ -43,16 +43,22 @@ if isempty(mc)
 end
 
 % get parameter estimates - estimate kinetic parameters in an ensemble
-rxn_add = {};
-rxn_excep = {};
+rxnadd = {};
+rxnexcep = {};
 % FBAmodel.bmrxn = [];
-ensb = parallel_ensemble(FBAmodel,mc,parameter,rxn_add,rxn_excep);
+ensb = parallel_ensemble(FBAmodel,mc,parameter,rxnadd,rxnexcep);
 
 % serially solve ODE of model to steady state
-FBAmodel.rxn_add = rxn_add;
-FBAmodel.rxn_excep = rxn_excep;
+FBAmodel.rxn_add = rxnadd;
+FBAmodel.rxn_excep = rxnexcep;
 if ensb{1,2}.feasible    
-    sol = IntegrateModel(FBAmodel,ensb,ensb{1,1},ess_rxn,Vup_struct);
+    % setup model for integration 
+    [newmodel,newpvec,Nimc,solverP,flux,dXdt] =...
+    setupKineticODE(FBAmodel,ensb,ensb{1,1},ess_rxn,Vup_struct,1000);
+    
+    % integrate model
+    [outsol,allxeq] = callODEsolver(newmodel,newpvec,Nimc,solverP);
+%     sol = IntegrateModel(FBAmodel,ensb,ensb{1,1},ess_rxn,Vup_struct);
 else
     error('No feasible model found');
 end
