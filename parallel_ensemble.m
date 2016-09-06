@@ -1,4 +1,4 @@
-function ensb = parallel_ensemble(model,mc,pvec,rxn_add,rxn_excep,nmodels,smp)
+function ensb = parallel_ensemble(model,mc,pvec,rxnadd,rxnexcep,nmodels,smp)
 if nargin<7
     smp={};
 end
@@ -8,10 +8,10 @@ if nargin<6
 end
 %if no rxn exceptions for Vind in buildmodels
 if nargin < 5
-    rxn_excep = {};
+    rxnexcep = {};
 end
 if nargin < 4
-    rxn_add = {};
+    rxnadd = {};
 end
 %# metabolite concentration samples available
 if ~isempty(smp)
@@ -25,7 +25,7 @@ if (nsamples==1 && nmodels==1)
     ensb = cell(nmodels,2);
     model_ens = cell(nmodels,1);     
     ensb{1,1} = mc;
-    model_ens{1} = buildmodels(model,pvec,mc,rxn_add,rxn_excep);    
+    model_ens{1} = buildmodels(model,pvec,mc,rxnadd,rxnexcep);    
     fprintf('Parameter generation complete\n\n');
 elseif nsamples==1 && nmodels>1
     ensb = cell(nmodels,2);
@@ -33,7 +33,7 @@ elseif nsamples==1 && nmodels>1
     %parallel capable
     parfor im = 1:nmodels
         ensb{im,1} = mc;
-        model_ens{1,im} = buildmodels(model,pvec,mc,rxn_add,rxn_excep);
+        model_ens{1,im} = buildmodels(model,pvec,mc,rxnadd,rxnexcep);
     end    
 elseif nsamples>1 && nmodels>=1 %--------not supported yet
     ensb = cell(nsamples,nmodels,2);

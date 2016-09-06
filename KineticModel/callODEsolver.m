@@ -68,7 +68,7 @@ outsol.t(1) = t;
 outsol.y(:,1) = initval;
 outsol.flux(:,1) = iflux(model,pvec,[initval.*model.imc;model.PM]);
 
-fprintf('Initial time:\t\t\t %4.3g\n',t0);
+fprintf('\nInitial time:\t\t\t %4.3g\n',t0);
 fprintf('Final time:\t\t\t\t %4.3g\n',tspan(end));
 fprintf('Total simulaion time:\t %4.3g\n',tspan(end)-t0);
 
