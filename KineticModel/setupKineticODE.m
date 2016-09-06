@@ -21,7 +21,7 @@ else
 end
 
 % initialize solver properties
-[model,solverP,saveData] = imodel(model,'ode',tmax,essrxn,Vupstruct);
+[model,solverP] = imodel(model,'ode',tmax,essrxn,Vupstruct);
 
 % remove water and protons (held constant) from consideration in the model
 % integration phase
