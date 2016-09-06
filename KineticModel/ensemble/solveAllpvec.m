@@ -1,8 +1,9 @@
-function [outsol,outss] = solveAllpvec(model,pvec,ival,solverP)
+function [outsol,outss,allxss,allfss] = solveAllpvec(model,pvec,ival,solverP)
 % solve an ensemble of parameter vectors and post process results into a
 % structure array
 
 nmodels = size(pvec,2);
+nvar = size(ival,1);
 allsol = cell(nmodels,1);
 allss = cell(nmodels,1);
 
@@ -27,6 +28,9 @@ fprintf('\nParallel Integration time for %d models: %4.3g\n',nmodels,tstop);
 
 outsol(nmodels) = struct();
 outss(nmodels) = struct();
+allxss = zeros(nvar,nmodels);
+allfss = zeros(model.nt_rxn,nmodels);
+
 for im = 1:nmodels
     if isfield(allsol{im},'t')
         outsol(im).t = allsol{im}.t;
@@ -45,6 +49,9 @@ for im = 1:nmodels
     end
     if isfield(allss{im},'flux')
         outss(im).flux = allss{im}.flux;
-    end
+    end    
+    % collect all ss together
+    allxss(:,im) = outss(im).y;
+    allfss(:,im) = outss(im).flux;
 end
 fprintf('Post processing overhead: %4.3g\n',toc(tstart)-tstop);
