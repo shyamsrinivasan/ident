@@ -1,4 +1,4 @@
-function [allsol,jacobian] =...
+function [outsol,jacobian] =...
 IntegrateModel(model,ensb,mc,ess_rxn,Vup_struct,change_pos,change_neg)
 % integrate iniital model to obtain initial steady state
 if nargin<7
@@ -28,7 +28,7 @@ end
 % [model,solverP,saveData] = imodel(model,1e9,ess_rxn,Vup_struct);
 
 % toy model
-[model,solverP,saveData] = imodel(model,'ode',500,ess_rxn,Vup_struct);
+[model,solverP,saveData] = imodel(model,'ode',1000,ess_rxn,Vup_struct);
 
 % remove water and protons (held constant) from consideration in the model
 % integration phase
@@ -83,13 +83,13 @@ dXdt = ToyODEmodel(0,Nimc,[],newmodel,newpvec);
 % [J,lambda,w] = getjacobian(Nimc,newpvec,newmodel);
 
 % integrate model
-[allsol,allxeq] = callODEsolver(newmodel,newpvec,Nimc,solverP);
+[outsol,allxeq] = callODEsolver(newmodel,newpvec,Nimc,solverP);
 
 % introduce perturbation
 Nimc = perturbEqSolution(model,allxeq.y,change_pos,change_neg);
 
 %Perturbation to concentrations
-[allsol] =...
+[outsol] =...
 MonteCarloPertrubationIV(model,ess_rxn,Vup_struct,ensb,allxeq.y.*imc,change_pos,[]);
 
 % sol = MCPerturbationFlux(model,ess_rxn,Vup_struct,ensb,finalSS.y,finalSS.flux,change_pos,[]);
@@ -102,13 +102,13 @@ MonteCarloPertrubationIV(model,ess_rxn,Vup_struct,ensb,allxeq.y.*imc,change_pos,
 Nimc = perturbEqSolution(model,allxeq.y,change_pos,[]);
 
 % integrate model
-[allsol,allxeq,status] = callODEsolver(model,pvec,Nimc,solverP);
+[outsol,allxeq,status] = callODEsolver(model,pvec,Nimc,solverP);
 
 % initialize solver properties
 [model,solverP,saveData] = imodel(model,ess_rxn,Vup_struct,1.1e5);
 
 % integrate model
-[allsol,allxeq,status] = callODEsolver(model,pvec,Nimc,solverP,allsol);
+[outsol,allxeq,status] = callODEsolver(model,pvec,Nimc,solverP,outsol);
 
 
 
