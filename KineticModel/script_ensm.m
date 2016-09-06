@@ -1,22 +1,22 @@
 % kinetic ensemble modeling script any/all models
 % testing with Kotte model of glucoeneogenesis
 addpath(genpath('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel'));
-% rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\gtoy1.txt';
-% cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\gtoy1C.txt';
-% rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\gtoy2.txt';
-% cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\gtoy2C.txt';
-rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\gtoy3.txt';
-cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\gtoy3C.txt';
+% rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy1.txt';
+% cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy1C.txt';
+% rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy2.txt';
+% cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy2C.txt';
+rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy4.txt';
+cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy4C.txt';
 % create model structure
-[FBAmodel,parameter,variable,nrxn,nmetab] = modelgen(rxfname);
+[model,parameter,variable,nrxn,nmetab] = modelgen(rxfname);
 
 % obtain conentrations from file
-[mc,FBAmodel,met] = readCNCfromFile(cnfname,FBAmodel);
+[mc,model,met] = readCNCfromFile(cnfname,model);
 
 % FBA or pFBA solution - optional
 % fix flux uptakes for FBA solution
 % Vup_struct.exAC = 20;%mmol/gDCW.h
-Vupstruct.ACt2r = 20;
+Vupstruct.ACex = 20;
 Vupstruct.ENZ1ex = 1;
 
 % designate reactions for which uptake should not be zero in FBA
@@ -25,9 +25,9 @@ essrxn = {'ACex'};
 
 % assign initial fluxes and calculate FBA fluxes for direction
 % FBAmodel.bmrxn = 14;
-FBAmodel.bmrxn = 3;
-FBAmodel = FBAfluxes(FBAmodel,'fba',essrxn,Vupstruct,...
-                     find(strcmpi(FBAmodel.rxns,'bmex')));
+model.bmrxn = 3;
+model = FBAfluxes(model,'fba',essrxn,Vupstruct,...
+                     find(strcmpi(model.rxns,'bmex')));
 
 rxnadd = {};
 % Metabolite conecntrations 
@@ -35,7 +35,7 @@ rxnadd = {};
 % met.pi_e = 4e-2;
 
 % sample initial metabolite concentrations for estimating kinetic parameters
-[mc,parameter,smp] = parallel_sampling(FBAmodel,parameter,'setupMetLP_gtoy',met,mc,rxnadd);
+[mc,parameter,smp] = parallel_sampling(model,parameter,'setupMetLP_gtoy',met,mc,rxnadd);
 if isempty(mc)
     % multiple saples are being supplied
     mc = smp{1,1};
@@ -46,27 +46,28 @@ end
 rxnadd = {};
 rxnexcep = {};
 % FBAmodel.bmrxn = [];
-ensb = parallel_ensemble(FBAmodel,mc,parameter,rxnadd,rxnexcep,10);
+ensb = parallel_ensemble(model,mc,parameter,rxnadd,rxnexcep,10);
 
 % serially solve ODE of model to steady state
-FBAmodel.rxn_add = rxnadd;
-FBAmodel.rxn_excep = rxnexcep;
+model.rxn_add = rxnadd;
+model.rxn_excep = rxnexcep;
 
 % setup model for integration 
 [newmodel,newpvec,Nimc,solverP,flux,dXdt] =...
-setupKineticODE(FBAmodel,ensb,ensb{1,1},essrxn,Vupstruct,15000);
+setupKineticODE(model,ensb,ensb{1,1},essrxn,Vupstruct,1000);
 
 % solve only if models are feasible
 if size(ensb,1)>1
-    [outsol,outss] = solveAllpvec(newmodel,newpvec,Nimc,solverP);
+    [outsol,outss,allxeq,allfeq] = solveAllpvec(newmodel,newpvec,Nimc,solverP);
 else
     if ensb{1,2}.feasible    
         % integrate model
-        [outsol,allxeq] = callODEsolver(newmodel,newpvec,Nimc,solverP);
+        [outsol,outss] = callODEsolver(newmodel,newpvec,Nimc,solverP);
     else
         error('No feasible model found');
     end
 end
 
 % time course plots
-AllTimeCoursePlots(outsol,model);
+AllTimeCoursePlots(outsol,newmodel,{'pyr[c]','pep[c]','fdp[c]','ac[c]'},...
+                                   {'ACt2r','FBP','PDHr','PYK'});
