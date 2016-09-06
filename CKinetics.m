@@ -72,10 +72,21 @@ for irxn = 1:nrxn
     if ismember(irxn,Vind)
         alls = S(:,irxn);allp = S(:,irxn);
         alls(S(:,irxn)>0) = 0;allp(S(:,irxn)<0) = 0;
-        sratio = M(logical(alls),:)./K(logical(alls),irxn);
-        pratio = M(logical(allp),:)./K(logical(allp),irxn);
-        thetas = prod(sratio.^-alls(logical(alls)),1);
-        thetap = prod(pratio.^allp(logical(allp)),1);
+        if nc>1
+            sratio = M(logical(alls),:)./...
+                     repmat(K(logical(alls),irxn),1,nc);
+            pratio = M(logical(allp),:)./...
+                     repmat(K(logical(allp),irxn),1,nc);
+            thetas = prod(sratio.^...
+                     repmat(-alls(logical(alls)),1,nc),1);
+            thetap = prod(pratio.^...
+                     repmat(allp(logical(allp)),1,nc),1);
+        else
+            sratio = M(logical(alls),:)./K(logical(alls),irxn);
+            pratio = M(logical(allp),:)./K(logical(allp),irxn);
+            thetas = prod(sratio.^-alls(logical(alls)),1);
+            thetap = prod(pratio.^allp(logical(allp)),1);
+        end    
         fwdflx = kfwd(irxn).*thetas;
         revflx = kbkw(irxn).*thetap;
         if ~rev(irxn)
@@ -87,8 +98,16 @@ for irxn = 1:nrxn
         % partial activation
         if any(SI(:,irxn)>0)
             allac = SI(:,irxn);allac(SI(:,irxn)<0) = 0;
-            acratio = M(logical(allac),:)./KIact(logical(allac),irxn);
-            acflx = prod((0.5+(1-0.5).*acratio./(1+acratio)).^allac(logical(allac)),1);
+            if nc>1
+                acratio = M(logical(allac),:)./...
+                          repmat(KIact(logical(allac),irxn),1,nc);
+                acflx = prod((0.5+(1-0.5).*acratio./(1+acratio)).^...
+                        repmat(allac(logical(allac)),1,nc),1);
+            else
+                acratio = M(logical(allac),:)./KIact(logical(allac),irxn);
+                acflx = prod((0.5+(1-0.5).*acratio./(1+acratio)).^...
+                        allac(logical(allac)),1);
+            end            
         else
             acflx = ones(1,length(nrflx));
         end
@@ -96,8 +115,16 @@ for irxn = 1:nrxn
         % partial inhibition
         if any(SI(:,irxn)<0)
             allib = SI(:,irxn);allib(SI(:,irxn)>0) = 0;
-            ibratio = M(logical(allib),:)./KIihb(logical(allib),irxn);
-            ibflx = prod((0.5+(1-0.5)./(1+ibratio)).^-allib(logical(allib)),1);
+            if nc>1
+                ibratio = M(logical(allib),:)./...
+                          repmat(KIihb(logical(allib),irxn),1,nc);
+                ibflx = prod((0.5+(1-0.5)./(1+ibratio)).^...
+                        repmat(-allib(logical(allib)),1,nc),1);
+            else
+                ibratio = M(logical(allib),:)./KIihb(logical(allib),irxn);
+                ibflx = prod((0.5+(1-0.5)./(1+ibratio)).^...
+                        -allib(logical(allib)),1);
+            end
         else
             ibflx = ones(1,length(nrflx));
         end
