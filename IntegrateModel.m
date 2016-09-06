@@ -1,6 +1,6 @@
 function [allsol,jacobian] =...
 IntegrateModel(model,ensb,mc,ess_rxn,Vup_struct,change_pos,change_neg)
-% change in initial conditions
+% integrate iniital model to obtain initial steady state
 if nargin<7
     change_neg = struct([]);
 end
@@ -80,7 +80,7 @@ flux = iflux(newmodel,newpvec,[Nimc.*imc;PM]);
 dXdt = ToyODEmodel(0,Nimc,[],newmodel,newpvec);
 
 % get jacobian and eigen values and eigne vectors
-[J,lambda,w] = getjacobian(Nimc,newpvec,newmodel);
+% [J,lambda,w] = getjacobian(Nimc,newpvec,newmodel);
 
 % integrate model
 [allsol,allxeq] = callODEsolver(newmodel,newpvec,Nimc,solverP);
