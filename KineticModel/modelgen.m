@@ -46,8 +46,8 @@
 % KIact     - mxn matrix of allosteric activation constants
 % KIihb     - mxn matrix allosteric inhibition constants
 % Vmax      - nx1 vector of reaction Vmax
-% kcat_fwd  - nx1 forward reaction kcat vector
-% kcat_bkw  - nx1 reverse reaction kcat vector. 0 for irreversible reactions
+% kfwd  - nx1 forward reaction kcat vector
+% kbkw  - nx1 reverse reaction kcat vector. 0 for irreversible reactions
 % variable  -
 % nt_rxn    - total number of reactions in model
 % nt_metab  - total number of metabolites in model
@@ -82,8 +82,8 @@ model.enzName = C{1}(~cellfun('isempty',C{1}));%enzs Name
 model.S = sparse(0,nt_rxn);
 model.K = sparse(0,nt_rxn);
 model.delG = zeros(nt_rxn,1);
-model.kcat_fwd = C{9}(1:nt_rxn);   %Reaction fwd kcat 
-model.kcat_bkw = C{10}(1:nt_rxn);   %reaction bkw kcat
+model.kfwd = C{9}(1:nt_rxn);   %Reaction fwd kcat 
+model.krev = C{10}(1:nt_rxn);   %reaction bkw kcat
 model.Vmax = C{12}(1:nt_rxn);   %Vmax
 model.reversible = zeros(nt_rxn,1);
 model.Vss = zeros(nt_rxn,1);
@@ -362,8 +362,8 @@ delSGr = [model.delG;zeros(length(other_ind),1)];
 delGlb = [model.delGlb;zeros(length(other_ind),1)];
 delGub = [model.delGub;zeros(length(other_ind),1)];
 newKeq = [Keq;zeros(length(other_ind),1)];
-newkcfwd = [model.kcat_fwd;zeros(length(other_ind),1)];
-newkcbkw = [model.kcat_bkw;zeros(length(other_ind),1)];
+newkcfwd = [model.kfwd;zeros(length(other_ind),1)];
+newkcbkw = [model.krev;zeros(length(other_ind),1)];
 newreverse = [model.reversible;zeros(length(other_ind),1)];
 
 % compensated metabolites
@@ -438,8 +438,8 @@ parameter.Kub = newmodel.Kub;
 parameter.KIact = newmodel.KIact;
 parameter.KIihb = newmodel.KIihb;
 parameter.Vmax = model.Vmax;
-parameter.kcat_fwd = newkcfwd;
-parameter.kcat_bkw = newkcbkw;
+parameter.kfwd = newkcfwd;
+parameter.krev = newkcbkw;
 
 %Separate phosphorylated proteins from non-phosphorylated proteins
 %Separate PTS mets from other mets

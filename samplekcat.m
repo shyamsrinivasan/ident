@@ -20,29 +20,29 @@ if rerun
     kcatfwd = kfwdbkup;
     kcatbkw = kbkwbkup;
 else
-    kcatfwd = pvec.kcat_fwd(irxn);
-    kcatbkw = pvec.kcat_bkw(irxn);
+    kcatfwd = pvec.kfwd(irxn);
+    kcatbkw = pvec.krev(irxn);
 end
 
 if isnan(kcatfwd)
-    pvec.kcat_fwd(irxn) = model.Keq(irxn)*kcatbkw*...
+    pvec.kfwd(irxn) = model.Keq(irxn)*kcatbkw*...
                           prod(K(sbid,irxn).^Sb)/prod(K(prid,irxn).^Sp);
-%     pvec.kcat_fwd(irxn) = nrm_pr/nrm_sb*kcatbkw*exp(-delGr/RT);    
+%     pvec.kfwd(irxn) = nrm_pr/nrm_sb*kcatbkw*exp(-delGr/RT);    
 end
 if isnan(kcatbkw)
-    pvec.kcat_bkw(irxn) = (kcatfwd/model.Keq(irxn))*...
+    pvec.krev(irxn) = (kcatfwd/model.Keq(irxn))*...
                           prod(K(prid,irxn).^Sp)/prod(K(sbid,irxn).^Sb);
-%     pvec.kcat_bkw(irxn) = nrm_sb/nrm_pr*kcatfwd*exp(delGr/RT);
+%     pvec.krev(irxn) = nrm_sb/nrm_pr*kcatfwd*exp(delGr/RT);
 end
 if model.Vss(irxn)==0
-    pvec.kcat_fwd(irxn) = 0;
-    pvec.kcat_bkw(irxn) = 0;
+    pvec.kfwd(irxn) = 0;
+    pvec.krev(irxn) = 0;
 end
-% fprintf('kcat+ = %3.6g \t kcat- = %3.6g \t Keq = %3.6g\t',pvec.kcat_fwd(irxn),...
-%                                          pvec.kcat_bkw(irxn),...
+% fprintf('kcat+ = %3.6g \t kcat- = %3.6g \t Keq = %3.6g\t',pvec.kfwd(irxn),...
+%                                          pvec.krev(irxn),...
 %                                          model.Keq(irxn));
 % fprintf('vflux = %3.6g\n',...                                   
-% pvec.kcat_fwd(irxn)*nrm_sb - pvec.kcat_bkw(irxn)*nrm_pr);
+% pvec.kfwd(irxn)*nrm_sb - pvec.krev(irxn)*nrm_pr);
 
 
 

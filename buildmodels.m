@@ -26,8 +26,8 @@ newp = struct();
 newp.K = pvec.K;
 newp.Kind = sparse(ntmet,ntrxn);
 newp.Vmax = pvec.Vmax;
-newp.kfwd = pvec.kcat_fwd;
-newp.kbkw = pvec.kcat_bkw;
+newp.kfwd = pvec.kfwd;
+newp.kbkw = pvec.krev;
 
 pvec.Kin = sparse(ntmet,ntrxn);
 S = model.S;
@@ -50,8 +50,8 @@ for irxn = 1:nrxn
     rerun = 0;
     Ksbackup = pvec.K(sbid,Vind(irxn));
     Kpbackup = pvec.K(prid,Vind(irxn));
-    kfwdbkup = pvec.kcat_fwd(Vind(irxn));
-    kbkwbkup = pvec.kcat_bkw(Vind(irxn));
+    kfwdbkup = pvec.kfwd(Vind(irxn));
+    kbkwbkup = pvec.krev(Vind(irxn));
     while check(Vind(irxn))~=1 
 %         if any(Ksbackup==1)||any(Kpbackup==1)
             % sampling of parameters needs to be recursive until check (see below) is 1
@@ -105,13 +105,13 @@ end
 % set irreversible kcats
 for irxn = 1:length(model.rxns)
     if ~model.rev(irxn)
-        pvec.kcat_bkw(irxn)=0;
+        pvec.krev(irxn)=0;
     end
 end
 
 % exhcnage reactions
-pvec.kcat_fwd(model.VFex) = 0;
-pvec.kcat_bkw(model.VFex) = 0;
+pvec.kfwd(model.VFex) = 0;
+pvec.krev(model.VFex) = 0;
 
 % restore Vmax from backup
 pvec.Vmax = newp.Vmax;

@@ -3,7 +3,7 @@ function flux = EKinetics(model,pvec,M,VFex)
 flux = zeros(model.nt_rxn,nc);
 % flux = cons(flux,M);
 
-kfwd = pvec.kcat_fwd;
+kfwd = pvec.kfwd;
 % kcatbkw = pvec.kcat_bkw;
 % flux = zeros(model.nt_rxn,1);
 % model.Vuptake = zeros(model.nt_rxn,1);

@@ -7,8 +7,8 @@ rev = model.rev;
 K = pvec.K;
 KIact = pvec.KIact;
 KIihb = pvec.KIihb;
-kfwd = pvec.kcat_fwd;
-kbkw = pvec.kcat_bkw;
+kfwd = pvec.kfwd;
+kbkw = pvec.krev;
 Vmax = pvec.Vmax;
 
 vflux = zeros(nrxn,nc);

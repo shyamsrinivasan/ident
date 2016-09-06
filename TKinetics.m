@@ -4,8 +4,8 @@ S = model.S;
 nrxn = model.nt_rxn;
 rev = model.rev;
 K = pvec.K;
-kfwd = pvec.kcat_fwd;
-kbkw = pvec.kcat_bkw;
+kfwd = pvec.kfwd;
+kbkw = pvec.krev;
 Vmax = pvec.Vmax;
 
 vflux = zeros(nrxn,nc);

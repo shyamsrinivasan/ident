@@ -89,8 +89,8 @@ if ~isempty(newpvec)
     newpvec.KIact = newpvec.KIact(:,logical(sum(logical(newmodel.S),1)));
     newpvec.KIihb = newpvec.KIihb(:,logical(sum(logical(newmodel.S),1))); 
     newpvec.Vmax = newpvec.Vmax(logical(sum(logical(newmodel.S),1)));
-    newpvec.kcat_fwd = newpvec.kcat_fwd(logical(sum(logical(newmodel.S),1)));
-    newpvec.kcat_bkw = newpvec.kcat_bkw(logical(sum(logical(newmodel.S),1)));
+    newpvec.kfwd = newpvec.kfwd(logical(sum(logical(newmodel.S),1)));
+    newpvec.krev = newpvec.krev(logical(sum(logical(newmodel.S),1)));
     newpvec.delGr = newpvec.delGr(logical(sum(logical(newmodel.S),1)));    
 end
 
