@@ -1,14 +1,14 @@
 function [newmodel,newpvec,Nimc,solverP,flux,dXdt] =...
-        setupKineticODE(model,ensb,mc,ess_rxn,Vup_struct,tmax)
+        setupKineticODE(model,ensb,mc,essrxn,Vupstruct,tmax)
 % setup kinetic model for integration
 if nargin<6
     tmax = 500;
 end
 if nargin<5
-    Vup_struct = ([]);
+    Vupstruct = ([]);
 end
 if nargin<4
-    ess_rxn = {};
+    essrxn = {};
 end
 % check if concentrations are initialized
 if nargin < 3
@@ -21,7 +21,7 @@ else
 end
 
 % initialize solver properties
-[model,solverP,saveData] = imodel(model,'ode',tmax,ess_rxn,Vup_struct);
+[model,solverP,saveData] = imodel(model,'ode',tmax,essrxn,Vupstruct);
 
 % remove water and protons (held constant) from consideration in the model
 % integration phase

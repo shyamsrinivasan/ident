@@ -16,17 +16,17 @@ cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\Kine
 % FBA or pFBA solution - optional
 % fix flux uptakes for FBA solution
 % Vup_struct.exAC = 20;%mmol/gDCW.h
-Vup_struct.ACt2r = 20;
-Vup_struct.ENZ1ex = 1;
+Vupstruct.ACt2r = 20;
+Vupstruct.ENZ1ex = 1;
 
 % designate reactions for which uptake should not be zero in FBA
 % ess_rxn = {'exH','exPI','exAC'};
-ess_rxn = {'ACex'};
+essrxn = {'ACex'};
 
 % assign initial fluxes and calculate FBA fluxes for direction
 % FBAmodel.bmrxn = 14;
 FBAmodel.bmrxn = 3;
-FBAmodel = FBAfluxes(FBAmodel,'fba',ess_rxn,Vup_struct,...
+FBAmodel = FBAfluxes(FBAmodel,'fba',essrxn,Vupstruct,...
                      find(strcmpi(FBAmodel.rxns,'bmex')));
 
 rxnadd = {};
@@ -54,7 +54,7 @@ FBAmodel.rxn_excep = rxnexcep;
 if ensb{1,2}.feasible    
     % setup model for integration 
     [newmodel,newpvec,Nimc,solverP,flux,dXdt] =...
-    setupKineticODE(FBAmodel,ensb,ensb{1,1},ess_rxn,Vup_struct,1000);
+    setupKineticODE(FBAmodel,ensb,ensb{1,1},essrxn,Vupstruct,15000);
     
     % integrate model
     [outsol,allxeq] = callODEsolver(newmodel,newpvec,Nimc,solverP);

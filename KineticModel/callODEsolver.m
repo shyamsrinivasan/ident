@@ -133,6 +133,6 @@ if ~f_flag
     outss.flux = outsol.flux(:,end);
 end
 
-fprintf('Completion time:\t %4.3g\n',toc(tstart));
+fprintf('Completion time:\t\t %4.3g\n',toc(tstart));
 return;
 
