@@ -67,3 +67,6 @@ else
         error('No feasible model found');
     end
 end
+
+% time course plots
+AllTimeCoursePlots(outsol,model);
