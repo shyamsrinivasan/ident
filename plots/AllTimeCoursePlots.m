@@ -1,4 +1,7 @@
-function varargout = AllTimeCoursePlots(outsol,model)
+function varargout = AllTimeCoursePlots(outsol,model,metid,flxid)
+if nargin<4
+    flxid = [];
+end
 % wrapper around timecourseplots for plotting results from an ensemble of
 % models
 
@@ -8,10 +11,14 @@ hfig2 = [];
 ha1 = [];
 ha2 = [];
 for im = 1:nmodels
-    [hfig1,ha1] = timecourseplots(outsol(im).t,outsol(im).y,...
-                                  1,{'pyr[c]','pep[c]'},model,hfig1,ha1);
-    [hfig2,ha2] = timecourseplots(outsol(im).t,outsol(im).y,...
-                                  2,[1 3 4 5],model,hfig2,ha2);
+    if ~isempty(metid)
+        [hfig1,ha1] = timecourseplots(outsol(im).t,outsol(im).y,...
+                                      1,metid,model,hfig1,ha1);
+    end
+    if ~isempty(flxid)
+        [hfig2,ha2] = timecourseplots(outsol(im).t,outsol(im).y,...
+                                      2,flxid,model,hfig2,ha2);
+    end
 end
 
 if nargout==1
