@@ -3,8 +3,8 @@ S = model.S;
 nrxn = model.nt_rxn;
 rev = model.rev;
 K = pvec.K;
-kfwd = pvec.kcat_fwd;
-kbkw = pvec.kcat_bkw;
+kfwd = pvec.kfwd;
+kbkw = pvec.krev;
 Vmax = pvec.Vmax;
 
 vflux = zeros(nrxn,1);
@@ -55,26 +55,34 @@ for irxn = 1:nrxn
             zetarxn = fwdflx./revflx;
             for im = 1:length(metid)
                 if S(metid(im),irxn)<0
-                    allTr(metid(im)) = (zetarxn*-S(metid(im),irxn)-0)/(zetarxn-1);                    
+                    if ~isinf(zetarxn)
+                        allTr(metid(im)) = (zetarxn*-S(metid(im),irxn)-0)/(zetarxn-1); 
+                    else
+                        allTr(metid(im)) = 1; 
+                    end
                 elseif S(metid(im),irxn)>0
-                    allTr(metid(im)) = (zetarxn*0-S(metid(im),irxn))/(zetarxn-1);                    
+                    if ~isinf(zetarxn)
+                        allTr(metid(im)) = (zetarxn*0-S(metid(im),irxn))/(zetarxn-1);
+                    else
+                        allTr(metid(im)) = 1;
+                    end
                 end
-                if vecmc(metid(im),irxn)>0
-                    allTr(metid(im)) = allTr(metid(im))/vecmc(metid(im),irxn);
-                else
-                    allTr(metid(im)) = 0;
-                end
+%                 if vecmc(metid(im),irxn)>0
+%                     allTr(metid(im)) = allTr(metid(im))/vecmc(metid(im),irxn);
+%                 else
+%                     allTr(metid(im)) = 0;
+%                 end
             end
         elseif ~rev(irxn)
             for im = 1:length(metid)
                 if S(metid(im),irxn)<0
                     allTr(metid(im)) = -S(metid(im),irxn);
                 end
-                if vecmc(metid(im),irxn)>0
-                    allTr(metid(im)) = allTr(metid(im))/vecmc(metid(im),irxn);
-                else
-                    allTr(metid(im)) = 0;
-                end
+%                 if vecmc(metid(im),irxn)>0
+%                     allTr(metid(im)) = allTr(metid(im))/vecmc(metid(im),irxn);
+%                 else
+%                     allTr(metid(im)) = 0;
+%                 end
             end
         end
         
@@ -94,11 +102,11 @@ for irxn = 1:nrxn
             else
                 allDr(metid(im)) = allDr(metid(im))/drflx;
             end
-            if vecmc(metid(im),irxn)>0
-                allDr(metid(im)) = allDr(metid(im))/vecmc(metid(im),irxn);
-            else
-                allDr(metid(im)) =  0;
-            end
+%             if vecmc(metid(im),irxn)>0
+%                 allDr(metid(im)) = allDr(metid(im))/vecmc(metid(im),irxn);
+%             else
+%                 allDr(metid(im)) =  0;
+%             end
         end             
         
         % complete differential w.r.t flux(irxn) dvr/dci
