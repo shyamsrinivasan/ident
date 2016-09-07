@@ -59,7 +59,7 @@ global Line annot type model
 if ~isempty(hfig)
     set(0,'CurrentFigure',hfig);
 else
-    hfig = figure('Name','Met Courses'); 
+    hfig = figure('Name','Time Courses'); 
     set(0,'CurrentFigure',hfig);
 end
 
