@@ -71,3 +71,5 @@ end
 % time course plots
 AllTimeCoursePlots(outsol,newmodel,{'pyr[c]','pep[c]','fdp[c]','ac[c]'},...
                                    {'ACt2r','FBP','PDHr','PYK'});
+                               
+% perturbations to steady states                              
