@@ -8,8 +8,8 @@ rev = model.rev;
 K = pvec.K;
 KIact = pvec.KIact;
 KIihb = pvec.KIihb;
-kfwd = pvec.kcat_fwd;
-kbkw = pvec.kcat_bkw;
+kfwd = pvec.kfwd;
+kbkw = pvec.krev;
 Vmax = pvec.Vmax;
 
 vflux = zeros(nrxn,nc);
@@ -97,22 +97,22 @@ for irxn = 1:nrxn
                 elseif S(metid(im),irxn)>0
                     allTr(metid(im)) = (zetarxn*0-S(metid(im),irxn))/(zetarxn-1);                    
                 end
-                if vecmc(metid(im),irxn)>0
-                    allTr(metid(im)) = allTr(metid(im))/vecmc(metid(im),irxn);
-                else
-                    allTr(metid(im)) = 0;
-                end
+%                 if vecmc(metid(im),irxn)>0
+%                     allTr(metid(im)) = allTr(metid(im))/vecmc(metid(im),irxn);
+%                 else
+%                     allTr(metid(im)) = 0;
+%                 end
             end
         elseif ~rev(irxn)
             for im = 1:length(metid)
                 if S(metid(im),irxn)<0
                     allTr(metid(im)) = -S(metid(im),irxn);
                 end
-                if vecmc(metid(im),irxn)>0
-                    allTr(metid(im)) = allTr(metid(im))/vecmc(metid(im),irxn);
-                else
-                    allTr(metid(im)) = 0;
-                end
+%                 if vecmc(metid(im),irxn)>0
+%                     allTr(metid(im)) = allTr(metid(im))/vecmc(metid(im),irxn);
+%                 else
+%                     allTr(metid(im)) = 0;
+%                 end
             end
         end
         
@@ -123,11 +123,11 @@ for irxn = 1:nrxn
             elseif S(metid(im),irxn)>0                
                 allDr(metid(im)) = thetas*0+thetap*S(metid(im),irxn);
             end      
-            if vecmc(metid(im),irxn)>0
-                allDr(metid(im)) = allDr(metid(im))/vecmc(metid(im),irxn);
-            else
-                allDr(metid(im)) = 0;
-            end
+%             if vecmc(metid(im),irxn)>0
+%                 allDr(metid(im)) = allDr(metid(im))/vecmc(metid(im),irxn);
+%             else
+%                 allDr(metid(im)) = 0;
+%             end
         end
         
         % denominator specific regulation dDreg/dci
@@ -167,25 +167,25 @@ for irxn = 1:nrxn
         end
         
         % collect common ids between allac and allid
-        if any(SI(:,irxn)>0) && any(SI(:,irxn)<0)
-            cmnreg = union(find(allac),find(allib));
-            % remove common ids from allac and allib
-            allac = allac(~ismember(allac,cmnreg));
-            allib = allib(~ismember(allib,cmnreg));
-            allfr(cmnreg) = allfr(cmnreg)./vecmc(cmnreg,irxn);
-%             allfr(vecmc(cmnreg,irxn)<=0) = 0;
-        end
-        if any(SI(:,irxn)>0)
-            if ~isempty(allac)
-                allfr(logical(allac)) = allfr(logical(allac))./vecmc(logical(allac),irxn);
-%                 allfr(
-            end
-        end
-        if any(SI(:,irxn)<0)
-            if ~isempty(allib)
-                allfr(logical(allib)) = allfr(logical(allib))./vecmc(logical(allib),irxn);
-            end  
-        end
+%         if any(SI(:,irxn)>0) && any(SI(:,irxn)<0)
+%             cmnreg = union(find(allac),find(allib));
+%             % remove common ids from allac and allib
+%             allac = allac(~ismember(allac,cmnreg));
+%             allib = allib(~ismember(allib,cmnreg));
+%             allfr(cmnreg) = allfr(cmnreg)./vecmc(cmnreg,irxn);
+% %             allfr(vecmc(cmnreg,irxn)<=0) = 0;
+%         end
+%         if any(SI(:,irxn)>0)
+%             if ~isempty(allac)
+%                 allfr(logical(allac)) = allfr(logical(allac))./vecmc(logical(allac),irxn);
+% %                 allfr(
+%             end
+%         end
+%         if any(SI(:,irxn)<0)
+%             if ~isempty(allib)
+%                 allfr(logical(allib)) = allfr(logical(allib))./vecmc(logical(allib),irxn);
+%             end  
+%         end
         
         % complete differential w.r.t flux(irxn) dvr/dci
         allvr = flux(irxn).*(allfr + allTr - allDr - allDreg);
