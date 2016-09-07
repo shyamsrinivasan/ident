@@ -106,8 +106,8 @@ outsol.flux(:,2:end) = iflux(model,pvec,allmets);
 fprintf('Flux calculation time:\t %4.3g\n',toc(tstart)-telaps);
 
 % plot solution for diagnostics
-timecourseplots(outsol.t,outsol.y,1,{'pep[c]','fdp[c]','bm[c]','pyr[c]'},model);
-timecourseplots(outsol.t,outsol.flux,2,[1 3 4 5],model);
+% timecourseplots(outsol.t,outsol.y,1,{'pep[c]','fdp[c]','bm[c]','pyr[c]'},model);
+% timecourseplots(outsol.t,outsol.flux,2,[1 3 4 5],model);
 
 % Get final Steady State
 % Obtaining final SS values for initial problem 
