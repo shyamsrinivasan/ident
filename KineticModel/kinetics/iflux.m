@@ -3,7 +3,7 @@ function flux = iflux(model,pvec,M,flux,idx)
 if nargin <5
     idx = [];
 else
-    idflux = zeros(length(idx),nc);
+    idflux = zeros(model.nt_rxn,nc);
 end
 if nargin<4
     flux = zeros(model.nt_rxn,nc);
@@ -39,6 +39,8 @@ VFex = model.VFex;
 % [flux,~,vred] = RedoxKinetics(model,pvec,mc,flux);
 
 tatpm = strcmpi(model.rxns,'ATPM');
+finid = []; % only when idx is non empty
+
 if isempty(idx)
     if ~isempty(Vind)
         flux(Vind,:) = CKinetics(model,pvec,M,Vind);
@@ -76,11 +78,12 @@ if isempty(idx)
 else
     % determine which group idx belongs to
     % vectorize wrt idx
-    % intracellular reactions
+    % intracellular reactions    
     Vin_idx = idx(ismember(idx,Vind));
     idx = setdiff(idx,Vin_idx);
     if ~isempty(Vin_idx)
         idflux(Vin_idx,:) = CKinetics(model,pvec,M,Vin_idx);
+        finid = [finid Vin_idx]; 
     end
     
     % transport fluxes
@@ -88,6 +91,7 @@ else
     idx = setdiff(idx,Vex_idx);
     if ~isempty(Vex_idx)
         idflux(Vex_idx,:) = TKinetics(model,pvec,M,Vex_idx);
+        finid = [finid Vex_idx]; 
     end
     
     % exchange fluxes
@@ -95,21 +99,32 @@ else
     idx = setdiff(idx,VFex_idx);    
     if ~isempty(VFex_idx)
         idflux(VFex_idx,:) = TKinetics(model,pvec,M,VFex_idx);
+        finid = [finid VFex_idx]; 
     end
     
     % atp maintenance
-    if any(idx==find(strcmpi(model.rxns,'ATPM')))
-        ratpm = idx(idx==find(strcmpi(model.rxns,'ATPM')));
-        S(h2o,ratpm)=0;      
-        idflux(idx==find(strcmpi(model.rxns,'ATPM')),:) =...
-        pvec.Vmax(ratpm).*18.84.*...
-        M(S(:,ratpm)<0,:)./pvec.K(S(:,ratpm)<0,ratpm)./...
-        (1+M(S(:,ratpm)<0,:)./pvec.K(S(:,ratpm)<0,ratpm));   
+    if ~isempty(idx)
+        if ~isempty(find(strcmpi(model.rxns,'ATPM'),1))
+            if any(idx==find(strcmpi(model.rxns,'ATPM')))
+                ratpm = idx(idx==find(strcmpi(model.rxns,'ATPM')));
+                S(h2o,ratpm)=0;      
+                idflux(idx==find(strcmpi(model.rxns,'ATPM')),:) =...
+                pvec.Vmax(ratpm).*18.84.*...
+                M(S(:,ratpm)<0,:)./pvec.K(S(:,ratpm)<0,ratpm)./...
+                (1+M(S(:,ratpm)<0,:)./pvec.K(S(:,ratpm)<0,ratpm));   
+                finid = [finid ratpm]; 
+            end
+        end
     end
     
     % biomass reaction
-    if any(idx==model.bmrxn)
-        idx(idx==model.bmrxn) = 0;
+    if ~isempty(idx)
+        if ~isempty(model.bmrxn)
+            if any(idx==model.bmrxn)
+                idflux(idx==model.bmrxn) = 0;
+                finid = [finid idx(idx==model.bmrxn)]; 
+            end
+        end
     end
     
     % ETC fluxes - not vectorized yet
@@ -120,8 +135,8 @@ else
 %     end                   
 end 
 
-if ~isempty(idx)
-    flux = idflux;
+if ~isempty(finid)
+    flux = idflux(finid);
 end
 
 % time factor for fluxes - conversion between seconds <-> hours
