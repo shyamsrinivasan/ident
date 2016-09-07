@@ -1,5 +1,6 @@
 % function to solve ODE to obtain concentration profiles using SUNDIALS
-function [outsol,outss] = callODEsolver(model,pvec,initval,solverP,inputsol)
+function [outsol,outss,allxss,allfss] =...
+         callODEsolver(model,pvec,initval,solverP,inputsol)
 if nargin < 5
     inputsol = struct([]);
 end
@@ -132,6 +133,9 @@ if ~f_flag
     outss.y = outsol.y(:,end); 
     outss.flux = outsol.flux(:,end);
 end
+
+allxss = outss.y;
+allfss = outss.flux;
 
 fprintf('Completion time:\t\t %4.3g\n',toc(tstart));
 return;
