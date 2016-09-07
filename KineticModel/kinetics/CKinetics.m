@@ -90,7 +90,7 @@ for irxn = 1:nrxn
         fwdflx = kfwd(irxn).*thetas;
         revflx = kbkw(irxn).*thetap;
         if ~rev(irxn)
-            revflx = zeros(1,length(revflx));
+%             revflx = zeros(1,length(revflx));
         end
         nrflx = fwdflx-revflx;
         drflx = 1+thetas+thetap;
