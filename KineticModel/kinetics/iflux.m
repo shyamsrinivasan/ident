@@ -22,6 +22,7 @@ end
 
 h2o = strcmpi(model.mets,'h2o[c]');
 
+S = model.S;
 Vind = model.Vind;
 Vex = model.Vex;
 % other fixed exchaged fluxes
@@ -73,30 +74,50 @@ if isempty(idx)
     %         flux(strcmpi('GLCpts',model.rxns),ic) = 10;      
         
 else
-    %determine which group idx belongs to
-    for id = 1:length(idx)
-        if ismember(idx(id),Vind)
-            idflux(id,:) = CKinetics(model,pvec,M,idx(id));
-        elseif ismember(idx(id),Vex)
-            idflux(id,:) = TKinetics(model,pvec,M,idx(id));                
-        elseif ismember(idx(id),VFex)
-            idflux(id,:) = EKinetics(model,pvec,M,idx(id));
-        elseif idx(id)==find(strcmpi(model.rxns,'ATPM'))
-            sbid = model.S(:,idx(id))<0;
-            sbid(h2o) = 0;
-            idflux(idx(id),:) = pvec.Vmax(tatpm).*18.84.*...
-                                 M(sbid,:)./pvec.K(sbid,tatpm)./...
-                                (1+M(sbid,:)./pvec.K(sbid,tatpm));                
-        elseif idx(id)==model.bmrxn
-            idflux(id,:) = 0;
-        end
-        % ETC fluxes - not vectorized yet
-        ETCrxn = {'ATPS4r','NADH16','CYTBD','SUCDi','FRD7'};
-        if any(strcmpi(ETCrxn,model.rxns{idx(id)}))
-            flux = ETCflux(model,pvec,M(:,ic),flux(:,ic));
-            idflux(id,ic) = flux(idx(id));
-        end
-    end                       
+    % determine which group idx belongs to
+    % vectorize wrt idx
+    % intracellular reactions
+    Vin_idx = idx(ismember(idx,Vind));
+    idx = setdiff(idx,Vin_idx);
+    if ~isempty(Vin_idx)
+        idflux(Vin_idx,:) = CKinetics(model,pvec,M,Vin_idx);
+    end
+    
+    % transport fluxes
+    Vex_idx = idx(ismember(idx,Vex));
+    idx = setdiff(idx,Vex_idx);
+    if ~isempty(Vex_idx)
+        idflux(Vex_idx,:) = TKinetics(model,pvec,M,Vex_idx);
+    end
+    
+    % exchange fluxes
+    VFex_idx = idx(ismember(idx,VFex));
+    idx = setdiff(idx,VFex_idx);    
+    if ~isempty(VFex_idx)
+        idflux(VFex_idx,:) = TKinetics(model,pvec,M,VFex_idx);
+    end
+    
+    % atp maintenance
+    if any(idx==find(strcmpi(model.rxns,'ATPM')))
+        ratpm = idx(idx==find(strcmpi(model.rxns,'ATPM')));
+        S(h2o,ratpm)=0;      
+        idflux(idx==find(strcmpi(model.rxns,'ATPM')),:) =...
+        pvec.Vmax(ratpm).*18.84.*...
+        M(S(:,ratpm)<0,:)./pvec.K(S(:,ratpm)<0,ratpm)./...
+        (1+M(S(:,ratpm)<0,:)./pvec.K(S(:,ratpm)<0,ratpm));   
+    end
+    
+    % biomass reaction
+    if any(idx==model.bmrxn)
+        idx(idx==model.bmrxn) = 0;
+    end
+    
+    % ETC fluxes - not vectorized yet
+    ETCrxn = {'ATPS4r','NADH16','CYTBD','SUCDi','FRD7'};
+    if any(strcmpi(ETCrxn,model.rxns{idx(id)}))
+        flux = ETCflux(model,pvec,M(:,ic),flux(:,ic));
+        idflux(id,ic) = flux(idx(id));
+    end                   
 end  
 
 % time factor for fluxes - conversion between seconds <-> hours
