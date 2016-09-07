@@ -29,7 +29,7 @@ Jxact = sparse(S*DVX');
 % Jint = Jxact(1:nint,1:nint);
 
 % get jacobian using finite difference
-rhsfun = @(irow,mc)Svrow(irow,x,model,pvec);
+rhsfun = @(irow,mc)Svrow(irow,mc,model,pvec);
 Jnum = model_Jacobian(model,allmet,rhsfun);
 
 % use ADMAT to calculate jacobians - see issue #18 on github
