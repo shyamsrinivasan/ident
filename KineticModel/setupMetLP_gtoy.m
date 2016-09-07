@@ -81,10 +81,10 @@ ub(ub==0) = log(3e-2);
 %concentrations in M = mole/L, Bennett et al., 2009
 lb(strcmpi(newmodel.mets,'ac[e]')) = log(mc(strcmpi(model.mets,'ac[e]')));
 % lb(strcmpi(newmodel.mets,'o2[c]')) = log(1e-5); % log(mc(strcmpi(model.mets,'o2[c]')));
-lb(strcmpi(newmodel.mets,'pyr[c]')) = log(1e-3);
-lb(strcmpi(newmodel.mets,'pep[c]')) = log(1e-3);
-lb(strcmpi(newmodel.mets,'fdp[c]')) = log(1e-3);
-lb(strcmpi(newmodel.mets,'bm[c]')) = log(1e-4);
+lb(strcmpi(newmodel.mets,'pyr[c]')) = log(1e-5);
+lb(strcmpi(newmodel.mets,'pep[c]')) = log(1e-5);
+lb(strcmpi(newmodel.mets,'fdp[c]')) = log(1e-5);
+lb(strcmpi(newmodel.mets,'bm[c]')) = log(1e-6);
 % lb(strcmpi(newmodel.mets,'atp[c]')) = log(1e-5);
 % lb(strcmpi(newmodel.mets,'adp[c]')) = log(1e-5);
 % lb(strcmpi(newmodel.mets,'fdp[c]')) = log(1e-6);
