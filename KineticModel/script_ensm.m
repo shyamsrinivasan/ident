@@ -27,7 +27,7 @@ essrxn = {'ACex'};
 % FBAmodel.bmrxn = 14;
 model.bmrxn = 3;
 model = FBAfluxes(model,'fba',essrxn,Vupstruct,...
-                     find(strcmpi(model.rxns,'bmex')));
+                     find(strcmpi(model.rxns,'G6Pex')));
 
 rxnadd = {};
 % Metabolite conecntrations 
@@ -46,7 +46,7 @@ end
 rxnadd = {};
 rxnexcep = {};
 % FBAmodel.bmrxn = [];
-ensb = parallel_ensemble(model,mc,parameter,rxnadd,rxnexcep,10);
+ensb = parallel_ensemble(model,mc,parameter,rxnadd,rxnexcep,1);
 
 % serially solve ODE of model to steady state
 model.rxn_add = rxnadd;
@@ -55,6 +55,9 @@ model.rxn_excep = rxnexcep;
 % setup model for integration 
 [newmodel,newpvec,Nimc,solverP,flux,dXdt] =...
 setupKineticODE(model,ensb,ensb{1,1},essrxn,Vupstruct,1000);
+
+% get jacobian and eigen values and eigne vectors
+[J,lambda,w] = getjacobian(Nimc,newpvec,newmodel);
 
 % solve only if models are feasible
 if size(ensb,1)>1
