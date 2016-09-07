@@ -113,19 +113,19 @@ else
     end
     
     % ETC fluxes - not vectorized yet
-    ETCrxn = {'ATPS4r','NADH16','CYTBD','SUCDi','FRD7'};
-    if any(strcmpi(ETCrxn,model.rxns{idx(id)}))
-        flux = ETCflux(model,pvec,M(:,ic),flux(:,ic));
-        idflux(id,ic) = flux(idx(id));
-    end                   
-end  
-
-% time factor for fluxes - conversion between seconds <-> hours
-flux = flux.*3600;
+%     ETCrxn = {'ATPS4r','NADH16','CYTBD','SUCDi','FRD7'};
+%     if any(strcmpi(ETCrxn,model.rxns{idx(id)}))
+%         flux = ETCflux(model,pvec,M(:,ic),flux(:,ic));
+%         idflux(id,ic) = flux(idx(id));
+%     end                   
+end 
 
 if ~isempty(idx)
     flux = idflux;
 end
+
+% time factor for fluxes - conversion between seconds <-> hours
+flux = flux.*3600;
 
 % if flux(strcmpi(model.rxns,'atpm'))>=1e-5 &&...
 %     all(mc(logical(model.S(:,model.bmrxn)>0))>0)
