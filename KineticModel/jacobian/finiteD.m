@@ -38,7 +38,7 @@ for irow = 1:size(Jpatt,1)
     for jcls = 1:length(cls)
         xmod = x;
         xmod(cls(jcls)) = xmod(cls(jcls))+eps;
-        fprintf('%d -- %d\n',irow,cls(jcls));
+        % fprintf('%d -- %d\n',irow,cls(jcls));
         fj = fh(irow,xmod);
         Jsp(cnt) = (fj-fm)/eps;
         cnt = cnt + 1;
