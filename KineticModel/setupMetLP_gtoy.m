@@ -33,12 +33,12 @@ Vind = addToVind(newmodel,Vind,rxn_add);
 Vex = setdiff(Vex,Vind);     
 
 %% %remove h2o[c] %remove h[c], h[e],pi[c] %remove from all reactions except vspl
-vh2o = find(strcmpi(newmodel.mets,'h2o[c]'));
+h2o = find(strcmpi(newmodel.mets,'h2o[c]'));
 
-newmodel.S(vh2o,:) = [];
-newmodel.mets(vh2o) = []; 
+newmodel.S(h2o,:) = [];
+newmodel.mets(h2o) = []; 
 if ~isempty(mc)
-    newmodel.mc(vh2o) = []; 
+    newmodel.mc(h2o) = []; 
 end
 
 he = find(strcmpi(newmodel.mets,'h[e]'));
