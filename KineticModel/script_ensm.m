@@ -5,8 +5,8 @@ addpath(genpath('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModel
 % cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy1C.txt';
 % rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy2.txt';
 % cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy2C.txt';
-rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy4.txt';
-cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy4C.txt';
+rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy5.txt';
+cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy5C.txt';
 % create model structure
 [model,parameter,variable,nrxn,nmetab] = modelgen(rxfname);
 
@@ -21,7 +21,7 @@ Vupstruct.ENZ1ex = 1;
 
 % designate reactions for which uptake should not be zero in FBA
 % ess_rxn = {'exH','exPI','exAC'};
-essrxn = {'ACex'};
+essrxn = {'ACex','exH'};
 
 % assign initial fluxes and calculate FBA fluxes for direction
 % FBAmodel.bmrxn = 14;
@@ -44,9 +44,9 @@ end
 
 % get parameter estimates - estimate kinetic parameters in an ensemble
 rxnadd = {};
-rxnexcep = {};
+rxnexcep = {'Ht2r'};
 % FBAmodel.bmrxn = [];
-ensb = parallel_ensemble(model,mc,parameter,rxnadd,rxnexcep,10);
+ensb = parallel_ensemble(model,mc,parameter,rxnadd,rxnexcep,1);
 
 % serially solve ODE of model to steady state
 model.rxn_add = rxnadd;
@@ -54,7 +54,7 @@ model.rxn_excep = rxnexcep;
 
 % setup model for integration 
 [newmodel,newpvec,Nimc,solverP,flux,dXdt] =...
-setupKineticODE(model,ensb,ensb{1,1},essrxn,Vupstruct,1000);
+setupKineticODE(model,ensb,ensb{1,1},essrxn,Vupstruct,100000);
 
 % get jacobian and eigen values and eigne vectors
 [J,lambda,w] = getjacobian(Nimc,newpvec,newmodel);
