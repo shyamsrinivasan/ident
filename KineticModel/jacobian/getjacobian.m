@@ -9,9 +9,9 @@ Vex = model.Vex;
 
 allmet = [x;model.PM];
 
-DVX(:,Vind) = CKjacobian(model,pvec,allmet,Vind);
+
 [~,~,DVX(:,Vind)] = CKinetics(model,pvec,allmet,Vind,1);
-DVX(:,Vex) = TKjacobian(model,pvec,allmet,Vex);
+[~,~,DVX(:,Vex)] = TKinetics(model,pvec,allmet,Vex,1);
 
 DVX(allmet==0,:) = 0;
 DVX(allmet~=0,:) = DVX(allmet~=0,:)./repmat(allmet(allmet~=0),1,nrxn);
