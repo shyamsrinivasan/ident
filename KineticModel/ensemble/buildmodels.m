@@ -124,9 +124,9 @@ if all(check(Vind)>0)
     % for Vind
     % simple vmax = vss/ck
     for irxn = 1:length(Vind)
-        if ~isnan(newp.Vmax(Vind(irxn)))
-            pvec.Vmax(Vind(irxn)) = newp.Vmax(Vind(irxn));
-        else
+        if isnan(newp.Vmax(Vind(irxn)))
+%             pvec.Vmax(Vind(irxn)) = newp.Vmax(Vind(irxn));
+%         else
             [~,ck] = CKinetics(model,pvec,mc,Vind(irxn));
             if ck
                 pvec.Vmax(Vind(irxn)) = model.Vss(Vind(irxn))/(3600*ck);
@@ -135,12 +135,14 @@ if all(check(Vind)>0)
             end
         end
     end
+    pvec.Vmax(Vind(~isnan(newp.Vmax(Vind)))) =...
+    newp.Vmax(Vind(~isnan(newp.Vmax(Vind))));
     
     % other reactions
     for irxn = 1:length(Vex)
-        if ~isnan(newp.Vmax(Vex(irxn)))
-            pvec.Vmax(Vex(irxn)) = newp.Vmax(Vex(irxn));
-        else
+        if isnan(newp.Vmax(Vex(irxn)))
+%             pvec.Vmax(Vex(irxn)) = newp.Vmax(Vex(irxn));
+%         else
             [~,tk] = TKinetics(model,pvec,mc,Vex(irxn));
             if tk
                 pvec.Vmax(Vex(irxn)) = model.Vss(Vex(irxn))/(3600*tk);
@@ -149,8 +151,8 @@ if all(check(Vind)>0)
             end
         end
     end 
-    % pvec.Vmax(Vex(~isnan(newp.Vmax(Vex)))) =...
-    % newp.Vmax(Vex(~isnan(newp.Vmax(Vex))));
+    pvec.Vmax(Vex(~isnan(newp.Vmax(Vex)))) =...
+    newp.Vmax(Vex(~isnan(newp.Vmax(Vex))));
     
     % calculate fluxes for ETC reactions
     [~,etck] = ETCflux(model,pvec,mc,flux);
