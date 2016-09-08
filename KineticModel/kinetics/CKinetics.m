@@ -1,4 +1,7 @@
-function [flux,vflux] = CKinetics(model,pvec,M,Vind)
+function [flux,vflux,DVX] = CKinetics(model,pvec,M,Vind,getjac)
+if nargin<5
+    getjac=0;
+end
 [~,nc] = size(M);
 S = model.S;
 SI = model.SI;
@@ -13,6 +16,7 @@ Vmax = pvec.Vmax;
 
 vflux = zeros(nrxn,nc);
 flux = zeros(nrxn,nc);
+DVX = zeros(length(M),nrxn);
 
 % vflux = cons(vflux,M);
 % flux = cons(flux,M);
@@ -70,36 +74,42 @@ for irxn = 1:nrxn
         drflx = 1+thetas+thetap;
         
         % partial activation
+        rhoA = 0.5;
         if any(SI(:,irxn)>0)
             allac = SI(:,irxn);allac(SI(:,irxn)<0) = 0;
             if nc>1
                 acratio = M(logical(allac),:)./...
                           repmat(KIact(logical(allac),irxn),1,nc);
-                acflx = prod((0.5+(1-0.5).*acratio./(1+acratio)).^...
+                acflx = prod((rhoA+(1-rhoA).*acratio./(1+acratio)).^...
                         repmat(allac(logical(allac)),1,nc),1);
             else
                 acratio = M(logical(allac),:)./KIact(logical(allac),irxn);
-                acflx = prod((0.5+(1-0.5).*acratio./(1+acratio)).^...
+                acflx = prod((rhoA+(1-rhoA).*acratio./(1+acratio)).^...
                         allac(logical(allac)),1);
             end            
         else
+            allac = [];
+            acratio = [];
             acflx = ones(1,length(nrflx));
         end
         
         % partial inhibition
+        rhoI = 0.5;
         if any(SI(:,irxn)<0)
             allib = SI(:,irxn);allib(SI(:,irxn)>0) = 0;
             if nc>1
                 ibratio = M(logical(allib),:)./...
                           repmat(KIihb(logical(allib),irxn),1,nc);
-                ibflx = prod((0.5+(1-0.5)./(1+ibratio)).^...
+                ibflx = prod((rhoI+(1-rhoI)./(1+ibratio)).^...
                         repmat(-allib(logical(allib)),1,nc),1);
             else
                 ibratio = M(logical(allib),:)./KIihb(logical(allib),irxn);
-                ibflx = prod((0.5+(1-0.5)./(1+ibratio)).^...
+                ibflx = prod((rhoI+(1-rhoI)./(1+ibratio)).^...
                         -allib(logical(allib)),1);
             end
         else
+            allib = [];
+            ibratio = [];
             ibflx = ones(1,length(nrflx));
         end
         nrflx = acflx.*ibflx.*nrflx;
@@ -124,7 +134,18 @@ for irxn = 1:nrxn
         drflx = drflx + dracflx + dribflx;
         vflux(irxn,:) = scale_flux(nrflx./drflx);
         flux(irxn,:) = Vmax(irxn).*vflux(irxn,:); 
+        
+        % get jacobian information
+        if getjac
+            DVX(:,irxn) = getCKjacobian(irxn,flux,S,SI,rev,sratio,pratio,thetas,thetap,...
+                                        nrflx,drflx,fwdflx,revflx,...
+                                        allac,acratio,rhoA,allib,ibratio,rhoI);
+        end
     end
+end
+
+if getjac
+    DVX = DVX(:,Vind);
 end
 
 flux = flux(Vind,:);
