@@ -87,37 +87,39 @@ for irxn = 1:nrxn
     if ismember(irxn,Vex)
         alls = S(:,irxn);allp = S(:,irxn);
         alls(S(:,irxn)>0) = 0;allp(S(:,irxn)<0) = 0;
-        sratio = M(logical(alls),:)./K(logical(alls),irxn);
-        pratio = M(logical(allp),:)./K(logical(allp),irxn);
-        thetas = prod(sratio.^-alls(logical(alls)),1);
-        thetap = prod(pratio.^allp(logical(allp)),1);
-        fwdflx = kfwd(irxn).*thetas;
-        revflx = kbkw(irxn).*thetap;
-        % set reverse flux for irreversible reactions = 0
-        if ~rev(irxn)
-            revflx = zeros(1,length(revflx));
-        end
-        % numerator of kinetics
-        nrflx = fwdflx-revflx;
-        % denominator of kinetics
-        drflx = 1+thetas+thetap;
-        % scale flux
-        vflux(irxn,:) = scale_flux(nrflx./drflx);
-        
-        % fluxes for O2t and PIt2r from Vex - overwrite nrflx and drflx
-        if irxn == find(strcmpi(model.rxns,'O2t'))
-        end
-        if irxn == find(strcmpi(model.rxns,'PIt2r'))
-            Kapie = 0.89; % mM
-            vflux(irxn,:) =...
-            scale_flux(fwdflx./drflx.*1./(1+Kapie./M(pie,:)));
-        end
-        flux(irxn,:) = Vmax(irxn).*vflux(irxn,:); 
-        
-        % get jacobian information
-        if getjac
-            DVX(:,irxn) = getTKjacobian(model,M,irxn,flux,S,rev,pratio,thetas,thetap,...
-                                        drflx,fwdflx,revflx);
+        if any(alls)||any(allp)
+            sratio = M(logical(alls),:)./repmat(K(logical(alls),irxn),1,nc);
+            pratio = M(logical(allp),:)./repmat(K(logical(allp),irxn),1,nc);
+            thetas = prod(sratio.^-alls(logical(alls)),1);
+            thetap = prod(pratio.^allp(logical(allp)),1);
+            fwdflx = kfwd(irxn).*thetas;
+            revflx = kbkw(irxn).*thetap;
+            % set reverse flux for irreversible reactions = 0
+            if ~rev(irxn)
+                revflx = zeros(1,length(revflx));
+            end
+            % numerator of kinetics
+            nrflx = fwdflx-revflx;
+            % denominator of kinetics
+            drflx = 1+thetas+thetap;
+            % scale flux
+            vflux(irxn,:) = scale_flux(nrflx./drflx);
+
+            % fluxes for O2t and PIt2r from Vex - overwrite nrflx and drflx
+            if irxn == find(strcmpi(model.rxns,'O2t'))
+            end
+            if irxn == find(strcmpi(model.rxns,'PIt2r'))
+                Kapie = 0.89; % mM
+                vflux(irxn,:) =...
+                scale_flux(fwdflx./drflx.*1./(1+Kapie./M(pie,:)));
+            end
+            flux(irxn,:) = Vmax(irxn).*vflux(irxn,:); 
+
+            % get jacobian information
+            if getjac
+                DVX(:,irxn) = getTKjacobian(model,M,irxn,flux,S,rev,pratio,thetas,thetap,...
+                                            drflx,fwdflx,revflx);
+            end
         end
     end
 end
