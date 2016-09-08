@@ -1,4 +1,5 @@
-function [outsol,outss,allxss,allfss,allJac,alllambda] = solveAllpvec(model,pvec,ival,solverP)
+function [outsol,outss,allxss,allfss,allJac,alllambda] =...
+          solveAllpvec(model,pvec,ival,solverP)
 % solve an ensemble of parameter vectors and post process results into a
 % structure array
 
@@ -9,9 +10,8 @@ allss = cell(nmodels,1);
 allxss = zeros(nvar,nmodels);
 allfss = zeros(model.nt_rxn,nmodels);
 
-allJac = sparse(model.nt_metab,model.nt_metab,nmodels);
+allJac = cell(nmodels,1);
 alllambda = zeros(model.nt_metab,nmodels);
-
 
 fprintf('Initiating parallel solution to %d models...\n',nmodels);
 tstart = tic;
@@ -19,7 +19,7 @@ parfor im = 1:nmodels
     if pvec(im).feasible
         % get jacobians and eigen values for all models at initial states
         [J,lambda] = getjacobian(ival,pvec(im),model);
-        allJac(:,:,im) = J;
+        allJac{im} = J;
         alllambda(:,im) = lambda;
                 
         [outsol,outss] = callODEsolver(model,pvec(im),ival,solverP);
@@ -34,6 +34,7 @@ parfor im = 1:nmodels
         allss{im}.flux = [];
     end
 end
+
 tstop = toc(tstart);
 fprintf('\nParallel Integration time for %d models: %4.3g\n',nmodels,tstop);
 
