@@ -30,31 +30,6 @@ S([he hc h2o],:) = 0;
 % find(strcmpi(model.mets,'pi[e]'))...
 %         find(strcmpi(model.mets,'pi[c]'))...
 
-% vmet = [he...
-%         find(strcmpi(model.mets,'h[c]'))...        
-%         h2o...       
-%         find(strcmpi(model.mets,'co2[c]'))];
-
-
-
-%         sbid = S(:,Vind(irxn))<0;
-%         prid = S(:,Vind(irxn))>0;   
-%         
-%         %remove water
-%         sbid(h2o) = 0;
-%         prid(h2o) = 0;
-%         
-%         %remove protons
-%         sbid([he hc]) = 0;
-%         prid([he hc]) = 0;
-%         
-
-%         elseif ~rev(Vind(irxn))                           
-%             if all(mc(sbid)>0)
-%                 nr_flux =...
-%                 kfwd(Vind(irxn))*prod((mc(sbid)./K(sbid,Vind(irxn))).^Sb);
-%             end
-%             if any(sbid) && any(prid)
 %                 %Denominator - 1.6
 %                 dr_sb = mc(sbid)./K(sbid,Vind(irxn));                             
 %                 for j = 1:length(find(sbid))
@@ -63,12 +38,7 @@ S([he hc h2o],:) = 0;
 %                     end
 %                     dr_sb(j) = dr_sb(j) + 1;
 %                 end                
-%             else
-%                 dr_sb = 1;                
-%             end
-%             dr_pr = 1;
-%         end
-%       
+
 
 % non vectorized version for ease of understanding and jacobina
 % implementation
