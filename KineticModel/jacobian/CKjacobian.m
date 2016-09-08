@@ -1,6 +1,5 @@
 function [DVX] = CKjacobian(model,pvec,M,Vind)
 [~,nc] = size(M);
-allmc = M;
 S = model.S;
 SI = model.SI;
 nrxn = model.nt_rxn;
