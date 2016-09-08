@@ -46,7 +46,7 @@ end
 rxnadd = {};
 rxnexcep = {};
 % FBAmodel.bmrxn = [];
-ensb = parallel_ensemble(model,mc,parameter,rxnadd,rxnexcep,1);
+ensb = parallel_ensemble(model,mc,parameter,rxnadd,rxnexcep,10);
 
 % serially solve ODE of model to steady state
 model.rxn_add = rxnadd;
@@ -61,11 +61,15 @@ setupKineticODE(model,ensb,ensb{1,1},essrxn,Vupstruct,1000);
 
 % solve only if models are feasible
 if size(ensb,1)>1
-    [outsol,outss,allxeq,allfeq] = solveAllpvec(newmodel,newpvec,Nimc,solverP);
+    [outsol,outss,allxeq,allfeq,allJac,alllambda] =...
+    solveAllpvec(newmodel,newpvec,Nimc,solverP);
 else
     if ensb{1,2}.feasible    
         % integrate model
-        [outsol,outss] = callODEsolver(newmodel,newpvec,Nimc,solverP);
+        [outsol,outss,allxss,allfss] = callODEsolver(newmodel,newpvec,Nimc,solverP);
+        
+        % get jacobian and eigen values and eigne vectors for new ss
+        [J,lambda,w] = getjacobian(allxss,newpvec,newmodel);
     else
         error('No feasible model found');
     end
@@ -73,6 +77,7 @@ end
 
 % time course plots
 AllTimeCoursePlots(outsol,newmodel,{'pyr[c]','pep[c]','fdp[c]','ac[c]'},...
-                                   {'ACt2r','FBP','PDHr','PYK'});
-                               
+                                   {'ACt2r','FBP','PDHr','PYK'});                           
+
+
 % perturbations to steady states                              
