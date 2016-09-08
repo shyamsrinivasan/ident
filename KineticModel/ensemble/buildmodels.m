@@ -103,11 +103,12 @@ for irxn = 1:length(Vex)
 end
 
 % set irreversible kcats
-for irxn = 1:length(model.rxns)
-    if ~model.rev(irxn)
-        pvec.krev(irxn)=0;
-    end
-end
+pvec.krev(~model.rev) = 0;
+% for irxn = 1:length(model.rxns)
+%     if ~model.rev(irxn)
+%         pvec.krev(irxn)=0;
+%     end
+% end
 
 % exhcnage reactions
 pvec.kfwd(model.VFex) = 0;
