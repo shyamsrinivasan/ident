@@ -148,7 +148,9 @@ if all(check(Vind)>0)
                 pvec.Vmax(Vex(irxn)) = 1;
             end
         end
-    end  
+    end 
+    % pvec.Vmax(Vex(~isnan(newp.Vmax(Vex)))) =...
+    % newp.Vmax(Vex(~isnan(newp.Vmax(Vex))));
     
     % calculate fluxes for ETC reactions
     [~,etck] = ETCflux(model,pvec,mc,flux);
