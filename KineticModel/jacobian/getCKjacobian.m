@@ -1,5 +1,6 @@
-function allvr = getCKjacobian(irxn,S,SI,sratio,pratio,allac,allib,...
-                               thetas,thetap,fwdflx,revflx,nrflx,drflx)
+function allvr = getCKjacobian(irxn,flux,S,SI,rev,sratio,pratio,thetas,thetap,...
+                               nrflx,drflx,fwdflx,revflx,...
+                               allac,acratio,rhoA,allib,ibratio,rhoI)
 % integrate jacobian calculation with CKinetics.m
 % call from within CKinetics to calculate jacobians using information from
 % CKinetics
@@ -19,9 +20,17 @@ if rev(irxn) && all(pratio>0)
     zetarxn = fwdflx./revflx;
     for im = 1:length(metid)
         if S(metid(im),irxn)<0
-            allTr(metid(im)) = (zetarxn*-S(metid(im),irxn)-0)/(zetarxn-1);                    
+            if ~isinf(zetarxn)
+                allTr(metid(im)) = (zetarxn*-S(metid(im),irxn)-0)/(zetarxn-1);
+            else
+                allTr(metid(im)) = 1;
+            end
         elseif S(metid(im),irxn)>0
-            allTr(metid(im)) = (zetarxn*0-S(metid(im),irxn))/(zetarxn-1);                    
+            if ~isinf(zetarxn)
+                allTr(metid(im)) = (zetarxn*0-S(metid(im),irxn))/(zetarxn-1);
+            else
+                allTr(metid(im)) = 1;
+            end
         end
 %                 if vecmc(metid(im),irxn)>0
 %                     allTr(metid(im)) = allTr(metid(im))/vecmc(metid(im),irxn);
@@ -115,4 +124,4 @@ end
 
 % complete differential w.r.t flux(irxn) dvr/dci
 allvr = flux(irxn).*(allfr + allTr - allDr - allDreg);
-DVX(:,irxn) = allvr;        
+% DVX(:,irxn) = allvr;        
