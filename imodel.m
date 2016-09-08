@@ -18,7 +18,7 @@ switch type
         solverP.MabsTol = 1e-10;
         solverP.RelTol = 1e-12;
         solverP.MaxIter = 70000;    
-        solverP.MaxDataPoints = 1500;
+        solverP.MaxDataPoints = 500;
         solverP.tmax = tmax;%s
         solverP.tout = 0.01;
     case 'nla'

@@ -80,11 +80,11 @@ if ~isempty(pvec)
     if isfield(pvec,'Vmax')
         newpvec.Vmax = pvec.Vmax;
     end
-    if isfield(pvec,'kcat_fwd')
-        newpvec.kcat_fwd = pvec.kcat_fwd;
+    if isfield(pvec,'kfwd')
+        newpvec.kfwd = pvec.kfwd;
     end
-    if isfield(pvec,'kcat_bkw')
-        newpvec.kcat_bkw = pvec.kcat_bkw;
+    if isfield(pvec,'krev')
+        newpvec.krev = pvec.krev;
     end
     if isfield(pvec,'delGr')
         newpvec.delGr = pvec.delGr;
