@@ -13,4 +13,4 @@ for ix = 1:nx
     Jin = sparse(1,unique([metid;regid]),1,1,nx);
     J = [J;Jin];
 end
-spy(J)
+% spy(J)
