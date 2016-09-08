@@ -1,4 +1,7 @@
-function [flux,vflux] = TKinetics(model,pvec,M,Vex)
+function [flux,vflux,DVX] = TKinetics(model,pvec,M,Vex,getjac)
+if nargin<5
+    getjac=0;
+end
 [~,nc] = size(M);
 S = model.S;
 nrxn = model.nt_rxn;
@@ -10,6 +13,7 @@ Vmax = pvec.Vmax;
 
 vflux = zeros(nrxn,nc);
 flux = zeros(nrxn,nc);
+DVX = zeros(length(M),nrxn);
 
 % vflux = cons(vflux,M);
 % flux = cons(flux,M);
@@ -109,7 +113,17 @@ for irxn = 1:nrxn
             scale_flux(fwdflx./drflx.*1./(1+Kapie./M(pie,:)));
         end
         flux(irxn,:) = Vmax(irxn).*vflux(irxn,:); 
+        
+        % get jacobian information
+        if getjac
+            DVX(:,irxn) = getTKjacobian(model,M,irxn,flux,S,rev,pratio,thetas,thetap,...
+                                        drflx,fwdflx,revflx);
+        end
     end
+end
+
+if getjac
+    DVX = DVX(:,Vex);
 end
 flux = flux(Vex,:);
 vflux = vflux(Vex,:);
