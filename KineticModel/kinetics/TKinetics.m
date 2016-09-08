@@ -16,10 +16,16 @@ flux = zeros(nrxn,nc);
 
 % vecmc = repmat(M,1,nrxn);
 
+pie = strcmpi(model.mets,'pi[e]');
+% eliminate consideration for excess cofators
+% pi[c],pi[e],h[c],h[e],h2o[c]
 he = find(strcmpi(model.mets,'h[e]'));
 hc = find(strcmpi(model.mets,'h[c]'));
+h2o = find(strcmpi(model.mets,'h2o[c]'));
+S([he hc h2o],:) = 0;
+
 % h2o = find(strcmpi(model.mets,'h2o[c]'));
-pie = strcmpi(model.mets,'pi[e]');
+
 % pic = find(strcmpi(model.mets,'pi[c]'));
 % co2 = find(strcmpi(model.mets,'co2[c]'));
     
