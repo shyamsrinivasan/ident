@@ -29,8 +29,6 @@ he = find(strcmpi(model.mets,'h[e]'));
 hc = find(strcmpi(model.mets,'h[c]'));
 h2o = find(strcmpi(model.mets,'h2o[c]'));
 pi = find(strcmpi(model.mets,'pi[c]'));
-S([he hc h2o pi],:) = 0;
-
 
 % find(strcmpi(model.mets,'pi[e]'))...
 %         find(strcmpi(model.mets,'pi[c]'))...
@@ -51,6 +49,7 @@ for irxn = 1:nrxn
     if ismember(irxn,Vind)
         alls = S(:,irxn);allp = S(:,irxn);
         alls(S(:,irxn)>0) = 0;allp(S(:,irxn)<0) = 0;
+        alls([he hc h2o pi],irxn) = 0;allp([he hc h2o pi],irxn) = 0;
         if nc>1
             sratio = M(logical(alls),:)./...
                      repmat(K(logical(alls),irxn),1,nc);
