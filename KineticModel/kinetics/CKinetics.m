@@ -28,7 +28,8 @@ DVX = zeros(length(M),nrxn);
 he = find(strcmpi(model.mets,'h[e]'));
 hc = find(strcmpi(model.mets,'h[c]'));
 h2o = find(strcmpi(model.mets,'h2o[c]'));
-S([he hc h2o],:) = 0;
+pi = find(strcmpi(model.mets,'pi[c]'));
+S([he hc h2o pi],:) = 0;
 
 
 % find(strcmpi(model.mets,'pi[e]'))...
