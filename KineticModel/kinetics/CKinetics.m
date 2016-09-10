@@ -7,6 +7,8 @@ S = model.S;
 SI = model.SI;
 nrxn = model.nt_rxn;
 rev = model.rev;
+remid = model.remid;
+
 K = pvec.K;
 KIact = pvec.KIact;
 KIihb = pvec.KIihb;
@@ -25,10 +27,10 @@ DVX = zeros(length(M),nrxn);
 
 % eliminate consideration for excess cofators
 % pi[c],pi[e],h[c],h[e],h2o[c]
-he = find(strcmpi(model.mets,'h[e]'));
-hc = find(strcmpi(model.mets,'h[c]'));
-h2o = find(strcmpi(model.mets,'h2o[c]'));
-pi = find(strcmpi(model.mets,'pi[c]'));
+% he = find(strcmpi(model.mets,'h[e]'));
+% hc = find(strcmpi(model.mets,'h[c]'));
+% h2o = find(strcmpi(model.mets,'h2o[c]'));
+% pi = find(strcmpi(model.mets,'pi[c]'));
 
 % find(strcmpi(model.mets,'pi[e]'))...
 %         find(strcmpi(model.mets,'pi[c]'))...
@@ -49,7 +51,7 @@ for irxn = 1:nrxn
     if ismember(irxn,Vind)
         alls = S(:,irxn);allp = S(:,irxn);
         alls(S(:,irxn)>0) = 0;allp(S(:,irxn)<0) = 0;
-        alls([he hc h2o pi],:) = 0;allp([he hc h2o pi],:) = 0;
+        alls(remid,:) = 0;allp(remid,:) = 0;
         if nc>1
             sratio = M(logical(alls),:)./...
                      repmat(K(logical(alls),irxn),1,nc);

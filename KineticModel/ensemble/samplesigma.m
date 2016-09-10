@@ -8,6 +8,7 @@ Keq = model.Keq;
 nrxn = model.nt_rxn;
 vss = model.Vss;
 rev = model.rev;
+rmid = model.rmid;
 
 M = repmat(M,1,nmodels);
 allK(nmodels) = struct();
@@ -26,16 +27,12 @@ else
     end
 end
 
-he = find(strcmpi(model.mets,'h[e]'));
-hc = find(strcmpi(model.mets,'h[c]'));
-h2o = find(strcmpi(model.mets,'h2o[c]'));
-
 for irxn = 1:nrxn
     if ismember(irxn,Vind)
         % subsrates and products
         alls = S(:,irxn);alls(S(:,irxn)>0) = 0;
         allp = S(:,irxn);allp(S(:,irxn)<0) = 0;
-        alls([hc he h2o],:) = 0;allp([hc he h2o],:) = 0;
+        alls(rmid,:) = 0;allp(rmid,:) = 0;
         
         % substrate and product Kms backed up
         inKs = K(logical(alls),irxn);
