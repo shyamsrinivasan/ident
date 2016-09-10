@@ -1,5 +1,5 @@
 Enzymes	Enzyme Name	 equation	Compensated Species	delta G (pH 7.2)	delGlb	delGub	Keq	kcat+(1/s)	kcat-(1/s)	Etot Conc	Vmax	"vss (Gur = -10, O2ur = -1000)"	EC	Substrate Km (mM)	Activators	Inhibitors	Regulator Km (mM)	Metab	Mclow (mM)	Mchigh (mM)
-ACt2r		ac[e] + h[e] <==> ac[c] + h[c]	"h[c],h[e]"	0				1	1			-19.22		"1e-2,1,1e-5,1"						
+ACt2r		ac[e] + h[e] <==> ac[c] + h[c]	"h[c],h[e]"	0				1	1			-19.22		"1e-5,1,1e-3,1"						
 FBA		[c] : fdp <==> dhap + g3p		4.2	-29.4	27.1		8.5					4.1.2.13					gap[c]	0.218	0.218
 FBP		[c] : fdp --> f6p	"h2o,pi"	-2.8	-48.8	-9.7		22				0.00	3.1.3.11		4 pep[c]		0.1	fdp[c]	0.272	0.272
 ACex		ac[e] <==>		0				1	1											
