@@ -1,4 +1,5 @@
 function pvec = estimateKm(pvec,sbid,prid,mc,Ksbackup,Kpbackup,Vind,rerun)
+% suprceded by samplesigma.m and samplekcat.m
 if nargin<8
     rerun = 0;
 end
