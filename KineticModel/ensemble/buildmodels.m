@@ -27,13 +27,6 @@ KIact = pvec.KIact;
 KIihb = pvec.KIihb;
 Vmax = pvec.Vmax;
 
-% metabolites that do not affect thermodynamic equilibrium  
-he = find(strcmpi(model.mets,'h[e]'));
-hc = find(strcmpi(model.mets,'h[c]'));
-h2o = find(strcmpi(model.mets,'h2o[c]'));
-remid = [he hc h2o];
-model.remid = remid;
-
 nrxn = model.nt_rxn;
 
 % sample nmodel Kms for all reactions in Vind
