@@ -16,7 +16,7 @@ outsol = struct();
 if isempty(inputsol)
     % time for initial data point
     t0 = 0.0;
-    tspan = solverP.tout:0.1:solverP.tmax;    
+    tspan = solverP.tout:100:solverP.tmax;    
     outsol.t = zeros(length(tspan)+1,1);
     outsol.y = zeros(nvar,length(tspan)+1);
     outsol.flux = zeros(size(model.S,2),length(tspan)+1);    
@@ -24,7 +24,7 @@ else
     tavail = inputsol.t;    
     % time for initial data point
     t0 = tavail(end);
-    tspan = tavail(end)+solverP.tout:0.1:solverP.tmax;
+    tspan = tavail(end)+solverP.tout:100:solverP.tmax;
     % initial value
     initval = inputsol.y(:,end);    
     outsol.t = inputsol.t;
