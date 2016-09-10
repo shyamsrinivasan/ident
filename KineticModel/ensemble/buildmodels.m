@@ -15,6 +15,12 @@ model.rxn_excep = rxn_excep;
 % reactions to consider for kinetics other than Vind
 Vind = addToVind(model.rxns,model.Vind,rxn_add,rxn_excep);
 
+% ETC rxns list
+etcrxns = {'ATPS4r','NADH16','CYTBD','SUCDi','FRD7'};
+etcrxns = cellfun(@(x)strcmpi(x,model.rxns),etcrxns,'UniformOutput',false);
+etcrxns = cellfun(@(x)find(x),etcrxns);
+etcrxns = cell2mat(etcrxns);
+
 % parameters from backup in pvec(input)
 delGr = pvec.delGr;
 KIact = pvec.KIact;
@@ -25,23 +31,10 @@ Vmax = pvec.Vmax;
 he = find(strcmpi(model.mets,'h[e]'));
 hc = find(strcmpi(model.mets,'h[c]'));
 h2o = find(strcmpi(model.mets,'h2o[c]'));
+remid = [he hc h2o];
+model.remid = remid;
 
-nrxn = length(Vind);
-ntrxn = model.nt_rxn;
-ntmet = model.nt_metab;
-
-% backup known parameters from pvec
-newp = struct();
-newp.K = pvec.K;
-newp.Kind = sparse(ntmet,ntrxn);
-newp.Vmax = pvec.Vmax;
-newp.kfwd = pvec.kfwd;
-newp.kbkw = pvec.krev;
-
-pvec.Kin = sparse(ntmet,ntrxn);
-S = model.S;
-check = zeros(ntrxn,1);
-flux = zeros(ntrxn,1);
+nrxn = model.nt_rxn;
 
 % sample nmodel Kms for all reactions in Vind
 newK = samplesigma(model,mc,pvec.K,pvec.kfwd,pvec.krev,Vind,nmodels);
@@ -74,8 +67,15 @@ if nmodels>10
         
         % determine Vmax values for all Vind rxns
         [newVmax,feasible] = getVmax(Vmax,model,newK(im),mc,Vind,@CKinetics);
-        newK(im).Vmax(Vind) = newVmax(Vind);
-        newK(im).feasible = feasible; 
+        newK(im).Vmax(Vind) = newVmax(Vind);           
+        
+        % determine Vmax values for all Vex rxns
+        newVmax = getVmax(Vmax,model,newK(im),mc,Vex,@TKinetics);
+        newK(im).Vmax(Vex) = newVmax(Vex);    
+        
+        % determine Vmax values for other reactions in ETC
+%         [newVmax,feasible] = getVmax(Vmax,model,newK(im),mc,Vex,@ETCflux);
+        newK(im).feasible = feasible;  
     end
 else
     for im = 1:nmodels
@@ -96,18 +96,39 @@ else
         
         % determine Vmax values for all Vind rxns
         [newVmax,feasible] = getVmax(Vmax,model,newK(im),mc,Vind,@CKinetics);
-        newK(im).Vmax(Vind) = newVmax(Vind);
-        newK(im).feasible = feasible;      
+        newK(im).Vmax(Vind) = newVmax(Vind);           
         
         % determine Vmax values for all Vex rxns
         newVmax = getVmax(Vmax,model,newK(im),mc,Vex,@TKinetics);
-        newK(im).Vmax(Vex) = newVmax(Vex);        
+        newK(im).Vmax(Vex) = newVmax(Vex);    
+        
+        % determine Vmax values for other reactions in ETC
+%         [newVmax,feasible] = getVmax(Vmax,model,newK(im),mc,Vex,@ETCflux);
+        newK(im).feasible = feasible;        
     end
 end
 
-% exhcnage reactions
-% pvec.kfwd(model.VFex) = 0;
-% pvec.krev(model.VFex) = 0;
+% check - calculate initial flux
+allmc = repmat(mc,1,nmodels);
+flux = iflux(model,pvec,allmc);
+        
+        
+ % calculate fluxes for ETC reactions
+%     [~,etck] = ETCflux(model,pvec,mc,flux);
+%     rnlst = {'ATPS4r','NADH16','CYTBD'};
+%     for irxn = 1:length(rnlst)
+%         tfr = strcmpi(model.rxns,rnlst{irxn});
+%         if ~isnan(newp.Vmax(tfr))
+%             pvec.Vmax(tfr) = newp.Vmax(tfr);
+%         else
+%             if any(tfr) && etck(tfr)
+%                 pvec.Vmax(tfr) = model.Vss(tfr)/(3600*etck(tfr));
+%             else
+%                 pvec.Vmax(tfr) = 1;
+%             end
+%         end
+%     end    
+
 
 % sample nmodel kcat using Brigg's Haldane for all reactions in Vind
 % pvec = samplekcat(model,pvec,sbid,prid,Vind(irxn),mc,kfwdbkup,kbkwbkup,rerun);
@@ -163,132 +184,46 @@ end
 
 
 % for irxn = 1:length(Vex)
-%     nmet = size(S,1);
-%     
-%     sbid = S(:,Vex(irxn))<0;    
-%     prid = S(:,Vex(irxn))>0;
-%     
-%     % remove protons
-%     sbid([he hc]) = 0;
-%     prid([he hc]) = 0;
-%     
-%     Kscol = zeros(nmet,1);
-%     Kpcol = zeros(nmet,1); 
+
 %     
 %     pvec = estimateKm(pvec,sbid,prid,mc,Kscol,Kpcol,Vex(irxn));
 % end
 
-% set irreversible kcats
-% pvec.krev(~model.rev) = 0;
-% for irxn = 1:length(model.rxns)
-%     if ~model.rev(irxn)
-%         pvec.krev(irxn)=0;
-%     end
-% end
 
 
 
 
 
 % estimate Vmax
-if all(check(Vind)>0)
-    pvec.Vmax(pvec.delGr==0) = 0;
-    
-    % for Vind
-    % simple vmax = vss/ck
-    for irxn = 1:length(Vind)
-        if isnan(newp.Vmax(Vind(irxn)))
-%             pvec.Vmax(Vind(irxn)) = newp.Vmax(Vind(irxn));
+% if all(check(Vind)>0)
+%        
+%        
+%     % atp maintanance
+%     tatpm = strcmpi(model.rxns,'ATPM');
+%     if any(tatpm)
+%         sbid = model.S(:,tatpm)<0;
+%         sbid(h2o) = 0;
+%         atpmk = 18.84*mc(sbid)/pvec.K(sbid,tatpm)/(1+mc(sbid)/pvec.K(sbid,tatpm));
+%         if logical(atpmk)
+%             pvec.Vmax(tatpm) = model.Vss(tatpm)/(3600*atpmk);
 %         else
-            [~,ck] = CKinetics(model,pvec,mc,Vind(irxn));
-            if ck
-                pvec.Vmax(Vind(irxn)) = model.Vss(Vind(irxn))/(3600*ck);
-            else
-                pvec.Vmax(Vind(irxn)) = 1;
-            end
-        end
-    end
-    pvec.Vmax(Vind(~isnan(newp.Vmax(Vind)))) =...
-    newp.Vmax(Vind(~isnan(newp.Vmax(Vind))));
-    
-    % other reactions
-    for irxn = 1:length(Vex)
-        if isnan(newp.Vmax(Vex(irxn)))
-%             pvec.Vmax(Vex(irxn)) = newp.Vmax(Vex(irxn));
-%         else
-            [~,tk] = TKinetics(model,pvec,mc,Vex(irxn));
-            if tk
-                pvec.Vmax(Vex(irxn)) = model.Vss(Vex(irxn))/(3600*tk);
-            else
-                pvec.Vmax(Vex(irxn)) = 1;
-            end
-        end
-    end 
-    pvec.Vmax(Vex(~isnan(newp.Vmax(Vex)))) =...
-    newp.Vmax(Vex(~isnan(newp.Vmax(Vex))));
-    
-    % calculate fluxes for ETC reactions
-    [~,etck] = ETCflux(model,pvec,mc,flux);
-    rnlst = {'ATPS4r','NADH16','CYTBD'};
-    for irxn = 1:length(rnlst)
-        tfr = strcmpi(model.rxns,rnlst{irxn});
-        if ~isnan(newp.Vmax(tfr))
-            pvec.Vmax(tfr) = newp.Vmax(tfr);
-        else
-            if any(tfr) && etck(tfr)
-                pvec.Vmax(tfr) = model.Vss(tfr)/(3600*etck(tfr));
-            else
-                pvec.Vmax(tfr) = 1;
-            end
-        end
-    end    
-       
-    % atp maintanance
-    tatpm = strcmpi(model.rxns,'ATPM');
-    if any(tatpm)
-        sbid = model.S(:,tatpm)<0;
-        sbid(h2o) = 0;
-        atpmk = 18.84*mc(sbid)/pvec.K(sbid,tatpm)/(1+mc(sbid)/pvec.K(sbid,tatpm));
-        if logical(atpmk)
-            pvec.Vmax(tatpm) = model.Vss(tatpm)/(3600*atpmk);
-        else
-            pvec.Vmax(tatpm) = 1;
-        end
-    end
-    
-    pvec.Vmax(model.VFex) = 0;    
-    pvec.Vmax(model.Vss==0) = 0;
-    pvec.feasible = 1;   
-else
-    fprintf('Thermodynamically infeasible parameters\n');
-    fprintf('Discontinuing\n');
-    pvec.feasible = 0;
-    return
-end
-
-% check - calculate initial flux
-flux = iflux(model,pvec,mc);
-
-% function check = checkthermo(fhandle,check)
-% 
-% %#check for vss and delGr direction      
-% flux(Vind(irxn)) = fhandle(model,pvec,mc,Vind(irxn));
-% %     flux = ETCflux(model,mc,flux);
-% if pvec.delGr(Vind(irxn)) ~= 0
-%     if flux(Vind(irxn))*pvec.delGr(Vind(irxn))<0
-%         check(Vind(irxn)) = 1;
-%     else
-%         check(Vind(irxn)) = -1;
-%     end    
-% else
-%     if flux(Vind(irxn))*pvec.delGr(Vind(irxn))<1e-6
-%         check(Vind(irxn)) = 1;
-%     else
-%         check(Vind(irxn)) = -1;
+%             pvec.Vmax(tatpm) = 1;
+%         end
 %     end
-% end 
-% 
+%     
+%     pvec.Vmax(model.VFex) = 0;    
+%     pvec.Vmax(model.Vss==0) = 0;
+%     pvec.feasible = 1;   
+% else
+%     fprintf('Thermodynamically infeasible parameters\n');
+%     fprintf('Discontinuing\n');
+%     pvec.feasible = 0;
+%     return
 % end
+
+
+
+
 
 end
 
