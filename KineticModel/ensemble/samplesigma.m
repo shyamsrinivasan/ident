@@ -15,10 +15,14 @@ allK(nmodels) = struct();
 if nmodels>10
     parfor im = 1:nmodels
         allK(im).K = sparse(imet,jrxn,1,size(K,1),size(K,2));
+        allK(im).kfwd = zeros(1,nrxn);
+        allK(im).krev = zeros(1,nrxn);
     end
 else
     for im = 1:nmodels
-        allK(im).K = sparse(imet,jrxn,1,size(K,1),size(K,2));    
+        allK(im).K = sparse(imet,jrxn,1,size(K,1),size(K,2));
+        allK(im).kfwd = zeros(1,nrxn);
+        allK(im).krev = zeros(1,nrxn);
     end
 end
 
