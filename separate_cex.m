@@ -24,6 +24,16 @@ newmodel.S = [model.S(inter_mind,:);model.S(exter_mind,:);model.S(bm_ind,:)];
 newmodel.SI = [model.SI(inter_mind,:);model.SI(exter_mind,:);model.SI(bm_ind,:)];
 newmodel.next_metab = length(find(exter_mind));
 newmodel.nint_metab = length(find(inter_mind));
+if isfield(model,'remid')
+    if ~isempty(model.remid)
+        oldmets = model.mets(model.remid);
+        newmetid = cellfun(@(x)strcmpi(newmodel.mets,x),oldmets,'UniformOutput',false);
+        newmetid = cellfun(@(x)find(x),newmetid,'UniformOutput',false);
+        newmodel.remid = cell2mat(newmetid);
+    else
+        newmodel.remid = [];
+    end
+end
 if isfield(model,'CMPS')
     newmodel.CMPS = [model.CMPS(inter_mind,:);...
                      model.CMPS(exter_mind,:);...
