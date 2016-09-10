@@ -8,7 +8,7 @@ Keq = model.Keq;
 nrxn = model.nt_rxn;
 vss = model.Vss;
 rev = model.rev;
-rmid = model.rmid;
+rmid = model.remid;
 
 M = repmat(M,1,nmodels);
 allK(nmodels) = struct();
