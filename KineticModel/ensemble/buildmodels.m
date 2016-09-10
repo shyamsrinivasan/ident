@@ -105,24 +105,6 @@ else
     end
 end
 
-% other reactions
-    for irxn = 1:length(Vex)
-        if isnan(newp.Vmax(Vex(irxn)))
-%             pvec.Vmax(Vex(irxn)) = newp.Vmax(Vex(irxn));
-%         else
-            [~,tk] = TKinetics(model,pvec,mc,Vex(irxn));
-            if tk
-                pvec.Vmax(Vex(irxn)) = model.Vss(Vex(irxn))/(3600*tk);
-            else
-                pvec.Vmax(Vex(irxn)) = 1;
-            end
-        end
-    end 
-    pvec.Vmax(Vex(~isnan(newp.Vmax(Vex)))) =...
-    newp.Vmax(Vex(~isnan(newp.Vmax(Vex))));
-
-
-
 % exhcnage reactions
 % pvec.kfwd(model.VFex) = 0;
 % pvec.krev(model.VFex) = 0;
