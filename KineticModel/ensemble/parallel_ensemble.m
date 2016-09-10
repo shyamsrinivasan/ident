@@ -20,6 +20,9 @@ else
     nsamples = 1;
 end
 
+% newK = samplesigma(model,mc,pvec.K,nmodels);
+buildmodels(model,pvec,mc,rxnadd,rxnexcep,nmodels);    
+
 if (nsamples==1 && nmodels==1)
     fprintf('\nGenerating a single parameter set in the ensemble...\n');
     ensb = cell(nmodels,2);
