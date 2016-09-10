@@ -53,7 +53,7 @@ h2o = find(strcmpi(model.mets,'h2o[c]'));
 model.remid = [he hc h2o];
 
 % FBAmodel.bmrxn = [];
-ensb = parallel_ensemble(model,mc,parameter,rxnadd,rxnexcep,10);
+[ensb,mc] = parallel_ensemble(model,mc,parameter,rxnadd,rxnexcep,1);
 
 % serially solve ODE of model to steady state
 model.rxn_add = rxnadd;
@@ -61,7 +61,7 @@ model.rxn_excep = rxnexcep;
 
 % setup model for integration 
 [newmodel,newpvec,Nimc,solverP,flux,dXdt] =...
-setupKineticODE(model,ensb,ensb{1,1},essrxn,Vupstruct,10000);
+setupKineticODE(model,ensb,mc,essrxn,Vupstruct,5000000);
 
 % get jacobian and eigen values and eigne vectors
 [J,lambda,w] = getjacobian(Nimc,newpvec,newmodel);
@@ -71,7 +71,7 @@ if size(ensb,1)>1
     [outsol,outss,allxeq,allfeq,allJac,alllambda] =...
     solveAllpvec(newmodel,newpvec,Nimc,solverP);
 else
-    if ensb{1,2}.feasible    
+    if newpvec.feasible    
         % integrate model
         [outsol,outss,allxss,allfss] = callODEsolver(newmodel,newpvec,Nimc,solverP);
         
