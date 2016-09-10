@@ -118,6 +118,14 @@ end
 if isfield(newmodel,'mets')
     newmodel.mets = newmodel.mets(logical(sum(logical(newmodel.S),2)));
 end
+if isfield(newmodel,'remid')
+    if ~isempty(newmodel.remid)
+        oldmets = newmodel.mets(newmodel.remid);
+        newmetid = cellfun(@(x)strcmpi(newmodel.mets,x),oldmets,'UniformOutput',false);
+        newmetid = cellfun(@(x)find(x),newmetid,'UniformOutput',false);
+        newmodel.remid = cell2mat(newmetid);
+    end
+end
 if isfield(newmodel,'SI')
     newmodel.SI = newmodel.SI(logical(sum(logical(newmodel.S),2)),:);
 end
