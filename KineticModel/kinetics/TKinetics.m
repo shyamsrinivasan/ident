@@ -26,7 +26,6 @@ pie = strcmpi(model.mets,'pi[e]');
 he = find(strcmpi(model.mets,'h[e]'));
 hc = find(strcmpi(model.mets,'h[c]'));
 h2o = find(strcmpi(model.mets,'h2o[c]'));
-S([he hc h2o],:) = 0;
 
 % h2o = find(strcmpi(model.mets,'h2o[c]'));
 
@@ -87,6 +86,7 @@ for irxn = 1:nrxn
     if ismember(irxn,Vex)
         alls = S(:,irxn);allp = S(:,irxn);
         alls(S(:,irxn)>0) = 0;allp(S(:,irxn)<0) = 0;
+        alls([he hc h2o],:) = 0;allp([he hc h2o],:) = 0;
         if any(alls)||any(allp)
             sratio = M(logical(alls),:)./repmat(K(logical(alls),irxn),1,nc);
             pratio = M(logical(allp),:)./repmat(K(logical(allp),irxn),1,nc);
