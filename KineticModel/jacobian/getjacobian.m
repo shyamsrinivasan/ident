@@ -15,6 +15,8 @@ allmet = [x;model.PM];
 
 DVX(allmet==0,:) = 0;
 DVX(allmet~=0,:) = DVX(allmet~=0,:)./repmat(allmet(allmet~=0),1,nrxn);
+% remove mets in remid from jacobian - they do not control flux
+% DVX(model.remid,:) = 0;
 S = model.S;
 
 % complete jacobian - build in column loops rowwise
