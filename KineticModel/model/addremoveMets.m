@@ -39,6 +39,14 @@ end
 if ~isempty(mc)
     newmc = newmc(list);
 end
+if isfield(newmodel,'remid')
+    if ~isempty(newmodel.remid)
+        oldid = model.mets(newmodel.remid);
+        newid = cellfun(@(x)strcmpi(newmodel.mets,x),oldid,'UniformOutput',false);
+        newid = cellfun(@(x)find(x),newid,'UniformOutput',false);
+        newmodel.remid = cell2mat(newid);
+    end
+end
 
 if ~isempty(rmvmet)
     if ~isempty(newpvec)

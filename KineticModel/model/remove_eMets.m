@@ -40,6 +40,14 @@ newmodel.mets = [newmodel.mets(varmet,1);...
                  newmodel.mets(cnstmet,1)];   
 newmodel.S = [newmodel.S(varmet,:);newmodel.S(cnstmet,:)];
 newmodel.SI = [newmodel.SI(varmet,:);newmodel.SI(cnstmet,:)];
+if isfield(newmodel,'remid')
+    if ~isempty(newmodel.remid)
+        oldid = model.mets(newmodel.remid);
+        newid = cellfun(@(x)strcmpi(newmodel.mets,x),oldid,'UniformOutput',false);
+        newid = cellfun(@(x)find(x),newid,'UniformOutput',false);
+        newmodel.remid = cell2mat(newid);
+    end
+end
 
 if isfield(newmodel,'CMPS')
     newmodel.CMPS = [newmodel.CMPS(varmet,:);...
