@@ -1,5 +1,5 @@
 function [newmodel,newpvec,Nimc,solverP,flux,dXdt,jacobian] =...
-        setupKineticODE(model,ensb,mc,essrxn,Vupstruct,tmax)
+        setupKineticODE(model,pvec,mc,essrxn,Vupstruct,tmax)
 % setup kinetic model for integration
 if nargin<6
     tmax = 500;
@@ -16,16 +16,8 @@ if nargin < 3
 end
 if nargin<2
     error('getiest:NoA','No parameter vector');
-else    
-    nmodels = size(ensb,1);
-    if nmodels>1
-        pvec(nmodels) = struct();
-        for im = 1:nmodels
-            pvec = copystruct(ensb{im,2},pvec,im);           
-        end
-    else
-        pvec = ensb{1,2};
-    end
+else
+    nmodels = size(pvec,2);
 end
 
 % initialize solver properties
