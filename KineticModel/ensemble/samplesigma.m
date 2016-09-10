@@ -62,6 +62,8 @@ for irxn = 1:nrxn
         % only include Kms whose default value not specified in file
         if any(Kbkp(:,1))
             newK(Kbkp==1) = Km(Kbkp==1);
+            % cant have zero Kms since M/0 = NaN
+            newK(newK==0) = 1;
         end  
         
         % sample kcats for above newK                
