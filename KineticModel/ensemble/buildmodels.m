@@ -63,7 +63,11 @@ if nmodels>10
         newK(im).KIact = KIact;
         newK(im).KIihb = KIihb;  
         % check for consistency with fluxes in vss and delGr
-        newK(im).check = checkthermo(model,newK(im),mc,Vind,@CKinetics);        
+        newK(im).check = checkthermo(model,newK(im),mc,Vind,@CKinetics); 
+        
+        % echange rxn flxs
+        newK(im).kfwd(model.VFex) = 0;
+        newK(im).krev(model.VFex) = 0;
     end
 else
     for im = 1:nmodels
@@ -76,10 +80,17 @@ else
         newK(im).KIact = KIact;
         newK(im).KIihb = KIihb;  
         % check for consistency with fluxes in vss and delGr
-        newK(im).check = checkthermo(model,newK(im),mc,Vind,@CKinetics);    
+        newK(im).check = checkthermo(model,newK(im),mc,Vind,@CKinetics); 
+        
+        % echange rxn flxs
+        newK(im).kfwd(model.VFex) = 0;
+        newK(im).krev(model.VFex) = 0;
     end
 end
 
+% exhcnage reactions
+% pvec.kfwd(model.VFex) = 0;
+% pvec.krev(model.VFex) = 0;
 
 % sample nmodel kcat using Brigg's Haldane for all reactions in Vind
 % pvec = samplekcat(model,pvec,sbid,prid,Vind(irxn),mc,kfwdbkup,kbkwbkup,rerun);
@@ -134,33 +145,31 @@ end
 
 
 
-for irxn = 1:length(Vex)
-    nmet = size(S,1);
-    
-    sbid = S(:,Vex(irxn))<0;    
-    prid = S(:,Vex(irxn))>0;
-    
-    % remove protons
-    sbid([he hc]) = 0;
-    prid([he hc]) = 0;
-    
-    Kscol = zeros(nmet,1);
-    Kpcol = zeros(nmet,1); 
-    
-    pvec = estimateKm(pvec,sbid,prid,mc,Kscol,Kpcol,Vex(irxn));
-end
+% for irxn = 1:length(Vex)
+%     nmet = size(S,1);
+%     
+%     sbid = S(:,Vex(irxn))<0;    
+%     prid = S(:,Vex(irxn))>0;
+%     
+%     % remove protons
+%     sbid([he hc]) = 0;
+%     prid([he hc]) = 0;
+%     
+%     Kscol = zeros(nmet,1);
+%     Kpcol = zeros(nmet,1); 
+%     
+%     pvec = estimateKm(pvec,sbid,prid,mc,Kscol,Kpcol,Vex(irxn));
+% end
 
 % set irreversible kcats
-pvec.krev(~model.rev) = 0;
+% pvec.krev(~model.rev) = 0;
 % for irxn = 1:length(model.rxns)
 %     if ~model.rev(irxn)
 %         pvec.krev(irxn)=0;
 %     end
 % end
 
-% exhcnage reactions
-pvec.kfwd(model.VFex) = 0;
-pvec.krev(model.VFex) = 0;
+
 
 % restore Vmax from backup
 pvec.Vmax = newp.Vmax;
