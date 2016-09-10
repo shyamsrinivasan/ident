@@ -15,9 +15,11 @@ model.rxn_excep = rxn_excep;
 % reactions to consider for kinetics other than Vind
 Vind = addToVind(model.rxns,model.Vind,rxn_add,rxn_excep);
 
+% parameters from backup in pvec(input)
 delGr = pvec.delGr;
 KIact = pvec.KIact;
 KIihb = pvec.KIihb;
+Vmax = pvec.Vmax;
 
 % metabolites that do not affect thermodynamic equilibrium  
 he = find(strcmpi(model.mets,'h[e]'));
@@ -85,8 +87,35 @@ else
         % echange rxn flxs
         newK(im).kfwd(model.VFex) = 0;
         newK(im).krev(model.VFex) = 0;
+        
+        % determine Vmax values for all Vind rxns
+        [newVmax,feasible] = getVmax(Vmax,model,newK(im),mc,Vind,@CKinetics);
+        newK(im).Vmax(Vind) = newVmax(Vind);
+        newK(im).feasible = feasible;        
     end
 end
+
+% if all(check(Vind)>0)
+%     pvec.Vmax(pvec.delGr==0) = 0;
+%     
+%     % for Vind
+%     % simple vmax = vss/ck
+%     for irxn = 1:length(Vind)
+%         if isnan(newp.Vmax(Vind(irxn)))
+% %             pvec.Vmax(Vind(irxn)) = newp.Vmax(Vind(irxn));
+% %         else
+%             [~,ck] = CKinetics(model,pvec,mc,Vind(irxn));
+%             if ck
+%                 pvec.Vmax(Vind(irxn)) = model.Vss(Vind(irxn))/(3600*ck);
+%             else
+%                 pvec.Vmax(Vind(irxn)) = 1;
+%             end
+%         end
+%     end
+%     pvec.Vmax(Vind(~isnan(newp.Vmax(Vind)))) =...
+%     newp.Vmax(Vind(~isnan(newp.Vmax(Vind))));
+
+
 
 % exhcnage reactions
 % pvec.kfwd(model.VFex) = 0;
@@ -171,8 +200,7 @@ end
 
 
 
-% restore Vmax from backup
-pvec.Vmax = newp.Vmax;
+
 
 % estimate Vmax
 if all(check(Vind)>0)
