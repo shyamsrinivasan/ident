@@ -15,6 +15,10 @@ model.rxn_excep = rxn_excep;
 % reactions to consider for kinetics other than Vind
 Vind = addToVind(model.rxns,model.Vind,rxn_add,rxn_excep);
 
+delGr = pvec.delGr;
+KIact = pvec.KIact;
+KIihb = pvec.KIihb;
+
 % metabolites that do not affect thermodynamic equilibrium  
 he = find(strcmpi(model.mets,'h[e]'));
 hc = find(strcmpi(model.mets,'h[c]'));
@@ -40,58 +44,76 @@ flux = zeros(ntrxn,1);
 % sample nmodel Kms for all reactions in Vind
 newK = samplesigma(model,mc,pvec.K,pvec.kfwd,pvec.krev,Vind,nmodels);
 
+% assign parameters to nmodels structure array parallel
+if nmodels>10
+    parfor im = 1:nmodels
+        newK(im).delGr = delGr;
+        newK(im).KIact = KIact;
+        newK(im).KIihb = KIihb;  
+        % check for consistency with fluxes in vss and delGr
+        newK(im).check = checkthermo(model,newK(im),mc,Vind,@CKinetics);    
+    end
+else
+    parfor im = 1:nmodels
+        newK(im).delGr = delGr;
+        newK(im).KIact = KIact;
+        newK(im).KIihb = KIihb;  
+        % check for consistency with fluxes in vss and delGr
+        newK(im).check = checkthermo(model,newK(im),mc,Vind,@CKinetics);    
+    end
+end
 
 
 % sample nmodel kcat using Brigg's Haldane for all reactions in Vind
 % pvec = samplekcat(model,pvec,sbid,prid,Vind(irxn),mc,kfwdbkup,kbkwbkup,rerun);
 
-for irxn = 1:nrxn
-    sbid = S(:,Vind(irxn))<0;    
-    prid = S(:,Vind(irxn))>0;        
-    % remove water
-    sbid(h2o) = 0;
-    prid(h2o) = 0;      
-    % remove protons
-    sbid([he hc]) = 0;
-    prid([he hc]) = 0;
-    
-    % no parameters for cofactors - assumed abundant 
-    % cofactros are assumed as compensated species
-    % hence   
-    rerun = 0;
-    Ksbackup = pvec.K(sbid,Vind(irxn));
-    Kpbackup = pvec.K(prid,Vind(irxn));
-    kfwdbkup = pvec.kfwd(Vind(irxn));
-    kbkwbkup = pvec.krev(Vind(irxn));
-    while check(Vind(irxn))~=1 
-%         if any(Ksbackup==1)||any(Kpbackup==1)
-            % sampling of parameters needs to be recursive until check (see below) is 1
-        pvec = estimateKm(pvec,sbid,prid,mc,Ksbackup,Kpbackup,Vind(irxn),rerun);
-    
-    % forward and backward catalytic rates
-    % kfwd and kbkw
-    % kfwd or kbkw is sampled basedon reaction directionality from FBA for
-    % thermodynamic consistency
-    % sampling done only for unknown values
-%     fprintf('%s \t delG = %3.6g \t Vflux = %3.6g\t',model.rxns{Vind(irxn)},...
-%              pvec.delGr(Vind(irxn)),...
-%              model.Vss(Vind(irxn)));  
-%     if ~any(strcmpi(model.rxns{Vind(irxn)},'ATPS4r'))
-        % ATPsynthase does not strictly obey Briggs Haldane
-        pvec = samplekcat(model,pvec,sbid,prid,Vind(irxn),mc,kfwdbkup,kbkwbkup,rerun);
-%     end    
-        pvec.Vmax(Vind(irxn)) = 1;
-        pvec.Vmax(model.Vss==0) = 0;
-    
-        % check for vss and delGr direction
-        check = checkthermo(@CKinetics,check);
-        rerun = 1;
-        % if not satisfied => resample -> use a while loop?
-%         else
-%             fprintf('Parameter estimation entering an infinite loop for %s\n',model.rxns(Vind(irxn)))
-%         end
-    end
-end
+% for irxn = 1:nrxn
+%     sbid = S(:,Vind(irxn))<0;    
+%     prid = S(:,Vind(irxn))>0;        
+%     % remove water
+%     sbid(h2o) = 0;
+%     prid(h2o) = 0;      
+%     % remove protons
+%     sbid([he hc]) = 0;
+%     prid([he hc]) = 0;
+%     
+%     % no parameters for cofactors - assumed abundant 
+%     % cofactros are assumed as compensated species
+%     % hence   
+%     rerun = 0;
+%     Ksbackup = pvec.K(sbid,Vind(irxn));
+%     Kpbackup = pvec.K(prid,Vind(irxn));
+%     kfwdbkup = pvec.kfwd(Vind(irxn));
+%     kbkwbkup = pvec.krev(Vind(irxn));
+%     while check(Vind(irxn))~=1 
+% %         if any(Ksbackup==1)||any(Kpbackup==1)
+%             % sampling of parameters needs to be recursive until check (see below) is 1
+%         pvec = estimateKm(pvec,sbid,prid,mc,Ksbackup,Kpbackup,Vind(irxn),rerun);
+%     
+%     % forward and backward catalytic rates
+%     % kfwd and kbkw
+%     % kfwd or kbkw is sampled basedon reaction directionality from FBA for
+%     % thermodynamic consistency
+%     % sampling done only for unknown values
+% %     fprintf('%s \t delG = %3.6g \t Vflux = %3.6g\t',model.rxns{Vind(irxn)},...
+% %              pvec.delGr(Vind(irxn)),...
+% %              model.Vss(Vind(irxn)));  
+% %     if ~any(strcmpi(model.rxns{Vind(irxn)},'ATPS4r'))
+%         % ATPsynthase does not strictly obey Briggs Haldane
+%         pvec = samplekcat(model,pvec,sbid,prid,Vind(irxn),mc,kfwdbkup,kbkwbkup,rerun);
+% %     end    
+%         pvec.Vmax(Vind(irxn)) = 1;
+%         pvec.Vmax(model.Vss==0) = 0;
+%     
+%         % check for vss and delGr direction
+%         check = checkthermo(@CKinetics,check);
+%         rerun = 1;
+%         % if not satisfied => resample -> use a while loop?
+% %         else
+% %             fprintf('Parameter estimation entering an infinite loop for %s\n',model.rxns(Vind(irxn)))
+% %         end
+%     end
+% end
 
 % other reactions 
 % transport reactions x[e] <==> x[c]
@@ -207,26 +229,26 @@ end
 % check - calculate initial flux
 flux = iflux(model,pvec,mc);
 
-function check = checkthermo(fhandle,check)
-
-%#check for vss and delGr direction      
-flux(Vind(irxn)) = fhandle(model,pvec,mc,Vind(irxn));
-%     flux = ETCflux(model,mc,flux);
-if pvec.delGr(Vind(irxn)) ~= 0
-    if flux(Vind(irxn))*pvec.delGr(Vind(irxn))<0
-        check(Vind(irxn)) = 1;
-    else
-        check(Vind(irxn)) = -1;
-    end    
-else
-    if flux(Vind(irxn))*pvec.delGr(Vind(irxn))<1e-6
-        check(Vind(irxn)) = 1;
-    else
-        check(Vind(irxn)) = -1;
-    end
-end 
-
-end
+% function check = checkthermo(fhandle,check)
+% 
+% %#check for vss and delGr direction      
+% flux(Vind(irxn)) = fhandle(model,pvec,mc,Vind(irxn));
+% %     flux = ETCflux(model,mc,flux);
+% if pvec.delGr(Vind(irxn)) ~= 0
+%     if flux(Vind(irxn))*pvec.delGr(Vind(irxn))<0
+%         check(Vind(irxn)) = 1;
+%     else
+%         check(Vind(irxn)) = -1;
+%     end    
+% else
+%     if flux(Vind(irxn))*pvec.delGr(Vind(irxn))<1e-6
+%         check(Vind(irxn)) = 1;
+%     else
+%         check(Vind(irxn)) = -1;
+%     end
+% end 
+% 
+% end
 
 end
 
