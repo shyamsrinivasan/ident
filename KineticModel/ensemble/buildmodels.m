@@ -1,4 +1,4 @@
-function pvec = buildmodels(model,pvec,mc,rxn_add,rxn_excep,nmodels)
+function newK = buildmodels(model,pvec,mc,rxn_add,rxn_excep,nmodels)
 if nargin<6
     nmodels = 1;
 end
@@ -18,7 +18,7 @@ Vind = addToVind(model.rxns,model.Vind,rxn_add,rxn_excep);
 % ETC rxns list
 etcrxns = {'ATPS4r','NADH16','CYTBD','SUCDi','FRD7'};
 etcrxns = cellfun(@(x)strcmpi(x,model.rxns),etcrxns,'UniformOutput',false);
-etcrxns = cellfun(@(x)find(x),etcrxns);
+etcrxns = cellfun(@(x)find(x),etcrxns,'UniformOutput',false);
 etcrxns = cell2mat(etcrxns);
 
 % parameters from backup in pvec(input)
@@ -28,6 +28,7 @@ KIihb = pvec.KIihb;
 Vmax = pvec.Vmax;
 
 nrxn = model.nt_rxn;
+flux = zeros(nrxn,nmodels);
 
 % sample nmodel Kms for all reactions in Vind
 newK = samplesigma(model,mc,pvec.K,pvec.kfwd,pvec.krev,Vind,nmodels);
@@ -97,13 +98,14 @@ else
         
         % determine Vmax values for other reactions in ETC
 %         [newVmax,feasible] = getVmax(Vmax,model,newK(im),mc,Vex,@ETCflux);
-        newK(im).feasible = feasible;        
+        newK(im).feasible = feasible;    
+    
+        % check - calculate initial flux
+        flux(:,im) = iflux(model,newK(im),mc);
     end
 end
 
-% check - calculate initial flux
-allmc = repmat(mc,1,nmodels);
-flux = iflux(model,pvec,allmc);
+
         
         
  % calculate fluxes for ETC reactions
