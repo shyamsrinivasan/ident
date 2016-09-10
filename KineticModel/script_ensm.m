@@ -45,8 +45,15 @@ end
 % get parameter estimates - estimate kinetic parameters in an ensemble
 rxnadd = {};
 rxnexcep = {'Ht2r'};
+
+% metabolites that do not affect thermodynamic equilibrium  
+he = find(strcmpi(model.mets,'h[e]'));
+hc = find(strcmpi(model.mets,'h[c]'));
+h2o = find(strcmpi(model.mets,'h2o[c]'));
+model.remid = [he hc h2o];
+
 % FBAmodel.bmrxn = [];
-ensb = parallel_ensemble(model,mc,parameter,rxnadd,rxnexcep,1);
+ensb = parallel_ensemble(model,mc,parameter,rxnadd,rxnexcep,10);
 
 % serially solve ODE of model to steady state
 model.rxn_add = rxnadd;
@@ -54,7 +61,7 @@ model.rxn_excep = rxnexcep;
 
 % setup model for integration 
 [newmodel,newpvec,Nimc,solverP,flux,dXdt] =...
-setupKineticODE(model,ensb,ensb{1,1},essrxn,Vupstruct,100000);
+setupKineticODE(model,ensb,ensb{1,1},essrxn,Vupstruct,10000);
 
 % get jacobian and eigen values and eigne vectors
 [J,lambda,w] = getjacobian(Nimc,newpvec,newmodel);
