@@ -1,4 +1,7 @@
-function pvec = buildmodels(model,pvec,mc,rxn_add,rxn_excep)
+function pvec = buildmodels(model,pvec,mc,rxn_add,rxn_excep,nmodels)
+if nargin<6
+    nmodels = 1;
+end
 if nargin < 5
     rxn_excep = {};
 end
@@ -33,6 +36,14 @@ pvec.Kin = sparse(ntmet,ntrxn);
 S = model.S;
 check = zeros(ntrxn,1);
 flux = zeros(ntrxn,1);
+
+% sample nmodel Kms for all reactions in Vind
+newK = samplesigma(model,mc,pvec.K,pvec.kfwd,pvec.krev,Vind,nmodels);
+
+
+
+% sample nmodel kcat using Brigg's Haldane for all reactions in Vind
+% pvec = samplekcat(model,pvec,sbid,prid,Vind(irxn),mc,kfwdbkup,kbkwbkup,rerun);
 
 for irxn = 1:nrxn
     sbid = S(:,Vind(irxn))<0;    
