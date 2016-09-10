@@ -51,6 +51,7 @@ newK = samplesigma(model,mc,pvec.K,pvec.kfwd,pvec.krev,Vind,nmodels);
 new_excep = union(rxn_excep,model.rxns(Vind));
 Vex = addToVind(model.rxns,model.Vex,[],new_excep);
 
+% sample nmodel Kms for all reactions in Vex
 newKVex = samplesigma(model,mc,pvec.K,pvec.kfwd,pvec.krev,Vex,nmodels);
 
 % assign parameters to nmodels structure array parallel
@@ -70,6 +71,11 @@ if nmodels>10
         % echange rxn flxs
         newK(im).kfwd(model.VFex) = 0;
         newK(im).krev(model.VFex) = 0;
+        
+        % determine Vmax values for all Vind rxns
+        [newVmax,feasible] = getVmax(Vmax,model,newK(im),mc,Vind,@CKinetics);
+        newK(im).Vmax(Vind) = newVmax(Vind);
+        newK(im).feasible = feasible; 
     end
 else
     for im = 1:nmodels
@@ -91,29 +97,29 @@ else
         % determine Vmax values for all Vind rxns
         [newVmax,feasible] = getVmax(Vmax,model,newK(im),mc,Vind,@CKinetics);
         newK(im).Vmax(Vind) = newVmax(Vind);
-        newK(im).feasible = feasible;        
+        newK(im).feasible = feasible;      
+        
+        % determine Vmax values for all Vex rxns
+        newVmax = getVmax(Vmax,model,newK(im),mc,Vex,@TKinetics);
+        newK(im).Vmax(Vex) = newVmax(Vex);        
     end
 end
 
-% if all(check(Vind)>0)
-%     pvec.Vmax(pvec.delGr==0) = 0;
-%     
-%     % for Vind
-%     % simple vmax = vss/ck
-%     for irxn = 1:length(Vind)
-%         if isnan(newp.Vmax(Vind(irxn)))
-% %             pvec.Vmax(Vind(irxn)) = newp.Vmax(Vind(irxn));
-% %         else
-%             [~,ck] = CKinetics(model,pvec,mc,Vind(irxn));
-%             if ck
-%                 pvec.Vmax(Vind(irxn)) = model.Vss(Vind(irxn))/(3600*ck);
-%             else
-%                 pvec.Vmax(Vind(irxn)) = 1;
-%             end
-%         end
-%     end
-%     pvec.Vmax(Vind(~isnan(newp.Vmax(Vind)))) =...
-%     newp.Vmax(Vind(~isnan(newp.Vmax(Vind))));
+% other reactions
+    for irxn = 1:length(Vex)
+        if isnan(newp.Vmax(Vex(irxn)))
+%             pvec.Vmax(Vex(irxn)) = newp.Vmax(Vex(irxn));
+%         else
+            [~,tk] = TKinetics(model,pvec,mc,Vex(irxn));
+            if tk
+                pvec.Vmax(Vex(irxn)) = model.Vss(Vex(irxn))/(3600*tk);
+            else
+                pvec.Vmax(Vex(irxn)) = 1;
+            end
+        end
+    end 
+    pvec.Vmax(Vex(~isnan(newp.Vmax(Vex)))) =...
+    newp.Vmax(Vex(~isnan(newp.Vmax(Vex))));
 
 
 
