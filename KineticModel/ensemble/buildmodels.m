@@ -44,17 +44,34 @@ flux = zeros(ntrxn,1);
 % sample nmodel Kms for all reactions in Vind
 newK = samplesigma(model,mc,pvec.K,pvec.kfwd,pvec.krev,Vind,nmodels);
 
+% other reactions 
+% transport reactions x[e] <==> x[c]
+new_excep = union(rxn_excep,model.rxns(Vind));
+Vex = addToVind(model.rxns,model.Vex,[],new_excep);
+
+newKVex = samplesigma(model,mc,pvec.K,pvec.kfwd,pvec.krev,Vex,nmodels);
+
 % assign parameters to nmodels structure array parallel
 if nmodels>10
     parfor im = 1:nmodels
+        % set Vex rxn parameters in newK from newKVex
+        newK(im).K(:,Vex) = newKVex(im).K(:,Vex);
+        newK(im).kfwd(Vex) = newKVex(im).kfwd(Vex);
+        newK(im).krev(Vex) = newKVex(im).krev(Vex);
+        
         newK(im).delGr = delGr;
         newK(im).KIact = KIact;
         newK(im).KIihb = KIihb;  
         % check for consistency with fluxes in vss and delGr
-        newK(im).check = checkthermo(model,newK(im),mc,Vind,@CKinetics);    
+        newK(im).check = checkthermo(model,newK(im),mc,Vind,@CKinetics);        
     end
 else
-    parfor im = 1:nmodels
+    for im = 1:nmodels
+        % set Vex rxn parameters in newK from newKVex
+        newK(im).K(:,Vex) = newKVex(im).K(:,Vex);
+        newK(im).kfwd(Vex) = newKVex(im).kfwd(Vex);
+        newK(im).krev(Vex) = newKVex(im).krev(Vex);
+        
         newK(im).delGr = delGr;
         newK(im).KIact = KIact;
         newK(im).KIihb = KIihb;  
@@ -115,10 +132,8 @@ end
 %     end
 % end
 
-% other reactions 
-% transport reactions x[e] <==> x[c]
-new_excep = union(rxn_excep,model.rxns(Vind));
-Vex = addToVind(model.rxns,model.Vex,[],new_excep);
+
+
 for irxn = 1:length(Vex)
     nmet = size(S,1);
     
