@@ -56,16 +56,20 @@ if isfield(newmodel,'Klb')
     newmodel.Klb = [newmodel.Klb(varmet,:);...
                     newmodel.Klb(cnstmet,:)];
 elseif ~isempty(newpvec)
-    newpvec.Klb = [newpvec.Klb(varmet,:);...
-                   newpvec.Klb(cnstmet,:)];
+    if isfield(newpvec,'Klb')
+        newpvec.Klb = [newpvec.Klb(varmet,:);...
+                       newpvec.Klb(cnstmet,:)];
+    end
 end
 
 if isfield(newmodel,'Kub')
     newmodel.Kub = [newmodel.Kub(varmet,:);...
                     newmodel.Kub(cnstmet,:)];             
 elseif ~isempty(newpvec)
-    newpvec.Kub = [newpvec.Kub(varmet,:);...
-                   newpvec.Kub(cnstmet,:)];
+    if isfield(newpvec,'Kub')
+        newpvec.Kub = [newpvec.Kub(varmet,:);...
+                       newpvec.Kub(cnstmet,:)];
+    end
 end
 
 if isfield(newmodel,'KIact')

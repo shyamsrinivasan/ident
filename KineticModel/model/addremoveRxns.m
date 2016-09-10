@@ -101,8 +101,12 @@ end
 if ~isempty(rmvrxn)
     if ~isempty(newpvec)
         newpvec.K = newpvec.K(:,list);
-        newpvec.Klb = newpvec.Klb(:,list);
-        newpvec.Kub = newpvec.Kub(:,list);
+        if isfield(newpvec,'Klb')
+            newpvec.Klb = newpvec.Klb(:,list);
+        end
+        if isfield(pvec,'Kub')
+            newpvec.Kub = newpvec.Kub(:,list);
+        end
         newpvec.KIact = newpvec.KIact(:,list);
         newpvec.KIihb = newpvec.KIihb(:,list); 
         newpvec.Vmax = newpvec.Vmax(list);
@@ -145,8 +149,12 @@ end
 % remove corepsonding rows in pvec
 if ~isempty(newpvec)
     newpvec.K = newpvec.K(logical(sum(logical(newmodel.S),2)),:);
-    newpvec.Klb = newpvec.Klb(logical(sum(logical(newmodel.S),2)),:);
-    newpvec.Kub = newpvec.Kub(logical(sum(logical(newmodel.S),2)),:);
+    if isfield(newpvec,'Klb')
+        newpvec.Klb = newpvec.Klb(logical(sum(logical(newmodel.S),2)),:);
+    end
+    if isfield(newpvec,'Kub')
+        newpvec.Kub = newpvec.Kub(logical(sum(logical(newmodel.S),2)),:);
+    end
     newpvec.KIact = newpvec.KIact(logical(sum(logical(newmodel.S),2)),:);
     newpvec.KIihb = newpvec.KIihb(logical(sum(logical(newmodel.S),2)),:);     
 end

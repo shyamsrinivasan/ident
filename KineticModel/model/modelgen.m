@@ -353,8 +353,12 @@ model_data.rxns = model_data.enzs;
 newmodel.S = [newmodel.S,sparse(mS,length(other_ind))];
 newmodel.SI = [newmodel.SI,sparse(mS,length(other_ind))];
 newmodel.K = [newmodel.K,sparse(mS,length(other_ind))];
-newmodel.Klb = [newmodel.Klb,sparse(mS,length(other_ind))];
-newmodel.Kub = [newmodel.Kub,sparse(mS,length(other_ind))];
+if isfield(newmodel,'Klb')
+    newmodel.Klb = [newmodel.Klb,sparse(mS,length(other_ind))];
+end
+if isfield(newmodel,'Kub')
+    newmodel.Kub = [newmodel.Kub,sparse(mS,length(other_ind))];
+end
 newmodel.KIact = [newmodel.KIact,sparse(mS,length(other_ind))];
 newmodel.KIihb = [newmodel.KIihb,sparse(mS,length(other_ind))];
 newVss = [model.Vss;zeros(length(other_ind),1)];
