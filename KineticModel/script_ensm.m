@@ -61,7 +61,7 @@ model.rxn_excep = rxnexcep;
 
 % setup model for integration 
 [newmodel,newpvec,Nimc,solverP,flux,dXdt] =...
-setupKineticODE(model,ensb,mc,essrxn,Vupstruct,5000000);
+setupKineticODE(model,ensb,mc,essrxn,Vupstruct,1000);
 
 % get jacobian and eigen values and eigne vectors
 [J,lambda,w] = getjacobian(Nimc,newpvec,newmodel);
@@ -82,9 +82,20 @@ else
     end
 end
 
+% get jacobian and eigen values and eigne vectors
+[J,lambda,w] = getjacobian(allxss,newpvec,newmodel);
+
 % time course plots
 AllTimeCoursePlots(outsol,newmodel,{'pyr[c]','pep[c]','fdp[c]','ac[c]'},...
                                    {'ACt2r','FBP','PDHr','PYK'});                           
 
 
-% perturbations to steady states                              
+% perturbations to steady states  
+newmodel.PM(find(strcmpi(newmodel.mets,'ac[e]'))-length(allxss)) = 1000;
+[outsol,outss,allxss,allfss] = callODEsolver(newmodel,newpvec,allxss,solverP);
+
+% get jacobian and eigen values and eigne vectors
+[J,lambda,w] = getjacobian(allxss,newpvec,newmodel);
+
+AllTimeCoursePlots(outsol,newmodel,{'pyr[c]','pep[c]','fdp[c]','ac[c]'},...
+                                   {'ACt2r','FBP','PDHr','PYK'});  
