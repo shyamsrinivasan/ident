@@ -140,7 +140,7 @@ if ~isempty(finid)
 end
 
 % time factor for fluxes - conversion between seconds <-> hours
-flux = flux;
+flux = flux.*3600;
 
 % if flux(strcmpi(model.rxns,'atpm'))>=1e-5 &&...
 %     all(mc(logical(model.S(:,model.bmrxn)>0))>0)
