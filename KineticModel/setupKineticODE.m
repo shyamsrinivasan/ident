@@ -30,7 +30,7 @@ newpvec(nmodels) = struct();
 for im = 1:nmodels
     [model,outpvec,mc] = addremoveMets(bkupmodel,{'h2o[c]','h2o[e]'},pvec(im),mc);
     [newmodel,newoutpvec,newmc,cnstmet] =...
-    remove_eMets(model,outpvec,mc,[model.Vind model.Vex],{'ac[e]','pyr[e]','h[c]','h[e]'});
+    remove_eMets(model,outpvec,mc,[model.Vind model.Vex],{'ac[e]','pyr[e]','g6p[e]','h[e]','h[c]'});
     newpvec = copystruct(newoutpvec,newpvec,im);     
 end
                        
