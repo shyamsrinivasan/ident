@@ -76,7 +76,7 @@ else
         [outsol,~,allxeq,allfeq] = callODEsolver(newmodel,newpvec,Nimc,solverP);
         
         % get jacobian and eigen values and eigne vectors for new ss
-        [J,lambda,w] = getjacobian(allxss,newpvec,newmodel);
+        [J,lambda,w] = getjacobian(allxeq,newpvec,newmodel);
     else
         error('No feasible model found');
     end
@@ -87,7 +87,7 @@ AllTimeCoursePlots(outsol,newmodel,{'pyr[c]','pep[c]','fdp[c]','ac[c]'},...
                                    {'ACt2r','FBP','PDHr','PYK'});
 
 % perturbations to steady states  
-[outsol,outss,allxss,allfss] = perturbation(allxeq,newmodel,newpvec,solverP);
+[outsol,allxss,allfss] = perturbation(allxeq,newmodel,newpvec,solverP,[1:3,5:14]);
 
 
 
