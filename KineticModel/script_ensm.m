@@ -53,7 +53,7 @@ h2o = find(strcmpi(model.mets,'h2o[c]'));
 model.remid = [he hc h2o];
 
 % FBAmodel.bmrxn = [];
-[ensb,mc] = parallel_ensemble(model,mc,parameter,rxnadd,rxnexcep,1);
+[ensb,mc] = parallel_ensemble(model,mc,parameter,rxnadd,rxnexcep,5);
 
 % serially solve ODE of model to steady state
 model.rxn_add = rxnadd;
@@ -64,16 +64,16 @@ model.rxn_excep = rxnexcep;
 setupKineticODE(model,ensb,mc,essrxn,Vupstruct,1000);
 
 % get jacobian and eigen values and eigne vectors
-[J,lambda,w] = getjacobian(Nimc,newpvec,newmodel);
+% [J,lambda,w] = getjacobian(Nimc,newpvec,newmodel);
 
 % solve only if models are feasible
-if size(ensb,1)>1
-    [outsol,outss,allxeq,allfeq,allJac,alllambda] =...
+if size(ensb,2)>1
+    [outsol,~,allxeq,allfeq,allJac,alllambda] =...
     solveAllpvec(newmodel,newpvec,Nimc,solverP);
 else
     if newpvec.feasible    
         % integrate model
-        [outsol,outss,allxss,allfss] = callODEsolver(newmodel,newpvec,Nimc,solverP);
+        [outsol,~,allxeq,allfeq] = callODEsolver(newmodel,newpvec,Nimc,solverP);
         
         % get jacobian and eigen values and eigne vectors for new ss
         [J,lambda,w] = getjacobian(allxss,newpvec,newmodel);
@@ -82,20 +82,12 @@ else
     end
 end
 
-% get jacobian and eigen values and eigne vectors
-[J,lambda,w] = getjacobian(allxss,newpvec,newmodel);
-
 % time course plots
 AllTimeCoursePlots(outsol,newmodel,{'pyr[c]','pep[c]','fdp[c]','ac[c]'},...
-                                   {'ACt2r','FBP','PDHr','PYK'});                           
-
+                                   {'ACt2r','FBP','PDHr','PYK'});
 
 % perturbations to steady states  
-newmodel.PM(find(strcmpi(newmodel.mets,'ac[e]'))-length(allxss)) = 1000;
-[outsol,outss,allxss,allfss] = callODEsolver(newmodel,newpvec,allxss,solverP);
+[outsol,outss,allxss,allfss] = perturbation(allxeq,newmodel,newpvec,solverP);
 
-% get jacobian and eigen values and eigne vectors
-[J,lambda,w] = getjacobian(allxss,newpvec,newmodel);
 
-AllTimeCoursePlots(outsol,newmodel,{'pyr[c]','pep[c]','fdp[c]','ac[c]'},...
-                                   {'ACt2r','FBP','PDHr','PYK'});  
+
