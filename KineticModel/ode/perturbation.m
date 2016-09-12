@@ -1,4 +1,5 @@
-function [alloutsol,allpxeq,allpfeq] = perturbation(xeq,model,pvec,solverP,npts,type)
+function [alloutsol,allpxeq,allpfeq] =...
+         perturbation(xeq,model,pvec,solverP,npts,type)
 if nargin<6
     type = 'rnd';
 end
@@ -15,12 +16,14 @@ else
     allpxeq = zeros(nvar,nmodels);
     allpfeq = zeros(length(model.rxns),nmodels);
     alloutsol(nmodels) = struct();
+    tstart = tic;
+    fprintf('Perturbation of %d models...\n',nmodels);
     for im = 1:nmodels
         % get npts perturbed points of xeq of type
         Nxeq = eqperturbation(xeq(:,im),npts,type);
         
         % solve each model strating from Nxeq
-        [outsol,outss,xss,fss] =...
+        [outsol,~,xss,fss] =...
         solveAllpvec(model,pvec(im),Nxeq,solverP);
     
         % parse results for each perturbation for each models 
@@ -29,5 +32,9 @@ else
         alloutsol(im).flux = outsol.flux;
         allpxeq(:,im) = xss;
         allpfeq(:,im) = fss;
+        
+        AllTimeCoursePlots(outsol,model,{'pyr[c]','pep[c]','fdp[c]','ac[c]'},...
+                                   {'ACt2r','FBP','PDHr','PYK'});  
     end
+    fprintf('Time for complete perturbation simulations of %d model steady states: %4.3g\n',nmodels,toc(tstart));
 end
