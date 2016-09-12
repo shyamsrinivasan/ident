@@ -40,10 +40,9 @@ else
         alloutsol(im).y = outsol.y;
         alloutsol(im).flux = outsol.flux;
         allpxeq(:,im) = xss;
-        allpfeq(:,im) = fss;
-        
-        AllTimeCoursePlots(outsol,model,{'pyr[c]','pep[c]','fdp[c]','ac[c]'},...
-                                   {'ACt2r','FBP','PDHr','PYK'});  
+        allpfeq(:,im) = fss;        
     end
+    AllTimeCoursePlots(alloutsol,model,{'pyr[c]','pep[c]','fdp[c]','ac[c]'},...
+                                   {'ACt2r','FBP','PDHr','PYK'});  
     fprintf('Time for complete perturbation simulations of %d model steady states: %4.3g\n',nmodels,toc(tstart));
 end
