@@ -5,8 +5,8 @@ addpath(genpath('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModel
 % cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy1C.txt';
 % rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy2.txt';
 % cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy2C.txt';
-rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy5.txt';
-cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy5C.txt';
+rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy6.txt';
+cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy6C.txt';
 % create model structure
 [model,parameter,variable,nrxn,nmetab] = modelgen(rxfname);
 
@@ -21,7 +21,7 @@ Vupstruct.ENZ1ex = 1;
 
 % designate reactions for which uptake should not be zero in FBA
 % ess_rxn = {'exH','exPI','exAC'};
-essrxn = {'ACex','exH'};
+essrxn = {'ACex','exH','H2Oex'};
 
 % assign initial fluxes and calculate FBA fluxes for direction
 % FBAmodel.bmrxn = 14;
@@ -50,6 +50,7 @@ rxnexcep = {'Ht2r'};
 he = find(strcmpi(model.mets,'h[e]'));
 hc = find(strcmpi(model.mets,'h[c]'));
 h2o = find(strcmpi(model.mets,'h2o[c]'));
+h2o = find(strcmpi(model.mets,'h2o[e]'));
 model.remid = [he hc h2o];
 
 % FBAmodel.bmrxn = [];
