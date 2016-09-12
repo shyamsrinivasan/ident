@@ -18,6 +18,8 @@ if ~isempty(rmvmet)
     list = setdiff(model.mets,rmvmet);
     list = cellfun(@(x)strcmpi(x,model.mets),list,'UniformOutput',false);
     list = cell2mat(cellfun(@(x)find(x),list,'UniformOutput',false));
+else
+    list = [];
 end
 
 newmodel.S = newmodel.S(list,:);
