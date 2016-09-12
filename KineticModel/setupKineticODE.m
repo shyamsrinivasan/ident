@@ -28,9 +28,10 @@ end
 bkupmodel = model;
 newpvec(nmodels) = struct();
 for im = 1:nmodels
-    [model,outpvec,mc] = addremoveMets(bkupmodel,{'h2o[c]','h2o[e]'},pvec(im),mc);
-    [newmodel,newoutpvec,newmc,cnstmet] =...
-    remove_eMets(model,outpvec,mc,[model.Vind model.Vex],{'ac[e]','pyr[e]','g6p[e]','h[e]','h[c]'});
+    [model,outpvec,newmc] = addremoveMets(bkupmodel,{'h2o[c]','h2o[e]'},pvec(im),mc);
+    [newmodel,newoutpvec,nnewmc,cnstmet] =...
+    remove_eMets(model,outpvec,newmc,[model.Vind model.Vex],...
+    {'ac[e]','pyr[e]','g6p[e]','h[e]','h[c]'});
     newpvec = copystruct(newoutpvec,newpvec,im);     
 end
                        
@@ -46,8 +47,8 @@ imc(imc==0) = 1;
 
 % separate variables from constants and assign constants to a field in
 % newmodel
-Nimc = newmc(1:nvar);
-PM = newmc(nvar+1:end);
+Nimc = nnewmc(1:nvar);
+PM = nnewmc(nvar+1:end);
 Nimc(imc==0) = 0;
 newmodel.imc = imc;
 newmodel.imc(newmodel.imc==0) = 1;
