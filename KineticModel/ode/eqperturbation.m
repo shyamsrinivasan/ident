@@ -1,33 +1,38 @@
-function Nxeq = eqperturbation(xeq,npts,type)
-if nargin<3
+function Nxeq = eqperturbation(xin,idx,npts,type)
+if nargin<4
     type = 'rnd';
 end
-if nargin<2
+if nargin<3
     npts = 1;
 end
-nvar = size(xeq,1);
+if nargin<2
+    % index of variables to be perturbed
+    idx = [];
+end
 
+if ~isempty(idx)
+    npvar = length(idx);    
+    pval = getperturbationpoints(xin(idx),npvar,npts,type);
+    Nxeq = repmat(xin,1,npts);
+    Nxeq(idx,:) = pval(1:npvar,:);
+else
+    Nxeq = getperturbationpoints(xin,length(xin),npts,type);    
+end
+
+function pval = getperturbationpoints(xeq,npvar,npts,type)
 switch type
     case 'rnd'
-        Nxeq = repmat(xeq,1,npts)+...
-               randi([-1 1],nvar,npts).*repmat(xeq,1,npts).*...
-               (2*random(makedist('Uniform'),length(xeq),npts));
-        Nxeq = max(0.00001,Nxeq);
-%         for i = 1:npts
-%             Nxeq(:,i) = max(0.00001,Nxeq(:,1));
-%         end
+        pval = repmat(xeq,1,npts)+...
+               randi([-1 1],npvar,npts).*repmat(xeq,1,npts).*...
+               (random(makedist('Uniform'),npvar,npts));
     case 'pos'
-        Nxeq = repmat(xeq,1,npts)+...
-               repmat(xeq,1,npts).*random(makedist('Uniform'),length(xeq),npts);
+        pval = repmat(xeq,1,npts)+...
+               repmat(xeq,1,npts).*random(makedist('Uniform'),npvar,npts);
     case 'neg'
-        Nxeq = repmat(xeq,1,npts)-...
-               repmat(xeq,1,npts).*random(makedist('Uniform'),length(xeq),npts);
-        Nxeq = max(0.00001,Nxeq);
-%         for i = 1:npts
-%             Nxeq(:,i) = max(0.00001,Nxeq(:,1));
-%         end
+        pval = repmat(xeq,1,npts)-...
+               repmat(xeq,1,npts).*random(makedist('Uniform'),npvar,npts);
     otherwise
         fprintf('Invalid option\nReturning replicated input\n');
-        Nxeq = repmat(xeq,1,npts);
+        pval = repmat(xeq,1,npts);
         return
 end

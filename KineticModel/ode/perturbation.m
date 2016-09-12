@@ -1,10 +1,19 @@
 function [alloutsol,allpxeq,allpfeq] =...
-         perturbation(xeq,model,pvec,solverP,npts,type)
-if nargin<6
+         perturbation(xeq,model,pvec,solverP,idx,npts,type)
+if nargin<7
     type = 'rnd';
 end
-if nargin<5
+if nargin<6
     npts = 1;
+end
+if nargin<5
+    idx = [];
+else
+    if iscell(idx)
+        idx = cellfun(@(x)strcmpi(model.mets,x),idx,'UniformOutput',false);
+        idx = cellfun(@(x)find(x),idx,'UniformOutput',false);
+        idx = cell2mat(idx);
+    end
 end
 
 nmodels = size(pvec,2);nvar = size(xeq,1);
@@ -20,7 +29,7 @@ else
     fprintf('Perturbation of %d models...\n',nmodels);
     for im = 1:nmodels
         % get npts perturbed points of xeq of type
-        Nxeq = eqperturbation(xeq(:,im),npts,type);
+        Nxeq = eqperturbation(xeq(:,im),idx,npts,type);
         
         % solve each model strating from Nxeq
         [outsol,~,xss,fss] =...
