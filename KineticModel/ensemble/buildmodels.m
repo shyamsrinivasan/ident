@@ -19,6 +19,7 @@ Vind = addToVind(model.rxns,model.Vind,rxn_add,rxn_excep);
 etcrxns = {'ATPS4r','NADH16','CYTBD','SUCDi','FRD7'};
 etcrxns = cellfun(@(x)strcmpi(x,model.rxns),etcrxns,'UniformOutput',false);
 etcrxns = cellfun(@(x)find(x),etcrxns,'UniformOutput',false);
+etcrxns = etcrxns(~cellfun('isempty',etcrxns));
 etcrxns = cell2mat(etcrxns);
 
 % parameters from backup in pvec(input)
