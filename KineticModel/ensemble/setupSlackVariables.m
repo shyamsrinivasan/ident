@@ -13,16 +13,16 @@ A_slack = repmat(sign(newmodel.Vss),1,nconstr).*A_slack;
 newmodel.A = [newmodel.A A_slack];
 
 lb_slack = zeros(size(newmodel.A,1),1);
-lb_slack(lb_slack==0) = 0.55 ;%1.3201;%5e-1;
+lb_slack(lb_slack==0) = 0.2 ;%1.3201;%5e-1;
 %-------
 % vpgi = strcmpi(newmodel.rxns,'pgi');
 % lb_slack(vpgi) = 3;
 % vpfk = strcmpi(newmodel.rxns,'pfk');
 % lb_slack(vpfk) = 2;
-lb_slack(strcmpi(newmodel.rxns,'fba')) = 0.5;
-lb_slack(strcmpi(newmodel.rxns,'atps4r')) =10;
+lb_slack(strcmpi(newmodel.rxns,'fba')) = 0.9;
+lb_slack(strcmpi(newmodel.rxns,'atps4r')) = 10;
 % lb_slack(strcmpi(newmodel.rxns,'pgk')) = 2;
-lb_slack(strcmpi(newmodel.rxns,'tpi')) = 0.5;
+lb_slack(strcmpi(newmodel.rxns,'tpi')) = 0.9;
 % lb_slack(strcmpi(newmodel.rxns,'gapd')) = 2;
 % lb_slack(strcmpi(newmodel.rxns,'pgm')) = 2;
 % lb_slack(strcmpi(newmodel.rxns,'eno')) = 2;
