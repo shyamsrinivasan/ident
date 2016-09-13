@@ -23,6 +23,7 @@ lb_slack(strcmpi(newmodel.rxns,'fba')) = 0.9;
 lb_slack(strcmpi(newmodel.rxns,'atps4r')) = 10;
 % lb_slack(strcmpi(newmodel.rxns,'pgk')) = 2;
 lb_slack(strcmpi(newmodel.rxns,'tpi')) = 0.9;
+lb_slack(strcmpi(newmodel.rxns,'me1')) = 1;
 % lb_slack(strcmpi(newmodel.rxns,'gapd')) = 2;
 % lb_slack(strcmpi(newmodel.rxns,'pgm')) = 2;
 % lb_slack(strcmpi(newmodel.rxns,'eno')) = 2;
