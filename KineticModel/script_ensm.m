@@ -34,6 +34,13 @@ rxnadd = {};
 % extracellular metabolites in M moles/L
 % met.pi_e = 4e-2;
 
+% metabolites that do not affect thermodynamic equilibrium  
+he = find(strcmpi(model.mets,'h[e]'));
+hc = find(strcmpi(model.mets,'h[c]'));
+h2oc = find(strcmpi(model.mets,'h2o[c]'));
+h2oe = find(strcmpi(model.mets,'h2o[e]'));
+model.remid = [he hc h2oc h2oe];
+
 % sample initial metabolite concentrations for estimating kinetic parameters
 [mc,parameter,smp] = parallel_sampling(model,parameter,'setupMetLP_gtoy',met,mc,rxnadd);
 if isempty(mc)
@@ -45,13 +52,6 @@ end
 % get parameter estimates - estimate kinetic parameters in an ensemble
 rxnadd = {};
 rxnexcep = {'Ht2r'};
-
-% metabolites that do not affect thermodynamic equilibrium  
-he = find(strcmpi(model.mets,'h[e]'));
-hc = find(strcmpi(model.mets,'h[c]'));
-h2o = find(strcmpi(model.mets,'h2o[c]'));
-h2o = find(strcmpi(model.mets,'h2o[e]'));
-model.remid = [he hc h2o];
 
 % FBAmodel.bmrxn = [];
 [ensb,mc] = parallel_ensemble(model,mc,parameter,rxnadd,rxnexcep,5);
