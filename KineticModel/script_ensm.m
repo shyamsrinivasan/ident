@@ -21,7 +21,7 @@ Vupstruct.ENZ1ex = 1;
 
 % designate reactions for which uptake should not be zero in FBA
 % ess_rxn = {'exH','exPI','exAC'};
-essrxn = {'ACex','exH','H2Oex'};
+essrxn = {'ACex','exH','exH2O'};
 
 % assign initial fluxes and calculate FBA fluxes for direction
 % FBAmodel.bmrxn = 14;
@@ -85,7 +85,7 @@ end
 
 % time course plots
 AllTimeCoursePlots(outsol,newmodel,{'pyr[c]','pep[c]','fdp[c]','ac[c]'},...
-                                   {'ACt2r','FBP','PDHr','PYK'});
+                                   {'ACt2r','FBP','ICL','MALS'});
 
 % perturbations to steady states  
 [outsol,allxss,allfss] = perturbation(allxeq,newmodel,newpvec,solverP,[1:3,5:14]);
