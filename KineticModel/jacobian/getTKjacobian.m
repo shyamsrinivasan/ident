@@ -53,12 +53,12 @@ for im = 1:length(metid)
         allDr(metid(im)) = thetas*0+thetap*S(metid(im),irxn);
     end         
     if irxn == find(strcmpi(model.rxns,'PIt2r'))
-        Kapie = 0.89; % mM
-        if metid(im) == find(pie)
-            piratio = Kapie/M(metid(im));
-            allDr(metid(im)) = allDr(metid(im))/drflx-...
-            (piratio/M(metid(im)))/(1+piratio);
-        end
+%         Kapie = 0.89; % mM
+%         if metid(im) == find(pie)
+%             piratio = Kapie/M(metid(im));
+%             allDr(metid(im)) = allDr(metid(im))/drflx-...
+%             (piratio/M(metid(im)))/(1+piratio);
+%         end
     else
         allDr(metid(im)) = allDr(metid(im))/drflx;
     end

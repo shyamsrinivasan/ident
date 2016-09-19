@@ -111,9 +111,9 @@ for irxn = 1:nrxn
             if irxn == find(strcmpi(model.rxns,'O2t'))
             end
             if irxn == find(strcmpi(model.rxns,'PIt2r'))
-                Kapie = 0.89; % mM
-                vflux(irxn,:) =...
-                scale_flux(fwdflx./drflx.*1./(1+Kapie./M(pie,:)));
+%                 Kapie = 0.89; % mM
+%                 vflux(irxn,:) =...
+%                 scale_flux(fwdflx./drflx.*1./(1+Kapie./M(pie,:)));
             end
             flux(irxn,:) = Vmax(irxn).*vflux(irxn,:); 
 
