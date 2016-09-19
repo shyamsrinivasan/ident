@@ -42,7 +42,7 @@ h2oe = find(strcmpi(model.mets,'h2o[e]'));
 model.remid = [he hc h2oc h2oe];
 
 % sample initial metabolite concentrations for estimating kinetic parameters
-[mc,parameter,smp] = parallel_sampling(model,parameter,'setupMetLP_gtoy',met,mc,rxnadd);
+[mc,parameter,smp] = parallel_sampling(model,parameter,'setupMetLP_gtoy',met,mc,rxnadd,10000);
 if isempty(mc)
     % multiple saples are being supplied
     mc = smp{1,1};
