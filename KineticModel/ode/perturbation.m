@@ -43,6 +43,6 @@ else
         allpfeq(:,im) = fss;        
     end
     AllTimeCoursePlots(alloutsol,model,{'pyr[c]','pep[c]','fdp[c]','ac[c]'},...
-                                   {'ACt2r','FBP','PDHr','PYK'});  
+                                   {'ACt2r','FBP','ICL','MALS'});  
     fprintf('Time for complete perturbation simulations of %d model steady states: %4.3g\n',nmodels,toc(tstart));
 end
