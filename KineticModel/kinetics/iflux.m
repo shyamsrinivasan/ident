@@ -1,4 +1,4 @@
-function flux = iflux(model,pvec,M,flux,idx)
+function [flux,fluxbm] = iflux(model,pvec,M,flux,idx)
 [~,nc] = size(M);
 if nargin <5
     idx = [];
@@ -10,12 +10,16 @@ if nargin<4
 %     flux = cons(flux,M);
 end
 
+fluxbm = zeros(size(M,1),nc);
 h2o = strcmpi(model.mets,'h2o[c]');
 
 S = model.S;
 Vind = model.Vind;
 Vex = model.Vex;
 VFex = model.VFex; % other fixed exchaged fluxes
+if isfield(model,'bmrxn')
+    bmrxn = model.bmrxn;
+end
 
 %carbon uptake fluxes
 % [flux,~,vcup] = CarbonKinetics(model,pvec,mc,flux);
@@ -45,6 +49,7 @@ if isempty(idx)
     end
 
     % biomass
+    fluxbm = BMKinetics(model,pvec,M,bmrxn);
         %     if mc(strcmpi(model.mets,'atp[c]'))>0 &&...
         %        mc(strcmpi(model.mets,'h2o[c]'))>0
         %         flux(strcmpi(model.rxns,'atpm')) = 8.39;
