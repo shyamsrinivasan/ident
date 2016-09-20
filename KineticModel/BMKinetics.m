@@ -35,6 +35,7 @@ for irxn = 1:nrxn
         end
     end
 end
+fluxbm = fluxbm./3600;
 
 
 
