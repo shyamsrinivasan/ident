@@ -29,6 +29,7 @@ KIihb = pvec.KIihb;
 Vmax = pvec.Vmax;
 
 nrxn = model.nt_rxn;
+bmrxn = model.bmrxn;
 flux = zeros(nrxn,nmodels);
 
 % sample nmodel Kms for all reactions in Vind
@@ -42,6 +43,10 @@ Vex = addToVind(model.rxns,model.Vex,[],new_excep);
 % sample nmodel Kms for all reactions in Vex
 newKVex = samplesigma(model,mc,pvec.K,pvec.kfwd,pvec.krev,Vex,nmodels);
 
+% copy k values for biomass rxns from data file using functionality in
+% samplesigma
+newKbm = samplesigma(model,mc,pvec.K,pvec.kfwd,pvec.krev,bmrxn,nmodels);
+
 % assign parameters to nmodels structure array parallel
 if nmodels>10
     parfor im = 1:nmodels
@@ -53,6 +58,10 @@ if nmodels>10
         newK(im).delGr = delGr;
         newK(im).KIact = KIact;
         newK(im).KIihb = KIihb;  
+        
+        % set bmrxn parameters in newK from newKbm
+        newK(im).K(:,bmrxn) = newKbm(im).K(:,bmrxn);        
+        
         % check for consistency with fluxes in vss and delGr
         newK(im).check = checkthermo(model,newK(im),mc,Vind,@CKinetics); 
         
@@ -67,6 +76,9 @@ if nmodels>10
         % determine Vmax values for all Vex rxns
         newVmax = getVmax(Vmax,model,newK(im),mc,Vex,@TKinetics);
         newK(im).Vmax(Vex) = newVmax(Vex);    
+        
+        % set Vmax for bmrxn as 1
+        newK(im).Vmax(bmrxn) = 1;
         
         % determine Vmax values for other reactions in ETC
 %         [newVmax,feasible] = getVmax(Vmax,model,newK(im),mc,Vex,@ETCflux);
@@ -82,6 +94,10 @@ else
         newK(im).delGr = delGr;
         newK(im).KIact = KIact;
         newK(im).KIihb = KIihb;  
+        
+        % set bmrxn parameters in newK from newKbm
+        newK(im).K(:,bmrxn) = newKbm(im).K(:,bmrxn);        
+        
         % check for consistency with fluxes in vss and delGr
         newK(im).check = checkthermo(model,newK(im),mc,Vind,@CKinetics); 
         
@@ -95,7 +111,10 @@ else
         
         % determine Vmax values for all Vex rxns
         newVmax = getVmax(Vmax,model,newK(im),mc,Vex,@TKinetics);
-        newK(im).Vmax(Vex) = newVmax(Vex);    
+        newK(im).Vmax(Vex) = newVmax(Vex);  
+        
+        % set Vmax for bmrxn as 1
+        newK(im).Vmax(bmrxn) = 1;
         
         % determine Vmax values for other reactions in ETC
 %         [newVmax,feasible] = getVmax(Vmax,model,newK(im),mc,Vex,@ETCflux);
