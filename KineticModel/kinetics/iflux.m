@@ -9,28 +9,13 @@ if nargin<4
     flux = zeros(model.nt_rxn,nc);
 %     flux = cons(flux,M);
 end
-% if isfield(model,'rxn_add');
-%     rxn_add = model.rxn_add;
-% else
-%     rxn_add = {};
-% end
-% if isfield(model,'rxn_excep')
-%     rxn_excep = model.rxn_excep;
-% else
-%     rxn_excep = {};
-% end
 
 h2o = strcmpi(model.mets,'h2o[c]');
 
 S = model.S;
 Vind = model.Vind;
 Vex = model.Vex;
-% other fixed exchaged fluxes
-VFex = model.VFex;
-
-% Vind = addToVind(model,model.Vind,rxn_add,rxn_excep);
-% rxn_excep = union(rxn_excep,model.rxns(Vind));
-% Vex = addToVind(model,model.Vex,[],rxn_excep);
+VFex = model.VFex; % other fixed exchaged fluxes
 
 %carbon uptake fluxes
 % [flux,~,vcup] = CarbonKinetics(model,pvec,mc,flux);
