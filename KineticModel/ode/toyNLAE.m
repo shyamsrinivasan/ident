@@ -17,5 +17,8 @@ end
 
 flux = iflux(model,pvec,allmc);
 
+% metabolite consumption for biomass generation
+fluxbm = BMKinetics(model,pvec,allmc,find(strcmpi(model.rxns,'biomass')));
+
 % Cytosolic
-dM(1:nvar) = (1./imc).*(model.S(1:nvar,:)*(flux));
+dM(1:nvar) = (1./imc).*(model.S(1:nvar,:)*(flux)+fluxbm);
