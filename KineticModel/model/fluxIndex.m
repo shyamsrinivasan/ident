@@ -110,7 +110,7 @@ end
 
 %Identify biomass reaction
 % [~,bmrxn] = find(newS(strcmpi(model.mets,'Biomass'),:) > 0);
-bmrxn = find(strcmpi(model.rxns,'EC_biomass'));
+bmrxn = find(strcmpi(model.rxns,'biomass'));
 VFex = setdiff(VFex,bmrxn);
 Vex = setdiff(Vex,bmrxn);
 
