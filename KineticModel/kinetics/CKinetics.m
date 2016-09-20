@@ -18,7 +18,7 @@ Vmax = pvec.Vmax;
 
 vflux = zeros(nrxn,nc);
 flux = zeros(nrxn,nc);
-DVX = zeros(length(M),nrxn);
+DVX = zeros(size(M,1),nrxn);
 
 % vflux = cons(vflux,M);
 % flux = cons(flux,M);
