@@ -31,6 +31,7 @@ Vmax = pvec.Vmax;
 nrxn = model.nt_rxn;
 bmrxn = model.bmrxn;
 flux = zeros(nrxn,nmodels);
+fluxbm = zeros(size(mc,1),nmodels);
 
 % sample nmodel Kms for all reactions in Vind
 newK = samplesigma(model,mc,pvec.K,pvec.kfwd,pvec.krev,Vind,nmodels);
@@ -121,7 +122,7 @@ else
         newK(im).feasible = feasible;    
     
         % check - calculate initial flux
-        flux(:,im) = iflux(model,newK(im),mc);
+        [flux(:,im),fluxbm(:,im)] = iflux(model,newK(im),mc);
     end
 end
 
