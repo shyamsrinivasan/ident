@@ -16,21 +16,23 @@ act2r = strcmpi(model.rxns,'ACt2r');
 alpha = M(ace,:)./K(ace,act2r);
 
 for irxn = 1:nrxn
-    if ismember(irxn,Vid)    
-        alls = S(:,irxn);allp = S(:,irxn);
-        alls(S(:,irxn)>0) = 0;allp(S(:,irxn)<0) = 0;
-        alls(remid,:) = 0;allp(remid,:) = 0;
-        if nc>1
-            fluxbm(logical(alls)) = -repmat(K(logical(alls),irxn),1,nc).*M(logical(alls),:);
-        else
-            fluxbm(logical(alls)) = -K(logical(alls),irxn).*M(logical(alls),:);
+    if ~isempty(Vid)
+        if ismember(irxn,Vid)    
+            alls = S(:,irxn);allp = S(:,irxn);
+            alls(S(:,irxn)>0) = 0;allp(S(:,irxn)<0) = 0;
+            alls(remid,:) = 0;allp(remid,:) = 0;
+            if nc>1
+                fluxbm(logical(alls)) = -repmat(K(logical(alls),irxn),1,nc).*M(logical(alls),:);
+            else
+                fluxbm(logical(alls)) = -K(logical(alls),irxn).*M(logical(alls),:);
+            end
+            if nc>1
+                fluxbm(logical(allp)) = repmat(K(logical(allp),irxn),1,nc).*M(logical(allp),:);
+            else
+                fluxbm(logical(allp)) = K(logical(allp),irxn).*M(logical(allp),:);
+            end
+            fluxbm = repmat(alpha,nvar,1).*fluxbm;
         end
-        if nc>1
-            fluxbm(logical(allp)) = repmat(K(logical(allp),irxn),1,nc).*M(logical(allp),:);
-        else
-            fluxbm(logical(allp)) = K(logical(allp),irxn).*M(logical(allp),:);
-        end
-        fluxbm = repmat(alpha,nvar,1).*fluxbm;
     end
 end
 
