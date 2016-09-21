@@ -25,9 +25,9 @@ essrxn = {'ACex','exH','exH2O'};
 
 % assign initial fluxes and calculate FBA fluxes for direction
 % FBAmodel.bmrxn = 14;
-model.bmrxn = 3;
+model.bmrxn = 34;
 model = FBAfluxes(model,'fba',essrxn,Vupstruct,...
-                     find(strcmpi(model.rxns,'G6Pex')));
+                     find(strcmpi(model.rxns,'biomass')));
 
 rxnadd = {};
 % Metabolite conecntrations 
@@ -42,7 +42,7 @@ h2oe = find(strcmpi(model.mets,'h2o[e]'));
 model.remid = [he hc h2oc h2oe];
 
 % sample initial metabolite concentrations for estimating kinetic parameters
-[mc,parameter,smp] = parallel_sampling(model,parameter,'setupMetLP_gtoy',met,mc,rxnadd,10000);
+[mc,parameter,smp] = parallel_sampling(model,parameter,'setupMetLP_gtoy',met,mc,rxnadd);
 if isempty(mc)
     % multiple saples are being supplied
     mc = smp{1,1};
@@ -54,7 +54,7 @@ rxnadd = {};
 rxnexcep = {'Ht2r'};
 
 % FBAmodel.bmrxn = [];
-[ensb,mc] = parallel_ensemble(model,mc,parameter,rxnadd,rxnexcep,5);
+[ensb,mc] = parallel_ensemble(model,mc,parameter,rxnadd,rxnexcep,1);
 
 % serially solve ODE of model to steady state
 model.rxn_add = rxnadd;
