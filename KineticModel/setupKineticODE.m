@@ -29,9 +29,15 @@ bkupmodel = model;
 newpvec(nmodels) = struct();
 for im = 1:nmodels
     [model,outpvec,newmc] = addremoveMets(bkupmodel,{'h2o[c]','h2o[e]'},pvec(im),mc);
-    [newmodel,newoutpvec,nnewmc,cnstmet] =...
-    remove_eMets(model,outpvec,newmc,[model.Vind model.Vex],...
-    {'ac[e]','pyr[e]','g6p[e]','succ[e]','mal[e]','akg[e]','for[e]','fum[e]','h[e]','h[c]'});
+    if ~isempty(model.bmrxn)
+        [newmodel,newoutpvec,nnewmc,cnstmet] =...
+        remove_eMets(model,outpvec,newmc,[model.Vind model.Vex model.bmrxn],...
+        {'ac[e]','pyr[e]','g6p[e]','succ[e]','mal[e]','akg[e]','for[e]','fum[e]','h[e]','h[c]'});
+    else
+        [newmodel,newoutpvec,nnewmc,cnstmet] =...
+        remove_eMets(model,outpvec,newmc,[model.Vind model.Vex],...
+        {'ac[e]','pyr[e]','g6p[e]','succ[e]','mal[e]','akg[e]','for[e]','fum[e]','h[e]','h[c]'});
+    end
     newpvec = copystruct(newoutpvec,newpvec,im);     
 end
                        
@@ -56,11 +62,12 @@ newmodel.PM = PM;
 
 % system check
 flux = zeros(newmodel.nt_rxn,nmodels);
+fluxbm = zeros(length(newmodel.mets),nmodels);
 dXdt = zeros(nvar,nmodels);
 jacobian = struct();
 for im = 1:nmodels
     % calculate initial flux
-    flux(:,im) = iflux(newmodel,newpvec(im),[Nimc.*imc;PM]);
+    [flux(:,im),fluxbm(:,im)] = iflux(newmodel,newpvec(im),[Nimc.*imc;PM]);
     % toy model
     dXdt(:,im) = ToyODEmodel(0,Nimc,[],newmodel,newpvec(im));
     % get jacobian and eigen values and eigne vectors
