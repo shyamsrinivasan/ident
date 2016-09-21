@@ -24,17 +24,17 @@ for irxn = 1:nrxn
         if any(alls)
             sratio = M(logical(alls),:);
             thetas = sratio;
-            fwdflx = 0.1*thetas;
-            revflx = 0;
+            fwdflx = 0.1.*thetas;
+            revflx = zeros(1,nc);
             if any(Vuptake(irxn))
-                revflx = Vuptake(irxn);
+                revflx = repmat(Vuptake(irxn),1,nc);
             end        
             nrflx = fwdflx-revflx;
-            drflx = 1;
+            drflx = ones(1,nc);
             vflux(irxn,:) = scale_flux(nrflx./drflx);
-            flux(irxn,:) = Vmax(irxn).*vflux(irxn,:);
+            flux(irxn,:) = Vmax(irxn).*vflux(irxn,:)./repmat(3600,1,nc);
         end
     end
 end
-flux = flux(VFex);
-vflux = vflux(VFex);
+flux = flux(VFex,:);
+vflux = vflux(VFex,:);
