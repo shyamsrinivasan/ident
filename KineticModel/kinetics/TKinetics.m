@@ -90,10 +90,19 @@ for irxn = 1:nrxn
         alls(S(:,irxn)>0) = 0;allp(S(:,irxn)<0) = 0;
         alls(model.remid,:) = 0;allp(model.remid,:) = 0;
         if any(alls)||any(allp)
-            sratio = M(logical(alls),:)./repmat(K(logical(alls),irxn),1,nc);
-            pratio = M(logical(allp),:)./repmat(K(logical(allp),irxn),1,nc);
-            thetas = prod(sratio.^-alls(logical(alls)),1);
-            thetap = prod(pratio.^allp(logical(allp)),1);
+            if nc>1
+                sratio = M(logical(alls),:)./repmat(K(logical(alls),irxn),1,nc);
+                pratio = M(logical(allp),:)./repmat(K(logical(allp),irxn),1,nc);
+                thetas = prod(sratio.^...
+                         repmat(-alls(logical(alls)),1,nc),1);
+                thetap = prod(pratio.^...
+                         repmat(allp(logical(allp)),1,nc),1);
+            else
+                sratio = M(logical(alls),:)./K(logical(alls),irxn);
+                pratio = M(logical(allp),:)./K(logical(allp),irxn);
+                thetas = prod(sratio.^-alls(logical(alls)),1);
+                thetap = prod(pratio.^allp(logical(allp)),1);
+            end
             fwdflx = kfwd(irxn).*thetas;
             revflx = kbkw(irxn).*thetap;
             % set reverse flux for irreversible reactions = 0
