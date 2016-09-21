@@ -16,7 +16,7 @@ h2o = strcmpi(model.mets,'h2o[c]');
 S = model.S;
 Vind = model.Vind;
 Vex = model.Vex;
-VFex = model.VFex; % other fixed exchaged fluxes
+VFex = model.VFex; % other exchage fluxes
 if isfield(model,'bmrxn')
     bmrxn = model.bmrxn;
 end
@@ -89,7 +89,7 @@ else
     VFex_idx = idx(ismember(idx,VFex));
     idx = setdiff(idx,VFex_idx);    
     if ~isempty(VFex_idx)
-        idflux(VFex_idx,:) = TKinetics(model,pvec,M,VFex_idx);
+        idflux(VFex_idx,:) = EKinetics(model,pvec,M,VFex_idx);
         finid = [finid VFex_idx]; 
     end
     
