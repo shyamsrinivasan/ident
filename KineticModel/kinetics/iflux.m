@@ -50,6 +50,7 @@ if isempty(idx)
 
     % biomass
     fluxbm = BMKinetics(model,pvec,M,bmrxn);
+    flux(bmrxn,:) = 1.0;
         %     if mc(strcmpi(model.mets,'atp[c]'))>0 &&...
         %        mc(strcmpi(model.mets,'h2o[c]'))>0
         %         flux(strcmpi(model.rxns,'atpm')) = 8.39;
