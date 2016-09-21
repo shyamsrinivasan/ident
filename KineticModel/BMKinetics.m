@@ -14,6 +14,7 @@ fluxbm = zeros(nvar,1);
 ace = strcmpi(model.mets,'ac[e]');
 act2r = strcmpi(model.rxns,'ACt2r');
 alpha = M(ace,:)./K(ace,act2r);
+alpha = alpha./(1+alpha);
 
 for irxn = 1:nrxn
     if ~isempty(Vid)
