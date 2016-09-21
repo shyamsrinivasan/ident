@@ -88,7 +88,7 @@ for irxn = 1:nrxn
     if ismember(irxn,Vex)
         alls = S(:,irxn);allp = S(:,irxn);
         alls(S(:,irxn)>0) = 0;allp(S(:,irxn)<0) = 0;
-        alls(model.remid,:) = 0;allp(model.remid,:) = 0;
+        alls(remid,:) = 0;allp(remid,:) = 0;
         if any(alls)||any(allp)
             if nc>1
                 sratio = M(logical(alls),:)./repmat(K(logical(alls),irxn),1,nc);
