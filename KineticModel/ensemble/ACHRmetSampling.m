@@ -31,7 +31,7 @@ dTol = 1e-14;
 fh = str2func(setupfun);
 bounds = fh(model,rxn_add,mc);
 if size(bounds.A,2)==length(bounds.mets)
-    %setup slack problem
+    % setup slack problem
     bounds = setupSlackVariables(bounds);
     warmUpPts = createWarmupPoints(model,bounds,2000);   
 end
@@ -42,72 +42,71 @@ bounds.ub = separate_slack(bounds.ub,bounds);
 
 [nmets,npts] = size(warmUpPts);
 
-%centre point for the space
-centre = mean(warmUpPts,2);
+% centre point for the space
+% centre = mean(warmUpPts,2);
 
-%set centre point as start point
-prevPt = centre;
+% set centre point as start point
+% prevPt = centre;
 
 totalStepcnt = 0;
+ub = bounds.ub;
+lb = bounds.lb;
 
-%nFiles - # files created to store samples
-for i=1:nFiles
-    
-    pts = zeros(nmets,nptsPerFile);
-    
-    ptcnt = 1;
-    while ptcnt<=nptsPerFile
-        
-        %random step size
-        randStepSize = rand(stepsPerPnt,1);
+% nFiles - # files created to store samples
+for i=1:nFiles    
+    pts = zeros(nmets,nptsPerFile);    
+%     ptcnt = 1;
+    % parallelize ACHR
+    for ptcnt = 1:nptsPerFile
+%     while ptcnt<=nptsPerFile
+        if ptcnt == 1
+            % centre point for the space
+            centre = mean(warmUpPts,2);
+            % set centre point as start point
+            prevPt = centre;
+        end        
+        % random step size
+        randStepSize = rand(stepsPerPnt,1);       
         
         stepcnt = 1;
-        while stepcnt<=stepsPerPnt
-            
-            %pick random warmup point
+        while stepcnt<=stepsPerPnt            
+            % pick random warmup point
             randPntID = ceil(npts*rand);
-            randPnt = warmUpPts(:,randPntID);
-            
-            %direction from centre point to warmup point
+            randPnt = warmUpPts(:,randPntID);            
+            % direction from centre point to warmup point
             u = randPnt-centre;
-            u = u/norm(u);
-            
-            %distance to upper and lower bound
-            distUb = bounds.ub-prevPt;
-            distLb = prevPt-bounds.lb;
-            
-            %determine if too close to boundary
-            validDir = ((distUb>dTol) & (distLb>dTol));
-            
+            u = u/norm(u);            
+            % distance to upper and lower bound
+            distUb = ub-prevPt;
+            distLb = prevPt-lb;            
+            % determine if too close to boundary
+            validDir = ((distUb>dTol) & (distLb>dTol));            
             if ~any(validDir)
                 continue
             end
             
-            %find positive and negative directions
+            % find positive and negative directions
             posDir = find(u(validDir)>uTol);
-            negDir = find(u(validDir)<-uTol);
-            
-            %find all max and min step sizes
+            negDir = find(u(validDir)<-uTol);            
+            % find all max and min step sizes
             maxStepTemp = distUb(validDir)./u(validDir);
-            minStepTemp = -distLb(validDir)./u(validDir);
-            
+            minStepTemp = -distLb(validDir)./u(validDir);            
             maxStepVec = [maxStepTemp(posDir);minStepTemp(negDir)];
             minStepVec = [minStepTemp(posDir);maxStepTemp(negDir)];
             
-            %true max and min step sizes
+            % true max and min step sizes
             maxStep = min(maxStepVec);
             minStep = max(minStepVec);
             
-            %Find new direction if getting too close to boundary
+            % Find new direction if getting too close to boundary
             if (abs(minStep) < maxMinTol & abs(maxStep) < maxMinTol) | (minStep > maxStep)
                 fprintf('Warning\n');
                 continue
             end
             
-            %obtain random step distance
-            stepDist = randStepSize(stepcnt)*(maxStep-minStep)+minStep;
-            
-            %advance to next point
+            % obtain random step distance
+            stepDist = randStepSize(stepcnt)*(maxStep-minStep)+minStep;            
+            % advance to next point
             curPt = prevPt + stepDist*u;
             
             %Reproject current point and go to the next step
@@ -123,9 +122,9 @@ for i=1:nFiles
 %             overInd = find(bounds.ub-curPt>0);
 %             underInd = find(curPt-bounds.lb<0);
             
-            if (any((bounds.ub-curPt) < 0) || any((curPt-bounds.lb)< 0))
-               curPt(bounds.ub-curPt>0) = bounds.ub(bounds.ub-curPt>0);
-               curPt(curPt-bounds.lb<0) = bounds.lb(curPt-bounds.lb<0);             
+            if (any((ub-curPt) < 0) || any((curPt-lb)< 0))
+               curPt(ub-curPt>0) = ub(ub-curPt>0);
+               curPt(curPt-lb<0) = lb(curPt-lb<0);             
             end
             
 %             if mod(totalStepcnt,2000)==0
@@ -135,17 +134,17 @@ for i=1:nFiles
             prevPt = curPt;
             stepcnt = stepcnt+1;
             
-            %count toal number of steps
+            % count toal number of steps
             totalStepcnt = totalStepcnt+1;
             
-            %recalculate centre point
+            % recalculate centre point
             centre = ((npts+totalStepcnt)*centre+curPt)/(npts+totalStepcnt+1);
             
         end %steps per point
         
         %add current point to points
         pts(:,ptcnt) = curPt;
-        ptcnt = ptcnt+1;
+%         ptcnt = ptcnt+1;
     end %points per cycle
     
     % re-assign concentrations to model.mets
