@@ -5,8 +5,8 @@ addpath(genpath('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModel
 % cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy1C.txt';
 % rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy2.txt';
 % cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy2C.txt';
-rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy6.txt';
-cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy6C.txt';
+rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy9.txt';
+cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy9C.txt';
 % create model structure
 [model,parameter,variable,nrxn,nmetab] = modelgen(rxfname);
 
@@ -25,9 +25,9 @@ essrxn = {'ACex','exH','exH2O'};
 
 % assign initial fluxes and calculate FBA fluxes for direction
 % FBAmodel.bmrxn = 14;
-model.bmrxn = 34;
-model = FBAfluxes(model,'fba',essrxn,Vupstruct,...
-                     find(strcmpi(model.rxns,'biomass')));
+% model.bmrxn = 34;
+model = FBAfluxes(model,'pfba',essrxn,Vupstruct,...
+                     find(strcmpi(model.rxns,'G6Pt2r')));
 
 rxnadd = {};
 % Metabolite conecntrations 
