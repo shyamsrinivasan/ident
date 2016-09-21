@@ -19,3 +19,6 @@ end
 
 % Cytosolic
 dM(1:nvar) = (1./imc).*(model.S(1:nvar,:)*(flux)+fluxbm(1:nvar));
+
+% Extracellular
+% dM(1:(nmets-nvar)) = (1./imc).*(model.S(1:(nmets-nvar),:)*(flux));
