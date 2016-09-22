@@ -435,6 +435,8 @@ model_data.n_rxn = length(model_data.Vind);
 model_data.nt_metab = nt_metab;
 model_data.next_metab = newmodel.next_metab;
 model_data.nint_metab = newmodel.nint_metab;
+model_data.Mext = newmodel.Mext;
+model_data.Mint = newmodel.Mint;
 
 parameter.K = newmodel.K;
 parameter.Klb = newmodel.Klb;
