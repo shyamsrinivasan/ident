@@ -25,11 +25,6 @@ DVX = zeros(length(M),nrxn);
 % pie = strcmpi(model.mets,'pi[e]');
 % eliminate consideration for excess cofators
 % pi[c],pi[e],h[c],h[e],h2o[c]
-% he = find(strcmpi(model.mets,'h[e]'));
-% hc = find(strcmpi(model.mets,'h[c]'));
-% h2o = find(strcmpi(model.mets,'h2o[c]'));
-
-% h2o = find(strcmpi(model.mets,'h2o[c]'));
 
 % pic = find(strcmpi(model.mets,'pi[c]'));
 % co2 = find(strcmpi(model.mets,'co2[c]'));
