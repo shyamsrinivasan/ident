@@ -4,6 +4,7 @@ S = model.S;
 nrxn = model.nt_rxn;
 % rev = model.rev;
 remid = model.remid;
+D = model.D;
 
 % K = pvec.K;
 % kfwd = pvec.kfwd;
@@ -24,15 +25,19 @@ for irxn = 1:nrxn
         if any(alls)
             sratio = M(logical(alls),:);
             thetas = sratio;
-            fwdflx = 0.1.*thetas;
+            fwdflx = D.*thetas; % mmole/Lc/h
             revflx = zeros(1,nc);
             if any(Vuptake(irxn))
-                revflx = repmat(Vuptake(irxn),1,nc);
+                % assume feeds of Vuptake mmole/Lc
+                revflx = D.*repmat(Vuptake(irxn),1,nc); % mmole/Lc/h
+%                 revflx = repmat(Vuptake(irxn),1,nc);
             end        
             nrflx = fwdflx-revflx;
             drflx = ones(1,nc);
             vflux(irxn,:) = scale_flux(nrflx./drflx);
-            flux(irxn,:) = Vmax(irxn).*vflux(irxn,:)./repmat(3600,1,nc).*model.rho;
+            flux(irxn,:) = Vmax(irxn).*vflux(irxn,:);
+            % convert mmole/Lc/h -> mmole/Lc/s
+            flux(irxn,:) = flux(irxn,:)./repmat(3600,1,nc);
         end
     end
 end
