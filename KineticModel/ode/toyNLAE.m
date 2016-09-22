@@ -4,6 +4,14 @@ nvar = size(mc,1);
 dM = zeros(nvar,1);
 PM = model.PM;
 imc = model.imc;
+rho = model.rho;
+
+Mint = model.Mint;
+Mext = model.Mext;
+Vind = model.Vind;
+Vex = model.Vex;
+biomass = strcmpi(model.mets,'biomass[e]');
+
 % PM = cons(PM,mc);
 % imc = cons(imc,mc);
 
@@ -18,7 +26,14 @@ end
 [flux,fluxbm] = iflux(model,pvec,allmc);
 
 % Cytosolic
-dM(1:nvar) = (1./imc).*(model.S(1:nvar,:)*(flux)+fluxbm(1:nvar));
+dM(Mint) = (1./imc(Mint)).*(model.S(Mint,:)*(flux)+fluxbm(Mint));
 
 % Extracellular
-% dM(1:(nmets-nvar)) = (1./imc).*(model.S(1:(nmets-nvar),:)*(flux));
+% change flux values for flux(Vind) and flux(Vex) mmole/Lcw/h -> mmole/Lc/h
+flux(Vind) = flux(Vind).*mc(biomass)./rho;
+flux(Vex) = flux(Vex).*mc(biomass)./rho;
+
+dM(Mext) = (1./imc(Mext)).*(model.S(Mext,:)*(flux));
+
+% Biomass as in biomass[e] not in Mext
+dM(biomass) = (1./imc(biomass)).*(model.S(biomass,:)*flux);
