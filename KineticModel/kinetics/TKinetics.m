@@ -7,6 +7,12 @@ S = model.S;
 nrxn = model.nt_rxn;
 rev = model.rev;
 remid = model.remid;
+Mext = model.Mext;
+rho = model.rho;
+biomass = strcmpi(model.mets,'biomass[e]');
+
+% convert units mmole/Lc -> mmole/Lcw
+M(Mext) = M(Mext).*rho/M(biomass);
 
 K = pvec.K;
 kfwd = pvec.kfwd;
