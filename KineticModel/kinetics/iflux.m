@@ -130,7 +130,7 @@ if ~isempty(finid)
     flux = idflux(finid);
 end
 
-% time factor for fluxes - conversion between seconds <-> hours
+% time factor for fluxes - conversion between seconds -> hours
 flux = flux.*3600;
 fluxbm = fluxbm.*3600;
 
