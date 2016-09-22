@@ -178,6 +178,9 @@ end
 if isfield(model,'rho')
     newmodel.rho = model.rho;
 end
+if isfield(model,'D')
+    newmodel.D = model.D;
+end
 
 if ~isempty(mc)
     newmc = [mc(inter_mind,:);...
