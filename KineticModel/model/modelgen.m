@@ -516,6 +516,9 @@ model_data.MolWt(strcmpi('f6p[c]',model_data.mets)) = 259.81;
 model_data.MolWt(strcmpi('g6p[c]',model_data.mets)) = 260.136;
 model_data.MolWt(strcmpi('B[c]',model_data.mets)) = 200;
 
+% assign cell density gDCW/Lcw - gDCW per unit litre cell volume
+model_data.rho = 564;
+
 fprintf('Model generation complete\n\n');
 % nested functions
 function [model] =...

@@ -175,6 +175,9 @@ end
 if isfield(model,'rxn_excep')
     newmodel.rxn_excep = model.rxn_excep;
 end
+if isfield(model,'rho')
+    newmodel.rho = model.rho;
+end
 
 if ~isempty(mc)
     newmc = [mc(inter_mind,:);...

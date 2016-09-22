@@ -1,10 +1,11 @@
 function [newVmax,feasible] = getVmax(Vmax,model,pvec,mc,Vind,fhandle)
 newVmax = pvec.Vmax;
 Vmax = Vmax(Vind);
+rho = model.rho;
 
 if all(pvec.check(Vind)>0)
     [~,cflx] = fhandle(model,pvec,mc,Vind);
-    tempVmax = model.Vss(Vind)./(3600.*cflx);
+    tempVmax = model.Vss(Vind)./(3600.*cflx).*rho;
     tempVmax(cflx==0) = 1;
     tempVmax(~isnan(Vmax)) = Vmax(~isnan(Vmax));
     newVmax(Vind) = tempVmax; 

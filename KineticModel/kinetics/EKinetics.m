@@ -32,7 +32,7 @@ for irxn = 1:nrxn
             nrflx = fwdflx-revflx;
             drflx = ones(1,nc);
             vflux(irxn,:) = scale_flux(nrflx./drflx);
-            flux(irxn,:) = Vmax(irxn).*vflux(irxn,:)./repmat(3600,1,nc);
+            flux(irxn,:) = Vmax(irxn).*vflux(irxn,:)./repmat(3600,1,nc).*model.rho;
         end
     end
 end
