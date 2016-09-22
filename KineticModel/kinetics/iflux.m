@@ -32,12 +32,15 @@ finid = []; % only when idx is non empty
 
 if isempty(idx)
     if ~isempty(Vind)
+        % flux in mmole/Lcw/s
         flux(Vind,:) = CKinetics(model,pvec,M,Vind);
     end
     if ~isempty(Vex)
+        % flux in mmole/Lcw/s
         flux(Vex,:) = TKinetics(model,pvec,M,Vex);
     end
     if ~isempty(VFex)
+        % flux in mmole/Lc/s
         flux(VFex,:) = EKinetics(model,pvec,M,VFex);
     end
     % atp maintanance    
@@ -73,6 +76,7 @@ else
     Vin_idx = idx(ismember(idx,Vind));
     idx = setdiff(idx,Vin_idx);
     if ~isempty(Vin_idx)
+        % flux in mmole/Lcw/s
         idflux(Vin_idx,:) = CKinetics(model,pvec,M,Vin_idx);
         finid = [finid Vin_idx]; 
     end
@@ -81,6 +85,7 @@ else
     Vex_idx = idx(ismember(idx,Vex));
     idx = setdiff(idx,Vex_idx);
     if ~isempty(Vex_idx)
+        % flux in mmole/Lcw/s
         idflux(Vex_idx,:) = TKinetics(model,pvec,M,Vex_idx);
         finid = [finid Vex_idx]; 
     end
@@ -89,6 +94,7 @@ else
     VFex_idx = idx(ismember(idx,VFex));
     idx = setdiff(idx,VFex_idx);    
     if ~isempty(VFex_idx)
+        % flux in mmole/Lc/s
         idflux(VFex_idx,:) = EKinetics(model,pvec,M,VFex_idx);
         finid = [finid VFex_idx]; 
     end
