@@ -30,9 +30,9 @@ model = FBAfluxes(model,'pfba',essrxn,Vupstruct,...
                      find(strcmpi(model.rxns,'G6Pt2r')));
 
 rxnadd = {};
-% Metabolite conecntrations 
-% extracellular metabolites in M moles/L
-% met.pi_e = 4e-2;
+
+% dilution rate in model in h-1;
+model.D = 0.1;
 
 % metabolites that do not affect thermodynamic equilibrium  
 he = find(strcmpi(model.mets,'h[e]'));
@@ -84,11 +84,11 @@ else
 end
 
 % time course plots
-AllTimeCoursePlots(outsol,newmodel,{'pyr[c]','pep[c]','fdp[c]','ac[c]'},...
-                                   {'ACt2r','FBP','ICL','MALS'});
+AllTimeCoursePlots(outsol,newmodel,{'pyr[c]','pep[c]','fdp[c]','ac[c]','ac[e]','biomass[e]'},...
+                                   {'ACt2r','FBP','ICL','MALS','G6Pt2r','ACex'});
 
 % perturbations to steady states  
-[outsol,allxss,allfss] = perturbation(allxeq,newmodel,newpvec,solverP,[1:3,5:14]);
+[outsol,allxss,allfss] = perturbation(allxeq,newmodel,newpvec,solverP,[1:3,5:14],10);
 
 
 
