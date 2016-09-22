@@ -186,6 +186,7 @@ inter_mind = ~exter_mind;
 newmodel.nextmet = length(find(exter_mind));
 newmodel.nintmet = length(find(inter_mind));
 newmodel.Mext = find(exter_mind);
+newmodel.Mext(ismember(newmodel.Mext,find(strcmpi(newmodel.mets,'biomass[e]')))) = [];
 newmodel.Mint = find(inter_mind);
 
 if ~isempty(mc)

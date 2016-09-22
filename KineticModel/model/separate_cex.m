@@ -24,6 +24,12 @@ newmodel.S = [model.S(inter_mind,:);model.S(exter_mind,:);model.S(bm_ind,:)];
 newmodel.SI = [model.SI(inter_mind,:);model.SI(exter_mind,:);model.SI(bm_ind,:)];
 newmodel.next_metab = length(find(exter_mind));
 newmodel.nint_metab = length(find(inter_mind));
+
+% new internal and external mets
+newmodel.Mint = 1:length(find(inter_mind));
+newmodel.Mext = length(find(inter_mind))+1:length(find(inter_mind))+length(find(exter_mind));
+newmodel.Mext(ismember(newmodel.Mext,find(strcmpi(newmodel.mets,'biomass[e]')))) = [];
+
 if isfield(model,'remid')
     if ~isempty(model.remid)
         oldmets = model.mets(model.remid);
