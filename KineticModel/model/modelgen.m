@@ -449,19 +449,19 @@ parameter.krev = newkcbkw;
 %Separate PTS mets from other mets
 %At least get indices corresponding to PTS mets
 %PEP,PYR,G6P,GLCxt,ACxt,RIBxt,GLXxt, etc
-pts_metab = {'pep[c]','pyr[c]','g6p[c]','lac[c]','gl[c]','gal[c]',...
-             'glc[e]','lac[e]','gl[e]','gal[e]'};
-pts_ind = zeros(length(pts_metab),1);                                                                                                                                                                                                                                                                                                                                                                                          
-for ipts = 1:length(pts_metab)
-    tf_pts = strcmpi(model_data.mets,pts_metab{ipts});
-    if any(tf_pts)
-        pts_ind(ipts) = find(tf_pts);
-    end
-end
-if any(pts_ind)
-    pts_ind = pts_ind(pts_ind~=0);
-end
-model_data.PTSind = pts_ind;
+% pts_metab = {'pep[c]','pyr[c]','g6p[c]','lac[c]','gl[c]','gal[c]',...
+%              'glc[e]','lac[e]','gl[e]','gal[e]'};
+% pts_ind = zeros(length(pts_metab),1);                                                                                                                                                                                                                                                                                                                                                                                          
+% for ipts = 1:length(pts_metab)
+%     tf_pts = strcmpi(model_data.mets,pts_metab{ipts});
+%     if any(tf_pts)
+%         pts_ind(ipts) = find(tf_pts);
+%     end
+% end
+% if any(pts_ind)
+%     pts_ind = pts_ind(pts_ind~=0);
+% end
+% model_data.PTSind = pts_ind;
 
 % Reading in the concentration for each metabolite
 metabname = C{19}(~cellfun('isempty',C{19}));%Metabolite Name
