@@ -13,6 +13,9 @@ newmodel = model;
 newpvec = pvec;
 newmc = mc;
 
+% remove some fields for appearance
+newmodel = rmfield(newmodel,{'next_metab','nint_metab'});
+
 % only keep rxns in rxnid
 if ~isempty(rxnid)
     rmvlst = model.rxns(setdiff(1:length(model.rxns),rxnid));
@@ -96,6 +99,13 @@ elseif ~isempty(newpvec)
                      newpvec.KIihb(cnstmet,:)];
 end
 
+if isfield(newmodel,'enzs')
+    newmodel.enzs = newmodel.enzs;
+end
+if isfield(newmodel,'rxns')
+    newmodel.rxns = newmodel.rxns;
+end
+
 if isfield(newpvec,'Vmax')
     newpvec.Vmax = newpvec.Vmax;
 end
@@ -111,15 +121,14 @@ end
 if isfield(newpvec,'feasible')
     newpvec.feasible = newpvec.feasible;
 end
-
-if isfield(newmodel,'enzs')
-    newmodel.enzs = newmodel.enzs;
-end
-if isfield(newmodel,'rxns')
-    newmodel.rxns = newmodel.rxns;
+if isfield(newmodel,'rev')
+    newmodel.rev = newmodel.rev;
 end
 if isfield(newmodel,'Vss')
     newmodel.Vss = newmodel.Vss;
+end
+if isfield(newmodel,'Keq')
+    newmodel.Keq = newmodel.Keq;
 end
 if isfield(newmodel,'delSGr')
     newmodel.delSGr = newmodel.delSGr;
@@ -130,12 +139,7 @@ end
 if isfield(newmodel,'delGub')
     newmodel.delGub = newmodel.delGub;
 end
-if isfield(newmodel,'Keq')
-    newmodel.Keq = newmodel.Keq;
-end
-if isfield(newmodel,'rev')
-    newmodel.rev = newmodel.rev;
-end
+
 if isfield(newmodel,'Vact_ind')
     newmodel.Vact_ind = newmodel.Vact_ind;
 end
@@ -175,6 +179,14 @@ end
 if isfield(newmodel,'rxn_excep')
     newmodel.rxn_excep = newmodel.rxn_excep;
 end
+
+% calculate number of internal/external mets within varmets
+exter_mind = ~cellfun('isempty',regexp(newmodel.mets(1:length(find(varmet))),'\w(?:\[e\])$'));
+inter_mind = ~exter_mind;
+newmodel.nextmet = length(find(exter_mind));
+newmodel.nintmet = length(find(inter_mind));
+newmodel.Mext = find(exter_mind);
+newmodel.Mint = find(inter_mind);
 
 if ~isempty(mc)
     newmc = [newmc(varmet,:);...
