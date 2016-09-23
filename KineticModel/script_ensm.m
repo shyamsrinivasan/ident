@@ -5,8 +5,8 @@ addpath(genpath('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModel
 % cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy1C.txt';
 % rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy2.txt';
 % cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy2C.txt';
-rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy9.txt';
-cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy9C.txt';
+rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy10.txt';
+cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\data\gtoy10C.txt';
 % create model structure
 [model,parameter,variable,nrxn,nmetab] = modelgen(rxfname);
 
@@ -29,7 +29,7 @@ essrxn = {'ACex','exH','exH2O'};
 model = FBAfluxes(model,'pfba',essrxn,Vupstruct,...
                      find(strcmpi(model.rxns,'G6Pt2r')));
 
-rxnadd = {};
+rxnadd = {'ACKr'};
 
 % dilution rate in model in h-1;
 model.D = 0.8;
@@ -50,7 +50,7 @@ if isempty(mc)
 end
 
 % get parameter estimates - estimate kinetic parameters in an ensemble
-rxnadd = {};
+rxnadd = {'ACKr'};
 rxnexcep = {'Ht2r'};
 
 % FBAmodel.bmrxn = [];
@@ -84,8 +84,8 @@ else
 end
 
 % time course plots
-AllTimeCoursePlots(outsol,newmodel,{'pyr[c]','pep[c]','fdp[c]','ac[c]','ac[e]','biomass[e]'},...
-                                   {'ACt2r','FBP','ICL','MALS','G6Pt2r','ACex'});
+AllTimeCoursePlots(outsol,newmodel,{'pyr[c]','pep[c]','fdp[c]','actp[c]','ac[e]','biomass[e]'},...
+                                   {'ACKr','FBP','ICL','MALS','G6Pt2r','ACex'});
 
 % perturbations to steady states  
 [outsol,allxss,allfss] = perturbation(allxeq,newmodel,newpvec,solverP,[1:3,5:14],10);
