@@ -14,3 +14,4 @@ for irxn = 1:length(rxn_excep)
 end
 
 Vind = setdiff(Vind,excep_ind);
+Vind = ToColumnVector(Vind);
