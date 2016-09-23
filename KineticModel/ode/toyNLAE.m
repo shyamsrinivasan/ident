@@ -23,6 +23,7 @@ else
 end
 % dM = cons(dM,allmc);
 
+% flux in mmole/Lcw/h for Vind and Vex and mmole/Lc/h for VFex
 [flux,fluxbm] = iflux(model,pvec,allmc);
 
 % Cytosolic
@@ -30,8 +31,7 @@ dM(Mint) = (1./imc(Mint)).*(model.S(Mint,:)*(flux)+fluxbm(Mint));
 
 % Extracellular
 % change flux values for flux(Vind) and flux(Vex) mmole/Lcw/h -> mmole/Lc/h
-flux(Vind) = flux(Vind).*mc(biomass)./rho;
-flux(Vex) = flux(Vex).*mc(biomass)./rho;
+flux([Vind Vex]) = changefluxunits(flux([Vind Vex]),allmc,model,1);
 
 dM(Mext) = (1./imc(Mext)).*(model.S(Mext,:)*(flux));
 
