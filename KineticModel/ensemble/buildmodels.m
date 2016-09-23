@@ -1,19 +1,19 @@
-function newK = buildmodels(model,pvec,mc,rxn_add,rxn_excep,nmodels)
+function newK = buildmodels(model,pvec,mc,rxnadd,rxnexcep,nmodels)
 if nargin<6
     nmodels = 1;
 end
 if nargin < 5
-    rxn_excep = {};
+    rxnexcep = {};
 end
 if nargin<4
-    rxn_add = {};
+    rxnadd = {};
 end
 
-model.rxn_add = rxn_add;
-model.rxn_excep = rxn_excep;
+model.rxn_add = rxnadd;
+model.rxn_excep = rxnexcep;
 
 % reactions to consider for kinetics other than Vind
-Vind = addToVind(model.rxns,model.Vind,rxn_add,rxn_excep);
+Vind = addToVind(model.rxns,model.Vind,rxnadd,rxnexcep);
 
 % ETC rxns list
 etcrxns = {'ATPS4r','NADH16','CYTBD','SUCDi','FRD7'};
@@ -38,7 +38,7 @@ newK = samplesigma(model,mc,pvec.K,pvec.kfwd,pvec.krev,Vind,nmodels);
 
 % other reactions 
 % transport reactions x[e] <==> x[c]
-new_excep = union(rxn_excep,model.rxns(Vind));
+new_excep = union(rxnexcep,model.rxns(Vind));
 Vex = addToVind(model.rxns,model.Vex,[],new_excep);
 
 % sample nmodel Kms for all reactions in Vex
