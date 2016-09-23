@@ -32,7 +32,7 @@ model = FBAfluxes(model,'pfba',essrxn,Vupstruct,...
 rxnadd = {};
 
 % dilution rate in model in h-1;
-model.D = 0.1;
+model.D = 0.8;
 
 % metabolites that do not affect thermodynamic equilibrium  
 he = find(strcmpi(model.mets,'h[e]'));
