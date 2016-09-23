@@ -28,7 +28,7 @@ end
 %% %find all exchnage and transport reactions in newmodel
 [Vind,VFex,Vex,bmrxn] = fluxIndex(newmodel);
 %reactions to consider for kinetics other than Vind
-Vind = addToVind(newmodel,Vind,rxn_add);
+Vind = addToVind(newmodel.rxns,Vind,rxn_add);
 % Vind = [Vind vspl find(strcmpi(newmodel.rxns,'GLCpts'))]; 
 Vex = setdiff(Vex,Vind);     
 
