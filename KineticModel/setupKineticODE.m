@@ -43,9 +43,9 @@ for im = 1:nmodels
 end
                        
 % preinitialize Vind and Vex to reduce integration overhead in iflux.m                       
-newmodel.Vind = addToVind(newmodel,newmodel.Vind,newmodel.rxn_add,newmodel.rxn_excep);
+newmodel.Vind = addToVind(newmodel.rxns,newmodel.Vind,newmodel.rxn_add,newmodel.rxn_excep);
 newmodel.rxn_excep = union(newmodel.rxn_excep,newmodel.rxns(newmodel.Vind));
-newmodel.Vex = addToVind(newmodel,newmodel.Vex,[],newmodel.rxn_excep);  
+newmodel.Vex = addToVind(newmodel.rxns,newmodel.Vex,[],newmodel.rxn_excep);  
 
 % only initialize for varmets   
 nvar = length(newmodel.mets)-length(find(cnstmet));
