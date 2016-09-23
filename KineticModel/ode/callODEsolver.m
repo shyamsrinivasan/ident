@@ -67,7 +67,15 @@ t = t0;
 % store initial values
 outsol.t(1) = t;    
 outsol.y(:,1) = initval;
-outsol.flux(:,1) = iflux(model,pvec,[initval.*model.imc;model.PM]);
+flux = iflux(model,pvec,[initval.*model.imc;model.PM]);
+% change units of flux to mmole/gDCW.h for easy comparison before storing
+flux([model.Vind model.Vex],:) = changefluxunits(flux([model.Vind model.Vex],:),...
+                                [initval.*model.imc;model.PM],...
+                                model,-2);
+flux(model.VFex,:) = changefluxunits(flux(model.VFex,:),...
+                    [initval.*model.imc;model.PM],...
+                    model,-3);                
+outsol.flux(:,1) = flux;
 
 fprintf('\nInitial time:\t\t\t %4.3g\n',t0);
 fprintf('Final time:\t\t\t\t %4.3g\n',tspan(end));
@@ -102,8 +110,15 @@ catch
     allmets = [yout'.*repmat(model.imc',1,length(t));...
                repmat(model.PM,1,length(t))];
 end
+
 % calculate time course fluxes
-outsol.flux(:,2:end) = iflux(model,pvec,allmets);
+flux = iflux(model,pvec,allmets);
+% change units of flux to mmole/gDCW.h for easy comparison before storing
+flux([model.Vind model.Vex],:) = changefluxunits(flux([model.Vind model.Vex],:),...
+                                allmets,model,-2);
+flux(model.VFex,:) = changefluxunits(flux(model.VFex,:),...
+                    allmets,model,-3);
+outsol.flux(:,2:end) = flux;
 fprintf('Flux calculation time:\t %4.3g\n',toc(tstart)-telaps);
 
 % plot solution for diagnostics
