@@ -1,8 +1,19 @@
-function [flux,vflux] = TKinetics(model,pvec,M,Vex)
+function [flux,vflux,DVX] = TKinetics(model,pvec,M,Vex,getjac)
+if nargin<5
+    getjac=0;
+end
 [~,nc] = size(M);
 S = model.S;
 nrxn = model.nt_rxn;
 rev = model.rev;
+remid = model.remid;
+Mext = model.Mext;
+rho = model.rho;
+biomass = strcmpi(model.mets,'biomass[e]');
+
+% convert units mmole/Lc -> mmole/Lcw
+M(Mext) = M(Mext).*rho/M(biomass);
+
 K = pvec.K;
 kfwd = pvec.kfwd;
 kbkw = pvec.krev;
@@ -10,16 +21,17 @@ Vmax = pvec.Vmax;
 
 vflux = zeros(nrxn,nc);
 flux = zeros(nrxn,nc);
+DVX = zeros(length(M),nrxn);
 
 % vflux = cons(vflux,M);
 % flux = cons(flux,M);
 
 % vecmc = repmat(M,1,nrxn);
 
-he = find(strcmpi(model.mets,'h[e]'));
-hc = find(strcmpi(model.mets,'h[c]'));
-% h2o = find(strcmpi(model.mets,'h2o[c]'));
-pie = strcmpi(model.mets,'pi[e]');
+% pie = strcmpi(model.mets,'pi[e]');
+% eliminate consideration for excess cofators
+% pi[c],pi[e],h[c],h[e],h2o[c]
+
 % pic = find(strcmpi(model.mets,'pi[c]'));
 % co2 = find(strcmpi(model.mets,'co2[c]'));
     
@@ -77,33 +89,55 @@ for irxn = 1:nrxn
     if ismember(irxn,Vex)
         alls = S(:,irxn);allp = S(:,irxn);
         alls(S(:,irxn)>0) = 0;allp(S(:,irxn)<0) = 0;
-        sratio = M(logical(alls),:)./K(logical(alls),irxn);
-        pratio = M(logical(allp),:)./K(logical(allp),irxn);
-        thetas = prod(sratio.^-alls(logical(alls)),1);
-        thetap = prod(pratio.^allp(logical(allp)),1);
-        fwdflx = kfwd(irxn).*thetas;
-        revflx = kbkw(irxn).*thetap;
-        % set reverse flux for irreversible reactions = 0
-        if ~rev(irxn)
-            revflx = zeros(1,length(revflx));
+        alls(remid,:) = 0;allp(remid,:) = 0;
+        if any(alls)||any(allp)
+            if nc>1
+                sratio = M(logical(alls),:)./repmat(K(logical(alls),irxn),1,nc);
+                pratio = M(logical(allp),:)./repmat(K(logical(allp),irxn),1,nc);
+                thetas = prod(sratio.^...
+                         repmat(-alls(logical(alls)),1,nc),1);
+                thetap = prod(pratio.^...
+                         repmat(allp(logical(allp)),1,nc),1);
+            else
+                sratio = M(logical(alls),:)./K(logical(alls),irxn);
+                pratio = M(logical(allp),:)./K(logical(allp),irxn);
+                thetas = prod(sratio.^-alls(logical(alls)),1);
+                thetap = prod(pratio.^allp(logical(allp)),1);
+            end
+            fwdflx = kfwd(irxn).*thetas;
+            revflx = kbkw(irxn).*thetap;
+            % set reverse flux for irreversible reactions = 0
+            if ~rev(irxn)
+                revflx = zeros(1,length(revflx));
+            end
+            % numerator of kinetics
+            nrflx = fwdflx-revflx;
+            % denominator of kinetics
+            drflx = 1+thetas+thetap;
+            % scale flux
+            vflux(irxn,:) = scale_flux(nrflx./drflx);
+
+            % fluxes for O2t and PIt2r from Vex - overwrite nrflx and drflx
+            if irxn == find(strcmpi(model.rxns,'O2t'))
+            end
+            if irxn == find(strcmpi(model.rxns,'PIt2r'))
+%                 Kapie = 0.89; % mM
+%                 vflux(irxn,:) =...
+%                 scale_flux(fwdflx./drflx.*1./(1+Kapie./M(pie,:)));
+            end
+            flux(irxn,:) = Vmax(irxn).*vflux(irxn,:); 
+
+            % get jacobian information
+            if getjac
+                DVX(:,irxn) = getTKjacobian(model,M,irxn,flux,S,rev,pratio,thetas,thetap,...
+                                            drflx,fwdflx,revflx);
+            end
         end
-        % numerator of kinetics
-        nrflx = fwdflx-revflx;
-        % denominator of kinetics
-        drflx = 1+thetas+thetap;
-        % scale flux
-        vflux(irxn,:) = scale_flux(nrflx./drflx);
-        
-        % fluxes for O2t and PIt2r from Vex - overwrite nrflx and drflx
-        if irxn == find(strcmpi(model.rxns,'O2t'))
-        end
-        if irxn == find(strcmpi(model.rxns,'PIt2r'))
-            Kapie = 0.89; % mM
-            vflux(irxn,:) =...
-            scale_flux(fwdflx./drflx.*1./(1+Kapie./M(pie,:)));
-        end
-        flux(irxn,:) = Vmax(irxn).*vflux(irxn,:); 
     end
+end
+
+if getjac
+    DVX = DVX(:,Vex);
 end
 flux = flux(Vex,:);
 vflux = vflux(Vex,:);

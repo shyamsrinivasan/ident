@@ -1,4 +1,4 @@
-function flux = iflux(model,pvec,M,flux,idx)
+function [flux,fluxbm] = iflux(model,pvec,M,flux,idx)
 [~,nc] = size(M);
 if nargin <5
     idx = [];
@@ -9,28 +9,17 @@ if nargin<4
     flux = zeros(model.nt_rxn,nc);
 %     flux = cons(flux,M);
 end
-% if isfield(model,'rxn_add');
-%     rxn_add = model.rxn_add;
-% else
-%     rxn_add = {};
-% end
-% if isfield(model,'rxn_excep')
-%     rxn_excep = model.rxn_excep;
-% else
-%     rxn_excep = {};
-% end
 
+fluxbm = zeros(size(M,1),nc);
 h2o = strcmpi(model.mets,'h2o[c]');
 
 S = model.S;
 Vind = model.Vind;
 Vex = model.Vex;
-% other fixed exchaged fluxes
-VFex = model.VFex;
-
-% Vind = addToVind(model,model.Vind,rxn_add,rxn_excep);
-% rxn_excep = union(rxn_excep,model.rxns(Vind));
-% Vex = addToVind(model,model.Vex,[],rxn_excep);
+VFex = model.VFex; % other exchage fluxes
+if isfield(model,'bmrxn')
+    bmrxn = model.bmrxn;
+end
 
 %carbon uptake fluxes
 % [flux,~,vcup] = CarbonKinetics(model,pvec,mc,flux);
@@ -43,12 +32,15 @@ finid = []; % only when idx is non empty
 
 if isempty(idx)
     if ~isempty(Vind)
+        % flux in mmole/Lcw/s
         flux(Vind,:) = CKinetics(model,pvec,M,Vind);
     end
     if ~isempty(Vex)
+        % flux in mmole/Lcw/s
         flux(Vex,:) = TKinetics(model,pvec,M,Vex);
     end
     if ~isempty(VFex)
+        % flux in mmole/Lc/s
         flux(VFex,:) = EKinetics(model,pvec,M,VFex);
     end
     % atp maintanance    
@@ -60,6 +52,8 @@ if isempty(idx)
     end
 
     % biomass
+    fluxbm = BMKinetics(model,pvec,M,bmrxn);
+    flux(bmrxn,:) = 1.0;
         %     if mc(strcmpi(model.mets,'atp[c]'))>0 &&...
         %        mc(strcmpi(model.mets,'h2o[c]'))>0
         %         flux(strcmpi(model.rxns,'atpm')) = 8.39;
@@ -82,6 +76,7 @@ else
     Vin_idx = idx(ismember(idx,Vind));
     idx = setdiff(idx,Vin_idx);
     if ~isempty(Vin_idx)
+        % flux in mmole/Lcw/s
         idflux(Vin_idx,:) = CKinetics(model,pvec,M,Vin_idx);
         finid = [finid Vin_idx]; 
     end
@@ -90,6 +85,7 @@ else
     Vex_idx = idx(ismember(idx,Vex));
     idx = setdiff(idx,Vex_idx);
     if ~isempty(Vex_idx)
+        % flux in mmole/Lcw/s
         idflux(Vex_idx,:) = TKinetics(model,pvec,M,Vex_idx);
         finid = [finid Vex_idx]; 
     end
@@ -98,7 +94,8 @@ else
     VFex_idx = idx(ismember(idx,VFex));
     idx = setdiff(idx,VFex_idx);    
     if ~isempty(VFex_idx)
-        idflux(VFex_idx,:) = TKinetics(model,pvec,M,VFex_idx);
+        % flux in mmole/Lc/s
+        idflux(VFex_idx,:) = EKinetics(model,pvec,M,VFex_idx);
         finid = [finid VFex_idx]; 
     end
     
@@ -139,8 +136,9 @@ if ~isempty(finid)
     flux = idflux(finid);
 end
 
-% time factor for fluxes - conversion between seconds <-> hours
+% time factor for fluxes - conversion between seconds -> hours
 flux = flux.*3600;
+fluxbm = fluxbm.*3600;
 
 % if flux(strcmpi(model.rxns,'atpm'))>=1e-5 &&...
 %     all(mc(logical(model.S(:,model.bmrxn)>0))>0)

@@ -15,7 +15,7 @@ bounds.mets = [bounds.mets;bounds.mets_kn];
 delGr = getdelGr(bounds,x);
 
 vCorrectFlag = zeros(length(bounds.rxns),size(x,2));
-vCorrectFlag(sign(delGr.*repmat(bounds.Vss,1,size(x,2)))<0) = 1;
+vCorrectFlag(sign(delGr.*repmat(bounds.Vss,1,size(x,2)))<=0) = 1;
 
 assignFlag = zeros(length(model.mets),1);
 for im = 1:length(bounds.mets)

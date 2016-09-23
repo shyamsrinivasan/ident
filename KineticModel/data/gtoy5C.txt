@@ -1,0 +1,6 @@
+Metab	Mc (mM)
+ac[e]	10
+pyr[e]	0.00E+00
+g6p[e]	0
+h[e]	1.00E-04
+h[c]	1.00E-04

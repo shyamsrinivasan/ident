@@ -13,6 +13,9 @@ newmodel = model;
 newpvec = pvec;
 newmc = mc;
 
+% remove some fields for appearance
+newmodel = rmfield(newmodel,{'next_metab','nint_metab'});
+
 % only keep rxns in rxnid
 if ~isempty(rxnid)
     rmvlst = model.rxns(setdiff(1:length(model.rxns),rxnid));
@@ -40,6 +43,14 @@ newmodel.mets = [newmodel.mets(varmet,1);...
                  newmodel.mets(cnstmet,1)];   
 newmodel.S = [newmodel.S(varmet,:);newmodel.S(cnstmet,:)];
 newmodel.SI = [newmodel.SI(varmet,:);newmodel.SI(cnstmet,:)];
+if isfield(newmodel,'remid')
+    if ~isempty(newmodel.remid)
+        oldid = model.mets(newmodel.remid);
+        newid = cellfun(@(x)strcmpi(newmodel.mets,x),oldid,'UniformOutput',false);
+        newid = cellfun(@(x)find(x),newid,'UniformOutput',false);
+        newmodel.remid = cell2mat(newid);
+    end
+end
 
 if isfield(newmodel,'CMPS')
     newmodel.CMPS = [newmodel.CMPS(varmet,:);...
@@ -56,16 +67,20 @@ if isfield(newmodel,'Klb')
     newmodel.Klb = [newmodel.Klb(varmet,:);...
                     newmodel.Klb(cnstmet,:)];
 elseif ~isempty(newpvec)
-    newpvec.Klb = [newpvec.Klb(varmet,:);...
-                   newpvec.Klb(cnstmet,:)];
+    if isfield(newpvec,'Klb')
+        newpvec.Klb = [newpvec.Klb(varmet,:);...
+                       newpvec.Klb(cnstmet,:)];
+    end
 end
 
 if isfield(newmodel,'Kub')
     newmodel.Kub = [newmodel.Kub(varmet,:);...
                     newmodel.Kub(cnstmet,:)];             
 elseif ~isempty(newpvec)
-    newpvec.Kub = [newpvec.Kub(varmet,:);...
-                   newpvec.Kub(cnstmet,:)];
+    if isfield(newpvec,'Kub')
+        newpvec.Kub = [newpvec.Kub(varmet,:);...
+                       newpvec.Kub(cnstmet,:)];
+    end
 end
 
 if isfield(newmodel,'KIact')
@@ -84,6 +99,13 @@ elseif ~isempty(newpvec)
                      newpvec.KIihb(cnstmet,:)];
 end
 
+if isfield(newmodel,'enzs')
+    newmodel.enzs = newmodel.enzs;
+end
+if isfield(newmodel,'rxns')
+    newmodel.rxns = newmodel.rxns;
+end
+
 if isfield(newpvec,'Vmax')
     newpvec.Vmax = newpvec.Vmax;
 end
@@ -99,15 +121,14 @@ end
 if isfield(newpvec,'feasible')
     newpvec.feasible = newpvec.feasible;
 end
-
-if isfield(newmodel,'enzs')
-    newmodel.enzs = newmodel.enzs;
-end
-if isfield(newmodel,'rxns')
-    newmodel.rxns = newmodel.rxns;
+if isfield(newmodel,'rev')
+    newmodel.rev = newmodel.rev;
 end
 if isfield(newmodel,'Vss')
     newmodel.Vss = newmodel.Vss;
+end
+if isfield(newmodel,'Keq')
+    newmodel.Keq = newmodel.Keq;
 end
 if isfield(newmodel,'delSGr')
     newmodel.delSGr = newmodel.delSGr;
@@ -118,12 +139,7 @@ end
 if isfield(newmodel,'delGub')
     newmodel.delGub = newmodel.delGub;
 end
-if isfield(newmodel,'Keq')
-    newmodel.Keq = newmodel.Keq;
-end
-if isfield(newmodel,'rev')
-    newmodel.rev = newmodel.rev;
-end
+
 if isfield(newmodel,'Vact_ind')
     newmodel.Vact_ind = newmodel.Vact_ind;
 end
@@ -163,6 +179,15 @@ end
 if isfield(newmodel,'rxn_excep')
     newmodel.rxn_excep = newmodel.rxn_excep;
 end
+
+% calculate number of internal/external mets within varmets
+exter_mind = ~cellfun('isempty',regexp(newmodel.mets(1:length(find(varmet))),'\w(?:\[e\])$'));
+inter_mind = ~exter_mind;
+newmodel.nextmet = length(find(exter_mind));
+newmodel.nintmet = length(find(inter_mind));
+newmodel.Mext = find(exter_mind);
+newmodel.Mext(ismember(newmodel.Mext,find(strcmpi(newmodel.mets,'biomass[e]')))) = [];
+newmodel.Mint = find(inter_mind);
 
 if ~isempty(mc)
     newmc = [newmc(varmet,:);...

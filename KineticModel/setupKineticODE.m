@@ -1,5 +1,5 @@
 function [newmodel,newpvec,Nimc,solverP,flux,dXdt,jacobian] =...
-        setupKineticODE(model,ensb,mc,essrxn,Vupstruct,tmax)
+        setupKineticODE(model,pvec,mc,essrxn,Vupstruct,tmax)
 % setup kinetic model for integration
 if nargin<6
     tmax = 500;
@@ -16,16 +16,8 @@ if nargin < 3
 end
 if nargin<2
     error('getiest:NoA','No parameter vector');
-else    
-    nmodels = size(ensb,1);
-    if nmodels>1
-        pvec(nmodels) = struct();
-        for im = 1:nmodels
-            pvec = copystruct(ensb{im,2},pvec,im);           
-        end
-    else
-        pvec = ensb{1,2};
-    end
+else
+    nmodels = size(pvec,2);
 end
 
 % initialize solver properties
@@ -36,16 +28,24 @@ end
 bkupmodel = model;
 newpvec(nmodels) = struct();
 for im = 1:nmodels
-    [model,outpvec,mc] = addremoveMets(bkupmodel,{'h2o[c]','h2o[e]'},pvec(im),mc);
-    [newmodel,newoutpvec,newmc,cnstmet] =...
-    remove_eMets(model,outpvec,mc,[model.Vind model.Vex],{'ac[e]','bm[e]','pep[e]'});
+    [model,outpvec,newmc] = addremoveMets(bkupmodel,{'h2o[c]','h2o[e]'},pvec(im),mc);
+    if ~isempty(model.bmrxn)
+        [newmodel,newoutpvec,nnewmc,cnstmet] =...
+        remove_eMets(model,outpvec,newmc,[model.Vind model.Vex model.bmrxn model.VFex],...
+        {'h[e]','h[c]'});
+    % 'ac[e]','pyr[e]','g6p[e]','succ[e]','mal[e]','akg[e]','for[e]','fum[e]',
+    else
+        [newmodel,newoutpvec,nnewmc,cnstmet] =...
+        remove_eMets(model,outpvec,newmc,[model.Vind model.Vex model.bmrxn model.VFex],...
+        {'h[e]','h[c]'});
+    end
     newpvec = copystruct(newoutpvec,newpvec,im);     
 end
                        
 % preinitialize Vind and Vex to reduce integration overhead in iflux.m                       
-newmodel.Vind = addToVind(newmodel,newmodel.Vind,newmodel.rxn_add,newmodel.rxn_excep);
+newmodel.Vind = addToVind(newmodel.rxns,newmodel.Vind,newmodel.rxn_add,newmodel.rxn_excep);
 newmodel.rxn_excep = union(newmodel.rxn_excep,newmodel.rxns(newmodel.Vind));
-newmodel.Vex = addToVind(newmodel,newmodel.Vex,[],newmodel.rxn_excep);  
+newmodel.Vex = addToVind(newmodel.rxns,newmodel.Vex,[],newmodel.rxn_excep);  
 
 % only initialize for varmets   
 nvar = length(newmodel.mets)-length(find(cnstmet));
@@ -54,8 +54,8 @@ imc(imc==0) = 1;
 
 % separate variables from constants and assign constants to a field in
 % newmodel
-Nimc = newmc(1:nvar);
-PM = newmc(nvar+1:end);
+Nimc = nnewmc(1:nvar);
+PM = nnewmc(nvar+1:end);
 Nimc(imc==0) = 0;
 newmodel.imc = imc;
 newmodel.imc(newmodel.imc==0) = 1;
@@ -63,11 +63,12 @@ newmodel.PM = PM;
 
 % system check
 flux = zeros(newmodel.nt_rxn,nmodels);
+fluxbm = zeros(length(newmodel.mets),nmodels);
 dXdt = zeros(nvar,nmodels);
 jacobian = struct();
 for im = 1:nmodels
     % calculate initial flux
-    flux(:,im) = iflux(newmodel,newpvec(im),[Nimc.*imc;PM]);
+    [flux(:,im),fluxbm(:,im)] = iflux(newmodel,newpvec(im),[Nimc.*imc;PM]);
     % toy model
     dXdt(:,im) = ToyODEmodel(0,Nimc,[],newmodel,newpvec(im));
     % get jacobian and eigen values and eigne vectors

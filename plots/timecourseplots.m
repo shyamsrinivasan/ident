@@ -28,6 +28,7 @@ switch(type)
         if iscell(name)
             name = cellfun(@(x)strcmpi(model.mets,x),name,'UniformOutput',false);
             name = cellfun(@(x)find(x),name,'UniformOutput',false);
+            name = name(~cellfun('isempty',name));
             yid = cell2mat(name);
         else
             yid = name;
@@ -41,6 +42,7 @@ switch(type)
         if iscell(name)
             name = cellfun(@(x)strcmpi(model.rxns,x),name,'UniformOutput',false);
             name = cellfun(@(x)find(x),name,'UniformOutput',false);
+            name = name(~cellfun('isempty',name));
             yid = cell2mat(name);
         else
             yid = name;

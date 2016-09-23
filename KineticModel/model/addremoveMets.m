@@ -18,6 +18,8 @@ if ~isempty(rmvmet)
     list = setdiff(model.mets,rmvmet);
     list = cellfun(@(x)strcmpi(x,model.mets),list,'UniformOutput',false);
     list = cell2mat(cellfun(@(x)find(x),list,'UniformOutput',false));
+else
+    list = [];
 end
 
 newmodel.S = newmodel.S(list,:);
@@ -39,14 +41,32 @@ end
 if ~isempty(mc)
     newmc = newmc(list);
 end
+if isfield(newmodel,'remid')
+    if ~isempty(newmodel.remid)
+        oldid = model.mets(newmodel.remid);
+        newid = cellfun(@(x)strcmpi(newmodel.mets,x),oldid,'UniformOutput',false);
+        newid = cellfun(@(x)find(x),newid,'UniformOutput',false);
+        newmodel.remid = cell2mat(newid);
+    end
+end
 
 if ~isempty(rmvmet)
     if ~isempty(newpvec)
-        newpvec.K = newpvec.K(list,:);
-        newpvec.Klb = newpvec.Klb(list,:);
-        newpvec.Kub = newpvec.Kub(list,:);
-        newpvec.KIact = newpvec.KIact(list,:);
-        newpvec.KIihb = newpvec.KIihb(list,:);        
+        if isfield(newpvec,'K')
+            newpvec.K = newpvec.K(list,:);
+        end
+        if isfield(newpvec,'Klb')
+            newpvec.Klb = newpvec.Klb(list,:);
+        end
+        if isfield(newpvec,'Kub')
+            newpvec.Kub = newpvec.Kub(list,:);
+        end
+        if isfield(newpvec,'KIact')
+            newpvec.KIact = newpvec.KIact(list,:);
+        end
+        if isfield(newpvec,'KIihb')
+            newpvec.KIihb = newpvec.KIihb(list,:);
+        end
     end
 end
 
@@ -83,11 +103,21 @@ end
 
 % remove corresponding columns in pvec
 if ~isempty(newpvec)
-    newpvec.K = newpvec.K(:,logical(sum(logical(newmodel.S),1)));
-    newpvec.Klb = newpvec.Klb(:,logical(sum(logical(newmodel.S),1)));
-    newpvec.Kub = newpvec.Kub(:,logical(sum(logical(newmodel.S),1)));
-    newpvec.KIact = newpvec.KIact(:,logical(sum(logical(newmodel.S),1)));
-    newpvec.KIihb = newpvec.KIihb(:,logical(sum(logical(newmodel.S),1))); 
+    if isfield(newpvec,'K')
+        newpvec.K = newpvec.K(:,logical(sum(logical(newmodel.S),1)));
+    end
+    if isfield(newpvec,'Klb')
+        newpvec.Klb = newpvec.Klb(:,logical(sum(logical(newmodel.S),1)));
+    end
+    if isfield(newpvec,'Kub')
+        newpvec.Kub = newpvec.Kub(:,logical(sum(logical(newmodel.S),1)));
+    end
+    if isfield(newpvec,'KIact')
+        newpvec.KIact = newpvec.KIact(:,logical(sum(logical(newmodel.S),1)));
+    end
+    if isfield(newpvec,'KIihb')
+        newpvec.KIihb = newpvec.KIihb(:,logical(sum(logical(newmodel.S),1))); 
+    end
     newpvec.Vmax = newpvec.Vmax(logical(sum(logical(newmodel.S),1)));
     newpvec.kfwd = newpvec.kfwd(logical(sum(logical(newmodel.S),1)));
     newpvec.krev = newpvec.krev(logical(sum(logical(newmodel.S),1)));

@@ -9,11 +9,14 @@ Vex = model.Vex;
 
 allmet = [x;model.PM];
 
-DVX(:,Vind) = CKjacobian(model,pvec,allmet,Vind);
-DVX(:,Vex) = TKjacobian(model,pvec,allmet,Vex);
+
+[~,~,DVX(:,Vind)] = CKinetics(model,pvec,allmet,Vind,1);
+[~,~,DVX(:,Vex)] = TKinetics(model,pvec,allmet,Vex,1);
 
 DVX(allmet==0,:) = 0;
 DVX(allmet~=0,:) = DVX(allmet~=0,:)./repmat(allmet(allmet~=0),1,nrxn);
+% remove mets in remid from jacobian - they do not control flux
+% DVX(model.remid,:) = 0;
 S = model.S;
 
 % complete jacobian - build in column loops rowwise
@@ -28,9 +31,10 @@ Jxact = sparse(S*DVX');
 % nint = model.nint_metab;
 % Jint = Jxact(1:nint,1:nint);
 
-% get jacobian using finite difference
-rhsfun = @(irow,mc)Svrow(irow,mc,model,pvec);
-Jnum = model_Jacobian(model,allmet,rhsfun);
+% get jacobian using finite difference - this works and produces same
+% result as analytical jacobians
+% rhsfun = @(irow,mc)Svrow(irow,mc,model,pvec);
+% Jnum = model_Jacobian(model,allmet,rhsfun);
 
 % use ADMAT to calculate jacobians - see issue #18 on github
 % admatfun = @(x)toyNLAE(x,model,pvec);

@@ -1,44 +1,45 @@
-function flux = EKinetics(model,pvec,M,VFex)
+function [flux,vflux] = EKinetics(model,pvec,M,VFex)
 [~,nc] = size(M);
-flux = zeros(model.nt_rxn,nc);
-% flux = cons(flux,M);
+S = model.S;
+nrxn = model.nt_rxn;
+% rev = model.rev;
+remid = model.remid;
+D = model.D;
 
-kfwd = pvec.kfwd;
-% kcatbkw = pvec.kcat_bkw;
-% flux = zeros(model.nt_rxn,1);
-% model.Vuptake = zeros(model.nt_rxn,1);
-% model.Vuptake(VFex) = -model.Vss(VFex);
+% K = pvec.K;
+% kfwd = pvec.kfwd;
+% kbkw = pvec.krev;
+Vmax = pvec.Vmax;
+
+vflux = zeros(nrxn,nc);
+flux = zeros(nrxn,nc);
+% DVX = zeros(length(M),nrxn);
+
 if isfield(model,'Vuptake')
     Vuptake = model.Vuptake;
 end
 
-vh = [find(strcmpi(model.rxns,'exH'));...
-      find(strcmpi(model.rxns,'exH2O'));...
-      find(strcmpi(model.rxns,'exPI'))];
-
-for irxn = 1:length(VFex)
-%     sbid = logical(model.S(:,VFex(irxn))<0);
-%     if ismember(VFex(irxn),vh)
-%         ind = model.Vex(logical(model.S(sbid,model.Vex)));    
-%         net_out = -sign(model.S(sbid,VFex(irxn)))*...
-%                   (model.S(sbid,ind)*flux(ind));
-%               -model.S(sbid,VFex(irxn))*Vuptake(VFex(irxn)));
-        flux(VFex(irxn),:) = zeros(1,nc);%scale_flux(net_out);%-Vuptake(VFex(irxn)));
-%         flux(VFex(irxn)) = scale_flux(flux(VFex(irxn)));
-%     else
-        
-%     end
-    
-    
-%     flux(VFex(irxn)) = scale_flux(kcatfwd(VFex(irxn))*mc(sbid)-...
-%                        Vuptake(VFex(irxn)));    
-%     vf = model.S(sbid,:);
-%     vdiff = setdiff(find(vf),VFex(irxn));
-%     if ~model.Vuptake(VFex(irxn))
-%         flux(VFex(irxn)) = model.S(sbid,vdiff)*flux(vdiff);
-%         %mc(sbid);
-%     else
-%         flux(VFex(irxn)) = -model.Vuptake(VFex(irxn));
-%     end
+for irxn = 1:nrxn
+    if ismember(irxn,VFex)
+        alls = S(:,irxn);alls(S(:,irxn)>0) = 0;alls(remid,:) = 0;
+        if any(alls)
+            sratio = M(logical(alls),:);
+            thetas = sratio;
+            fwdflx = D.*thetas; % mmole/Lc/h
+            revflx = zeros(1,nc);
+            if any(Vuptake(irxn))
+                % assume feeds of Vuptake mmole/Lc
+                revflx = D.*0.5; % repmat(Vuptake(irxn),1,nc); % mmole/Lc/h
+%                 revflx = repmat(Vuptake(irxn),1,nc);
+            end        
+            nrflx = fwdflx-revflx;
+            drflx = ones(1,nc);
+            vflux(irxn,:) = scale_flux(nrflx./drflx);
+            flux(irxn,:) = Vmax(irxn).*vflux(irxn,:);
+            % convert mmole/Lc/h -> mmole/Lc/s
+            flux(irxn,:) = flux(irxn,:)./repmat(3600,1,nc);
+        end
+    end
 end
-flux = flux(VFex);
+flux = flux(VFex,:);
+vflux = vflux(VFex,:);

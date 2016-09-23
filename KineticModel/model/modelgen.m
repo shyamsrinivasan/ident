@@ -353,8 +353,12 @@ model_data.rxns = model_data.enzs;
 newmodel.S = [newmodel.S,sparse(mS,length(other_ind))];
 newmodel.SI = [newmodel.SI,sparse(mS,length(other_ind))];
 newmodel.K = [newmodel.K,sparse(mS,length(other_ind))];
-newmodel.Klb = [newmodel.Klb,sparse(mS,length(other_ind))];
-newmodel.Kub = [newmodel.Kub,sparse(mS,length(other_ind))];
+if isfield(newmodel,'Klb')
+    newmodel.Klb = [newmodel.Klb,sparse(mS,length(other_ind))];
+end
+if isfield(newmodel,'Kub')
+    newmodel.Kub = [newmodel.Kub,sparse(mS,length(other_ind))];
+end
 newmodel.KIact = [newmodel.KIact,sparse(mS,length(other_ind))];
 newmodel.KIihb = [newmodel.KIihb,sparse(mS,length(other_ind))];
 newVss = [model.Vss;zeros(length(other_ind),1)];
@@ -431,6 +435,8 @@ model_data.n_rxn = length(model_data.Vind);
 model_data.nt_metab = nt_metab;
 model_data.next_metab = newmodel.next_metab;
 model_data.nint_metab = newmodel.nint_metab;
+model_data.Mext = newmodel.Mext;
+model_data.Mint = newmodel.Mint;
 
 parameter.K = newmodel.K;
 parameter.Klb = newmodel.Klb;
@@ -445,19 +451,19 @@ parameter.krev = newkcbkw;
 %Separate PTS mets from other mets
 %At least get indices corresponding to PTS mets
 %PEP,PYR,G6P,GLCxt,ACxt,RIBxt,GLXxt, etc
-pts_metab = {'pep[c]','pyr[c]','g6p[c]','lac[c]','gl[c]','gal[c]',...
-             'glc[e]','lac[e]','gl[e]','gal[e]'};
-pts_ind = zeros(length(pts_metab),1);                                                                                                                                                                                                                                                                                                                                                                                          
-for ipts = 1:length(pts_metab)
-    tf_pts = strcmpi(model_data.mets,pts_metab{ipts});
-    if any(tf_pts)
-        pts_ind(ipts) = find(tf_pts);
-    end
-end
-if any(pts_ind)
-    pts_ind = pts_ind(pts_ind~=0);
-end
-model_data.PTSind = pts_ind;
+% pts_metab = {'pep[c]','pyr[c]','g6p[c]','lac[c]','gl[c]','gal[c]',...
+%              'glc[e]','lac[e]','gl[e]','gal[e]'};
+% pts_ind = zeros(length(pts_metab),1);                                                                                                                                                                                                                                                                                                                                                                                          
+% for ipts = 1:length(pts_metab)
+%     tf_pts = strcmpi(model_data.mets,pts_metab{ipts});
+%     if any(tf_pts)
+%         pts_ind(ipts) = find(tf_pts);
+%     end
+% end
+% if any(pts_ind)
+%     pts_ind = pts_ind(pts_ind~=0);
+% end
+% model_data.PTSind = pts_ind;
 
 % Reading in the concentration for each metabolite
 metabname = C{19}(~cellfun('isempty',C{19}));%Metabolite Name
@@ -503,14 +509,19 @@ variable = struct();
 % variable.MC = model.MC;
 variable.EC = model.EC;
 
-%Add Molecular weight individually
-model_data.MolWt = zeros(nt_metab,1);
+% Add Molecular weight individually, g/mole
+model_data.MolWt = ones(nt_metab,1);
 model_data.MolWt(strcmpi('g3p[c]',model_data.mets)) = 172.074;
 model_data.MolWt(strcmpi('pyr[c]',model_data.mets)) = 88.06;
 model_data.MolWt(strcmpi('pep[c]',model_data.mets)) = 168.042;
 model_data.MolWt(strcmpi('f6p[c]',model_data.mets)) = 259.81;
 model_data.MolWt(strcmpi('g6p[c]',model_data.mets)) = 260.136;
+model_data.MolWt(strcmpi('e4p[c]',model_data.mets)) = 200.084;
+model_data.MolWt(strcmpi('r5p[c]',model_data.mets)) = 230.110;
 model_data.MolWt(strcmpi('B[c]',model_data.mets)) = 200;
+
+% assign cell density gDCW/Lcw - gDCW per unit litre cell volume
+model_data.rho = 564;
 
 fprintf('Model generation complete\n\n');
 % nested functions

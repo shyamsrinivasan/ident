@@ -24,6 +24,22 @@ newmodel.S = [model.S(inter_mind,:);model.S(exter_mind,:);model.S(bm_ind,:)];
 newmodel.SI = [model.SI(inter_mind,:);model.SI(exter_mind,:);model.SI(bm_ind,:)];
 newmodel.next_metab = length(find(exter_mind));
 newmodel.nint_metab = length(find(inter_mind));
+
+% new internal and external mets
+newmodel.Mint = 1:length(find(inter_mind));
+newmodel.Mext = length(find(inter_mind))+1:length(find(inter_mind))+length(find(exter_mind));
+newmodel.Mext(ismember(newmodel.Mext,find(strcmpi(newmodel.mets,'biomass[e]')))) = [];
+
+if isfield(model,'remid')
+    if ~isempty(model.remid)
+        oldmets = model.mets(model.remid);
+        newmetid = cellfun(@(x)strcmpi(newmodel.mets,x),oldmets,'UniformOutput',false);
+        newmetid = cellfun(@(x)find(x),newmetid,'UniformOutput',false);
+        newmodel.remid = cell2mat(newmetid);
+    else
+        newmodel.remid = [];
+    end
+end
 if isfield(model,'CMPS')
     newmodel.CMPS = [model.CMPS(inter_mind,:);...
                      model.CMPS(exter_mind,:);...
@@ -42,19 +58,25 @@ if isfield(model,'Klb')
                     model.Klb(exter_mind,:);...
                     model.Klb(bm_ind,:)];
 elseif ~isempty(pvec)
-    newpvec.Klb = [pvec.Klb(inter_mind,:);...
-                   pvec.Klb(exter_mind,:);...
-                   pvec.Klb(bm_ind,:)];
+    if isfield(pvec,'Klb')
+        newpvec.Klb = [pvec.Klb(inter_mind,:);...
+                       pvec.Klb(exter_mind,:);...
+                       pvec.Klb(bm_ind,:)];
+    end
 end
 
 if isfield(model,'Kub')
-    newmodel.Kub = [model.Kub(inter_mind,:);...
-                    model.Kub(exter_mind,:);...
-                    model.Kub(bm_ind,:)];             
+    if isfield(model,'Kub')
+        newmodel.Kub = [model.Kub(inter_mind,:);...
+                        model.Kub(exter_mind,:);...
+                        model.Kub(bm_ind,:)];
+    end
 elseif ~isempty(pvec)
-    newpvec.Kub = [pvec.Kub(inter_mind,:);...
-                   pvec.Kub(exter_mind,:);...
-                   pvec.Kub(bm_ind,:)];
+    if isfield(pvec,'Kub')
+        newpvec.Kub = [pvec.Kub(inter_mind,:);...
+                        pvec.Kub(exter_mind,:);...
+                        pvec.Kub(bm_ind,:)];
+    end
 end
 
 if isfield(model,'KIact')
@@ -158,6 +180,12 @@ if isfield(model,'rxn_add')
 end
 if isfield(model,'rxn_excep')
     newmodel.rxn_excep = model.rxn_excep;
+end
+if isfield(model,'rho')
+    newmodel.rho = model.rho;
+end
+if isfield(model,'D')
+    newmodel.D = model.D;
 end
 
 if ~isempty(mc)

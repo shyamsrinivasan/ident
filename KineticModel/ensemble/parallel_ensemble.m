@@ -1,4 +1,4 @@
-function ensb = parallel_ensemble(model,mc,pvec,rxnadd,rxnexcep,nmodels,smp)
+function [newp,mc] = parallel_ensemble(model,mc,pvec,rxnadd,rxnexcep,nmodels,smp)
 if nargin<7
     smp={};
 end
@@ -20,39 +20,41 @@ else
     nsamples = 1;
 end
 
-if (nsamples==1 && nmodels==1)
-    fprintf('\nGenerating a single parameter set in the ensemble...\n');
-    ensb = cell(nmodels,2);
-    model_ens = cell(nmodels,1);     
-    ensb{1,1} = mc;
-    model_ens{1} = buildmodels(model,pvec,mc,rxnadd,rxnexcep);    
-    fprintf('Parameter generation complete\n\n');
-elseif nsamples==1 && nmodels>1
-    ensb = cell(nmodels,2);
-    model_ens = cell(1,nmodels);
-    %parallel capable
-    parfor im = 1:nmodels
-        ensb{im,1} = mc;
-        model_ens{1,im} = buildmodels(model,pvec,mc,rxnadd,rxnexcep);
-    end    
-elseif nsamples>1 && nmodels>=1 %--------not supported yet
-    ensb = cell(nsamples,nmodels,2);
-    model_ens = cell(nsamples,nmodels);
-    parfor ism = 1:nsamples        
-        for im = 1:nmodels
-            ensb{ism,im,1} = smp{ism,1};
-            model_ens{ism,im} = buildmodels(model,smp{ism,2},smp{ism,1});
-        end      
-    end
+% newK = samplesigma(model,mc,pvec.K,nmodels);
+
+if nmodels>1
+    tstart = tic;
+    fprintf('\nGenerating %d parameter set in the ensemble...\n',nmodels);
+    newp = buildmodels(model,pvec,mc,rxnadd,rxnexcep,nmodels);             
+    fprintf('Parameter generation complete\n');
+    fprintf('Time for generating %d model:%4.3g\n\n',nmodels,toc(tstart));   
+else
+    tstart = tic;
+    fprintf('\nGenerating a single parameter set in the ensemble...\n');    
+    newp = buildmodels(model,pvec,mc,rxnadd,rxnexcep,nmodels);    
+    fprintf('Parameter generation complete\n');
+    fprintf('Time for generating 1 model:%4.3g\n\n',toc(tstart));
 end
 
-if length(model_ens)>1
-    for im = 1:length(model_ens)
-        ensb{im,2} = model_ens{1,im};
-    end
-else
-    ensb{1,2} = model_ens{1,1};
-end
+% -------not supported
+% if nsamples>1 && nmodels>=1 %--------not supported yet
+%     ensb = cell(nsamples,nmodels,2);
+%     model_ens = cell(nsamples,nmodels);
+%     parfor ism = 1:nsamples        
+%         for im = 1:nmodels
+%             ensb{ism,im,1} = smp{ism,1};
+%             model_ens{ism,im} = buildmodels(model,smp{ism,2},smp{ism,1});
+%         end      
+%     end
+% end
+
+% if length(model_ens)>1
+%     for im = 1:length(model_ens)
+%         ensb{im,2} = model_ens{1,im};
+%     end
+% else
+%     ensb{1,2} = model_ens{1,1};
+% end
 
 % if ndims(model_ens)>2
 %     for ism = 1:nsamples
