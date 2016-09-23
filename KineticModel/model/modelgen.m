@@ -509,13 +509,15 @@ variable = struct();
 % variable.MC = model.MC;
 variable.EC = model.EC;
 
-%Add Molecular weight individually
-model_data.MolWt = zeros(nt_metab,1);
+% Add Molecular weight individually, g/mole
+model_data.MolWt = ones(nt_metab,1);
 model_data.MolWt(strcmpi('g3p[c]',model_data.mets)) = 172.074;
 model_data.MolWt(strcmpi('pyr[c]',model_data.mets)) = 88.06;
 model_data.MolWt(strcmpi('pep[c]',model_data.mets)) = 168.042;
 model_data.MolWt(strcmpi('f6p[c]',model_data.mets)) = 259.81;
 model_data.MolWt(strcmpi('g6p[c]',model_data.mets)) = 260.136;
+model_data.MolWt(strcmpi('e4p[c]',model_data.mets)) = 200.084;
+model_data.MolWt(strcmpi('r5p[c]',model_data.mets)) = 230.110;
 model_data.MolWt(strcmpi('B[c]',model_data.mets)) = 200;
 
 % assign cell density gDCW/Lcw - gDCW per unit litre cell volume
