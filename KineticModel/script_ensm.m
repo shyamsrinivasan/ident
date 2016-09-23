@@ -13,10 +13,13 @@ cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\Kine
 % obtain conentrations from file
 [mc,model,met] = readCNCfromFile(cnfname,model);
 
+% dilution rate in model in h-1;
+model.D = 0.8;
+
 % FBA or pFBA solution - optional
 % fix flux uptakes for FBA solution
 % Vup_struct.exAC = 20;%mmol/gDCW.h
-Vupstruct.ACex = 20;
+Vupstruct.ACex = model.D*40;
 Vupstruct.ENZ1ex = 1;
 
 % designate reactions for which uptake should not be zero in FBA
@@ -29,10 +32,7 @@ essrxn = {'ACex','exH','exH2O'};
 model = FBAfluxes(model,'pfba',essrxn,Vupstruct,...
                      find(strcmpi(model.rxns,'G6Pt2r')));
 
-rxnadd = {'ACKr'};
-
-% dilution rate in model in h-1;
-model.D = 0.8;
+rxnadd = {'ACKr','ACStr'};
 
 % metabolites that do not affect thermodynamic equilibrium  
 he = find(strcmpi(model.mets,'h[e]'));
@@ -50,7 +50,7 @@ if isempty(mc)
 end
 
 % get parameter estimates - estimate kinetic parameters in an ensemble
-rxnadd = {'ACKr'};
+rxnadd = {'ACKr','ACStr'};
 rxnexcep = {'Ht2r'};
 
 % FBAmodel.bmrxn = [];
@@ -85,7 +85,7 @@ end
 
 % time course plots
 AllTimeCoursePlots(outsol,newmodel,{'pyr[c]','pep[c]','fdp[c]','actp[c]','ac[e]','biomass[e]'},...
-                                   {'ACKr','FBP','ICL','MALS','G6Pt2r','ACex'});
+                                   {'ACKr','FBP','ICL','MALS','G6Pt2r','ACex','ACStr'});
 
 % perturbations to steady states  
 [outsol,allxss,allfss] = perturbation(allxeq,newmodel,newpvec,solverP,[1:3,5:14],10);
