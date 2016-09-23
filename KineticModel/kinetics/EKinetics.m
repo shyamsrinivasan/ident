@@ -29,7 +29,7 @@ for irxn = 1:nrxn
             revflx = zeros(1,nc);
             if any(Vuptake(irxn))
                 % assume feeds of Vuptake mmole/Lc
-                revflx = D.*repmat(Vuptake(irxn),1,nc); % mmole/Lc/h
+                revflx = D.*10; % repmat(Vuptake(irxn),1,nc); % mmole/Lc/h
 %                 revflx = repmat(Vuptake(irxn),1,nc);
             end        
             nrflx = fwdflx-revflx;
