@@ -12,8 +12,12 @@ fluxbm = zeros(nvar,1);
 % bmrxn = find(strcmpi(model.rxns,'biomass'));
 
 ace = strcmpi(model.mets,'ac[e]');
-act2r = strcmpi(model.rxns,'ACt2r');
-alpha = M(ace,:)./K(ace,act2r);
+ackr = strcmpi(model.rxns,'ACKr');
+if nc>1
+    alpha = M(ace,:)./repmat(K(ace,ackr),1,nc);
+else
+    alpha = M(ace,:)./K(ace,ackr);
+end
 alpha = alpha./(1+alpha);
 
 for irxn = 1:nrxn
