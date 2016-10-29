@@ -73,6 +73,7 @@ allxdyn = zeros(length(M),length(tspan),npts);
 allxf = zeros(length(M),npts);
 allfeq = zeros(length(fluxg),npts);
 allfdyn = zeros(length(fluxg),length(tspan),npts);
+ap = 9;
 solveEquilibriumODE     
 
 % extending existing bifurcation diagram for pep and fdp
@@ -98,7 +99,7 @@ solveEquilibriumODE
 
 % get saddle node
 [saddle,saddlepar] = getsaddlenode(data.s1,data.x1,5e-3);
-pvec(9) = saddlepar;
+pvec(ap) = saddlepar;
 model.PM(ac-length(saddle)) = saddlepar;
 
 % perturb saddle to get steady states
