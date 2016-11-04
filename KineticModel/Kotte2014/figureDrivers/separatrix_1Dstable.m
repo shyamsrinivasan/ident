@@ -83,7 +83,6 @@ pival = saddle+eps*[1;1;1];
 [~,xeq1,~,feq1] = solveODEonly(1,pival,model,pvec,opts,tspanf);
 nival = saddle-eps*[1;1;1];
 [~,xeq2,~,feq2] = solveODEonly(1,nival,model,pvec,opts,tspanf);
-fss = [feq1 feq2];
 
 % calculate and plot separatrix as 2-D projections
 NumericalSeparatrix(model,pvec,opts,ap,data.s1,data.x1,[xeq1 xeq2],5e-3);
