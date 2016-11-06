@@ -112,7 +112,12 @@ save_time_start_index = 3;
 eqpts = [saddle'; % 2D stable 
        xeq1';   % spiral sink (3D stable)
        xeq2'];  % sink (3D stable)
-                       
+
+npoints = 500;
+range = [saddlepar 2];
+contdir = 1;
+options = optimoptions('fsolve','Display','iter','TolFun',1e-10,'TolX',1e-10);
+fixed_points = kotte_branches(npoints,range,contdir,eqpts,model,pvec,ap,options);   
 [type,alleig] = KotteStabilityInfo(eqpts,model,pvec);       
 
 % circle parameters
