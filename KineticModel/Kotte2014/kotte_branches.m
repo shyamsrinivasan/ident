@@ -1,7 +1,7 @@
-function fixed_points = kotte_branches(npoints,range,contdir,eqpts,ap,opts)
+function fixed_points = kotte_branches(npoints,range,contdir,eqpts,model,pvec,ap,opts)
 
 % set parameters
-global lambda c
+global c
 c = 3;
 
 neqpts = size(eqpts,1);
@@ -17,11 +17,12 @@ elseif contdir == -1
 end
 
 arraycont = zeros(neqpts,3*npoints);
-arraycont(:,1:3) = arraycont;
+% arraycont(:,1:3) = arraycont;
 
 conttype = zeros(neqpts,npoints);
 
 % continuation of fixed points
+contpt = continuation(model,pvec,pararray,ap,eqpts,opts);
 for i = 1:npoints
-    fixed_points = 
+%     fixed_points = 
 end
