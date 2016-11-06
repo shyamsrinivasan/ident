@@ -1,4 +1,4 @@
-function [contpt,contpt_eig,contpttype] = continuation(model,pvec,lambda,ap,iguess,opts)
+function [contpt,varargout] = continuation(model,pvec,lambda,ap,iguess,opts)
 
 % npts = size(iguess,1);
 % contpt = zeros(npts,size(iguess,2));
@@ -48,6 +48,10 @@ for ip = 1:npar
     % set initial value loop (from different solution branches ?)
     iguess = neweqpt;
 end
+% last points only
 contpt = alleqsol(:,nvar*npar-(nvar-1):nvar*npar);   
-contpt_eig = alleigval(:,nvar*npar-(nvar-1):nvar*npar);
-contpttype = eqpttype(:,end);
+varargout{1} = alleigval(:,nvar*npar-(nvar-1):nvar*npar);
+varargout{2} = eqpttype(:,end);
+% all value
+varargout{3} = alleigval;
+varargout{4} = eqpttype;
