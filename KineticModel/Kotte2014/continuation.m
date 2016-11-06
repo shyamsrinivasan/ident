@@ -1,8 +1,6 @@
-function contpt = continuation(model,pvec,lambda,ap,iguess,opts)
+function [contpt,contpt_eig,contpttype] = continuation(model,pvec,lambda,ap,iguess,opts)
 
-global c
-
-npts = size(iguess,1);
+% npts = size(iguess,1);
 % contpt = zeros(npts,size(iguess,2));
 % 
 % for i = 1:npts
@@ -26,6 +24,8 @@ nvar = size(iguess,2);
 npts = size(iguess,1);
 npar = length(lambda);
 alleqsol = zeros(npts,npar*nvar);
+eqpttype = zeros(npts,npar);
+alleigval = zeros(nvar,npar*npts);
 % continuation algorithm
 % set parameter value loop
 for ip = 1:npar 
@@ -38,8 +38,16 @@ for ip = 1:npar
         neweqpt(jval,:) = fsolve(sysfun,iguess(jval,:)',opts);
     end
     % store neweqpt
-    % alleqsol
+    alleqsol(:,(ip-1)*nvar+1:ip*nvar) = neweqpt;
+    
+    % get stability info
+    [type,eigval] = KotteStabilityInfo(neweqpt,model,pvec);
+    eqpttype(:,ip) = type;
+    alleigval(:,(ip-1)*npts+1:ip*npts) = eigval;
+    
     % set initial value loop (from different solution branches ?)
     iguess = neweqpt;
 end
-    
+contpt = alleqsol(:,nvar*npar-(nvar-1):nvar*npar);   
+contpt_eig = alleigval(:,nvar*npar-(nvar-1):nvar*npar);
+contpttype = eqpttype(:,end);
