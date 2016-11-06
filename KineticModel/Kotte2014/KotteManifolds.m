@@ -78,7 +78,17 @@ solveEquilibriumODE
 pvec(ap) = saddlepar;
 model.PM(ac-length(saddle)) = saddlepar;
 
+% calculate eig val for all points on continuation curve data.x1
+alleig = zeros(3,size(data.x1,2));
+for ipts = 1:size(data.x1,2)
+    pvec(ap) = data.x1(end,ipts);
+    model.PM(ac-length(saddle)) = data.x1(end,ipts);
+    [~,alleig(:,ipts)] = KotteStabilityInfo(data.x1(1:3,ipts)',model,pvec);      
+end
+
 % perturb saddle to get steady states
+pvec(ap) = saddlepar;
+model.PM(ac-length(saddle)) = saddlepar;
 eps = 1e-4;
 tspanf = 0:0.1:2000;
 pival = saddle+eps*[1;1;1];
@@ -87,16 +97,26 @@ pival = saddle+eps*[1;1;1];
 nival = saddle-eps*[1;1;1];
 [~,xeq2] = solveODEonly(1,nival,model,pvec,opts,tspanf);
 
+[~,eigval,w] = getKotteJacobian(saddle,pvec,model);
+
+% continuation parameter is already set
+tspanr = [0,-8.25];
+for iw = 3:size(w,2)
+    zi = saddle+eps*w(:,iw);
+    zj = saddle-eps*w(:,iw);
+    % separatrix curve
+    xdynr1 = solveODEonly(1,zi,model,pvec,opts,[0 -16]); 
+    % get eigvalues of points on the separatrix curve xdynr
+    [~,eigvals_xdynr1] = KotteStabilityInfo(real(xdynr1'),model,pvec);
+    % separatrix curve
+    xdynr2 = solveODEonly(1,zj,model,pvec,opts,[0 -16]);
+    % get eigvalues of points on the separatrix curve xdynr
+    [~,eigvals_xdynr2] = KotteStabilityInfo(real(xdynr2'),model,pvec);
+end
+
 % Lyons et al., 2014 code
 mypath = 'C:\Users\shyam\Documents\MATLAB\CCFM_manifolds';
 addpath(strcat(mypath,'\CCFM_manifolds\functions\'));
-
-%initialize parameters
-global c lambda;
-c = 3.0;
-
-% solution tolerance (f_solve)
-sol_tol = 1.0e-8;
 
 % set viewpoint for 3D plots
 azimuth = 52; elevation = 10;
@@ -116,7 +136,7 @@ eqpts = [saddle'; % 2D stable
 npoints = 500;
 range = [saddlepar 2];
 contdir = 1;
-options = optimoptions('fsolve','Display','iter','TolFun',1e-10,'TolX',1e-10);
+options = optimoptions('fsolve','Display','off','TolFun',1e-10,'TolX',1e-10);
 fixed_points = kotte_branches(npoints,range,contdir,eqpts,model,pvec,ap,options);   
 [type,alleig] = KotteStabilityInfo(eqpts,model,pvec);       
 
@@ -154,23 +174,31 @@ ode_system = 'givenModel';
 [~,eig,eigvec] = getKotteJacobian(eqpts(1,:)',pvec,model);
 
 % obtain the 2 eigenvectors of 2D linear eigenspace
-eigvec_stable = eigvec(:,eig<0);
+stableeigvec = eigvec(:,eig<0);
 
 % obtain coordinates of circle with radius r in (x1,x2) plane
-[x1,x2] = planar_circle(points,radius);
+[x1,x2] = getplanarcircle(points,radius);
 
 % perform linear mapping of unit circle onto plane in R3 spanned by W1,W2
-[x1_new,x2_new,x3_new] =...
-curve_map_R2_R3(x1,x2,eigvec_stable(:,1),eigvec_stable(:,2),points);
+xnew = manifoldlinearmapping(x1,x2,stableeigvec(:,1),stableeigvec(:,2));
 
-%translate mapping to saddle point
-x1_new = x1_new + saddle(1);
-x2_new = x2_new + saddle(2);
-x3_new = x3_new + saddle(3);
-x_new = [x1_new' x2_new' x3_new'];
+% translate mapping to saddle point
+xnew = xnew + repmat(saddle,1,size(xnew,2));
+xnew = xnew';
 
-[x,y,z] =...
-manifold_compute_circle(saddle',time,save_time_start_index,delta_x,step,ode_system,x_new,1);
+tspanr = 0:-.1:-16;
+allxdynr = get2Dmanifoldpoints(xnew,model,pvec,tspanr,opts);
+
+% trim dynr
+% filter out extra points within small tolerance of each other
+norm_tol = 0.01;%0.01;
+[x,y,z] = redundant_point_filter(allxdynr(1,:),allxdynr(2,:),allxdynr(3,:),norm_tol);
+
+figure(3); hold on;
+Delaunay_special_plot(x,y,z,0.05);
+
+
+
 
 
 
