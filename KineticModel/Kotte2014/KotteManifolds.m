@@ -3,6 +3,7 @@
 
 % generate equilibrium solution and model for Kotte model
 addpath(genpath('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel'));
+addpath('C:\Users\shyam\Documents\MATLAB\CCFM_manifolds\CCFM_manifolds\functions\');
 rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\Kotte2014\Kotte2014.txt';
 cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\Kotte2014\Kotte2014C.txt';
 
@@ -99,19 +100,49 @@ nival = saddle-eps*[1;1;1];
 
 [~,eigval,w] = getKotteJacobian(saddle,pvec,model);
 
+% NumericalSeparatrix(model,pvec,opts,ap,data.s1,data.x1,[xeq1 xeq2],5e-3);
+
 % continuation parameter is already set
 tspanr = [0,-8.25];
-for iw = 3:size(w,2)
+figure
+for iw = 1:2
+    % continuation parameter is already set
     zi = saddle+eps*w(:,iw);
     zj = saddle-eps*w(:,iw);
     % separatrix curve
-    xdynr1 = solveODEonly(1,zi,model,pvec,opts,[0 -16]); 
+    xdynr1 = solveODEonly(1,zi,model,pvec,opts,tspanr);   
+    % stable manifold
+    [~,xeq] = solveODEonly(1,zi,model,pvec,opts,tspanf);
     % get eigvalues of points on the separatrix curve xdynr
-    [~,eigvals_xdynr1] = KotteStabilityInfo(real(xdynr1'),model,pvec);
+    % [~,eigvals_xdynr1] = KotteStabilityInfo(real(xdynr1'),model,pvec);
     % separatrix curve
-    xdynr2 = solveODEonly(1,zj,model,pvec,opts,[0 -16]);
+    xdynr2 = solveODEonly(1,zj,model,pvec,opts,[0,-12]);
     % get eigvalues of points on the separatrix curve xdynr
-    [~,eigvals_xdynr2] = KotteStabilityInfo(real(xdynr2'),model,pvec);
+    % [~,eigvals_xdynr2] = KotteStabilityInfo(real(xdynr2'),model,pvec);
+    hold on
+    plot3(xdynr1(1,:),xdynr1(2,:),xdynr1(3,:),'LineWidth',2);
+    plot3(xdynr2(1,:),xdynr2(2,:),xdynr2(3,:),'LineWidth',2,'Color','r');
+end
+
+% unstable manifold
+tspanr = [0,-20];
+for iw = 3:size(w,2)
+    % continuation parameter is already set
+    zi = saddle+eps*w(:,iw);
+    zj = saddle-eps*w(:,iw);
+    % separatrix curve
+    xdynr1 = solveODEonly(1,zi,model,pvec,opts,tspanr);   
+    % stable manifold
+    [~,xeq] = solveODEonly(1,zi,model,pvec,opts,tspanf);
+    % get eigvalues of points on the separatrix curve xdynr
+    % [~,eigvals_xdynr1] = KotteStabilityInfo(real(xdynr1'),model,pvec);
+    % separatrix curve
+    xdynr2 = solveODEonly(1,zj,model,pvec,opts,tspanr);
+    % get eigvalues of points on the separatrix curve xdynr
+    % [~,eigvals_xdynr2] = KotteStabilityInfo(real(xdynr2'),model,pvec);
+    hold on
+    plot3(xdynr1(1,:),xdynr1(2,:),xdynr1(3,:),'LineWidth',2);
+    plot3(xdynr2(1,:),xdynr2(2,:),xdynr2(3,:),'LineWidth',2,'Color','r');
 end
 
 % Lyons et al., 2014 code
@@ -125,7 +156,7 @@ azimuth = 52; elevation = 10;
 color_hash = {'k.','go','ko'};
 
 % compute invariant manifold via numerical integration
-ti = 0.0; h = -0.25; tf = -25;%-25;%integration time data
+ti = 0.0; h = -0.5; tf = -25;%-25;%integration time data
 time = ti:h:tf; %set time array
 save_time_start_index = 3;
 
@@ -142,7 +173,7 @@ fixed_points = kotte_branches(npoints,range,contdir,eqpts,model,pvec,ap,options)
 
 % circle parameters
 points = 401;
-radius = 0.05;
+radius = 0.005;
 
 % 2D stable manifold 
 int_time_1D_manifolds = 0:-0.005:-15;
@@ -186,12 +217,12 @@ xnew = manifoldlinearmapping(x1,x2,stableeigvec(:,1),stableeigvec(:,2));
 xnew = xnew + repmat(saddle,1,size(xnew,2));
 xnew = xnew';
 
-tspanr = 0:-.1:-16;
+tspanr = 0:-.05:-20;
 allxdynr = get2Dmanifoldpoints(xnew,model,pvec,tspanr,opts);
 
 % trim dynr
 % filter out extra points within small tolerance of each other
-norm_tol = 0.01;%0.01;
+norm_tol = 0.1;%0.01;
 [x,y,z] = redundant_point_filter(allxdynr(1,:),allxdynr(2,:),allxdynr(3,:),norm_tol);
 
 figure(3); hold on;
