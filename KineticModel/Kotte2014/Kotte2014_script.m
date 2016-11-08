@@ -47,12 +47,6 @@ M = newmc(1:nvar);
 PM = newmc(nvar+1:end);
 model.PM = PM;
 
-% use CNA to calculate EFMs and plot them on the envelope
-% change model to be CNA compliant
-% [cnap,errval] = getCNAmodel(FBAmodel);
-% call to stoichioemtric analysis script for calculating EFMs
-% Kotte_StoichiometricAnalysisScript
-
 % call to parameter sampling script for analysis of mss
 % parameters
 clear pvec
