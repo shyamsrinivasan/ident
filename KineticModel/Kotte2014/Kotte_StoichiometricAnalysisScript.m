@@ -56,16 +56,16 @@ printEFM(efm,idx,ray,cnap);
                        efm,idx,FBAmodel,find(strcmpi(model.rxns,'ACpts')));
 
 % cut set calculation
-% reacID = cnap.reacID(idx,:);
-% target = efm([1 4],:);
-% set2save(1).tabl2save = efm([1 2],:);
-% set2save(2).tabl2save = efm(2,:);
-% set2save(1).min2save = 2;
-% set2save(2).min2save = 1;
-% set2save = [];
-% cutsets = CNAcomputeCutsets(target,10,reacID,set2save);
-% printCS(cutsets,reacID);
+reacID = cnap.reacID(idx,:);
+target = efm([1 4],:);
+set2save(1).tabl2save = efm([1 2],:);
+set2save(2).tabl2save = efm(2,:);
+set2save(1).min2save = 2;
+set2save(2).min2save = 1;
+set2save = [];
+cutsets = CNAcomputeCutsets(target,10,reacID,set2save);
+printCS(cutsets,reacID);
 
 % cut set calculations script
-% getCNAMCS
+getCNAMCS
 
