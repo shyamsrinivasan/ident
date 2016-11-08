@@ -33,4 +33,4 @@ model.PM = PM;
 % change model to be CNA compliant
 [cnap,errval] = getCNAmodel(FBAmodel);
 % call to stoichioemtric analysis script for calculating EFMs
-Kotte_StoichiometricAnalysisScript
+stoichAnalysis
