@@ -1,6 +1,9 @@
 % getCNAMCS
 % get MCS, cMCS and regCMCS - constrained minimal cut sets - 
 % ends with an  error due to lack of MCSs
+cellreacID = cellstr(cnap.reacID);
+cellreacID = cellfun(@(x)strtrim(x),cellreacID,'UniformOutput',false);
+
 cnap.reacMin(cnap.reacMin == -100) = -1; % Inf;
 cnap.reacMax(cnap.reacMax == 100) = 1; % Inf;
 cnap.reacMax(strcmpi(cellreacID,'ACt2r')) = 0;
@@ -9,8 +12,8 @@ tar = zeros(1,cnap.numr);
 nT = 1;
 T = repmat(tar,nT,1);
 % 
-cellreacID = cellstr(cnap.reacID);
-cellreacID = cellfun(@(x)strtrim(x),cellreacID,'UniformOutput',false);
+% cellreacID = cellstr(cnap.reacID);
+% cellreacID = cellfun(@(x)strtrim(x),cellreacID,'UniformOutput',false);
 T(1,[find(strcmpi(cellreacID,'PEPt2r')) find(strcmpi(cellreacID,'ACt2r'))]) =...
   [1 0.1];
 % T(1,strcmpi(cellreacID,'EC_Biomass')) = -1;
