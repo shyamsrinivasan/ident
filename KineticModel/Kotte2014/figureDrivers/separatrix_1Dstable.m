@@ -85,4 +85,18 @@ nival = saddle-eps*[1;1;1];
 [~,xeq2,~,feq2] = solveODEonly(1,nival,model,pvec,opts,tspanf);
 
 % calculate and plot separatrix as 2-D projections
-NumericalSeparatrix(model,pvec,opts,ap,data.s1,data.x1,[xeq1 xeq2],5e-3);
+% stable 3D manifolds
+tspanr = [0 -8.5];
+NumericalSeparatrix(model,pvec,opts,ap,data.s1,data.x1,[xeq1 xeq2],'stable',tspanr,3,5e-3);
+
+% stable 2D manifolds
+tspanr = [0 -8.5];
+NumericalSeparatrix(model,pvec,opts,ap,data.s1,data.x1,[xeq1 xeq2],'stable',tspanr,2,5e-3);
+
+% unstable 3D manifolds
+tspanr = [0 -20];
+NumericalSeparatrix(model,pvec,opts,ap,data.s1,data.x1,[xeq1 xeq2],'unstable',tspanr,3,5e-3);
+
+% unstable 2D manifolds
+tspanr = [0 -20];
+NumericalSeparatrix(model,pvec,opts,ap,data.s1,data.x1,[xeq1 xeq2],'unstable',tspanr,2,5e-3);
