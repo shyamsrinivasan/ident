@@ -100,50 +100,13 @@ nival = saddle-eps*[1;1;1];
 
 [~,eigval,w] = getKotteJacobian(saddle,pvec,model);
 
-% NumericalSeparatrix(model,pvec,opts,ap,data.s1,data.x1,[xeq1 xeq2],5e-3);
-
-% continuation parameter is already set
-tspanr = [0,-8.25];
-figure
-for iw = 1:2
-    % continuation parameter is already set
-    zi = saddle+eps*w(:,iw);
-    zj = saddle-eps*w(:,iw);
-    % separatrix curve
-    xdynr1 = solveODEonly(1,zi,model,pvec,opts,tspanr);   
-    % stable manifold
-    [~,xeq] = solveODEonly(1,zi,model,pvec,opts,tspanf);
-    % get eigvalues of points on the separatrix curve xdynr
-    % [~,eigvals_xdynr1] = KotteStabilityInfo(real(xdynr1'),model,pvec);
-    % separatrix curve
-    xdynr2 = solveODEonly(1,zj,model,pvec,opts,[0,-12]);
-    % get eigvalues of points on the separatrix curve xdynr
-    % [~,eigvals_xdynr2] = KotteStabilityInfo(real(xdynr2'),model,pvec);
-    hold on
-    plot3(xdynr1(1,:),xdynr1(2,:),xdynr1(3,:),'LineWidth',2);
-    plot3(xdynr2(1,:),xdynr2(2,:),xdynr2(3,:),'LineWidth',2,'Color','r');
-end
-
-% unstable manifold
+% unstable manifold in 3D
 tspanr = [0,-20];
-for iw = 3:size(w,2)
-    % continuation parameter is already set
-    zi = saddle+eps*w(:,iw);
-    zj = saddle-eps*w(:,iw);
-    % separatrix curve
-    xdynr1 = solveODEonly(1,zi,model,pvec,opts,tspanr);   
-    % stable manifold
-    [~,xeq] = solveODEonly(1,zi,model,pvec,opts,tspanf);
-    % get eigvalues of points on the separatrix curve xdynr
-    % [~,eigvals_xdynr1] = KotteStabilityInfo(real(xdynr1'),model,pvec);
-    % separatrix curve
-    xdynr2 = solveODEonly(1,zj,model,pvec,opts,tspanr);
-    % get eigvalues of points on the separatrix curve xdynr
-    % [~,eigvals_xdynr2] = KotteStabilityInfo(real(xdynr2'),model,pvec);
-    hold on
-    plot3(xdynr1(1,:),xdynr1(2,:),xdynr1(3,:),'LineWidth',2);
-    plot3(xdynr2(1,:),xdynr2(2,:),xdynr2(3,:),'LineWidth',2,'Color','r');
-end
+NumericalSeparatrix(model,pvec,opts,ap,data.s1,data.x1,[xeq1 xeq2],'unstable',tspanr,3,5e-3);
+
+% stable manifolds in 3D
+tspanr = [0 -8.5];
+NumericalSeparatrix(model,pvec,opts,ap,data.s1,data.x1,[xeq1 xeq2],'stable',tspanr,3,5e-3);
 
 % Lyons et al., 2014 code
 mypath = 'C:\Users\shyam\Documents\MATLAB\CCFM_manifolds';
