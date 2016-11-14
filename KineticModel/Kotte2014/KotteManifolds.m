@@ -184,6 +184,13 @@ tspanr = 0:-.05:-20;
 allxdynr = get2Dmanifoldpoints(xnew,model,pvec,tspanr,opts);
 
 % trim dynr
+txdynr = allxdynr;
+txdynr(:,txdynr(1,:)>5) = [];
+
+figure(3); hold on;
+Delaunay_special_plot(txdynr(1,:),txdynr(2,:),txdynr(3,:),0.05);
+
+
 % filter out extra points within small tolerance of each other
 norm_tol = 0.1;%0.01;
 [x,y,z] = redundant_point_filter(allxdynr(1,:),allxdynr(2,:),allxdynr(3,:),norm_tol);
