@@ -185,9 +185,9 @@ allxdynr = get2Dmanifoldpoints(xnew,model,pvec,tspanr,opts);
 
 % trim dynr
 txdynr = allxdynr;
-txdynr(:,txdynr(1,:)>5) = [];
+txdynr(:,txdynr(1,:)>100) = [];
 
-figure(3); hold on;
+figure(4); hold on;
 Delaunay_special_plot(txdynr(1,:),txdynr(2,:),txdynr(3,:),0.05);
 
 
