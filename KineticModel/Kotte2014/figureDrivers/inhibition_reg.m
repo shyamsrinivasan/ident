@@ -86,7 +86,8 @@ xss = [xeq1 xeq2];
 
 % run inhibition parameter perturbations
 % sample parameters indicated by indices in idp
-cmb = [.05;.125;.25;.5;2;4];
+% cmb = [.05;.125;.25;.5;2;4];
+cmb = linspace(.05,4,100)';
    
 idp = [7];
 type = 'together';
@@ -117,12 +118,11 @@ model.PM(ac-length(orig_saddle)) = orig_saddlepar;
 allpvec = repmat(pvec,npts,1);
 allpvec(:,idp) = cmb;
 
-% save allpvec for ap
-allpvecofap = allpvec(:,ap);
+% find equilibirum points for cmb parameters at old saddle acetate
 for iid = 1:1 % length(idp)
     fprintf('Parameter Combination #%d\n',iid); 
     
-    % find equilibrium solution at lowest acetate followed by MATCONT
+    % find equilibrium solution at saddle acetate
     allxeq = zeros(length(M),npts);
     allxdyn = zeros(length(M),length(tspan),npts);    
     allfeq = zeros(length(fluxg),npts);
@@ -130,14 +130,6 @@ for iid = 1:1 % length(idp)
     [allxdyn,allxeq,allfdyn,allfeq] =...
     solveODEonly(npts,M,model,allpvec,opts,tspan,...
               allxdyn,allxeq,allfdyn,allfeq);
-  
-    % continue on acetate for all equilibirum solutions to different
-    % parameter combinations
-    ap = 9;
-    [s,mssid,nss] = setupMATCONT(allxeq,allpvec,ap,model,fluxg,npts);
-    
-    % restore allpvec(ap) after continuation
-    allpvec(:,ap) = allpvecofap;
     
     % save solution
     alliidpvec(:,:,iid) = allpvec;
@@ -145,15 +137,46 @@ for iid = 1:1 % length(idp)
     alliidxdyn(:,:,:,iid) = allxdyn;
     alliidfeq(:,:,iid) = allfeq;
     alliidfdyn(:,:,:,iid) = allfdyn;
+end
+
+% find equilibrium points for all cmb for lowest acetate value followed by
+% continuation
+allpvec(:,ap) = 0.01;
+model.PM(ac-length(orig_saddle)) = 0.01;
+for iid = 1:1
+    % find equilibrium solution at lowest acetate followed by MATCONT
+    allxeqlac = zeros(length(M),npts);  
+    allfeqlac = zeros(length(fluxg),npts);
+    [~,allxeqlac,~,allfeqlac] =...
+    solveODEonly(npts,M,model,allpvec,opts,tspan,...
+              [],allxeqlac,[],allfeqlac);
+          
+    % continue on acetate for all equilibirum solutions to different
+    % parameter combinations
+    [s,mssid,nss] = setupMATCONT(allxeqlac,allpvec,ap,model,fluxg,npts);
     
     siid.(['iid' num2str(iid)]) = s;
     allmssid.(['iid' num2str(iid)]) = mssid;
     allnss.(['iid' num2str(iid)]) = nss;
-    
-    % reset pvec for next iteration of iid - need to check before using
-    pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
-            KEXPEP,vemax,KeFBP,ne,acetate,d,...
-            kPEPout,kEcat,vFbpmax,vEXmax];
-        
-    
 end
+
+% identify boundaries of bistability from continuation results
+for iid = 1:1
+    acbounds = zeros(2,length(mssid)); % [min;max];
+    xbounds = zeros(nvar,length(mssid));
+    for ipt = 1:npts
+        if ismember(ipt,mssid)
+            index = cat(1,siid.(['iid' num2str(iid)]).(['pt' num2str(ipt)]).index);
+            x1 = siid.(['iid' num2str(iid)]).(['pt' num2str(ipt)]).x1;
+            xcont = x1(1:nvar,index);
+            pcont = x1(nvar+1:end,index);
+            xbounds(:,ipt) = xcont(:,2:end-1);
+            acbounds(1,ipt) = min(pcont(:,2:end-1));
+            acbounds(2,ipt) = max(pcont(:,2:end-1));
+        end
+    end
+end
+
+% collect all solutions for final plot
+
+
