@@ -50,9 +50,9 @@ nss = zeros(npts,1);
 for ipt = 1:npts
     if ~isempty(s.(['pt' num2str(ipt)]))
         s1 = s.(['pt' num2str(ipt)]).s1;
-        nLP = size(s1,1);
-        if nLP > 2
-            fprintf('Vector %d has %d Steady States\n',ipt,nLP);
+        nLP = size(s1,1)-2; % [initial lp1 lp2 final] 
+        if nLP > 0
+            fprintf('Vector %d has %d Limit Points\n',ipt,nLP);
             mssid = union(mssid,ipt);
             nss(ipt) = nLP;
         end
