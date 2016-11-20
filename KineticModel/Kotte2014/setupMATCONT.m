@@ -7,7 +7,7 @@ for ipt = 1:npts
     pvec = allpvec(ipt,:);
     
     % change to bigger number if bifurcation starts at a bigger value
-    pvec(ap) = 0.01;
+%     pvec(ap) = 0.001;
     
     % run MATCONT
     [data,y,p] = execMATCONT(xeq,pvec,ap,fluxg,model);
