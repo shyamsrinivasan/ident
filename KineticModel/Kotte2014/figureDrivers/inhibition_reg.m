@@ -160,23 +160,54 @@ for iid = 1:1
     allnss.(['iid' num2str(iid)]) = nss;
 end
 
-% identify boundaries of bistability from continuation results
+%% identify boundaries of bistability from continuation results
 for iid = 1:1
     acbounds = zeros(2,length(mssid)); % [min;max];
-    xbounds = zeros(nvar,length(mssid));
+    xbounds = zeros(nvar,2*length(mssid));
+    mssipt = 1;
     for ipt = 1:npts
         if ismember(ipt,mssid)
-            index = cat(1,siid.(['iid' num2str(iid)]).(['pt' num2str(ipt)]).index);
+            index = cat(1,siid.(['iid' num2str(iid)]).(['pt' num2str(ipt)]).s1.index);
             x1 = siid.(['iid' num2str(iid)]).(['pt' num2str(ipt)]).x1;
             xcont = x1(1:nvar,index);
             pcont = x1(nvar+1:end,index);
-            xbounds(:,ipt) = xcont(:,2:end-1);
-            acbounds(1,ipt) = min(pcont(:,2:end-1));
-            acbounds(2,ipt) = max(pcont(:,2:end-1));
+            xbounds(:,2*mssipt-1:2*mssipt) = xcont(:,2:end-1);
+            acbounds(1,mssipt) = min(pcont(:,2:end-1));
+            acbounds(2,mssipt) = max(pcont(:,2:end-1));
+            mssipt = mssipt+1;
         end
     end
 end
 
+% final plot
+xlabel = 'Acetate a.u.';
+ylabel = 'Kefdp a.u.';
+figure
+Line.LineStyle = 'none';
+Line.LineWidth = 3;
+Line.Marker = '.';
+Line.MarkerSize = 25;
+hl1 = line(acbounds(1,:),cmb(mssid));
+Line.Color = 'b';
+set(hl1,Line);
+hl2 = line(acbounds(2,:),cmb(mssid));
+Line.Color = 'r';
+set(hl2,Line);
+
+set(get(gca,'YLabel'),'String',ylabel);  
+set(get(gca,'YLabel'),'FontName','Arial');   
+set(get(gca,'YLabel'),'FontSize',22); 
+set(get(gca,'XLabel'),'String',xlabel);  
+set(get(gca,'XLabel'),'FontName','Arial');   
+set(get(gca,'XLabel'),'FontSize',22);
+
+axesP.FontName  = 'Arial';
+axesP.FontSize = 22;
+axesP.LineWidth = 1.5;
+axesP.TickLength = [0.01 0.01];
+axesP.XColor = [.1 .1 .1];
+axesP.YColor = [.1 .1 .1];
+set(gca,axesP);
 % collect all solutions for final plot
 
 
