@@ -1,8 +1,6 @@
-% enzyme perturbation script
+% enzyme perturbation script - Figure 7
 % changes to enzyme expression levels to determine new steady states by
 % simulating from either of the 2 initial steady states
-% this code will take considerable time to run - preferrable to run this
-% segment separately, store data and run the plotting section separately
 
 % build stoichioemtrc matrices
 addpath(genpath('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel'));
@@ -129,43 +127,96 @@ allpvec(:,idp) = cmb;
 % save allpvec for ap
 allpvecofap = allpvec(:,ap);
 
+colorSpec = chooseColors(4,{'Navy','HotPink','Red','Orange'});
 for iid = 1:1 % length(idp)
-    fprintf('Parameter Combination #%d\n',iid);    
-    
-    % find equilibrium solution followed by MATCONT at the original saddle
+    fprintf('Parameter Combination #%d\n',iid); 
+    % find equilibrium solution from different ss at the original saddle
     % node
-    allxeq = zeros(length(M),npts);
-    allxdyn = zeros(length(M),length(tspan),npts);    
-    allfeq = zeros(length(fluxg),npts);
-    allfdyn = zeros(length(fluxg),length(tspan),npts);
-    [allxdyn,allxeq,allfdyn,allfeq] =...
-    solveODEonly(npts,M,model,allpvec,opts,tspan,...
-              allxdyn,allxeq,allfdyn,allfeq);
-          
-    % continue on acetate for all equilibirum solutions to different
-    % parameter combinations
-    ap = 9;
-    [s,mssid,nss] = setupMATCONT(allxeq,allpvec,ap,model,fluxg,npts);
-    
-    % restore allpvec(ap) after continuation
-    allpvec(:,ap) = allpvecofap;
-    
-    % save solution
-    alliidpvec(:,:,iid) = allpvec;
-    alliidxeq(:,:,iid) = allxeq;
-    alliidxdyn(:,:,:,iid) = allxdyn;
-    alliidfeq(:,:,iid) = allfeq;
-    alliidfdyn(:,:,:,iid) = allfdyn;
-    
-    siid.(['iid' num2str(iid)]) = s;
-    allmssid.(['iid' num2str(iid)]) = mssid;
-    allnss.(['iid' num2str(iid)]) = nss;
-    
-    % reset pvec for next iteration of iid - need to check before using
-    pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
-            KEXPEP,vemax,KeFBP,ne,acetate,d,...
-            kPEPout,kEcat,vFbpmax,vEXmax];
-    pvec(ap) = orig_saddlepar;    
+    alliidpvec(:,:,iid) = allpvec;    
+    hf1 = [];
+    ha1 = [];
+    hf2 = [];
+    ha2 = [];
+
+    ivalpts = zeros(2*nvar,npts);
+    xeqpts = zeros(2*nvar,npts);
+    eqid = zeros(2,npts);
+    ivalid = zeros(2,npts);
+    % perturbation for all points
+    for ipt = 1:npts
+        pvec = alliidpvec(ipt,:,iid);                
+        % perturbations from ss 
+        [ivalpts,ivalid,xeqpts,eqid,hf1,ha1] = ParameterPerturbations(model,pvec,...
+            xss,ivalpts,ivalid,xeqpts,eqid,ipt,tspanf,colorSpec,opts,hf1,ha1);                          
+    end          
+
+    % plot points from xeqpts and ivalpts using ivalid and eqid after
+    % normalization
+    normeqpts = xeqpts; % ./repmat(max(xeqpts,[],2),1,size(xeqpts,2));
+    normival = ivalpts; % ./repmat(max(xeqpts,[],2),1,size(ivalpts,2));
+    hf1 = [];
+    ha1 = [];
+    hf2 = [];
+    ha2 = [];
+    hf3 = [];
+    ha3 = [];
+    plotpoints = zeros(1,size(xeqpts,2));
+    Point.Marker = '.';
+    Point.MarkerSize = 25;
+    Point2.Marker = '.';
+    Point2.MarkerSize = 25;
+    for ipt = 1:size(xeqpts,2) 
+        addanot.text = ['P' num2str(ipt)];
+        if eqid(1,ipt)==eqid(2,ipt)
+            if eqid(1,ipt)==1
+                Point.MarkerFaceColor = colorSpec{1};   
+                Point.MarkerEdgeColor = colorSpec{1}; 
+            elseif eqid(1,ipt)==2
+                Point.MarkerFaceColor = colorSpec{2};   
+                Point.MarkerEdgeColor = colorSpec{2}; 
+            end 
+            ival1 = normival(1:nvar,ipt);
+            ival2 = normeqpts(1:nvar,ipt);
+            plotpoints(ipt) = 1;
+        else
+            if eqid(1,ipt)==1
+                Point.MarkerFaceColor = colorSpec{1};   
+                Point.MarkerEdgeColor = colorSpec{1};
+                ival1 = normival(1:nvar,ipt);
+                ival2 = normeqpts(1:nvar,ipt);
+            elseif eqid(1,ipt)==2
+                Point.MarkerFaceColor = colorSpec{2};   
+                Point.MarkerEdgeColor = colorSpec{2};
+                ival1 = normival(1:nvar,ipt);
+                ival2 = normeqpts(1:nvar,ipt);
+            end
+            if eqid(2,ipt)==1
+                Point2.MarkerFaceColor = colorSpec{1};   
+                Point2.MarkerEdgeColor = colorSpec{1}; 
+                ival3 = normival(nvar+1:end,ipt);
+                ival4 = normeqpts(nvar+1:end,ipt);
+            elseif eqid(2,ipt)==2
+                Point2.MarkerFaceColor = colorSpec{2};   
+                Point2.MarkerEdgeColor = colorSpec{2};
+                ival3 = normival(nvar+1:end,ipt);
+                ival4 = normeqpts(nvar+1:end,ipt);
+            end
+        end
+        [hf1,ha1] =...
+        FIGmssEqIvalPerturbations(ival1,ival2,2,[1 2],hf1,ha1,Point,addanot); 
+        [hf2,ha2] =...
+        FIGmssEqIvalPerturbations(ival1,ival2,2,[2 3],hf2,ha2,Point,addanot); 
+        [hf3,ha3] =...
+        FIGmssEqIvalPerturbations(ival1,ival2,2,[1 3],hf3,ha3,Point,addanot); 
+        if ~plotpoints(ipt)
+            [hf1,ha1] =...
+            FIGmssEqIvalPerturbations(ival3,ival4,2,[1 2],hf1,ha1,Point2,addanot); 
+            [hf2,ha2] =...
+            FIGmssEqIvalPerturbations(ival3,ival4,2,[2 3],hf2,ha2,Point2,addanot);
+            [hf3,ha3] =...
+            FIGmssEqIvalPerturbations(ival3,ival4,2,[1 3],hf3,ha3,Point2,addanot);
+        end                 
+    end
 end
 
 % plotting section
@@ -202,33 +253,7 @@ for iid = 1:ndp
                 if ~ismember(ipt,allmsspts)                   
                     % perturbations from ss 
                     [ivalpts,ivalid,xeqpts,eqid,hf1,ha1] = ParameterPerturbations(model,pvec,...
-                        xss,ivalpts,ivalid,xeqpts,eqid,ipt,tspanf,colorSpec,opts,hf1,ha1);
-                    
-                    % do continuation anyways to confirm
-%                     clear pvec
-%                     pvec = alliidpvec(ipt,:,iid);
-%                     model.PM(ac-length(orig_saddle)) = pvec(ap);
-%                     if eqid(1,ipt)~=eqid(2,ipt)                        
-%                         fprintf('Point %d is bistable. Performing continuation on\n',ipt);
-%                         ieq = 0;
-%                         while ieq<2                      
-%                             [data,y,p] =...
-%                             execMATCONT(xeqpts(nvar*ieq+1:nvar*(ieq+1),ipt),pvec,ap,fluxg,model);
-%                             if ~isempty(data) && size(data.s1,1)>2
-%                                 hbif = bifurcationPlot(data.x1,data.s1,data.f1,[4,1]); 
-%                                 fprintf('Solution %d...',ieq+1);
-%                                 fprintf('Figure %d\n',hbif);
-%                             end                            
-%                             ieq = ieq+1;
-%                         end
-%                     else
-%                         fprintf('Point %d is not bistable.\n',ipt);
-%                         [data,y,p] =...
-%                         execMATCONT(xeqpts(1:nvar,ipt),pvec,ap,fluxg,model);
-%                         if ~isempty(data) && size(data.s1,1)>2
-%                             bifurcationPlot(data.x1,data.s1,data.f1,[4,1]);  
-%                         end
-%                     end                    
+                        xss,ivalpts,ivalid,xeqpts,eqid,ipt,tspanf,colorSpec,opts,hf1,ha1);                  
                 else                    
                     % perturbations from ss 
                     [ivalpts,ivalid,xeqpts,eqid,hf1,ha1] = ParameterPerturbations(model,pvec,...
