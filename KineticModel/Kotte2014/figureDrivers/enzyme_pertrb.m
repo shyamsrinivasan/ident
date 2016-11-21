@@ -219,6 +219,44 @@ for iid = 1:1 % length(idp)
     end
 end
 
-% find equilibrium points for all cmb for lowest acetate value followed by
+%% find equilibrium points for all cmb for lowest acetate value followed by
 % continuation
+for iid = 1:1
+    allpvec = alliidpvec(:,:,1);
+    allpvec(:,ap) = 0.01;
+    model.PM(ac-length(orig_saddle)) = 0.01;
+    allxeqlac = zeros(length(M),npts);  
+    allfeqlac = zeros(length(fluxg),npts);
+    [~,allxeqlac,~,allfeqlac] =...
+    solveODEonly(npts,M,model,allpvec,opts,tspan,...
+              [],allxeqlac,[],allfeqlac);
+          
+    % continue on acetate for all equilibrium solutions to cmb parameters
+    [s,mssid,nss] = setupMATCONT(allxeqlac,allpvec,ap,model,fluxg,npts,900);
+    
+    siid.(['iid' num2str(iid)]) = s;
+    allmssid.(['iid' num2str(iid)]) = mssid;
+    allnss.(['iid' num2str(iid)]) = nss;
+end
+
+%% identify boundaries of bistability from continuation results
+for iid = 1:1
+    acbounds = zeros(2,length(mssid)); % [min;max];
+    xbounds = zeros(nvar,2*length(mssid));
+    mssipt = 1;
+    for ipt = 1:npts
+        if ismember(ipt,mssid)
+            index = cat(1,siid.(['iid' num2str(iid)]).(['pt' num2str(ipt)]).s1.index);
+            x1 = siid.(['iid' num2str(iid)]).(['pt' num2str(ipt)]).x1;
+            xcont = x1(1:nvar,index);
+            pcont = x1(nvar+1:end,index);
+            xbounds(:,2*mssipt-1:2*mssipt) = xcont(:,2:end-1);
+            acbounds(1,mssipt) = min(pcont(:,2:end-1));
+            acbounds(2,mssipt) = max(pcont(:,2:end-1));
+            mssipt = mssipt+1;
+        end
+    end
+end
+
+
 
