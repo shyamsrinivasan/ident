@@ -145,7 +145,7 @@ for iid = 1:1 % length(idp)
     % perturbation for all points
     for ipt = 1:npts
         pvec = alliidpvec(ipt,:,iid);                
-        % perturbations from ss 
+        % perturbations from ss (xeq1 and xeq2)
         [ivalpts,ivalid,xeqpts,eqid,hf1,ha1] = ParameterPerturbations(model,pvec,...
             xss,ivalpts,ivalid,xeqpts,eqid,ipt,tspanf,colorSpec,opts,hf1,ha1);                          
     end          
@@ -218,3 +218,7 @@ for iid = 1:1 % length(idp)
         end                 
     end
 end
+
+% find equilibrium points for all cmb for lowest acetate value followed by
+% continuation
+
