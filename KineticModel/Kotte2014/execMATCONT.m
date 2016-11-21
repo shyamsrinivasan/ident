@@ -1,4 +1,7 @@
-function [data,y,p] = execMATCONT(xeq,pvec,ap,fluxg,model)
+function [data,y,p] = execMATCONT(xeq,pvec,ap,fluxg,model,bfpts)
+if nargin<6
+    bfpts = 800;
+end
 % runMATCONT
 % continuation and dynamical systems analysis using MATCONT
 
@@ -16,7 +19,7 @@ opt = contset;
 opt = contset(opt,'VarTolerance',1e-3);
 opt = contset(opt,'VarTolerance',1e-3);
 opt = contset(opt,'FunTolerance',1e-3);
-opt = contset(opt,'MaxNumPoints',800);
+opt = contset(opt,'MaxNumPoints',bfpts);
 opt = contset(opt,'MaxStepsize',.01);
 opt = contset(opt,'Singularities',1);
 opt = contset(opt,'Eigenvalues',1);

@@ -1,4 +1,7 @@
-function [s,mssid,nss] = setupMATCONT(allxeq,allpvec,ap,model,fluxg,npts)
+function [s,mssid,nss] = setupMATCONT(allxeq,allpvec,ap,model,fluxg,npts,bfpts)
+if nargin<7
+    bfpts = 800;
+end
 
 for ipt = 1:npts
     fprintf('\nIteration #%d of %d Equilibrium Continuation...\n',ipt,npts);
@@ -10,7 +13,7 @@ for ipt = 1:npts
 %     pvec(ap) = 0.001;
     
     % run MATCONT
-    [data,y,p] = execMATCONT(xeq,pvec,ap,fluxg,model);
+    [data,y,p] = execMATCONT(xeq,pvec,ap,fluxg,model,bfpts);
     if ~isempty(data) && size(data.s1,1)>2
 %         bifurcationPlot(data.flux,data.s1,data.f1,[5,3]);
         hbif1 = bifurcationPlot(data.x1,data.s1,data.f1,[4,1],ap);    
@@ -38,9 +41,9 @@ nss = zeros(npts,1);
 for ipt = 1:npts
     if ~isempty(s.(['pt' num2str(ipt)]))
         s1 = s.(['pt' num2str(ipt)]).s1;
-        nLP = size(s1,1);
-        if nLP > 2
-            fprintf('Vector %d has %d Steady States\n',ipt,nLP);
+        nLP = size(s1,1)-2;
+        if nLP > 0
+            fprintf('Vector %d has %d Limit Points\n',ipt,nLP);
             mssid = union(mssid,ipt);
             nss(ipt) = nLP;
         end
