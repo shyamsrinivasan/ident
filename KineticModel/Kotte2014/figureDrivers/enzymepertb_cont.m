@@ -136,7 +136,8 @@ for id = 1:length(idp)
     [s,mssid,nss] = setupMATCONT(id2xeq,pvec,ap,model,fluxg,npts,900);
     pvec = origpvec;
 end
-
+% reset ap
+ap = 9;
 %% continuation on enzyme parameters at saddle node for enzyme perturbations
 % sample parameters indicated by indices in idp
 cmb = [.05 1 1;1 .05 1;1 1 .05;.05 .05 .05;...
