@@ -1,4 +1,4 @@
-% enzyme perturbation script - Figure 7
+% enzyme perturbation script - Figure 7?
 % changes to enzyme expression levels to determine new steady states by
 % simulating from either of the 2 initial steady states
 
@@ -217,6 +217,55 @@ for iid = 1:1 % length(idp)
             FIGmssEqIvalPerturbations(ival3,ival4,2,[1 3],hf3,ha3,Point2,addanot);
         end                 
     end
+end
+
+% print analysis of results - partially complete
+% same final state for both starting states
+samestates = find(eqid(1,:)==eqid(2,:));
+
+% same as strating state
+highstate = find(eqid(1,:)==ivalid(1,1));
+lowstate = find(eqid(2,:)==ivalid(2,1));
+
+% systems restricted to the high state for all ivals
+samehighstate = highstate(ismember(highstate,samestates));
+% systems restricted to the low state for all ivals
+samelowstate = lowstate(ismember(lowstate,samestates));
+% systems not restricted to either of the 2 states - resting state depends
+% on ival
+diffstate = setdiff(1:size(eqid,2),union(samehighstate,samelowstate));
+
+% check ival for diffstate
+% systems were a low state start gets a low state and high state start
+% gets a high state - i.e. maintain bistability
+bistable = all(eqid(:,diffstate)==ivalid(:,diffstate));
+if any(bistable)
+    % no movement/change in separatrix?
+    % no change in ability to remove bistability
+    % system too close to old state?   
+    fprintf('Following perturbations still result in bistability: %s\n'...
+            ,num2str(diffstate(bistable))); 
+    fprintf('Bistable parameter sets:\n');
+    bistates = diffstate(bistable);
+    fprintf('kEcat \t   vFbpmax \t   vEXmax\n');
+    for is = 1:length(bistates)
+        fprintf('%s\n',num2str(alliidpvec(bistates(is),idp),'%4.2e\t'));
+    end
+else
+    fprintf('No perturbation results in a bistable system\n');
+end
+% systems restricted to high state
+fprintf('Systems restricted to the high state:\n')
+fprintf('%s\n',num2str(samehighstate,'%d\t'));
+fprintf('High state parameters\n');
+for ih = 1:length(samehighstate)
+    fprintf('%s\n',num2str(alliidpvec(samehighstate(ih),idp),'%4.2e\t'));
+end
+% systems restricted to low state
+fprintf('Systems restricted to the low state:\n')
+fprintf('%s\n',num2str(samelowstate,'%d\t'));
+for il = 1:length(samelowstate)
+    fprintf('%s\n',num2str(alliidpvec(samelowstate(il),idp),'%4.2e\t'));
 end
 
 %% find equilibrium points for all cmb for lowest acetate value followed by
