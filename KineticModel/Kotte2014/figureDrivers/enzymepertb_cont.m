@@ -218,8 +218,8 @@ while ipt<size(cmb,1)
         end
         % save MATCONT results
         s.(['pt' num2str(ipt)]) = data;
-    end
-    pvec = allpvec(ipt,:);
+        pvec = allpvec(ipt,:);
+    end    
     ipt = ipt+4;
 end
 
