@@ -173,6 +173,7 @@ model.PM(ac-length(orig_saddle)) = orig_saddlepar;
 % set parameters from cmb at idp position(s)
 allpvec = repmat(pvec,npts,1);
 allpvec(:,idp) = cmb;
+allpvec(:,ap) = pvec(ap);
 
 % save allpvec for ap
 allpvecofap = allpvec(:,ap);
