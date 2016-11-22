@@ -61,12 +61,15 @@ opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
 ac = find(strcmpi(model.mets,'ac[e]'));
 npts = 1;
 
-% continuation on enzyme parameters at original parameter values
+%% continuation on enzyme parameters at original parameters (acetate & enzyme)
 idp = [12 13 14];
+pmin = zeros(length(idp),npts); % min
+pmax = zeros(length(idp),npts); % max
 origpvec1 = pvec;
 for id = 1:length(idp)
     id1xeq = zeros(length(M),npts);    
-    id1feq = zeros(length(fluxg),npts);    
+    id1feq = zeros(length(fluxg),npts);        
+    % xbounds = zeros(nvar,npts);
     ap = idp(id);
     
     % fix parameter at a lower value than 1
@@ -83,8 +86,22 @@ for id = 1:length(idp)
           
     % continute using MATCONT
     [s,mssid,nss] = setupMATCONT(id1xeq,pvec,ap,model,fluxg,npts,900);
+    
+    % identify boundaries of bistable enzyme parameters
+    for ipt = 1:npts
+        if ismember(ipt,mssid)
+            index = cat(1,s.(['pt' num2str(ipt)]).s1.index);
+            x1 = s.(['pt' num2str(ipt)]).x1;
+            pcont = x1(nvar+1:end,index);
+        end
+    end
+    
+    % reset parameters 
     pvec = origpvec1;
 end
+
+
+
 
 %% continue on acetate for original/nominal parameter values
 ap = 9;
@@ -112,7 +129,7 @@ nival = orig_saddle-eps*[1;1;1];
 [~,xeq2,~,feq2] = solveODEonly(1,nival,model,pvec,opts,tspanf);
 xss = [xeq1 xeq2];
 
-%% continuation on enzyme parameters at saddle node
+%% continuation on enzyme parameters at saddle node for nominal enzyme 
 origpvec = pvec; % pvec backup
 npts = 1;
 for id = 1:length(idp)
@@ -180,10 +197,10 @@ allpvec(:,ap) = pvec(ap);
 % cmb
 % change ipt from 1 through 4 to cycle through different types of perturbations
 % see Table 1 in Methods for the types fo perturbations
+ipt = 4;
 hf1 = [];
 hf2 = [];
 hf3 = [];
-ipt = 4;
 orig2pvec = allpvec;
 npts = 1;
 while ipt<size(cmb,1)
