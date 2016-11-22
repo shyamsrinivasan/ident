@@ -19,24 +19,17 @@ for ipt = 1:npts
     xeq = allxeq(:,ipt);
     pvec = allpvec(ipt,:);
     
-    % change to bigger number if bifurcation starts at a bigger value
-%     pvec(ap) = 0.001;
-    
     % run MATCONT
     [data,y,p] = execMATCONT(xeq,pvec,ap,fluxg,model,bfpts);    
     if fig && (~isempty(data) && size(data.s1,1)>2)
 %         bifurcationPlot(data.flux,data.s1,data.f1,[5,3]);
 %         bifurcationPlot(data.x1,data.s1,data.f1,[4,2]);
-%         bifurcationPlot([data.flux;data.x1(end,:)],data.s1,data.f1,[6,5]); 
-        if ~isempty(hbif1) 
-            if ~isempty(annot)
-                hbif1 = bifurcationPlot(data.x1,data.s1,data.f1,[4,1],ap,hbif1,annot);
-            else
-                hbif1 = bifurcationPlot(data.x1,data.s1,data.f1,[4,1],ap,hbif1);
-            end
+%         bifurcationPlot([data.flux;data.x1(end,:)],data.s1,data.f1,[6,5]);        
+        if ~isempty(annot)
+            hbif1 = bifurcationPlot(data.x1,data.s1,data.f1,[4,1],ap,hbif1,annot);
         else
-            hbif1 = bifurcationPlot(data.x1,data.s1,data.f1,[4,1],ap);
-        end       
+            hbif1 = bifurcationPlot(data.x1,data.s1,data.f1,[4,1],ap,hbif1);
+        end          
     end   
     
     % save MATCONT results
