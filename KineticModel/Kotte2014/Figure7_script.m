@@ -36,17 +36,19 @@ for iid = 1:ndp
                 if ismember(ipt,allmsspts)  
                     % find two steady states for different acetate
                     % concentrations
-                    s1 =...
-                    siid.(['iid' num2str(iid)]).(['pt' num2str(ipt)]).s1;
-                    x1 =...
-                    siid.(['iid' num2str(iid)]).(['pt' num2str(ipt)]).x1;
+%                     s1 =...
+%                     siid.(['iid' num2str(iid)]).(['pt' num2str(ipt)]).s1;
+%                     x1 =...
+%                     siid.(['iid' num2str(iid)]).(['pt' num2str(ipt)]).x1;
+                    s1.(['pt' num2str(ipt)]) =...
+                    siid.(['iid' num2str(iid)]).(['pt' num2str(ipt)]);
                     for iac = 1:length(acetate)
                         % calculate saddle for each acetate concentration
                         eps = 1e-4;
                         saddle = [];
                         saddlepar = [];
                         while isempty(saddlepar)
-                            [saddle,saddlepar,status] = geteqcontpt(s1,x1,acetate(iac),eps);
+                            [saddle,saddlepar,status] = geteqcontpt(s1,acetate(iac),eps);
                             eps = eps*10;
                         end
                         if status % obtained good saddle node
