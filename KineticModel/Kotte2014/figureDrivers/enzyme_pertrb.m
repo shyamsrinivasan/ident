@@ -35,23 +35,23 @@ model.PM = PM;
 % call to parameter sampling script for analysis of mss
 % parameters
 clear pvec
-kEcat = 1;
-KEacetate = 0.1;    % or 0.02
-KFbpFBP = 0.1;
-vFbpmax = 1;
-Lfbp = 4e6;
-KFbpPEP = 0.1;
-vEXmax = 1;
-KEXPEP = 0.3;
+k1cat = 1;
+K1ac = 0.1;    % or 0.02
+K3fdp = 0.1;
+v3max = 1;
+L3 = 4e6;
+K3pep = 0.1;
+v2max = 1;
+K2pep = 0.3;
 vemax = 1.1;        % for bifurcation analysis: 0.7:0.1:1.3
 KeFBP = 0.45;       % or 0.45
 ne = 2;             % or 2
 acetate = 0.1;      % a.u acetate
 d = 0.25;           % or 0.25 or 0.35
-kPEPout = 0.2;
-pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
-        KEXPEP,vemax,KeFBP,ne,acetate,d,...
-        kPEPout,kEcat,vFbpmax,vEXmax];
+k4cat = 0.2;
+pvec = [K1ac,K3fdp,L3,K3pep,...
+        K2pep,vemax,KeFBP,ne,acetate,d,...
+        k4cat,k1cat,v3max,v2max];
 
 % systems check
 givenModel = @(t,x)KotteODE(t,x,model,pvec);
@@ -100,32 +100,21 @@ type = 'together';
 npts = size(cmb,1);
 
 if strcmpi(type,'together')
-    alliidpvec = zeros(npts,length(pvec),size(idp,1));
-    alliidxeq = zeros(length(M),npts,size(idp,1));
-    alliidxdyn = zeros(length(M),length(tspan),npts,size(idp,1));
-    alliidfeq = zeros(length(fluxg),npts,size(idp,1));
-    alliidfdyn = zeros(length(fluxg),length(tspan),npts,size(idp,1));
+    alliidpvec = zeros(npts,length(pvec),size(idp,1));    
 else    
-    alliidpvec = zeros(npts,length(pvec),length(idp));
-    alliidxeq = zeros(length(M),npts,length(idp));
-    alliidxdyn = zeros(length(M),length(tspan),npts,length(idp));
-    alliidfeq = zeros(length(fluxg),npts,length(idp));
-    alliidfdyn = zeros(length(fluxg),length(tspan),npts,length(idp));
+    alliidpvec = zeros(npts,length(pvec),length(idp));    
 end
 
 % set acetate conentration
-pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
-        KEXPEP,vemax,KeFBP,ne,acetate,d,...
-        kPEPout,kEcat,vFbpmax,vEXmax];
+pvec = [K1ac,K3fdp,L3,K3pep,...
+        K2pep,vemax,KeFBP,ne,acetate,d,...
+        k4cat,k1cat,v3max,v2max];
 pvec(ap) = orig_saddlepar;
 model.PM(ac-length(orig_saddle)) = orig_saddlepar;
 
 % set parameters from cmb at idp position(s)
 allpvec = repmat(pvec,npts,1);
 allpvec(:,idp) = cmb;
-
-% save allpvec for ap
-allpvecofap = allpvec(:,ap);
 
 colorSpec = chooseColors(4,{'Navy','HotPink','Red','Orange'});
 for iid = 1:1 % length(idp)
