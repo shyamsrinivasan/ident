@@ -1,4 +1,4 @@
-function [s,mssid,nss] = setupMATCONT(allxeq,allpvec,ap,model,fluxg,npts,bfpts)
+function [s,mssid,nss] = setupMATCONT(allxeq,allpvec,ap,model,fluxg,npts,bfpts,fig)
 if nargin<8
     fig = 0;
 end
