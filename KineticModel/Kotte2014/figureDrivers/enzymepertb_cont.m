@@ -82,7 +82,7 @@ for id = 1:length(idp)
     solveODEonly(npts,M,model,pvec,opts,tspan);
           
     % continute using MATCONT
-    [s,mssid,nss] = setupMATCONT(id1xeq,pvec,ap,model,fluxg,npts,1500);
+    [s,mssid,nss] = setupMATCONT(id1xeq,pvec,ap,model,fluxg,npts,1500,1);
     
     % identify boundaries of bistable enzyme parameters
     for ipt = 1:npts
@@ -144,7 +144,7 @@ for id = 1:length(idp)
     solveODEonly(npts,M,model,pvec,opts,tspan);
           
     % continute using MATCONT
-    [s,mssid,nss] = setupMATCONT(id2xeq,pvec,ap,model,fluxg,npts,1500);
+    [s,mssid,nss] = setupMATCONT(id2xeq,pvec,ap,model,fluxg,npts,1500,1);
     pvec = origpvec;
     
     % determine bistable parameter boundaries
@@ -268,6 +268,7 @@ allpvec(:,ap) = pvec(ap);
 
 orig2pvec = allpvec;
 for ip = 1:length(idp)
+    hbif1 = [];
     ap = idp(ip);    
     
     % fix parameter at a lower value than 1
@@ -281,34 +282,38 @@ for ip = 1:length(idp)
     [~,id3xeq] = solveODEonly(npts,M,model,allpvec,opts,tspan);
 
     % continue using MATCONT for all npts points
-    [s,mssid,nss] = setupMATCONT(id3xeq,allpvec,ap,model,fluxg,npts,900); 
+    [s,mssid,nss,hbif1] = setupMATCONT(id3xeq,allpvec,ap,model,fluxg,npts,900,1,hbif1); 
     
     % store continuation data
-    siid.(['iid' num2str(ip)]) = s;
-    allmssid.(['iid' num2str(ip)]) = mssid;
-    allnss.(['iid' num2str(ip)]) = nss;
+    cmbsiid.(['iid' num2str(ip)]) = s;
+    cmbmssid.(['iid' num2str(ip)]) = mssid;
+    % allnss.(['iid' num2str(ip)]) = nss;
     
      % reset parameter
     allpvec = orig2pvec;
 end
 
 %% identify bistable bounds
-for ip = 1:length(fieldnames(siid))
-    mssid = allmssid.(['iid' num2str(ip)]);    
+fprintf('Summary of Enzyme Parameter Continuation\n');
+for ip = 1:length(fieldnames(cmbsiid))
+    fprintf('\nContinuation on parameter %d\n:',idp(ip));
+    fprintf('Bistable Perturbation Vectors :\n');
+    mssid = cmbmssid.(['iid' num2str(ip)]);    
     pbounds = zeros(2,length(mssid));
     xbounds = zeros(nvar,2*length(mssid));
     mssipt = 1;
     for ipt = 1:npts
         if ismember(ipt,mssid)
-            index = cat(1,siid.(['iid' num2str(ip)]).(['pt' num2str(ipt)]).s1.index);
-            x1 = siid.(['iid' num2str(ip)]).(['pt' num2str(ipt)]).x1;
+            index = cat(1,cmbsiid.(['iid' num2str(ip)]).(['pt' num2str(ipt)]).s1.index);
+            x1 = cmbsiid.(['iid' num2str(ip)]).(['pt' num2str(ipt)]).x1;
             pcont = x1(nvar+1:end,index);
             pbounds(1,mssipt) = min(pcont(:,2:end-1));
             pbounds(2,mssipt) = max(pcont(:,2:end-1));
+            fprintf('%d\t',ipt);
             mssipt = mssipt + 1;
         end
     end
-    pbistable.(['iid' num2str(ip)]) = pbounds;
+    pbistable.(['iid' num2str(ip)]) = pbounds;    
 end
               
 
