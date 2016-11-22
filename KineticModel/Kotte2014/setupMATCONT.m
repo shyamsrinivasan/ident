@@ -1,4 +1,11 @@
-function [s,mssid,nss] = setupMATCONT(allxeq,allpvec,ap,model,fluxg,npts,bfpts,fig)
+function [s,mssid,nss,hbif1] =...
+        setupMATCONT(allxeq,allpvec,ap,model,fluxg,npts,bfpts,fig,hbif1,annot)
+if nargin<10
+    annot = [];
+end
+if nargin<9
+    hbif1 = [];
+end
 if nargin<8
     fig = 0;
 end
@@ -16,15 +23,21 @@ for ipt = 1:npts
 %     pvec(ap) = 0.001;
     
     % run MATCONT
-    [data,y,p] = execMATCONT(xeq,pvec,ap,fluxg,model,bfpts);
-    if fig
-        if ~isempty(data) && size(data.s1,1)>2
-    %         bifurcationPlot(data.flux,data.s1,data.f1,[5,3]);
-            hbif1 = bifurcationPlot(data.x1,data.s1,data.f1,[4,1],ap);    
-    %         bifurcationPlot(data.x1,data.s1,data.f1,[4,2]);
-    %         bifurcationPlot([data.flux;data.x1(end,:)],data.s1,data.f1,[6,5]);
-        end
-    end
+    [data,y,p] = execMATCONT(xeq,pvec,ap,fluxg,model,bfpts);    
+    if fig && (~isempty(data) && size(data.s1,1)>2)
+%         bifurcationPlot(data.flux,data.s1,data.f1,[5,3]);
+%         bifurcationPlot(data.x1,data.s1,data.f1,[4,2]);
+%         bifurcationPlot([data.flux;data.x1(end,:)],data.s1,data.f1,[6,5]); 
+        if ~isempty(hbif1) 
+            if ~isempty(annot)
+                hbif1 = bifurcationPlot(data.x1,data.s1,data.f1,[4,1],ap,hbif1,annot);
+            else
+                hbif1 = bifurcationPlot(data.x1,data.s1,data.f1,[4,1],ap,hbif1);
+            end
+        else
+            hbif1 = bifurcationPlot(data.x1,data.s1,data.f1,[4,1],ap);
+        end       
+    end   
     
     % save MATCONT results
     s.(['pt' num2str(ipt)]) = data;
