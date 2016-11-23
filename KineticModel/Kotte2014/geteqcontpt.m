@@ -30,10 +30,9 @@ for ipt = 1:npts
     minid = id(minid);
     maxid = id(maxid);
     % check if input value is within bounds
-    status = 1;
+    status = -1;
     if pt<mineqvar || pt>maxeqvar
-        % if outside bounds - terminate and return a saddle node at the midpt
-        saddle = [];
+        % if outside bounds - terminate and return a saddle node at the midpt        
         saddlepar = [];
         while isempty(saddlepar)
             [saddle,saddlepar] = getsaddlenode(s1,x1,eps);
@@ -44,21 +43,24 @@ for ipt = 1:npts
         % if pt within bounds - identify saddle closest to pt
         % get all data between minid and maxid
         reldata = x1(:,min([minid maxid]):max([minid maxid]));
-        % search for parameter value closest to point 
-        if any(abs(pt-reldata(end,:))<=eps)
-            index = find(abs(pt-reldata(end,:))<=eps,1,'first');
-            if ~isempty(index)
-                saddle = reldata(:,index);
-                saddlepar = saddle(end);
-                saddle(end) = [];
+        % search for parameter value closest to point         
+        while status<0            
+            if any(abs(pt-reldata(end,:))<=eps)
+                index = find(abs(pt-reldata(end,:))<=eps,1,'first');
+                if ~isempty(index)
+                    saddle = reldata(:,index);
+                    saddlepar = saddle(end);
+                    saddle(end) = [];
+                end
+                status = 1;
+            else
+                saddle = [];
+                saddlepar = [];                
+                eps = eps*10;
             end
-        else
-            saddle = [];
-            saddlepar = [];
-            status = -1;
         end
     end
-    display(saddle); % debug
+    % display(saddle); % debug
     if status>=0
         saddlepts(:,ipt) = saddle;
         saddleparpts(ipt) = saddlepar;
