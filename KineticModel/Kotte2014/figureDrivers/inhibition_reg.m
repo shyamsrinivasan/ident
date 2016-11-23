@@ -180,8 +180,8 @@ for iid = 1:1
 end
 
 % final plot
-xlabel = 'Acetate a.u.';
-ylabel = 'Kefdp a.u.';
+xlab = 'Acetate a.u.';
+ylab = 'Kefdp a.u.';
 figure
 Line.LineStyle = 'none';
 Line.LineWidth = 3;
@@ -194,10 +194,10 @@ hl2 = line(acbounds(2,:),cmb(mssid));
 Line.Color = 'r';
 set(hl2,Line);
 
-set(get(gca,'YLabel'),'String',ylabel);  
+set(get(gca,'YLabel'),'String',ylab);  
 set(get(gca,'YLabel'),'FontName','Arial');   
 set(get(gca,'YLabel'),'FontSize',22); 
-set(get(gca,'XLabel'),'String',xlabel);  
+set(get(gca,'XLabel'),'String',xlab);  
 set(get(gca,'XLabel'),'FontName','Arial');   
 set(get(gca,'XLabel'),'FontSize',22);
 
@@ -208,6 +208,69 @@ axesP.TickLength = [0.01 0.01];
 axesP.XColor = [.1 .1 .1];
 axesP.YColor = [.1 .1 .1];
 set(gca,axesP);
-% collect all solutions for final plot
+
+%% get changes in steady state for a given acetate concentration over
+% multiple inhibition values similar to that obtained in k4catchange
+acetate = orig_saddlepar;
+ap = 9;
+colorSpec = chooseColors(5,{'Green','Purple','Red','Navy','HotPink'});
+saddleac = zeros(npts,length(acetate));
+xeqac = zeros(2*nvar,npts,length(acetate));
+feqac = zeros(2*length(fluxg),npts,length(acetate));
+for iac = 1:length(acetate)    
+    % calculate saddle for each acetate concentration
+    eps = 1e-4;
+    [saddle,saddlepar,status] = eqptwrapper(s,nvar,acetate(iac),eps);
+    
+    % good saddle node points only
+    goodsaddle = saddle(:,logical(status));
+    goodsaddlepar = saddlepar(logical(status));
+    saddleac(logical(status),iac) = goodsaddlepar;
+    allpvec(logical(status),ap) = goodsaddlepar;
+    % saddle parameter out of bifurcation bounds
+    % get the one possible steady state
+    oubsaddle = saddle(:,~logical(status));
+    oubsaddlepar = saddlepar(~logical(status));
+    saddleac(~logical(status),iac) = acetate(iac);
+    allpvec(~logical(status),ap) = acetate(iac);
+    
+    for ipt = 1:npts
+        if ismember(ipt,find(status))
+            model.PM(ac-length(orig_saddle)) = saddlepar(ipt); 
+            % perturb saddle to get steady states
+            eps = 1e-4;                            
+            pival = saddle(:,ipt)+eps*[1;1;1];
+            [~,xeq1,~,feq1] =...
+            solveODEonly(1,pival,model,allpvec(ipt,:),opts,tspanf);
+            nival = saddle(:,ipt)-eps*[1;1;1];
+            [~,xeq2,~,feq2] =...
+            solveODEonly(1,nival,model,allpvec(ipt,:),opts,tspanf);            
+            xeqac(nvar+1:end,ipt,iac) = xeq2;
+            feqac(length(fluxg)+1:end,ipt,iac) = feq2;
+        else
+            % get the only possible steady state
+            model.PM(ac-length(orig_saddle)) = acetate(iac);
+            [~,xeq1,~,feq1] = solveODEonly(1,M,model,allpvec(ipt,:),opts,tspan);            
+            xeqac(nvar+1:end,ipt,iac) = xeq1;
+        end
+        xeqac(1:nvar,ipt,iac) = xeq1;
+        feqac(1:length(fluxg),ipt,iac) = feq1;
+    end
+    
+    hc1 = figure;
+    hold on
+    plot(allpvec(:,idp),xeqac(1,:),'Color',colorSpec{1},'LineWidth',2);
+    plot(allpvec(:,idp),xeqac(4,:),'Color',colorSpec{2},'LineWidth',2);
+    xlabel('Kefdp a.u.');
+    ylabel('PEP a.u.');
+    
+    hc2 = figure;
+    hold on
+    plot(allpvec(:,idp),feqac(4,:),'Color',colorSpec{1},'LineWidth',2);
+    plot(allpvec(:,idp),feqac(8,:),'Color',colorSpec{2},'LineWidth',2);
+    xlabel('Kefdp a.u.');
+    ylabel('v4 a.u.');
+end
+
 
 
