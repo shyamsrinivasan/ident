@@ -40,9 +40,10 @@ for iid = 1:ndp
 %                     siid.(['iid' num2str(iid)]).(['pt' num2str(ipt)]).s1;
 %                     x1 =...
 %                     siid.(['iid' num2str(iid)]).(['pt' num2str(ipt)]).x1;
-                    s1.(['pt' num2str(ipt)]) =...
+                    s1.pt1 =...
                     siid.(['iid' num2str(iid)]).(['pt' num2str(ipt)]);
                     for iac = 1:length(acetate)
+                        fprintf('%d\n',iac); % debug
                         % calculate saddle for each acetate concentration
                         eps = 1e-4;
                         saddle = [];
