@@ -4,7 +4,7 @@
 % x1 = varargin{2}; % output from MATCONT
 % pt = pvec(ap)
 function [saddlepts,saddleparpts,statuspts] = geteqcontpt(s,pt,eps)
-if nargin<4 || isempty(eps)
+if nargin<3 || isempty(eps)
     eps = 1e-3;
 end  
 
@@ -58,9 +58,12 @@ for ipt = 1:npts
             status = -1;
         end
     end
-    saddlepts(:,ipt) = saddle;
-    saddleparpts(ipt) = saddlepar;
-    statuspts(ipt) = status;
+    display(saddle); % debug
+    if status>=0
+        saddlepts(:,ipt) = saddle;
+        saddleparpts(ipt) = saddlepar;
+    end
+    statuspts(ipt) = status;    
 end % for
 
 
