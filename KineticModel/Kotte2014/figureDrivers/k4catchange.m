@@ -194,6 +194,7 @@ for iac = 1:length(acetate)
             model.PM(ac-length(orig_saddle)) = acetate(iac);
             [~,xeq1,~,feq1] = solveODEonly(1,M,model,allpvec(ipt,:),opts,tspan);            
             xeqac(nvar+1:end,ipt,iac) = xeq1;
+            feqac(length(fluxg)+1:end,ipt,iac) = feq1;
         end
         xeqac(1:nvar,ipt,iac) = xeq1;
         feqac(1:length(fluxg),ipt,iac) = feq1;
@@ -208,8 +209,8 @@ for iac = 1:length(acetate)
     
     hc2 = figure;
     hold on
-    plot(allpvec(:,idp),feqac(4,:),'Color',colorSpec{1},'LineWidth',2);
-    plot(allpvec(:,idp),feqac(8,:),'Color',colorSpec{2},'LineWidth',2);
+    plot(allpvec(:,idp),feqac(5,:),'Color',colorSpec{1},'LineWidth',2);
+    plot(allpvec(:,idp),feqac(10,:),'Color',colorSpec{2},'LineWidth',2);
     xlabel('k4cat s-1');
     ylabel('v4 a.u.');
 end
