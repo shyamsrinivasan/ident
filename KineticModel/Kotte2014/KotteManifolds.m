@@ -2,10 +2,20 @@
 % Lyons et al., 2014, Int. J. Bifurcation Chaos
 
 % generate equilibrium solution and model for Kotte model
-addpath(genpath('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel'));
-addpath('C:\Users\shyam\Documents\MATLAB\CCFM_manifolds\CCFM_manifolds\functions\');
-rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\Kotte2014\Kotte2014.txt';
-cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\Kotte2014\Kotte2014C.txt';
+if ~exist('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\Kotte2014\Kotte2014.txt')
+    status = 2;
+    fprintf('\nLinux System\n');
+else 
+    status = 1;
+    fprintf('\nWindows System\n');
+end
+if status == 1
+    rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\Kotte2014\Kotte2014.txt';
+    cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\Kotte2014\Kotte2014C.txt';
+elseif status == 2
+    rxfname = '/home/shyam/Documents/MATLAB/Code/KineticModel/Kotte2014/Kotte2014.txt';
+    cnfname = '/home/shyam/Documents/MATLAB/Code/KineticModel/Kotte2014/Kotte2014C.txt';
+end
 
 % create model structure
 [FBAmodel,parameter,variable,nrxn,nmetab] = modelgen(rxfname);
@@ -109,8 +119,8 @@ tspanr = [0 -8.5];
 NumericalSeparatrix(model,pvec,opts,ap,data.s1,data.x1,[xeq1 xeq2],'stable',tspanr,3,5e-3);
 
 % Lyons et al., 2014 code
-mypath = 'C:\Users\shyam\Documents\MATLAB\CCFM_manifolds';
-addpath(strcat(mypath,'\CCFM_manifolds\functions\'));
+% mypath = 'C:\Users\shyam\Documents\MATLAB\CCFM_manifolds';
+% addpath(strcat(mypath,'\CCFM_manifolds\functions\'));
 
 % set viewpoint for 3D plots
 azimuth = 52; elevation = 10;
@@ -132,7 +142,14 @@ range = [saddlepar 2];
 contdir = 1;
 options = optimoptions('fsolve','Display','off','TolFun',1e-10,'TolX',1e-10);
 fixed_points = kotte_branches(npoints,range,contdir,eqpts,model,pvec,ap,options);   
-[type,alleig] = KotteStabilityInfo(eqpts,model,pvec);       
+[type,alleig] = KotteStabilityInfo(eqpts,model,pvec);      
+
+% compute Jacobian, eigenvalues, eigenvector at saddle points with 2D stable
+% manifolds
+[~,eig,eigvec] = getKotteJacobian(eqpts(1,:)',pvec,model);
+
+% obtain the 2 eigenvectors of 2D linear eigenspace
+stableeigvec = eigvec(:,eig<0);
 
 % circle parameters
 points = 401;
@@ -163,40 +180,33 @@ ode_system = 'givenModel';
 % at the equilibrium "fixed_points" with exactly 2 eigenvalues with
 % negative real part
 
-% compute Jacobian, eigenvalues, eigenvector at saddle points with 2D stable
-% manifolds
-[~,eig,eigvec] = getKotteJacobian(eqpts(1,:)',pvec,model);
-
-% obtain the 2 eigenvectors of 2D linear eigenspace
-stableeigvec = eigvec(:,eig<0);
-
-% obtain coordinates of circle with radius r in (x1,x2) plane
-[x1,x2] = getplanarcircle(points,radius);
-
-% perform linear mapping of unit circle onto plane in R3 spanned by W1,W2
-xnew = manifoldlinearmapping(x1,x2,stableeigvec(:,1),stableeigvec(:,2));
-
-% translate mapping to saddle point
-xnew = xnew + repmat(saddle,1,size(xnew,2));
-xnew = xnew';
-
-tspanr = 0:-.05:-20;
-allxdynr = get2Dmanifoldpoints(xnew,model,pvec,tspanr,opts);
+% % obtain coordinates of circle with radius r in (x1,x2) plane
+% [x1,x2] = getplanarcircle(points,radius);
+% 
+% % perform linear mapping of unit circle onto plane in R3 spanned by W1,W2
+% xnew = manifoldlinearmapping(x1,x2,stableeigvec(:,1),stableeigvec(:,2));
+% 
+% % translate mapping to saddle point
+% xnew = xnew + repmat(saddle,1,size(xnew,2));
+% xnew = xnew';
+% 
+% tspanr = 0:-.05:-20;
+% allxdynr = get2Dmanifoldpoints(xnew,model,pvec,tspanr,opts);
 
 % trim dynr
-txdynr = allxdynr;
-txdynr(:,txdynr(1,:)>100) = [];
-
-figure(4); hold on;
-Delaunay_special_plot(txdynr(1,:),txdynr(2,:),txdynr(3,:),0.05);
-
-
-% filter out extra points within small tolerance of each other
-norm_tol = 0.1;%0.01;
-[x,y,z] = redundant_point_filter(allxdynr(1,:),allxdynr(2,:),allxdynr(3,:),norm_tol);
-
-figure(3); hold on;
-Delaunay_special_plot(x,y,z,0.05);
+% txdynr = allxdynr;
+% txdynr(:,txdynr(1,:)>100) = [];
+% 
+% figure(4); hold on;
+% Delaunay_special_plot(txdynr(1,:),txdynr(2,:),txdynr(3,:),0.05);
+% 
+% 
+% % filter out extra points within small tolerance of each other
+% norm_tol = 0.1;%0.01;
+% [x,y,z] = redundant_point_filter(allxdynr(1,:),allxdynr(2,:),allxdynr(3,:),norm_tol);
+% 
+% figure(3); hold on;
+% Delaunay_special_plot(x,y,z,0.05);
 
 
 
