@@ -159,4 +159,20 @@ for iac = 1:length(acetate)
         xeqac(1:nvar,ipt,iac) = xeq1;
         feqac(1:length(fluxg),ipt,iac) = feq1;
     end
+    
+    xeqid = zeros(2,npts);
+    xeqid(1,xeqac(1,:)>xeqac(2,:)) = 1;
+    xeqid(1,xeqac(2,:)>xeqac(1,:)) = 2;
+    xeqid(2,xeqac(4,:)>xeqac(5,:)) = 1;
+    xeqid(2,xeqac(5,:)>xeqac(4,:)) = 2;    
+    % get indices where xeqid(1) != xeqid(2)
+    shiftid = find(xeqid(1,:)~=xeqid(2,:),1,'last');
+    % sample points around shiftid (ball of radius?)
+    
+    
+    % find edge of bistable region for each acetate 
+    % point at which status changes a second time?
+    % point at which you stop get 2 steady states a second time?
+    % find points between changes in status
 end
+
