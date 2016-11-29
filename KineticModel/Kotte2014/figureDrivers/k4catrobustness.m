@@ -168,7 +168,7 @@ for iac = 1:length(acetate)
     % get indices where xeqid(1) != xeqid(2)
     shiftid = find(xeqid(1,:)~=xeqid(2,:),1,'last');
     % sample points around shiftid (ball of radius?)
-    
+    samples = SphereSampling(xeqac(1:3,shiftid),1,1000);
     
     % find edge of bistable region for each acetate 
     % point at which status changes a second time?
