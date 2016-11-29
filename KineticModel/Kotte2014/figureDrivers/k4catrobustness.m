@@ -167,9 +167,25 @@ for iac = 1:length(acetate)
     xeqid(2,xeqac(5,:)>xeqac(4,:)) = 2;    
     % get indices where xeqid(1) != xeqid(2)
     shiftid = find(xeqid(1,:)~=xeqid(2,:),1,'last');
+    % adjust pvec?
+    pvec = allpvec(shiftid,:);
+    model.PM(ac-nvar) = pvec(9);
     % sample points around shiftid (ball of radius?)
     samples = SphereSampling(xeqac(1:3,shiftid),1,1000);
-    
+    samples = samples(:,samples(1,:)>0);
+    samples = samples(:,samples(2,:)>0);
+    samples = samples(:,samples(3,:)>0);
+    % simulate from each sample
+    nsample = size(samples,2);
+    smpxeq = zeros(nvar,nsample);
+    smpfeq = zeros(length(fluxg),nsample);
+    %%
+    parfor isample = 1:nsample
+        [~,xeqs,~,feqs] =...
+        solveODEonly(1,samples(:,isample),model,pvec,opts,tspanf);
+        smpxeq(:,isample) = xeqs;
+        smpfeq(:,isample) = feqs;
+    end    
     % find edge of bistable region for each acetate 
     % point at which status changes a second time?
     % point at which you stop get 2 steady states a second time?
