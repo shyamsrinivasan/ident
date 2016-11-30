@@ -110,6 +110,9 @@ nival = saddle-eps*[1;1;1];
 
 [~,eigval,w] = getKotteJacobian(saddle,pvec,model);
 
+tspanr = [0,-18;0 -9];
+NumericalSeparatrix(model,pvec,opts,ap,data.s1,data.x1,[xeq1 xeq2],'all',tspanr,2,5e-3);
+
 % unstable manifold in 3D
 tspanr = [0,-20];
 NumericalSeparatrix(model,pvec,opts,ap,data.s1,data.x1,[xeq1 xeq2],'unstable',tspanr,3,5e-3);
