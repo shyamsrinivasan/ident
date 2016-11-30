@@ -43,13 +43,13 @@ K3pep = 0.1;
 v2max = 1;
 K2pep = 0.3;
 vemax = 1.1;        % for bifurcation analysis: 0.7:0.1:1.3
-KeFBP = 0.45;       % or 0.45
+KeFDP = 0.45;       % or 0.45
 ne = 2;             % or 2
 acetate = 0.1;      % a.u acetate
 d = 0.25;           % or 0.25 or 0.35
 k4cat = 0.2;
 pvec = [K1ac,K3fdp,L3,K3pep,...
-        K2pep,vemax,KeFBP,ne,acetate,d,...
+        K2pep,vemax,KeFDP,ne,acetate,d,...
         k4cat,k1cat,v3max,v2max];
 
 % systems check
@@ -92,7 +92,7 @@ npts = size(cmb,1);
 
 % set acetate conentration to saddle
 pvec = [K1ac,K3fdp,L3,K3pep,...
-        K2pep,vemax,KeFBP,ne,acetate,d,...
+        K2pep,vemax,KeFDP,ne,acetate,d,...
         k4cat,k1cat,v3max,v2max];
 % pvec(ap) = orig_saddlepar;
 % model.PM(ac-length(orig_saddle)) = orig_saddlepar;
