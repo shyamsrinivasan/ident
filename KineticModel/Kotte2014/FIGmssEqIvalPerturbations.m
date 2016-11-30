@@ -84,6 +84,7 @@ end
 
 setKotteproperties(3,ha,xlabel,ylabel)
 hlval = [hlval1 hlval2];
+drawnow;
 end
 
 function [ha,hlval] = plot3DeqPoints(val1,val2,idx,datatype,hfig,ha,Point)
@@ -142,4 +143,5 @@ end
 
 setKotteproperties(3,ha,xlabel,ylabel,zlabel)
 hlval = [hlval1 hlval2];
+drawnow;
 end
