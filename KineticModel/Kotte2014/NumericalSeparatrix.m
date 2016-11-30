@@ -71,16 +71,22 @@ end
 switch type
     case 'stable'
         w = w(:,real(lambda)<0);
+        lambda = lambda(real(lambda)<0);
         tspanr1 = tspanr;
         tspanr2 = [];
     case 'unstable'
         w = w(:,real(lambda)>=0);
+        lambda = lambda(real(lambda)>=0);
         tspanr1 = [];
         tspanr2 = tspanr;
     otherwise
         fprintf('Using both stable and unstable eigen values for separatrix calculation\n');
-        tspanr1 = tspanr(1,:);
-        tspanr2 = tspanr(2,:);
+        wall = w;
+        lambdall = lambda;
+        w = [wall(:,real(lambda)>=0),wall(:,real(lambda)<0)];
+        lambda = [lambdall(real(lambdall)>=0);lambdall(real(lambdall)<0)];
+        tspanr1 = tspanr(2,:);
+        tspanr2 = tspanr(1,:);
 end
     
 colorSpec = chooseColors(4,{'Green','Purple','Red','Navy','HotPink'});
@@ -104,15 +110,29 @@ if unstablept
         p1execflag = 0;
         for iw = 1:size(w,2)
             % separatrix curve
-            if ~isempty(tspanr1)
-                xdynr1 =...
-                solveODEonly(1,zval((iw-1)*nvar+1:iw*nvar,ival),model,pvec,opts,tspanr1);
+            if real(lambda(iw))<0
+                if ~isempty(tspanr1)
+                    xdynr1 =...
+                    solveODEonly(1,zval((iw-1)*nvar+1:iw*nvar,ival),model,pvec,opts,tspanr1);
+                    xdynr1 = xdynr1(:,xdynr1(1,:)>=0);
+                    xdynr1 = xdynr1(:,xdynr1(2,:)>=0);
+                    xdynr1 = xdynr1(:,xdynr1(3,:)>=0);
+                else
+                    xdynr1 = [];
+                end
             else
                 xdynr1 = [];
             end
-            if ~isempty(tspanr2)
-                xdynr2 =...
-                solveODEonly(1,zval((iw-1)*nvar+1:iw*nvar,ival),model,pvec,opts,tspanr2);
+            if real(lambda(iw))>=0
+                if ~isempty(tspanr2)
+                    xdynr2 =...
+                    solveODEonly(1,zval((iw-1)*nvar+1:iw*nvar,ival),model,pvec,opts,tspanr2);
+                    xdynr2 = xdynr2(:,xdynr2(1,:)>=0);
+                    xdynr2 = xdynr2(:,xdynr2(2,:)>=0);
+                    xdynr2 = xdynr2(:,xdynr2(3,:)>=0);
+                else
+                    xdynr2 = [];
+                end
             else
                 xdynr2 = [];
             end
@@ -134,8 +154,8 @@ if unstablept
                     FIGodetrajectories(real(xdynr1),saddle,saddle,2,[2 3],ht23fig,ha23,Line1);
                     [ht13fig,ha13] =...
                     FIGodetrajectories(real(xdynr1),saddle,saddle,2,[1 3],ht13fig,ha13,Line1);
-                else
-                    hl1 = [];
+%                 else
+%                     hl1 = [];
                 end
                 % xdynr2
                 if ~isempty(xdynr2)
@@ -145,8 +165,8 @@ if unstablept
                     FIGodetrajectories(real(xdynr2),saddle,saddle,2,[2 3],ht23fig,ha23,Line2);
                     [ht13fig,ha13] =...
                     FIGodetrajectories(real(xdynr2),saddle,saddle,2,[1 3],ht13fig,ha13,Line2);
-                else
-                    hl2 = [];
+%                 else
+%                     hl2 = [];
                 end
             end
             % 3D trajectories
@@ -154,14 +174,14 @@ if unstablept
                 if ~isempty(xdynr1)
                     [hf3,ha3,hl1] =...
                     FIGodetrajectories(real(xdynr1),saddle,saddle,2,[1 2 3],hf3,ha3,Line1);
-                else
-                    hl1 = [];
+%                 else
+%                     hl1 = [];
                 end
                 if ~isempty(xdynr2)
                     [hf3,ha3,hl2] =...
                     FIGodetrajectories(real(xdynr2),saddle,saddle,2,[1 2 3],hf3,ha3,Line2);
-                else
-                    hl2 = [];
+%                 else
+%                     hl2 = [];
                 end
             end
             % plot equilibrium points
@@ -211,6 +231,12 @@ if unstablept
             end
         end         
     end
+    if ~exist('hl1','var')
+        hl1 = [];
+    end
+    if ~exist('hl2','var')
+        hl2 = [];
+    end
 
     if ~isempty(hl1)&&~isempty(hl2)
         legend([hl1 hl2 hl4 hl3(1) hl3(2)],'Separatrix(Stable Manifold)',...
@@ -227,7 +253,7 @@ if unstablept
                'Separatrix Perturbations',...
                'Saddle Node','Steady States');
     end        
-    legend('boxoff');
+%     legend('boxoff');
 end
 
 function [hl1,hl2,xeq] = perturbSeparatrix(saddle,xdynr,tspanf,opts,...
