@@ -111,12 +111,12 @@ nival = saddle-eps*[1;1;1];
 [~,eigval,w] = getKotteJacobian(saddle,pvec,model);
 
 % all manifolds in 2D
-tspanr = [0,-30;0 -12];
-NumericalSeparatrix(model,pvec,opts,ap,data.s1,data.x1,[xeq1 xeq2],'all',tspanr,2,5e-3);
+% tspanr = [0,-30;0 -12];
+% NumericalSeparatrix(model,pvec,opts,ap,data.s1,data.x1,[xeq1 xeq2],'all',tspanr,2,5e-3);
 
 % all manifold in 3D
-% tspanr = [0,-30;0 -12];
-% NumericalSeparatrix(model,pvec,opts,ap,data.s1,data.x1,[xeq1 xeq2],'all',tspanr,3,5e-3);
+tspanr = [0,-30;0 -12];
+NumericalSeparatrix(model,pvec,opts,ap,data.s1,data.x1,[xeq1 xeq2],'all',tspanr,3,5e-3);
 
 % Lyons et al., 2014 code
 % mypath = 'C:\Users\shyam\Documents\MATLAB\CCFM_manifolds';
@@ -153,10 +153,10 @@ stableeigvec = eigvec(:,eig<0);
 
 % circle parameters
 points = 401;
-radius = 0.005;
+radius = 0.05;
 
 % 2D stable manifold 
-int_time_1D_manifolds = 0:-0.005:-15;
+int_time_1D_manifolds = 0:-0.05:-15;
 time_1D = length(int_time_1D_manifolds);
 one_dim_manifolds_array_x = zeros(2*time_1D,6);
 one_dim_manifolds_array_y = zeros(2*time_1D,6);
@@ -165,8 +165,8 @@ one_dim_manifolds_array_z = zeros(2*time_1D,6);
 % one single saddle node with 2D stable manifold
 delta_x = 0.01;
 step = 0.005;
-pvec(ap) = 0.01;
-model.PM(ac-length(saddle)) = 0.01;
+pvec(ap) = saddlepar;
+model.PM(ac-length(saddle)) = saddlepar;
 
 % input functions
 givenMfsolve = @(x)Kotte_givenNLAE(x,model,pvec);
@@ -181,24 +181,26 @@ ode_system = 'givenModel';
 % negative real part
 
 % % obtain coordinates of circle with radius r in (x1,x2) plane
-% [x1,x2] = getplanarcircle(points,radius);
+[x1,x2] = getplanarcircle(points,radius);
 % 
 % % perform linear mapping of unit circle onto plane in R3 spanned by W1,W2
-% xnew = manifoldlinearmapping(x1,x2,stableeigvec(:,1),stableeigvec(:,2));
+xnew = manifoldlinearmapping(x1,x2,stableeigvec(:,1),stableeigvec(:,2));
 % 
 % % translate mapping to saddle point
-% xnew = xnew + repmat(saddle,1,size(xnew,2));
-% xnew = xnew';
+xnew = xnew + repmat(saddle,1,size(xnew,2));
+xnew = xnew';
 % 
-% tspanr = 0:-.05:-20;
-% allxdynr = get2Dmanifoldpoints(xnew,model,pvec,tspanr,opts);
+% tspanr = 0:-.05:-25;
+[x,y,z] = get2Dmanifoldpoints(xnew,model,pvec,tspanr,opts);
+
+[x,y,z] = redundant_point_filter(x,y,z,0.01);
 
 % trim dynr
 % txdynr = allxdynr;
 % txdynr(:,txdynr(1,:)>100) = [];
 % 
 % figure(4); hold on;
-% Delaunay_special_plot(txdynr(1,:),txdynr(2,:),txdynr(3,:),0.05);
+% Delaunay_special_plot(x,y,z,0.05);
 % 
 % 
 % % filter out extra points within small tolerance of each other
