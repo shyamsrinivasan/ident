@@ -258,6 +258,7 @@ for iac = 1:length(acetate)
             model.PM(ac-length(orig_saddle)) = acetate(iac);
             [~,xeq1,~,feq1] = solveODEonly(1,M,model,allpvec(ipt,:),opts,tspan);            
             xeqac(nvar+1:end,ipt,iac) = xeq1;
+            feqac(length(fluxg)+1:end,ipt,iac) = feq1;
         end
         xeqac(1:nvar,ipt,iac) = xeq1;
         feqac(1:length(fluxg),ipt,iac) = feq1;
