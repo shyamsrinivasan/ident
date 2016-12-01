@@ -110,16 +110,13 @@ nival = saddle-eps*[1;1;1];
 
 [~,eigval,w] = getKotteJacobian(saddle,pvec,model);
 
-tspanr = [0,-18;0 -9];
+% all manifolds in 2D
+tspanr = [0,-30;0 -12];
 NumericalSeparatrix(model,pvec,opts,ap,data.s1,data.x1,[xeq1 xeq2],'all',tspanr,2,5e-3);
 
-% unstable manifold in 3D
-tspanr = [0,-20];
-NumericalSeparatrix(model,pvec,opts,ap,data.s1,data.x1,[xeq1 xeq2],'unstable',tspanr,3,5e-3);
-
-% stable manifolds in 3D
-tspanr = [0 -8.5];
-NumericalSeparatrix(model,pvec,opts,ap,data.s1,data.x1,[xeq1 xeq2],'stable',tspanr,3,5e-3);
+% all manifold in 3D
+% tspanr = [0,-30;0 -12];
+% NumericalSeparatrix(model,pvec,opts,ap,data.s1,data.x1,[xeq1 xeq2],'all',tspanr,3,5e-3);
 
 % Lyons et al., 2014 code
 % mypath = 'C:\Users\shyam\Documents\MATLAB\CCFM_manifolds';
