@@ -63,6 +63,8 @@ for icomb = 1:size(ncomb,1)
     
     [xlabel,ylabel] = getKotteaxislabels(2,datatype,idx);
     setKotteproperties(2,ha,xlabel,ylabel)
+    set(gca,'XLim',[0 max(xdata)],...
+            'YLim',[0 max(ydata)]);
     drawnow;
 end
 
@@ -106,6 +108,9 @@ for icomb = 1:size(ncomb,1)
 
     [xlabel,ylabel,zlabel] = getKotteaxislabels(3,datatype,idx);
     setKotteproperties(3,ha,xlabel,ylabel,zlabel)
+    set(gca,'XLim',[0 max(xdata)],...
+            'YLim',[0 max(ydata)],...
+            'ZLim',[0 max(zdata)]);
     drawnow;
 end
 end

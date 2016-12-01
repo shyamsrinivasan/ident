@@ -84,6 +84,7 @@ end
 
 setKotteproperties(3,ha,xlabel,ylabel)
 hlval = [hlval1 hlval2];
+% set(gac,'XLim',[0 max(xdata)],'YLim',[0 max(ydata)]);
 drawnow;
 end
 
