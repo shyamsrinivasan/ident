@@ -114,9 +114,9 @@ if unstablept
                 if ~isempty(tspanr1)
                     xdynr1 =...
                     solveODEonly(1,zval((iw-1)*nvar+1:iw*nvar,ival),model,pvec,opts,tspanr1);
-                    xdynr1 = xdynr1(:,xdynr1(1,:)>=0);
-                    xdynr1 = xdynr1(:,xdynr1(2,:)>=0);
-                    xdynr1 = xdynr1(:,xdynr1(3,:)>=0);
+%                     xdynr1 = xdynr1(:,xdynr1(1,:)>=0);
+%                     xdynr1 = xdynr1(:,xdynr1(2,:)>=0);
+%                     xdynr1 = xdynr1(:,xdynr1(3,:)>=0);
                 else
                     xdynr1 = [];
                 end
@@ -127,9 +127,9 @@ if unstablept
                 if ~isempty(tspanr2)
                     xdynr2 =...
                     solveODEonly(1,zval((iw-1)*nvar+1:iw*nvar,ival),model,pvec,opts,tspanr2);
-                    xdynr2 = xdynr2(:,xdynr2(1,:)>=0);
-                    xdynr2 = xdynr2(:,xdynr2(2,:)>=0);
-                    xdynr2 = xdynr2(:,xdynr2(3,:)>=0);
+%                     xdynr2 = xdynr2(:,xdynr2(1,:)>=0);
+%                     xdynr2 = xdynr2(:,xdynr2(2,:)>=0);
+%                     xdynr2 = xdynr2(:,xdynr2(3,:)>=0);
                 else
                     xdynr2 = [];
                 end
