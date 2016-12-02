@@ -193,12 +193,12 @@ xnew = xnew';
 tspanr = 0:-.05:-25;
 [x,y,z] = get2Dmanifoldpoints(xnew,model,pvec,tspanr,opts);
 
-[x,y,z] = removeredundantpoints(x,y,z,0.01);
+[xnew,ynew,znew] = removeredundantpoints(real(x),real(y),real(z),0.01);
 
-% [x,y,z] = redundant_point_filter(x,y,z,0.01);
+% [xnew,ynew,znew] = redundant_point_filter(x,y,z,0.01);
 
 figure(4); hold on;
-Delaunay_special_plot(real(x),real(y),real(z),0.05);
+Delaunay_special_plot(real(xnew),real(ynew),real(znew),0.05);
 
 
 % trim dynr
