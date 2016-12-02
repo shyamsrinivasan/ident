@@ -17,7 +17,7 @@ z = allxdynr(3,:);
 
 chop_pos = 5;
 
-r = find(x>chop_pos|x<0|y>chop_val|y<0|z>chop_val|z<0);
+r = find(x>chop_pos|x<0|y>chop_pos|y<0|z>chop_pos|z<0);
 x(r) = [];
 y(r) = [];
 z(r) = [];
