@@ -115,8 +115,8 @@ nival = saddle-eps*[1;1;1];
 % NumericalSeparatrix(model,pvec,opts,ap,data.s1,data.x1,[xeq1 xeq2],'all',tspanr,2,5e-3);
 
 % all manifold in 3D
-tspanr = [0,-30;0 -12];
-NumericalSeparatrix(model,pvec,opts,ap,data.s1,data.x1,[xeq1 xeq2],'all',tspanr,3,5e-3);
+% tspanr = [0,-30;0 -12];
+% NumericalSeparatrix(model,pvec,opts,ap,data.s1,data.x1,[xeq1 xeq2],'all',tspanr,3,5e-3);
 
 % Lyons et al., 2014 code
 % mypath = 'C:\Users\shyam\Documents\MATLAB\CCFM_manifolds';
@@ -153,7 +153,7 @@ stableeigvec = eigvec(:,eig<0);
 
 % circle parameters
 points = 401;
-radius = 0.05;
+radius = 0.01;
 
 % 2D stable manifold 
 int_time_1D_manifolds = 0:-0.05:-15;
@@ -190,17 +190,22 @@ xnew = manifoldlinearmapping(x1,x2,stableeigvec(:,1),stableeigvec(:,2));
 xnew = xnew + repmat(saddle,1,size(xnew,2));
 xnew = xnew';
 % 
-% tspanr = 0:-.05:-25;
+tspanr = 0:-.05:-25;
 [x,y,z] = get2Dmanifoldpoints(xnew,model,pvec,tspanr,opts);
 
-[x,y,z] = redundant_point_filter(x,y,z,0.01);
+[x,y,z] = removeredundantpoints(x,y,z,0.01);
+
+% [x,y,z] = redundant_point_filter(x,y,z,0.01);
+
+figure(4); hold on;
+Delaunay_special_plot(real(x),real(y),real(z),0.05);
+
 
 % trim dynr
 % txdynr = allxdynr;
 % txdynr(:,txdynr(1,:)>100) = [];
 % 
-% figure(4); hold on;
-% Delaunay_special_plot(x,y,z,0.05);
+
 % 
 % 
 % % filter out extra points within small tolerance of each other
