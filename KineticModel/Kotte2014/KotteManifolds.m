@@ -151,10 +151,6 @@ fixed_points = kotte_branches(npoints,range,contdir,eqpts,model,pvec,ap,options)
 % obtain the 2 eigenvectors of 2D linear eigenspace
 stableeigvec = eigvec(:,eig<0);
 
-% circle parameters
-points = 401;
-radius = 0.01;
-
 % 2D stable manifold 
 int_time_1D_manifolds = 0:-0.05:-15;
 time_1D = length(int_time_1D_manifolds);
@@ -174,31 +170,38 @@ ode_system_fsolve = 'givenMfsolve';
 givenModel = @(t,x)KotteODE(t,x,model,pvec);
 ode_system = 'givenModel';
 
+%%
 % compute eigenvalues for 2D stable manifolds with integrating backwards
 % in time beginning with a circle of initial conditions with radius "r"
 % and "points" points in the 2D space spanned by the two eigenvectors
 % at the equilibrium "fixed_points" with exactly 2 eigenvalues with
 % negative real part
+% circle parameters
+points = 801;
+radius = 0.01;
 
 % % obtain coordinates of circle with radius r in (x1,x2) plane
 [x1,x2] = getplanarcircle(points,radius);
 % 
 % % perform linear mapping of unit circle onto plane in R3 spanned by W1,W2
-xnew = manifoldlinearmapping(x1,x2,stableeigvec(:,1),stableeigvec(:,2));
+circlenew = manifoldlinearmapping(x1,x2,stableeigvec(:,1),stableeigvec(:,2));
 % 
 % % translate mapping to saddle point
-xnew = xnew + repmat(saddle,1,size(xnew,2));
-xnew = xnew';
+circlenew = circlenew + repmat(saddle,1,size(circlenew,2));
+circlenew = circlenew';
 % 
 tspanr = 0:-.05:-25;
-[x,y,z] = get2Dmanifoldpoints(xnew,model,pvec,tspanr,opts);
+[x,y,z] = get2Dmanifoldpoints(circlenew,model,pvec,tspanr,opts);
 
-% [xnew,ynew,znew] = removeredundantpoints(x,y,z,0.01);
+[xchop,ychop,zchop,r] = chopvals(x,y,z,5);
 
-[xnew,ynew,znew] = redundant_point_filter(x,y,z,0.01);
+[xnew,ynew,znew] = removeredundantpoints(xchop,ychop,zchop,0.01);
 
-figure(4); hold on;
-Delaunay_special_plot(real(xnew),real(ynew),real(znew),0.05);
+% [xnew,ynew,znew] = redundant_point_filter(x,y,z,0.01);
+
+Manifold2DPlot(real(xnew),real(ynew),real(znew));
+% figure; hold on;
+% Delaunay_special_plot(real(xnew),real(ynew),real(znew),0.05);
 
 
 % trim dynr
