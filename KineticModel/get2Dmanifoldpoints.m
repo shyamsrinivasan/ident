@@ -15,13 +15,6 @@ x = allxdynr(1,:);
 y = allxdynr(2,:);
 z = allxdynr(3,:);
 
-chop_pos = 5;
-
-r = find(x>chop_pos|x<0|y>chop_pos|y<0|z>chop_pos|z<0);
-x(r) = [];
-y(r) = [];
-z(r) = [];
-
 if nargout<=1
     varargout{1} = allxdynr;
 elseif nargout>1
