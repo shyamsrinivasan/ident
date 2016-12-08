@@ -4,10 +4,7 @@ if nargin<4
     norm_tol = 0.001;
 end
 
-% xbkp = x;
-% ybkp = y;
-% zbkp = z;
-
+% remove redundant points
 nxpts = size(x,2);
 i = 1;
 while i <= nxpts
@@ -26,19 +23,3 @@ while i <= nxpts
     
     nxpts = size(x,2);
 end
-%     
-% x = xbkp;
-% y = ybkp;
-% z = zbkp;
-% for i = 1:length(x)-1    
-%     j = i + 1;
-%     while  j <= length(x)
-%         if sqrt((x(i)-x(j))^2 + (y(i)-y(j))^2 + (z(i)-z(j))^2) < norm_tol
-%             x(j) = [];
-%             y(j) = [];
-%             z(j) = [];
-%             j = j - 1;
-%         end
-%         j = j + 1;
-%     end 
-% end
