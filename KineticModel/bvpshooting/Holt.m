@@ -1,5 +1,5 @@
 % example for shooting with continuation for 2 point BVP
-function dy = Holt(t,y)
+function dy = Holt(y)
 s = .2;
 n = -.1;
 
