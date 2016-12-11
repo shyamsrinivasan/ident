@@ -69,15 +69,19 @@ for m = 1:nvar-r
 end
 
 % solve n-r algebraic equations given by 
-getAgeq = @(delyi)BVPshooting_algebraic(delyi,delyf,xic,yiknwn,yfknwn);
-fx = getAgeq(delyi);
+delyvar = delyi(yiunkwn);
+getAgeq = @(delyi)BVPshooting_algebraic(delyi,delyf,xic,yiunkwn,yfknwn);
+fx = getAgeq(delyvar);
 
 options = optimoptions('fsolve','Display','iter',...
                        'TolFun',1e-10,...
                        'TolX',1e-10,...
                        'MaxFunEvals',1000000,...
                        'MaxIter',50000);
-[new_delyi,fval,exitflag,output,jacobian] = fsolve(getAgeq,delyi,options);
+[new_delyi,fval,exitflag,output,jacobian] = fsolve(getAgeq,delyvar,options);
+
+delyi(yiunkwn) = new_delyi(:);
+yinew = yinit + delyi;
 
 
 
