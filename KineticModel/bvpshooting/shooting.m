@@ -49,7 +49,7 @@ yinit(yiunkwn) = [-1;0.6];
 % assume dely(t0) = 0
 delyi = getvaldiff(yinit,yinit);
 
-% integrate system with guessed intial conditions
+% integrate system with guessed/new intial conditions
 opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
 [tf,ydyn] = ode45(@HoltODE,0:0.1:3.5,yinit,opts);
 yf = ydyn(end,:)';
@@ -57,31 +57,44 @@ yf = ydyn(end,:)';
 % check difference in final values
 delyf = getvaldiff(yterm,yf); % assuming yf is obtained at tf
 
-% integrate adjoint equation in reverse time from tf to t0 for m =
-% 1,...,n-r
-xic = zeros(nvar,nvar-r);
-for m = 1:nvar-r
-    getAdj = @(t,x)adjointEquation(t,x,yf);
-    xf = zeros(nvar,1);
-    xf(yfknwn(m)) = 1;
-    [~,xint] = ode45(getAdj,0:-0.1:-3.5,xf,opts);
-    xic(:,m) = xint(end,:)';
+% start of while loop for BVP shooting
+eps = 1e-6;
+while abs(delyf(yfknwn)) <= repmat(eps,length(yfknwn),1)
+    % integrate adjoint equation in reverse time from tf to t0 for m =
+    % 1,...,n-r
+    fprintf('Solving adjoint Equation...\n');
+    xic = zeros(nvar,nvar-r);
+    for m = 1:nvar-r
+        getAdj = @(t,x)adjointEquation(t,x,yf);
+        xf = zeros(nvar,1);
+        xf(yfknwn(m)) = 1;
+        [~,xint] = ode45(getAdj,0:-0.1:-3.5,xf,opts);
+        xic(:,m) = xint(end,:)';
+    end
+
+    % solve n-r algebraic equations given by 
+    fprintf('Solving algebraic Equations...\n');
+    delyvar = delyi(yiunkwn);
+    getAgeq = @(delyi)BVPshooting_algebraic(delyi,delyf,xic,yiunkwn,yfknwn);
+    fx = getAgeq(delyvar);
+    options = optimoptions('fsolve','Display','iter',...
+                           'TolFun',1e-10,...
+                           'TolX',1e-10,...
+                           'MaxFunEvals',1000000,...
+                           'MaxIter',50000);
+    [new_delyi,fval,exitflag,output,jacobian] = fsolve(getAgeq,delyvar,options);
+    delyi(yiunkwn) = new_delyi(:);
+    yinit = yinit + delyi;
+    
+    % integrate system with guessed/new intial conditions
+    fprintf('Integrated system to find final value...\n');
+    opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
+    [tf,ydyn] = ode45(@HoltODE,0:0.1:3.5,yinit,opts);
+    yf = ydyn(end,:)';
+
+    % check difference in final values
+    delyf = getvaldiff(yterm,yf); % assuming yf is obtained at tf
 end
-
-% solve n-r algebraic equations given by 
-delyvar = delyi(yiunkwn);
-getAgeq = @(delyi)BVPshooting_algebraic(delyi,delyf,xic,yiunkwn,yfknwn);
-fx = getAgeq(delyvar);
-
-options = optimoptions('fsolve','Display','iter',...
-                       'TolFun',1e-10,...
-                       'TolX',1e-10,...
-                       'MaxFunEvals',1000000,...
-                       'MaxIter',50000);
-[new_delyi,fval,exitflag,output,jacobian] = fsolve(getAgeq,delyvar,options);
-
-delyi(yiunkwn) = new_delyi(:);
-yinew = yinit + delyi;
 
 
 
