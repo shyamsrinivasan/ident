@@ -14,7 +14,3 @@ for m = 1:nvar
     fx(m) = sum(xic(yiunkwn,m).*delyi)-delyf(yfknwn(m));
 end
 
-
-% for m = 1:nvar-r
-%     fx(m) = sum(xic(yfknwn,m).*delyi(yfknwn))-delyf(yfknwn(m));
-% end
