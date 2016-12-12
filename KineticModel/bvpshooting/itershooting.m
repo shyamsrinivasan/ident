@@ -1,4 +1,5 @@
-function delyf = itershooting(fh,yi,yf,ti,tf,yiunkwn,yfknwn,delyi,delyf,ysimf,opts,r,nvar)
+function [yi,ysimf,delyf] =...
+itershooting(fh,yi,yf,ti,tf,yiunkwn,yfknwn,delyi,delyf,ysimf,opts,r,nvar)
 % perform kth iteration of the goodman-lance shooting method to get delyf -
 % the difference in terminal boundary conditions
 if nargin<13
@@ -13,12 +14,9 @@ if nargin<11
 end
 
 if nargin<10
-    [~,ydyn] = ode45(fh,0:0.1:3.5,yi,opts);
+    [~,ydyn] = ode45(fh,ti:0.1:tf,yi,opts);
     ysimf = ydyn(end,:)';
 end    
-
-
-
 
 % integrate adjoint equation in reverse time from tf to t0 for m =
 % 1,...,n-r
