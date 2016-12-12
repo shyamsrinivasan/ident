@@ -1,13 +1,24 @@
-function delyf = itershooting(fh,yi,yf,yiunkwn,yfknwn,delyi,delyf,ysimf,opts)
-if nargin<9
+function delyf = itershooting(fh,yi,yf,ti,tf,yiunkwn,yfknwn,delyi,delyf,ysimf,opts,r,nvar)
+% perform kth iteration of the goodman-lance shooting method to get delyf -
+% the difference in terminal boundary conditions
+if nargin<13
+    nvar = size(yi,1);
+end
+if nargin<12
+    yiknwn = setdiff(1:nvar,yiunkwn);
+    r = length(yiknwn);
+end
+if nargin<11
     opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
 end
 
-if nargin<8
+if nargin<10
     [~,ydyn] = ode45(fh,0:0.1:3.5,yi,opts);
     ysimf = ydyn(end,:)';
-end
-    
+end    
+
+
+
 
 % integrate adjoint equation in reverse time from tf to t0 for m =
 % 1,...,n-r
@@ -17,7 +28,7 @@ for m = 1:nvar-r
     getAdj = @(t,x)adjointEquation(t,x,ysimf);
     xf = zeros(nvar,1);
     xf(yfknwn(m)) = 1;
-    [~,xint] = ode45(getAdj,0:-0.1:-3.5,xf,opts);
+    [~,xint] = ode45(getAdj,ti:-0.1:-tf,xf,opts);
     xic(:,m) = xint(end,:)';
 end
     
@@ -38,7 +49,7 @@ yi = yi + delyi;
 % integrate system with guessed/new intial conditions
 fprintf('Integrated system to find final value...\n');
 opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
-[~,ydyn] = ode45(fh,0:0.1:3.5,yi,opts);
+[~,ydyn] = ode45(fh,ti:0.1:tf,yi,opts);
 ysimf = ydyn(end,:)';
     
 % check difference in final values
