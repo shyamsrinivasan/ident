@@ -1,4 +1,4 @@
-function [yi,yf,delyf] =...
+function [yi,yf,delyf,flag] =...
 execshooting(fh,yi,yterm,ti,tf,yiunkwn,yfknwn,delyi,delyf,yf,eps,opts,niter)
 % execute shooting iteration
 if nargin<13
@@ -17,12 +17,18 @@ if nargin<9||isempty(delyf)
     delyf = zeros(size(yi,1),1);
 end
 
+printBVPstats();
 iter = 1;
 while abs(delyf(yfknwn))>repmat(eps,length(yfknwn),1) 
-    fprintf('Iteration #%d\n',iter);
+%     fprintf('Iteration #%d\n',iter);
     if iter<niter
         [yi,yf,delyf] = itershooting(fh,yi,yf,ti,tf,yiunkwn,yfknwn,delyi,delyf,yf,opts);
+        printBVPstats(iter,delyf(yfknwn),ti,tf);
+        flag = 1;
         iter = iter+1;
+    else
+        fprintf('Number of iterations exceeded\n');
+        flag = 0;
     end
 end
 
