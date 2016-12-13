@@ -23,7 +23,7 @@ end
 
 % integrate adjoint equation in reverse time from tf to t0 for m =
 % 1,...,n-r
-fprintf('Solving adjoint Equation...\n'); 
+% fprintf('Solving adjoint Equation...\n'); 
 xic = zeros(nvar,nvar-r);
 for m = 1:nvar-r
     getAdj = @(t,x)adjointEquation(t,x,ysimf);
@@ -34,11 +34,11 @@ for m = 1:nvar-r
 end
     
 % solve n-r algebraic equations given by 
-fprintf('Solving algebraic Equations...\n');
+% fprintf('Solving algebraic Equations...\n');
 delyvar = delyi(yiunkwn);
 getAgeq = @(delyi)BVPshooting_algebraic(delyi,delyf,xic,yiunkwn,yfknwn);
 fx = getAgeq(delyvar);
-options = optimoptions('fsolve','Display','iter',...
+options = optimoptions('fsolve','Display','off',...
                        'TolFun',1e-10,...
                        'TolX',1e-10,...
                        'MaxFunEvals',1000000,...
@@ -48,7 +48,7 @@ delyi(yiunkwn) = new_delyi(:);
 yinew = yi + delyi;
     
 % integrate system with guessed/new intial conditions
-fprintf('Integrated system to find final value...\n');
+% fprintf('Integrated system to find final value...\n');
 opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
 [~,ydyn] = ode45(fh,ti:0.1:tf,yinew,opts);
 ysimf = ydyn(end,:)';
