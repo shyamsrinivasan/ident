@@ -39,7 +39,7 @@ end
 delyvar = delyi(yiunkwn);
 getAgeq = @(delyi)BVPshooting_algebraic(delyi,delyf,xic,yiunkwn,yfknwn);
 fx = getAgeq(delyvar);
-options = optimoptions('fsolve','Display','iter',...
+options = optimoptions('fsolve','Display','off',...
                        'TolFun',1e-10,...
                        'TolX',1e-10,...
                        'MaxFunEvals',1000000,...
@@ -48,11 +48,9 @@ options = optimoptions('fsolve','Display','iter',...
 delyi(yiunkwn) = new_delyi(:);
 yinew = yi + delyi;
     
-% integrate system with guessed/new intial conditions
-% fprintf('Integrated system to find final value...\n');
-opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
-[tf,ydyn] = ode45(fh,ti:0.1:tf,yinew,opts);
-ysimf = ydyn(end,:)';
+% % integrate system with guessed/new intial conditions
+% % fprintf('Integrated system to find final value...\n');
+% [tf,ysimf,status] = integrateshooting(ti,tf,yi,opts);
     
-% check difference in final values
-delyf = getvaldiff(yf,ysimf); % assuming ysimf is obtained at tf
+% % check difference in final values
+% delyf = getvaldiff(yf,ysimf); % assuming ysimf is obtained at tf
