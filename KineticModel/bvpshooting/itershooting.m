@@ -1,4 +1,4 @@
-function [yinew,ysimf,delyf] =...
+function [yinew,ysimf,delyi,delyf] =...
 itershooting(fh,yi,yf,ti,tf,yiunkwn,yfknwn,delyi,delyf,ysimf,opts,r,nvar)
 % perform kth iteration of the goodman-lance shooting method to get delyf -
 % the difference in terminal boundary conditions
@@ -17,7 +17,8 @@ if nargin<10 || isempty(ysimf)
     ysimf = ydyn(end,:)';
 end    
 if nargin<9 ||isempty(delyf)
-    delyf = zeros(size(yi,1),1);
+%     delyf = zeros(size(yi,1),1);
+    delyf = getvaldiff(yf,ysimf);
 end
 
 
@@ -38,7 +39,7 @@ end
 delyvar = delyi(yiunkwn);
 getAgeq = @(delyi)BVPshooting_algebraic(delyi,delyf,xic,yiunkwn,yfknwn);
 fx = getAgeq(delyvar);
-options = optimoptions('fsolve','Display','off',...
+options = optimoptions('fsolve','Display','iter',...
                        'TolFun',1e-10,...
                        'TolX',1e-10,...
                        'MaxFunEvals',1000000,...
@@ -50,7 +51,7 @@ yinew = yi + delyi;
 % integrate system with guessed/new intial conditions
 % fprintf('Integrated system to find final value...\n');
 opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
-[~,ydyn] = ode45(fh,ti:0.1:tf,yinew,opts);
+[tf,ydyn] = ode45(fh,ti:0.1:tf,yinew,opts);
 ysimf = ydyn(end,:)';
     
 % check difference in final values
