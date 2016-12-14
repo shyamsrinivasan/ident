@@ -1,4 +1,4 @@
-function [yi,yf,delyi,delyf,flag] =...
+function [yi,yf,tf,delyi,delyf,flag] =...
 execshooting(fh,yi,yterm,ti,tf,yiunkwn,yfknwn,delyi,delyf,yf,eps,opts,niter)
 % execute shooting iteration
 if nargin<13
@@ -19,12 +19,26 @@ end
 
 printBVPstats();
 iter = 1;
-while abs(delyf(yfknwn))>repmat(eps,length(yfknwn),1) 
-%     fprintf('Iteration #%d\n',iter);
+flag = 1;
+while any(abs(delyf(yfknwn))>repmat(eps,length(yfknwn),1))
+    tstart = tic;
     if iter<niter
-        [yi,yf,delyi,delyf] = itershooting(fh,yi,yf,ti,tf,yiunkwn,yfknwn,delyi,delyf,yf,opts);
-        printBVPstats(iter,delyf(yfknwn),ti,tf);
-        flag = 1;
+        [yi,yfold,delyi,delyf] = itershooting(fh,yi,yterm,ti,tf,yiunkwn,yfknwn,delyi,delyf,yf,opts);
+        % integrate system with guessed/new intial conditions
+        % fprintf('Integrated system to find final value...\n');
+        [tf,yf,status] = integrateshooting(fh,ti,tf,yi,opts);
+        
+        if status>0 % successful integration to new final value at new final time
+            % proceed to next iteration
+        elseif status<0 % integration fails before new final time at tf
+            flag = 0;
+            printBVPstats(iter,delyf(yfknwn),ti,tf,toc(tstart),'F');    
+            return % restart the BVP solution process till time tf
+        end
+            
+        % check difference in final values
+        delyf = getvaldiff(yfold,yf); % assuming ysimf is obtained at tf        
+        printBVPstats(iter,delyf(yfknwn),ti,tf,toc(tstart),'S');        
         iter = iter+1;
     else
         fprintf('Number of iterations exceeded\n');
