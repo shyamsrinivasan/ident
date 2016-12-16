@@ -218,6 +218,16 @@ Manifold2DPlot(real(xnew),real(ynew),real(znew));
 % figure(3); hold on;
 % Delaunay_special_plot(x,y,z,0.05);
 
+% xnew coordinates for 2 surfaces
+% surface 1
+i1 = [1;1294;1507;1717;1928;2137;2345;2550;2753;2954;3079;3204;3332;3458;3584;3708;3833];
+i2 = [1178;1391;1605;1815;2025;2234;2440;2644;2846;3047;3172;3296;3423;3549;3674;3798;3924];
+
+% surface 2
+ii1
+ii2
+
+
 
 
 
