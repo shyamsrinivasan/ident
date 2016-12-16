@@ -23,7 +23,9 @@ yfunkwn = find(~yfknwn);
 yfknwn = find(yfknwn);
 
 % choose unknown initial conditions
-yinit(yiunkwn) = [-.978197694;0.646786696];
+% yinit(yiunkwn) = [-.978197694;0.646786696];
+% yinit(yiunkwn) = vpa([-.96631174099999990;0.65290958299999993],10);
+yinit(yiunkwn) = vpa([-1.0;0.6],10);
 delyi = getvaldiff(yinit,yinit);
 
 % cotinuation parameters
@@ -35,7 +37,7 @@ tterm = 11.0;
 eps = 1e-4;
 
 % integrate till time t1 till which there are no numerical problems
-opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
+opts = odeset('RelTol',1e-18,'AbsTol',1e-16);
 % [yi,yf,delyi,delyf] =...
 % itershooting(@HoltODE,yinit,yterm,ti,tf,yiunkwn,yfknwn,delyi,[],[],opts);
 yi = yinit;
@@ -45,24 +47,33 @@ yi = yinit;
 delyf = getvaldiff(yterm,yf);
 
 allyi = yi;
+allyf = yf;
 allti = ti;
 alltf = tf;
+saveyi = [];
 while tf<tterm
     flag = 1;
     while flag        
         % solve 2 point bvp over (t0,t1) using goodman lance method
+        oldtf = tf;
         [yi,yf,tf,delyi,~,flag] =...
         execshooting(@HoltODE,yi,yterm,ti,tf,yiunkwn,yfknwn,delyi,delyf,yf,eps);    
         if flag
             % store yi,ti,tf values
             allyi = [allyi yi];
+            allyf = [allyf yf];
             allti = [allti;ti];
             alltf = [alltf;tf];
             tf = tf + tau;
+        else
+            % tf = tf-tau/2;
+            saveyi = [allyi yi];
+            yi = allyi(:,end-1);
+            yfold = yf;
+            [~,yf] = integrateshooting(@HoltODE,ti,tf(end),yi,opts);        
+            delyf = getvaldiff(yterm,yf);
         end     
-        yfold = yf;
-        [~,yf] = integrateshooting(@HoltODE,ti,tf,yi,opts);        
-        delyf = getvaldiff(yterm,yf);
+        
 %         [yi,yf,delyi,delyf] =...
 %         itershooting(@HoltODE,yi,yf,ti,tf,yiunkwn,yfknwn,delyi,newdelyf,ysimf,opts);
     end
