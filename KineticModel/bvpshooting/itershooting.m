@@ -30,8 +30,8 @@ for m = 1:nvar-r
     getAdj = @(t,x)adjointEquation(t,x,ysimf);
     xf = zeros(nvar,1);
     xf(yfknwn(m)) = 1;
-    [~,xint] = ode45(getAdj,ti:-0.1:-tf,xf,opts);
-    xic(:,m) = xint(end,:)';
+    [tint,xint] = ode15s(getAdj,tf:-0.1:ti,xf,opts);
+    xic(:,m) = vpa(xint(end,:)',16);
 end
     
 % solve n-r algebraic equations given by 
@@ -40,12 +40,12 @@ delyvar = delyi(yiunkwn);
 getAgeq = @(delyi)BVPshooting_algebraic(delyi,delyf,xic,yiunkwn,yfknwn);
 fx = getAgeq(delyvar);
 options = optimoptions('fsolve','Display','off',...
-                       'TolFun',1e-10,...
-                       'TolX',1e-10,...
+                       'TolFun',1e-16,...
+                       'TolX',1e-16,...
                        'MaxFunEvals',1000000,...
                        'MaxIter',50000);
 [new_delyi,fval,exitflag,output,jacobian] = fsolve(getAgeq,delyvar,options);
-delyi(yiunkwn) = new_delyi(:);
+delyi(yiunkwn) = vpa(new_delyi(:),16);
 yinew = yi + delyi;
     
 % % integrate system with guessed/new intial conditions
