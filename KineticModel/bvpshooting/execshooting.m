@@ -26,13 +26,16 @@ while any(abs(delyf(yfknwn))>repmat(eps,length(yfknwn),1))
         [yi,yfold,delyi,delyf] = itershooting(fh,yi,yterm,ti,tf,yiunkwn,yfknwn,delyi,delyf,yf,opts);
         % integrate system with guessed/new intial conditions
         % fprintf('Integrated system to find final value...\n');
-        [tf,yf,status] = integrateshooting(fh,ti,tf,yi,opts);
+        [tfnew,yf,status] = integrateshooting(fh,ti,tf,yi,opts);
         
         if status>0 % successful integration to new final value at new final time
+            tf = tfnew;
             % proceed to next iteration
         elseif status<0 % integration fails before new final time at tf
             flag = 0;
-            printBVPstats(iter,delyf(yfknwn),ti,tf,toc(tstart),'F');    
+            delyf = getvaldiff(yfold,yf);
+            printBVPstats(iter,delyf(yfknwn),ti,tf,toc(tstart),'F');   
+            tf = [tf tfnew];
             return % restart the BVP solution process till time tf
         end
             
