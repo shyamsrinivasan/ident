@@ -1,7 +1,7 @@
 function [tf,yf,status] = integrateshooting(fh,ti,tf,yi,opts)
 status = 1;
 
-[tdyn,ydyn] = ode45(fh,ti:0.1:tf,yi,opts);
+[tdyn,ydyn] = ode15s(fh,ti:0.1:tf,yi,opts);
 tfnew = tdyn(end);
 yf = ydyn(end,:)';
 
