@@ -21,5 +21,6 @@ elseif nargout>1
     varargout{1} = x;
     varargout{2} = y;
     varargout{3} = z;
+    varargout{4} = allxdynr;
 end
 
