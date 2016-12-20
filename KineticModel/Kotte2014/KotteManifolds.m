@@ -258,14 +258,27 @@ xxs4 = xx1(idd7);yys4 = yy1(idd7);zzs4 = zz1(idd7);
 
 idd8 = xxs4<0.3862&zzs4<2.395;
 xxs5 = xxs4(idd8);yys5 = yys4(idd8);zzs5 = zzs4(idd8);
+xxs3 = [xxs3 xxs5];yys3 = [yys3 yys5];zzs3 = [zzs3 zzs5];
 
 xxs4(idd8) = [];yys4(idd8) = [];zzs4(idd8) = [];
 
-Manifold2DPlot(real(xxs1),real(yys1),real(zzs1));
-Manifold2DPlot(real(xxs2),real(yys2),real(zzs2));
-Manifold2DPlot(real(xxs3),real(yys3),real(zzs3));
-Manifold2DPlot(real(xxs4),real(yys4),real(zzs4));
-Manifold2DPlot(real(xxs5),real(yys5),real(zzs5));
+idd9 = xxs3<0.3273&zzs3<0.5410;
+xxs6 = xxs3(idd9);yys6 = yys3(idd9);zzs6 = zzs3(idd9);
+
+xxs3(idd9) = [];yys3(idd9) = [];zzs3(idd9) = [];
+
+xxs7 = xxs3(zzs3>1.241);yys7 = yys3(zzs3>1.241);zzs7 = zzs3(zzs3>1.241);
+xxs8 = xxs3(zzs3<1.241);yys8 = yys3(zzs3<1.241);zzs8 = zzs3(zzs3<1.241);
+
+%% Final Figure
+hfig = Manifold2DPlot(real(xxs1),real(yys1),real(zzs1),[],[1 0 0]);
+Manifold2DPlot(real(xxs2),real(yys2),real(zzs2),hfig,[0 1 0]);
+Manifold2DPlot(real(xxs4),real(yys4),real(zzs4),hfig,[0 0 0]);
+% Manifold2DPlot(real(xxs5),real(yys5),real(zzs5),hfig,[0.5 0.5 0.5]);
+Manifold2DPlot(real(xxs6),real(yys6),real(zzs6),hfig,[0 0 1]);
+Manifold2DPlot(real(xxs7),real(yys7),real(zzs7),hfig,[0 0 1]);
+Manifold2DPlot(real(xxs8),real(yys8),real(zzs8),hfig,[0 0 1]);
+plot3(saddle(1),saddle(2),saddle(3),'Color','r','Marker','.','MarkerSize',30);
 
 
 
@@ -295,14 +308,14 @@ Manifold2DPlot(real(xxs5),real(yys5),real(zzs5));
 
 % xnew coordinates for 2 surfaces
 % surface 1
-i1 = [1;1294;1507;1717;1928;2137;2345;2550;2753;2954;3079;3204;3332;...
-    3458;3584;3708;3833;3958;4082;4204;4325;4446;4566;4776;4985;5193;...
-    5399;5604;5808;6010;6211;6411;6610;6808;7005;7200;7394;7587;7779;...
-    7970;8161;8350;8538;8724;8909;9094;9278;9461;9643;9824;10004;10183;10362];
-i2 = [1178;1391;1605;1815;2025;2234;2440;2644;2846;3047;3172;3296;3423;...
-    3549;3674;3798;3924;4049;4171;4293;4414;4535;4637;4847;5056;5264;...
-    5470;5675;5878;6080;6281;6481;6680;6878;7074;7269;7463;7656;7848;...
-    8039;8230;8419;8606;8792;8977;9162;9346;9529;9712;9892;10072;10251;10430];
+% i1 = [1;1294;1507;1717;1928;2137;2345;2550;2753;2954;3079;3204;3332;...
+%     3458;3584;3708;3833;3958;4082;4204;4325;4446;4566;4776;4985;5193;...
+%     5399;5604;5808;6010;6211;6411;6610;6808;7005;7200;7394;7587;7779;...
+%     7970;8161;8350;8538;8724;8909;9094;9278;9461;9643;9824;10004;10183;10362];
+% i2 = [1178;1391;1605;1815;2025;2234;2440;2644;2846;3047;3172;3296;3423;...
+%     3549;3674;3798;3924;4049;4171;4293;4414;4535;4637;4847;5056;5264;...
+%     5470;5675;5878;6080;6281;6481;6680;6878;7074;7269;7463;7656;7848;...
+%     8039;8230;8419;8606;8792;8977;9162;9346;9529;9712;9892;10072;10251;10430];
 
 % surface 2
 % ii1
