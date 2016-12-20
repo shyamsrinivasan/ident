@@ -193,74 +193,11 @@ circlenew = circlenew';
 tspanr = 0:-.05:-25;
 [x,y,z,dynr] = get2Dmanifoldpoints(circlenew,model,pvec,tspanr,opts);
 [xchop,ychop,zchop,r] = chopvals(x,y,z,5);
-[xnew,ynew,znew] = removeredundantpoints(real(xchop),real(ychop),real(zchop),0.01);
+% [xnew,ynew,znew] = removeredundantpoints(real(xchop),real(ychop),real(zchop),0.01);
 % Manifold2DPlot(real(xnew),real(ynew),real(znew));
 
-
 %% Separate out segments of manifold surface
-% backup
-% xx1 = xnew;yy1 = ynew;zz1 = znew;
-% 
-% % surface 1
-% idd2 = ynew<2.6065;
-% idd2 = setdiff(1:length(ynew),find(idd2));
-% xx1(idd2) = [];yy1(idd2) = [];zz1(idd2) = [];
-% 
-% % surface 2
-% idd1 = yy1>1.1875;
-% xxs1 = xx1(idd1);yys1 = yy1(idd1);zzs1 = zz1(idd1);
-% xx1(idd1) = [];yy1(idd1) = [];zz1(idd1) = [];
-% 
-% % surface 3
-% idd3 = yy1>0.49155;
-% xxs23 = xx1(idd3);yys23 = yy1(idd3);zzs23 = zz1(idd3);
-% xx1(idd3) = [];yy1(idd3) = [];zz1(idd3) = [];
-% 
-% idd4 = zzs23<0.6103;
-% idd5 = setdiff(1:length(xxs23),find(idd4));
-% 
-% xxs3 = xxs23(idd4);yys3 = yys23(idd4);zzs3 = zzs23(idd4);
-% xxs2 = xxs23(idd5);yys2 = yys23(idd5);zzs2 = zzs23(idd5);
-% 
-% idd5 = yys3>1.092;
-% xxs4 = xxs3(idd5);yys4 = yys3(idd5);zzs4 = zzs3(idd5);
-% 
-% % surface 2
-% xxs3(idd5) = [];yys3(idd5) = [];zzs3(idd5) = [];
-% xxs2 = [xxs3 xxs2];yys2 = [yys3 yys2];zzs2 = [zzs3 zzs2];
-% clear xxs3 yys3 zzs3
-% 
-% % surface 3 and 4
-% xxs1 = [xxs1 xxs4];yys1 = [yys1 yys4];zzs1 = [zzs1 zzs4];
-% clear xxs4 yys4 zzs4
-% 
-% idd6 = zz1<2.000&xx1<0.9505;
-% xxs3 = xx1(idd6);yys3 = yy1(idd6);zzs3 = zz1(idd6);
-% 
-% idd7 = setdiff(1:length(xx1),find(idd6));
-% xxs4 = xx1(idd7);yys4 = yy1(idd7);zzs4 = zz1(idd7);
-% 
-% idd8 = xxs4<0.3862&zzs4<2.395;
-% xxs5 = xxs4(idd8);yys5 = yys4(idd8);zzs5 = zzs4(idd8);
-% xxs4(idd8) = [];yys4(idd8) = [];zzs4(idd8) = [];
-% xxs3 = [xxs3 xxs5];yys3 = [yys3 yys5];zzs3 = [zzs3 zzs5];
-% 
-% idd9 = xxs3<0.3273&zzs3<0.5410;
-% xxs6 = xxs3(idd9);yys6 = yys3(idd9);zzs6 = zzs3(idd9);
-% xxs3(idd9) = [];yys3(idd9) = [];zzs3(idd9) = [];
-% xxs7 = xxs3(zzs3>1.241);yys7 = yys3(zzs3>1.241);zzs7 = zzs3(zzs3>1.241);
-% xxs8 = xxs3(zzs3<1.241);yys8 = yys3(zzs3<1.241);zzs8 = zzs3(zzs3<1.241);
-% 
-% hfig = Manifold2DPlot(real(xxs1),real(yys1),real(zzs1),[],[1 0 0]);
-% Manifold2DPlot(real(xxs2),real(yys2),real(zzs2),hfig,[0 1 0]);
-% Manifold2DPlot(real(xxs4),real(yys4),real(zzs4),hfig,[0 0 0]);
-% % Manifold2DPlot(real(xxs5),real(yys5),real(zzs5),hfig,[0.5 0.5 0.5]);
-% Manifold2DPlot(real(xxs6),real(yys6),real(zzs6),hfig,[0 0 1]);
-% Manifold2DPlot(real(xxs7),real(yys7),real(zzs7),hfig,[0 0 1]);
-% Manifold2DPlot(real(xxs8),real(yys8),real(zzs8),hfig,[0 0 1]);
-% plot3(saddle(1),saddle(2),saddle(3),'Color','r','Marker','.','MarkerSize',30);
-
-%% working with xchop
+% working with xchop
 % backup 
 x1 = real(xchop);y1 = real(ychop);z1 = real(zchop);
 id2 = y1<1.1885;
@@ -281,7 +218,7 @@ x1(id3) = [];y1(id3) = [];z1(id3) = [];
 % % small segmet in xs2
 id3 = xs2>.2491 & xs2<.4319 & ys2>1.0905 & ys2<1.195 & zs2>.5164 & zs2<.5796;
 xs1 = [xs1 xs2(id3)];ys1 = [ys1 ys2(id3)];zs1 = [zs1 zs2(id3)];
-% [xs1,ys1,zs1] = removeredundantpoints(xs1,ys1,zs1,0.02);
+[xs1,ys1,zs1] = removeredundantpoints(xs1,ys1,zs1,0.02);
 xs2(id3) = [];ys2(id3) = [];zs2(id3) = [];
 
 id4 = x1<0.687 & z1<2.4;
@@ -293,16 +230,12 @@ id6 = setdiff(1:length(ys3),find(id5));
 xs31 = xs3(id5);ys31 = ys3(id5);zs31 = zs3(id5);
 xs32 = xs3(id6);ys32 = ys3(id6);zs32 = zs3(id6);
 
-hfig = Manifold2DPlot(real(xxs1),real(yys1),real(zzs1),[],[1 0 0]);
-Manifold2DPlot(real(xxs2),real(yys2),real(zzs2),hfig,[0 1 0]);
-Manifold2DPlot(real(xxs4),real(yys4),real(zzs4),hfig,[0 0 0]);
-% Manifold2DPlot(real(xxs5),real(yys5),real(zzs5),hfig,[0.5 0.5 0.5]);
-Manifold2DPlot(real(xxs6),real(yys6),real(zzs6),hfig,[0 0 1]);
-Manifold2DPlot(real(xxs7),real(yys7),real(zzs7),hfig,[0 0 1]);
-Manifold2DPlot(real(xxs8),real(yys8),real(zzs8),hfig,[0 0 1]);
+hfig = Manifold2DPlot(xs1,ys1,zs1,[]);
+Manifold2DPlot(xs2,ys2,zs2,hfig);
+Manifold2DPlot(xs31,ys31,zs31,hfig);
+Manifold2DPlot(xs32,ys32,zs32,hfig);
+Manifold2DPlot(x1,y1,z1,hfig);
 plot3(saddle(1),saddle(2),saddle(3),'Color','r','Marker','.','MarkerSize',30);
-
-
 
 % 
 % % foil on surface xs2
@@ -312,54 +245,5 @@ plot3(saddle(1),saddle(2),saddle(3),'Color','r','Marker','.','MarkerSize',30);
 
 % id6 = xs2>0.0004287 & xs2<0.3842 & ys2>0.7312 & ys2<0.9922 & zs2>0.5523 & zs2<0.61375;
 % xs3 = [xs3 xs2(id6)];ys3 = [ys3 ys2(id6)];zs3 = [zs3 zs2(id6)];
-% xs2(id6) = [];ys2(id6) = [];zs2(id6) = [];
-
-
-
-
-
-
-% [xnew,ynew,znew] = redundant_point_filter(x,y,z,0.01);
-
-
-% figure; hold on;
-% Delaunay_special_plot(real(xnew),real(ynew),real(znew),0.05);
-
-
-% trim dynr
-% txdynr = allxdynr;
-% txdynr(:,txdynr(1,:)>100) = [];
-% 
-
-% 
-% 
-% % filter out extra points within small tolerance of each other
-% norm_tol = 0.1;%0.01;
-% [x,y,z] = redundant_point_filter(allxdynr(1,:),allxdynr(2,:),allxdynr(3,:),norm_tol);
-% 
-% figure(3); hold on;
-% Delaunay_special_plot(x,y,z,0.05);
-
-% xnew coordinates for 2 surfaces
-% surface 1
-% i1 = [1;1294;1507;1717;1928;2137;2345;2550;2753;2954;3079;3204;3332;...
-%     3458;3584;3708;3833;3958;4082;4204;4325;4446;4566;4776;4985;5193;...
-%     5399;5604;5808;6010;6211;6411;6610;6808;7005;7200;7394;7587;7779;...
-%     7970;8161;8350;8538;8724;8909;9094;9278;9461;9643;9824;10004;10183;10362];
-% i2 = [1178;1391;1605;1815;2025;2234;2440;2644;2846;3047;3172;3296;3423;...
-%     3549;3674;3798;3924;4049;4171;4293;4414;4535;4637;4847;5056;5264;...
-%     5470;5675;5878;6080;6281;6481;6680;6878;7074;7269;7463;7656;7848;...
-%     8039;8230;8419;8606;8792;8977;9162;9346;9529;9712;9892;10072;10251;10430];
-
-% surface 2
-% ii1
-% ii2
-
-
-
-
-
-
-
-                       
+% xs2(id6) = [];ys2(id6) = [];zs2(id6) = [];                    
                        
