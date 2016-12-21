@@ -1,4 +1,4 @@
-function NumericalSeparatrix(varargin)
+function varargout = NumericalSeparatrix(varargin)
 % numerical approximation of separatrix based on algorithm presented in
 % Rudiger Seydel, Interdisciplinary Applied Mathematics, 1994
 global model pvec colorSpec eps Axeq
@@ -254,6 +254,14 @@ if unstablept
                'Saddle Node','Steady States');
     end        
 %     legend('boxoff');
+end
+
+if plotDim == 2
+    varargout{1} = ht12fig;
+    varargout{2} = ht23fig;
+    varargout{3} = ht13fig;
+elseif plotDim == 3
+    varargout{1} = hf3;
 end
 
 function [hl1,hl2,xeq] = perturbSeparatrix(saddle,xdynr,tspanf,opts,...
