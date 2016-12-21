@@ -114,9 +114,10 @@ nival = saddle-eps*[1;1;1];
 % tspanr = [0,-30;0 -12];
 % NumericalSeparatrix(model,pvec,opts,ap,data.s1,data.x1,[xeq1 xeq2],'all',tspanr,2,5e-3);
 
-% all manifold in 3D
-% tspanr = [0,-30;0 -12];
-% NumericalSeparatrix(model,pvec,opts,ap,data.s1,data.x1,[xeq1 xeq2],'all',tspanr,3,5e-3);
+% unstable manifold in 3D
+tspanr = [0,-30]; % 0 -12];
+hfig =...
+NumericalSeparatrix(model,pvec,opts,ap,data.s1,data.x1,[xeq1 xeq2],'unstable',tspanr,3,5e-3);
 
 % Lyons et al., 2014 code
 % mypath = 'C:\Users\shyam\Documents\MATLAB\CCFM_manifolds';
@@ -192,7 +193,7 @@ circlenew = circlenew';
 % 
 tspanr = 0:-.05:-25;
 [x,y,z,dynr] = get2Dmanifoldpoints(circlenew,model,pvec,tspanr,opts);
-[xchop,ychop,zchop,r] = chopvals(x,y,z,5);
+[xchop,ychop,zchop,r] = chopvals(x,y,z,[2.3 1.6 1.6]);
 % [xnew,ynew,znew] = removeredundantpoints(real(xchop),real(ychop),real(zchop),0.01);
 % Manifold2DPlot(real(xnew),real(ynew),real(znew));
 
@@ -230,12 +231,12 @@ id6 = setdiff(1:length(ys3),find(id5));
 xs31 = xs3(id5);ys31 = ys3(id5);zs31 = zs3(id5);
 xs32 = xs3(id6);ys32 = ys3(id6);zs32 = zs3(id6);
 
-hfig = Manifold2DPlot(xs1,ys1,zs1,[]);
+hfig = Manifold2DPlot(xs1,ys1,zs1,hfig);
 Manifold2DPlot(xs2,ys2,zs2,hfig);
 Manifold2DPlot(xs31,ys31,zs31,hfig);
 Manifold2DPlot(xs32,ys32,zs32,hfig);
 Manifold2DPlot(x1,y1,z1,hfig);
-plot3(saddle(1),saddle(2),saddle(3),'Color','r','Marker','.','MarkerSize',30);
+% plot3(saddle(1),saddle(2),saddle(3),'Color','r','Marker','.','MarkerSize',30);
 
 % 
 % % foil on surface xs2
