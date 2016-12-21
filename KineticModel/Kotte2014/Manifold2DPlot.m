@@ -10,7 +10,7 @@ end
 t = Delaunay2_5D([x' y' z']);
 
 % get indices of triangles inside boundary box and outside
-cut_val = 6; 
+cut_val = 2.5; 
 [tri_inside,tri_boundary,tri_outside] = tri_calc(x,y,z,t,cut_val);
 
 % redraw boundary triangles so they end at the boundary value "cut_val"
