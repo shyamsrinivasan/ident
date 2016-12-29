@@ -237,6 +237,7 @@ Manifold2DPlot(xs2,ys2,zs2,hfig);
 Manifold2DPlot(xs31,ys31,zs31,hfig);
 Manifold2DPlot(xs32,ys32,zs32,hfig);
 Manifold2DPlot(x1,y1,z1,hfig);
+
 gcf
 axis([0 2.5 0 1.6 0 1.6]);
 view([116 22]);
