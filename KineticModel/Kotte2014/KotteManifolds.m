@@ -1,5 +1,6 @@
 % get different stable maniforlds from Kotte model using information from
 % Lyons et al., 2014, Int. J. Bifurcation Chaos
+% plot both unstable and stable manifolds for a given saddle point
 
 % generate equilibrium solution and model for Kotte model
 if ~exist('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\Kotte2014\Kotte2014.txt')
@@ -193,7 +194,7 @@ circlenew = circlenew';
 % 
 tspanr = 0:-.05:-25;
 [x,y,z,dynr] = get2Dmanifoldpoints(circlenew,model,pvec,tspanr,opts);
-[xchop,ychop,zchop,r] = chopvals(x,y,z,[2.3 1.6 1.6]);
+[xchop,ychop,zchop,r] = chopvals(x,y,z,[2.5 2.5 2.5]);
 % [xnew,ynew,znew] = removeredundantpoints(real(xchop),real(ychop),real(zchop),0.01);
 % Manifold2DPlot(real(xnew),real(ynew),real(znew));
 
@@ -236,6 +237,17 @@ Manifold2DPlot(xs2,ys2,zs2,hfig);
 Manifold2DPlot(xs31,ys31,zs31,hfig);
 Manifold2DPlot(xs32,ys32,zs32,hfig);
 Manifold2DPlot(x1,y1,z1,hfig);
+gcf
+axis([0 2.5 0 1.6 0 1.6]);
+view([116 22]);
+fname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\manifolds\manifoldFig';
+print('-depsc','-painters','-loose',fname)
+
+%% perturb 2D stable manifold
+pvec(ap) = saddlepar;
+model.PM(ac-length(saddle)) = saddlepar;
+Perturb2DstableManifold([xs1' ys1' zs1'],saddle,model,pvec,opts,tspanf,hfig,10);
+
 % plot3(saddle(1),saddle(2),saddle(3),'Color','r','Marker','.','MarkerSize',30);
 
 % 
