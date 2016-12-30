@@ -1,5 +1,5 @@
 % perturbation of points on the 2D manifold surface
-function [] = Perturb2DstableManifold(man2Dpts,saddle,model,pvec,opts,tspanf,hfig,id,npts)
+function [] = perturbManifolds(man2Dpts,saddle,model,pvec,opts,tspanf,hfig,id,npts)
 % 2Dmanpts - points on the 2D manifold represented as triangles from
 % delaunay triangulation or from the known trajectories
 kid = man2Dpts(:,1)<0|man2Dpts(:,1)>5|man2Dpts(:,2)<0|...
@@ -13,8 +13,8 @@ rndid = randi(nmanpts,npts,1);
 startval = man2Dpts(rndid,:);
 
 % perturb said points
-posival = startval + repmat(1e-3*[1 1 1],npts,1);
-negival = startval - repmat(1e-3*[1 1 1],npts,1);
+posival = startval + repmat(1e-4*[1 1 1],npts,1);
+negival = startval - repmat(1e-4*[1 1 1],npts,1);
 
 % simulate from said points in forward time
 for ival = 1:npts
