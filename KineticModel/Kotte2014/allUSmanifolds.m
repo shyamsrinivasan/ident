@@ -81,6 +81,20 @@ allfdyn = zeros(length(fluxg),length(tspan),npts);
 ap = 9;
 solveEquilibriumODE    
 
+% get all parameter (saddles) values between the 2 limit points
+allsaddles = extractsaddles(data.s1,data.x1);
+
+% get eigval and eig vec for all saddle points
+alleig = zeros(3,size(allsaddles,2));
+allw = zeros(3,3,size(allsaddles,2));
+for ipts = 1:size(data.x1,2)
+    pvec(ap) = allsaddles(end,ipts);
+    model.PM(ac-length(saddle)) = allsaddles(end,ipts);
+    [~,alleig(:,ipts),w] = getKotteJacobian(allsaddles(1:3,ipts),pvec,model);
+    allw(:,:,ipts) = w;
+end
+
+
 % get saddle node
 [saddle,saddlepar] = getsaddlenode(data.s1,data.x1,5e-3);
 pvec(ap) = saddlepar;
@@ -116,5 +130,5 @@ tspanr = [0:-.1:-30]; % 0 -12];
 [hfig,xmafold] =...
 NumericalSeparatrix(model,pvec,opts,ap,data.s1,data.x1,[xeq1 xeq2],...
                     'unstable',tspanr,3,5e-3);
-Perturb2DstableManifold(xmafold(1:3,:)',saddle,model,pvec,opts,tspanf,...
+perturbManifolds(xmafold(1:3,:)',saddle,model,pvec,opts,tspanf,...
                         hfig,[1 2 3],10); 
