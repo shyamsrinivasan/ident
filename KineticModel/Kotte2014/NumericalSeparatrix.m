@@ -83,27 +83,19 @@ Line.LineWidth = 2.0;
 % select stable, unstable or all eigen vectors to be used
 switch type
     case 'stable'
-%         w = w(:,real(lambda)<0);
-%         lambda = lambda(real(lambda)<0);
         tspanr1 = tspanr;
-%         tspanr2 = [];
         xWs = calc1DWs(saddle,w,lambda,model,pvec,opts,tspanr1,tspanf,eps);
         Line.Color = colorSpec{1};   
         [hf,ha,hl1] = allTrajectoryfigures(plotDim,xWs,hf,ha,Line);
     case 'unstable'
-%         w = w(:,real(lambda)>=0);
-%         lambda = lambda(real(lambda)>=0);
-%         tspanr1 = [];
         tspanr2 = tspanr;
         [xWus,xeq] = calc1DWus(saddle,w,lambda,model,pvec,opts,tspanr2,tspanf,eps);
         Line.Color = colorSpec{3};
-        [hf,ha,hl2] = allTrajectoryfigures(plotDim,xWus,hf,ha,Line);
+        [hf,ha,hl2] = allTrajectoryfigures(plotDim,xWus,hf,ha,Line);       
         
-
+        % separatrix perturbation close to saddle node
         Line1.Color = colorSpec{4};
-        [hl4,hl5] = perturbSeparatrix(xWus,tspanf,opts,plotDim,hf,ha);                  
-
-        
+        [hl4,hl5] = perturbSeparatrix(xWus,tspanf,opts,plotDim,hf,ha);                          
     otherwise
         fprintf('Using both stable and unstable eigen values for separatrix calculation\n');
 %         wall = w;
@@ -130,13 +122,11 @@ if unstablept
     [hf,ha,hl3,plotss] = allPointfigures(plotDim,Axeq,xeq(:,1),hf,ha,Point,plotss);
     [hf,ha,hl] = allPointfigures(plotDim,Axeq,xeq(:,2),hf,ha,Point,plotss);
     
-    nvar = length(saddle);  
-    
+    nvar = length(saddle);     
     
     % stable ss vals from perturbing saddle node
 %     [~,xeq] = solveODEonly(1,zval((iw-1)*nvar+1:iw*nvar,ival),model,pvec,opts,tspanf);
-    % vector field around separatrix   
-    
+    % vector field around separatrix      
 
     if ~exist('hl1','var')
         hl1 = [];
@@ -167,16 +157,24 @@ if unstablept
 end
 
 if plotDim == 2
-    varargout{1} = ht12f;
-    varargout{2} = ht23f;
-    varargout{3} = ht13f;
+    varargout{1} = hf(1);
+    varargout{2} = hf(2);
+    varargout{3} = hf(3);
     if getdata
-        varargout{4} = savexdynr;
+        if strcmpi(type,'unstable')
+            varargout{4} = xWus;
+        elseif strcmpi(type,'stable')
+            varargout{4} = xWs;
+        end
     end
 elseif plotDim == 3
-    varargout{1} = hf3;
+    varargout{1} = hf;
     if getdata
-        varargout{2} = savexdynr;
+        if strcmpi(type,'unstable')
+            varargout{2} = xWus;
+        elseif strcmpi(type,'stable')
+            varargout{2} = xWs;
+        end        
     end
 end
 
