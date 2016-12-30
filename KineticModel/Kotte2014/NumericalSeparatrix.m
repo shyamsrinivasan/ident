@@ -44,11 +44,18 @@ if plotDim == 2
     ha23 = [];
     ht13fig = [];
     ha13 = [];
+    if nargout==4
+        getdata = 1;
+    end
 end
 if plotDim == 3
     hf3 = [];
     ha3 = [];
+    if nargout==2
+        getdata = 1;
+    end
 end
+savexdynr = [];
 
 % get saddle point
 [saddle,saddlepar] = getsaddlenode(s1,x1,eps1);
@@ -106,7 +113,7 @@ if unstablept
     end    
     Point.MarkerEdgeColor = [1 0 0];
     Point.MarkerFaceColor = [1 0 0];
-    for ival = 1:size(zval,2);
+    for ival = 2:size(zval,2);
         p1execflag = 0;
         for iw = 1:size(w,2)
             % separatrix curve
@@ -114,9 +121,7 @@ if unstablept
                 if ~isempty(tspanr1)
                     xdynr1 =...
                     solveODEonly(1,zval((iw-1)*nvar+1:iw*nvar,ival),model,pvec,opts,tspanr1);
-%                     xdynr1 = xdynr1(:,xdynr1(1,:)>=0);
-%                     xdynr1 = xdynr1(:,xdynr1(2,:)>=0);
-%                     xdynr1 = xdynr1(:,xdynr1(3,:)>=0);
+                    savexdynr = [savexdynr;xdynr1];
                 else
                     xdynr1 = [];
                 end
@@ -127,9 +132,7 @@ if unstablept
                 if ~isempty(tspanr2)
                     xdynr2 =...
                     solveODEonly(1,zval((iw-1)*nvar+1:iw*nvar,ival),model,pvec,opts,tspanr2);
-%                     xdynr2 = xdynr2(:,xdynr2(1,:)>=0);
-%                     xdynr2 = xdynr2(:,xdynr2(2,:)>=0);
-%                     xdynr2 = xdynr2(:,xdynr2(3,:)>=0);
+                    savexdynr = [savexdynr;xdynr2];
                 else
                     xdynr2 = [];
                 end
@@ -260,8 +263,14 @@ if plotDim == 2
     varargout{1} = ht12fig;
     varargout{2} = ht23fig;
     varargout{3} = ht13fig;
+    if getdata
+        varargout{4} = savexdynr;
+    end
 elseif plotDim == 3
     varargout{1} = hf3;
+    if getdata
+        varargout{2} = savexdynr;
+    end
 end
 
 function [hl1,hl2,xeq] = perturbSeparatrix(saddle,xdynr,tspanf,opts,...
