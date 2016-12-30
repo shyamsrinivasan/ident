@@ -5,7 +5,6 @@ global model pvec colorSpec eps Axeq saddle
 model = varargin{1};
 pvec = varargin{2};
 opts = varargin{3};
-% 1. calculate equilibirum points
 contvarid = varargin{4};
 s1 = varargin{5};
 x1 = varargin{6};
@@ -38,12 +37,6 @@ eps = 1e-4;
 % tspanr = [0,-18];
 tspanf = 0:0.1:2000;
 if plotDim == 2
-    ht12f = [];
-    ha12 = [];
-    ht23f = [];
-    ha23 = [];
-    ht13f = [];
-    ha13 = [];
     hf = [];
     ha = [];
     if nargout==4
@@ -51,8 +44,6 @@ if plotDim == 2
     end
 end
 if plotDim == 3
-    hf3 = [];
-    ha3 = [];
     hf = [];
     ha = [];
     if nargout==2
