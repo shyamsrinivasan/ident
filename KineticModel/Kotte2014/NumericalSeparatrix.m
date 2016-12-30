@@ -99,27 +99,10 @@ switch type
         Line.Color = colorSpec{3};
         [hf,ha,hl2] = allTrajectoryfigures(plotDim,xWus,hf,ha,Line);
         
-        % perturbation to the unstable manifold
+
         Line1.Color = colorSpec{4};
-%         if plotDim == 2
-%             if ~isempty(xdynr1)
-                [hl4,hl5] = perturbSeparatrix(xWus,tspanf,opts,plotDim,hf,ha);                  
-%             end
-%             if ~isempty(xdynr2)
-%                 hl4 = perturbSeparatrix(saddle,xdynr2,tspanf,opts,...
-%                                 ht12f,ha12,ht23f,ha23,ht13f,ha13);  
-%             end
-%         elseif plotDim == 3
-%             if ~isempty(xdynr1)
-%                 hl4 = perturbSeparatrix(saddle,xdynr1,tspanf,opts,...
-%                                     [],[],[],[],[],[],plotDim,hf3,ha3);  
-%             end
-%             if ~isempty(xdynr2)
-%                 hl4 = perturbSeparatrix(saddle,xdynr2,tspanf,opts,...
-%                                 [],[],[],[],[],[],plotDim,hf3,ha3);  
-%             end
-%         end
-        p1execflag = 1;
+        [hl4,hl5] = perturbSeparatrix(xWus,tspanf,opts,plotDim,hf,ha);                  
+
         
     otherwise
         fprintf('Using both stable and unstable eigen values for separatrix calculation\n');
@@ -147,131 +130,14 @@ if unstablept
     [hf,ha,hl3,plotss] = allPointfigures(plotDim,Axeq,xeq(:,1),hf,ha,Point,plotss);
     [hf,ha,hl] = allPointfigures(plotDim,Axeq,xeq(:,2),hf,ha,Point,plotss);
     
-    nvar = length(saddle);
-    
+    nvar = length(saddle);  
     
     
     % stable ss vals from perturbing saddle node
 %     [~,xeq] = solveODEonly(1,zval((iw-1)*nvar+1:iw*nvar,ival),model,pvec,opts,tspanf);
-    % vector field around separatrix
+    % vector field around separatrix   
     
-    
-%     for ival = 2:size(zval,2);
-%         p1execflag = 0;
-%         for iw = 1:size(w,2)
-            % separatrix curve
-%             if real(lambda(iw))<0
-%                 if ~isempty(tspanr1)
-%                     xdynr1 =...
-%                     solveODEonly(1,zval((iw-1)*nvar+1:iw*nvar,ival),model,pvec,opts,tspanr1);
-%                     savexdynr = [savexdynr;xdynr1];
-%                 else
-%                     xdynr1 = [];
-%                 end
-%             else
-%                 xdynr1 = [];
-%             end
-%             if real(lambda(iw))>=0
-%                 if ~isempty(tspanr2)
-%                     xdynr2 =...
-%                     solveODEonly(1,zval((iw-1)*nvar+1:iw*nvar,ival),model,pvec,opts,tspanr2);
-%                     savexdynr = [savexdynr;xdynr2];
-%                 else
-%                     xdynr2 = [];
-%                 end
-%             else
-%                 xdynr2 = [];
-%             end
-            
 
-            
-            % 2D trajectories (phase plane)
-%             if plotDim == 2
-%                 % xdynr1
-%                 if ~isempty(xdynr1)
-%                     [ht12f,ha12,hl1] =...
-%                     FIGodetrajectories(real(xdynr1),saddle,saddle,2,[1 2],ht12f,ha12,Line1);
-%                     [ht23f,ha23] =...
-%                     FIGodetrajectories(real(xdynr1),saddle,saddle,2,[2 3],ht23f,ha23,Line1);
-%                     [ht13f,ha13] =...
-%                     FIGodetrajectories(real(xdynr1),saddle,saddle,2,[1 3],ht13f,ha13,Line1);
-% %                 else
-% %                     hl1 = [];
-%                 end
-%                 % xdynr2
-%                 if ~isempty(xdynr2)
-%                     [ht12f,ha12,hl2] =...
-%                     FIGodetrajectories(real(xdynr2),saddle,saddle,2,[1 2],ht12f,ha12,Line2);
-%                     [ht23f,ha23] =...
-%                     FIGodetrajectories(real(xdynr2),saddle,saddle,2,[2 3],ht23f,ha23,Line2);
-%                     [ht13f,ha13] =...
-%                     FIGodetrajectories(real(xdynr2),saddle,saddle,2,[1 3],ht13f,ha13,Line2);
-% %                 else
-% %                     hl2 = [];
-%                 end
-%             end
-%             % 3D trajectories
-%             if plotDim == 3
-%                 if ~isempty(xdynr1)
-%                     [hf3,ha3,hl1] =...
-%                     FIGodetrajectories(real(xdynr1),saddle,saddle,2,[1 2 3],hf3,ha3,Line1);
-% %                 else
-% %                     hl1 = [];
-%                 end
-%                 if ~isempty(xdynr2)
-%                     [hf3,ha3,hl2] =...
-%                     FIGodetrajectories(real(xdynr2),saddle,saddle,2,[1 2 3],hf3,ha3,Line2);
-% %                 else
-% %                     hl2 = [];
-%                 end
-%             end
-            % plot equilibrium points
-%             if any(any(abs(Axeq-repmat(real(xeq),1,neqpts))<=1e-8))
-%                 [~,c] = find(abs(Axeq-repmat(real(xeq),1,neqpts))<=1e-8);
-%                 c = unique(c);
-%                 if ~plotss(c)                
-%                     if plotDim == 2
-%                         % 2D stationary points (saddle/stable nodes)
-%                         [~,~,hl3] = FIGmssEqIvalPerturbations(saddle,real(xeq),...
-%                                     2,[1 2],ht12f,ha12,Point);
-%                         FIGmssEqIvalPerturbations(saddle,real(xeq),2,[1 3],...
-%                                                   ht13f,ha13,Point);
-%                         FIGmssEqIvalPerturbations(saddle,real(xeq),2,[2 3],...
-%                                                   ht23f,ha23,Point);
-%                     elseif plotDim == 3
-%                         % 3D stationary points
-%                         [~,~,hl3] = FIGmssEqIvalPerturbations(saddle,real(xeq),...
-%                                     2,[1 2 3],hf3,ha3,Point);
-%                     end
-%                     plotss(c) = 1;
-%                 end
-%             end
-            % perturbations from separatrix          
-%             if ~p1execflag
-%                 Line1.Color = colorSpec{4};
-%                 if plotDim == 2
-%                     if ~isempty(xdynr1)
-%                         hl4 = perturbSeparatrix(saddle,xdynr1,tspanf,opts,...
-%                                         ht12f,ha12,ht23f,ha23,ht13f,ha13);  
-%                     end
-%                     if ~isempty(xdynr2)
-%                         hl4 = perturbSeparatrix(saddle,xdynr2,tspanf,opts,...
-%                                         ht12f,ha12,ht23f,ha23,ht13f,ha13);  
-%                     end
-%                 elseif plotDim == 3
-%                     if ~isempty(xdynr1)
-%                         hl4 = perturbSeparatrix(saddle,xdynr1,tspanf,opts,...
-%                                             [],[],[],[],[],[],plotDim,hf3,ha3);  
-%                     end
-%                     if ~isempty(xdynr2)
-%                         hl4 = perturbSeparatrix(saddle,xdynr2,tspanf,opts,...
-%                                         [],[],[],[],[],[],plotDim,hf3,ha3);  
-%                     end
-%                 end
-%                 p1execflag = 1;
-%             end
-%         end         
-%     end
     if ~exist('hl1','var')
         hl1 = [];
     end
@@ -391,9 +257,6 @@ elseif plotDim == 2
     hf = [ht12f;ht23f;ht13f];
     ha = [ha12;ha23;ha13];
 end
-% end
-    
-
 
 function [hl1,hl2,xeq] = perturbSeparatrix(xdynr,tspanf,opts,plotDim,hf,ha)
 global colorSpec eps model pvec Axeq saddle
