@@ -247,7 +247,7 @@ print('-depsc','-painters','-loose',fname)
 %% perturb 2D stable manifold
 pvec(ap) = saddlepar;
 model.PM(ac-length(saddle)) = saddlepar;
-Perturb2DstableManifold([xs1' ys1' zs1'],saddle,model,pvec,opts,tspanf,hfig,10);
+perturbManifolds([xs1' ys1' zs1'],saddle,model,pvec,opts,tspanf,hfig,10);
 
 % plot3(saddle(1),saddle(2),saddle(3),'Color','r','Marker','.','MarkerSize',30);
 
