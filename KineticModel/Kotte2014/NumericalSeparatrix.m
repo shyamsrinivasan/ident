@@ -50,7 +50,7 @@ if plotDim == 3
         getdata = 1;
     end
 end
-savexdynr = [];
+% savexdynr = [];
 
 % get saddle point
 [saddle,saddlepar] = getsaddlenode(s1,x1,eps1);
@@ -85,7 +85,7 @@ switch type
         [hf,ha,hl2] = allTrajectoryfigures(plotDim,xWus,hf,ha,Line);       
         
         % separatrix perturbation close to saddle node
-        Line1.Color = colorSpec{4};
+%         Line1.Color = colorSpec{4};
         [hl4,hl5] = perturbSeparatrix(xWus,tspanf,opts,plotDim,hf,ha);                          
     otherwise
         fprintf('Using both stable and unstable eigen values for separatrix calculation\n');
@@ -97,10 +97,10 @@ switch type
         tspanr2 = tspanr(1,:);
         xWs = calc1DWs(saddle,w,lambda,model,pvec,opts,tspanr1,tspanf,eps);
         [xWus,xeq] = calc1DWus(saddle,w,lambda,model,pvec,opts,tspanr2,tspanf,eps);
-        Line1 = Line;
-        Line2 = Line;
-        Line1.Color = colorSpec{1};   
-        Line2.Color = colorSpec{3};
+%         Line1 = Line;
+%         Line2 = Line;
+%         Line1.Color = colorSpec{1};   
+%         Line2.Color = colorSpec{3};
 end         
 
 % plot eq points on trajectories
@@ -111,9 +111,7 @@ if unstablept
     Point.MarkerFaceColor = [1 0 0];
     
     [hf,ha,hl3,plotss] = allPointfigures(plotDim,Axeq,xeq(:,1),hf,ha,Point,plotss);
-    [hf,ha,hl] = allPointfigures(plotDim,Axeq,xeq(:,2),hf,ha,Point,plotss);
-    
-    nvar = length(saddle);     
+    [hf,ha,hl] = allPointfigures(plotDim,Axeq,xeq(:,2),hf,ha,Point,plotss);        
     
     % stable ss vals from perturbing saddle node
 %     [~,xeq] = solveODEonly(1,zval((iw-1)*nvar+1:iw*nvar,ival),model,pvec,opts,tspanf);
