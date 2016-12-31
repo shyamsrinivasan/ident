@@ -1,4 +1,4 @@
-function [allxdyn,allxeq,allfdyn,allfeq,slope] =...
+function [allxdyn,allxeq,allfdyn,allfeq,slope,alltout] =...
          solveODEonly(npts,ival,model,allpvec,opts,tspan,...
                       allxdyn,allxeq,allfdyn,allfeq)
 
@@ -19,6 +19,7 @@ if nargin<7
         allxdyn = zeros(length(ival),length(tspan),npts);
     end        
 end
+alltout = zeros(length(tspan),npts);
                  
 
 for ipt = 1:npts
@@ -33,7 +34,13 @@ for ipt = 1:npts
 %     if ~exist('allxdyn','var')
 %         allxdyn = zeros(length(ival),length(tout),npts);
 %     end
-    allxdyn(:,:,ipt) = yout';
+    if size(tout,1) == size(tspan,2)
+        allxdyn(:,:,ipt) = yout';
+        alltout(:,ipt) = tspan';
+    else
+        allxdyn(:,1:size(tout,1),ipt) = yout';
+        alltout(1:size(tout,1),ipt) = tout;
+    end
     allxeq(:,ipt) = yout(end,:)';   
     
     % slope of ODE trajectory (dx/dt) at each tout using ADMAT        
