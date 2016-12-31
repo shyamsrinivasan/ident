@@ -11,6 +11,7 @@ eqcontvar = x1(end,id);
 minid = id(minid);
 maxid = id(maxid);
 
-% get all data between minid and maxid
-reldata = x1(:,min([minid maxid]):max([minid maxid]));
+% get all data between minid and maxid (do not include data at minid and
+% maxid as these are limit points)
+reldata = x1(:,min([minid maxid])+1:max([minid maxid])-1);
 
