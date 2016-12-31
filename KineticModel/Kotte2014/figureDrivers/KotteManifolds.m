@@ -130,11 +130,6 @@ azimuth = 52; elevation = 10;
 % color_hash for plotting
 color_hash = {'k.','go','ko'};
 
-% compute invariant manifold via numerical integration
-ti = 0.0; h = -0.5; tf = -25;%-25;%integration time data
-time = ti:h:tf; %set time array
-save_time_start_index = 3;
-
 eqpts = [saddle'; % 2D stable 
        xeq1';   % spiral sink (3D stable)
        xeq2'];  % sink (3D stable)
@@ -146,57 +141,11 @@ options = optimoptions('fsolve','Display','off','TolFun',1e-10,'TolX',1e-10);
 fixed_points = kotte_branches(npoints,range,contdir,eqpts,model,pvec,ap,options);   
 [type,alleig] = KotteStabilityInfo(eqpts,model,pvec);      
 
-% compute Jacobian, eigenvalues, eigenvector at saddle points with 2D stable
-% manifolds
-[~,eig,eigvec] = getKotteJacobian(eqpts(1,:)',pvec,model);
-
-% obtain the 2 eigenvectors of 2D linear eigenspace
-stableeigvec = eigvec(:,eig<0);
-
-% 2D stable manifold 
-int_time_1D_manifolds = 0:-0.05:-15;
-time_1D = length(int_time_1D_manifolds);
-one_dim_manifolds_array_x = zeros(2*time_1D,6);
-one_dim_manifolds_array_y = zeros(2*time_1D,6);
-one_dim_manifolds_array_z = zeros(2*time_1D,6);
-
-% one single saddle node with 2D stable manifold
-delta_x = 0.01;
-step = 0.005;
-pvec(ap) = saddlepar;
-model.PM(ac-length(saddle)) = saddlepar;
-
-% input functions
-givenMfsolve = @(x)Kotte_givenNLAE(x,model,pvec);
-ode_system_fsolve = 'givenMfsolve';
-givenModel = @(t,x)KotteODE(t,x,model,pvec);
-ode_system = 'givenModel';
-
-%%
-% compute eigenvalues for 2D stable manifolds with integrating backwards
-% in time beginning with a circle of initial conditions with radius "r"
-% and "points" points in the 2D space spanned by the two eigenvectors
-% at the equilibrium "fixed_points" with exactly 2 eigenvalues with
-% negative real part
-% circle parameters
-points = 801;
-radius = 0.01;
-
-% % obtain coordinates of circle with radius r in (x1,x2) plane
-[x1,x2] = getplanarcircle(points,radius);
-% 
-% % perform linear mapping of unit circle onto plane in R3 spanned by W1,W2
-circlenew = manifoldlinearmapping(x1,x2,stableeigvec(:,1),stableeigvec(:,2));
-% 
-% % translate mapping to saddle point
-circlenew = circlenew + repmat(saddle,1,size(circlenew,2));
-circlenew = circlenew';
-% 
+% get points on 2D stable invariant manifold surface
 tspanr = 0:-.05:-25;
-[x,y,z,dynr] = get2Dmanifoldpoints(circlenew,model,pvec,tspanr,opts);
-[xchop,ychop,zchop,r] = chopvals(x,y,z,[2.5 2.5 2.5]);
-% [xnew,ynew,znew] = removeredundantpoints(real(xchop),real(ychop),real(zchop),0.01);
-% Manifold2DPlot(real(xnew),real(ynew),real(znew));
+[xchop,ychop,zchop] =...
+         get2Dstablemanifold(saddle,saddlepar,ap,model,pvec,tspanr,opts);
+
 
 %% Separate out segments of manifold surface
 % working with xchop
