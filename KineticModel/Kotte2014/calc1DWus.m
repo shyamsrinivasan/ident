@@ -1,7 +1,13 @@
 function [xdynr1,xeq] = calc1DWus(saddle,w,lambda,model,pvec,opts,tspanr,tspanf,eps)
 % calculate 1D unstable manifold
 
-w = w(:,real(lambda)>=0);
+if any(real(lambda)>=0)
+    w = w(:,real(lambda)>=0);
+else
+    xdynr1 = [];
+    xeq = [];
+    return
+end
 
 ival = [saddle+eps*w saddle-eps*w];
 % choose either the positive or the negative perturbation for the manifold
