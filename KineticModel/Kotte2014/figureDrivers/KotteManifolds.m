@@ -143,8 +143,7 @@ fixed_points = kotte_branches(npoints,range,contdir,eqpts,model,pvec,ap,options)
 
 % get points on 2D stable invariant manifold surface
 tspanr = 0:-.05:-25;
-[xchop,ychop,zchop] =...
-         get2Dstablemanifold(saddle,saddlepar,ap,model,pvec,tspanr,opts);
+[xchop,ychop,zchop] = calc2DWs(saddle,saddlepar,ap,model,pvec,tspanr,opts);
 
 
 %% Separate out segments of manifold surface
