@@ -30,6 +30,7 @@ else
     eps1 = varargin{11};
 end
 ac = find(strcmpi(model.mets,'ac[e]'));
+getdata = 0;
 
 % 2. determine the saddle node/limit point
 % calculate jacobian at each equilibirum point
