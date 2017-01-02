@@ -25,7 +25,7 @@ points = 801;
 radius = 0.01;
 
 % obtain coordinates of circle with radius r in (x1,x2) plane
-[x1,x2] = getplanarcircle(points,radius);
+[x1,x2,x3] = getplanarcircle(points,radius);
 
 % perform linear mapping of unit circle onto plane in R3 spanned by W1,W2
 circlenew = manifoldlinearmapping(x1,x2,stableeigvec(:,1),stableeigvec(:,2));
