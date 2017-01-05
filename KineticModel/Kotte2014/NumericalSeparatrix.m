@@ -146,6 +146,15 @@ if unstablept
 %     legend('boxoff');
 end
 
+% get only poisitive values of the manifolds
+if strcmpi(type,'stable')
+    Wsnegid = xWs(1,:)<0|xWs(2,:)<0|xWs(3,:)<0;
+    xWs(:,Wsnegid) = [];
+elseif strcmpi(type,'unstable')
+    Wusnegid = xWus(1,:)<0|xWus(2,:)<0|xWus(3,:)<0;
+    xWus(:,Wusnegid) = [];
+end
+
 if plotDim == 2
     varargout{1} = hf(1);
     varargout{2} = hf(2);
