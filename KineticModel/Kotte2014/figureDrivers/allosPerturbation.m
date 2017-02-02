@@ -188,19 +188,17 @@ for iac = 1:length(acetate)
     hold on
     plot(allpvec(:,idp),xeqac(1,:),'Color',colorSpec{1},'LineWidth',2);
     plot(allpvec(:,idp),xeqac(4,:),'Color',colorSpec{2},'LineWidth',2);
-    xlabel('k4cat s-1');
+    xlabel('K3pep s-1');
     ylabel('PEP a.u.');
     
     hc2 = figure;
     hold on
     plot(allpvec(:,idp),feqac(5,:),'Color',colorSpec{1},'LineWidth',2);
     plot(allpvec(:,idp),feqac(10,:),'Color',colorSpec{2},'LineWidth',2);
-    xlabel('k4cat s-1');
+    xlabel('K3pep s-1');
     ylabel('v4 a.u.');
 end
 
-
-% not used ----------------------- probably remove
 load('C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\RegulationVariation_July30.mat');
 % idp = [3 4] % sampled together in a mesh grid
 npts = size(alliidpvec,1);
@@ -258,8 +256,8 @@ plot(log(alpha2_range'),bistable_alpha1(1,:),'Color','r','LineWidth',2);
 plot(log(alpha2_range'),bistable_alpha1(2,:),'Color','r','LineWidth',2);
 plot(log(alpha2_range'),unstable_alpha1(1,:),'Color','b','LineWidth',2);
 plot(log(alpha2_range'),unstable_alpha1(2,:),'Color','b','LineWidth',2);
-xlabel('log(Lfbp)');
-ylabel('KFbpPEP');
+xlabel('log(L3)');
+ylabel('K3PEP');
 
 % pick one Lfbpo point and plot bifurcation diagrams for all corresponding
 % KFbpPEP values
@@ -336,67 +334,4 @@ for iid = 1:ndp
         end
         last_endid = endid;        
     end
-end
-
-%% get pep and v4 vs Kallos for different acetate 
-acetate = orig_saddlepar;
-ap = 9;
-colorSpec = chooseColors(5,{'Green','Purple','Red','Navy','HotPink'});
-saddleac = zeros(npts,length(acetate));
-xeqac = zeros(2*nvar,npts,length(acetate));
-feqac = zeros(2*length(fluxg),npts,length(acetate));
-for iac = 1:length(acetate)    
-    % calculate saddle for each acetate concentration
-    eps = 1e-4;
-    [saddle,saddlepar,status] = eqptwrapper(s,nvar,acetate(iac),eps);
-    
-    % good saddle node points only
-    goodsaddle = saddle(:,logical(status));
-    goodsaddlepar = saddlepar(logical(status));
-    saddleac(logical(status),iac) = goodsaddlepar;
-    allpvec(logical(status),ap) = goodsaddlepar;
-    % saddle parameter out of bifurcation bounds
-    % get the one possible steady state
-    oubsaddle = saddle(:,~logical(status));
-    oubsaddlepar = saddlepar(~logical(status));
-    saddleac(~logical(status),iac) = acetate(iac);
-    allpvec(~logical(status),ap) = acetate(iac);
-    
-    for ipt = 1:npts
-        if ismember(ipt,find(status))
-            model.PM(ac-length(orig_saddle)) = saddlepar(ipt); 
-            % perturb saddle to get steady states
-            eps = 1e-4;                            
-            pival = saddle(:,ipt)+eps*[1;1;1];
-            [~,xeq1,~,feq1] =...
-            solveODEonly(1,pival,model,allpvec(ipt,:),opts,tspanf);
-            nival = saddle(:,ipt)-eps*[1;1;1];
-            [~,xeq2,~,feq2] =...
-            solveODEonly(1,nival,model,allpvec(ipt,:),opts,tspanf);            
-            xeqac(nvar+1:end,ipt,iac) = xeq2;
-            feqac(length(fluxg)+1:end,ipt,iac) = feq2;
-        else
-            % get the only possible steady state
-            model.PM(ac-length(orig_saddle)) = acetate(iac);
-            [~,xeq1,~,feq1] = solveODEonly(1,M,model,allpvec(ipt,:),opts,tspan);            
-            xeqac(nvar+1:end,ipt,iac) = xeq1;
-            feqac(length(fluxg)+1:end,ipt,iac) = feq1;
-        end
-        xeqac(1:nvar,ipt,iac) = xeq1;
-        feqac(1:length(fluxg),ipt,iac) = feq1;
-    end
-    
-    hc1 = figure;
-    hold on
-    plot(allpvec(:,idp),xeqac(1,:),'Color',colorSpec{1},'LineWidth',2);
-    plot(allpvec(:,idp),xeqac(4,:),'Color',colorSpec{2},'LineWidth',2);
-    xlabel('k4cat s-1');
-    ylabel('PEP a.u.');
-    
-    hc2 = figure;
-    hold on
-    plot(allpvec(:,idp),feqac(5,:),'Color',colorSpec{1},'LineWidth',2);
-    plot(allpvec(:,idp),feqac(10,:),'Color',colorSpec{2},'LineWidth',2);
-    xlabel('k4cat s-1');
-    ylabel('v4 a.u.');
 end
