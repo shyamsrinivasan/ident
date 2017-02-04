@@ -98,3 +98,4 @@ relWus = real(xWus(:,1:nzid));
 % get nipts random initial values and corresponding equilibrium points
 % through perturbation of relWus (x,y,z)
 relWus = [x;y;z];
+perturbTrajectory(relWus,model,pvec,opts,tspanf,[],3)
