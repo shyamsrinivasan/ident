@@ -95,7 +95,11 @@ eps = 1e-4;
 relWus = real(xWus(:,1:nzid));
 [x,y,z] = chopvals(relWus(1,:),relWus(2,:),relWus(3,:),[10 10 10]);
 
-% get nipts random initial values and corresponding equilibrium points
+%% get nipts random initial values and corresponding equilibrium points
 % through perturbation of relWus (x,y,z)
 relWus = [x;y;z];
-perturbTrajectory(relWus,model,pvec,opts,tspanf,[],3)
+newivals = perturbTrajectory(relWus);
+
+%% integrate from newivals
+% hfig = figure;
+getPequilibrium(newivals,model,pvec,opts,tspanf,hfig,3)
