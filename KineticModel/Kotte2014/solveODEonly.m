@@ -59,9 +59,12 @@ for ipt = 1:npts
     
     % calculation of fluxes for allxeq
     allfeq(:,ipt) = Kotte_givenFlux([allxeq(:,ipt);model.PM],pvec,model); 
-    for itout = 1:length(tout)
-        allfdyn(:,itout,ipt) = Kotte_givenFlux([allxdyn(:,itout,ipt);model.PM],pvec,model); 
-    end
+    allfdyn(:,:,ipt) =...
+    Kotte_givenFlux([allxdyn(:,:,ipt);repmat(model.PM,1,size(allxdyn,2))],pvec,model); 
+    
+%     for itout = 1:length(tout)
+%         allfdyn(:,itout,ipt) = Kotte_givenFlux([allxdyn(:,itout,ipt);model.PM],pvec,model); 
+%     end
     
     % optional  - plot information
 %      hf = plotKotteVariables(tout,yout,1);
