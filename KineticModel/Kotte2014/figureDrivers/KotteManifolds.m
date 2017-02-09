@@ -150,41 +150,44 @@ tspanr = 0:-.05:-25;
 % working with xchop
 % backup 
 x1 = real(xchop);y1 = real(ychop);z1 = real(zchop);
-id2 = y1<1.1885;
-id1 = setdiff(1:length(x1),find(id2));
-
-xs1 = x1(id1);
-ys1 = y1(id1);
-zs1 = z1(id1);
-x1(id1) = [];y1(id1) = [];z1(id1) = [];
-
-% x1(id1) = [];y1(id1) = [];z1(id1) = [];
-% [x1,y1,z1] = removeredundantpoints(real(x1),real(y1),real(z1),0.01);
-
-id3 = x1<1.325&y1>0.485&z1<2.6065;
-xs2 = x1(id3);ys2 = y1(id3);zs2 = z1(id3);
-x1(id3) = [];y1(id3) = [];z1(id3) = [];
-% 
-% % small segmet in xs2
-id3 = xs2>.2491 & xs2<.4319 & ys2>1.0905 & ys2<1.195 & zs2>.5164 & zs2<.5796;
-xs1 = [xs1 xs2(id3)];ys1 = [ys1 ys2(id3)];zs1 = [zs1 zs2(id3)];
-[xs1,ys1,zs1] = removeredundantpoints(xs1,ys1,zs1,0.02);
-xs2(id3) = [];ys2(id3) = [];zs2(id3) = [];
-
-id4 = x1<0.687 & z1<2.4;
-xs3 = x1(id4);ys3 = y1(id4);zs3 = z1(id4);
-x1(id4) = [];y1(id4) = [];z1(id4) = [];
-% divide xs3 into 2 parts
-id5 = ys3>0.06834;
-id6 = setdiff(1:length(ys3),find(id5));
-xs31 = xs3(id5);ys31 = ys3(id5);zs31 = zs3(id5);
-xs32 = xs3(id6);ys32 = ys3(id6);zs32 = zs3(id6);
-
+[xs1,ys1,zs1] = removeredundantpoints(x1,y1,z1,0.0001);
 hfig = Manifold2DPlot(xs1,ys1,zs1,hfig);
-Manifold2DPlot(xs2,ys2,zs2,hfig);
-Manifold2DPlot(xs31,ys31,zs31,hfig);
-Manifold2DPlot(xs32,ys32,zs32,hfig);
-Manifold2DPlot(x1,y1,z1,hfig);
+
+% id2 = y1<1.1885;
+% id1 = setdiff(1:length(x1),find(id2));
+% 
+% xs1 = x1(id1);
+% ys1 = y1(id1);
+% zs1 = z1(id1);
+% x1(id1) = [];y1(id1) = [];z1(id1) = [];
+% 
+% % x1(id1) = [];y1(id1) = [];z1(id1) = [];
+% % [x1,y1,z1] = removeredundantpoints(real(x1),real(y1),real(z1),0.01);
+% 
+% id3 = x1<1.325&y1>0.485&z1<2.6065;
+% xs2 = x1(id3);ys2 = y1(id3);zs2 = z1(id3);
+% x1(id3) = [];y1(id3) = [];z1(id3) = [];
+% % 
+% % % small segmet in xs2
+% id3 = xs2>.2491 & xs2<.4319 & ys2>1.0905 & ys2<1.195 & zs2>.5164 & zs2<.5796;
+% xs1 = [xs1 xs2(id3)];ys1 = [ys1 ys2(id3)];zs1 = [zs1 zs2(id3)];
+% [xs1,ys1,zs1] = removeredundantpoints(xs1,ys1,zs1,0.02);
+% xs2(id3) = [];ys2(id3) = [];zs2(id3) = [];
+% 
+% id4 = x1<0.687 & z1<2.4;
+% xs3 = x1(id4);ys3 = y1(id4);zs3 = z1(id4);
+% x1(id4) = [];y1(id4) = [];z1(id4) = [];
+% % divide xs3 into 2 parts
+% id5 = ys3>0.06834;
+% id6 = setdiff(1:length(ys3),find(id5));
+% xs31 = xs3(id5);ys31 = ys3(id5);zs31 = zs3(id5);
+% xs32 = xs3(id6);ys32 = ys3(id6);zs32 = zs3(id6);
+% 
+% hfig = Manifold2DPlot(xs1,ys1,zs1,hfig);
+% Manifold2DPlot(xs2,ys2,zs2,hfig);
+% Manifold2DPlot(xs31,ys31,zs31,hfig);
+% Manifold2DPlot(xs32,ys32,zs32,hfig);
+% Manifold2DPlot(x1,y1,z1,hfig);
 
 gcf
 axis([0 2.5 0 1.6 0 1.6]);

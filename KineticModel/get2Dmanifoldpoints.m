@@ -5,22 +5,28 @@ npoints = size(points,1);
 % npts = length(tspanr)-2;
 % allxdynr = zeros(nvar,(npts-2)*npoints);
 allxdynr = [];
+allx = zeros(npoints,length(tspanr));
+ally = zeros(npoints,length(tspanr));
+allz = zeros(npoints,length(tspanr));
 for ip = 1:npoints
     xdynr = solveODEonly(1,points(ip,:)',model,pvec,opts,tspanr); 
+    allx(ip,:) = xdynr(1,:);
+    ally(ip,:) = xdynr(2,:);
+    allz(ip,:) = xdynr(3,:);
 %     allxdynr(:,(ip-1)*npts+1:ip*npts) = xdynr(:,3:end);
     allxdynr = [allxdynr xdynr(:,3:end)];
 end
 
-x = allxdynr(1,:);
-y = allxdynr(2,:);
-z = allxdynr(3,:);
+% x = allxdynr(1,:);
+% y = allxdynr(2,:);
+% z = allxdynr(3,:);
 
 if nargout<=1
     varargout{1} = allxdynr;
 elseif nargout>1
-    varargout{1} = x;
-    varargout{2} = y;
-    varargout{3} = z;
+    varargout{1} = allx;
+    varargout{2} = ally;
+    varargout{3} = allz;
     varargout{4} = allxdynr;
 end
 
