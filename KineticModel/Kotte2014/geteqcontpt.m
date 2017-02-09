@@ -3,9 +3,9 @@
 % s1 = varargin{1}; % output from MATCONT
 % x1 = varargin{2}; % output from MATCONT
 % pt = pvec(ap)
-function [saddlepts,saddleparpts,statuspts] = geteqcontpt(s,pt,eps)
-if nargin<3 || isempty(eps)
-    eps = 1e-3;
+function [saddlepts,saddleparpts,statuspts] = geteqcontpt(s,pt,epsin)
+if nargin<3 || isempty(epsin)
+    epsin = 1e-3;
 end  
 
 npts = size(fieldnames(s),1);
@@ -13,6 +13,7 @@ saddlepts = zeros(size(s.pt1.x1,1)-1,npts);
 saddleparpts = zeros(1,npts);
 statuspts = zeros(1,npts);
 for ipt = 1:npts
+    eps = epsin;
     s1 = s.(['pt' num2str(ipt)]).s1;
     x1 = s.(['pt' num2str(ipt)]).x1;
     
