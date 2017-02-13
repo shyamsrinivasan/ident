@@ -95,6 +95,14 @@ eps = 1e-4;
 relWus = real(xWus(:,1:nzid));
 [x,y,z] = chopvals(relWus(1,:),relWus(2,:),relWus(3,:),[10 10 10]);
 
+%% get random initial values for all 3 variables and calculate steady state
+rndivals = randomivals([0 5;0 5;0 5],10000);
+% integrate
+options = [];
+hfig = figure;
+[allxeq,ssid,allfeq] =...
+getPequilibrium(rndivals,model,pvec,options,opts,tspanf,hfig,[1 2 3]);
+
 %% get nipts random initial values and corresponding equilibrium points
 % through perturbation of relWus (x,y,z)
 relWus = [x;y;z];
@@ -107,4 +115,5 @@ options = optimoptions('fsolve','Display','final-detailed',...
                        'MaxFunEvals',1000000,...
                        'MaxIter',50000);
 hfig = figure;
-getPequilibrium(newivals,model,pvec,options,opts,tspanf,hfig,[1 2 3])
+[allxeq,ssid,allfeq] =...
+getPequilibrium(newivals,model,pvec,options,opts,tspanf,hfig,[1 2 3]);
