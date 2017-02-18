@@ -1,9 +1,6 @@
-% curve_map_R2_R3.m, by Daniel Lyons (March 2014)
-% projects points in x1-x2 plane to the plane spanned by the vectors W1,W2
-% in the x1-x2-x3 coordinate systems
-% Modifications include var and fun names and vectorization
-
 function xnew = manifoldlinearmapping(x1,x2,W1,W2)
+% Adapted from Lyons (2014) curve_map_R2_R3.m
+% project 2-D points onto 3-D plane spanned by vectors W1 and W2 
 
 % perform linear mapping of unit circle onto plane in R3 spanned by W1,W2
 % [W1 W2]; %transformation matrix

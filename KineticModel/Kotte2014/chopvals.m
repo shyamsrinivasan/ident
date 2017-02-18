@@ -1,4 +1,5 @@
 function [x,y,z,r] = chopvals(x,y,z,chop_pos)
+% Adapted from Lyons (2014) chopvals.m
 
 % terminate all trajectories when they cross zero
 allx = [];ally = [];allz = [];
