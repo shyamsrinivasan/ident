@@ -95,25 +95,38 @@ eps = 1e-4;
 relWus = real(xWus(:,1:nzid));
 [x,y,z] = chopvals(relWus(1,:),relWus(2,:),relWus(3,:),[10 10 10]);
 
-%% get random initial values for all 3 variables and calculate steady state
-rndivals = randomivals([0 5;0 5;0 5],10000);
+%% get region of attraction by perturbing around the steady state and 
+% expanding region of perturbation
+rndivals = get3Dsphere(xeq1',0.1,1000);
 % integrate
 options = [];
 hfig = figure;
-[allxeq,ssid,allfeq] =...
-getPequilibrium(rndivals,model,pvec,options,opts,tspanf,hfig,[1 2 3]);
+[ppival,npival,allxeq,ssid,allfeq] =...
+getPequilibrium(rndivals,model,pvec,options,opts,tspanf);
 
+
+
+
+
+%% get random initial values for all 3 variables and calculate steady state
+% rndivals = randomivals([0 5;0 5;0 5],10000);
+% % integrate
+% options = [];
+% hfig = figure;
+% [ppival,npival,allxeq,ssid,allfeq] =...
+% getPequilibrium(rndivals,model,pvec,options,opts,tspanf);
+% plotrndivals(rndivals,ssid,allxeq,[1 2],2,hfig,ha)
 %% get nipts random initial values and corresponding equilibrium points
 % through perturbation of relWus (x,y,z)
-relWus = [x;y;z];
-newivals = perturbTrajectory(relWus);
+% relWus = [x;y;z];
+% newivals = perturbTrajectory(relWus);
 
 %% integrate from newivals
-options = optimoptions('fsolve','Display','final-detailed',...
-                       'TolFun',1e-16,...
-                       'TolX',1e-12,...
-                       'MaxFunEvals',1000000,...
-                       'MaxIter',50000);
-hfig = figure;
-[allxeq,ssid,allfeq] =...
-getPequilibrium(newivals,model,pvec,options,opts,tspanf,hfig,[1 2 3]);
+% options = optimoptions('fsolve','Display','final-detailed',...
+%                        'TolFun',1e-16,...
+%                        'TolX',1e-12,...
+%                        'MaxFunEvals',1000000,...
+%                        'MaxIter',50000);
+% hfig = figure;
+% [allxeq,ssid,allfeq] =...
+% getPequilibrium(newivals,model,pvec,options,opts,tspanf,hfig,[1 2 3]);
