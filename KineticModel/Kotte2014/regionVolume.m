@@ -97,13 +97,13 @@ relWus = real(xWus(:,1:nzid));
 
 %% get region of attraction by perturbing around the steady state and 
 % expanding region of perturbation
-rndivals = get3Dsphere(xeq1',0.1,1000);
+rndivals = get3Dsphere(xeq1',1.23,50000);
 % integrate
 options = [];
 hfig = figure;
 [ppival,npival,allxeq,ssid,allfeq] =...
 getPequilibrium(rndivals,model,pvec,options,opts,tspanf);
-
+plotrndivals(rndivals,ssid,allxeq,[1 2 3],2,hfig,[])
 
 
 
