@@ -97,13 +97,18 @@ relWus = real(xWus(:,1:nzid));
 
 %% get region of attraction by perturbing around the steady state and 
 % expanding region of perturbation
-rndivals = get3Dsphere(xeq1',1.23,50000);
+% radius where no initial point produces the 2nd steady state = rAss1 =
+% [1.22 1.22 1.22]'
+rndivals = get3Dsphere(xeq1',1.22,50000);
 % integrate
 options = [];
 hfig = figure;
 [ppival,npival,allxeq,ssid,allfeq] =...
 getPequilibrium(rndivals,model,pvec,options,opts,tspanf);
-plotrndivals(rndivals,ssid,allxeq,[1 2 3],2,hfig,[])
+% plotrndivals(rndivals,ssid,allxeq,[1 2 3],2,hfig,[]);
+plotrndivals(rndivals,ssid,allxeq,[1 2],2,hfig,[]);
+plotrndivals(rndivals,ssid,allxeq,[2 3],2,hfig,[]);
+plotrndivals(rndivals,ssid,allxeq,[2 3],2,hfig,[]);
 
 
 
