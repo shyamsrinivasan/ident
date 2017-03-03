@@ -2,10 +2,20 @@
 % code to generate figures showing changes in system characteristics for
 % changes in k4cat/kpepout
 % build stoichioemtrc matrices
-addpath(genpath('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel'));
-rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\Kotte2014\Kotte2014.txt';
-cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\Kotte2014\Kotte2014C.txt';
-
+if ~exist('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\Kotte2014\Kotte2014.txt')
+    status = 2;
+    fprintf('\nLinux System\n');
+else 
+    status = 1;
+    fprintf('\nWindows System\n');
+end
+if status == 1
+    rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\Kotte2014\Kotte2014.txt';
+    cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\Kotte2014\Kotte2014C.txt';
+elseif status == 2
+    rxfname = '/home/shyam/Documents/MATLAB/Code/KineticModel/Kotte2014/Kotte2014.txt';
+    cnfname = '/home/shyam/Documents/MATLAB/Code/KineticModel/Kotte2014/Kotte2014C.txt';
+end
 % create model structure
 [FBAmodel,parameter,variable,nrxn,nmetab] = modelgen(rxfname);
 
@@ -153,7 +163,7 @@ for ipt = 1:npts
 end
 
 %% get pep and v4 vs k4cat for different acetate 
-acetate = orig_saddlepar;
+acetate = 3.5;
 ap = 9;
 colorSpec = chooseColors(5,{'Green','Purple','Red','Navy','HotPink'});
 saddleac = zeros(npts,length(acetate));
@@ -213,5 +223,39 @@ for iac = 1:length(acetate)
     plot(allpvec(:,idp),feqac(10,:),'Color',colorSpec{2},'LineWidth',2);
     xlabel('k4cat s-1');
     ylabel('v4 a.u.');
+end
+%% % plot all available steady state pep concentrations for a 
+% given parameter V4max against all available fluxes
+% figure
+hold on
+for ipt = 10:10 % npts
+    if ismember(ipt,mssid)
+        x1 = s.(['pt' num2str(ipt)]).x1;
+        flux = s.(['pt' num2str(ipt)]).flux;
+        hl1 = line(x1(1,:),flux(1,:),'Color',colorSpec{1});
+        hl2 = line(x1(1,:),flux(4,:),'Color',colorSpec{2});
+        hl3 = line(x1(1,:),flux(5,:),'Color',colorSpec{3});
+%         hl4 = line(x1(1,:),flux(3,:),'Color',colorSpec{4});
+        legend([hl1 hl3 hl2],'v1','v4','v2');     
+        drawnow
+    end
+end
+
+%% % get steady state fluxes for different steady state pep concentrations 
+% for fixed parameter values
+% This is wrong. you cannot do this!
+pvec = allpvec(1,:);
+pvec(idp) = 0.2;
+pvec(ap) = orig_saddlepar;
+model.PM(ac-length(orig_saddle)) = orig_saddlepar;
+
+npts = 50;
+pep = linspace(0.1,5,npts);
+pepx = zeros(3,npts);
+pepflux = zeros(5,npts);
+for ipep = 1:npts
+    fprintf('PEP Concentration #%d\n',ipep);
+    M = [pep(ipep);0.1;0.1];
+    [pepx(:,ipep),pepflux(:,ipep)] = KotteSS([M;model.PM],pvec,model);
 end
 
