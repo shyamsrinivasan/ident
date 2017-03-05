@@ -163,7 +163,7 @@ for ipt = 1:npts
 end
 
 %% get pep and v4 vs k4cat for different acetate 
-acetate = 3.5;
+acetate = 3.5; % orig_saddlepar;
 ap = 9;
 colorSpec = chooseColors(5,{'Green','Purple','Red','Navy','HotPink'});
 saddleac = zeros(npts,length(acetate));
@@ -224,9 +224,21 @@ for iac = 1:length(acetate)
     xlabel('k4cat s-1');
     ylabel('v4 a.u.');
 end
+%% continue on acetate for given kcat to get all stable states
+pvec = allpvec(1,:);
+ap = 9;
+pvec(ap) = 0.01;
+model.PM(ac-length(orig_saddle)) = 0.01;
+pvec(11) = 0.2;
+iguess = [0.1 0.1 0.1];
+[~,xeq1,~,feq1] = solveODEonly(1,iguess',model,pvec,opts,tspanf);
+lambda = linspace(0.01,10,500);
+% options = optimoptions(@fsolve,'TolX',1e-6,'TolFun',1e-6,'Display','iter');
+[contpt] = continuation(model,pvec,lambda,ap,xeq1,opts);
+
 %% % plot all available steady state pep concentrations for a 
 % given parameter V4max against all available fluxes
-% figure
+figure
 hold on
 for ipt = 10:10 % npts
     if ismember(ipt,mssid)
@@ -240,22 +252,4 @@ for ipt = 10:10 % npts
         drawnow
     end
 end
-
-%% % get steady state fluxes for different steady state pep concentrations 
-% for fixed parameter values
-% This is wrong. you cannot do this!
-pvec = allpvec(1,:);
-pvec(idp) = 0.2;
-pvec(ap) = orig_saddlepar;
-model.PM(ac-length(orig_saddle)) = orig_saddlepar;
-
-npts = 50;
-pep = linspace(0.1,5,npts);
-pepx = zeros(3,npts);
-pepflux = zeros(5,npts);
-for ipep = 1:npts
-    fprintf('PEP Concentration #%d\n',ipep);
-    M = [pep(ipep);0.1;0.1];
-    [pepx(:,ipep),pepflux(:,ipep)] = KotteSS([M;model.PM],pvec,model);
-end
-
+ 
