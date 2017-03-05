@@ -252,4 +252,3 @@ for ipt = 10:10 % npts
         drawnow
     end
 end
- 
