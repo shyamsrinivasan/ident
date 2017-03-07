@@ -225,30 +225,85 @@ for iac = 1:length(acetate)
     ylabel('v4 a.u.');
 end
 %% continue on acetate for given kcat to get all stable states
-pvec = allpvec(1,:);
+pvec = allpvec(18,:);
 ap = 9;
 pvec(ap) = 0.01;
 model.PM(ac-length(orig_saddle)) = 0.01;
-pvec(11) = 0.2;
+% pvec(11) = 0.2;
 iguess = [0.1 0.1 0.1];
 [~,xeq1,~,feq1] = solveODEonly(1,iguess',model,pvec,opts,tspanf);
-lambda = linspace(0.01,10,500);
+lambda = linspace(0.01,2.5,500);
 % options = optimoptions(@fsolve,'TolX',1e-6,'TolFun',1e-6,'Display','iter');
-[contpt] = continuation(model,pvec,lambda,ap,xeq1,opts);
+[contpt,contflux,conteig] = continuation(model,pvec,lambda,ap,xeq1,opts);
+%% plot data form previous cell
+figure
+hold on
+line(contpt(1,:),contflux(1,:),'LineStyle','none','Marker','.','Color',colorSpec{1});
+line(contpt(1,:),contflux(4,:),'LineStyle','none','Marker','.','Color',colorSpec{2});
+line(contpt(1,:),contflux(5,:),'LineStyle','none','Marker','.','Color',colorSpec{3});
+
 
 %% % plot all available steady state pep concentrations for a 
 % given parameter V4max against all available fluxes
-figure
+% choose ipt = 1, 5, 11, 15 and 17 (all points 1:17 are bistable)
+% figure
 hold on
-for ipt = 10:10 % npts
+for ipt = 1:1 % npts
     if ismember(ipt,mssid)
-        x1 = s.(['pt' num2str(ipt)]).x1;
-        flux = s.(['pt' num2str(ipt)]).flux;
-        hl1 = line(x1(1,:),flux(1,:),'Color',colorSpec{1});
-        hl2 = line(x1(1,:),flux(4,:),'Color',colorSpec{2});
-        hl3 = line(x1(1,:),flux(5,:),'Color',colorSpec{3});
-%         hl4 = line(x1(1,:),flux(3,:),'Color',colorSpec{4});
-        legend([hl1 hl3 hl2],'v1','v4','v2');     
+        bifpts = cat(1,s.(['pt' num2str(ipt)]).s1.index);
+        for i = 1:3
+            x1 = s.(['pt' num2str(ipt)]).x1(:,bifpts(i)+1:bifpts(i+1)-1);
+            flux = s.(['pt' num2str(ipt)]).flux(:,bifpts(i)+1:bifpts(i+1)-1);
+            eig = s.(['pt' num2str(ipt)]).f1(:,bifpts(i)+1:bifpts(i+1)-1);            
+            if any(real(eig)>0)
+                style = '--';
+            else
+                style = '-';
+            end
+            hl1 = line(x1(1,:),flux(1,:),'Color',colorSpec{1},'LineStyle',style);
+            hl2 = line(x1(1,:),flux(4,:),'Color',colorSpec{2},'LineStyle',style);
+            hl3 = line(x1(1,:),flux(3,:),'Color',colorSpec{3},'LineStyle',style);
+        end
+        xlps = s.(['pt' num2str(ipt)]).x1(:,bifpts);
+        flps = s.(['pt' num2str(ipt)]).flux(:,bifpts);
+        line(xlps(1,[2,3]),...
+             flps(1,[2,3]),'Color','r','Marker','.','LineStyle','none');
+        line(xlps(1,[2,3]),...
+             flps(4,[2,3]),'Color','r','Marker','.','LineStyle','none');
+        line(xlps(1,[2,3]),...
+             flps(3,[2,3]),'Color','r','Marker','.','LineStyle','none');
+        legend([hl1 hl3 hl2],'v1','v3','v2');     
+        drawnow
+    end
+end
+
+%% % plot all available steady state pep concentrations for a 
+% given parameter V4max against all available concentrations
+% choose ipt = 1, 5, 11, 15 and 17
+% figure
+hold on
+for ipt = 17:17 % npts
+    if ismember(ipt,mssid)
+        bifpts = cat(1,s.(['pt' num2str(ipt)]).s1.index);
+        for i = 1:3
+            x1 = s.(['pt' num2str(ipt)]).x1(:,bifpts(i)+1:bifpts(i+1)-1);
+            flux = s.(['pt' num2str(ipt)]).flux(:,bifpts(i)+1:bifpts(i+1)-1);
+            eig = s.(['pt' num2str(ipt)]).f1(:,bifpts(i)+1:bifpts(i+1)-1);            
+            if any(real(eig)>0)
+                style = '--';
+            else
+                style = '-';
+            end
+            hl1 = line(x1(1,:),x1(2,:),'Color',colorSpec{1},'LineStyle',style);
+            hl2 = line(x1(1,:),x1(3,:),'Color',colorSpec{2},'LineStyle',style);           
+        end
+        xlps = s.(['pt' num2str(ipt)]).x1(:,bifpts);
+        flps = s.(['pt' num2str(ipt)]).flux(:,bifpts);
+        line(xlps(1,[2,3]),...
+             xlps(2,[2,3]),'Color','k','Marker','.','LineStyle','none');
+        line(xlps(1,[2,3]),...
+             xlps(3,[2,3]),'Color','k','Marker','.','LineStyle','none');        
+        legend([hl1 hl2],'fdp','E');     
         drawnow
     end
 end
