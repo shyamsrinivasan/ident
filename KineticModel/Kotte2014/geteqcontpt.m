@@ -3,7 +3,7 @@
 % s1 = varargin{1}; % output from MATCONT
 % x1 = varargin{2}; % output from MATCONT
 % pt = pvec(ap)
-function [saddlepts,saddleparpts,statuspts] = geteqcontpt(s,pt,epsin)
+function [saddlepts,saddleparpts,statuspts,saddleid] = geteqcontpt(s,pt,epsin)
 if nargin<3 || isempty(epsin)
     epsin = 1e-3;
 end  
@@ -12,6 +12,7 @@ npts = size(fieldnames(s),1);
 saddlepts = zeros(size(s.pt1.x1,1)-1,npts);
 saddleparpts = zeros(1,npts);
 statuspts = zeros(1,npts);
+saddleid = zeros(1,npts);
 for ipt = 1:npts
     eps = epsin;
     s1 = s.(['pt' num2str(ipt)]).s1;
@@ -36,7 +37,7 @@ for ipt = 1:npts
         % if outside bounds - terminate and return a saddle node at the midpt        
         saddlepar = [];
         while isempty(saddlepar)
-            [saddle,saddlepar] = getsaddlenode(s1,x1,eps);
+            [saddle,saddlepar,index] = getsaddlenode(s1,x1,eps);
             eps = eps*10;
         end
         status = 0;
@@ -65,6 +66,7 @@ for ipt = 1:npts
     if status>=0
         saddlepts(:,ipt) = saddle;
         saddleparpts(ipt) = saddlepar;
+        saddleid(ipt) = index;
     end
     statuspts(ipt) = status;    
 end % for

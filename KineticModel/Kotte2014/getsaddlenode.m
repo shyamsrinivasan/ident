@@ -1,4 +1,4 @@
-function [saddle,saddlepar] = getsaddlenode(s1,x1,eps)
+function [saddle,saddlepar,index] = getsaddlenode(s1,x1,eps)
 if nargin<3 || isempty(eps)
     eps = 1e-3;
 end    
@@ -30,4 +30,5 @@ if any(abs(midpt-reldata(end,:))<=eps)
 else
     saddle = [];
     saddlepar = [];
+    index = [];
 end
