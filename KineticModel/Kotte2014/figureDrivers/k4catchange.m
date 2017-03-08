@@ -82,9 +82,10 @@ solveEquilibriumODE
 
 % get saddle node to get both stable steady states and get a bistable
 % acetate concentration for perturbation
-[orig_saddle,orig_saddlepar] = getsaddlenode(data.s1,data.x1,5e-3);
+[orig_saddle,orig_saddlepar,saddleid] = getsaddlenode(data.s1,data.x1,5e-3);
 pvec(ap) = orig_saddlepar;
 model.PM(ac-length(orig_saddle)) = orig_saddlepar;
+saddleflux = Kotte_givenFlux([orig_saddle;model.PM],pvec,model);
 
 % perturb saddle to get steady states
 eps = 1e-4;
@@ -151,15 +152,24 @@ fprintf('Maximum Bistable \t %4.3f \t %4.3f\n',max(k4bsval),max(acbounds(2,:)));
 
 %% plot bifurcation (w/ 2 LPs) on acetate
 hf1 = [];
+hf2 = [];
 for ipt = 1:npts
     addanot.text = ['R' num2str(ipt)];
     if ismember(ipt,mssid)
         s1 = s.(['pt' num2str(ipt)]).s1;
         x1 = s.(['pt' num2str(ipt)]).x1;
         f1 = s.(['pt' num2str(ipt)]).f1;
+        flux1 = s.(['pt' num2str(ipt)]).flux;
         index = cat(1,s.(['pt' num2str(ipt)]).s1.index);
-        hf1 = bifurcationPlot(x1,s1,f1,[4,1],ap,hf1,addanot);
+        hf1 = bifurcationPlot(x1,s1,f1,[4,1],ap,hf1,addanot);  
+        hf2 = bifurcationPlot([flux1;x1(end,:)],s1,f1,[6,5],ap,hf2,addanot);
+%         hf2 = bifurcationPlot(x1,s1,f1,[1,4],ap,hf2,addanot);
     end
+end
+
+%% bifurcation plot for fluxes w.r.t acetate
+for ipt = 1:npts
+    
 end
 
 %% get pep and v4 vs k4cat for different acetate 
@@ -242,13 +252,36 @@ line(contpt(1,:),contflux(1,:),'LineStyle','none','Marker','.','Color',colorSpec
 line(contpt(1,:),contflux(4,:),'LineStyle','none','Marker','.','Color',colorSpec{2});
 line(contpt(1,:),contflux(5,:),'LineStyle','none','Marker','.','Color',colorSpec{3});
 
+%% get saddle close to original acetate for all bistable systems parameters
+[newsaddle,saddleparpts,saddlestatus,saddleid] =...
+geteqcontpt(s,orig_saddlepar,1e-3);
+saddleflux = zeros(5,npts);
+for ipt = 1:npts
+    if ismember(ipt,mssid)
+        pvec(ap) = saddleparpts(ipt);
+        model.PM(ac-length(orig_saddle)) = saddleparpts(ipt);
+        pvec(11) = allpvec(ipt,11);
+        saddleflux(:,ipt) =...
+        Kotte_givenFlux([newsaddle(:,ipt);model.PM],pvec,model);
+    end
+end
+
+%% plot all saddles v4 vs pep
+figure
+hold on
+for ipt = 1:npts
+    if ismember(ipt,mssid)
+       line(newsaddle(1,ipt),saddleflux(4,ipt),'Marker','.','Color','r');
+       drawnow
+    end
+end
 
 %% % plot all available steady state pep concentrations for a 
 % given parameter V4max against all available fluxes
 % choose ipt = 1, 5, 11, 15 and 17 (all points 1:17 are bistable)
 % figure
 hold on
-for ipt = 1:1 % npts
+for ipt = 17:17 % npts
     if ismember(ipt,mssid)
         bifpts = cat(1,s.(['pt' num2str(ipt)]).s1.index);
         for i = 1:3
@@ -262,17 +295,23 @@ for ipt = 1:1 % npts
             end
             hl1 = line(x1(1,:),flux(1,:),'Color',colorSpec{1},'LineStyle',style);
             hl2 = line(x1(1,:),flux(4,:),'Color',colorSpec{2},'LineStyle',style);
-            hl3 = line(x1(1,:),flux(3,:),'Color',colorSpec{3},'LineStyle',style);
+            hl3 = line(x1(1,:),flux(5,:),'Color',colorSpec{3},'LineStyle',style);
+        end
+        if saddlestatus(ipt)
+            line(newsaddle(1,ipt),saddleflux(1,ipt),'Color','r','Marker','.');
+            line(newsaddle(1,ipt),saddleflux(4,ipt),'Color','r','Marker','.');
+            line(newsaddle(1,ipt),saddleflux(5,ipt),'Color','r','Marker','.');
+            drawnow
         end
         xlps = s.(['pt' num2str(ipt)]).x1(:,bifpts);
         flps = s.(['pt' num2str(ipt)]).flux(:,bifpts);
         line(xlps(1,[2,3]),...
-             flps(1,[2,3]),'Color','r','Marker','.','LineStyle','none');
+             flps(1,[2,3]),'Color','k','Marker','.','LineStyle','none');
         line(xlps(1,[2,3]),...
-             flps(4,[2,3]),'Color','r','Marker','.','LineStyle','none');
+             flps(4,[2,3]),'Color','k','Marker','.','LineStyle','none');
         line(xlps(1,[2,3]),...
-             flps(3,[2,3]),'Color','r','Marker','.','LineStyle','none');
-        legend([hl1 hl3 hl2],'v1','v3','v2');     
+             flps(5,[2,3]),'Color','k','Marker','.','LineStyle','none');
+        legend([hl1 hl3 hl2],'v1','v4','v2');     
         drawnow
     end
 end
@@ -282,7 +321,7 @@ end
 % choose ipt = 1, 5, 11, 15 and 17
 % figure
 hold on
-for ipt = 17:17 % npts
+for ipt = 5:5 % npts
     if ismember(ipt,mssid)
         bifpts = cat(1,s.(['pt' num2str(ipt)]).s1.index);
         for i = 1:3
