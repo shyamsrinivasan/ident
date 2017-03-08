@@ -136,7 +136,7 @@ fprintf('\t\t K3pep \t acetate\t\n');
 fprintf('Minimum Bistable \t %4.3f \t %4.3f\n',min(K3pepbsval),min(acbounds(1,:)));
 fprintf('Maximum Bistable \t %4.3f \t %4.3f\n',max(K3pepbsval),max(acbounds(2,:)));
 
-%% get pep and v4 vs k4cat for different acetate 
+%% get pep and v4 vs K3pep for different acetate 
 acetate = orig_saddlepar;
 ap = 9;
 colorSpec = chooseColors(5,{'Green','Purple','Red','Navy','HotPink'});
@@ -333,5 +333,37 @@ for iid = 1:ndp
             end
         end
         last_endid = endid;        
+    end
+end
+
+%% 
+figure
+hold on
+for ipt = 9877:9925 % npts
+    if ismember(ipt,mssid)
+        bifpts = cat(1,s.(['pt' num2str(ipt)]).s1.index);
+        for i = 1:3
+            x1d = s.(['pt' num2str(ipt)]).x1(:,bifpts(i)+1:bifpts(i+1)-1);
+            flux = s.(['pt' num2str(ipt)]).flux(:,bifpts(i)+1:bifpts(i+1)-1);
+            eig = s.(['pt' num2str(ipt)]).f1(:,bifpts(i)+1:bifpts(i+1)-1);            
+            if any(real(eig)>0)
+                style = '--';
+            else
+                style = '-';
+            end
+            hl1 = line(x1d(1,:),flux(1,:),'Color',colorSpec{1},'LineStyle',style);
+            hl2 = line(x1d(1,:),flux(4,:),'Color',colorSpec{2},'LineStyle',style);
+            hl3 = line(x1d(1,:),flux(3,:),'Color',colorSpec{3},'LineStyle',style);
+        end
+        xlps = s.(['pt' num2str(ipt)]).x1(:,bifpts);
+        flps = s.(['pt' num2str(ipt)]).flux(:,bifpts);
+        line(xlps(1,[2,3]),...
+             flps(1,[2,3]),'Color','r','Marker','.','LineStyle','none');
+        line(xlps(1,[2,3]),...
+             flps(4,[2,3]),'Color','r','Marker','.','LineStyle','none');
+        line(xlps(1,[2,3]),...
+             flps(3,[2,3]),'Color','r','Marker','.','LineStyle','none');
+        legend([hl1 hl3 hl2],'v1','v3','v2');     
+        drawnow
     end
 end
