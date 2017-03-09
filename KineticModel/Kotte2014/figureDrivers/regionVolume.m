@@ -122,8 +122,6 @@ plotrndivals(rndivals,ssid,allxeq,[2 3],2,hfig,[]);
 plotrndivals(rndivals,ssid,allxeq,[2 3],2,hfig,[]);
 
 
-
-
 %% get random initial values for all 3 variables and calculate steady state
 % rndivals = randomivals([0 5;0 5;0 5],10000);
 % % integrate
