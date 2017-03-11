@@ -162,7 +162,7 @@ for ipt = 1:npts
         flux1 = s.(['pt' num2str(ipt)]).flux;
         index = cat(1,s.(['pt' num2str(ipt)]).s1.index);
         hf1 = bifurcationPlot(x1,s1,f1,[4,1],ap,hf1,addanot);  
-        hf2 = bifurcationPlot([flux1;x1(end,:)],s1,f1,[6,5],ap,hf2,addanot);
+%         hf2 = bifurcationPlot([flux1;x1(end,:)],s1,f1,[6,5],ap,hf2,addanot);
 %         hf2 = bifurcationPlot(x1,s1,f1,[1,4],ap,hf2,addanot);
     end
 end
