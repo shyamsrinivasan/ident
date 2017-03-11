@@ -1,4 +1,8 @@
-function [type,eigvals_all] = KotteStabilityInfo(eqpts,model,pvec)
+% function [type,eigvals_all] = KotteStabilityInfo(eqpts,model,pvec)
+% get stability information for all points passed as input
+% requires ADMAT to be installed for algorithmic differentiation (AD) to
+% get jacobian and corresponding eigen values at each eqpts passed in
+function [type,eigvals_all,eigw] = KotteStabilityInfo(eqpts,model,pvec)
 % type
 % 1 : saddle 2D stable manifold
 % 2 : saddle 1D stable manifold
@@ -6,9 +10,13 @@ function [type,eigvals_all] = KotteStabilityInfo(eqpts,model,pvec)
 % 4 : source 3D unstable manifold
 
 % eigen values
-eigvals_all = zeros(size(eqpts,2),size(eqpts,1));
+nvar = size(eqpts,2);
+npts = size(eqpts,1);
+eigvals_all = zeros(nvar,npts);
+eigw = zeros(nvar*npts,nvar);
 for ipts = 1:size(eqpts,1)
-    [~,eigvals_all(:,ipts)] = getKotteJacobian(eqpts(ipts,:)',pvec,model);
+    [~,eigvals_all(:,ipts),w] = getKotteJacobian(eqpts(ipts,:)',pvec,model);
+    eigw((ipts-1)*nvar+1:ipts*nvar,:) = w;
 end
 [neig,nvec] = size(eigvals_all);
 type = zeros(nvec,1);
