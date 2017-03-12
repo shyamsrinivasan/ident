@@ -96,7 +96,7 @@ xss = [xeq1 xeq2];
 
 idp = 6;
 type = 'together';
-cmb = linspace(0.1,30,50)';
+cmb = linspace(0.1,30,30)';
 npts = size(cmb,1);
 
 % set acetate conentration to saddle
