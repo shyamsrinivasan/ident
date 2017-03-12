@@ -106,7 +106,7 @@ unsteig = alleig(:,3);
 unsteigw = alleigw((3-1)*nvar+1:3*nvar,:);
 % Eus = unsteigw(:,real(unsteig)>0);
 
-calcBasinBoundary(xss,unsteig,unsteigw,model,pvec,opts,0:-20,tspanf,eps1)
+calcBasinBoundary(xss,unsteig,unsteigw,model,pvec,opts,0:-20,tspanf,5e-3)
 
 
 
