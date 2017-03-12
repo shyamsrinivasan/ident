@@ -96,7 +96,7 @@ xss = [xeq1 xeq2];
 
 idp = 6;
 type = 'together';
-cmb = linspace(75,100,50)';
+cmb = linspace(0.1,30,50)';
 npts = size(cmb,1);
 
 % set acetate conentration to saddle
@@ -114,7 +114,7 @@ model.PM(ac-length(orig_saddle)) = 0.001;
 [~,allxeqlac] = solveODEonly(npts,M,model,allpvec,opts,tspan);
 
 % and continue on acetate
-[s,mssid,nss] = setupMATCONT(allxeqlac,allpvec,ap,model,fluxg,npts,10000);
+[s,mssid,nss] = setupMATCONT(allxeqlac,allpvec,ap,model,fluxg,npts,6000);
 
 %% get boundaries of acetate bistability
 vemax = allpvec(mssid,idp);
@@ -141,7 +141,7 @@ xlabel('acetate a.u.');
 ylabel('vemax s-1');
 
 fprintf('Summary of vemax Perturbation\n')
-fprintf('\t\t k4cat \t acetate\t\n');
+fprintf('\t\t vemax \t acetate\t\n');
 fprintf('Minimum Bistable \t %4.3f \t %4.3f\n',min(vemax),min(acbounds(1,:)));
 fprintf('Maximum Bistable \t %4.3f \t %4.3f\n',max(vemax),max(acbounds(2,:)));
 
