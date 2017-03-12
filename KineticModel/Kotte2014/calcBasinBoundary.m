@@ -20,17 +20,18 @@ for iw = 1:neigw
         eps = alpha1*eps1;
         % step 3
         bndry_pts1 = xss(:,iss) + eps*eigw;  
-        while all((xss(:,iss)-xdynr1)>=eps)                
-            % step 4 - reverse time integration from bndry_pts
-            xdynr1 = solveODEonly(1,bndry_pts1,model,pvec,opts,tspanr);
-            if all((xss(:,iss)-xdynr1)<=eps) 
+        % step 4 - reverse time integration from bndry_pts
+        xdynr1 = solveODEonly(1,bndry_pts1,model,pvec,opts,tspanr);
+        while any(all(abs(repmat(xss(:,iss),1,size(xdynr1,2))-xdynr1)>=eps))            
+            if all(abs(repmat(xss(:,iss),1,size(xdynr1,2))-xdynr1)<=eps) 
                 % store values of alpha and the boundary point
                 pt1alpha = alpha1;
                 pt1final = bndry_pts1;
             end
-            alpha1 = alpha1/10;         
+            alpha1 = alpha1/1.1;         
             eps = alpha1*eps;
             bndry_pts1 = xss(:,iss) + eps*eigw;             
+            xdynr1 = solveODEonly(1,bndry_pts1,model,pvec,opts,tspanr);
         end
         alpha2 = 1;
         eps = alpha2*eps1;
