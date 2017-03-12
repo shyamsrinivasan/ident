@@ -31,9 +31,7 @@ for ipt = 1:npts
     % new equilibrium solution
     givenModel = @(t,x)KotteODE(t,x,model,pvec);
     [tout,yout] = ode45(givenModel,tspan,ival,opts);
-%     if ~exist('allxdyn','var')
-%         allxdyn = zeros(length(ival),length(tout),npts);
-%     end
+    
     if size(tout,1) == size(tspan,2)
         allxdyn(:,:,ipt) = yout';
         alltout(:,ipt) = tspan';
@@ -48,23 +46,19 @@ for ipt = 1:npts
     for it = 1:length(tout)
         slope(:,it) = givenModel(tout(it),yout(it,:)');        
     end
-%     slope = [];
-    
-%     Jxact = KottegivenJacobian(ival,pvec,model);
-    
-%     dX = zeros(length(tout),
-%     dX = givenModel(
-    
-%     xeq = yout(end,:)';
     
     % calculation of fluxes for allxeq
+    if size(tout,1)==size(tspan,2)
+        allfdyn(:,:,ipt) =...
+        Kotte_givenFlux([allxdyn(:,:,ipt);...
+                        repmat(model.PM,1,size(allxdyn,2))],pvec,model); 
+    else
+        allfdyn(:,1:size(tout,1),ipt) =...
+        Kotte_givenFlux([allxdyn(:,:,ipt);...
+                        repmat(model.PM,1,size(allxdyn,2))],pvec,model); 
+    end
     allfeq(:,ipt) = Kotte_givenFlux([allxeq(:,ipt);model.PM],pvec,model); 
-    allfdyn(:,:,ipt) =...
-    Kotte_givenFlux([allxdyn(:,:,ipt);repmat(model.PM,1,size(allxdyn,2))],pvec,model); 
     
-%     for itout = 1:length(tout)
-%         allfdyn(:,itout,ipt) = Kotte_givenFlux([allxdyn(:,itout,ipt);model.PM],pvec,model); 
-%     end
     
     % optional  - plot information
 %      hf = plotKotteVariables(tout,yout,1);
