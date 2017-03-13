@@ -3,7 +3,7 @@ function calcBasinBoundary(xss,lambda,w,model,pvec,opts,tspanr,tspanf,eps1)
 % code similar to calc1DWus w/o forward integration from every point
 % covers steps 3, 4 and 5 of algorithm
 if any(real(lambda)>=0)
-    w = w(:,real(lambda)>=0);
+    w = w(:,real(lambda)<=0);
 else    
     return
 end
