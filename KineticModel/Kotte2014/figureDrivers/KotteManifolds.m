@@ -138,7 +138,7 @@ npoints = 500;
 range = [saddlepar 2];
 contdir = 1;
 options = optimoptions('fsolve','Display','off','TolFun',1e-10,'TolX',1e-10);
-fixed_points = kotte_branches(npoints,range,contdir,eqpts,model,pvec,ap,options);   
+% fixed_points = kotte_branches(npoints,range,contdir,eqpts,model,pvec,ap,options);   
 [type,alleig] = KotteStabilityInfo(eqpts,model,pvec);      
 
 % get points on 2D stable invariant manifold surface
