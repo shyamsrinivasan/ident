@@ -22,7 +22,7 @@ stableeigvec = eigvec(:,eig<0);
 % Lyons et al., 2014 code
 % circle parameters
 points = 801;
-radius = 0.01;
+radius = 1e-4;
 
 % obtain coordinates of circle with radius r in (x1,x2) plane
 [x1,x2,x3] = getplanarcircle(points,radius);
