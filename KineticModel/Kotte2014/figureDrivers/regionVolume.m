@@ -110,12 +110,13 @@ relWus = real(xWus(:,1:nzid));
 % expanding region of perturbation
 % radius where no initial point produces the 2nd steady state = rAss1 =
 % [1.22 1.22 1.22]'
-rndivals = get3Dsphere(xeq1',1.22,10000);
+rndivals = get3Dsphere(xeq1',1.22,50000);
+save('regionVoluemSamplevals');
 % integrate
 options = [];
 % hfig = figure;
-[ppival,npival,allxeq,ssid,allfeq] =...
-getPequilibrium(rndivals,model,pvec,options,opts,tspanf);
+% [ppival,npival,allxeq,ssid,allfeq] =...
+% getPequilibrium(rndivals,model,pvec,options,opts,tspanf);
 % plotrndivals(rndivals,ssid,allxeq,[1 2 3],2,hfig,[]);
 % plotrndivals(rndivals,ssid,allxeq,[1 2],2,hfig,[]);
 % plotrndivals(rndivals,ssid,allxeq,[2 3],2,hfig,[]);
