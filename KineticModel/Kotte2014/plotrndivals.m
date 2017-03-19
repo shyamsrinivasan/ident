@@ -23,7 +23,7 @@ Point2.MarkerEdgeColor = colorSpec{1};
 
 if ~isempty(ss1ival) && ~isempty(ss1eq)
     [hfig,ha] =...
-    FIGmssEqIvalPerturbations(ss1ival,ss1eq(:,1),datatype,id,hfig,ha,Point1);  
+    FIGmssEqIvalPerturbations(ss1ival',ss1eq(:,1),datatype,id,hfig,ha,Point1);  
     drawnow
 end
 
@@ -34,7 +34,7 @@ end
 % end
 if ~isempty(ss2ival) && ~isempty(ss2eq)
     [hfig,ha] =...
-    FIGmssEqIvalPerturbations(ss2ival,ss2eq(:,1),datatype,id,hfig,ha,Point2);  
+    FIGmssEqIvalPerturbations(ss2ival',ss2eq(:,1),datatype,id,hfig,ha,Point2);  
     drawnow
 end
 
