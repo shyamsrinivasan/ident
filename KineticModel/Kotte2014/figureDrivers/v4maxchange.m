@@ -1,6 +1,6 @@
 % kpepout/bifurcation diagrams
 % code to generate figures showing changes in system characteristics for
-% changes in k4cat/kpepout
+% changes in v4max/kpepout
 % build stoichioemtrc matrices
 if ~exist('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\Kotte2014\Kotte2014.txt')
     status = 2;
@@ -173,7 +173,7 @@ for ipt = 1:npts
 end
 
 %% get pep and v4 vs k4cat for different acetate 
-acetate = 3.5; % orig_saddlepar;
+acetate = orig_saddlepar;
 ap = 9;
 colorSpec = chooseColors(5,{'Green','Purple','Red','Navy','HotPink'});
 saddleac = zeros(npts,length(acetate));
@@ -222,15 +222,15 @@ for iac = 1:length(acetate)
     
     hc1 = figure;
     hold on
-    plot(allpvec(:,idp),xeqac(1,:),'Color',colorSpec{1},'LineWidth',2);
-    plot(allpvec(:,idp),xeqac(4,:),'Color',colorSpec{2},'LineWidth',2);
+    plot(allpvec(:,idp),xeqac(1,:),'Color',colorSpec{1},'LineWidth',2,'Marker','s','MarkerSize',11);
+    plot(allpvec(:,idp),xeqac(4,:),'Color',colorSpec{2},'LineWidth',2,'Marker','o','MarkerSize',8);
     xlabel('k4cat s-1');
     ylabel('PEP a.u.');
     
     hc2 = figure;
     hold on
-    plot(allpvec(:,idp),feqac(5,:),'Color',colorSpec{1},'LineWidth',2);
-    plot(allpvec(:,idp),feqac(10,:),'Color',colorSpec{2},'LineWidth',2);
+    plot(allpvec(:,idp),feqac(5,:),'Color',colorSpec{1},'LineWidth',2,'Marker','s','MarkerSize',11);
+    plot(allpvec(:,idp),feqac(10,:),'Color',colorSpec{2},'LineWidth',2,'Marker','o','MarkerSize',8);
     xlabel('k4cat s-1');
     ylabel('v4 a.u.');
 end
