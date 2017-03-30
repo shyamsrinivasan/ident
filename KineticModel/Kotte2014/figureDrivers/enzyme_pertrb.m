@@ -1,75 +1,7 @@
 % enzyme perturbation script - Figure 7?
 % changes to enzyme expression levels to determine new steady states by
 % simulating from either of the 2 initial steady states
-
-% build stoichioemtrc matrices
-addpath(genpath('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel'));
-rxfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\Kotte2014\Kotte2014.txt';
-cnfname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\Kotte2014\Kotte2014C.txt';
-
-% create model structure
-[FBAmodel,parameter,variable,nrxn,nmetab] = modelgen(rxfname);
-
-% obtain conentrations from file
-[mc,FBAmodel,met] = readCNCfromFile(cnfname,FBAmodel);
-
-% run FBA
-Vup_struct.ACt2r = 1;
-Vup_struct.ENZ1ex = 1;
-FBAmodel = FBAfluxes(FBAmodel,'fba',{'ACt2r','ENZ1ex'},Vup_struct,...
-                    [find(strcmpi(FBAmodel.rxns,'FDex'))...
-                     find(strcmpi(FBAmodel.rxns,'PEPex'))]);
-                 
-% remove metabolites held constant from consideration in the model
-% integration phase
-[model,pvec,newmc,cnstmet] =...
-remove_eMets(FBAmodel,parameter,mc,[FBAmodel.Vind FBAmodel.Vex],...
-{'enz1[c]','enz1[e]','enz[e]','ac[e]','bm[c]','bm[e]','pep[e]'});
-
-% only initialize for varmets   
-nvar = length(model.mets)-length(find(cnstmet));
-M = newmc(1:nvar);
-PM = newmc(nvar+1:end);
-model.PM = PM;       
-
-% call to parameter sampling script for analysis of mss
-% parameters
-clear pvec
-k1cat = 1;
-K1ac = 0.1;    % or 0.02
-K3fdp = 0.1;
-v3max = 1;
-L3 = 4e6;
-K3pep = 0.1;
-v2max = 1;
-K2pep = 0.3;
-vemax = 1.1;        % for bifurcation analysis: 0.7:0.1:1.3
-KeFBP = 0.45;       % or 0.45
-ne = 2;             % or 2
-acetate = 0.1;      % a.u acetate
-d = 0.25;           % or 0.25 or 0.35
-k4cat = 0.2;
-pvec = [K1ac,K3fdp,L3,K3pep,...
-        K2pep,vemax,KeFBP,ne,acetate,d,...
-        k4cat,k1cat,v3max,v2max];
-
-% systems check
-givenModel = @(t,x)KotteODE(t,x,model,pvec);
-fluxg = Kotte_givenFlux([M;model.PM],pvec,model);
-tspan = 0:0.1:2000;
-opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
-ac = find(strcmpi(model.mets,'ac[e]'));
-npts = 1;
-ap = 9;
-allpvec = pvec;
-
-% find equilibrium solution and run equilibrium continuation
-allxeq = zeros(length(M),npts);
-allxdyn = zeros(length(M),length(tspan),npts);
-allxf = zeros(length(M),npts);
-allfeq = zeros(length(fluxg),npts);
-allfdyn = zeros(length(fluxg),length(tspan),npts);
-solveEquilibriumODE
+runKotte
 
 % get saddle node to get both stable steady states and get a bistable
 % acetate concentration for perturbation
@@ -270,7 +202,8 @@ for iid = 1:1
               [],allxeqlac,[],allfeqlac);
           
     % continue on acetate for all equilibrium solutions to cmb parameters
-    [s,mssid,nss] = setupMATCONT(allxeqlac,allpvec,ap,model,fluxg,npts,900);
+    [s,mssid,nss] = setupMATCONT(@KotteMATCONT,@Kottecont_fluxcalc,...
+                                allxeqlac,allpvec,ap,model,fluxg,npts,900);
     
     siid.(['iid' num2str(iid)]) = s;
     allmssid.(['iid' num2str(iid)]) = mssid;
