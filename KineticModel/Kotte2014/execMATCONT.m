@@ -1,5 +1,5 @@
-function [data,y,p] = execMATCONT(xeq,pvec,ap,fluxg,model,bfpts)
-if nargin<6
+function [data,y,p] = execMATCONT(funhand,fluxfunhand,xeq,pvec,ap,fluxg,model,bfpts)
+if nargin<8
     bfpts = 800;
 end
 % runMATCONT
@@ -12,7 +12,7 @@ sys.gui.pauseeachpoint=0; %Pause at each point
 
 % continuation from initial equilibrium - initialization
 % ap = 12; % index for parameter to be continued on     
-[x0,v0] = init_EP_EP(@KotteMATCONT,xeq,pvec,ap);
+[x0,v0] = init_EP_EP(funhand,xeq,pvec,ap);
 
 % MATCONT options
 opt = contset;
@@ -38,15 +38,16 @@ else
 end
 
 % calculation  of fluxes
-ac = find(strcmpi(model.mets,'ac[e]'));
-flux1 = zeros(length(fluxg),size(x1,2));
-if ~isempty(x1)
-    for icp = 1:size(x1,2)
-        pvec(ap) = p(icp);
-        model.PM(ac-length(xeq)) = p(icp);
-        flux1(:,icp) = Kotte_givenFlux([x1(1:length(xeq),icp);model.PM],pvec,model);
-    end
-end
+flux1 = fluxfunhand(xeq,x1,p,fluxg,model,pvec,ap);
+% ac = find(strcmpi(model.mets,'ac[e]'));
+% flux1 = zeros(length(fluxg),size(x1,2));
+% if ~isempty(x1)
+%     for icp = 1:size(x1,2)
+%         pvec(ap) = p(icp);
+%         model.PM(ac-length(xeq)) = p(icp);
+%         flux1(:,icp) = Kotte_givenFlux([x1(1:length(xeq),icp);model.PM],pvec,model);
+%     end
+% end
 
 if ~isempty(s1)
     data.s1 = s1;
