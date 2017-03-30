@@ -14,7 +14,8 @@ for ipt = 1:npts
     pvec = allpvec(ipt,:);
     
     % run MATCONT
-    [data,y,p] = execMATCONT(xeq,pvec,ap,fluxg,model);
+    [data,y,p] =...
+    execMATCONT(@KotteMATCONT,@Kottecont_fluxcalc,xeq,pvec,ap,fluxg,model);
     if ~isempty(data) && size(data.s1,1)>2
 %         bifurcationPlot(data.flux,data.s1,data.f1,[5,3]);
         hbif1 = bifurcationPlot(data.x1,data.s1,data.f1,[4,1],ap);    
