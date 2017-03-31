@@ -9,6 +9,9 @@ end
 if nargin<6
     pid = 1;
 end
+if nargin<5
+    axisfun = [];
+end
 global annot
 annot = addannot;
 
@@ -102,13 +105,25 @@ end
 if size(LPval,1)>4
     if xid > 5
     else
-        [xlabel,ylabel] = axisfun(2,1,[xid yid]);
+        if ~isempty(axisfun)
+            [xlabel,ylabel] = axisfun(2,1,[xid yid]);
+        else
+            xlabel={};ylabel={};
+        end
     end
 else
     if xid > 3
-        [xlabel,ylabel] = axisfun(2,3,[xid yid pid]);
+        if ~isempty(axisfun)
+            [xlabel,ylabel] = axisfun(2,3,[xid yid pid]);
+        else
+            xlabel = {};ylabel={};
+        end
     else
-        [xlabel,ylabel] = axisfun(2,2,[xid yid]);
+        if ~isempty(axisfun)
+            [xlabel,ylabel] = axisfun(2,2,[xid yid]);
+        else
+            xlabel={};ylabel={};
+        end
     end
 end
     
@@ -140,8 +155,11 @@ if ~isempty(LineP)
 else
     set(hl,'LineWidth',3);
 end
-
-[xlabel,ylabel,zlabel] = axisfun(3,2,[xid yid zid]);
+if ~isempty(axisfun)
+    [xlabel,ylabel,zlabel] = axisfun(3,2,[xid yid zid]);
+else
+    xlabel={};ylabel={};zlabel={};
+end
 
 plot3(LPval(xid,:),LPval(yid,:),LPval(zid,:),'LineStyle','none',...
                              'Marker','o','MarkerEdgeColor','r',...
