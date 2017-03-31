@@ -38,22 +38,21 @@ else
 end
 
 % calculation  of fluxes
-flux1 = fluxfunhand(xeq,x1,p,fluxg,model,pvec,ap);
-% ac = find(strcmpi(model.mets,'ac[e]'));
-% flux1 = zeros(length(fluxg),size(x1,2));
-% if ~isempty(x1)
-%     for icp = 1:size(x1,2)
-%         pvec(ap) = p(icp);
-%         model.PM(ac-length(xeq)) = p(icp);
-%         flux1(:,icp) = Kotte_givenFlux([x1(1:length(xeq),icp);model.PM],pvec,model);
-%     end
-% end
+if ~isempty(fluxfunhand)
+    flux = fluxfunhand(xeq,x1,p,fluxg,model,pvec,ap);
+else
+    flux = [];
+end
 
 if ~isempty(s1)
     data.s1 = s1;
     data.x1 = x1;
     data.f1 = f1;
-    data.flux = flux1;
+    if ~isempty(flux)
+        data.flux = flux;
+    else
+        data.flux = [];
+    end
 else
     data = [];
 end
