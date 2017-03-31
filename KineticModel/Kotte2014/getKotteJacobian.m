@@ -1,7 +1,7 @@
-function [J,lambda,w] = getKotteJacobian(x,pvec,model)
+function [J,lambda,w] = getKotteJacobian(funhdle,x,pvec,model)
 
 % use ADMAT to calculate jacobians
-admatfun = @(x)Kotte_givenNLAE(x,model,pvec);
+admatfun = @(x)funhdle(x,model,pvec);
 
 xADMATobj = deriv(x,eye(3));
 xADMATres = admatfun(xADMATobj);
