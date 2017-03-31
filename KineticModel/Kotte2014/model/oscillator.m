@@ -11,7 +11,7 @@ out{9} = [];
 
 function dM = fun_eval(t,kmrgd,q1,q2,q3,q4,q5,q6,k)
 p = [q1;q2;q3;q4;q5;q6;k];
-dM = oscillatorNLAE(kmrgd,p);
+dM = oscillatorNLAE(kmrgd,[],p);
 
 function [tspan,y0,options] = init
 handles = feval(oscillator);
