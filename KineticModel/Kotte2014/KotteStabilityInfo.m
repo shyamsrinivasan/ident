@@ -15,7 +15,8 @@ npts = size(eqpts,1);
 eigvals_all = zeros(nvar,npts);
 eigw = zeros(nvar*npts,nvar);
 for ipts = 1:size(eqpts,1)
-    [~,eigvals_all(:,ipts),w] = getKotteJacobian(eqpts(ipts,:)',pvec,model);
+    [~,eigvals_all(:,ipts),w] =...
+    getKotteJacobian(@Kotte_givenNLAE,eqpts(ipts,:)',pvec,model);
     % convert eigen vectors to unit eigen vectors  
     eigw((ipts-1)*nvar+1:ipts*nvar,:) = w./repmat(sqrt(sum(w.^2)),3,1);
 end
