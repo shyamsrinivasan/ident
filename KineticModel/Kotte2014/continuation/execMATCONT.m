@@ -2,6 +2,13 @@ function [data,y,p] = execMATCONT(funhand,fluxfunhand,xeq,pvec,ap,fluxg,model,bf
 if nargin<8
     bfpts = 800;
 end
+if nargin<7
+    model = [];
+end
+if nargin<6
+    fluxg = [];
+end
+    
 % runMATCONT
 % continuation and dynamical systems analysis using MATCONT
 
@@ -48,6 +55,8 @@ if ~isempty(s1)
     data.s1 = s1;
     data.x1 = x1;
     data.f1 = f1;
+    data.v1 = v1;
+    data.h1 = h1;
     if ~isempty(flux)
         data.flux = flux;
     else
