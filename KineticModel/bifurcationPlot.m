@@ -90,7 +90,6 @@ else
     hfig = figure;
     set(0,'CurrentFigure',hfig);  
     hl = line(xval,yval);
-%     hl = plot(xval,yval);
     hfig = gcf;
 end
 
@@ -102,17 +101,13 @@ end
 
 if size(LPval,1)>4
     if xid > 5
-%         [xlabel,ylabel] = getaxislabels(2,4,[xid yid pid]);
     else
-%         [xlabel,ylabel] = getKotteaxislabels(2,1,[xid yid]);
         [xlabel,ylabel] = axisfun(2,1,[xid yid]);
     end
 else
     if xid > 3
-%         [xlabel,ylabel] = getKotteaxislabels(2,3,[xid yid pid]);
         [xlabel,ylabel] = axisfun(2,3,[xid yid pid]);
     else
-%         [xlabel,ylabel] = getKotteaxislabels(2,2,[xid yid]);
         [xlabel,ylabel] = axisfun(2,2,[xid yid]);
     end
 end
@@ -146,52 +141,12 @@ else
     set(hl,'LineWidth',3);
 end
 
-% [xlabel,ylabel,zlabel] = getKotteaxislabels(3,2,[xid yid zid]);
 [xlabel,ylabel,zlabel] = axisfun(3,2,[xid yid zid]);
+
 plot3(LPval(xid,:),LPval(yid,:),LPval(zid,:),'LineStyle','none',...
                              'Marker','o','MarkerEdgeColor','r',...
                              'MarkerFaceColor','r','MarkerSize',6);
 setproperties(3,gca,xlabel,ylabel,zlabel);  
-end
-
-function [xlabel,ylabel,zlabel] = getaxislabels(plotype,datatype,idx)
-if nargin <3
-    idx = [];
-end
-
-fluxlist = {'ACpts a,u','ENZC a.u','ECbiomass(FDP) a.u',...
-           'GLUX a.u','PEPout a.u'};
-cnclist = {'PEP a.u','FDP a.u','ENZ a.u'};  
-parlist = {'acetate a.u'};
-
-if plotype == 3    
-    if datatype == 1
-        [xlabel,ylabel,zlabel] = deal(fluxlist(idx));
-%         zlabel = fluxlist(idx);
-%         ylabel = parlist(idp(2));
-    elseif datatype == 2
-        xlabel = cnclist(idx(1));
-        ylabel = cnclist(idx(2));
-        zlabel = cnclist(idx(3));
-    end
-elseif plotype ==2
-    if datatype == 1
-        xlabel = fluxlist(idx(1));
-        ylabel = fluxlist(idx(2));
-%         zlabel = fluxlist(idx);
-%         ylabel = parlist(idp(2));
-    elseif datatype == 2
-        xlabel = cnclist(idx(1));
-        ylabel = cnclist(idx(2));        
-    elseif datatype == 3
-        xlabel = parlist(idx(1)-length(cnclist));
-        ylabel = cnclist(idx(2));
-    elseif datatype == 4
-        xlabel = parlist(idx(1)-length(fluxlist));
-        ylabel = fluxlist(idx(2));
-    end
-    zlabel = {};
-end
 end
 
 function setproperties(plotype,hsfig,xlabel,ylabel,zlabel)
@@ -223,67 +178,6 @@ else
     set(hsfig,axesP);
 end
 end
-% plot data from initial value to first bifurcation
-% pval = p(ipx,1:xindex(1));
-% yval = y(idx,1:xindex(1));
-% 
-% if any(evalRe(:,xindex(1))<0) && any(evalRe(:,xindex(2))>=0)
-%     % entering unstable from stable region 
-%     LineP.LineStyle = '-';
-%     LineP.Color = 'k';
-% elseif any(evalRe(:,xindex(1))>=0) && any(evalRe(:,xindex(2))<0)
-%     % entering stable from unstable region
-%     LineP.LineStyle = '--';
-%     LineP.Color = 'k';
-% end
-% % plot data
-% if ~isempty(hfig)
-%     axes(hfig);
-%     set(gca,'NextPlot','add');
-%     plot(pval,yval,'LineStyle',LineP.LineStyle,'Color',LineP.Color,'LineWidth',3);
-%     hold on
-% else
-%     plot(pval,yval,'LineStyle',LineP.LineStyle,'Color',LineP.Color,'LineWidth',3);
-%     hold on
-% end
-% 
-% % mssval = zeros(length(xindex),2);
-% for ip = 1:length(xindex)
-%     if ip<length(xindex)
-%         pval = p(ipx,xindex(ip)+1:xindex(ip+1));
-%         yval = y(idx,xindex(ip)+1:xindex(ip+1));
-%     else
-%         pval = p(ipx,xindex(ip):end);
-%         yval = y(idx,xindex(ip):end);
-%     end
-%     
-%     % check stability
-%      if any(evalRe(:,xindex(ip))<0) && any(evalRe(:,xindex(ip)+1)>=0)
-%         % entering unstable from stable region 
-%         LineP.LineStyle = '--';
-%         LineP.Color = 'k';
-%     elseif any(evalRe(:,xindex(ip))>=0) && any(evalRe(:,xindex(ip)+1)<0)
-%         % entering stable from unstable region
-%         LineP.LineStyle = '-';
-%         LineP.Color = 'k';
-%      end
-%     
-% %     if xindex(ip)>1
-% %        
-% %     else
-% %         if any(evalRe(:,xindex(ip))<0) && any(evalRe(:,xindex(ip+1))>=0)
-%         % entering unstable from stable region 
-%     
-% %     mssval(ip,1) = y(idx,xindex(ip));
-% %     mssval(ip,2) = p(ipx,xindex(ip));
-%     plot(pval,yval,'LineStyle',LineP.LineStyle,'Color',LineP.Color,'LineWidth',3);
-%     line(p(ipx,xindex(ip)),y(idx,xindex(ip)),'LineStyle','none',...
-%                              'Marker','o','MarkerEdgeColor','r',...
-%                              'MarkerFaceColor','r','MarkerSize',6);
-%     hold on
-%         
-% end
-
 
 
         
