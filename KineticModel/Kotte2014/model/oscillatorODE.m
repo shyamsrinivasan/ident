@@ -1,4 +1,4 @@
-function dX = oscillatorODE(t,x,p)
+function dX = oscillatorODE(t,x,model,p)
 
-dX = oscillatorNLAE(x,p);
+dX = oscillatorNLAE(x,model,p);
 
