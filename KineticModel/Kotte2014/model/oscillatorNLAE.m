@@ -1,6 +1,6 @@
-function dX = oscillatorNLAE(x,p)
+function dX = oscillatorNLAE(x,model,p)
 dX = zeros(3,1);
-% dX = cons(dX,x);
+dX = cons(dX,x); % for use with ADMAT for jacobian calculation
 
 q1 = p(1);
 q2 = p(2);
