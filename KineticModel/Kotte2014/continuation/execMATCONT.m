@@ -1,4 +1,5 @@
-function [data,y,p] = execMATCONT(funhand,fluxfunhand,xeq,pvec,ap,fluxg,model,bfpts)
+function [data,y,p] =...
+execMATCONT(funhand,fluxfunhand,xeq,pvec,ap,fluxg,model,bfpts)
 if nargin<8
     bfpts = 800;
 end
