@@ -16,20 +16,20 @@ opt = contset(opt,'Eigenvalues',1);
 [x,v,s,h,f]=cont(@limitpoint,x0,v0,opt);
 
 % separation of variable and parameter vectors
-if ~isempty(s1)    
-    y = x1(1:length(x0),:);
-    p = x1(length(x0)+1:end,:); % 2 free vairables
+if ~isempty(s)    
+    y = x(1:length(x0),:);
+    p = x(length(x0)+1:end,:); % 2 free vairables
 else
     y = [];
     p = [];
 end
 
 if ~isempty(s)
-    data.s = s;
-    data.x = x;
-    data.f = f;
-    data.v = v;
-    data.h = h;
+    data.s1 = s;
+    data.x1 = x;
+    data.f1 = f;
+    data.v1 = v;
+    data.h1 = h;
 %      if ~isempty(flux)
 %          data.flux = flux;
 %      else
