@@ -22,14 +22,17 @@ apLP = [2 7];
 [LPdata_f,LPdata_b] =...
 execLPcont(@oscillator,yout(end,:)',pvec',apLP,ap,data);
 
-fig =...
 bifurcationPlot(LPdata_f{1}.x1,LPdata_f{1}.s1,LPdata_f{1}.f1,[4,1],[],1,fig);
-fig =...
 bifurcationPlot(LPdata_b{1}.x1,LPdata_b{1}.s1,LPdata_b{1}.f1,[4,1],[],1,fig);
-fig =...
 bifurcationPlot(LPdata_f{2}.x1,LPdata_f{2}.s1,LPdata_f{2}.f1,[4,1],[],1,fig);
-fig =...
 bifurcationPlot(LPdata_b{2}.x1,LPdata_b{2}.s1,LPdata_b{2}.f1,[4,1],[],1,fig);
+
+% continue from Hopf bifurcation points
+apH = [2 7];
+Hdata =...
+execHcont(@oscillator,yout(end,:)',pvec',apH,ap,data);
+bifurcationPlot(Hdata.x1,Hdata.s1,Hdata.f1,[4,1],[],1,fig);
+
 
 % calculate jacobian for points on continuation curve
 % [jac,lambda,w] = getKotteJacobian(@oscillatorNLAE,yout(end,:)',p',[])
