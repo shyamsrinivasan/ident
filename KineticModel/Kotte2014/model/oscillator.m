@@ -27,6 +27,8 @@ options = odeset('Jacobian',handles(3),'JacobianP',handles(4),...
 tspan = [0 10];
 
 function jac = jacobian(t,x,q1,q2,q3,q4,q5,q6,k)
+p = [q1;q2;q3;q4;q5;q6;k];
+jac = getKotteJacobian(@oscillatorNLAE,x,p,[]);
 
 function jacp = jacobianp(t,x,q1,q2,q3,q4,q5,q6,k)      
                      
