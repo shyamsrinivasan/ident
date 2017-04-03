@@ -6,7 +6,7 @@ sys.gui.pausenever=0;    %Pause never
 sys.gui.pauseeachpoint=0; %Pause at each point
 
 % limit point conitnuation (2 free variables in ap)
-[x0,v0]=init_LP_LP(funame,x0,pvec',ap);
+[x0,v0]=init_LP_LP(funame,x0,pvec,ap);
 [x,v,s,h,f]=cont(@limitpoint,x0,v0,opt);
 
 % separation of variable and parameter vectors
@@ -19,11 +19,13 @@ else
 end
 
 if ~isempty(s)
+    % LP from which the continuation was begun    
     data.s1 = s;
     data.x1 = x;
     data.f1 = f;
     data.v1 = v;
     data.h1 = h;
+    data.LP = x0;
 %      if ~isempty(flux)
 %          data.flux = flux;
 %      else
