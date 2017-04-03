@@ -15,36 +15,21 @@ plot(tout,yout);
 % close all
 ap = 2;
 [data,y,p] = execMATCONT(@oscillator,[],yout(end,:)',pvec',ap,[],[],300);
+fig = bifurcationPlot(data.x1,data.s1,data.f1,[4,1]);
 
 % continue from limit points obtained on equilibrium branch
-% collect only limit points
-id = cat(1,data.s1.index);
-label = cellstr(cat(1,data.s1.label));
-label = cellfun(@(x)strcmpi(x,'LP'),label);
-LPid = id(label);
+apLP = [2 7];
+[LPdata_f,LPdata_b] =...
+execLPcont(@oscillator,yout(end,:)',pvec',apLP,ap,data);
 
-LPx = data.x1(1:3,LPid(1));
-LPp = p(LPid(1));
-pvec(ap) = LPp;
-
-global sys
-sys.gui.pausespecial=1;  %Pause at special points 
-sys.gui.pausenever=0;    %Pause never 
-sys.gui.pauseeachpoint=0; %Pause at each point
-
-LPap = [2 7];
-[x0,v0]=init_LP_LP(@oscillator,LPx,pvec',LPap);
-opt=contset;
-opt=contset(opt,'MaxNumPoints',300);
-opt=contset(opt,'MinStepSize',0.00001);
-opt=contset(opt,'MaxStepSize',0.01);
-opt=contset(opt,'Singularities',1);
-opt = contset(opt,'Eigenvalues',1);
-[x,v,s,h,f]=cont(@limitpoint,x0,v0,opt);
-opt=contset(opt,'Backward',1);
-[x2,v2,s2,h2,f2]=cont(@limitpoint,x0,v0,opt);
-
-hfig = bifurcationPlot(x,s,f,[4,1]);
+fig =...
+bifurcationPlot(LPdata_f{1}.x1,LPdata_f{1}.s1,LPdata_f{1}.f1,[4,1],[],1,fig);
+fig =...
+bifurcationPlot(LPdata_b{1}.x1,LPdata_b{1}.s1,LPdata_b{1}.f1,[4,1],[],1,fig);
+fig =...
+bifurcationPlot(LPdata_f{2}.x1,LPdata_f{2}.s1,LPdata_f{2}.f1,[4,1],[],1,fig);
+fig =...
+bifurcationPlot(LPdata_b{2}.x1,LPdata_b{2}.s1,LPdata_b{2}.f1,[4,1],[],1,fig);
 
 % calculate jacobian for points on continuation curve
-[jac,lambda,w] = getKotteJacobian(@oscillatorNLAE,yout(end,:)',p',[])
+% [jac,lambda,w] = getKotteJacobian(@oscillatorNLAE,yout(end,:)',p',[])
