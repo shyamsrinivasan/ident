@@ -20,21 +20,21 @@ pH = data.x1(end,Hid);
 opt=contset;
 opt=contset(opt,'MaxNumPoints',contpts);
 opt=contset(opt,'MinStepSize',0.00001);
-opt=contset(opt,'MaxStepSize',0.01);
+opt=contset(opt,'MaxStepSize',0.1);
 opt=contset(opt,'Singularities',1);
 opt = contset(opt,'Eigenvalues',1);
 
 % Hdata = cell(length(Hid),1);
 % LPdata_b = cell(length(LPid),1);
-
+ih = 1;
 % for ilp = 1:length(LPid)	
     fprintf('\nHopf Point Continuation......\n');
-	pvec(ap) = pH(ilp);
+	pvec(ap) = pH(ih);
 	% change funame if you have to
 	% newfname = @(x)funame(x,pvec);
 	% continue forward from each limit point in data	
-	Hdata = Hcontinuation(xH(:,ilp),apH,funame,pvec,opt);
-    Hdata.pH = pH(ilp);
+	Hdata = Hcontinuation(xH(:,ih),apH,funame,pvec,opt);
+    Hdata.pH = pH(ih);
     Hdata.ap = ap;
     fprintf('Hopf Point Continuation Complete\n');
 % end
