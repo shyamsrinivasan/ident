@@ -26,5 +26,32 @@ ap = 2;
 [data,y,p] = execMATCONT(@repressilator,[],yout(end,:)',pvec',ap,[],[],300);
 
 % perform continuation from Hopf bifurcation point on equilibrium cont curve
+apH = [2 1];
 
+% extract all limit points from data
+id = cat(1,data.s1.index);
+label = cellstr(cat(1,data.s1.label));
+Hid = id(cellfun(@(x)strcmpi(x,'H'),label));
+
+% set continuation options
+opt=contset;
+opt=contset(opt,'MaxNumPoints',contpts);
+opt=contset(opt,'MinStepSize',0.00001);
+opt=contset(opt,'MaxStepSize',0.1);
+opt=contset(opt,'Singularities',1);
+opt = contset(opt,'Eigenvalues',1);
+
+global sys
+sys.gui.pausespecial=1;  %Pause at special points 
+sys.gui.pausenever=0;    %Pause never 
+sys.gui.pauseeachpoint=0; %Pause at each point
+
+% limit point conitnuation (2 free variables in apH)
+[x0,v0]=init_H_H(funame,x0,pvec,apH);
+[x,v,s,h,f]=cont(@hopf,x0,v0,opt);
+
+
+%  Hdata =...
+%  execHcont(@oscillator,yout(end,:)',pvec',apH,ap,data);
+%  bifurcationPlot(Hdata.x1,Hdata.s1,Hdata.f1,[4,1],[],1,fig);
 
