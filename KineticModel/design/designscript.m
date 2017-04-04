@@ -1,9 +1,9 @@
 % inverse bifurcation from Lu, et al., 2006
 % initial parameter sets
-alpha = 10^2.5;
+alpha = 100; % 10^2.5;
 beta = 1;
-delta = 1; % 1e-3;
-h = 5; % 1.5;
+delta = 1e-3;
+h = 1.5;
 pvec = [alpha,beta,delta,h];
 pi = [alpha,beta];
 ps = [delta,h];
@@ -24,4 +24,7 @@ plot(tout,yout);
 % run MATCONT
 ap = 2;
 [data,y,p] = execMATCONT(@repressilator,[],yout(end,:)',pvec',ap,[],[],300);
+
+% perform continuation from Hopf bifurcation point on equilibrium cont curve
+
 
