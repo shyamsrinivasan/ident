@@ -24,12 +24,12 @@ sys.gui.pauseeachpoint=0; %Pause at each point
 
 % MATCONT options
 opt = contset;
-opt = contset(opt,'VarTolerance',1e-3);
-opt = contset(opt,'VarTolerance',1e-3);
-opt = contset(opt,'FunTolerance',1e-3);
+opt = contset(opt,'VarTolerance',1e-4);
+opt = contset(opt,'VarTolerance',1e-4);
+opt = contset(opt,'FunTolerance',1e-4);
 opt = contset(opt,'MaxNumPoints',bfpts);
-opt = contset(opt,'MaxStepsize',0.1);
-% opt = contset(opt,'MinStepSize',0.00001);
+opt = contset(opt,'MaxStepsize',0.01);
+opt = contset(opt,'MinStepSize',0.00001);
 opt = contset(opt,'Singularities',1);
 opt = contset(opt,'Eigenvalues',1);
 % opt = contset(opt,'Backward',1);
