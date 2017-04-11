@@ -1,15 +1,15 @@
-function [s,mssid,nss,hbif1] = setupMATCONT(funhand,fluxfunhand,allxeq,...
-                        allpvec,ap,model,fluxg,npts,bfpts,fig,hbif1,annot)
-if nargin<12
+function [s,mssid,nss,hbif1] = setupMATCONT(funhand,fluxfunhand,axisfunhdl,...
+                            allxeq,allpvec,ap,model,fluxg,npts,bfpts,fig,hbif1,annot)
+if nargin<13
     annot = [];
 end
-if nargin<11
+if nargin<12
     hbif1 = [];
 end
-if nargin<10
+if nargin<11
     fig = 0;
 end
-if nargin<9
+if nargin<10
     bfpts = 800;
 end
 
@@ -26,9 +26,11 @@ for ipt = 1:npts
 %         bifurcationPlot(data.x1,data.s1,data.f1,[4,2]);
 %         bifurcationPlot([data.flux;data.x1(end,:)],data.s1,data.f1,[6,5]);        
         if ~isempty(annot)
-            hbif1 = bifurcationPlot(data.x1,data.s1,data.f1,[4,1],ap,hbif1,annot);
+            hbif1 =...
+            bifurcationPlot(data.x1,data.s1,data.f1,[4,1],axisfunhdl,ap,hbif1,annot);
         else
-            hbif1 = bifurcationPlot(data.x1,data.s1,data.f1,[4,1],ap,hbif1);
+            hbif1 =...
+            bifurcationPlot(data.x1,data.s1,data.f1,[4,1],axisfunhdl,ap,hbif1);
         end          
     end   
     
