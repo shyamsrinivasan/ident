@@ -65,7 +65,7 @@ for ipt = 1:npts
     
     
     % optional  - plot information
-%      hf = plotKotteVariables(tout,yout,1);
+     hf = plotKotteVariables(tout,yout,1);
 %     plotKotteVariables(tout,allfdyn(:,:,ipt)',2);
     drawnow
 %     close(hf);
