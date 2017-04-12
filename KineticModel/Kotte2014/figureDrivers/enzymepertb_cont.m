@@ -296,7 +296,7 @@ pvec = [K1ac,K3fdp,L3,K3pep,...
         K2pep,vemax,KeFDP,ne,acetate,d,...
         k4cat,k1cat,v3max,v2max];
 pvec(ap) = 0.1;
-model.PM(ac-length(orig_saddle)) = 0.01;
+model.PM(ac-length(orig_saddle)) = 0.1;
 
 % set parameters from cmb at idp position(s)
 allpvec = repmat(pvec,npts,1);
@@ -304,25 +304,32 @@ allpvec(:,idp) = cmb;
 allpvec(:,ap) = pvec(ap);
 
 orig2pvec = allpvec;
-% npts = 1;
-% while ipt<size(cmb,1)
+npts = 1;
+ipt = 4;
+while ipt<=size(cmb,1)
 % for ip = 1:npts
-hbif2 = figure;
+    hbif2 = figure;
+    
+%         if ap~=14
+%             pvec(ap) = 0.01;
+%         else
+%             pvec(ap) = 5;
+%         end
 
-% find equilibirum point for all npts points 
-[~,id4xeq] = solveODEonly(npts,M,model,allpvec,opts,tspan);
+    % find equilibirum point for all npts points 
+    [~,id4xeq] = solveODEonly(npts,M,model,allpvec(ipt,:),opts,tspan);
 
-% continue using MATCONT for all npts points
-[s2,mssid,nss,hbif2] = setupMATCONT(@KotteMATCONT,@Kottecont_fluxcalc,...
-                        @getKotteaxislabels,id3xeq,allpvec,ap,model,...
-                        fluxg,npts,1500,1,hbif2); 
+    % continue using MATCONT for all npts points
+    [s2,mssid,nss,hbif2] = setupMATCONT(@KotteMATCONT,@Kottecont_fluxcalc,...
+                            @getKotteaxislabels,id4xeq,allpvec(ipt,:),ap,model,...
+                            fluxg,npts,1500,1,hbif2); 
 
-% store continuation data
-cmb2siid.(['iid' num2str(ip)]) = s2;
-cmb2mssid.(['iid' num2str(ip)]) = mssid;
+    % store continuation data
+    cmb2siid.(['ipt' num2str(ipt)]) = s2;
+    cmb2mssid.(['ipt' num2str(ipt)]) = mssid;
 
-ipt = ipt+4;
-% end
+    ipt = ipt+4;
+end
     
 
 
