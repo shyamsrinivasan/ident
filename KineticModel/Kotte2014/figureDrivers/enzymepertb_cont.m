@@ -76,7 +76,9 @@ for id = 1:length(idp)
     solveODEonly(npts,M,model,pvec,opts,tspan);
           
     % continute using MATCONT
-    [s,mssid,nss] = setupMATCONT(id2xeq,pvec,ap,model,fluxg,npts,1500,1);
+    [s,mssid,nss] = setupMATCONT(@KotteMATCONT,@Kottecont_fluxcalc,...
+                                @getKotteaxislabels,id2xeq,pvec,ap,model,...
+                                fluxg,npts,1500,1);
     pvec = origpvec;
     
     % determine bistable parameter boundaries
@@ -187,9 +189,23 @@ type = 'together';
 npts = size(cmb,1);
 
 % set acetate conentration
-pvec = [KEacetate,KFbpFBP,Lfbp,KFbpPEP,...
-        KEXPEP,vemax,KeFBP,ne,acetate,d,...
-        kPEPout,kEcat,vFbpmax,vEXmax];
+k1cat = 1;
+K1ac = 0.1;    % or 0.02
+K3fdp = 0.1;
+v3max = 1;
+L3 = 4e6;
+K3pep = 0.1;
+v2max = 1;
+K2pep = 0.3;
+vemax = 1.1;        % for bifurcation analysis: 0.7:0.1:1.3
+KeFDP = 0.45;       % or 0.45
+ne = 2;             % or 2
+acetate = 0.1;      % a.u acetate
+d = 0.25;           % or 0.25 or 0.35
+k4cat = 0.2;
+pvec = [K1ac,K3fdp,L3,K3pep,...
+        K2pep,vemax,KeFDP,ne,acetate,d,...
+        k4cat,k1cat,v3max,v2max];
 pvec(ap) = orig_saddlepar;
 model.PM(ac-length(orig_saddle)) = orig_saddlepar;
 
@@ -214,7 +230,9 @@ for ip = 1:length(idp)
     [~,id3xeq] = solveODEonly(npts,M,model,allpvec,opts,tspan);
 
     % continue using MATCONT for all npts points
-    [s,mssid,nss,hbif1] = setupMATCONT(id3xeq,allpvec,ap,model,fluxg,npts,900,1,hbif1); 
+    [s,mssid,nss,hbif1] = setupMATCONT(@KotteMATCONT,@Kottecont_fluxcalc,...
+                            @getKotteaxislabels,id3xeq,allpvec,ap,model,...
+                            fluxg,npts,900,1,hbif1); 
     
     % store continuation data
     cmbsiid.(['iid' num2str(ip)]) = s;
@@ -224,7 +242,8 @@ for ip = 1:length(idp)
      % reset parameter
     allpvec = orig2pvec;
 end
-
+% reset ap
+ap = 9;
 %% identify bistable bounds
 fprintf('Summary of Enzyme Parameter Continuation\n');
 for ip = 1:length(fieldnames(cmbsiid))
@@ -247,6 +266,73 @@ for ip = 1:length(fieldnames(cmbsiid))
     end
     pbistable.(['iid' num2str(ip)]) = pbounds;    
 end
+
+%% continuation on acetate for perturbed enzyme parameter values
+cmb = [.05 1 1;1 .05 1;1 1 .05;.05 .05 .05;...
+       .125 1 1;1 .125 1;1 1 .125;.125 .125 .125;...
+       .25 1 1;1 .25 1;1 1 .25;.25 .25 .25;...
+       .5 1 1;1 .5 1;1 1 .5;.5 .5 .5;...
+       2 1 1;1 2 1;1 1 2;2 2 2;...
+       4 1 1;1 4 1;1 1 4;4 4 4];
+type = 'together';
+npts = size(cmb,1);
+
+% set acetate conentration at lowest value for continuation after
+k1cat = 1;
+K1ac = 0.1;    % or 0.02
+K3fdp = 0.1;
+v3max = 1;
+L3 = 4e6;
+K3pep = 0.1;
+v2max = 1;
+K2pep = 0.3;
+vemax = 1.1;        % for bifurcation analysis: 0.7:0.1:1.3
+KeFDP = 0.45;       % or 0.45
+ne = 2;             % or 2
+acetate = 0.1;      % a.u acetate
+d = 0.25;           % or 0.25 or 0.35
+k4cat = 0.2;
+pvec = [K1ac,K3fdp,L3,K3pep,...
+        K2pep,vemax,KeFDP,ne,acetate,d,...
+        k4cat,k1cat,v3max,v2max];
+pvec(ap) = 0.1;
+model.PM(ac-length(orig_saddle)) = 0.01;
+
+% set parameters from cmb at idp position(s)
+allpvec = repmat(pvec,npts,1);
+allpvec(:,idp) = cmb;
+allpvec(:,ap) = pvec(ap);
+
+orig2pvec = allpvec;
+% npts = 1;
+% while ipt<size(cmb,1)
+% for ip = 1:npts
+hbif2 = figure;
+
+% find equilibirum point for all npts points 
+[~,id4xeq] = solveODEonly(npts,M,model,allpvec,opts,tspan);
+
+% continue using MATCONT for all npts points
+[s2,mssid,nss,hbif2] = setupMATCONT(@KotteMATCONT,@Kottecont_fluxcalc,...
+                        @getKotteaxislabels,id3xeq,allpvec,ap,model,...
+                        fluxg,npts,1500,1,hbif2); 
+
+% store continuation data
+cmb2siid.(['iid' num2str(ip)]) = s2;
+cmb2mssid.(['iid' num2str(ip)]) = mssid;
+
+ipt = ipt+4;
+% end
+    
+
+
+
+
+
+
+   
+
+
               
 
 
