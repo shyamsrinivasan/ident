@@ -142,7 +142,7 @@ options = optimoptions('fsolve','Display','off','TolFun',1e-10,'TolX',1e-10);
 [type,alleig] = KotteStabilityInfo(eqpts,model,pvec);      
 
 % get points on 2D stable invariant manifold surface
-tspanr = 0:-.05:-25;
+tspanr = 0:-.1:-25;
 [xchop,ychop,zchop] = calc2DWs(saddle,saddlepar,ap,model,pvec,tspanr,opts);
 
 
