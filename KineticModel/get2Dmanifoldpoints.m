@@ -10,11 +10,15 @@ ally = zeros(npoints,length(tspanr));
 allz = zeros(npoints,length(tspanr));
 for ip = 1:npoints
     xdynr = solveODEonly(1,points(ip,:)',model,pvec,opts,tspanr); 
-    allx(ip,:) = xdynr(1,:);
-    ally(ip,:) = xdynr(2,:);
-    allz(ip,:) = xdynr(3,:);
+    % find if any negative values
+    r = find(xdynr(1,:)<0|xdynr(2,:)<0|xdynr(1,:)<0);
+    if isempty(r)
+        allx(ip,:) = xdynr(1,:);
+        ally(ip,:) = xdynr(2,:);
+        allz(ip,:) = xdynr(3,:);
+    end
 %     allxdynr(:,(ip-1)*npts+1:ip*npts) = xdynr(:,3:end);
-    allxdynr = [allxdynr xdynr(:,3:end)];
+%     allxdynr = [allxdynr xdynr(:,3:end)];
 end
 
 % x = allxdynr(1,:);
