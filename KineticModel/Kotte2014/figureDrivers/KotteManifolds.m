@@ -62,7 +62,7 @@ options = optimoptions('fsolve','Display','off','TolFun',1e-10,'TolX',1e-10);
 [type,alleig] = KotteStabilityInfo(eqpts,model,pvec);      
 
 % get points on 2D stable invariant manifold surface
-tspanr = 0:-.05:-15;
+tspanr = 0:-.05:-8.5;
 [xchop,ychop,zchop] = calc2DWs(saddle,saddlepar,ap,model,pvec,tspanr,opts);
 
 
@@ -71,7 +71,7 @@ tspanr = 0:-.05:-15;
 % backup 
 x1 = real(xchop);y1 = real(ychop);z1 = real(zchop);
 [xs1,ys1,zs1] = removeredundantpoints(x1,y1,z1,0.0001);
-hfig = Manifold2DPlot(xs1,ys1,zs1,hfig);
+hfig = Manifold2DPlot(xs1,ys1,zs1,hfig,2);
 
 % id2 = y1<1.1885;
 % id1 = setdiff(1:length(x1),find(id2));
@@ -112,13 +112,15 @@ hfig = Manifold2DPlot(xs1,ys1,zs1,hfig);
 gcf
 axis([0 2.5 0 1.6 0 1.6]);
 view([116 22]);
+grid on
+legend off
 fname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\manifolds\manifoldFig';
 print('-depsc','-painters','-loose',fname)
 
 %% perturb 2D stable manifold
-pvec(ap) = saddlepar;
-model.PM(ac-length(saddle)) = saddlepar;
-perturbManifolds([xs1' ys1' zs1'],saddle,model,pvec,opts,tspanf,hfig,3);
+% pvec(ap) = saddlepar;
+% model.PM(ac-length(saddle)) = saddlepar;
+% perturbManifolds([xs1' ys1' zs1'],saddle,model,pvec,opts,tspanf,hfig,[1 2 3],3);
 
 % plot3(saddle(1),saddle(2),saddle(3),'Color','r','Marker','.','MarkerSize',30);
 
