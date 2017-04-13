@@ -34,7 +34,7 @@ relWus = real(xWus(:,1:nzid));
 % radius where no initial point produces the 2nd steady state = rAss1 =
 % [1.22 1.22 1.22]'
 rndivals = get3Dsphere(xeq1',1.24,50000);
-save('regionVoluemSamplevals');
+save('regionVolumeSamplevals');
 % integrate
 options = [];
 % [ppival,npival,allxeq,ssid,allfeq] =...
