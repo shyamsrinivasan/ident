@@ -9,9 +9,15 @@ for ip = 1:size(x,1)
     iidy = find(y(ip,:)<0,1,'first');
     iidz = find(z(ip,:)<0,1,'first');
     iid = min([iidx iidy iidz]);
-    allx = [allx x(ip,1:iid-1)];
-    ally = [ally y(ip,1:iid-1)];
-    allz = [allz z(ip,1:iid-1)];
+    if ~isempty(iid)
+        allx = [allx x(ip,1:iid-1)];
+        ally = [ally y(ip,1:iid-1)];
+        allz = [allz z(ip,1:iid-1)];
+    else
+        allx = [allx x(ip,:)];
+        ally = [ally y(ip,:)];
+        allz = [allz z(ip,:)];
+    end
 end
 x = allx;
 y = ally;
