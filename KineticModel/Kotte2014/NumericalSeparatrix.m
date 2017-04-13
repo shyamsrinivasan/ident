@@ -61,7 +61,7 @@ if ~isempty(saddle)
     unstablept = 0;
     pvec(contvarid) = saddlepar;
     model.PM(ac-length(saddle)) = saddlepar;
-    [~,lambda,w] = getKotteJacobian(saddle,pvec,model);
+    [~,lambda,w] = getKotteJacobian(@Kotte_givenNLAE,saddle,pvec,model);
     if any(real(lambda)>=0)
         unstablept = 1;
     end

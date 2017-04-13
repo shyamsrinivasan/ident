@@ -29,7 +29,7 @@ pival = saddle+eps*[1;1;1];
 nival = saddle-eps*[1;1;1];
 [~,xeq2] = solveODEonly(1,nival,model,pvec,opts,tspanf);
 
-[~,eigval,w] = getKotteJacobian(saddle,pvec,model);
+[~,eigval,w] = getKotteJacobian(@Kotte_givenNLAE,saddle,pvec,model);
 
 % all manifolds in 2D
 % tspanr = [0,-30;0 -12];
@@ -62,7 +62,7 @@ options = optimoptions('fsolve','Display','off','TolFun',1e-10,'TolX',1e-10);
 [type,alleig] = KotteStabilityInfo(eqpts,model,pvec);      
 
 % get points on 2D stable invariant manifold surface
-tspanr = 0:-.05:-25;
+tspanr = 0:-.05:-15;
 [xchop,ychop,zchop] = calc2DWs(saddle,saddlepar,ap,model,pvec,tspanr,opts);
 
 
