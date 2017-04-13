@@ -9,7 +9,7 @@ model.PM(ac-length(saddle)) = saddlepar;
 
 % compute Jacobian, eigenvalues, eigenvector at saddle points with 2D stable
 % manifolds
-[~,eig,eigvec] = getKotteJacobian(saddle,pvec,model);
+[~,eig,eigvec] = getKotteJacobian(@Kotte_givenNLAE,saddle,pvec,model);
 
 % obtain the 2 eigenvectors of 2D linear eigenspace
 stableeigvec = eigvec(:,eig<0);
