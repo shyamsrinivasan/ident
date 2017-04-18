@@ -15,3 +15,5 @@
 % w1 - left eigen vector
 % 3. set ni = wi*flambda (sensitivty w.r.t parameters lambda)
 % 4. iterate through steps 1,2 and 3.
+
+% 
