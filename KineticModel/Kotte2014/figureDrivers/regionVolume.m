@@ -33,7 +33,7 @@ relWus = real(xWus(:,1:nzid));
 % expanding region of perturbation
 % radius where no initial point produces the 2nd steady state = rAss1 =
 % [1.22 1.22 1.22]'
-rndivals = get3Dsphere(xeq1',1.24,50000);
+rndivals = get3Dsphere(xeq2',0.8,50000);
 save('regionVolumeSamplevals');
 % integrate
 options = [];
@@ -41,20 +41,36 @@ options = [];
 % getPequilibrium(rndivals(1:10000),model,pvec,options,opts,tspanf);
 % run sim*_regionVolume.m for * = 1,2,3,4,5
 %% plot volume of region of attraction
-% hfig = figure;
+% plot trjaectories and stable manifolds
+% clear all
+% load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KotteModel\allmanifolds_data_Apr13');
+% tspanr = [0,-30]; % 0 -12];
+% hfig =...
+% NumericalSeparatrix(model,pvec,opts,ap,data.s1,data.x1,[xeq1 xeq2],'unstable',tspanr,3,5e-3);
+% hfig = Manifold2DPlot(xs1,ys1,zs1,hfig,2);
+% gcf
+% axis([0 2.5 0 1.6 0 1.6]);
+% view([116 22]);
+% grid on
+% legend off
+% fname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\manifolds\manifoldFig';
+% % print('-depsc','-painters','-loose',fname)
+% 
+% % hfig = gcf;
 % hold on
-% load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KotteModel\run2\regionVolume_run1_Mar21_10K.mat');
+% load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KotteModel\run3_Apr13_radius_1_23\regionVolume_run1_Apr15_10K.mat');
 % plotrndivals(rndivals(1:10000,:),ssid,allxeq,[1 2 3],2,hfig,[]);
 % clearvars -except hfig
-% load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KotteModel\run2\regionVolume_run3_Mar23_10K.mat');
+% load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KotteModel\run3_Apr13_radius_1_23\regionVolume_run2_Apr15_10K.mat');
 % plotrndivals(rndivals(10001:20000,:),ssid,allxeq,[1 2 3],2,hfig,[]);
 % clearvars -except hfig
-% load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KotteModel\run2\regionVolume_run4_Mar23_10K.mat');
+% load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KotteModel\run3_Apr13_radius_1_23\regionVolume_run5_Apr15_10K.mat');
 % plotrndivals(rndivals(20001:30000,:),ssid,allxeq,[1 2 3],2,hfig,[]);
 % clearvars -except hfig
-% load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KotteModel\run2\regionVolume_run5_Mar23_10K.mat');
+% load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KotteModel\run3_Apr13_radius_1_23\regionVolume_run4_Apr15_10K.mat');
 % plotrndivals(rndivals(30001:40000,:),ssid,allxeq,[1 2 3],2,hfig,[]);
-% load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KotteModel\run2\regionVolume_run2_Mar21_7K.mat');
+% clearvars -except hfig
+% load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KotteModel\run3_Apr13_radius_1_23\regionVolume_run3_Apr14_7K.mat');
 % plotrndivals(rndivals(40001:end,:),ssid,allxeq,[1 2 3],2,hfig,[]);
 % clearvars -except hfig
 %% get random initial values for all 3 variables and calculate steady state
