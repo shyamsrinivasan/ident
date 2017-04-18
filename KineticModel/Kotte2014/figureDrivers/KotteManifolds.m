@@ -115,7 +115,7 @@ view([116 22]);
 grid on
 legend off
 fname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\manifolds\manifoldFig';
-print('-depsc','-painters','-loose',fname)
+% print('-depsc','-painters','-loose',fname)
 
 %% perturb 2D stable manifold
 % pvec(ap) = saddlepar;
