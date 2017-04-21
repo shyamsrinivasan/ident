@@ -16,4 +16,9 @@
 % 3. set ni = wi*flambda (sensitivty w.r.t parameters lambda)
 % 4. iterate through steps 1,2 and 3.
 
-% 
+% step 1. 
+% get initial direction vector n0 - 0.2 for reactive power loads and 1.0
+% for all real power loads.
+
+% step 2. 
+% solve system of nonlinear AE to get all necessary values
