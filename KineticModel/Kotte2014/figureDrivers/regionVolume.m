@@ -53,28 +53,28 @@ options = [];
 % view([116 22]);
 % grid on
 % legend off
-% % fname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\manifolds\manifoldFig';
-% % print('-depsc','-painters','-loose',fname)
-% % 
-% % % hfig = gcf;
-% hold on
-% load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KotteModel\run4_Apr15_radius_0_8_xeq2\regionVolume_run1_Ap19_10K.mat');
-% plotrndivals(rndivals(1:10000,:),ssid,allxeq,[1 2 3],2,hfig,[]);
+% fname = 'C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\manifolds\manifoldFig';
+% print('-depsc','-painters','-loose',fname)
+% 
+hfig = gcf;
+hold on
+load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KotteModel\run5_Apr19_radius_0_6_xeq2\regionVolume_run1_Apr27_10K.mat');
+plotrndivals(rndivals(1:10000,:),ssid,allxeq,[1 2 3],2,hfig,[]);
+clearvars -except hfig
+load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KotteModel\run5_Apr19_radius_0_6_xeq2\regionVolume_run2_Apr27_10K.mat');
+plotrndivals(rndivals(10001:20000,:),ssid,allxeq,[1 2 3],2,hfig,[]);
+clearvars -except hfig
+load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KotteModel\run5_Apr19_radius_0_6_xeq2\regionVolume_run3_Apr27_10K.mat');
+plotrndivals(rndivals(20001:30000,:),ssid,allxeq,[1 2 3],2,hfig,[]);
+clearvars -except hfig
+load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KotteModel\run5_Apr19_radius_0_6_xeq2\regionVolume_run4_Apr27_5K.mat');
+plotrndivals(rndivals(30001:end,:),ssid,allxeq,[1 2 3],2,hfig,[]);
 % clearvars -except hfig
-% load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KotteModel\run4_Apr15_radius_0_8_xeq2\regionVolume_run2_Apr19_10K.mat');
-% plotrndivals(rndivals(10001:20000,:),ssid,allxeq,[1 2 3],2,hfig,[]);
-% clearvars -except hfig
-% load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KotteModel\run4_Apr15_radius_0_8_xeq2\regionVolume_run3_Apr19_10K.mat');
-% plotrndivals(rndivals(20001:30000,:),ssid,allxeq,[1 2 3],2,hfig,[]);
-% clearvars -except hfig
-% load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KotteModel\run4_Apr15_radius_0_8_xeq2\regionVolume_run4_Apr19_1K.mat');
-% plotrndivals(rndivals(30001:end,:),ssid,allxeq,[1 2 3],2,hfig,[]);
-% clearvars -except hfig
-% % load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KotteModel\run4_Apr15_radius_0_8_xeq2\regionVolume_run3_Apr14_7K.mat');
-% % plotrndivals(rndivals(40001:end,:),ssid,allxeq,[1 2 3],2,hfig,[]);
+% load('C:\Users\shyam\Documents\Courses\CHE1125Project\mat_files\KotteModel\run3_Apr13_radius_1_23\regionVolume_run5_Apr15_7K.mat');
+% plotrndivals(rndivals(40001:end,:),ssid,allxeq,[1 2 3],2,hfig,[]);
 % % clearvars -except hfig
-% fname1 = 'C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\manifolds\regionofAttraction';
-% print('-depsc','-painters','-loose',fname1)
+fname1 = 'C:\Users\shyam\Documents\Courses\CHE1125Project\Results\KotteModel\manifolds\regionofAttraction_Apr27';
+print('-depsc','-painters','-loose',fname1)
 %% get random initial values for all 3 variables and calculate steady state
 % rndivals = randomivals([0 5;0 5;0 5],10000);
 % % integrate
