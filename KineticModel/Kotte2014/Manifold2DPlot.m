@@ -3,7 +3,7 @@ if nargin<5
     type = 1;
 end
 if nargin<6
-    icolor = [0 1 0]; % green
+    icolor = [0 0 0]; % green
 end
 if nargin<4 || isempty(hfig)
     hfig = figure;
@@ -32,7 +32,7 @@ if type == 1
     set(hsurf,'FaceColor',icolor);
     set(hsurf,'FaceAlpha',0.25); 
 elseif type == 2
-    plot3(x,y,z,'LineStyle','none','Marker','.','Color',[0 .5 0]);
+    plot3(x,y,z,'LineStyle','none','Marker','.','Color',icolor);
 end
 [xlabel,ylabel,zlabel] = getKotteaxislabels(3,2,[1 2 3]);
 setKotteproperties(3,ha,xlabel,ylabel,zlabel);
