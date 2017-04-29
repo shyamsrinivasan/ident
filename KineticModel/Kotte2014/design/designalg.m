@@ -22,3 +22,21 @@
 
 % step 2. 
 % solve system of nonlinear AE to get all necessary values
+
+runKotte
+[orig_saddle,orig_saddlepar] = getsaddlenode(data.s1,data.x1,5e-3);
+pvec(ap) = orig_saddlepar;
+model.PM(ac-length(orig_saddle)) = orig_saddlepar;
+
+% perturb saddle to get steady states
+eps = 1e-4;
+tspanf = 0:0.1:2000;
+pival = orig_saddle+eps*[1;1;1];
+[~,xeq1,~,feq1] = solveODEonly(1,pival,model,pvec,opts,tspanf);
+nival = orig_saddle-eps*[1;1;1];
+[~,xeq2,~,feq2] = solveODEonly(1,nival,model,pvec,opts,tspanf);
+xss = [xeq1 xeq2];
+
+[J,eigval] = getKotteJacobian(@Kotte_givenNLAE,orig_saddle,pvec,model);
+[v,d,w] = eig(J);
+
