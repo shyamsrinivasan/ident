@@ -1,2 +1,2 @@
-function dX = simnoisyODE_kotte(t,x,model,p)
-dX = Kotte_givenNLAE(x,model,p);
+function dX = simnoisyODE_kotte(t,x,pstruct)
+dX = noisyNLAE_kotte(x,pstruct);
