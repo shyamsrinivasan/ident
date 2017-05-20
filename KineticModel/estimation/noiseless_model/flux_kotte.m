@@ -1,4 +1,4 @@
-function flux = noisyflux_kotte(x,pstruct,flux)
+function flux = flux_kotte(x,pstruct,flux)
 if isfield(pstruct,'p')
     p = pstruct.p;
 end
@@ -52,6 +52,9 @@ fdp = strcmpi(model.mets,'fdp[c]');
 enz = strcmpi(model.mets,'enz[c]');
 ac = strcmpi(model.mets,'ac[e]');
 
+% generate noise
+noise = rand(5,1);
+
 % metabolic fluxes
 % J(E, acetate)
 flux(1,:) = kEcat.*x(enz,:).*x(ac,:)./(x(ac,:)+KEacetate);
@@ -71,9 +74,5 @@ flux(4,:) = vEXmax.*x(pep,:)./(x(pep,:)+KEXPEP);
 % vPEPout
 flux(5,:) = kPEPout*x(pep,:);
 
-% generate noise
-% noise = random('Normal',0,sqrt(var(flux)),5,1);
-noise = rand(5,1)*2;
-
-flux = flux + repmat(noise,1,size(flux,2));
+% flux = flux + repmat(noise,1,size(flux,2));
 
