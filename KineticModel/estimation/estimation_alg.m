@@ -40,6 +40,14 @@ subplot(212)
 plot(tspan,fdyn);
 ylabel('fluxes a.u.');
 
+% perturb system from steady state and generate noisy data
+
+% generate model data from convinience kinetics
+
+% optimize for parameters by minimizing L2 norm of fluxes
+
+
+
 
 
 
