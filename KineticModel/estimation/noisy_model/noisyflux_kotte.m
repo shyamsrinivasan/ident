@@ -5,6 +5,12 @@ end
 if isfield(pstruct,'model')
     model = pstruct.model;
 end
+% perturbation - deletion
+if isfield(pstruct,'del')
+    del = pstruct.del;
+else
+    del = [];
+end
 % adatpted from Kotte_givenFlux
 % May 2017
 if nargin < 3
@@ -76,4 +82,5 @@ flux(5,:) = kPEPout*x(pep,:);
 noise = rand(5,1)*2;
 
 flux = flux + repmat(noise,1,size(flux,2));
+flux(del,:) = 0;
 
