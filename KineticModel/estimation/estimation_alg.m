@@ -17,19 +17,28 @@ p = pvec;
 ival = M;
 clear pvec
 
-% systems check
-noisy_model = @(t,x)simnoisyODE_kotte(t,x,model,p);
-noisy_flux_test = noisyflux_kotte([M;model.PM],p,model);
+odep = struct('p',p,'model',model);
 
-tspan = 0:0.1:2000;
-opts = odeset('RelTol',1e-12,'AbsTol',1e-10);
-ac = find(strcmpi(model.mets,'ac[e]'));
-npts = 1;
-ap = 9;
-allp = p;
+% systems check
+noisy_model = @(t,x)simnoisyODE_kotte(t,x,odep);
+noisy_flux_test = noisyflux_kotte([M;model.PM],odep);
+
+tspan = 0:0.1:200;
+solver_opts = odeset('RelTol',1e-3,'AbsTol',1e-3);
+% ac = find(strcmpi(model.mets,'ac[e]'));
+% npts = 1;
+% ap = 9;
 
 % simulate noisy system from random initial condition
-[xdyn,xeq,fdyn,feq] = solveODEonly(npts,ival,model,allp,opts,tspan);
+opts = struct('tspan',tspan,'x0',ival,'solver_opts',solver_opts,'odep',odep);
+[xdyn,fdyn] = solve_ode(@simnoisyODE_kotte,opts,@flux_kotte);
+figure
+subplot(211);
+plot(tspan,xdyn);
+ylabel('concentrations a.u.');
+subplot(212)
+plot(tspan,fdyn);
+ylabel('fluxes a.u.');
 
 
 
