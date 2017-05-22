@@ -1,5 +1,8 @@
 % call ode solver to solve ode
-function [yout,flux] = solve_ode(fh,opts,flxh)
+function [yout,flux,yss,fss] = solve_ode(fh,opts,flxh)
+if nargin<3
+    flxh = [];
+end
 
 if isfield(opts,'tspan')
     tspan = opts.tspan;
@@ -28,4 +31,16 @@ tstart = tic;
 fprintf('\nTime to solve ode :%4.3f\n',toc(tstart));
 yout = yout';
 
-flux = flxh([yout;repmat(odep.model.PM,1,size(yout,2))],odep);
+allc = [yout;repmat(odep.model.PM,1,size(yout,2))];
+yss = allc(:,end);
+if ~isempty(flxh)
+    flux = flxh(allc,odep);
+else
+    flux = [];
+end
+
+if ~isempty(flux)
+    fss = flux(:,end);
+else
+    fss = [];
+end
