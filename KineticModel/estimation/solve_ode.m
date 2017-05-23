@@ -27,7 +27,7 @@ else
     newfh = fh;
 end
 tstart = tic;
-[~,yout] = ode45(newfh,tspan,x0,solver_opts);
+[~,yout] = ode23(newfh,tspan,x0,solver_opts);
 fprintf('\nTime to solve ode :%4.3f\n',toc(tstart));
 yout = yout';
 
