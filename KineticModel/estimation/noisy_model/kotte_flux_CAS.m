@@ -1,4 +1,4 @@
-function flux = kotte_flux_CAS(x,p)
+function [flux,FXflx] = kotte_flux_CAS(x,p)
 
 flux = cell(5,1);
 
@@ -17,21 +17,29 @@ kEcat = p(12);
 vFbpmax = p(13);    
 vEXmax = p(14);   
 
+% noise = casadi.SX(rand(5,1)*2);
+
 % metabolic fluxes
 % J(E, acetate)
-flux(1) = kEcat.*x(3).*acetate./(acetate+KEacetate);
+flux{1} = kEcat.*x(3).*acetate./(acetate+KEacetate);
 
 % enzyme production fluxes
 % E(FBP) for J (%FBP ---| Cra and Cra ---> E)
-flux(2) = vemax.*(1-1./(1+(KeFBP./x(2)).^ne));
+flux{2} = vemax.*(1-1./(1+(KeFBP./x(2)).^ne));
 
 % vFbp(PEP,FBP)
 ratio = 1+x(2)./KFbpFBP;
-flux(3) = vFbpmax.*(ratio-1).*(ratio).^3./...
+flux{3} = vFbpmax.*(ratio-1).*(ratio).^3./...
             (ratio.^4+Lfbp.*(1+x(1)./KFbpPEP).^(-4));
 
 % vEX(PEP)
-flux(4) = vEXmax.*x(1)./(x(1)+KEXPEP);
+flux{4} = vEXmax.*x(1)./(x(1)+KEXPEP);
 
 % vPEPout
-flux(5) = kPEPout*x(1);
+flux{5} = kPEPout*x(1);
+
+FXflx = casadi.Function('FXflx',{x,p},{[flux{1};...
+                                        flux{2};...
+                                        flux{3};...
+                                        flux{4};...
+                                        flux{5}]});
