@@ -12,7 +12,7 @@
 % vmodel will use convenience kinetics for estimating fluxes
 
 %% no noise deterministic model - uses casadi to solve
-tspan = 0:0.1:500;
+tspan = 0:0.1:300;
 run_nonoise
 
 % perturb model from ss
@@ -20,20 +20,7 @@ run_nonoise
 odep(14) = .5; % 2;
 perturb_nonoise
 
-%% noisy stochastic model - uses ode23 to solve
-% tspan = 0:0.1:500;
-run_withnoise
-
-% perturb noisy model from ss
-% perturb enzyme 2 (flux(4),vEX)
-odep.p(14) = .5; % 2;
-perturb_noise
-
-
-%% casadi test
-% [FX,FX_flx,fx_sym] = kotte_CAS();
-
-% generate model data from convinience kinetics
+%% test - generate model data from convinience kinetics
 [FX,~,~,fx_sym,~,~,FX_flx] = kotte_conkin_CAS();
 clear tspan odep solver_opts opts
 tspan = 0:0.1:2000;
@@ -54,6 +41,23 @@ subplot(212)
 plot(tspan,f3dyn);
 ylabel('fluxes a.u.');
 legend('J','E(FDP)','vFbP','vEX','vPEPout');
+
+% optimization problem based on minimization of norm of difference in
+% fluxes to estimate parameters for one flux
+obj = @(x)estimation_obj(x,optim_opts);
+grad = @(x)estimation_grad;
+contr = @(x)estimation_constr(x,optim_opts);
+
+
+%% noisy stochastic model - uses ode23 to solve
+% tspan = 0:0.1:500;
+% run_withnoise
+
+% perturb noisy model from ss
+% perturb enzyme 2 (flux(4),vEX)
+% odep.p(14) = .5; % 2;
+% perturb_noise
+
 
 % optimize for parameters by minimizing L2 norm of fluxes
 
