@@ -13,53 +13,64 @@
 
 %% no noise deterministic model - uses casadi to solve
 tspan = 0:0.1:300;
-run_nonoise
+[xdyn,fdyn,xss1,fss1,opts] = run_nonoise(tspan);
 
 % perturb model from ss
 % perturb enzyme 2 (flux(4),vEX)
-odep(13) = .5; % 2;
-perturb_nonoise
+opts.x0 = xss1;
+opts.odep(13) = .5; % 2;
+[x2dyn,f2dyn,xss2,fss2] = perturb_nonoise(opts);
 
 %% test - generate model data from convinience kinetics
-% [FX,~,~,fx_sym,~,~,FX_flx] = kotte_conkin_CAS();
-clear tspan odep solver_opts opts
-tspan = 0:0.1:2000;
-p(14) = 1; % 2;V2max
-p(15) = .1; % K1pep
-p(16) = .3; % K2fdp
-p(17) = 0; % rhoA - regulation
-odep = p;
-solver_opts = struct('abstol',1e-3,'reltol',1e-3);
-opts = struct('tspan',tspan,'x0',ival(1:3),'solver_opts',solver_opts,'odep',odep);
-[x3dyn,f3dyn,xss3,fss3] = solveODE_cas(@kotte_conkin_CAS,opts,@kotte_convkinflux_CAS);
-figure
-subplot(211);
-plot(tspan,x3dyn);
-ylabel('concentrations a.u.');
-legend('pep','fdp','E');
-subplot(212)
-plot(tspan,f3dyn);
-ylabel('fluxes a.u.');
-legend('J','E(FDP)','vFbP','vEX','vPEPout');
-
+% tspan = 0:0.1:2000;
+% [x3dyn,f3dyn,xss3,fss3] = ckintest_script(tspan);
+%% run flux parameter estimation
 % optimization problem based on minimization of norm of difference in
 % fluxes to estimate parameters for one flux
 % get expression for objective function and grad(obj) for fluxi from casadi 
 % [FX,DFX,D2FX,DFp,fx_sym,x_sym,p_sym,FX_flux] = obj_CAS();
-[FX,gradF,~,DFp,fx_sym] = obj_flux1_CAS();
-p1 = [p([1;11])';.1];
-f2 = fss2(1);
-optim_opts = [xss2;f2]; % steady state fluxes (expt) are parameters
-obj = @(x)FX(x,optim_opts);
-grad = @(x)gradF(x,optim_opts);
+% list of all available parameters in order of occurence
+plist = {'K1ac','K3fdp','L3fdp','K3pep','K2pep','vemax','KeFDP','ne',...
+        'd','V4max','k1cat','V3max','V2max','K1pep','K2fdp','rhoA'};
+p_id = cellfun(@(x)strcmpi(plist,x),{'K1ac','k1cat'},'UniformOutput',false);
+p_id = cellfun(@(x)find(x),p_id);
+p = opts.odep(p_id)';
+
+p = [p;.1]; % add K1pep to list of parameters
+f2 = fss2(1); % add steayd state experimental flux
+optim_p = [xss2;f2]; % concentrations & fluxes (expt) are parameters
+
+[FX,gradF] = obj_flux1_CAS();
+obj = @(x)full(FX(x,optim_p));
+grad = @(x)full(gradF(x,optim_p));
 % contr = @(x)estimation_constr(x,optim_opts);
 lb = [1e-6;1e-3;1e-6];
 ub = [20;2000;20];
-x0_opt = p1;
+optim_x0 = p;
 
 % setup opti problem
-opt_prob = opti('obj',obj,'grad',grad,'bounds',lb,ub);
-[x_opt,fval,exitflag,info] = solve(opt_prob,x0_opt); 
+optim_opts = optiset('maxiter',5000,'maxfeval',5000,'display','iter');
+optim_prob = opti('obj',obj,'grad',grad,'bounds',lb,ub,'options',optim_opts);
+[x_opt,fval,exitflag,info] = solve(optim_prob,optim_x0); 
+
+%% check flux using conkin rate law
+pconv = [.1;.3;0]; % extra parameters for CK 'K1pep','K2fdp','rhoA'
+odep = [opts.odep';pconv];
+opt_pid = [p_id,14];
+odep(opt_pid) = x_opt;
+solver_opts = struct('abstol',1e-6,'reltol',1e-6);
+opts = struct('tspan',tspan,'x0',xss2,'solver_opts',solver_opts,'odep',odep);
+[x4dyn,f4dyn,xss4,fss4] = solveODE_cas(@kotte_conkin_CAS,opts,@kotte_convkinflux_noCAS);
+figure
+subplot(211);
+plot(tspan,x4dyn);
+ylabel('concentrations a.u.');
+legend('pep','fdp','E');
+subplot(212)
+plot(tspan,f4dyn);
+ylabel('fluxes a.u.');
+legend('J','E(FDP)','vFbP','vEX','vPEPout');
+
 
 
 
