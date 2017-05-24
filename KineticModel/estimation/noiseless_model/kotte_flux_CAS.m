@@ -5,7 +5,7 @@ flux = cell(5,1);
 % parameters
 K1ac = p(1);    % or 0.02
 K3fdp = p(2);
-L3fbp = p(3);
+L3fdp = p(3);
 K3pep = p(4);
 K2pep = p(5);
 vemax = p(6);        % for bifurcation analysis: 0.7:0.1:1.3
@@ -30,7 +30,7 @@ flux{2} = vemax.*(1-1./(1+(KeFDP./x(2)).^ne));
 % vFbp(PEP,FBP)
 ratio = 1+x(2)./K3fdp;
 flux{3} = V3max.*(ratio-1).*(ratio).^3./...
-            (ratio.^4+L3fbp.*(1+x(1)./K3pep).^(-4));
+            (ratio.^4+L3fdp.*(1+x(1)./K3pep).^(-4));
 
 % vEX(PEP)
 flux{4} = V2max.*x(1)./(x(1)+K2pep);
