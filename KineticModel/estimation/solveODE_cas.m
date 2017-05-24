@@ -45,12 +45,12 @@ sol = Fint('x0',x0,'p',odep);
 yout = full(sol.xf);
 
 ntime = size(yout,2);
-fout = zeros(5,ntime);
+% fout = zeros(5,ntime);
 if givenflux
-    [~,FXflx] = flxh(x,p);
-    for i = 1:ntime
-        fout(:,i) = full(FXflx(yout(:,i),odep));
-    end  
+    fout = flxh(yout,odep);
+%     for i = 1:ntime
+%         fout(:,i) = full(FXflx(yout(:,i),odep));
+%     end  
 end
   
 

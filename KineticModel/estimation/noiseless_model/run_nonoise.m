@@ -20,7 +20,7 @@ clear pvec
 odep = p;
 solver_opts = struct('abstol',1e-3,'reltol',1e-3);
 opts = struct('tspan',tspan,'x0',ival,'solver_opts',solver_opts,'odep',odep);
-[xdyn,fdyn,xss1,fss1] = solveODE_cas(@kotte_CAS,opts,@kotte_flux_CAS);
+[xdyn,fdyn,xss1,fss1] = solveODE_cas(@kotte_CAS,opts,@kotte_flux_noCAS);
 figure
 subplot(211);
 plot(tspan,xdyn);
