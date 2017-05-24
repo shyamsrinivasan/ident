@@ -12,7 +12,8 @@
 %% load original kotte model
 load('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\Kotte2014\model\kotte_model.mat');
 p = pvec;
-ival = M;
+p(9) = [];
+ival = [M;pvec(9)];
 clear pvec
 
 %% solve deterministic (no noise) model using casadi(cvodes)
