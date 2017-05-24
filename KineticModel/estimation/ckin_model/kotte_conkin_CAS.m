@@ -1,12 +1,12 @@
 function [FX,DFX,D2FX,fx_sym,x,p,FX_flux] = kotte_conkin_CAS()
 
-x = casadi.SX.sym('x',3,1);
-p = casadi.SX.sym('p',17,1);
+x = casadi.SX.sym('x',4,1);
+p = casadi.SX.sym('p',16,1);
 
-fx_sym = cell(3,1);
+fx_sym = cell(4,1);
 
 % parameters
-d = p(10);
+d = p(9);
 
 flux = kotte_convkinflux_CAS(x,p);
 % PEP
@@ -16,6 +16,8 @@ fx_sym{2} = flux{4} - flux{3};
 % enzymes
 % E
 fx_sym{3} = flux{2} - d*x(3);
+% acetate
+fx_sym{4} = 0;
 
 FX = casadi.Function('FX',{x,p},{[fx_sym{1};...
                                   fx_sym{2};...
