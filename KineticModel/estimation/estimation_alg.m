@@ -39,19 +39,9 @@ p = opts.odep(p_id)';
 p = [p;.1]; % add K1pep to list of parameters
 f2 = fss2(1); % add steayd state experimental flux
 optim_p = [xss2;f2]; % concentrations & fluxes (expt) are parameters
-
-[FX,gradF] = obj_flux1_CAS();
-obj = @(x)full(FX(x,optim_p));
-grad = @(x)full(gradF(x,optim_p));
-% contr = @(x)estimation_constr(x,optim_opts);
 lb = [1e-6;1e-3;1e-6];
 ub = [20;2000;20];
-optim_x0 = p;
-
-% setup opti problem
-optim_opts = optiset('maxiter',5000,'maxfeval',5000,'display','iter');
-optim_prob = opti('obj',obj,'grad',grad,'bounds',lb,ub,'options',optim_opts);
-[x_opt,fval,exitflag,info] = solve(optim_prob,optim_x0); 
+[x_opt,fval,~,~,opts] = runoptim_flux(opts,@obj_flux1_CAS,lb,ub,p,optim_p);
 
 %% check flux using conkin rate law
 pconv = [.1;.3;0]; % extra parameters for CK 'K1pep','K2fdp','rhoA'
@@ -59,7 +49,7 @@ odep = [opts.odep';pconv];
 opt_pid = [p_id,14];
 odep(opt_pid) = x_opt;
 solver_opts = struct('abstol',1e-6,'reltol',1e-6);
-opts = struct('tspan',tspan,'x0',xss2,'solver_opts',solver_opts,'odep',odep);
+opts = struct('tspan',tspan,'x0',xss1,'solver_opts',solver_opts,'odep',odep);
 [x4dyn,f4dyn,xss4,fss4] = solveODE_cas(@kotte_conkin_CAS,opts,@kotte_convkinflux_noCAS);
 figure
 subplot(211);
