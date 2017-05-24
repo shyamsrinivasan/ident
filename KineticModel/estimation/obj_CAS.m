@@ -1,4 +1,4 @@
-function [FX,DFX,D2FX,fx_sym,x,p,FX_flux] = obj_CAS()
+function [FX,DFX,D2FX,DFp,fx_sym,x,p,FX_flux] = obj_CAS
 % get function expression for objective function of optimization problem
 % and its gradient
 
@@ -26,35 +26,47 @@ k1cat = casadi.SX.sym('k1cat',1);
 V3max = casadi.SX.sym('V3max',1);
 V2max = casadi.SX.sym('V2max',1);
 
-% fluxes
-flux1 = k1cat.*enz.*ac./(ac+K1ac);
-flux2 = vemax.*(1-1./(1+(KeFDP./fdp).^ne));
-ratio = 1+fdp./K3fdp;
-flux3 = V3max.*(ratio-1).*(ratio).^3./...
-            (ratio.^4+L3fdp.*(1+pep./K3pep).^(-4));
-flux4 = V2max.*pep./(pep+K2pep);
-flux5 = V4max*pep;
-
-% f(x) = 0
-fx_sym = cell(3,1);
-% PEP
-fx_sym{1} = flux1 - flux4 - flux5;
-% FBP
-fx_sym{2} = flux4 - flux3;
-% enzymes
-% E
-fx_sym{3} = flux2 - d*enz;
+% given fluxes
+gflux = casadi.SX.sym('gflux',5,1);
 
 % change x and p such that constant concentrations are parameters and
 % variable parameters are in x
-x = [K2pep;V2max];
-p = [pep;fdp;enz;K1ac;K3fdp;L3fdp;K3pep;vemax;KeFDP;ne;ac;d;...
-    V4max;k1cat;V3max];
+x = [K1ac;K3fdp;L3fdp;K3pep;K2pep;vemax;KeFDP;ne;d;...
+    V4max;k1cat;V3max;V2max];
+p = [pep;fdp;enz;ac];
 
-FX = casadi.Function('FX',{x,p},{[fx_sym{1};fx_sym{2};fx_sym{3}]});
-FX_flux = casadi.Function('FX_flux',{[flux1;flux2;flux3;flux4;flux5]});
+% fluxes - original model (for testing only) - subs w/ CK model
+[flux,FX_flux] = kotte_flux_CAS(p,x);
 
-dfx = jacobian([fx_sym{1};fx_sym{2};fx_sym{3}],x);
+diff_flux = [flux{1}-gflux(1);flux{2}-gflux(2);flux{3}-gflux(3);...
+            flux{4}-gflux(4);flux{5}-gflux(5)];
+p = [p;gflux];        
+        
+% objective function : min |v-v*|
+fx_sym = norm(diff_flux);
+FX = casadi.Function('FX',{x,p},{fx_sym});
+
+% gradient of objectiv efunction
+% get gradient of fluxes w.r.t parameters in x
+% dflux_p = jacobian([flux{1};flux{2};flux{3};flux{4};flux{5}],x);
+% grad = 1/(2*sqrt(fx_sym))*(sum(2.*diff_flux.*dflux_p));
+% gradF = casadi.Function('gradF',{x,p},{grad});
+
+dfx = jacobian(fx_sym,x);
 DFX = casadi.Function('DFX',{x,p},{dfx});
 
+dfp = jacobian(fx_sym,p);
+DFp = casadi.Function('DFp',{x,p},{dfp});
+
 D2FX = [];
+
+% f(x) = 0
+% fx_sym = cell(3,1);
+% % PEP
+% fx_sym{1} = flux1 - flux4 - flux5;
+% % FBP
+% fx_sym{2} = flux4 - flux3;
+% % enzymes
+% % E
+% fx_sym{3} = flux2 - d*enz;
+
