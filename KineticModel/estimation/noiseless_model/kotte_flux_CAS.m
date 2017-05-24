@@ -3,40 +3,40 @@ function [flux,FXflx] = kotte_flux_CAS(x,p)
 flux = cell(5,1);
 
 % parameters
-KEacetate = p(1);    % or 0.02
-KFbpFBP = p(2);
-Lfbp = p(3);
-KFbpPEP = p(4);
-KEXPEP = p(5);
+K1ac = p(1);    % or 0.02
+K3fdp = p(2);
+L3fbp = p(3);
+K3pep = p(4);
+K2pep = p(5);
 vemax = p(6);        % for bifurcation analysis: 0.7:0.1:1.3
-KeFBP = p(7);        % or 0.45
+KeFDP = p(7);        % or 0.45
 ne = p(8);             % or 2
-acetate = p(9);
-kPEPout = p(11);
-kEcat = p(12);   
-vFbpmax = p(13);    
-vEXmax = p(14);   
+% ac = p(9);
+V4max = p(10);
+k1cat = p(11);   
+V3max = p(12);    
+V2max = p(13);   
 
 % noise = casadi.SX(rand(5,1)*2);
 
 % metabolic fluxes
 % J(E, acetate)
-flux{1} = kEcat.*x(3).*acetate./(acetate+KEacetate);
+flux{1} = k1cat.*x(3).*x(4)./(x(4)+K1ac);
 
 % enzyme production fluxes
 % E(FBP) for J (%FBP ---| Cra and Cra ---> E)
-flux{2} = vemax.*(1-1./(1+(KeFBP./x(2)).^ne));
+flux{2} = vemax.*(1-1./(1+(KeFDP./x(2)).^ne));
 
 % vFbp(PEP,FBP)
-ratio = 1+x(2)./KFbpFBP;
-flux{3} = vFbpmax.*(ratio-1).*(ratio).^3./...
-            (ratio.^4+Lfbp.*(1+x(1)./KFbpPEP).^(-4));
+ratio = 1+x(2)./K3fdp;
+flux{3} = V3max.*(ratio-1).*(ratio).^3./...
+            (ratio.^4+L3fbp.*(1+x(1)./K3pep).^(-4));
 
 % vEX(PEP)
-flux{4} = vEXmax.*x(1)./(x(1)+KEXPEP);
+flux{4} = V2max.*x(1)./(x(1)+K2pep);
 
 % vPEPout
-flux{5} = kPEPout*x(1);
+flux{5} = V4max*x(1);
 
 FXflx = casadi.Function('FXflx',{x,p},{[flux{1};...
                                         flux{2};...
