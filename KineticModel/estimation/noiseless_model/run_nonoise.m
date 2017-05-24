@@ -1,3 +1,4 @@
+function [xdyn,fdyn,xss1,fss1,opts] = run_nonoise(tspan)
 %% no noise deterministic model 
 % kinetic modeling with noisy metabolomics data 
 % test using kotte model 
