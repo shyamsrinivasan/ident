@@ -24,28 +24,26 @@ ival_bkp = opts.x0;
 odep_bkp = opts.odep;
 
 % calls to optimize fluxes serially
-% use optimized parameters from previous iterations 
-
-
-% optimize uptake flux parameters with perturbation to flux 2
+% use optimized parameters from previous iterations
+%% perturbation to flux 2
 % perutrb model from ss
 opts.x0 = xss1;
 opts.tspan = 0:.1:300;
 exp_pid = 13; % 'V2max'
-opts.odep(exp_pid) = 2; 
+opts.odep(exp_pid) = .5; 
 [~,~,xss2_1,fss2_1] = perturb_nonoise(opts);
 
-% 'K1ac','k1cat','K1pep'
-[x_opt_1,opt_id_1,new_opt_p] = flux1(opts,xss2_1,fss2_1,plist);
+%% optimize flux2 parameters - 'K2pep','V2max','K2fdp'
+[x_opt_1,opt_id_1,new_opt_p] = flux2(opts,xss2_1,fss2_1,plist);
 % check dynamics with new optimized parameters
 % opts.x0 = xss1;
 opts.x0 = ival_bkp;
 opts.odep = odep_bkp;
 opts.odep(opt_id_1) = x_opt_1;
-opts.tspan = 0:.1:500;
-[~,~,fss4_1,xss4_1] = check_conkin_kotte(opts);
+opts.tspan = 0:.1:300;
+[~,~,xss4_1,fss4_1] = check_conkin_kotte(opts);
 
-% optimize flux 3 with perturbation to flux 3
+%% perturbation to flux 3
 % restore from backup
 opts.x0 = xss1;
 opts.tspan = 0:.1:300;
@@ -54,17 +52,36 @@ exp_pid = 12; % 'V3max'
 opts.odep(exp_pid) = 2; % or 2
 [~,~,xss2_2,fss2_2] = perturb_nonoise(opts);
 
-% 'K3fdp','K3pep','V3max','rhoA'
-[x_opt_2,opt_id_2,new_opt_p_2] = flux3(opts,xss2_2,fss2_2,plist,new_opt_p);
+%% optimize flux 3 with - 'K3fdp','K3pep','V3max','rhoA'
+[x_opt_2,opt_id_2,new_opt_p] = flux3(opts,xss2_2,fss2_2,plist,new_opt_p);
 % check dynamics with new optimized parameters
 % opts.x0 = xss1;
 opts.x0 = ival_bkp;
 opts.odep = odep_bkp;
 opts.odep(opt_id_1) = x_opt_1;
 opts.odep(opt_id_2) = x_opt_2;
-opts.tspan = 0:.1:100000;
-[~,~,fss4_2,xss4_2] = check_conkin_kotte(opts);
+opts.tspan = 0:.1:300;
+[~,~,xss4_2,fss4_2] = check_conkin_kotte(opts);
 
+%% perturbation to flux 1
+opts.x0 = xss1;
+opts.tspan = 0:.1:300;
+opts.odep = odep_bkp;
+exp_pid = 11; % 'V3max'
+opts.odep(exp_pid) = 2; % or 2
+[~,~,xss2_3,fss2_3] = perturb_nonoise(opts);
+
+%% optimize uptake flux parameters - 'K1ac','k1cat','K1pep'
+[x_opt_3,opt_id_3,new_opt_p] = flux1(opts,xss2_3,fss2_3,plist,new_opt_p);
+% check dynamics with new optimized parameters
+% opts.x0 = xss1;
+opts.x0 = ival_bkp;
+opts.odep = odep_bkp;
+opts.odep(opt_id_1) = x_opt_1;
+opts.odep(opt_id_2) = x_opt_2;
+opts.odep(opt_id_3) = x_opt_3;
+opts.tspan = 0:.1:500;
+[~,~,xss4_3,fss4_3] = check_conkin_kotte(opts);
 
 
 
