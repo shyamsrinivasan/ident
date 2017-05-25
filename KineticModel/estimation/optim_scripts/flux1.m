@@ -1,4 +1,5 @@
 % optimization of flux parameters in kotte model for a CK formulation
+function [x_opt,opt_pid,fss4,f4dyn,xss4,x4dyn,fval] = flux1(opts)
 % no noise deterministic model - uses casadi to solve - get initial ss
 % tspan = 0:0.1:300;
 % [xdyn,fdyn,xss1,fss1,opts] = run_nonoise(tspan);
