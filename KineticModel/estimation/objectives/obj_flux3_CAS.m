@@ -22,7 +22,8 @@ gflux = casadi.SX.sym('gflux',1);
 
 % flux = k1cat.*enz.*ac./(ac+K1ac); % original model
 acratio = pep./K3pep;
-acflx = (rhoA + (1-rhoA).*acratio./(1+acratio)).^4;
+acflx = rhoA + (1-rhoA).*(acratio./(1+acratio)).^4;
+% acflx = (rhoA + (1-rhoA).*acratio./(1+acratio)).^4;
 flux = V3max.*acflx.*(fdp./K3fdp)./(1+fdp./K3fdp); % conv kin
 
 x = [K3pep;V3max;K3fdp;rhoA];

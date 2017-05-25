@@ -58,7 +58,8 @@ flux(2,:) = vemax.*(1-1./(1+(KeFBP./x(fdp,:)).^ne));
 
 % convinience kinetics w/ allostery for vFbp 
 acratio = x(pep,:)./KFbpPEP;
-acflx = (rhoA + (1-rhoA).*acratio./(1+acratio)).^4;
+acflx = rhoA + (1-rhoA).*(acratio./(1+acratio)).^4;
+% acflx = (rhoA + (1-rhoA).*acratio./(1+acratio)).^4;
 flux(3,:) = vFbpmax.*acflx.*(x(fdp,:)./KFbpFBP)./(1+x(fdp,:)./KFbpFBP);
 
 % convinience kinetics for vEX(pep)
