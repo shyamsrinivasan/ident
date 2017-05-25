@@ -6,14 +6,14 @@ if nargin<5
 end
     
 % flux 3 
-p_id = cellfun(@(x)strcmpi(plist,x),{'K3fdp','K3pep','V3max','rhoA'},'UniformOutput',false);
+p_id = cellfun(@(x)strcmpi(plist,x),{'K3pep','V3max','K3fdp','rhoA'},'UniformOutput',false);
 p_id = cellfun(@(x)find(x),p_id);
 p = opts.odep(p_id)';
 
 f3 = fss2(3); % add steayd state experimental flux
 optim_p = [xss2;f3]; % concentrations & fluxes (expt) are parameters
-lb = [1e-6;1e-6;1e-3;0];
-ub = [20;20;2000;1];
+lb = [1e-6;1e-3;1e-6;0];
+ub = [20;2000;20;1];
 [x_opt,fval,~,~,opts] = runoptim_flux(opts,@obj_flux3_CAS,lb,ub,p,optim_p);
 
 % check flux using conkin rate law
