@@ -12,7 +12,8 @@ function [xdyn,fdyn,xss1,fss1,opts] = run_nonoise(tspan)
 
 %% load original kotte model
 load('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\Kotte2014\model\kotte_model.mat');
-p = pvec;
+pconv = [.1,.3,0]; % extra parameters for CK 'K1pep','K2fdp','rhoA'
+p = [pvec,pconv];
 p(9) = [];
 ival = [M;pvec(9)];
 clear pvec

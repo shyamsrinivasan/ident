@@ -1,7 +1,7 @@
 function [FX,DFX,D2FX,fx_sym,x,p,FX_flux] = kotte_CAS()
 
 x = casadi.SX.sym('x',4,1);
-p = casadi.SX.sym('p',13,1);
+p = casadi.SX.sym('p',16,1);
 
 fx_sym = cell(4,1);
 
