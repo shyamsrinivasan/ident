@@ -19,17 +19,52 @@ plist = {'K1ac','K3fdp','L3fdp','K3pep','K2pep','vemax','KeFDP','ne',...
 tspan = 0:0.1:300;
 [xdyn,fdyn,xss1,fss1,opts] = run_nonoise(tspan);
 
-% perutrb model from ss
-opts.x0 = xss1;
-exp_pid = 13; % 'V2max'
-opts.odep(exp_id) = .5; 
-[x2dyn,f2dyn,xss2,fss2] = perturb_nonoise(opts);
+% backup parameters and initial conditions
+ival_bkp = opts.x0;
+odep_bkp = opts.odep;
 
 % calls to optimize fluxes serially
 % use optimized parameters from previous iterations 
 
+
+% optimize uptake flux parameters with perturbation to flux 2
+% perutrb model from ss
+opts.x0 = xss1;
+opts.tspan = 0:.1:300;
+exp_pid = 13; % 'V2max'
+opts.odep(exp_pid) = 2; 
+[~,~,xss2_1,fss2_1] = perturb_nonoise(opts);
+
 % 'K1ac','k1cat','K1pep'
-flux1 % optimize uptake flux parameters with perturbation to flux 2
+[x_opt_1,opt_id_1,new_opt_p] = flux1(opts,xss2_1,fss2_1,plist);
+% check dynamics with new optimized parameters
+% opts.x0 = xss1;
+opts.x0 = ival_bkp;
+opts.odep = odep_bkp;
+opts.odep(opt_id_1) = x_opt_1;
+opts.tspan = 0:.1:500;
+[~,~,fss4_1,xss4_1] = check_conkin_kotte(opts);
+
+% optimize flux 3 with perturbation to flux 3
+% restore from backup
+opts.x0 = xss1;
+opts.tspan = 0:.1:300;
+opts.odep = odep_bkp;
+exp_pid = 12; % 'V3max'
+opts.odep(exp_pid) = 2; % or 2
+[~,~,xss2_2,fss2_2] = perturb_nonoise(opts);
+
+% 'K3fdp','K3pep','V3max','rhoA'
+[x_opt_2,opt_id_2,new_opt_p_2] = flux3(opts,xss2_2,fss2_2,plist,new_opt_p);
+% check dynamics with new optimized parameters
+% opts.x0 = xss1;
+opts.x0 = ival_bkp;
+opts.odep = odep_bkp;
+opts.odep(opt_id_1) = x_opt_1;
+opts.odep(opt_id_2) = x_opt_2;
+opts.tspan = 0:.1:100000;
+[~,~,fss4_2,xss4_2] = check_conkin_kotte(opts);
+
 
 
 
@@ -41,34 +76,6 @@ flux1 % optimize uptake flux parameters with perturbation to flux 2
 % fluxes to estimate parameters for one flux
 % get expression for objective function and grad(obj) for fluxi from casadi 
 % [FX,DFX,D2FX,DFp,fx_sym,x_sym,p_sym,FX_flux] = obj_CAS();
-
-% generate 
-
-
-
-% 'K3fdp','K3pep','V3max','rhoA'
-flux3 % optimize uptake flux parameters with perturbation to flux 3
-
-
-
-%% check flux using conkin rate law
-pconv = [.1;.3;0]; % extra parameters for CK 'K1pep','K2fdp','rhoA'
-odep = [opts.odep';pconv];
-opt_pid = [p_id,14];
-odep(opt_pid) = x_opt;
-solver_opts = struct('abstol',1e-6,'reltol',1e-6);
-opts = struct('tspan',tspan,'x0',xss1,'solver_opts',solver_opts,'odep',odep);
-[x4dyn,f4dyn,xss4,fss4] = solveODE_cas(@kotte_conkin_CAS,opts,@kotte_convkinflux_noCAS);
-figure
-subplot(211);
-plot(tspan,x4dyn);
-ylabel('concentrations a.u.');
-legend('pep','fdp','E');
-subplot(212)
-plot(tspan,f4dyn);
-ylabel('fluxes a.u.');
-legend('J','E(FDP)','vFbP','vEX','vPEPout');
-
 
 
 
