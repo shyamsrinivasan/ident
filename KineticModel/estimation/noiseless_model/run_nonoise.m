@@ -20,7 +20,7 @@ clear pvec
 
 %% solve deterministic (no noise) model using casadi(cvodes)
 odep = p;
-solver_opts = struct('abstol',1e-3,'reltol',1e-3);
+solver_opts = struct('abstol',1e-6,'reltol',1e-6);
 opts = struct('tspan',tspan,'x0',ival,'solver_opts',solver_opts,'odep',odep);
 [xdyn,fdyn,xss1,fss1] = solveODE_cas(@kotte_CAS,opts,@kotte_flux_noCAS);
 figure
