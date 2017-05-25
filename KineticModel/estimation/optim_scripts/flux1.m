@@ -1,16 +1,16 @@
 % optimization of flux parameters in kotte model for a CK formulation
 % no noise deterministic model - uses casadi to solve - get initial ss
-tspan = 0:0.1:300;
-[xdyn,fdyn,xss1,fss1,opts] = run_nonoise(tspan);
+% tspan = 0:0.1:300;
+% [xdyn,fdyn,xss1,fss1,opts] = run_nonoise(tspan);
 
 % perturb model from ss
 % perturb enzyme 2 (flux(4),vEX)
-opts.x0 = xss1;
-opts.odep(13) = .5; % 2;
-[x2dyn,f2dyn,xss2,fss2] = perturb_nonoise(opts);
-
-plist = {'K1ac','K3fdp','L3fdp','K3pep','K2pep','vemax','KeFDP','ne',...
-        'd','V4max','k1cat','V3max','V2max','K1pep','K2fdp','rhoA'};
+% opts.x0 = xss1;
+% opts.odep(13) = .5; % 2;
+% [x2dyn,f2dyn,xss2,fss2] = perturb_nonoise(opts);
+% 
+% plist = {'K1ac','K3fdp','L3fdp','K3pep','K2pep','vemax','KeFDP','ne',...
+%         'd','V4max','k1cat','V3max','V2max','K1pep','K2fdp','rhoA'};
 
 %% flux 1    
 p_id = cellfun(@(x)strcmpi(plist,x),{'K1ac','k1cat'},'UniformOutput',false);
