@@ -24,5 +24,7 @@ if ~isempty(old_opt_p)
 %     opts.odep = [opts.odep';pconv];
 end
 opt_pid = p_id; % [p_id,16];
-opts.odep(opt_pid) = x_opt;
+if ~isempty(x_opt)
+    opts.odep(opt_pid) = x_opt;
+end    
 new_opt_p = opts.odep;
