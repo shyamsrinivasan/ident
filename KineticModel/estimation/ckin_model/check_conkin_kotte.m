@@ -9,7 +9,7 @@ figure
 subplot(211);
 plot(opts.tspan,x4dyn);
 ylabel('concentrations a.u.');
-legend('pep','fdp','E');
+legend('pep','fdp','E','acetate');
 subplot(212)
 plot(opts.tspan,f4dyn);
 ylabel('fluxes a.u.');
