@@ -17,7 +17,7 @@ fx_sym{2} = flux{4} - flux{3};
 % E
 fx_sym{3} = flux{2} - d*x(3);
 % acetate
-fx_sym{4} = 0;
+fx_sym{4} = x(4) - x(4);
 
 
 FX = casadi.Function('FX',{x,p},{[fx_sym{1};...
