@@ -29,7 +29,7 @@ flux{2} = vemax.*(1-1./(1+(KeFDP./x(2)).^ne));
 
 % convinience kinetics w/ allostery for vFbp 
 acratio = x(1)./K3pep;
-acflx = rhoA + (1-rhoA).*(acratio./(1+acratio)).^4;
+acflx = rhoA + (1-rhoA).*(acratio./(1+acratio));
 % acflx = (rhoA + (1-rhoA).*acratio./(1+acratio)).^4;
 flux{3} = V3max.*acflx.*(x(2)./K3fdp)./(1+x(2)./K3fdp);
 
@@ -37,7 +37,7 @@ flux{3} = V3max.*acflx.*(x(2)./K3fdp)./(1+x(2)./K3fdp);
 flux{4} = V2max.*(x(1)./K2pep)/(1+x(1)./K2pep+x(2)./K2fdp);
 
 % linear kinetics for vPEPout
-flux{5} = V4max*x(1);
+flux{5} = V4max.*x(1);
 
 FXflx = casadi.Function('FXflx',{x,p},{[flux{1};...
                                         flux{2};...
