@@ -11,7 +11,19 @@ function [xdyn,fdyn,xss1,fss1,opts] = run_nonoise(tspan)
 % given : x(expt), vexpt
 
 %% load original kotte model
-load('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\Kotte2014\model\kotte_model.mat');
+if ~exist('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\Kotte2014\model\kotte_model.mat')
+    status = 2;
+    fprintf('\nLinux System\n');
+else 
+    status = 1;
+    fprintf('\nWindows System\n');
+end
+if status == 1
+    load('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel\Kotte2014\model\kotte_model.mat');
+elseif status == 2
+    load('/home/shyam/Documents/Courses/CHE1125Project/IntegratedModels/KineticModel/Kotte2014/model/kotte_model.mat');    
+end
+
 pconv = [.1,.3,0]; % extra parameters for CK 'K1pep','K2fdp','rhoA'
 p = [pvec,pconv];
 p(9) = [];
