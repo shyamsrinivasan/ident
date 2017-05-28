@@ -1,5 +1,9 @@
 function [x_opt,fval,xss4,fss4,opts] =...
-         runoptim_flux(opts,objCASh,lb,ub,x0,optim_p)
+         runoptim_flux(opts,objCASh,lb,ub,x0,optim_p,multi)
+
+if nargin<7
+    multi = 0;
+end
 
 [FX,gradF] = objCASh();
 obj = @(x)full(FX(x,optim_p));
@@ -17,10 +21,17 @@ optim_opts = optiset('solver','NLOPT','maxiter',5000,...
 %                                       'maxfeval',5000,...                                      
 %                                       'display','final');
 optim_prob = opti('obj',obj,'grad',grad,'bounds',lb,ub,'options',optim_opts);
-[xval,fval,exitflag,info] = solve(optim_prob,x0); 
+if multi
+    [xval,fval,exitflag,info] = multisolve(optim_prob,[],[50 10]);   
+else
+    [xval,fval,exitflag,info] = solve(optim_prob,x0); 
+end
 
 if exitflag == 1 &&...
-   (strcmpi(info.Status,'Success')||strcmpi(info.Status,'Optimal'))
+   (strcmpi(info.Status,'Success')||...
+    strcmpi(info.Status,'Optimal')||...
+    strcmpi(info.Status,'Converged / Target Reached'))
+
     x_opt = xval;
 else
     x_opt = [];
