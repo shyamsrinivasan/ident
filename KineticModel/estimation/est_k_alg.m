@@ -65,14 +65,16 @@ odep_bkp_2 = opts.odep;
 
 %% optimize flux 3 with - 'K3fdp','K3pep','V3max','rhoA'
 fprintf('\nOptimizing parameters for flux 3.....\n');
-[x_opt_2,opt_id_2,~,fval_2] = flux3_k(opts,xss2_2,fss2_2,plist);
+% [x_opt_2,opt_id_2,~,fval_2] = flux3_k(opts,xss2_2,fss2_2,plist);
+% testing the use of scip as a global optimizer for nlp
+[x_opt_2_6,opt_id_2_6,~,fval_2] = flux3_k_scip(opts,xss2_2,fss2_2,plist);
 
 %% check if new parameters give the same perturbed flux value
-opts.x0 = xss2_2;
+opts.x0 = xss1;
 opts.odep = odep_bkp_2;
 opts.tspan = 0:.1:500;
-opts.odep(opt_id_2) = x_opt_2;
-[~,~,xss4_2,fss4_2] = check_conkin_kotte(opts);
+opts.odep(opt_id_2_6) = x_opt_2_6;
+[~,~,xss4_2,fss4_2] = check_kin_kotte(opts);
 
 %% perturbation to flux 4
 opts.x0 = xss1;
