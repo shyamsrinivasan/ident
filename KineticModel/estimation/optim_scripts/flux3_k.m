@@ -8,9 +8,8 @@ end
 % flux 3 
 p_id = cellfun(@(x)strcmpi(plist,x),{'K3pep','V3max','K3fdp','L3fdp'},'UniformOutput',false);
 p_id = cellfun(@(x)find(x),p_id);
-p = opts.odep(p_id)'; % [.1;.5;.1;3e6];
-
-f3 = fss2(3); % add steayd state experimental flux
+p = opts.odep(p_id)'; % [.1;.5;.1;3e6]; 
+f3 = fss2(3,:); % add steayd state experimental flux
 optim_p = [xss2;f3]; % concentrations & fluxes (expt) are parameters
 lb = [1e-6;1e-3;1e-6;1];
 ub = [20;2000;20;5e6];
