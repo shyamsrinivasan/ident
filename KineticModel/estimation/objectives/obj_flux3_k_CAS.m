@@ -1,15 +1,16 @@
-function [FX,DFX,D2FX,DFp,fx_sym,x,p] = obj_flux3_k_CAS
+function [FX,DFX,D2FX,DFp,fx_sym,x,p] = obj_flux3_k_CAS(np)
 % get function expression for objective function of optimization problem
 % and its gradient
 
+% np - number of perturbations 
 % x - parameters that are being optimized for
 % p - parameters and concentrations that are being held constant
 
 % concentrations
-pep = casadi.SX.sym('pep',1);
-fdp = casadi.SX.sym('fdp',1);
-enz = casadi.SX.sym('enz',1);
-ac = casadi.SX.sym('ac',1);
+pep = casadi.SX.sym('pep',1,np);
+fdp = casadi.SX.sym('fdp',1,np);
+enz = casadi.SX.sym('enz',1,np);
+ac = casadi.SX.sym('ac',1,np);
 
 % parameters
 K3pep = casadi.SX.sym('K3pep',1);
@@ -18,7 +19,7 @@ K3fdp = casadi.SX.sym('K3fdp',1);
 L3fdp = casadi.SX.sym('L3fdp',1);
 
 % given fluxes
-gflux = casadi.SX.sym('gflux',1);
+gflux = casadi.SX.sym('gflux',1,np);
 
 ratio = 1+fdp./K3fdp;
 flux = V3max.*(ratio-1).*(ratio).^3./...
