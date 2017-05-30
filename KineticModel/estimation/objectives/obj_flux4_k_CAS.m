@@ -1,4 +1,4 @@
-function [FX,DFX,D2FX,DFp,fx_sym,x,p] = obj_flux2_k_CAS(np)
+function [FX,DFX,D2FX,DFp,fx_sym,x,p] = obj_flux4_k_CAS(np)
 % get function expression for objective function of optimization problem
 % and its gradient
 
@@ -12,16 +12,15 @@ enz = casadi.SX.sym('enz',1,np);
 ac = casadi.SX.sym('ac',1,np);
 
 % parameters
-K2pep = casadi.SX.sym('K2pep',1);
-V2max = casadi.SX.sym('V2max',1);
+V4max = casadi.SX.sym('V4max',1,np);
 
 % given fluxes
 gflux = casadi.SX.sym('gflux',1,np);
 
 % flux = k1cat.*enz.*ac./(ac+K1ac); % original model
-flux = V2max.*pep./(pep+K2pep); % conv kin
+flux = V4max.*pep; % conv kin
 
-x = [K2pep;V2max];
+x = V4max;
 p = [pep;fdp;enz;ac;gflux];
 
 fx_sym = norm(flux-gflux);
