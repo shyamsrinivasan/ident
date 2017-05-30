@@ -23,7 +23,7 @@ optim_opts = optiset('solver','NLOPT','maxiter',5000,...
 %                                       'display','final');
 optim_prob = opti('obj',obj,'grad',grad,'bounds',lb,ub,'options',optim_opts);
 if multi
-    [xval,fval,exitflag,info] = multisolve(optim_prob,[],[25 10]);   
+    [xval,fval,exitflag,info] = multisolve(optim_prob,[],[50 10]);   
 else
     [xval,fval,exitflag,info] = solve(optim_prob,x0); 
 end
