@@ -68,11 +68,16 @@ fprintf('\nOptimizing parameters for flux 3.....\n');
 flux3_k(opts,xss_1,fss_1,plist);
 
 %% check if new parameters give the same perturbed flux value
+% rerun perturbations with new parameters
 opts.x0 = xss1;
 opts.odep = odep_bkp;
-opts.tspan = 0:.1:500;
+opts.tspan = 0:.1:10000;
 opts.odep(opt_id_1) = x_opt_1;
-opts.odep(12) = 2;
-[~,~,xss4_1,fss4_1] = check_kin_kotte(opts);
+exp_pid = 11;
+exp_pval = [.2;.5;.8;1.2;1.5;1.8;2];
+[xss4_1,fss4_1] = runperturbations(@perturb_nonoise,exp_pid,exp_pval,opts);
+
+% [~,~,xss4_1,fss4_1] = check_kin_kotte(opts);
+
 
 
