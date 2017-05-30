@@ -49,33 +49,33 @@ exp_val = [0;.1;.4;.5;.6;.8;1];
 [xss_4,fss_4] = runperturbations(@perturb_nonoise,exp_pid,exp_pval,opts);
 close all
 
-%% optimize flux 3 with - 'K3fdp','K3pep','V3max','rhoA'
-% opts.odep = odep_bkp;
-% fprintf('\nOptimizing parameters for flux 3.....\n');
-% [x_opt_1,opt_id_1,~,fval_1] =...
-% flux3_k(opts,[xss_1,xss_2,xss_3,xss_4],[fss_1,fss_2,fss_3,fss_4],plist);
-% 
-% fprintf('\nOptimizing parameters for flux 3.....\n');
-% [x_opt_2,opt_id_2,~,fval_2] =...
-% flux3_k(opts,[xss_1,xss_2,xss_3],[fss_1,fss_2,fss_3],plist);
-
 %% use only 1 perturbation set flux to get parameters
 x_opt_1 = optimize_p(opts,xss_1,fss_1,plist,odep_bkp);
 
 %% use 2 perturbation sets 
 x_opt_2 = optimize_p(opts,[xss_1,xss_2],[fss_1,fss_2],plist,odep_bkp);
 
+%% use 3 perturbation sets
+x_opt_3 =...
+optimize_p(opts,[xss_1,xss_2,xss_3],[fss_1,fss_2,fss_3],plist,odep_bkp);
+
+%% use 4 perturbation sets
+x_opt_4 =...
+optimize_p(opts,[xss_1,xss_2,xss_3,xss_4],[fss_1,fss_2,fss_3,fss_4],plist,odep_bkp);
+
+
+
 
 
 %% check if new parameters give the same perturbed flux value
 % rerun perturbations with new parameters
-opts.x0 = xss1;
-opts.odep = odep_bkp;
-opts.tspan = 0:.1:10000;
-opts.odep(opt_id_1) = x_opt_1;
-exp_pid = 11;
-exp_pval = [.2;.5;.8;1.2;1.5;1.8;2];
-[xss4_1,fss4_1] = runperturbations(@perturb_nonoise,exp_pid,exp_pval,opts);
+% opts.x0 = xss1;
+% opts.odep = odep_bkp;
+% opts.tspan = 0:.1:10000;
+% opts.odep(opt_id_1) = x_opt_1;
+% exp_pid = 11;
+% exp_pval = [.2;.5;.8;1.2;1.5;1.8;2];
+% [xss4_1,fss4_1] = runperturbations(@perturb_nonoise,exp_pid,exp_pval,opts);
 
 % [~,~,xss4_1,fss4_1] = check_kin_kotte(opts);
 
