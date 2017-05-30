@@ -10,7 +10,7 @@ p_id = cellfun(@(x)strcmpi(plist,x),{'K2pep','V2max'},'UniformOutput',false);
 p_id = cellfun(@(x)find(x),p_id);
 p = opts.odep(p_id)';
 
-f2 = fss2(4); % add steayd state experimental flux
+f2 = fss2(4,:); % add steayd state experimental flux
 optim_p = [xss2;f2]; % concentrations & fluxes (expt) are parameters
 lb = [1e-6;1e-3];
 ub = [20;2000];
