@@ -14,7 +14,7 @@ f2 = fss2(4); % add steayd state experimental flux
 optim_p = [xss2;f2]; % concentrations & fluxes (expt) are parameters
 lb = [1e-6;1e-3];
 ub = [20;2000];
-[x_opt,fval,~,~,opts] = runoptim_flux(opts,@obj_flux2_k_CAS,lb,ub,p,optim_p);
+[x_opt,fval,~,~,opts] = runoptim_flux(opts,@obj_flux2_k_CAS,lb,ub,p,optim_p,1);
 
 % check flux using conkin rate law
 if ~isempty(old_opt_p)
