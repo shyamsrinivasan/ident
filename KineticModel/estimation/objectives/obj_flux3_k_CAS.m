@@ -16,7 +16,7 @@ ac = casadi.SX.sym('ac',1,np);
 K3pep = casadi.SX.sym('K3pep',1);
 V3max = casadi.SX.sym('V3max',1);
 K3fdp = casadi.SX.sym('K3fdp',1);
-L3fdp = casadi.SX.sym('L3fdp',1);
+L3fdp = 4e6; % casadi.SX.sym('L3fdp',1);
 
 % given fluxes
 gflux = casadi.SX.sym('gflux',1,np);
@@ -25,7 +25,7 @@ ratio = 1+fdp./K3fdp;
 flux = V3max.*(ratio-1).*(ratio).^3./...
             (ratio.^4+L3fdp.*(1+pep./K3pep).^(-4));
 
-x = [K3pep;V3max;K3fdp;L3fdp];
+x = [K3pep;V3max;K3fdp]; % L3fdp];
 p = [pep;fdp;enz;ac;gflux];
 
 fx_sym = norm(flux-gflux);
