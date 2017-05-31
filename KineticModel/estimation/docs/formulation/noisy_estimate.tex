@@ -1,0 +1,61 @@
+\documentclass[10pt]{report}
+
+\usepackage{amsmath}
+\usepackage{array}
+\usepackage{tabu}
+\usepackage{lmodern}
+
+\begin{document}
+	Optimization problem for estimation of kinetic parameters from noisy experimental data. The noisy data is generated through the use of additive noise in flux equations that use a known kinetic model to predict the responses of a metabolic network to different perturbations.\\
+	\begin{equation}
+	v^* = g(x,p) + {\cal{N}}(0,1)
+	\end{equation}
+	where ${\cal{N}}(0,1)$ is Gaussian noise with zero mean and a standard deviation of 1.
+	\begin{equation}\label{eq:ode1}
+	\frac{d}{dt}pep=v_1-v_2-v_4
+	\end{equation}
+	\begin{equation}\label{eq:ode2}
+	\frac{d}{dt}fdp=v_2-v_3
+	\end{equation}
+	\begin{equation}\label{eq:ode3}
+	\frac{d}{dt}E=v_{e,max}\left(\frac{1}{1+\left(\frac{fdp}{K_{e}^{fdp}}\right)^{n_e}}\right) - d E
+	\end{equation}
+	The kinetic expressions for fluxes $v_1$ through $v_4$ are given below. The consumption of acetate through $v_1$ and conversion of \textit{pep} through $v_2$ are expressed in Equations (\ref{eq:flux1}) and (\ref{eq:flux2}) respectively using Michaelis-Menten kinetics. The acetate flux through $v_1$ is also governed by the quantity of available enzyme E. 
+	\begin{equation}\label{eq:flux1}
+	v_1 = k_{1}^{cat}E\frac{acetate}{acetate+K_{1}^{acetate}}
+	\end{equation}	
+	\begin{equation}\label{eq:flux2}
+	v_2 = V_{2}^{max}\frac{pep}{pep+K_{2}^{pep}}
+	\end{equation}
+	\begin{equation}\label{eq:flux3}
+	v_3 = V_{3}^{max}\frac{\tilde{fdp}\left(1+\tilde{fdp}\right)^3}{\left(1+\tilde{fdp}\right)^4+L_3\left(1+\frac{pep}{K_{3}^{pep}}\right)^{-4}}
+	\end{equation}
+	The allosterically regulated flux $v_3$ for the consumption of \textit{fdp} is expressed in Equation (\ref{eq:flux3}) using the Monod-Wyman-Changeux (MWC) model for allosterically regulated enzymes, where $\tilde{fdp}$ refers to the ratio of \textit{fdp} with respect to its allosteric binding constant $K_{3}^{fdp}$. The added flux $v_4$ for the export of \textit{pep} is expressed as a linear equation dependent on $pep$ in Equation (\ref{eq:flux4}).
+	\begin{equation}\label{eq:flux4}
+	v_4 = k_{4}^{cat}.pep
+	\end{equation}
+	
+	We denote the known noisy flux and concentration information with the superscript $^*$. Accordingly, fluxes $v^*$ and concentrations $x^*$ are the noisy information that will be used for estimation. Fluxes ($v$) and concentrations ($x$) that predicted by the model (without noise) are denoted without the superscript.
+	
+	The optimization formulation to estimate fluxes given below is based on the minimization of the tolerance for the L2-norm of the difference between the model predicted flux and the noisy flux. 
+	\begin{center}
+		\begin{subequations}\label{eq:noisyopt}
+			\begin{align}
+			\underset{x,p}{\mathrm{min}} & \text{      }\varepsilon\\
+			\mathrm{st} & \text{      }|v-v^*| \le \varepsilon\\
+			& \text{      }|x-x^*| \le \varepsilon\\
+			& \text{      }Sv = 0\\
+			& \text{      }v = f(x,p)\\
+			& \text{      }x_{min}\le x \le x_{max}\\
+			& \text{      }p_{min} \le p \le p_{max}
+			\end{align}
+		\end{subequations}		
+	\end{center}
+
+	In Equation (\ref{eq:noisyopt}) above, $\varepsilon$ is the absolute tolerance between the predicted and the measured quantities. The relationship between the predicted and the measured quantities are given by the nonlinear constraints in Equations (\ref{eq:noisyopt}b) and (\ref{eq:noisyopt}c). The stoichiometric constraints for steady state are given by Equation (\ref{eq:noisyopt}d), and Equation (\ref{eq:noisyopt}e) specifies the kinetic rate laws for the predicted fluxes as a function of the concentrations ($x$) and the parameters ($p$). Equations (\ref{eq:noisyopt}f) and (\ref{eq:noisyopt}g) are the bounds for the concentrations and parameters that are to be estimated by the optimization problem. 
+
+	
+	
+	
+\end{document}
+
