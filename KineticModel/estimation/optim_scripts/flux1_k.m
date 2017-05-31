@@ -13,8 +13,8 @@ p = opts.odep(p_id)';
 
 f2 = fss2(1,:); % add steayd state experimental flux
 optim_p = [xss2;f2]; % concentrations & fluxes (expt) are parameters
-lb = [1e-6;1e-3];
-ub = [20;2000];
+lb = [1e-3;1e-3];
+ub = [10;10];
 [x_opt,fval,~,~,opts] = runoptim_flux(opts,@obj_flux1_k_CAS,lb,ub,p,optim_p,1);
 
 % check flux using conkin rate law
