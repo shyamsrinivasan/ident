@@ -41,21 +41,18 @@
 	\begin{center}
 		\begin{subequations}\label{eq:noisyopt}
 			\begin{align}
-			\underset{x,p}{\mathrm{min}} & \text{      }\varepsilon\\
+			\underset{x,p}{\mathrm{min}} & \text{      }e\\
 			\mathrm{st} & \text{      }|v-v^*| \le \varepsilon\\
 			& \text{      }|x-x^*| \le \varepsilon\\
 			& \text{      }Sv = 0\\
-			& \text{      }v = f(x,p)\\
+			& \text{      }v = f(x,p) + e\\
 			& \text{      }x_{min}\le x \le x_{max}\\
-			& \text{      }p_{min} \le p \le p_{max}
+			& \text{      }p_{min} \le p \le p_{max}			
 			\end{align}
 		\end{subequations}		
 	\end{center}
 
-	In Equation (\ref{eq:noisyopt}) above, $\varepsilon$ is the absolute tolerance between the predicted and the measured quantities. The relationship between the predicted and the measured quantities are given by the nonlinear constraints in Equations (\ref{eq:noisyopt}b) and (\ref{eq:noisyopt}c). The stoichiometric constraints for steady state are given by Equation (\ref{eq:noisyopt}d), and Equation (\ref{eq:noisyopt}e) specifies the kinetic rate laws for the predicted fluxes as a function of the concentrations ($x$) and the parameters ($p$). Equations (\ref{eq:noisyopt}f) and (\ref{eq:noisyopt}g) are the bounds for the concentrations and parameters that are to be estimated by the optimization problem. 
-
-	
-	
+	In Equation (\ref{eq:noisyopt}) above, $\varepsilon$ is the absolute tolerance between the predicted and the measured quantities. The relationship between the predicted and the measured quantities are given by the nonlinear constraints in Equations (\ref{eq:noisyopt}b) and (\ref{eq:noisyopt}c). The stoichiometric constraints for steady state are given by Equation (\ref{eq:noisyopt}d), and Equation (\ref{eq:noisyopt}e) specifies the kinetic rate laws for the predicted fluxes as a function of the concentrations ($x$) and the parameters ($p$). Equations (\ref{eq:noisyopt}f) and (\ref{eq:noisyopt}g) are the bounds for the concentrations and parameters that are to be estimated by the optimization problem. The above optimization problem is to be solved for fixed values of $\varepsilon \in \{\text{.01, .05, .1}\}$.	
 	
 \end{document}
 
