@@ -66,6 +66,10 @@ allx_opt_2 = cat(1,opt_sol{2}(:).x_opt);
 opts.odep(allopt_id_2) = allx_opt_2;
 
 % flux 1, 2 and 3 % k1cat, 'V2max', 'V3max'
+ptopts = struct('exp_pid',{11,13,12},...
+                'exp_pval',{[.1;.5;1.0;1.5;2],...
+                            [.1;.5;1.0;1.5;2],...
+                            [.1;.5;1.0;1.5;2]}); 
 sol_opt_p_2 = getperturbations(ptopts,@perturb_nonoise,opts);
 ptopts = struct('exp_pid',10,'exp_pval',[0;.1;.3;.5;.7;.9;1]);
 sol_opt_p_2 = getperturbations(ptopts,@perturb_nonoise,opts,sol_opt_p_2);
@@ -81,6 +85,10 @@ allx_opt_3 = cat(1,opt_sol{3}(:).x_opt);
 opts.odep(allopt_id_3) = allx_opt_3;
 
 % flux 1, 2 and 3 % k1cat, 'V2max', 'V3max'
+ptopts = struct('exp_pid',{11,13,12},...
+                'exp_pval',{[.1;.5;1.0;1.5;2],...
+                            [.1;.5;1.0;1.5;2],...
+                            [.1;.5;1.0;1.5;2]}); 
 sol_opt_p_3 = getperturbations(ptopts,@perturb_nonoise,opts);
 ptopts = struct('exp_pid',10,'exp_pval',[0;.1;.3;.5;.7;.9;1]);
 sol_opt_p_3 = getperturbations(ptopts,@perturb_nonoise,opts,sol_opt_p_3);
@@ -96,6 +104,10 @@ allx_opt_4 = cat(1,opt_sol{4}(:).x_opt);
 opts.odep(allopt_id_4) = allx_opt_4;
 
 % flux 1, 2 and 3 % k1cat, 'V2max', 'V3max'
+ptopts = struct('exp_pid',{11,13,12},...
+                'exp_pval',{[.1;.5;1.0;1.5;2],...
+                            [.1;.5;1.0;1.5;2],...
+                            [.1;.5;1.0;1.5;2]}); 
 sol_opt_p_4 = getperturbations(ptopts,@perturb_nonoise,opts);
 ptopts = struct('exp_pid',10,'exp_pval',[0;.1;.3;.5;.7;.9;1]);
 sol_opt_p_4 = getperturbations(ptopts,@perturb_nonoise,opts,sol_opt_p_4);
