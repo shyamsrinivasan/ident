@@ -16,11 +16,12 @@ for i = 1:npt
     if isfield(ptopts,'exp_pval')
         exp_pval = ptopts(i).exp_pval;
     end
-    [xss,fss] = runperturbations(fh,exp_pid,exp_pval,opts);
+    [xss,fss,collect_p] = runperturbations(fh,exp_pid,exp_pval,opts);
     sol(istart).xss = xss;
     sol(istart).fss = fss;
     sol(istart).exp_pid = exp_pid;
     sol(istart).exp_pval = exp_pval;
+    sol(istart).odep = collect_p;
     
     istart = istart+1;
 end
