@@ -12,43 +12,57 @@ tspan = 0:0.1:300;
 ival_bkp = opts.x0;
 odep_bkp = opts.odep;
 
-%% perturbation to flux 1
+%% perturbation to all fluxes 
 opts.x0 = xss1;
 opts.tspan = 0:.1:300;
 opts.odep = odep_bkp;
-exp_pid = 11; % 'k1cat'
-exp_pval = [.1;.5;1.0;1.5;2];
-[xss_1,fss_1] = runperturbations(@perturb_nonoise,exp_pid,exp_pval,opts);
+% flux 1, 2 and 3 % k1cat, 'V2max', 'V3max'
+ptopts = struct('exp_pid',{11,13,12},...
+                'exp_pval',{[.5;1.0;1.5;2],...
+                            [.1;.5;1.0;1.5;2],...
+                            [.1;.5;1.0;1.5;2]}); 
+sol = getperturbations(ptopts,@perturb_nonoise,opts);
 close all
+% flux 4 V4max
+opts.tspan = 0:.1:10000;
+ptopts = struct('exp_pid',10,'exp_pval',[0;.1;.3;.5;.7;.9;1]);
+sol = getperturbations(ptopts,@perturb_nonoise,opts,sol);
+close all
+
+
+% exp_pid = 11; % 'k1cat'
+% exp_pval = [.1;.5;1.0;1.5;2];
+% [xss_1,fss_1] = runperturbations(@perturb_nonoise,exp_pid,exp_pval,opts);
+% close all
 
 %% perturbation to flux 2
 % perutrb model from ss
-opts.x0 = xss1;
-opts.tspan = 0:.1:300;
-opts.odep = odep_bkp;
-exp_pid = 13; % 'V2max'
-exp_pval = [.1;.5;1.0;1.5;2];
-[xss_2,fss_2] = runperturbations(@perturb_nonoise,exp_pid,exp_pval,opts);
-close all
+% opts.x0 = xss1;
+% opts.tspan = 0:.1:300;
+% opts.odep = odep_bkp;
+% exp_pid = 13; % 'V2max'
+% exp_pval = [.1;.5;1.0;1.5;2];
+% [xss_2,fss_2] = runperturbations(@perturb_nonoise,exp_pid,exp_pval,opts);
+% close all
 
 %% perturbation to flux 3
 % restore from backup
-opts.x0 = xss1;
-opts.tspan = 0:.1:300;
-opts.odep = odep_bkp;
-exp_pid = 12; % 'V3max'
-exp_pval = [.1;.5;1.0;1.5;2];
-[xss_3,fss_3] = runperturbations(@perturb_nonoise,exp_pid,exp_pval,opts);
-close all
+% opts.x0 = xss1;
+% opts.tspan = 0:.1:300;
+% opts.odep = odep_bkp;
+% exp_pid = 12; % 'V3max'
+% exp_pval = [.1;.5;1.0;1.5;2];
+% [xss_3,fss_3] = runperturbations(@perturb_nonoise,exp_pid,exp_pval,opts);
+% close all
 
 %% perturbation to flux 4
-opts.x0 = xss1;
-opts.tspan = 0:.1:10000;
-opts.odep = odep_bkp;
-exp_pid = 10; % 'V4max'
-exp_pval = [0;.1;.3;.5;.7;.9;1];
-[xss_4,fss_4] = runperturbations(@perturb_nonoise,exp_pid,exp_pval,opts);
-close all
+% opts.x0 = xss1;
+% opts.tspan = 0:.1:10000;
+% opts.odep = odep_bkp;
+% exp_pid = 10; % 'V4max'
+% exp_pval = [0;.1;.3;.5;.7;.9;1];
+% [xss_4,fss_4] = runperturbations(@perturb_nonoise,exp_pid,exp_pval,opts);
+% close all
 
 %% use only perturbation set to flux 1 to get parameters
 x_opt_1 = optimize_p(opts,xss_1,fss_1,plist,odep_bkp);
