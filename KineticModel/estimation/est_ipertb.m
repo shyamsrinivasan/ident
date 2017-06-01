@@ -23,91 +23,38 @@ ptopts = struct('exp_pid',{11,13,12},...
                             [.1;.5;1.0;1.5;2]}); 
 sol = getperturbations(ptopts,@perturb_nonoise,opts);
 close all
+
 % flux 4 V4max
 opts.tspan = 0:.1:10000;
 ptopts = struct('exp_pid',10,'exp_pval',[0;.1;.3;.5;.7;.9;1]);
 sol = getperturbations(ptopts,@perturb_nonoise,opts,sol);
 close all
 
-
-% exp_pid = 11; % 'k1cat'
-% exp_pval = [.1;.5;1.0;1.5;2];
-% [xss_1,fss_1] = runperturbations(@perturb_nonoise,exp_pid,exp_pval,opts);
-% close all
-
-%% perturbation to flux 2
-% perutrb model from ss
-% opts.x0 = xss1;
-% opts.tspan = 0:.1:300;
-% opts.odep = odep_bkp;
-% exp_pid = 13; % 'V2max'
-% exp_pval = [.1;.5;1.0;1.5;2];
-% [xss_2,fss_2] = runperturbations(@perturb_nonoise,exp_pid,exp_pval,opts);
-% close all
-
-%% perturbation to flux 3
-% restore from backup
-% opts.x0 = xss1;
-% opts.tspan = 0:.1:300;
-% opts.odep = odep_bkp;
-% exp_pid = 12; % 'V3max'
-% exp_pval = [.1;.5;1.0;1.5;2];
-% [xss_3,fss_3] = runperturbations(@perturb_nonoise,exp_pid,exp_pval,opts);
-% close all
-
-%% perturbation to flux 4
-% opts.x0 = xss1;
-% opts.tspan = 0:.1:10000;
-% opts.odep = odep_bkp;
-% exp_pid = 10; % 'V4max'
-% exp_pval = [0;.1;.3;.5;.7;.9;1];
-% [xss_4,fss_4] = runperturbations(@perturb_nonoise,exp_pid,exp_pval,opts);
-% close all
-
-%% use only perturbation set to flux 1 to get parameters
-x_opt_1 = optimize_p(opts,xss_1,fss_1,plist,odep_bkp);
-
-%% use only perturbation set to flux 2 to get parameters
-x_opt_5 = optimize_p(opts,xss_2,fss_2,plist,odep_bkp);
-
-%% use only perturbation set to flux 3 to get parameters
-x_opt_6 = optimize_p(opts,xss_3,fss_3,plist,odep_bkp);
-
-%% use only perturbation set to flux 4 to get parameters
-x_opt_7 = optimize_p(opts,xss_4,fss_4,plist,odep_bkp);
+%% use single perturbation sets to get parameters
+optimopts = struct('xss',{sol(1).xss,sol(2).xss,...
+                          sol(3).xss,sol(4).xss},...
+                   'fss',{sol(1).fss,sol(2).fss,...
+                          sol(3).fss,sol(4).fss});
+opt_sol = runoptimp(opts,plist,odep_bkp,optimopts);                       
+% x_opt_1 = optimize_p(opts,xss_1,fss_1,plist,odep_bkp);
 
 %% rerun all perturbations with new parameters from x_opt_1
 % check if new parameters give the same perturbed flux value
 opts.x0 = xss1;
 opts.odep = odep_bkp;
 opts.tspan = 0:.1:10000;
-allopt_id_1 = cat(2,x_opt_1(:).opt_id);
-allx_opt_1 = cat(1,x_opt_1(:).x_opt);
+allopt_id_1 = cat(2,opt_sol{1}(:).opt_id);
+allx_opt_1 = cat(1,opt_sol{1}(:).x_opt);
 opts.odep(allopt_id_1) = allx_opt_1;
 
-% perturbation to flux 1
-exp_pid = 11; % 'k1cat'
-exp_pval = [.1;.5;1.0;1.5;2];
-[xss4_1,fss4_1] = runperturbations(@perturb_nonoise,exp_pid,exp_pval,opts);
-close all
-
-% perturbation to flux 2
-exp_pid = 13; % 'V2max'
-exp_pval = [.1;.5;1.0;1.5;2];
-[xss4_2,fss4_2] = runperturbations(@perturb_nonoise,exp_pid,exp_pval,opts);
-close all
-
-% perturbation to flux 3
-% restore from backup
-exp_pid = 12; % 'V3max'
-exp_pval = [.1;.5;1.0;1.5;2];
-[xss4_3,fss4_3] = runperturbations(@perturb_nonoise,exp_pid,exp_pval,opts);
-close all
-
-% perturbation to flux 4
-exp_pid = 10; % 'V4max'
-exp_pval = [0;.1;.3;.5;.7;.9;1];
-[xss4_4,fss4_4] = runperturbations(@perturb_nonoise,exp_pid,exp_pval,opts);
+% perturbations to flux 1, 2 and 3 % k1cat, 'V2max', 'V3max'
+ptopts = struct('exp_pid',{11,13,12},...
+                'exp_pval',{[.5;1.0;1.5;2],...
+                            [.1;.5;1.0;1.5;2],...
+                            [.1;.5;1.0;1.5;2]}); 
+sol_opt_p_1 = getperturbations(ptopts,@perturb_nonoise,opts);
+ptopts = struct('exp_pid',10,'exp_pval',[0;.1;.3;.5;.7;.9;1]);
+sol_opt_p_1 = getperturbations(ptopts,@perturb_nonoise,opts,sol_opt_p_1);
 close all
 
 %% rerun all perturbations with new parameters from x_opt_5
@@ -115,33 +62,18 @@ close all
 opts.x0 = xss1;
 opts.odep = odep_bkp;
 opts.tspan = 0:.1:10000;
-allopt_id_5 = cat(2,x_opt_5(:).opt_id);
-allx_opt_5 = cat(1,x_opt_5(:).x_opt);
+allopt_id_5 = cat(2,opt_sol{2}(:).opt_id);
+allx_opt_5 = cat(1,opt_sol{2}(:).x_opt);
 opts.odep(allopt_id_5) = allx_opt_5;
 
-% perturbation to flux 1
-exp_pid = 11; % 'k1cat'
-exp_pval = [.1;.5;1.0;1.5;2];
-[xss9_1,fss9_1] = runperturbations(@perturb_nonoise,exp_pid,exp_pval,opts);
-close all
-
-% perturbation to flux 2
-exp_pid = 13; % 'V2max'
-exp_pval = [.1;.5;1.0;1.5;2];
-[xss9_2,fss9_2] = runperturbations(@perturb_nonoise,exp_pid,exp_pval,opts);
-close all
-
-% perturbation to flux 3
-% restore from backup
-exp_pid = 12; % 'V3max'
-exp_pval = [.1;.5;1.0;1.5;2];
-[xss9_3,fss9_3] = runperturbations(@perturb_nonoise,exp_pid,exp_pval,opts);
-close all
-
-% perturbation to flux 4
-exp_pid = 10; % 'V4max'
-exp_pval = [0;.1;.3;.5;.7;.9;1];
-[xss9_4,fss9_4] = runperturbations(@perturb_nonoise,exp_pid,exp_pval,opts);
+% perturbations to flux 1, 2 and 3 and 4 % k1cat, 'V2max', 'V3max', V4max
+ptopts = struct('exp_pid',{11,13,12},...
+                'exp_pval',{[.5;1.0;1.5;2],...
+                            [.1;.5;1.0;1.5;2],...
+                            [.1;.5;1.0;1.5;2]}); 
+sol_opt_p_5 = getperturbations(ptopts,@perturb_nonoise,opts);
+ptopts = struct('exp_pid',10,'exp_pval',[0;.1;.3;.5;.7;.9;1]);
+sol_opt_p_5 = getperturbations(ptopts,@perturb_nonoise,opts,sol_opt_p_5);
 close all
 
 %% rerun all perturbations with new parameters from x_opt_6
@@ -149,33 +81,18 @@ close all
 opts.x0 = xss1;
 opts.odep = odep_bkp;
 opts.tspan = 0:.1:10000;
-allopt_id_6 = cat(2,x_opt_6(:).opt_id);
-allx_opt_6 = cat(1,x_opt_6(:).x_opt);
+allopt_id_6 = cat(2,opt_sol{3}(:).opt_id);
+allx_opt_6 = cat(1,opt_sol{3}(:).x_opt);
 opts.odep(allopt_id_6) = allx_opt_6;
 
-% perturbation to flux 1
-exp_pid = 11; % 'k1cat'
-exp_pval = [.1;.5;1.0;1.5;2];
-[xss10_1,fss10_1] = runperturbations(@perturb_nonoise,exp_pid,exp_pval,opts);
-close all
-
-% perturbation to flux 2
-exp_pid = 13; % 'V2max'
-exp_pval = [.1;.5;1.0;1.5;2];
-[xss10_2,fss10_2] = runperturbations(@perturb_nonoise,exp_pid,exp_pval,opts);
-close all
-
-% perturbation to flux 3
-% restore from backup
-exp_pid = 12; % 'V3max'
-exp_pval = [.1;.5;1.0;1.5;2];
-[xss10_3,fss10_3] = runperturbations(@perturb_nonoise,exp_pid,exp_pval,opts);
-close all
-
-% perturbation to flux 4
-exp_pid = 10; % 'V4max'
-exp_pval = [0;.1;.3;.5;.7;.9;1];
-[xss10_4,fss10_4] = runperturbations(@perturb_nonoise,exp_pid,exp_pval,opts);
+% flux 1, 2 and 3 and 4 % k1cat, 'V2max', 'V3max'
+ptopts = struct('exp_pid',{11,13,12},...
+                'exp_pval',{[.5;1.0;1.5;2],...
+                            [.1;.5;1.0;1.5;2],...
+                            [.1;.5;1.0;1.5;2]}); 
+sol_opt_p_6 = getperturbations(ptopts,@perturb_nonoise,opts);
+ptopts = struct('exp_pid',10,'exp_pval',[0;.1;.3;.5;.7;.9;1]);
+sol_opt_p_6 = getperturbations(ptopts,@perturb_nonoise,opts,sol_opt_p_6);
 close all
 
 %% rerun all perturbations with new parameters from x_opt_7
@@ -183,33 +100,18 @@ close all
 opts.x0 = xss1;
 opts.odep = odep_bkp;
 opts.tspan = 0:.1:10000;
-allopt_id_7 = cat(2,x_opt_7(:).opt_id);
-allx_opt_7 = cat(1,x_opt_7(:).x_opt);
+allopt_id_7 = cat(2,opt_sol{4}(:).opt_id);
+allx_opt_7 = cat(1,opt_sol{4}(:).x_opt);
 opts.odep(allopt_id_7) = allx_opt_7;
 
-% perturbation to flux 1
-exp_pid = 11; % 'k1cat'
-exp_pval = [.1;.5;1.0;1.5;2];
-[xss11_1,fss11_1] = runperturbations(@perturb_nonoise,exp_pid,exp_pval,opts);
-close all
-
-% perturbation to flux 2
-exp_pid = 13; % 'V2max'
-exp_pval = [.1;.5;1.0;1.5;2];
-[xss11_2,fss11_2] = runperturbations(@perturb_nonoise,exp_pid,exp_pval,opts);
-close all
-
-% perturbation to flux 3
-% restore from backup
-exp_pid = 12; % 'V3max'
-exp_pval = [.1;.5;1.0;1.5;2];
-[xss11_3,fss11_3] = runperturbations(@perturb_nonoise,exp_pid,exp_pval,opts);
-close all
-
-% perturbation to flux 4
-exp_pid = 10; % 'V4max'
-exp_pval = [0;.1;.3;.5;.7;.9;1];
-[xss11_4,fss11_4] = runperturbations(@perturb_nonoise,exp_pid,exp_pval,opts);
+% flux 1, 2 and 3 and 4 % k1cat, 'V2max', 'V3max'
+ptopts = struct('exp_pid',{11,13,12},...
+                'exp_pval',{[.5;1.0;1.5;2],...
+                            [.1;.5;1.0;1.5;2],...
+                            [.1;.5;1.0;1.5;2]}); 
+sol_opt_p_7 = getperturbations(ptopts,@perturb_nonoise,opts);
+ptopts = struct('exp_pid',10,'exp_pval',[0;.1;.3;.5;.7;.9;1]);
+sol_opt_p_7 = getperturbations(ptopts,@perturb_nonoise,opts,sol_opt_p_7);
 close all
 
 %% compare all optimized parameter perturbations with original model 
@@ -227,59 +129,44 @@ perturbations = {'flux 1','flux 2','flux 3','flux 4'};
 % parameter norms
 p_1_diff = norm(allx_opt_1-odep_bkp(allopt_id_1)');
 
-fss4_1_diff = norm(fss4_1-fss_1);
-fss4_2_diff = norm(fss4_2-fss_2);
-fss4_3_diff = norm(fss4_3-fss_3);
-fss4_4_diff = norm(fss4_4-fss_4);
 fprintf('%s \t %s \t %6.4g \n\t\t\t %s \t %6.4g \n\t\t\t %s \t %6.4g \n\t\t\t %s \t %6.4g \n',...
-         dataset{1},perturbations{1},fss4_1_diff,...
-                    perturbations{2},fss4_2_diff,...
-                    perturbations{3},fss4_3_diff,...
-                    perturbations{4},fss4_4_diff);
-fprintf('Parameter Norm : %6.4g\n',p_1_diff);                
+         dataset{1},perturbations{1},norm(sol_opt_p_1(1).fss-sol(1).fss),...
+                    perturbations{2},norm(sol_opt_p_1(2).fss-sol(2).fss),...
+                    perturbations{3},norm(sol_opt_p_1(3).fss-sol(3).fss),...
+                    perturbations{4},norm(sol_opt_p_1(4).fss-sol(4).fss));
+fprintf('Parameter Norm : %6.4g\n',p_1_diff);                    
 
 % x_opt_2
 % parameter norms
-p_5_diff = norm(allx_opt_5-odep_bkp(allopt_id_5)');
+p_2_diff = norm(allx_opt_5-odep_bkp(allopt_id_5)');
 
-fss9_1_diff = norm(fss9_1-fss_1);
-fss9_2_diff = norm(fss9_2-fss_2);
-fss9_3_diff = norm(fss9_3-fss_3);
-fss9_4_diff = norm(fss9_4-fss_4);
 fprintf('%s \t %s \t %6.4g \n\t\t\t %s \t %6.4g \n\t\t\t %s \t %6.4g \n\t\t\t %s \t %6.4g \n',...
-         dataset{2},perturbations{1},fss9_1_diff,...
-                    perturbations{2},fss9_2_diff,...
-                    perturbations{3},fss9_3_diff,...
-                    perturbations{4},fss9_4_diff);
-fprintf('Parameter Norm : %6.4g\n',p_5_diff);
+         dataset{2},perturbations{1},norm(sol_opt_p_5(1).fss-sol(1).fss),...
+                    perturbations{2},norm(sol_opt_p_5(2).fss-sol(2).fss),...
+                    perturbations{3},norm(sol_opt_p_5(3).fss-sol(3).fss),...
+                    perturbations{4},norm(sol_opt_p_5(4).fss-sol(4).fss));
+fprintf('Parameter Norm : %6.4g\n',p_2_diff);
 
 % x_opt_3
 % parameter norms
-p_6_diff = norm(allx_opt_6-odep_bkp(allopt_id_6)');
+p_3_diff = norm(allx_opt_6-odep_bkp(allopt_id_6)');
 
-fss10_1_diff = norm(fss10_1-fss_1);
-fss10_2_diff = norm(fss10_2-fss_2);
-fss10_3_diff = norm(fss10_3-fss_3);
-fss10_4_diff = norm(fss10_4-fss_4);
 fprintf('%s \t %s \t %6.4g \n\t\t\t %s \t %6.4g \n\t\t\t %s \t %6.4g \n\t\t\t %s \t %6.4g \n',...
-         dataset{3},perturbations{1},fss10_1_diff,...
-                    perturbations{2},fss10_2_diff,...
-                    perturbations{3},fss10_3_diff,...
-                    perturbations{4},fss10_4_diff);
-fprintf('Parameter Norm : %6.4g\n',p_6_diff);
+         dataset{3},perturbations{1},norm(sol_opt_p_6(1).fss-sol(1).fss),...
+                    perturbations{2},norm(sol_opt_p_6(2).fss-sol(2).fss),...
+                    perturbations{3},norm(sol_opt_p_6(3).fss-sol(3).fss),...
+                    perturbations{4},norm(sol_opt_p_6(4).fss-sol(4).fss));
+fprintf('Parameter Norm : %6.4g\n',p_3_diff);
+
 
 % x_opt_4
 % parameter norms
-p_7_diff = norm(allx_opt_7-odep_bkp(allopt_id_7)');
+p_4_diff = norm(allx_opt_7-odep_bkp(allopt_id_7)');
 
-fss11_1_diff = norm(fss11_1-fss_1);
-fss11_2_diff = norm(fss11_2-fss_2);
-fss11_3_diff = norm(fss11_3-fss_3);
-fss11_4_diff = norm(fss11_4-fss_4);
 fprintf('%s \t %s \t %6.4g \n\t\t\t %s \t %6.4g \n\t\t\t %s \t %6.4g \n\t\t\t %s \t %6.4g \n',...
-         dataset{4},perturbations{1},fss11_1_diff,...
-                    perturbations{2},fss11_2_diff,...
-                    perturbations{3},fss11_3_diff,...
-                    perturbations{4},fss11_4_diff);  
-fprintf('Parameter Norm : %6.4g\n',p_7_diff);
-fprintf('================================================\n');            
+         dataset{4},perturbations{1},norm(sol_opt_p_7(1).fss-sol(1).fss),...
+                    perturbations{2},norm(sol_opt_p_7(2).fss-sol(2).fss),...
+                    perturbations{3},norm(sol_opt_p_7(3).fss-sol(3).fss),...
+                    perturbations{4},norm(sol_opt_p_7(4).fss-sol(4).fss));  
+fprintf('Parameter Norm : %6.4g\n',p_4_diff);
+fprintf('================================================\n');                
