@@ -1,5 +1,5 @@
 function [x_opt,fval,xss4,fss4,opts] =...
-         runoptim_flux(opts,objCASh,lb,ub,x0,optim_p,multi)
+         runoptim_flux(opts,objCASh,lb,ub,x0,optim_p,multi,constrfh)
 
 if nargin<7
     multi = 0;
@@ -13,7 +13,7 @@ FX = objCASh(np);
 obj = @(x)full(FX(x,optim_p));
 % grad = @(x)full(gradF(x,optim_p));
 if ~isempty(costrfh)
-    constr = @(x)constrfh();
+    constr = @(x)constrfh(x,optim_p);
     givenconstr = 1;
 else
     givenconstr = 0;
