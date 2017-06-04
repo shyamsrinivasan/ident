@@ -1,26 +1,12 @@
-function dM = noisyNLAE_kotte(x,pstruct)
-% 
-if isfield(pstruct,'p')
-    p = pstruct.p;
-end
-if isfield(pstruct,'model')
-    model = pstruct.model;
-else
-    model = [];
-end
+function dM = noisyNLAE_kotte(x,p)
 
-% x = x + rand(3,1);
 d = p(10);
-dM = zeros(3,size(x,2));
-if ~isempty(model)
-%     PM = cons(model.PM,x);
-    PM = model.PM;
-    allmc = [x;repmat(PM,1,size(x,2))];
-else
-    allmc = x;
-end
-% dM = cons(dM,allmc);
-flux = noisyflux_kotte(allmc,pstruct);
+dM = zeros(4,size(x,2));
+
+% generate noisy flux
+flux = kotte_flux_noCAS(x,p);
+flux = flux + 2*rand(5,1);
+
 % differential equations
 % PEP
 dM(1,:) = flux(1,:) - flux(4,:) - flux(5,:);
@@ -28,7 +14,10 @@ dM(1,:) = flux(1,:) - flux(4,:) - flux(5,:);
 dM(2,:) = flux(4,:) - flux(3,:);
 % enzymes
 % E
-dM(3,:) = flux(2,:) - d*allmc(3,:);
+dM(3,:) = flux(2,:) - d*x(3,:);
+% acetate
+dM(4,:) = x(4,:) - x(4,:);
+
 
 % generate noise
 % noise = rand(3,1);
