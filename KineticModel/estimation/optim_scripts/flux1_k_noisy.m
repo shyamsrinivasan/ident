@@ -14,7 +14,6 @@ p = opts.odep(p_id)';
 x0 = [xss2;p];
 % steady state experimental concetrations and fluxes needed for constraints
 % fed as parameters
-% f2 = ; % add steayd state experimental flux
 optim_p = [xss2;fss2(1,:);.2]; % [concentrations(expt);flux(expt);e(init val)]
 
 % all concentrations as well as kientic parameters are variables
