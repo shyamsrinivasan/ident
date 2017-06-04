@@ -31,10 +31,9 @@ tstart = tic;
 fprintf('\nTime to solve ode :%4.3f\n',toc(tstart));
 yout = yout';
 
-allc = [yout;repmat(odep.model.PM,1,size(yout,2))];
-yss = allc(:,end);
+yss = yout(:,end);
 if ~isempty(flxh)
-    flux = flxh(allc,odep);
+    flux = flxh(yout,odep);
 else
     flux = [];
 end
