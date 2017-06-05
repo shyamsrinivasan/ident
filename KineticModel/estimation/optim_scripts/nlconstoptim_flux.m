@@ -11,11 +11,15 @@ end
 m = 4;
 % objective fun
 obj = @(x)sparse(7,1,-1,7,1)'*x;
+grad = @(x)-1;
 % c = ; % [-1 0 0 0 0];
 
 % constraint function
 if ~isempty(constrfh)
-    nlcons = @(x)constrfh(x,optim_p);
+    % nlcons = @(x)constrfh(x,optim_p);
+    [FX,DFX] = constrfh();
+    nlconFX = @(x)full(FX(x,optim_p));
+    nlconDFX = @(x)full(DFX(x,optim_p));
     givenconstr = 1;
 else
     givenconstr = 0;
@@ -24,7 +28,7 @@ end
 % nlcons = constrfh(x0,optim_p);
 % constraint rhs
 nlrhs = zeros(m+2,1);
-nlrhs(1:2) = optim_p.eps;
+nlrhs(1:2) = 0.1;
 % constraint type : (-1 <, 0 =, 1 >)
 nle = zeros(m+2,1);
 nle(1:2) = -1;
@@ -46,7 +50,8 @@ optim_opts = optiset('solver','NLOPT','maxiter',5000,...
 %                                       'display','final');
 if givenconstr
     optim_prob =...
-    opti('obj',obj,'nlmix',nlcons,nlrhs,nle,'ndec',7,'bounds',lb,ub,'options',optim_opts);
+    opti('obj',obj,'nlmix',nlconFX,nlrhs,nle,'nljac',nlconDFX,...
+         'ndec',7,'bounds',lb,ub,'options',optim_opts);
 else
     optim_prob =...
     opti('obj',obj,'bounds',lb,ub,'options',optim_opts);
