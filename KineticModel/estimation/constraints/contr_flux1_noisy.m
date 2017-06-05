@@ -1,24 +1,37 @@
-function constr = contr_flux1_noisy(x,p,p_id,gflux,gcon)
+function nlcon = contr_flux1_noisy(x,optim_p)
 
-% x = [pep;fdp;enz;ac;K1ac;k1cat];
+% all options passed as options structure
+if isfield(optim_p,'p')
+    p = optim_p.p;
+end
+if isfield(optim_p,'p_id')
+    p_id = optim_p.p_id;
+end
+if isfield(optim_p,'xss')
+    xss = optim_p.xss;
+end
+if isfield(optim_p,'fss')
+    fss = optim_p.fss;
+end
 
-% calculate flux
-p(p_id) = x(5:end);
-flux = kotte_flux(x(1:4),p);
+% variables
+% x = [pep;fdp;enz;ac;K1ac;k1cat;e];
+p(p_id) = x(5:4+length(p_id));
 
-% constr : noisy flux error
-noisy_flux = flux + e;
+% nl constraints
+% constraint 1 : norm of flux for which parameters are estimated (1x1)
+noisy_flux = kotte_flux_noCAS(x(1:4),p);
+noisy_flux(1) = noisy_flux(1) + x(end);    
+nlcon1 = norm(noisy_flux(1)-fss(1));
 
-% constr 1 : flux norm for optimized parameters
-constr1 = norm(noisy_flux(1)-gflux);
+% constraint 2 : norm of all ss concentrations (1x1)
+nlcon2 = norm(x(1:4)-xss);
 
-% constr 2 : concentration steady state
-constr2 = kotte_ode(x(1:4),p,noisy_flux);
+% constraint 3 : ss for concentrations (mx1)
+nlcon3 = kotte_ode(x(1:4),p,noisy_flux);
 
-% constr 3 : concentration norm
-constr3 = norm(x(1:4)-gcon);
-
-constr = [constr1;constr2;constr3];
+% all constraints : (m+2)x1
+nlcon = [nlcon1;nlcon2;nlcon3];
 
 function dx = kotte_ode(x,p,flux)
 dx = zeros(4,1);
