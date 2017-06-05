@@ -14,15 +14,16 @@ p = opts.odep(p_id)';
 x0 = [xss;p;0]; % x = [pep;fdp;enz;ac;K1ac;k1cat;e];
 % steady state experimental concetrations and fluxes needed for constraints
 % fed as parameters
-optim_p = struct('xss',xss,'fss',fss,'p',opts.odep,'p_id',p_id,'eps',.1);
-% optim_p = [xss;fss(1,:)]; % [concentrations(expt);flux(expt);e(init val)]
+nopt_p = opts.odep(setdiff(1:length(opts.odep),p_id));
+% optim_p = struct('xss',xss,'fss',fss,'p',opts.odep,'p_id',p_id,'eps',.1);
+optim_p = [nopt_p';xss;fss(1)];
 
 % all concentrations as well as kientic parameters are variables
 % lb = [pep;fdp;e;ac] - acetate is a equality constraint (fixed parameter)
 lb = [0;0;0;xss(4,1);1e-3;1e-3;0]; 
 ub = [20;20;20;xss(4,1);10;10;20];
 [x_opt,fval,~,~,opts] =...
-nlconstoptim_flux(opts,[],lb,ub,x0,optim_p,0,@contr_flux1_noisy); % linear objective
+nlconstoptim_flux(opts,[],lb,ub,x0,optim_p,0,@constr_flux1_noisy_CAS); % linear objective
 
 % check flux using conkin rate law
 if ~isempty(old_opt_p)
