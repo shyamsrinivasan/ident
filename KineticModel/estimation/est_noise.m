@@ -29,7 +29,7 @@ sol = getperturbations(ptopts,@perturb_noisy,opts);
 %% use single perturbation sets to get parameters
 optimopts = struct('xss',{sol(1).xss},...
                    'fss',{sol(1).fss});
-opt_sol = runoptimp(opts,plist,odep_bkp,optimopts);     
+opt_sol = runoptimp(opts,plist,odep_bkp,optimopts,@optimize_p_noisy);     
 
 
 
