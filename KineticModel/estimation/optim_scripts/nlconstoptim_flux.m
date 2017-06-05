@@ -5,31 +5,36 @@ if nargin<7
     multi = 0;
 end
 if nargin<8
-    costrfh = [];
+    constrfh = [];
 end
 % np = size(optim_p,2);
-
-% objective vector
-e = sparse(1,1,-1,1,5); % [-1 0 0 0 0];
+m = 4;
+% objective fun
+obj = @(x)sparse(7,1,-1,7,1)'*x;
+% c = ; % [-1 0 0 0 0];
 
 % constraint function
-if ~isempty(costrfh)
+if ~isempty(constrfh)
     nlcons = @(x)constrfh(x,optim_p);
     givenconstr = 1;
 else
     givenconstr = 0;
 end
+% test constraint fun
+% nlcons = constrfh(x0,optim_p);
 % constraint rhs
-nlrhs
+nlrhs = zeros(m+2,1);
+nlrhs(1:2) = optim_p.eps;
 % constraint type : (-1 <, 0 =, 1 >)
-nle
+nle = zeros(m+2,1);
+nle(1:2) = -1;
 
 % FX = objCASh(np);
 % obj = @(x)full(FX(x,optim_p));
 % grad = @(x)full(gradF(x,optim_p));
 
 % setup opti problem
-solver_opts = nloptset('algorithm','GN_DIRECT');
+solver_opts = nloptset('algorithm','GN_ISRES');
 optim_opts = optiset('solver','NLOPT','maxiter',5000,...
                                       'maxfeval',5000,...
                                       'tolrfun',1e-8,...
@@ -40,7 +45,8 @@ optim_opts = optiset('solver','NLOPT','maxiter',5000,...
 %                                       'maxfeval',5000,...                                      
 %                                       'display','final');
 if givenconstr
-    optim_prob = opti('obj',e,'nlmix',nlcons,nlrhs,nle,'bounds',lb,ub,'options',optim_opts);
+    optim_prob =...
+    opti('obj',obj,'nlmix',nlcons,nlrhs,nle,'ndec',7,'bounds',lb,ub,'options',optim_opts);
 else
     optim_prob =...
     opti('obj',obj,'bounds',lb,ub,'options',optim_opts);
