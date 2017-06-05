@@ -1,6 +1,6 @@
 % optimization of flux parameters in kotte model for a CK formulation
 function [x_opt,opt_id,new_opt_p,fval] =...
-        flux1_k_noisy(opts,xss2,fss2,plist,old_opt_p)
+        flux1_k_noisy(opts,xss,fss,plist,old_opt_p)
 if nargin<5
     old_opt_p = [];
 end    
@@ -11,15 +11,16 @@ p_id = cellfun(@(x)find(x),p_id);
 p = opts.odep(p_id)';
 % p = [.1;.1];
 
-x0 = [xss2;p];
+x0 = [xss;p;0]; % x = [pep;fdp;enz;ac;K1ac;k1cat;e];
 % steady state experimental concetrations and fluxes needed for constraints
 % fed as parameters
-optim_p = [xss2;fss2(1,:);.2]; % [concentrations(expt);flux(expt);e(init val)]
+optim_p = struct('xss',xss,'fss',fss,'p',opts.odep,'p_id',p_id,'eps',.1);
+% optim_p = [xss;fss(1,:)]; % [concentrations(expt);flux(expt);e(init val)]
 
 % all concentrations as well as kientic parameters are variables
 % lb = [pep;fdp;e;ac] - acetate is a equality constraint (fixed parameter)
-lb = [0;0;0;xss2(4,1);1e-3;1e-3]; 
-ub = [20;20;20;xss2(4,1);10;10];
+lb = [0;0;0;xss(4,1);1e-3;1e-3;0]; 
+ub = [20;20;20;xss(4,1);10;10;20];
 [x_opt,fval,~,~,opts] =...
 nlconstoptim_flux(opts,[],lb,ub,x0,optim_p,0,@contr_flux1_noisy); % linear objective
 
