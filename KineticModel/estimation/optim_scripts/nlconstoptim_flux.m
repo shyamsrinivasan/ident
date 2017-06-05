@@ -24,14 +24,15 @@ if ~isempty(constrfh)
 else
     givenconstr = 0;
 end
-% test constraint fun
-% nlcons = constrfh(x0,optim_p);
+% test if x0 satisfies constraints constraint fun
+nlconsval = nlconFX(x0);
 % constraint rhs
 nlrhs = zeros(m+2,1);
 nlrhs(1:2) = 0.1;
-% constraint type : (-1 <, 0 =, 1 >)
-nle = zeros(m+2,1);
-nle(1:2) = -1;
+nlrhs(3:6) = 1e-10; % precision level for Sv <= 0
+% constraint type : (-1 <=, 0 =, 1 >=)
+nle = -ones(m+2,1); % zeros(m+2,1);
+% nle(1:2) = -1;
 
 % FX = objCASh(np);
 % obj = @(x)full(FX(x,optim_p));
