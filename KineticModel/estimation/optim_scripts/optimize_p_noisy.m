@@ -10,7 +10,7 @@ ts1 = tic;
 % 'K1ac','k1cat'
 fprintf('Optimizing with a single set of perturbations\n');
 fprintf('\nOptimizing parameters for flux 1.....\n');
-[x_opt_4_1,opt_id_4_1,~,fval_4_1] = flux1_k(opts,xss,fss,plist);
+[x_opt_4_1,opt_id_4_1,~,fval_4_1] = flux1_k_noisy(opts,xss,fss,plist);
 optsol(1).x_opt = x_opt_4_1;
 optsol(1).opt_id = opt_id_4_1;
 optsol(1).fval = fval_4_1;
