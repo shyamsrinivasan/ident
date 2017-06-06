@@ -23,7 +23,8 @@ optim_p = [nopt_p';xss;fss(1)];
 lb = [0;0;0;xss(4,1);1e-3;1e-3;0]; 
 ub = [20;20;20;xss(4,1);10;10;20];
 [x_opt,fval,~,~,opts] =...
-nlconstoptim_flux(opts,[],lb,ub,x0,optim_p,0,@constr_flux1_noisy_CAS); % linear objective
+nlconstoptim_flux(opts,@obj_flux1_noisy_CAS,lb,ub,x0,...
+                  optim_p,0,@constr_flux1_noisy_CAS); % linear objective
 
 % check flux using conkin rate law
 if ~isempty(old_opt_p)
