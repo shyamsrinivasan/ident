@@ -9,34 +9,62 @@ if nargin<8
 end
 % np = size(optim_p,2);
 m = 4;
+
 % objective fun
-obj = @(x)sparse(7,1,-1,7,1)'*x;
-grad = @(x)-1;
-% c = ; % [-1 0 0 0 0];
+if ~isempty(objCASh)
+    c = sparse(7,1,-1,7,1); % [0 0 0 0 0 0 -1];
+    [FXobj,gradF] = objCASh();
+    obj = @(x)full(FXobj(x,c));
+    grad = @(x)full(gradF(x,c));
+end
 
 % constraint function
 if ~isempty(constrfh)
     % nlcons = @(x)constrfh(x,optim_p);
-    [FX,DFX] = constrfh();
-    nlconFX = @(x)full(FX(x,optim_p));
-    nlconDFX = @(x)full(DFX(x,optim_p));
+    [FXcons,DFXcons] = constrfh();
+    nlconFX = @(x)full(FXcons(x,optim_p));
+    nlconDFX = @(x)full(DFXcons(x,optim_p));
     givenconstr = 1;
 else
     givenconstr = 0;
 end
-% test if x0 satisfies constraints constraint fun
-nlconsval = nlconFX(x0);
+
 % constraint rhs
 nlrhs = zeros(m+2,1);
 nlrhs(1:2) = 0.1;
-nlrhs(3:6) = 1e-10; % precision level for Sv <= 0
+% nlrhs(3:6) = 1e-10; % precision level for Sv <= 0
 % constraint type : (-1 <=, 0 =, 1 >=)
-nle = -ones(m+2,1); % zeros(m+2,1);
-% nle(1:2) = -1;
+nle = zeros(m+2,1); % -ones(m+2,1);
+nle(1:2) = -1;
 
-% FX = objCASh(np);
-% obj = @(x)full(FX(x,optim_p));
-% grad = @(x)full(gradF(x,optim_p));
+% test if x0 satisfies constraints 
+nlconsval = nlconFX(x0);
+% == constraints
+eqcons_iid = ones(length(nlrhs),1);
+if ~all(nlconsval(nle==0) == nlrhs(nle==0))
+    eqcons_iid(nlconsval ~= nlrhs) = -1;
+    eqcons_iid(nle~=0) = 0;    
+end
+% <= constraints
+lecons_iid = ones(length(nlrhs),1);
+if ~all(nlconsval(nle==-1) == nlrhs(nle==-1))
+    lecons_iid(nlconsval > nlrhs) = -1;
+    lecons_iid(nle~=-1) = 0;    
+end
+% >= constraints
+gecons_iid = ones(length(nlrhs),1);
+if ~all(nlconsval(nle==1) == nlrhs(nle==1))
+    gecons_iid(nlconsval < nlrhs) = -1;
+    gecons_iid(nle~=1) = 0;    
+end
+
+if any(eqcons_iid(nle==0)<0) ||...
+    any(lecons_iid(nle==-1)<0) ||...
+    any(gecons_iid(nle==1)<0)    
+    error('Initial point is infeasible - constraint(s) are violated');
+end
+        
+
 
 % setup opti problem
 % solver_opts = nloptset('algorithm','GN_ISRES');'solverOpts',solver_opts,...
@@ -45,6 +73,7 @@ optim_opts = optiset('solver','NLOPT','maxiter',5000,...
                                       'tolrfun',1e-8,...
                                       'tolafun',1e-10,...                                      
                                       'display','final');
+% solver_opts
 % optim_opts = optiset('solver','IPOPT','maxiter',5000,...
 %                                       'maxfeval',5000,...                                      
 %                                       'display','final');
