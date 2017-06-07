@@ -36,26 +36,31 @@ clear pvec
 %% solve noisy model using ode45
 % odep = struct('p',p,'model',model);
 odep = p;
-solver_opts = odeset('RelTol',1e-3,'AbsTol',1e-3);
-opts = struct('tspan',tspan,'x0',ival,'solver_opts',solver_opts,'odep',odep);
-
+% solver_opts = odeset('RelTol',1e-3,'AbsTol',1e-3);
+% opts = struct('tspan',tspan,'x0',ival,'solver_opts',solver_opts,'odep',odep);
 % % systems check
 % noisy_model = @(t,x)simnoisyODE_kotte(t,x,odep);
 % noisy_flux_test = noisyflux_kotte([M;model.PM],odep);
+% % simulate noisy system from random initial condition - this is better for
+% % simulating the noisy model
+% [xdyn,fdyn,xss1,fss1] = solve_ode(@simnoisyODE_kotte,opts,@kotte_flux_noCAS);
 
-% simulate noisy system from random initial condition - this is better for
-% simulating the noisy model
-[xdyn,fdyn,xss1,fss1] = solve_ode(@simnoisyODE_kotte,opts,@kotte_flux_noCAS);
+% add noise to final steady state value
+
 
 % solve noisy NLAE as a stochastic differential equation (SDE) with
 % Euler-Maruyama algorithm
-% options = sdeset('SDEType','Ito',...
-%                  'RandSeed',2);
-% g = @(t,y)[ones(3,1);0];             
-% [xdyn,w] =...
-% sde_euler(@(t,x)simnoisyODE_kotte(t,x,opts.odep),g,opts.tspan,opts.x0,options);
-% xdyn = xdyn';
-
+g = [eye(3) zeros(3,1);zeros(1,4)];
+% B = eye(6);
+% S = [1 0 0 -1 -1 0;0 0 -1 1 0 0;0 1 0 0 0 -1;0 0 0 0 0 0];
+% g = S*B;
+solver_opts = sdeset('SDEType','Ito',...
+                 'RandSeed',2,...
+                 'ConstGFUN','yes',...
+                 'NonNegative','yes',...
+                 'DiagonalNoise','no');
+opts = struct('tspan',tspan,'x0',ival,'solver_opts',solver_opts,'odep',odep);
+[xdyn,fdyn,xss1,fss1] = solve_sde(@simnoisyODE_kotte,g,opts,@kotte_flux_noCAS);
 
 figure
 subplot(211);
@@ -65,4 +70,4 @@ legend('pep','fdp','E','acetate');
 subplot(212)
 plot(tspan,fdyn);
 ylabel('fluxes a.u.');
-legend('J','E(FDP)','vFbP','vEX','vPEPout');
+legend('J','E(FDP)','vFbP','vEX','vPEPout','vEout');
