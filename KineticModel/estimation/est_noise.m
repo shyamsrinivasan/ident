@@ -35,8 +35,8 @@ soli = getperturbations(ptopts,@perturb_nonoise,optsi);
 % close all
 
 %% use single perturbation sets to get parameters
-optimopts = struct('xss',{soli(1).xss},...
-                   'fss',{soli(1).fss});
+optimopts = struct('xss',{sol(1).xss},...
+                   'fss',{sol(1).fss});
 odep_opt = odep_bkp;
 odep_opt(11) = 2;
 opt_sol = runoptimp(opts,plist,odep_opt,optimopts,@optimize_p_noisy);     
