@@ -1,8 +1,8 @@
 % optimization of flux parameters in kotte model for a CK formulation
 function [x_opt,opt_id,new_opt_p,fval] =...
-        flux1_k_noisy(opts,xss,fss,plist,old_opt_p)
+        flux1_k_noisy(opts,xss,fss,plist,init_xss)
 if nargin<5
-    old_opt_p = [];
+    init_xss = [];
 end    
 
 % flux 1    
@@ -11,7 +11,7 @@ p_id = cellfun(@(x)find(x),p_id);
 % p = opts.odep(p_id)';
 p = [.1;.1];
 
-x0 = [xss;p;0.1]; % x = [pep;fdp;enz;ac;K1ac;k1cat;e];
+x0 = [init_xss;p;0.1]; % x = [pep;fdp;enz;ac;K1ac;k1cat;e];
 % steady state experimental concetrations and fluxes needed for constraints
 % fed as parameters
 nopt_p = opts.odep(setdiff(1:length(opts.odep),p_id));
@@ -31,8 +31,8 @@ nlconstoptim_flux(opts,@obj_flux1_noisy_CAS,lb,ub,x0,...
                   optim_p,0,@constr_flux1_noisy_CAS); % linear objective
 
 % check flux using conkin rate law
-if ~isempty(old_opt_p)
-    opts.odep = old_opt_p;
+if ~isempty(init_xss)
+    opts.odep = init_xss;
 % else
 %     pconv = [.1;.3;0]; % extra parameters for CK 'K1pep','K2fdp','rhoA'
 %     opts.odep = [opts.odep';pconv];
