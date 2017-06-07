@@ -62,6 +62,10 @@ solver_opts = sdeset('SDEType','Ito',...
 opts = struct('tspan',tspan,'x0',ival,'solver_opts',solver_opts,'odep',odep);
 [xdyn,fdyn,xss1,fss1] = solve_sde(@simnoisyODE_kotte,g,opts,@kotte_flux_noCAS);
 
+% reset solver opts for deterministic ode with matlab solvers
+solver_opts = odeset('RelTol',1e-3,'AbsTol',1e-3);
+opts.solver_opts = solver_opts;
+
 figure
 subplot(211);
 plot(tspan,xdyn);
