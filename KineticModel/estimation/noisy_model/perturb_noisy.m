@@ -1,13 +1,22 @@
-function [x2dyn,f2dyn,xss2,fss2] = perturb_noisy(opts)
+function [xdyn,fdyn,xss,fss] = perturb_noisy(opts)
 % perturb model with no noise
 % perturb system from steady state and generate data w/ noise
-[x2dyn,f2dyn,xss2,fss2] = solve_ode(@simnoisyODE_kotte,opts,@kotte_flux_noCAS);
+solver_opts = sdeset('SDEType','Ito',...
+                 'RandSeed',2,...
+                 'ConstGFUN','yes',...
+                 'NonNegative','yes',...
+                 'DiagonalNoise','no');
+opts.solver_opts = solver_opts;             
+g = [eye(3) zeros(3,1);zeros(1,4)];
+
+% [xdyn,fdyn,xss,fss] = solve_ode(@simnoisyODE_kotte,opts,@kotte_flux_noCAS);
+[xdyn,fdyn,xss,fss] = solve_sde(@simnoisyODE_kotte,g,opts,@kotte_flux_noCAS);
 figure
 subplot(211);
-plot(opts.tspan,x2dyn);
+plot(opts.tspan,xdyn);
 ylabel('concentrations a.u.');
 legend('pep','fdp','E');
 subplot(212)
-plot(opts.tspan,f2dyn);
+plot(opts.tspan,fdyn);
 ylabel('fluxes a.u.');
-legend('J','E(FDP)','vFbP','vEX','vPEPout');
+legend('J','E(FDP)','vFbP','vEX','vPEPout','vEout');
