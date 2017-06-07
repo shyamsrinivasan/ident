@@ -3,9 +3,11 @@ function dM = noisyNLAE_kotte(x,p)
 d = p(10);
 dM = zeros(4,size(x,2));
 
+% noise = random('norm',0,1,[4,1]);
+
 % generate noisy flux
 flux = kotte_flux_noCAS(x,p);
-flux = flux + 2*rand(5,1);
+% flux([1,3,4,5]) = flux([1,3,4,5]) + noise;
 
 % differential equations
 % PEP
