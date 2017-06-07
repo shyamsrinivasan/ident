@@ -18,6 +18,14 @@ opts.odep = odep_bkp;
 ptopts = struct('exp_pid',{11},...
                 'exp_pval',{2}); 
 sol = getperturbations(ptopts,@perturb_noisy,opts);
+
+% run perturbation without noise to get feasible initial solution
+tspan = 0:0.1:300;
+[~,~,xss1i,fss1i,optsi] = run_nonoise(tspan);   
+optsi.odep = odep_bkp;
+optsi.x0 = xss1i;
+optsi.tspan = 0:.1:600;
+soli = getperturbations(ptopts,@perturb_nonoise,optsi);
 % close all
 
 % flux 4 V4max
@@ -27,9 +35,11 @@ sol = getperturbations(ptopts,@perturb_noisy,opts);
 % close all
 
 %% use single perturbation sets to get parameters
-optimopts = struct('xss',{sol(1).xss},...
-                   'fss',{sol(1).fss});
-opt_sol = runoptimp(opts,plist,odep_bkp,optimopts,@optimize_p_noisy);     
+optimopts = struct('xss',{soli(1).xss},...
+                   'fss',{soli(1).fss});
+odep_opt = odep_bkp;
+odep_opt(11) = 2;
+opt_sol = runoptimp(opts,plist,odep_opt,optimopts,@optimize_p_noisy);     
 
 
 
