@@ -11,12 +11,16 @@ p_id = cellfun(@(x)find(x),p_id);
 p = opts.odep(p_id)';
 % p = [.1;.1];
 
-x0 = [xss;p;0]; % x = [pep;fdp;enz;ac;K1ac;k1cat;e];
+x0 = [xss;p;0.1]; % x = [pep;fdp;enz;ac;K1ac;k1cat;e];
 % steady state experimental concetrations and fluxes needed for constraints
 % fed as parameters
 nopt_p = opts.odep(setdiff(1:length(opts.odep),p_id));
-% optim_p = struct('xss',xss,'fss',fss,'p',opts.odep,'p_id',p_id,'eps',.1);
 optim_p = [nopt_p';xss;fss(1)];
+
+% check copnstraints for x0
+% pval = opts.odep;
+% optim_p = [pval';xss;fss(1)];
+% nlconval = constr_flux1_noisy(x0,optim_p,p_id);
 
 % all concentrations as well as kientic parameters are variables
 % lb = [pep;fdp;e;ac] - acetate is a equality constraint (fixed parameter)
