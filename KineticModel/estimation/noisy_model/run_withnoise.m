@@ -46,6 +46,17 @@ opts = struct('tspan',tspan,'x0',ival,'solver_opts',solver_opts,'odep',odep);
 % simulate noisy system from random initial condition - this is better for
 % simulating the noisy model
 [xdyn,fdyn,xss1,fss1] = solve_ode(@simnoisyODE_kotte,opts,@kotte_flux_noCAS);
+
+% solve noisy NLAE as a stochastic differential equation (SDE) with
+% Euler-Maruyama algorithm
+% options = sdeset('SDEType','Ito',...
+%                  'RandSeed',2);
+% g = @(t,y)[ones(3,1);0];             
+% [xdyn,w] =...
+% sde_euler(@(t,x)simnoisyODE_kotte(t,x,opts.odep),g,opts.tspan,opts.x0,options);
+% xdyn = xdyn';
+
+
 figure
 subplot(211);
 plot(tspan,xdyn);
