@@ -8,8 +8,8 @@ end
 % flux 1    
 p_id = cellfun(@(x)strcmpi(plist,x),{'K1ac','k1cat'},'UniformOutput',false);
 p_id = cellfun(@(x)find(x),p_id);
-p = opts.odep(p_id)';
-% p = [.1;.1];
+% p = opts.odep(p_id)';
+p = [.1;.1];
 
 x0 = [xss;p;0.1]; % x = [pep;fdp;enz;ac;K1ac;k1cat;e];
 % steady state experimental concetrations and fluxes needed for constraints
