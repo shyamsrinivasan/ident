@@ -40,15 +40,15 @@ pf = [K1ac;K3fdp;L3fdp;K3pep;K2pep;vemax;KeFDP;ne;d;...
 
 % nl constraints
 % constraint 1 : norm of flux for which parameters are estimated (1x1)
-noisy_flux = kotte_flux_CAS(xf,pf);
-noisy_flux{1} = noisy_flux{1} + e;    
-fx_nlcon{1} = sqrt(sum((noisy_flux{1}-fss).^2));    
+model_flux = kotte_flux_CAS(xf,pf);
+model_flux{1} = model_flux{1} + e;    
+fx_nlcon{1} = sqrt(sum((model_flux{1}-fss).^2));    
 
 % constraint 2 : norm of all ss concentrations (1x1)
 fx_nlcon{2} = sqrt(sum((xf-xss).^2));
 
 % constraint 3 : ss for concentrations (mx1)
-fx_nlcon(3:6) = kotte_ode(xf,pf,noisy_flux);
+fx_nlcon(3:6) = kotte_ode(xf,pf,model_flux);
 
 x = [xf;K1ac;k1cat;e];
 p = [K3fdp;L3fdp;K3pep;K2pep;vemax;KeFDP;ne;d;...
