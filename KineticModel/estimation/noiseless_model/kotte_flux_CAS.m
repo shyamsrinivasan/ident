@@ -1,6 +1,6 @@
 function [flux,FXflx] = kotte_flux_CAS(x,p)
 
-flux = cell(5,1);
+flux = cell(6,1);
 
 % parameters
 K1ac = p(1);    % or 0.02
@@ -11,7 +11,7 @@ K2pep = p(5);
 vemax = p(6);        % for bifurcation analysis: 0.7:0.1:1.3
 KeFDP = p(7);        % or 0.45
 ne = p(8);             % or 2
-% ac = p(9);
+d = p(9);
 V4max = p(10);
 k1cat = p(11);   
 V3max = p(12);    
@@ -38,8 +38,12 @@ flux{4} = V2max.*x(1)./(x(1)+K2pep);
 % vPEPout
 flux{5} = V4max.*x(1);
 
+% E --->
+flux{6} = d.*x(3);
+
 FXflx = casadi.Function('FXflx',{x,p},{[flux{1};...
                                         flux{2};...
                                         flux{3};...
                                         flux{4};...
-                                        flux{5}]});
+                                        flux{5};...
+                                        flux{6}]});

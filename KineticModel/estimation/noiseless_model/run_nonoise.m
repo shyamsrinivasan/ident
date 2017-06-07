@@ -43,4 +43,4 @@ legend('pep','fdp','E');
 subplot(212)
 plot(tspan,fdyn);
 ylabel('fluxes a.u.');
-legend('J','E(FDP)','vFbP','vEX','vPEPout');
+legend('J','E(FDP)','vFbP','vEX','vPEPout','vEout');

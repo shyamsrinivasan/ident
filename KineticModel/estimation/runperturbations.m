@@ -2,7 +2,7 @@ function [xss_pval,fss_pval,collect_p] = runperturbations(fh,pid,pval,opts)
 
 np = length(pval);
 xss_pval = zeros(length(opts.x0),np);
-fss_pval = zeros(5,np);
+fss_pval = zeros(6,np);
 odep_bkp = opts.odep;
 
 n_odep = length(opts.odep);

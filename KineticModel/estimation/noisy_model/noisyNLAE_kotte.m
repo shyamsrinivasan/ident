@@ -16,7 +16,7 @@ dM(1,:) = flux(1,:) - flux(4,:) - flux(5,:);
 dM(2,:) = flux(4,:) - flux(3,:);
 % enzymes
 % E
-dM(3,:) = flux(2,:) - d*x(3,:);
+dM(3,:) = flux(2,:) - flux(6,:);
 % acetate
 dM(4,:) = x(4,:) - x(4,:);
 

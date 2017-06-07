@@ -69,7 +69,7 @@ dx = cell(4,1);
 
 dx{1} = flux{1}-flux{4}-flux{5};
 dx{2} = flux{4}-flux{3};
-dx{3} = flux{2}-p(9)*x(3);
+dx{3} = flux{2}-flux{6};
 dx{4} = x(4)-x(4);
 
 
