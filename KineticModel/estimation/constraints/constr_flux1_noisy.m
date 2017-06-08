@@ -1,50 +1,69 @@
-function nlcon = constr_flux1_noisy(x,optim_p,p_id)
+% objective function for estimation of kientic paramaters from noisy
+% perturbation data
+% concentrations are also variables
+function fx_nlcon =...
+        constr_flux1_noisy(x,p,p_id,ss_val)
 
-% optimp_p = [flux parameters(w/o estimated parameters);xss;fss]
+ncons = 2*3+1;
+np = size(ss_val,2);
+% np - number of perturbation whose data is used
+% fx_nlcon = zeros(ncons,1);
 
-% all options passed as options structure
-% if isfield(optim_p,'p')
-%     optim_p = optim_p.p;
-% end
-% if isfield(optim_p,'p_id')
-%     p_id = optim_p.p_id;
-% end
-% if isfield(optim_p,'xss')
-%     xss = optim_p.xss;
-% end
-% if isfield(optim_p,'fss')
-%     fss = optim_p.fss;
-% end
-fss = optim_p(end);
-xss = optim_p(end-4:end-1);
-optim_p(end-4:end) = [];
+% parameters
+K1ac = p(1);    % or 0.02
+K3fdp = p(2);
+L3fbp = p(3);
+K3pep = p(4);
+K2pep = p(5);
+vemax = p(6);        % for bifurcation analysis: 0.7:0.1:1.3
+KeFDP = p(7);        % or 0.45
+ne = p(8);             % or 2
+d = p(9);
+V4max = p(10);
+k1cat = p(11);   
+V3max = p(12);    
+V2max = p(13);  
+ac = p(17);
 
-% variables
-% x = [pep;fdp;enz;ac;K1ac;k1cat;e];
-optim_p(p_id) = x(5:4+length(p_id));
+% p(p_id) = x(4:5);
+xss = ss_val(1:3,:);
+fss = ss_val(end,:);
+% model_flux = zeros(6,1);
+
+% fluxes
+model_flux(1) = x(5).*x(3).*ac./(ac+x(4)) + x(end);
+model_flux(2) = vemax.*(1-1./(1+(KeFDP./x(2)).^ne));
+ratio = 1+x(2)./K3fdp;
+model_flux(3) = V3max.*(ratio-1).*(ratio).^3./...
+            (ratio.^4+L3fbp.*(1+x(1)./K3pep).^(-4));
+model_flux(4) = V2max.*x(1)./(x(1)+K2pep);    
+model_flux(5) = V4max.*x(1);
+model_flux(6) = d.*x(3);
 
 % nl constraints
 % constraint 1 : norm of flux for which parameters are estimated (1x1)
-model_flux = kotte_flux_noCAS(x(1:4),optim_p);
-model_flux(1) = model_flux(1) + x(end);    
-nlcon1 = sqrt(sum((model_flux(1)-fss).^2));
+% model_flux = kotte_flux_noCAS(x(1:3),p);
+% model_flux(1) = model_flux(1) + x(end);    
+fx_nlcon(1,1) = sqrt(sum((model_flux(1)-fss).^2));   
 
-% constraint 2 : norm of all ss concentrations (1x1)
-nlcon2 = sqrt(sum((x(1:4)-xss).^2));
+% constraint 2 : norm of all ss concentrations (mx1)
+fx_nlcon(2:4,1) = sqrt(sum((repmat(x(1:3,1),1,np)-xss).^2,2));
 
 % constraint 3 : ss for concentrations (mx1)
-nlcon3 = kotte_ode(x(1:4),optim_p,model_flux);
+fx_nlcon(5:7,1) = kotte_ode(x(1:3),p,model_flux);
 
-% all constraints : (m+2)x1
-nlcon = [nlcon1;nlcon2;nlcon3];
 
 function dx = kotte_ode(x,p,flux)
-dx = zeros(4,1);
+% dx = cell(3,1);
 
-dx(1) = flux(1)-flux(4)-flux(5);
-dx(2) = flux(4)-flux(3);
-dx(3) = flux(2)-p(9)*x(3);
-dx(4) = x(4)-x(4);
+dx = [flux(1)-flux(4)-flux(5);...
+      flux(4)-flux(3);...
+      flux(2)-flux(6)];
+
+% dx{1} = flux{1}-flux{4}-flux{5};
+% dx{2} = flux{4}-flux{3};
+% dx{3} = flux{2}-flux{6};
+% dx{4} = x(4)-x(4);
 
 
 
