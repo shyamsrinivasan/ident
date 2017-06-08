@@ -8,32 +8,32 @@ end
 % flux 1    
 p_id = cellfun(@(x)strcmpi(plist,x),{'K1ac','k1cat'},'UniformOutput',false);
 p_id = cellfun(@(x)find(x),p_id);
-% p = opts.odep(p_id)';
-p = [.1;.1];
+p = opts.odep(p_id)';
+% p = [.1;.1];
 
 x0 = [init_xss;...      
       p;...
-      0.1]; % x = [pep;fdp;enz;K1ac;k1cat;e];
+      0]; % x = [pep;fdp;enz;K1ac;k1cat;e];
 % steady state experimental concetrations and fluxes needed for constraints
 % fed as parameters
 % ac = opts.odep(17);
-nopt_p = opts.odep(setdiff(1:length(opts.odep),p_id));
-optim_p = [nopt_p';...           
-           xss;...
-           fss(1)];
-
-% check copnstraints for x0
-% pval = opts.odep;
-% optim_p = [pval';xss;fss(1)];
-% nlconval = constr_flux1_noisy(x0,optim_p,p_id);
+% nopt_p = opts.odep(setdiff(1:length(opts.odep),p_id));
+% optim_p = nopt_p';
+optim_p = opts.odep;
+opts.p_id = p_id;
+ss_val = [xss;...
+          fss(1,:)];
 
 % all concentrations as well as kientic parameters are variables
 % lb = [pep;fdp;e;ac] - acetate is a equality constraint (fixed parameter)
 lb = [0;0;0;1e-3;1e-3;0]; 
 ub = [20;20;20;10;10;20];
+% [x_opt,fval,~,~,opts] =...
+% nlconstoptim_flux(opts,@obj_flux1_noisy_CAS,lb,ub,x0,...
+%                   optim_p,ss_val,0,@constr_flux1_noisy_CAS); % linear objective
 [x_opt,fval,~,~,opts] =...
-nlconstoptim_flux(opts,@obj_flux1_noisy_CAS,lb,ub,x0,...
-                  optim_p,0,@constr_flux1_noisy_CAS); % linear objective
+nlconstoptim_flux_noCAS(opts,@obj_flux1_noisy,lb,ub,x0,...
+                  optim_p,ss_val,0,@constr_flux1_noisy); % linear objective              
 
 % check flux using conkin rate law
 if ~isempty(init_xss)
