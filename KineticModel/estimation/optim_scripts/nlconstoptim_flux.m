@@ -8,11 +8,13 @@ if nargin<8
     constrfh = [];
 end
 % np = size(optim_p,2);
-m = 4;
+m = 3;
+nvar = 6;
+var_id = 6;
 
 % objective fun
 if ~isempty(objCASh)
-    c = sparse(7,1,-1,7,1); % [0 0 0 0 0 0 -1];
+    c = sparse(var_id,1,-1,nvar,1); % [0 0 0 0 0 0 -1];
     [FXobj,gradF] = objCASh();
     obj = @(x)full(FXobj(x,c));
     grad = @(x)full(gradF(x,c));
@@ -81,7 +83,7 @@ optim_opts = optiset('solver','NLOPT','maxiter',5000,...
 if givenconstr
     optim_prob =...
     opti('obj',obj,'nlmix',nlconFX,nlrhs,nle,'nljac',nlconDFX,...
-         'ndec',7,'bounds',lb,ub,'options',optim_opts);
+         'ndec',nvar,'bounds',lb,ub,'options',optim_opts);
 else
     optim_prob =...
     opti('obj',obj,'bounds',lb,ub,'options',optim_opts);
