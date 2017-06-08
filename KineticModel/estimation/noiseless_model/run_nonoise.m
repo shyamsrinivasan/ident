@@ -24,10 +24,10 @@ elseif status == 2
     load('/home/shyam/Documents/Courses/CHE1125Project/IntegratedModels/KineticModel/Kotte2014/model/kotte_model.mat');    
 end
 
-pconv = [.1,.3,0]; % extra parameters for CK 'K1pep','K2fdp','rhoA'
+pconv = [.1,.3,0,pvec(9)]; % extra parameters for CK 'K1pep','K2fdp','rhoA' and 'acetate'
 p = [pvec,pconv];
 p(9) = [];
-ival = [M;pvec(9)];
+ival = M;
 clear pvec
 
 %% solve deterministic (no noise) model using casadi(cvodes)

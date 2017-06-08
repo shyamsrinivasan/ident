@@ -16,13 +16,14 @@ d = p(9);
 V4max = p(10);
 k1cat = p(11);   
 V3max = p(12);    
-V2max = p(13);   
+V2max = p(13);  
+ac = p(17);
 
 % noise = casadi.SX(rand(5,1)*2);
 
 % metabolic fluxes
 % J(E, acetate)
-flux(1,:) = k1cat.*x(3,:).*x(4,:)./(x(4,:)+K1ac);
+flux(1,:) = k1cat.*x(3,:).*ac./(ac+K1ac);
 
 % enzyme production fluxes
 % E(FBP) for J (%FBP ---| Cra and Cra ---> E)
