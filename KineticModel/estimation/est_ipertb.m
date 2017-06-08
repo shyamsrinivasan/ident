@@ -2,7 +2,7 @@
 % parameters are estimated on the basis of a single set of perturbations
 % all parameters available
 plist = {'K1ac','K3fdp','L3fdp','K3pep','K2pep','vemax','KeFDP','ne',...
-        'd','V4max','k1cat','V3max','V2max','K1pep','K2fdp','rhoA'};
+        'd','V4max','k1cat','V3max','V2max','K1pep','K2fdp','rhoA','acetate'};
 
 % generate experimental data - get initial ss
 tspan = 0:0.1:300;
