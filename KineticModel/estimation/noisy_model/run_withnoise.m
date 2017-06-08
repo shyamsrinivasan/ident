@@ -51,7 +51,7 @@ odep = p;
 % solve noisy NLAE as a stochastic differential equation (SDE) with
 % Euler-Maruyama algorithm
 % g = eye(3);
-g = ones(3,1);
+g = 0.01*ones(3,1);
 % B = eye(6);
 % S = [1 0 0 -1 -1 0;0 0 -1 1 0 0;0 1 0 0 0 -1;0 0 0 0 0 0];
 % g = S*B;

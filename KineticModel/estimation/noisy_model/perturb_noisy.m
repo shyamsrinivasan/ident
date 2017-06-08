@@ -8,7 +8,7 @@ solver_opts = sdeset('SDEType','Ito',...
                  'DiagonalNoise','yes'); % default for DiagonalNoise
 opts.solver_opts = solver_opts;             
 % g = eye(3);
-g = ones(3,1);
+g = 0.01*ones(3,1);
 
 % [xdyn,fdyn,xss,fss] = solve_ode(@simnoisyODE_kotte,opts,@kotte_flux_noCAS);
 [xdyn,fdyn,xss,fss] = solve_sde(@simnoisyODE_kotte,g,opts,@kotte_flux_noCAS);
