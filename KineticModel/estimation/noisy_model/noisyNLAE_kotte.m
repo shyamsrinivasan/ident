@@ -1,7 +1,7 @@
 function dM = noisyNLAE_kotte(x,p)
 
-d = p(10);
-dM = zeros(4,size(x,2));
+% d = p(10);
+dM = zeros(3,size(x,2));
 
 % noise = random('norm',0,1,[4,1]);
 
@@ -18,7 +18,7 @@ dM(2,:) = flux(4,:) - flux(3,:);
 % E
 dM(3,:) = flux(2,:) - flux(6,:);
 % acetate
-dM(4,:) = x(4,:) - x(4,:);
+% dM(4,:) = x(4,:) - x(4,:);
 
 
 % generate noise

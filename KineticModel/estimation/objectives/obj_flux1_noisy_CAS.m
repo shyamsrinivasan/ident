@@ -1,7 +1,7 @@
 function [FXobj,DFXobj,fx_sym] = obj_flux1_noisy_CAS
 
-x = casadi.SX.sym('x',7,1);
-c = casadi.SX.sym('c',7,1);
+x = casadi.SX.sym('x',6,1);
+c = casadi.SX.sym('c',6,1);
 
 fx_sym = c'*x;
 FXobj = casadi.Function('FXobj',{x,c},{fx_sym});

@@ -27,10 +27,10 @@ elseif status == 2
     load('/home/shyam/Documents/Courses/CHE1125Project/IntegratedModels/KineticModel/Kotte2014/model/kotte_model.mat');    
 end
 
-pconv = [.1,.3,0]; % extra parameters for CK 'K1pep','K2fdp','rhoA'
+pconv = [.1,.3,0,pvec(9)]; % extra parameters for CK 'K1pep','K2fdp','rhoA','acetate'
 p = [pvec,pconv];
 p(9) = [];
-ival = [M;pvec(9)];
+ival = M;
 clear pvec
 
 %% solve noisy model using ode45
@@ -50,7 +50,8 @@ odep = p;
 
 % solve noisy NLAE as a stochastic differential equation (SDE) with
 % Euler-Maruyama algorithm
-g = [eye(3) zeros(3,1);zeros(1,4)];
+% g = eye(3);
+g = ones(3,1);
 % B = eye(6);
 % S = [1 0 0 -1 -1 0;0 0 -1 1 0 0;0 1 0 0 0 -1;0 0 0 0 0 0];
 % g = S*B;
@@ -58,7 +59,7 @@ solver_opts = sdeset('SDEType','Ito',...
                  'RandSeed',2,...
                  'ConstGFUN','yes',...
                  'NonNegative','yes',...
-                 'DiagonalNoise','no');
+                 'DiagonalNoise','yes'); % default for DiagonalNoise
 opts = struct('tspan',tspan,'x0',ival,'solver_opts',solver_opts,'odep',odep);
 [xdyn,fdyn,xss1,fss1] = solve_sde(@simnoisyODE_kotte,g,opts,@kotte_flux_noCAS);
 
