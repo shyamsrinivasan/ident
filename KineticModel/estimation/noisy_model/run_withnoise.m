@@ -51,15 +51,16 @@ odep = p;
 % solve noisy NLAE as a stochastic differential equation (SDE) with
 % Euler-Maruyama algorithm
 % g = eye(3);
-g = 0.01*ones(3,1);
-% B = eye(6);
-% S = [1 0 0 -1 -1 0;0 0 -1 1 0 0;0 1 0 0 0 -1;0 0 0 0 0 0];
+% g = 0.01*ones(3,1);
+% B = 0.1*eye(6);
+% S = [1 0 0 -1 -1 0;0 0 -1 1 0 0;0 1 0 0 0 -1];
 % g = S*B;
-solver_opts = sdeset('SDEType','Ito',...
-                 'RandSeed',2,...
-                 'ConstGFUN','yes',...
-                 'NonNegative','yes',...
-                 'DiagonalNoise','yes'); % default for DiagonalNoise
+[g,solver_opts] = get_noise_fun();
+% solver_opts = sdeset('SDEType','Ito',...
+%                  'RandSeed',2,...
+%                  'ConstGFUN','yes',...
+%                  'NonNegative','yes',...
+%                  'DiagonalNoise','no'); % default for DiagonalNoise
 opts = struct('tspan',tspan,'x0',ival,'solver_opts',solver_opts,'odep',odep);
 [xdyn,fdyn,xss1,fss1] = solve_sde(@simnoisyODE_kotte,g,opts,@kotte_flux_noCAS);
 
@@ -71,7 +72,7 @@ figure
 subplot(211);
 plot(tspan,xdyn);
 ylabel('concentrations a.u.');
-legend('pep','fdp','E','acetate');
+legend('pep','fdp','E');
 subplot(212)
 plot(tspan,fdyn);
 ylabel('fluxes a.u.');
