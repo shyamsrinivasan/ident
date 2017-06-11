@@ -44,9 +44,9 @@ optimopts = struct('xss',{sol(1).xss},...
 % calculate fluxes based on above perturbation parameters
 xi = sol(1).xss(:,5);
 pi = opts.odep;
-pi(11) = 2;
+pi(11) = 1.5;
 x0 = [xi;pi([1,11])';.01];
-constrhs = constr_flux1_noisy(x0,odep,[1,11],[sol.xss(:,5);sol.fss(:,5)]);
+constrhs = constr_flux1_noisy(x0,opts.odep,[1,11],[sol.xss(:,5);sol.fss(:,5)]);
 opts.init_xss = soli(1).xss(:,5);  
 
 % constraint rhs
@@ -71,7 +71,7 @@ opts.solver = 'nlopt';
 opts.opt_alg = 'GN_ISRES';
 odep_opt = odep_bkp;
 odep_opt(11) = 2;
-opt_sol1 = runoptimp(opts,plist,odep_opt,optimopts,@optimize_p_noisy);     
+opt_sol2 = runoptimp(opts,plist,odep_opt,optimopts,@optimize_p_noisy);     
 
 
 
