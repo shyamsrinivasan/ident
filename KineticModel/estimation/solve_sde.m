@@ -25,7 +25,7 @@ else
     newfh = fh;
 end
 tstart = tic;
-yout = sde_euler(newfh,gh,tspan,x0,solver_opts);
+[yout,w] = sde_euler(newfh,gh,tspan,x0,solver_opts);
 fprintf('\nTime to solve ode :%4.3f\n',toc(tstart));
 yout = yout';
 
