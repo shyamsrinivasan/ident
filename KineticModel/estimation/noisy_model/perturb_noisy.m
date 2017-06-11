@@ -1,14 +1,9 @@
 function [xdyn,fdyn,xss,fss] = perturb_noisy(opts)
 % perturb model with no noise
 % perturb system from steady state and generate data w/ noise
-solver_opts = sdeset('SDEType','Ito',...
-                 'RandSeed',2,...
-                 'ConstGFUN','yes',...
-                 'NonNegative','yes',...
-                 'DiagonalNoise','yes'); % default for DiagonalNoise
+
+[g,solver_opts] = get_noise_fun();
 opts.solver_opts = solver_opts;             
-% g = eye(3);
-g = 0.01*ones(3,1);
 
 % [xdyn,fdyn,xss,fss] = solve_ode(@simnoisyODE_kotte,opts,@kotte_flux_noCAS);
 [xdyn,fdyn,xss,fss] = solve_sde(@simnoisyODE_kotte,g,opts,@kotte_flux_noCAS);
