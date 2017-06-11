@@ -4,16 +4,20 @@ function [x_opt,opt_id,new_opt_p,fval] =...
 if nargin<5
     init_xss = [];
 end    
+if isfield(opts,'opt_x0')
+    x0 = opts.opt_x0;
+end
 
 % flux 1    
 p_id = cellfun(@(x)strcmpi(plist,x),{'K1ac','k1cat'},'UniformOutput',false);
 p_id = cellfun(@(x)find(x),p_id);
-p = opts.odep(p_id)';
+% p = opts.odep(p_id)';
 % p = [.1;.1];
 
-x0 = [init_xss;...      
-      p;...
-      0]; % x = [pep;fdp;enz;K1ac;k1cat;e];
+
+% x0 = [init_xss;...      
+%       p;...
+%       0.01]; % x = [pep;fdp;enz;K1ac;k1cat;e];
 % steady state experimental concetrations and fluxes needed for constraints
 % fed as parameters
 % ac = opts.odep(17);
@@ -21,8 +25,8 @@ x0 = [init_xss;...
 % optim_p = nopt_p';
 optim_p = opts.odep;
 opts.p_id = p_id;
-ss_val = [xss;...
-          fss(1,:)];
+ss_val = [xss(:,1:4);...
+          fss(:,1:4)];
 
 % all concentrations as well as kientic parameters are variables
 % lb = [pep;fdp;e;ac] - acetate is a equality constraint (fixed parameter)
@@ -43,5 +47,5 @@ if ~isempty(init_xss)
 %     opts.odep = [opts.odep';pconv];
 end
 opt_id = p_id; % [p_id,14];
-opts.odep(opt_id) = x_opt;
+opts.odep(opt_id) = x_opt(4:end-1);
 new_opt_p = opts.odep;
