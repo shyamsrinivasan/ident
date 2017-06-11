@@ -16,16 +16,23 @@ end
 if isfield(opts,'opt_alg')
     opt_alg = opts.opt_alg;
 else
-    opt_alg = [];
+    opt_alg = 'none';
+end
+if isfield(opts,'nlrhs')
+    nlrhs = opts.nlrhs;
+end
+if isfield(opts,'nle')
+    nle = opts.nle;
 end
 np = size(ss_val,2); % # perturbations
 m = 3;
+n = 6;
 nvar = 6;
 var_id = 6;
 
 % objective fun
 if ~isempty(objCASh)
-    c = sparse(var_id,1,-1,nvar,1); % [0 0 0 0 0 0 -1];
+    c = sparse(var_id,1,1,nvar,1); % [0 0 0 0 0 0 -1];
     obj = @(x)objCASh(x,c);
 %     grad = @(x)full(gradF(x,c));
 end
@@ -35,18 +42,18 @@ if givenconstr
     nlconFX = @(x)constrfh(x,optim_p,opts.p_id,ss_val);     
 end
 
-% constraint rhs
-nlrhs = zeros(2*m+1,1);
-% flux norm
-nlrhs(1) = 0.1;     
-% concentration norm
-nlrhs(2:1+m) = 0.1;
-% nlrhs(3:6) = 1e-6; % precision level for Sv <= 0
+% % constraint rhs
+% nlrhs = zeros(2*m+n,1);
+% % flux norm
+% nlrhs(1:n) = 0.05;     
+% % concentration norm
+% nlrhs(n+1:n+m) = 0.05;
+% nlrhs(n+m+1:end) = 1e-6; % precision level for Sv <= 0
 
-% constraint type : (-1 <=, 0 =, 1 >=)
-nle = zeros(2*m+1,1); % -ones(m+2,1);
-nle(1:2) = -1;
-nle(2:1+m) = -1;
+% % constraint type : (-1 <=, 0 =, 1 >=)
+% nle = -ones(2*m+n,1); % -ones(m+2,1);
+% nle(1:n) = -1;
+% nle(n+1:n+m) = -1;
 % test if x0 satisfies constraints 
 nlconsval = nlconFX(x0);
 % == constraints
@@ -108,7 +115,7 @@ else
     opti('obj',obj,'bounds',lb,ub,'options',optim_opts);
 end
 if multi
-    [xval,fval,exitflag,info] = multisolve(optim_prob,[],[100 10]);   
+    [xval,fval,exitflag,info] = multisolve(optim_prob,[],[5 10]);   
 else
     [xval,fval,exitflag,info] = solve(optim_prob,x0); 
 end     
