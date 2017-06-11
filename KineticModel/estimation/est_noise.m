@@ -19,6 +19,9 @@ ptopts = struct('exp_pid',{11},...
                 'exp_pval',{[.1;.5;1.0;1.5;2]}); 
 sol = getperturbations(ptopts,@perturb_noisy,opts);
 
+% get initial feasible solution for optimization based on these parameters 
+% and fluxes
+
 % run perturbation without noise to get feasible initial solution
 tspan = 0:0.1:300;
 [~,~,xss1i,fss1i,optsi] = run_nonoise(tspan);   
@@ -37,12 +40,38 @@ soli = getperturbations(ptopts,@perturb_nonoise,optsi);
 %% use single perturbation sets to get parameters
 optimopts = struct('xss',{sol(1).xss},...
                    'fss',{sol(1).fss});
-opts.init_xss = soli(1).xss(:,1);   
+               
+% calculate fluxes based on above perturbation parameters
+xi = sol(1).xss(:,5);
+pi = opts.odep;
+pi(11) = 2;
+x0 = [xi;pi([1,11])';.01];
+constrhs = constr_flux1_noisy(x0,odep,[1,11],[sol.xss(:,5);sol.fss(:,5)]);
+opts.init_xss = soli(1).xss(:,5);  
+
+% constraint rhs
+m = 3; % concentrations
+n = 6; % fluxes
+nlrhs = zeros(2*m+n,1);
+% flux norm
+nlrhs(1:n) = 0.05;     
+% concentration norm
+nlrhs(n+1:n+m) = 0.05;
+nlrhs(n+m+1:end) = 0; %1e-6; % precision level for Sv <= 0
+opts.nlrhs = nlrhs;
+
+% constraint type : (-1 <=, 0 =, 1 >=)
+nle = zeros(2*m+n,1);
+nle(1:n) = -1;
+nle(n+1:n+m) = -1;
+opts.nle = nle;
+
+opts.opt_x0 = x0;
 opts.solver = 'nlopt';
-% opts.opt_alg = 'GN_ISRES';
+opts.opt_alg = 'GN_ISRES';
 odep_opt = odep_bkp;
-% odep_opt(11) = 2;
-opt_sol = runoptimp(opts,plist,odep_opt,optimopts,@optimize_p_noisy);     
+odep_opt(11) = 2;
+opt_sol1 = runoptimp(opts,plist,odep_opt,optimopts,@optimize_p_noisy);     
 
 
 
