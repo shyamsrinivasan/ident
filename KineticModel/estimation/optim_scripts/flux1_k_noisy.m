@@ -26,7 +26,7 @@ p_id = cellfun(@(x)find(x),p_id);
 optim_p = opts.odep;
 opts.p_id = p_id;
 ss_val = [xss(:,1:4);...
-          fss(:,1:4)];
+          fss(1,1:4)];
 
 % all concentrations as well as kientic parameters are variables
 % lb = [pep;fdp;e;ac] - acetate is a equality constraint (fixed parameter)
