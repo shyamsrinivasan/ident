@@ -106,7 +106,7 @@ else
     opti('obj',obj,'bounds',lb,ub,'options',optim_opts);
 end
 if multi
-    [xval,fval,exitflag,info] = multisolve(optim_prob,[],[100 10]);   
+    [xval,fval,exitflag,info] = multisolve(optim_prob,[],[500 100]);   
 else
     [xval,fval,exitflag,info] = solve(optim_prob,x0); 
 end     
