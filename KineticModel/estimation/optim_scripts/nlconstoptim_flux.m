@@ -18,6 +18,12 @@ if isfield(opts,'opt_alg')
 else
     opt_alg = [];
 end
+if isfield(opts,'nlrhs')
+    nlrhs = opts.nlrhs;
+end
+if isfield(opts,'nle')
+    nle = opts.nle;
+end
 np = size(ss_val,2); % # perturbations
 m = 3;
 nvar = 6;
@@ -25,7 +31,7 @@ var_id = 6;
 
 % objective fun
 if ~isempty(objCASh)
-    c = sparse(var_id,1,-1,nvar,1); % [0 0 0 0 0 0 -1];
+    c = sparse(var_id,1,1,nvar,1); % [0 0 0 0 0 0 -1];
     [FXobj,gradF] = objCASh();
     obj = @(x)full(FXobj(x,c));
     grad = @(x)full(gradF(x,c));
@@ -39,18 +45,6 @@ if givenconstr
     nlconDFX = @(x)full(DFXcons(x,optim_p,ss_val));    
 end
 
-% constraint rhs
-nlrhs = zeros(2*m+1,1);
-% flux norm
-nlrhs(1) = 0.1;     
-% concentration norm
-nlrhs(2:1+m) = 0.1;
-% nlrhs(3:6) = 1e-6; % precision level for Sv <= 0
-
-% constraint type : (-1 <=, 0 =, 1 >=)
-nle = zeros(2*m+1,1); % -ones(m+2,1);
-nle(1:2) = -1;
-nle(2:1+m) = -1;
 % test if x0 satisfies constraints 
 nlconsval = nlconFX(x0);
 % == constraints
@@ -82,8 +76,8 @@ end
 optim_opts = optiset('solver',solver,...
                       'maxiter',5000,...
                       'maxfeval',500000,...
-                      'tolrfun',1e-3,...
-                      'tolafun',1e-3,...
+                      'tolrfun',1e-7,...
+                      'tolafun',1e-7,...
                       'display','final');                               
 switch(solver)
     case 'nlopt'        
