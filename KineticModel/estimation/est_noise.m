@@ -51,13 +51,13 @@ opts.init_xss = soli(1).xss(:,5);
 
 % constraint rhs
 m = 3; % concentrations
-n = 6; % fluxes
+n = 1; % fluxes
 nlrhs = zeros(2*m+n,1);
 % flux norm
-nlrhs(1:n) = 0.05;     
+nlrhs(1:n) = 0.5;     
 % concentration norm
-nlrhs(n+1:n+m) = 0.05;
-nlrhs(n+m+1:end) = 0; %1e-6; % precision level for Sv <= 0
+nlrhs(n+1:n+m) = 0.5;
+nlrhs(n+m+1:end) = 1e-4; %1e-6; % precision level for |Sv| <= 0
 opts.nlrhs = nlrhs;
 
 % constraint type : (-1 <=, 0 =, 1 >=)
@@ -69,9 +69,10 @@ opts.nle = nle;
 opts.opt_x0 = x0;
 opts.solver = 'nlopt';
 opts.opt_alg = 'GN_ISRES';
+% opts.solver = 'scip';
 odep_opt = odep_bkp;
 odep_opt(11) = 2;
-opt_sol2 = runoptimp(opts,plist,odep_opt,optimopts,@optimize_p_noisy);     
+opt_sol9 = runoptimp(opts,plist,odep_opt,optimopts,@optimize_p_noisy);     
 
 
 
