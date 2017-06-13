@@ -47,5 +47,9 @@ if ~isempty(init_xss)
 %     opts.odep = [opts.odep';pconv];
 end
 opt_id = p_id; % [p_id,14];
-opts.odep(opt_id) = x_opt(4:end-1);
+if ~isempty(x_opt)
+    opts.odep(opt_id) = x_opt(4:end-1);
+else
+    opts.odep(opt_id) = NaN;
+end
 new_opt_p = opts.odep;
