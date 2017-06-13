@@ -44,8 +44,8 @@ optimopts = struct('xss',{sol(1).xss},...
 % calculate fluxes based on above perturbation parameters
 xi = sol(1).xss(:,5);
 pi = opts.odep;
-pi(11) = 1.5;
-x0 = [xi;pi([1,11])';.01];
+% pi(11) = 1;
+x0 = [xi;pi([1,11])';.1];
 constrhs = constr_flux1_noisy(x0,opts.odep,[1,11],[sol.xss(:,5);sol.fss(:,5)]);
 opts.init_xss = soli(1).xss(:,5);  
 
@@ -54,10 +54,10 @@ m = 3; % concentrations
 n = 1; % fluxes
 nlrhs = zeros(2*m+n,1);
 % flux norm
-nlrhs(1:n) = 0.5;     
+nlrhs(1:n) = 0.2;     
 % concentration norm
-nlrhs(n+1:n+m) = 0.5;
-nlrhs(n+m+1:end) = 1e-4; %1e-6; % precision level for |Sv| <= 0
+nlrhs(n+1:n+m) = 0.3;
+nlrhs(n+m+1:end) = 1e-8; %1e-6; % precision level for |Sv| <= 0
 opts.nlrhs = nlrhs;
 
 % constraint type : (-1 <=, 0 =, 1 >=)
@@ -67,9 +67,9 @@ nle(n+1:n+m) = -1;
 opts.nle = nle;
 
 opts.opt_x0 = x0;
-opts.solver = 'nlopt';
-opts.opt_alg = 'GN_ISRES';
-% opts.solver = 'scip';
+% opts.solver = 'nlopt';
+% opts.opt_alg = 'GN_ISRES';
+opts.solver = 'scip';
 odep_opt = odep_bkp;
 odep_opt(11) = 2;
 opt_sol9 = runoptimp(opts,plist,odep_opt,optimopts,@optimize_p_noisy);     
