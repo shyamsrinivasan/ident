@@ -102,7 +102,7 @@ switch(solver)
     case 'ipopt'
          
     case 'scip'
-%         optim_opts = scipset('lpfeastol',1e-4,'feastol',1e-4);
+        optim_opts = optiset(optim_opts,'maxnodes',10000000);
     otherwise
         error('Nonexistent solver in OPTI');
 end
@@ -129,9 +129,10 @@ if exitflag == 1 &&...
     strcmpi(info.Status,'Globally Optimal'))
 
     x_opt = xval;
+elseif ~isempty(xval) && ~isnan(fval)
+    x_opt = xval;    
 else
-    x_opt = [];
-    fval = []; 
+    x_opt = [];    
 end
 
 xss4 = [];
