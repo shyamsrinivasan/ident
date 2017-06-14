@@ -62,18 +62,16 @@ opts.nle = nle;
 % opts.opt_alg = 'GN_ISRES';
 opts.solver = 'scip';
 odep_opt = odep_bkp;
+
+%% flux 1
 opt_sol_f1 = runoptimp(opts,plist,odep_opt,optimopts,@optimize_flux1);   
 
-%% flux 2 estimation
-p_id = [5,13];
-xi = sol(1).xss(:,5);
-pi = opts.odep; % pi(11) = 1;
-x0 = [xi;pi(p_id)';.1];
-opts.opt_x0 = x0;
+%% flux 2
+opt_sol_f2 = runoptimp(opts,plist,odep_opt,optimopts,@optimize_flux2);   
 
-opts.solver = 'scip';
-odep_opt = odep_bkp;
-opt_sol_f2 = runoptimp(opts,plist,odep_opt,optimopts,@optimize_p_noisy);   
+%% flux 2 estimation
+
+
 
 
 
