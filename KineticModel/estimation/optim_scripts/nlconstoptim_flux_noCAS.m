@@ -27,8 +27,8 @@ end
 np = size(ss_val,2); % # perturbations
 m = 3;
 n = 6;
-nvar = 6;
-var_id = 6;
+nvar = length(x0);
+var_id = nvar;
 
 % objective fun
 if ~isempty(objCASh)
