@@ -32,7 +32,7 @@ var_id = 6;
 
 % objective fun
 if ~isempty(objCASh)
-    c = sparse(var_id,1,1,nvar,1); % [0 0 0 0 0 0 -1];
+    c = sparse(var_id,1,1,nvar,1); % [0 0 0 0 0 0 1];
     obj = @(x)c'*x;
 %     obj = @(x)objCASh(x,c);
 %     grad = @(x)full(gradF(x,c));
@@ -43,39 +43,8 @@ if givenconstr
     nlconFX = @(x)constrfh(x,optim_p,opts.p_id,ss_val);     
 end
 
-% % constraint rhs
-% nlrhs = zeros(2*m+n,1);
-% % flux norm
-% nlrhs(1:n) = 0.05;     
-% % concentration norm
-% nlrhs(n+1:n+m) = 0.05;
-% nlrhs(n+m+1:end) = 1e-6; % precision level for Sv <= 0
-
-% % constraint type : (-1 <=, 0 =, 1 >=)
-% nle = -ones(2*m+n,1); % -ones(m+2,1);
-% nle(1:n) = -1;
-% nle(n+1:n+m) = -1;
 % test if x0 satisfies constraints 
-nlconsval = nlconFX(x0);
-% == constraints
-eqcons_iid = ones(length(nlrhs),1);
-if ~all(nlconsval(nle==0) == nlrhs(nle==0))
-    eqcons_iid(nlconsval ~= nlrhs) = -1;
-    eqcons_iid(nle~=0) = 0;    
-end
-% <= constraints
-lecons_iid = ones(length(nlrhs),1);
-if ~all(nlconsval(nle==-1) == nlrhs(nle==-1))
-    lecons_iid(nlconsval > nlrhs) = -1;
-    lecons_iid(nle~=-1) = 0;    
-end
-% >= constraints
-gecons_iid = ones(length(nlrhs),1);
-if ~all(nlconsval(nle==1) == nlrhs(nle==1))
-    gecons_iid(nlconsval < nlrhs) = -1;
-    gecons_iid(nle~=1) = 0;    
-end
-
+[eqcons_iid,lecons_iid,gecons_idd] = checkconstr(nlconFX,x0,nlrhs,nle);
 % if any(eqcons_iid(nle==0)<0) ||...
 %     any(lecons_iid(nle==-1)<0) ||...
 %     any(gecons_iid(nle==1)<0)    
