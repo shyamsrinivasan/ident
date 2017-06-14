@@ -44,26 +44,11 @@ model_flux(6) = d.*x(3);
 % constraint 1 : norm of flux for which parameters are estimated (1x1)
 % model_flux = kotte_flux_noCAS(x(1:3),p);
 % model_flux(1) = model_flux(1) + x(end);    
-fx_nlcon(1,1) = sqrt(sum((model_flux(1)-fss).^2));
+fx_nlcon(1,1) = sqrt(sum((model_flux(4)-fss).^2));
 
 % constraint 2 : norm of all ss concentrations (mx1)
 fx_nlcon(2:4,1) = sqrt(sum((repmat(x(1:3,1),1,np)-xss).^2,2));
 
 % constraint 3 : ss for concentrations (mx1)
-fx_nlcon(5:7,1) = abs(kotte_ode(x(1:3),p,model_flux));
-
-
-function dx = kotte_ode(x,p,flux)
-% dx = cell(3,1);
-
-dx = [flux(1)-flux(4)-flux(5);...
-      flux(4)-flux(3);...
-      flux(2)-flux(6)];
-
-% dx{1} = flux{1}-flux{4}-flux{5};
-% dx{2} = flux{4}-flux{3};
-% dx{3} = flux{2}-flux{6};
-% dx{4} = x(4)-x(4);
-
-
+fx_nlcon(5:7,1) = abs(kotte_ode_eq(x(1:3),p,model_flux));
 
