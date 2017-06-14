@@ -31,12 +31,12 @@ fss = ss_val(end,:);
 % model_flux = zeros(6,1);
 
 % fluxes
-model_flux(1) = k1cat.*x(3).*ac./(ac+K1ac) + x(end);
+model_flux(1) = k1cat.*x(3).*ac./(ac+K1ac);
 model_flux(2) = vemax.*(1-1./(1+(KeFDP./x(2)).^ne));
 ratio = 1+x(2)./K3fdp;
 model_flux(3) = V3max.*(ratio-1).*(ratio).^3./...
             (ratio.^4+L3fbp.*(1+x(1)./K3pep).^(-4));
-model_flux(4) = x(5).*x(1)./(x(1)+x(4));    
+model_flux(4) = x(5).*x(1)./(x(1)+x(4)) + x(end);    
 model_flux(5) = V4max.*x(1);
 model_flux(6) = d.*x(3);
 
