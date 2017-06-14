@@ -56,6 +56,7 @@ opts.nlrhs = nlrhs;
 nle = zeros(2*m+n,1);
 nle(1:n) = -1;
 nle(n+1:n+m) = -1;
+% nle(n+m+1:n+2*m) = -1;
 opts.nle = nle;
 
 % opts.solver = 'nlopt';
@@ -69,7 +70,8 @@ opt_sol_f1 = runoptimp(opts,plist,odep_opt,optimopts,@optimize_flux1);
 %% flux 2
 opt_sol_f2 = runoptimp(opts,plist,odep_opt,optimopts,@optimize_flux2);   
 
-%% flux 2 estimation
+%% flux 3
+opt_sol_f3 = runoptimp(opts,plist,odep_opt,optimopts,@optimize_flux3);  
 
 
 
