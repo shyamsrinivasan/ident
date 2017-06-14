@@ -58,15 +58,6 @@ nle(1:n) = -1;
 nle(n+1:n+m) = -1;
 opts.nle = nle;
 
-% set initial value
-% flux 1 estimation
-p_id = [1,11];               
-% calculate fluxes based on above perturbation parameters
-xi = sol(1).xss(:,5);
-pi = opts.odep; % pi(11) = 1;
-x0 = [xi;pi(p_id)';.1];
-opts.opt_x0 = x0;
-
 % opts.solver = 'nlopt';
 % opts.opt_alg = 'GN_ISRES';
 opts.solver = 'scip';
