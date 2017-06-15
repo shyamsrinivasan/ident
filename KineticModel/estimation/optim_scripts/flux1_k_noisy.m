@@ -24,7 +24,7 @@ ub = [20;20;20;10;10;20];
 %                   optim_p,ss_val,0,@constr_flux1_noisy_CAS); % linear objective
 [x_opt,fval,~,~,opts] =...
 nlconstoptim_flux_noCAS(opts,@obj_flux1_noisy,lb,ub,x0,...
-                  optim_p,ss_val,1,@constr_flux1_noisy); % linear objective              
+                  optim_p,ss_val,0,@constr_flux1_noisy); % linear objective              
 
 opt_id = p_id; % [p_id,14];
 if ~isempty(x_opt)
