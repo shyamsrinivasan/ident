@@ -39,7 +39,9 @@ soli = getperturbations(ptopts,@perturb_nonoise,optsi);
 
 %% use single perturbation sets to get parameters
 optimopts = struct('xss',{sol(1).xss},...
-                   'fss',{sol(1).fss});
+                   'fss',{sol(1).fss},...
+                   'pid',{sol(1).exp_pid},...
+                   'pval',{sol(1).exp_pval});
 
 % set constraint rhs
 m = 3; % concentrations

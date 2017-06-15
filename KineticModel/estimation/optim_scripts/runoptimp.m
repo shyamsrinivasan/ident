@@ -8,5 +8,15 @@ for j = 1:noptim
         xss = optimstruct(j).xss;
         fss = optimstruct(j).fss;
     end
-    x_opt{j} = optimfh(opts,xss,fss,plist,odep_bkp);
+    if isfield(optimstruct,'pid')
+        pid = optimstruct.pid;
+    else
+        pid = [];
+    end
+    if isfield(optimstruct,'pval')
+        pval = optimstruct.pval;
+    else
+        pval = [];
+    end
+    x_opt{j} = optimfh(opts,xss,fss,plist,odep_bkp,pid,pval);
 end
