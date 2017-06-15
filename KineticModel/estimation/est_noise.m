@@ -15,7 +15,7 @@ opts.x0 = xss1;
 opts.tspan = 0:.1:600;
 opts.odep = odep_bkp;
 % flux 1, 2 and 3 % k1cat, 'V2max', 'V3max'
-ptopts = struct('exp_pid',{11},...
+ptopts = struct('exp_pid',{13},...
                 'exp_pval',{[.1;.5;1.0;1.5;2]}); 
 sol = getperturbations(ptopts,@perturb_noisy,opts);
 
