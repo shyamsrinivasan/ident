@@ -56,6 +56,9 @@ flux(2) = vemax.*(1-1./(1+(KeFBP./M(2)).^ne));
 ratio = 1+M(2)/KFbpFBP;
 flux(3) = vFbpmax.*(ratio-1).*(ratio).^3/(ratio.^4+Lfbp*(1+M(1)./KFbpPEP).^(-4));
 
+% no regulation FBP -  added to test heterologous expression w/o regulation
+% flux(3,:) = vFbpmax.*M(2)./(M(2)+KFbpFBP);
+
 % vEX(PEP)
 flux(4) = vEXmax.*M(1)./(M(1)+KEXPEP);
 
