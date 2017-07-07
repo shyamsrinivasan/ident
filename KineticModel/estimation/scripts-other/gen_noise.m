@@ -33,6 +33,10 @@ pt_p(:,pt_val.exp_pid) = pt_val.exp_pval;
 [noisy_sol.xss,noisy_sol.fss] = addnoise(sol.xss,pt_p);
 noisy_sol.xss = sol.xss + random(pd,3,size(sol.xss,2));
 
+% get only data from one steady state
+pss = ones(length(pt_val.exp_pval),1);
+pss(noisy_sol.xss(1,:)>noisy_sol.xss(2,:)) = 2;    
+
 % use noisy data as perturbed data analoges to estimate parameters
 % optimdata = struct('xss',{noisy_xss},...
 %                    'fss',{noisy_fss});
