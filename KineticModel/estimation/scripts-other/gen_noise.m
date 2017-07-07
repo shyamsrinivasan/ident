@@ -11,19 +11,27 @@ odep_bkp = opts.odep;
 
 % generate nsmp samples by adding random noise to ss values
 nsmp = 10;
-pd = makedist('Uniform','lower',min(xss1),'upper',max(xss1));
-met_noise = random(pd,3,nsmp);
-
-pd = makedist('Uniform','lower',min(fss1),'upper',max(fss1));
-flx_noise = random(pd,6,nsmp);
-
-noisy_xss = repmat(xss1,1,nsmp)+met_noise;
-noisy_fss = repmat(fss1,1,nsmp)+flx_noise;
+[noisy_xss,noisy_fss] = addnoise(repmat(xss1,1,nsmp),odep_bkp);
 
 % figure
 % boxplot([noisy_fss';fss1']);
 % figure
 % boxplot([noisy_xss';xss1']);
+
+% perturb system from noisy initial conditions
+opts.x0 = noisy_xss(:,1);
+opts.tspan = 0:.1:300;
+opts.odep = odep_bkp;
+pt_val = struct('exp_pid',{11},...
+                'exp_pval',{[.5;1.0;1.5;2]}); 
+sol = getperturbations(pt_val,@perturb_nonoise,opts);
+
+% add noise to perturbed data
+noisy_sol = sol;
+pt_p = repmat(odep_bkp,length(pt_val.exp_pval),1);
+pt_p(:,pt_val.exp_pid) = pt_val.exp_pval;
+[noisy_sol.xss,noisy_sol.fss] = addnoise(sol.xss,pt_p);
+noisy_sol.xss = sol.xss + random(pd,3,size(sol.xss,2));
 
 % use noisy data as perturbed data analoges to estimate parameters
 % optimdata = struct('xss',{noisy_xss},...
