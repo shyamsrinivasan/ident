@@ -35,14 +35,14 @@ noisy_sol.xss = sol.xss + random(pd,3,size(sol.xss,2));
 
 % get only data from one steady state
 pss = ones(length(pt_val.exp_pval),1);
-pss(noisy_sol.xss(1,:)>noisy_sol.xss(2,:)) = 2;    
+pss(noisy_sol.xss(1,:)>noisy_sol.xss(2,:)) = 0;    
 
 % use noisy data as perturbed data analoges to estimate parameters
 % optimdata = struct('xss',{noisy_xss},...
 %                    'fss',{noisy_fss});
 
 % problem defn
-optimdata = struct('nvar',5,'nc',3,'vexp',noisy_fss,'p_id',[1 11]);
+optimdata = struct('nvar',5,'nc',3,'vexp',noisy_sol.fss(:,logical(pss)),'p_id',[1 11]);
 
 % set objective
 obj = @(x)objnoisy(x,odep_bkp,optimdata);
@@ -67,6 +67,8 @@ optimopts = optiset('solver','scip',...
                       'tolafun',1e-6,...
                       'display','final');   
 optimopts = optiset(optimopts,'maxnodes',10000000);   
+solveropts = scipset('scipopts',{'limits/time',1e20});
+optimopts = optiset(optimopts,'solverOpts',solveropts);
 optim_prob = opti('obj',obj,'bounds',lb,ub,'options',optimopts);
 [xval,fval,exitflag,info] = solve(optim_prob,x0); 
 
