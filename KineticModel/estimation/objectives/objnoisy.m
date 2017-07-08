@@ -9,4 +9,4 @@ vest = getmodelflux(x(1:data.nc),p);
 vest(1) = x(5).*x(3).*p(17)./(p(17)+x(4));
 
 % calc objective
-fx = sqrt(sum((vest(1)-data.vexp(1,:)).^2));
+fx = sqrt(sum((vest(data.flxid)-data.vexp(data.flxid,:)).^2));
