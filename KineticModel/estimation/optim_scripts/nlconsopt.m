@@ -23,11 +23,11 @@ if isfield(prob,'ub')
 else
     ub = [];
 end
-if isfield(prob,'optimopts')
-    optimopts = prob.optimopts;
-else
-    optimopts = [];
-end
+% if isfield(prob,'optimopts')
+%     optimopts = prob.optimopts;
+% else
+%     optimopts = [];
+% end
 if isfield(prob,'nlrhs')
     nlrhs = prob.nlrhs;
 else
@@ -91,21 +91,9 @@ else
 end
 [xval,fval,exitflag,info] = solve(optim_prob,x0); 
 
-if exitflag == 1 &&...
-   (strcmpi(info.Status,'Success')||...
-    strcmpi(info.Status,'Optimal')||...
-    strcmpi(info.Status,'Converged / Target Reached')||...
-    strcmpi(info.Status,'Globally Optimal'))
-
-    xopt = xval;
-elseif ~isempty(xval) && ~isnan(fval)
-    xopt = xval;    
-else
-    xopt = [];    
-end
-
 optsol.x0 = x0;
-optsol.xval = xopt;
+optsol.xval = xval;
 optsol.fval = fval;
+optsol.exitflag = exitflag;
+optsol.info = info;
 optsol.time = toc(tstrt);
-
