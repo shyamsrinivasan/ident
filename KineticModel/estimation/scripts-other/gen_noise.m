@@ -31,7 +31,7 @@ noisy_sol = sol;
 pt_p = repmat(odep_bkp,length(pt_val.exp_pval),1);
 pt_p(:,pt_val.exp_pid) = pt_val.exp_pval;
 [noisy_sol.xss,noisy_sol.fss] = addnoise(sol.xss,pt_p);
-noisy_sol.xss = sol.xss + random(pd,3,size(sol.xss,2));
+% noisy_sol.xss = sol.xss + random(pd,3,size(sol.xss,2));
 
 % get only data from one steady state
 pss = ones(length(pt_val.exp_pval),1);
@@ -42,7 +42,8 @@ pss(noisy_sol.xss(1,:)>noisy_sol.xss(2,:)) = 0;
 %                    'fss',{noisy_fss});
 
 % problem defn
-optimdata = struct('nvar',5,'nc',3,'vexp',noisy_sol.fss(:,logical(pss)),'p_id',[1 11]);
+optimdata = struct('nvar',5,'nc',3,'vexp',noisy_sol.fss(:,logical(pss)),...
+                    'p_id',[1 11],'flxid',1);
 
 % set objective
 obj = @(x)objnoisy(x,odep_bkp,optimdata);
@@ -60,18 +61,9 @@ ub(optimdata.nc+1:end) = [10;10];
 % initial values for consrained nl(or quadratic?) optimization
 x0 = [xss1;odep_bkp(optimdata.p_id)'];
 
-optimopts = optiset('solver','scip',...
-                      'maxiter',5000,...
-                      'maxfeval',500000,...
-                      'tolrfun',1e-6,...
-                      'tolafun',1e-6,...
-                      'display','final');   
-optimopts = optiset(optimopts,'maxnodes',10000000);   
-solveropts = scipset('scipopts',{'limits/time',1e20});
-optimopts = optiset(optimopts,'solverOpts',solveropts);
-optim_prob = opti('obj',obj,'bounds',lb,ub,'options',optimopts);
-[xval,fval,exitflag,info] = solve(optim_prob,x0); 
-
+prob = struct('obj',obj,'lb',lb,'ub',ub);
+solveropt = struct('solver','scip');
+optsol = nlconsopt(prob,x0,solveropt);
 
 
 
