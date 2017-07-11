@@ -74,8 +74,8 @@ switch(solver)
     case 'ipopt'
          
     case 'scip'
-        solver_opts = scipset('scipopts',{'limits/time',1e20});
-        optimopts = optiset(optimopts,'maxnodes',10000000);
+        solver_opts = scipset('scipopts',{'limits/time',1e6});
+        optimopts = optiset(optimopts,'maxnodes',100000000);
     otherwise
         error('Nonexistent solver in OPTI');
 end
