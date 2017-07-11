@@ -23,8 +23,8 @@ nsmp = 10;
 % close all
 
 % get only data from one steady state
-pss = ones(length(pt_val.exp_pval),1);
-pss(noisy_sol.xss(1,:)>noisy_sol.xss(2,:)) = 0;    
+pss = ones(length(noisy_sol.exp_pval),1);
+% pss(noisy_sol.xss(1,:)>noisy_sol.xss(2,:)) = 0;    
 
 % use noisy data as perturbed data analoges to estimate parameters
 % optimdata = struct('xss',{noisy_xss},...
@@ -44,7 +44,7 @@ lb(1:optimdata.nc) = xss1.*(1-optimdata.eps);
 ub = zeros(optimdata.nvar,1);
 ub(1:optimdata.nc) = xss1.*(1+optimdata.eps);
 % set bounds - parameter
-lb(optimdata.nc+1:end) = [1e-3;1e-3];
+lb(optimdata.nc+1:end) = [1e-2;1e-1];
 ub(optimdata.nc+1:end) = [10;10];
 
 % initial values for consrained nl(or quadratic?) optimization
