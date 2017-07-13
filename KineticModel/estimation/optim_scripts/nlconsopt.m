@@ -72,7 +72,7 @@ switch(solver)
                 nloptset('algorithm','AUGLAG','subalgorithm','LN_COBYLA'); 
         end                
     case 'ipopt'
-         
+         solver_opts = [];
     case 'scip'
         solver_opts = scipset('scipopts',{'limits/time',1e6});
         optimopts = optiset(optimopts,'maxnodes',100000000);
@@ -89,7 +89,12 @@ else
     optim_prob =...
     opti('obj',obj,'bounds',lb,ub,'options',optimopts);    
 end
-[xval,fval,exitflag,info] = solve(optim_prob,x0); 
+if multi
+    [xval,fval,exitflag,info] = multisolve(optim_prob,[],[5 10]);   
+else
+    [xval,fval,exitflag,info] = solve(optim_prob,x0); 
+end     
+% [xval,fval,exitflag,info] = solve(optim_prob,x0); 
 
 optsol.x0 = x0;
 optsol.xval = xval;
