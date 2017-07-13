@@ -26,5 +26,8 @@ est_xss = cat(2,sol.xss);
 est_fss = cat(2,sol.fss);
 
 % plot comparison
-
+figure
+bar(est_xss);
+figure
+bar(est_fss);
 
