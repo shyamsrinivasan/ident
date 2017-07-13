@@ -23,7 +23,7 @@ exp_xss = cat(2,exp_sol.xss);
 exp_fss = cat(2,exp_sol.fss);
 
 est_xss = cat(2,sol.xss);
-est_fss = cat(2,sol.xss);
+est_fss = cat(2,sol.fss);
 
 % plot comparison
 
