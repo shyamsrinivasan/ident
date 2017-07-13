@@ -21,11 +21,10 @@ for j = 1:length(pt_sol_id)
 end
 
 % combine all perturbation flux data into a single vector
-for j = 1:size(noisy_sol,2)
-    exp_sol.xss = cat(2,noisy_sol.xss);
-    exp_sol.fss = cat(2,noisy_sol.fss);
-    exp_sol.exp_pid = cat(2,noisy_sol.exp_pid);
-    exp_sol.exp_pval = cat(2,noisy_sol.exp_pval);
-    exp_sol.odep = cat(1,noisy_sol.odep);
-end
+exp_sol.xss = cat(2,noisy_sol.xss);
+exp_sol.fss = cat(2,noisy_sol.fss);
+exp_sol.exp_pid = cat(2,noisy_sol.exp_pid);
+exp_sol.exp_pval = cat(2,noisy_sol.exp_pval);
+exp_sol.odep = cat(1,noisy_sol.odep);
+
 
