@@ -19,9 +19,9 @@ nsmp = 10;
 % boxplot([noisy_xss';xss1']);
 
 % perturb system from noisy initial conditions
-% pt_sol_id = [1 2 3];
-% [exp_sol,noisy_sol] = dopert_noisy(opts,noisy_xss,odep_bkp,pt_sol_id);
-% close all
+pt_sol_id = [1 2 3];
+[exp_sol,noisy_sol] = dopert_noisy(opts,noisy_xss,odep_bkp,pt_sol_id);
+close all
 
 % get only data from one steady state
 pss = ones(1,numel(exp_sol.exp_pval));
