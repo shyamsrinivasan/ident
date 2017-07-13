@@ -19,20 +19,21 @@ nsmp = 10;
 % boxplot([noisy_xss';xss1']);
 
 % perturb system from noisy initial conditions
-% dopert_noisy
+% pt_sol_id = [1 2 3];
+% [exp_sol,noisy_sol] = dopert_noisy(opts,noisy_xss,odep_bkp,pt_sol_id);
 % close all
 
 % get only data from one steady state
-pss = ones(length(noisy_sol.exp_pval),1);
-% pss(noisy_sol.xss(1,:)>noisy_sol.xss(2,:)) = 0;    
+pss = ones(1,numel(exp_sol.exp_pval));
+% pss(exp_sol.xss(1,:)>exp_sol.xss(2,:)) = 0;    
 
 % use noisy data as perturbed data analoges to estimate parameters
 % optimdata = struct('xss',{noisy_xss},...
 %                    'fss',{noisy_fss});
 
 % problem defn
-optimdata = struct('nvar',5,'nc',3,'vexp',noisy_sol.fss(:,logical(pss)),...
-                    'p_id',[1 11],'flxid',1);
+optimdata = struct('nvar',5,'nc',3,'vexp',exp_sol.fss(:,logical(pss)),...
+                    'p_id',[1 11],'flxid',1,'odep',odep_bkp);
 
 % set objective
 obj = @(x)objnoisy(x,odep_bkp,optimdata);
@@ -51,8 +52,11 @@ ub(optimdata.nc+1:end) = [10;10];
 x0 = [xss1;odep_bkp(optimdata.p_id)'];
 
 prob = struct('obj',obj,'lb',lb,'ub',ub);
-solveropt = struct('solver','scip');
+solveropt = struct('solver','ipopt','multi',1);
 optsol = nlconsopt(prob,x0,solveropt);
+
+% compare fluxes and concentrations
+compare_vals(optsol,noisy_sol,optimdata,opts);
 
 
 
