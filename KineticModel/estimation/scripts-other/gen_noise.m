@@ -27,13 +27,9 @@ nsmp = 10;
 pss = ones(1,numel(exp_sol.exp_pval));
 % pss(exp_sol.xss(1,:)>exp_sol.xss(2,:)) = 0;    
 
-% use noisy data as perturbed data analoges to estimate parameters
-% optimdata = struct('xss',{noisy_xss},...
-%                    'fss',{noisy_fss});
-
 % problem defn
 optimdata = struct('nvar',5,'nc',3,'vexp',exp_sol.fss(:,logical(pss)),...
-                    'p_id',[1 11],'flxid',1,'odep',odep_bkp);
+                    'p_id',[1 11],'flxid',1,'odep',odep_bkp,'wt_xss',noisy_xss(:,1));
 
 % set objective
 obj = @(x)objnoisy(x,odep_bkp,optimdata);
@@ -49,7 +45,7 @@ lb(optimdata.nc+1:end) = [1e-2;1e-1];
 ub(optimdata.nc+1:end) = [10;10];
 
 % initial values for consrained nl(or quadratic?) optimization
-x0 = [xss1;odep_bkp(optimdata.p_id)'];
+x0 = [noisy_xss(:,2);odep_bkp(optimdata.p_id)'];
 
 prob = struct('obj',obj,'lb',lb,'ub',ub);
 solveropt = struct('solver','ipopt','multi',1);
