@@ -38,6 +38,26 @@ bar(x2ss);
 subplot(313)
 bar(x3ss);
 
+f1ss = [exp_fss(1,:);est_fss(1,:)]';
+f2ss = [exp_fss(2,:);est_fss(2,:)]';
+f3ss = [exp_fss(3,:);est_fss(3,:)]';
+f4ss = [exp_fss(4,:);est_fss(4,:)]';
+f5ss = [exp_fss(5,:);est_fss(5,:)]';
+f6ss = [exp_fss(6,:);est_fss(6,:)]';
+figure
+subplot(331)
+bar(f1ss);
+legend('Noisy Data','Model Estimate');
+subplot(322)
+bar(f2ss);
+subplot(323)
+bar(f3ss);
+subplot(324)
+bar(f4ss);
+subplot(325)
+bar(f5ss);
+subplot(326)
+bar(f6ss);
 % figure
 % bar(est_fss);
 
