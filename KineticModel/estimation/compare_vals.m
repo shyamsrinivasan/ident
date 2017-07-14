@@ -26,8 +26,18 @@ est_xss = cat(2,sol.xss);
 est_fss = cat(2,sol.fss);
 
 % plot comparison
+x1ss = [exp_xss(1,:);est_xss(1,:)]';
+x2ss = [exp_xss(2,:);est_xss(2,:)]';
+x3ss = [exp_xss(3,:);est_xss(3,:)]';
 figure
-bar(est_xss);
-figure
-bar(est_fss);
+subplot(311)
+bar(x1ss);
+legend('Noisy Data','Model Estimate');
+subplot(312)
+bar(x2ss);
+subplot(313)
+bar(x3ss);
+
+% figure
+% bar(est_fss);
 
