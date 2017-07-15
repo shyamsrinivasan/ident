@@ -55,7 +55,11 @@ if isfield(solveropts,'multi')
 else
     multi = 0;
 end
-
+if isfield(solveropts,'multi_pts')
+    multi_pts = solveropts.multi_pts;
+else
+    multi_pts = [5 12];
+end
 if isempty(obj)
     error('No given objective function');
 end
@@ -95,7 +99,7 @@ else
     opti('obj',obj,'bounds',lb,ub,'options',optimopts);    
 end
 if multi
-    [xval,fval,exitflag,info] = multisolve(optim_prob,[],[5 12]);   
+    [xval,fval,exitflag,info] = multisolve(optim_prob,[],multi_pts);   
 else
     [xval,fval,exitflag,info] = solve(optim_prob,x0); 
 end     
