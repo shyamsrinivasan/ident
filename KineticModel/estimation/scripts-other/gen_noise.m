@@ -29,7 +29,8 @@ pss = ones(1,numel(exp_sol.exp_pval));
 
 % problem defn
 optimdata = struct('nvar',6,'nc',3,'nf',1,'vexp',exp_sol.fss(:,logical(pss)),...
-                    'p_id',[1 11],'flxid',1,'odep',odep_bkp,'wt_xss',noisy_xss(:,1));
+                    'p_id',[1 11],'flxid',1,'odep',odep_bkp,...
+                    'wt_xss',noisy_xss(:,1));
 
 % set objective
 obj = @(x)objnoisy(x,odep_bkp,optimdata);
