@@ -56,7 +56,7 @@ end
 lb(1:nc) = exp_xss.*(1-eps);
 ub(1:nc) = exp_xss.*(1+eps);
 % set bounds - parameter
-lb(nc+1:nc+length(p_id)) = .1*ones(length(p_id),1); 
+lb(nc+1:nc+length(p_id)) = .05*ones(length(p_id),1); 
 ub(nc+1:optimdata.nc+length(p_id)) = 10*ones(length(p_id),1);
 % set bounds - flux
 lb(nvar-nf+1:nvar) = exp_fss(flxid)*(1-eps);
