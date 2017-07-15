@@ -42,8 +42,8 @@ for j = 0:data.nc-1
     bh = bar(ahc,xss_plot(:,2*j+1:2*(j+1)));
     [~,ylbl] = getKotteaxislabels(2,2,[1,j+1]);
     ahc.YLabel.String = ylbl;    
+    ahc.XTickLabel = {'WT','P1','P2','P3'};
 end
-ahc.XTickLabel = {'WT','P1','P2','P3'};
 legend('Noisy Data','Model Estimate');
 % fluxes
 figure
@@ -51,7 +51,7 @@ for k = 0:nf-1
     ahf = subplot(nf/2,2,k+1);
     bh = bar(ahf,fss_plot(:,2*k+1:2*(k+1)));
     [~,ylbl] = getKotteaxislabels(2,1,[1,k+1]);
-    ahf.YLabel.String = ylbl;    
+    ahf.YLabel.String = ylbl;  
+    ahf.XTickLabel = {'WT','P1','P2','P3'};
 end
-ahc.XTickLabel = {'WT','P1','P2','P3'};
 legend('Noisy Data','Model Estimate');
