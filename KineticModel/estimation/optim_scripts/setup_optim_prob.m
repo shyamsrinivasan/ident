@@ -76,13 +76,15 @@ if isfield(optimdata,'nle')
     nles = optimdata.nle;
 end
 
+newdata = rmfield(newdata,{'obj','nlcons','nlrhs','nle'});
+
 % choose obj and cons
 fhobj = str2func(objhs{flxid});
-obj = @(x)fhobj(x,optimdata.odep,optimdata);
+obj = @(x)fhobj(x,newdata.odep,newdata);
 newdata.obj = obj;
 
 fhcons = str2func(conshs{flxid});
-nlcons = @(x)fhcons(x,optimdata.odep,optimdata);
+nlcons = @(x)fhcons(x,newdata.odep,newdata);
 newdata.nlcons = nlcons;
 
 nlrhs = rhsval{flxid};
