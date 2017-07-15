@@ -12,6 +12,7 @@ opt_fss = kotte_flux_noCAS(opt_xss,opt_odep);
 
 % after perturbation - perturb parameters to ascertain fluxes
 np = size(exp_sol,2);
+nf = size(wt_fss,1);
 opts.odep = opt_odep;
 opts.tspan = 0:.1:500;
 [pt_val(1:np).exp_pid] = exp_sol.exp_pid;
@@ -27,57 +28,30 @@ est_xss = cat(2,sol.xss);
 est_fss = cat(2,sol.fss);
 
 % plot comparison
-x1ss = [exp_xss(1,:);est_xss(1,:)]';
-x2ss = [exp_xss(2,:);est_xss(2,:)]';
-x3ss = [exp_xss(3,:);est_xss(3,:)]';
+xss_plot = zeros(np+1,2*data.nc);
+fss_plot = zeros(np+1,2*size(wt_fss,1));
+for j = 0:data.nc-1
+    xss_plot(:,2*j+1:2*(j+1)) = [data.wt_xss(j+1) opt_xss(j+1);exp_xss(j+1,:)' est_xss(j+1,:)'];
+end
+for k = 0:nf-1
+    fss_plot(:,2*k+1:2*(k+1)) = [data.wt_fss(k+1) opt_fss(k+1);exp_fss(k+1,:)' est_fss(k+1,:)'];
+end
 figure
-subplot(311)
-bar(x1ss);
+for j = 0:data.nc-1
+    ahc = subplot(data.nc,1,j+1);
+    bh = bar(ahc,xss_plot(:,2*j+1:2*(j+1)));
+    [~,ylbl] = getKotteaxislabels(2,2,[1,j+1]);
+    ahc.YLabel.String = ylbl;    
+end
+ahc.XTickLabel = {'WT','P1','P2','P3'};
 legend('Noisy Data','Model Estimate');
-[~,ylbl] = getKotteaxislabels(2,2,[1,1]);
-ylabel(ylbl);
-subplot(312)
-bar(x2ss);
-[~,ylbl] = getKotteaxislabels(2,2,[1,2]);
-ylabel(ylbl);
-subplot(313)
-bar(x3ss);
-[~,ylbl] = getKotteaxislabels(2,2,[1,3]);
-ylabel(ylbl);
-
-f1ss = [exp_fss(1,:);est_fss(1,:)]';
-f2ss = [exp_fss(2,:);est_fss(2,:)]';
-f3ss = [exp_fss(3,:);est_fss(3,:)]';
-f4ss = [exp_fss(4,:);est_fss(4,:)]';
-f5ss = [exp_fss(5,:);est_fss(5,:)]';
-f6ss = [exp_fss(6,:);est_fss(6,:)]';
 % fluxes
 figure
-subplot(331)
-bh = bar(f1ss);
+for k = 0:nf-1
+    ahf = subplot(nf/2,2,k+1);
+    bh = bar(ahf,fss_plot(:,2*k+1:2*(k+1)));
+    [~,ylbl] = getKotteaxislabels(2,1,[1,k+1]);
+    ahf.YLabel.String = ylbl;    
+end
+ahc.XTickLabel = {'WT','P1','P2','P3'};
 legend('Noisy Data','Model Estimate');
-[~,ylbl] = getKotteaxislabels(2,1,[1,1]);
-ylabel(ylbl);
-subplot(322)
-bar(f2ss);
-[~,ylbl] = getKotteaxislabels(2,1,[1,2]);
-ylabel(ylbl);
-subplot(323)
-bar(f3ss);
-[~,ylbl] = getKotteaxislabels(2,1,[1,3]);
-ylabel(ylbl);
-subplot(324)
-bar(f4ss);
-[~,ylbl] = getKotteaxislabels(2,1,[1,4]);
-ylabel(ylbl);
-subplot(325)
-bar(f5ss);
-[~,ylbl] = getKotteaxislabels(2,1,[1,5]);
-ylabel(ylbl);
-subplot(326)
-bar(f6ss);
-[~,ylbl] = getKotteaxislabels(2,1,[1,6]);
-ylabel(ylbl);
-% figure
-% bar(est_fss);
-
