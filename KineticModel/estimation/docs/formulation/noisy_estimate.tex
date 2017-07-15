@@ -90,14 +90,35 @@
 			\begin{subequations}
 				\begin{align}
 				\underset{x,p_j}{\mathrm{min}} & \text{      }\left\Vert v_i-v^*\right\Vert &  i\in\mathcal{R}^n,\text{  }j\in\mathcal{R}^l\\
-				& \text{      }v_i = f(x,p_j)\\
+				\mathrm{st}& \text{      }v_i = f(x,p_j)\\
 				& \text{      }x_{min}(1-\epsilon)\le x \le x_{max}(1+\epsilon)\\
 				%& \text{      }v_{min}(1-\epsilon)\le v \le v_{max}(1+\epsilon)\\
-				& \text{      }p_{j,min} \le p_j \le p_{j,max}\\
+				& \text{      }p_{j,min} \le p_j \le p_{j,max}
 				\end{align}
 			\end{subequations}
 		\end{center}
 	\item The noise $\epsilon$ is fixed at 5\% or 10\% to signify experimental noise.
+	\end{itemize}
+
+	\paragraph{More changes to address nonlinearity due to division(July 13)}
+	Prof. M suggested changing the nonlinear formulation of the flux equations into just a bilinear form by removing the denominator and formulating it as nonlinear algebraic equation.
+	\begin{center}
+		\begin{subequations}
+			\begin{align}
+			\underset{x,p_j,v_i}{\mathrm{min}} & \text{      }\left\Vert v_i-v^*\right\Vert &  i\in\mathcal{R}^n,\text{  }j\in\mathcal{R}^l\\
+			\mathrm{st}& \text{      }N(x,p_j) - v_iD(x,p_j) = 0\\
+			& \text{      }x_{min}(1-\epsilon)\le x \le x_{max}(1+\epsilon)\\			
+			& \text{      }p_{j,min} \le p_j \le p_{j,max}\\
+			& \text{      }v_{i,min}(1-\epsilon)\le v_i \le v_{i,max}(1+\epsilon)
+			\end{align}
+		\end{subequations}
+	\end{center}
+
+	\begin{itemize}
+		\item Also, the initial noise added to the steady state solutions was reduced from 50\% to 5\% or 10\%.
+		\item $\epsilon$ is fixed at 50\%.
+		\item Solution is obtained using multisolve with IPOPT instead of aiming to obtain a global solution with SCIP.
+		\item Using approximately 14 million points for the second phase of multistart in OPTI
 	\end{itemize}
 	
 \end{document}
