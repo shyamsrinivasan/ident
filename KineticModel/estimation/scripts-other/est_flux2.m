@@ -61,7 +61,9 @@ setup_opts.nle = allnle;
 [prob,optimdata] = setup_optim_prob(setup_opts);
 
 % initial values for consrained nl(or quadratic?) optimization
-x0 = [noisy_xss(:,2);optimdata.odep(optimdata.p_id)';noisy_fss(1,2)];
+x0 = [noisy_xss(:,2);...
+      optimdata.odep(optimdata.p_id)';...
+      noisy_fss(optimdata.flxid,2)];
 
 % prob = struct('obj',obj,'nlcons',nlcons,'nlrhs',nlrhs,'nle',nle,'lb',lb,'ub',ub);
 solveropt = struct('solver','ipopt','multi',1);
