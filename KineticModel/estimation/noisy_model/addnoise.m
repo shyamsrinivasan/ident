@@ -7,9 +7,9 @@ npar = size(p,1);
 nsmp = size(x,2);
 
 if nsmp>1    
-    pd = makedist('Uniform','lower',-.1,'upper',.1);    
+    pd = makedist('Uniform','lower',-.05,'upper',.05);    
 else
-    pd = makedist('Uniform','lower',-.1,'upper',.1);    
+    pd = makedist('Uniform','lower',-.05,'upper',.05);    
 end
 met_noise = random(pd,nvar,nsmp);
 noisy_xss = x.*(1+met_noise);
