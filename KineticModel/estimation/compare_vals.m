@@ -44,6 +44,7 @@ for j = 0:data.nc-1
     ahc.YLabel.String = ylbl;    
     ahc.XTickLabel = {'WT','P1','P2','P3'};
 end
+ahc.XLabel.String = 'WT and Perturbations';
 legend('Noisy Data','Model Estimate');
 % fluxes
 figure
@@ -54,4 +55,5 @@ for k = 0:nf-1
     ahf.YLabel.String = ylbl;  
     ahf.XTickLabel = {'WT','P1','P2','P3'};
 end
+ahf.XLabel.String = 'WT and Perturbations';
 legend('Noisy Data','Model Estimate');
