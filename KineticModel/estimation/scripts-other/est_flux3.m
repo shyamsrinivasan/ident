@@ -66,7 +66,7 @@ x0 = [noisy_xss(:,2);...
       noisy_fss(optimdata.flxid,2)];
 
 % prob = struct('obj',obj,'nlcons',nlcons,'nlrhs',nlrhs,'nle',nle,'lb',lb,'ub',ub);
-solveropt = struct('solver','ipopt','multi',1,'multi_pts',[6 8]);
+solveropt = struct('solver','ipopt','multi',1,'multi_pts',[8 8]);
 optsol = nlconsopt(prob,x0,solveropt,optimdata);
 
 % compare fluxes and concentrations
