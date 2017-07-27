@@ -31,10 +31,12 @@ est_fss = cat(2,sol.fss);
 xss_plot = zeros(np+1,2*data.nc);
 fss_plot = zeros(np+1,2*size(wt_fss,1));
 for j = 0:data.nc-1
-    xss_plot(:,2*j+1:2*(j+1)) = [data.wt_xss(j+1) opt_xss(j+1);exp_xss(j+1,:)' est_xss(j+1,:)'];
+    xss_plot(:,2*j+1:2*(j+1)) =...
+    [data.wt_xss(j+1) opt_xss(j+1);exp_xss(j+1,:)' est_xss(j+1,:)'];
 end
 for k = 0:nf-1
-    fss_plot(:,2*k+1:2*(k+1)) = [data.wt_fss(k+1) opt_fss(k+1);exp_fss(k+1,:)' est_fss(k+1,:)'];
+    fss_plot(:,2*k+1:2*(k+1)) =...
+    [data.wt_fss(k+1) opt_fss(k+1);exp_fss(k+1,:)' est_fss(k+1,:)'];
 end
 figure
 for j = 0:data.nc-1
