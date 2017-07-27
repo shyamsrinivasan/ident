@@ -1,4 +1,6 @@
-function compare_vals(optsol,exp_sol,data,opts)
+function compare_vals(optsol,exp_sol,data,opts,exp_data_id)
+
+exp_data_id = logical(exp_data_id);
 
 % parse data to get optimal concentrations and parameters
 [opt_xss,xpar] = parsesolvec(optsol,data);
@@ -7,32 +9,57 @@ opt_odep(data.p_id) = xpar;
 
 % calculate new model fluxes
 % before perturbation - wt fluxes
-wt_fss = kotte_flux_noCAS(data.wt_xss,data.odep);
+% assume wt (unperturbed) data is always included at the end
+wt_exp_xss = exp_sol(end).xss;
+wt_exp_fss = kotte_flux_noCAS(wt_exp_xss,data.odep);
 % before perturbation - pertubed fluxes(using estimate concentrations)
 opt_fss = kotte_flux_noCAS(opt_xss,opt_odep);
 
+% unperturbed model fluxes when wt fluxes are not estimated
+if ~exp_data_id(end)
+    wt_est_xss = wt_exp_xss; % model wt xss = exp wt xss
+    wt_est_fss = kotte_flux_noCAS(wt_est_xss,opt_odep);
+else
+    wt_est_xss = opt_xss(:,end);
+    wt_est_fss = kotte_flux_noCAS(wt_est_xss,opt_odep);
+end
+
 % after perturbation - perturb parameters to ascertain fluxes
-np = size(exp_sol,2);
-nf = size(wt_fss,1);
+np = length(find(exp_data_id));
+nf = size(wt_exp_fss,1);
 opts.odep = opt_odep;
 opts.tspan = 0:.1:500;
-[pt_val(1:np).exp_pid] = exp_sol.exp_pid;
-[pt_val(1:np).exp_pval] = exp_sol.exp_pval;
+if np == size(exp_sol,2)
+    [pt_val(1:np-1).exp_pid] = exp_sol(1:end-1).exp_pid;
+    [pt_val(1:np-1).exp_pval] = exp_sol(1:end-1).exp_pval;
+else
+    [pt_val(1:np).exp_pid] = exp_sol(exp_data_id).exp_pid;
+    [pt_val(1:np).exp_pval] = exp_sol(exp_data_id).exp_pval;
+end
 sol = getperturbations(pt_val,@perturb_nonoise,opts);
 close all
 
-% collect all data to plot [wt p#1 p#2....]
-exp_xss = [data.wt_xss cat(2,exp_sol.xss)];
-exp_fss = [wt_fss cat(2,exp_sol.fss)];
+% collect all data to plot [wt p#1 p#2....]  
+exp_xss = cat(2,exp_sol.xss);
+exp_xss = [exp_xss(:,end) exp_xss(:,1:end-1)];
+exp_fss = cat(2,exp_sol.fss);
+exp_fss = [exp_fss(:,end) exp_fss(:,1:end-1)];
 
-est_xss = [opt_xss(:,1) cat(2,sol.xss)];
-est_fss = [opt_fss(:,1) cat(2,sol.fss)];
+if np<size(exp_sol,2) % wt not included in estimation
+    est_xss = [wt_est_xss cat(2,sol.xss)];
+    est_fss = [wt_est_fss cat(2,sol.fss)];
+    nplot = np+1;
+else
+    est_xss = [opt_xss(:,end) cat(2,sol.xss)];
+    est_fss = [opt_fss(:,end) cat(2,sol.fss)];
+    nplot = np;
+end
 % opt_xss(:,1) = [];
 % opt_fss(:,1) = [];
 
 % plot comparison
-xss_plot = zeros(np+1,2*data.nc);
-fss_plot = zeros(np+1,2*size(wt_fss,1));
+xss_plot = zeros(nplot,2*data.nc);
+fss_plot = zeros(nplot,2*size(wt_exp_fss,1));
 for j = 0:data.nc-1
     xss_plot(:,2*j+1:2*(j+1)) =...
     [exp_xss(j+1,:)' est_xss(j+1,:)'];
