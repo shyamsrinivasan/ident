@@ -63,7 +63,7 @@ lb(1:nc*npert) = xss_exp_v.*(1-eps);
 ub(1:nc*npert) = xss_exp_v.*(1+eps);
 % set bounds - parameter
 lb(nc*npert+1:nc*npert+length(p_id)) = .05*ones(length(p_id),1); 
-ub(nc*npert+1:nc*npert+length(p_id)) = 10*ones(length(p_id),1);
+ub(nc*npert+1:nc*npert+length(p_id)) = 5*ones(length(p_id),1);
 % set bounds - flux
 lb(nvar-nf*npert+1:nvar) = vss_exp_v*(1-eps);
 ub(nvar-nf*npert+1:nvar) = vss_exp_v*(1+eps);
