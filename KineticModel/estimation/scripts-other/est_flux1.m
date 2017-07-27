@@ -19,16 +19,18 @@ nsmp = 10;
 
 % perturb system from noisy initial conditions
 pt_sol_id = [1 2 3];
-[exp_sol,noisy_sol] = dopert_noisy(opts,noisy_xss,odep_bkp,pt_sol_id);
+[exp_sol,noisy_sol] = dopert_noisy(opts,noisy_xss,noisy_fss,odep_bkp,pt_sol_id);
 close all
 
 % get only data from one steady state
 pss = ones(1,numel(exp_sol.exp_pval));
+pss(end) = 0;
 % pss(exp_sol.xss(1,:)>exp_sol.xss(2,:)) = 0;    
 
 % options structure for solving problem
 optimdata = struct('nc',3,'nf',1,'flxid',1,'eps',.5,...
-                    'vexp',exp_sol.fss(:,logical(pss)),...                    
+                    'vexp',exp_sol.fss(:,logical(pss)),...
+                    'xexp',exp_sol.xss(:,logical(pss)),...
                     'odep',odep_bkp,...
                     'wt_xss',noisy_xss(:,1),'wt_fss',noisy_fss(:,1));
 
@@ -47,9 +49,9 @@ allconsh = {'consnoisyf1',...
             'consnoisyf1',...
             []};
 % define all rhs for nl cons
-allnlrhs = {0,[],0,0,0,[]};
+allnlrhs = {[],[],0,0,0,[]};
 % define cons type for nl cons
-allnle = {0,[],0,0,0,[]};
+allnle = {[],[],0,0,0,[]};
 
 % problem defn
 setup_opts = optimdata;
@@ -61,14 +63,14 @@ setup_opts.nle = allnle;
 [prob,optimdata] = setup_optim_prob(setup_opts);
 
 % initial values for consrained nl(or quadratic?) optimization
-x0 = [noisy_xss(:,2);optimdata.odep(optimdata.p_id)';noisy_fss(1,2)];
+x0 = [optimdata.xexp;optimdata.odep(optimdata.p_id)';optimdata.vexp];
 
 % prob = struct('obj',obj,'nlcons',nlcons,'nlrhs',nlrhs,'nle',nle,'lb',lb,'ub',ub);
-solveropt = struct('solver','ipopt','multi',1,'multi_pts',[7 7]);
+solveropt = struct('solver','ipopt','multi',1,'multi_pts',[2 2]);
 optsol = nlconsopt(prob,x0,solveropt,optimdata);
 
 % compare fluxes and concentrations
-compare_vals(optsol,noisy_sol,optimdata,opts);
+compare_vals(optsol,noisy_sol,optimdata,opts,pss);
 
 
 
