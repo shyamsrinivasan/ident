@@ -21,12 +21,18 @@ for j = 1:length(pt_sol_id)
     noisy_sol(j).xss = noisy_ss(j).xss;
     noisy_sol(j).fss = noisy_ss(j).fss;
 end
+% include wt (unperturbed) data
+noisy_sol(j+1).xss = noisy_xss(:,id);
+noisy_sol(j+1).fss = noisy_fss(:,id);
+noisy_sol(j+1).exp_pid = 0;
+noisy_sol(j+1).exp_pval = 0;
+noisy_sol(j+1).odep = odep_bkp;
 
 % combine all perturbation flux data into a single vector
-exp_sol.xss = [noisy_xss(:,1) cat(2,noisy_sol.xss)];
-exp_sol.fss = [noisy_fss(:,1) cat(2,noisy_sol.fss)];
-exp_sol.exp_pid = [0 cat(2,noisy_sol.exp_pid)];
-exp_sol.exp_pval = [0 cat(2,noisy_sol.exp_pval)];
-exp_sol.odep = [odep_bkp;cat(1,noisy_sol.odep)];
+exp_sol.xss = cat(2,noisy_sol.xss);
+exp_sol.fss = cat(2,noisy_sol.fss);
+exp_sol.exp_pid = cat(2,noisy_sol.exp_pid);
+exp_sol.exp_pval = cat(2,noisy_sol.exp_pval);
+exp_sol.odep = cat(1,noisy_sol.odep);
 
 
