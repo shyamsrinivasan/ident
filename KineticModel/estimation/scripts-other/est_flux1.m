@@ -64,7 +64,7 @@ setup_opts.nle = allnle;
 x0 = [noisy_xss(:,2);optimdata.odep(optimdata.p_id)';noisy_fss(1,2)];
 
 % prob = struct('obj',obj,'nlcons',nlcons,'nlrhs',nlrhs,'nle',nle,'lb',lb,'ub',ub);
-solveropt = struct('solver','ipopt','multi',1);
+solveropt = struct('solver','ipopt','multi',1,'multi_pts',[7 7]);
 optsol = nlconsopt(prob,x0,solveropt,optimdata);
 
 % compare fluxes and concentrations
