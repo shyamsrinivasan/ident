@@ -25,10 +25,22 @@ end
 if isfield(optimdata,'nf')
     nf = optimdata.nf;
 end
+if isfield(optimdata,'vexp')
+    vss_exp = optimdata.vexp(flxid,:);    
+end
+if isfield(optimdata,'xexp')
+    xss_exp = optimdata.xexp;
+end
+npert = size(xss_exp,2);
+vss_exp_v = reshape(vss_exp,[nf*npert,1]);
+xss_exp_v = reshape(xss_exp,[nc*npert,1]);
 
 % determine nvar
-nvar = nc+nf+length(p_id);
+nvar = nc*npert+nf*npert+length(p_id);
 newdata = optimdata;
+newdata.vexp = vss_exp_v;
+newdata.xexp = xss_exp_v;
+newdata.npert = npert;
 newdata.nvar = nvar;
 newdata.p_id = p_id;
 
@@ -43,24 +55,18 @@ if isfield(optimdata,'ub')
 else
     ub = zeros(nvar,1);
 end
-if isfield(optimdata,'wt_xss')
-    exp_xss  = optimdata.wt_xss;
-end
-if isfield(optimdata,'wt_fss')
-    exp_fss = optimdata.wt_fss;
-end
 if isfield(optimdata,'eps')
     eps = optimdata.eps;
 end
 % set bounds - concentration
-lb(1:nc) = exp_xss.*(1-eps);
-ub(1:nc) = exp_xss.*(1+eps);
+lb(1:nc*npert) = xss_exp_v.*(1-eps);
+ub(1:nc*npert) = xss_exp_v.*(1+eps);
 % set bounds - parameter
-lb(nc+1:nc+length(p_id)) = .05*ones(length(p_id),1); 
-ub(nc+1:optimdata.nc+length(p_id)) = 10*ones(length(p_id),1);
+lb(nc*npert+1:nc*npert+length(p_id)) = .05*ones(length(p_id),1); 
+ub(nc*npert+1:nc*npert+length(p_id)) = 10*ones(length(p_id),1);
 % set bounds - flux
-lb(nvar-nf+1:nvar) = exp_fss(flxid)*(1-eps);
-ub(nvar-nf+1:nvar) = exp_fss(flxid)*(1+eps);
+lb(nvar-nf*npert+1:nvar) = vss_exp_v*(1-eps);
+ub(nvar-nf*npert+1:nvar) = vss_exp_v*(1+eps);
 
 % setup objectives and cons
 if isfield(optimdata,'obj')
@@ -71,9 +77,13 @@ if isfield(optimdata,'nlcons')
 end
 if isfield(optimdata,'nlrhs')
     rhsval = optimdata.nlrhs;
+else
+    rhsval = [];
 end
 if isfield(optimdata,'nle')
     nles = optimdata.nle;
+else
+    nles = [];
 end
 
 newdata = rmfield(newdata,{'obj','nlcons','nlrhs','nle'});
@@ -87,9 +97,17 @@ fhcons = str2func(conshs{flxid});
 nlcons = @(x)fhcons(x,newdata.odep,newdata);
 newdata.nlcons = nlcons;
 
-nlrhs = rhsval{flxid};
+if ~isempty(rhsval{flxid})
+    nlrhs = rhsval{flxid};
+else
+    nlrhs = zeros(npert,1);
+end
 newdata.nlrhs = nlrhs;
-nle = nles{flxid};
+if ~isempty(nles{flxid})
+    nle = nles{flxid};
+else
+    nle = zeros(npert,1);
+end
 newdata.nle = nle;
 
 % setup problem structure
