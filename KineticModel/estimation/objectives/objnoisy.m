@@ -9,4 +9,4 @@ function fx = objnoisy(x,p,data)
 % vest(1) = x(5).*x(3).*p(17)./(p(17)+x(4));
 
 % calc objective
-fx = sqrt(sum((x(end)-data.vexp(data.flxid,:)).^2));
+fx = sqrt(sum((x(data.nvar-data.nf*data.npert+1:nvar)-data.vexp).^2));
