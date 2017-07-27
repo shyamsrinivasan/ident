@@ -20,7 +20,7 @@ nsmp = 10;
 
 % perturb system from noisy initial conditions
 pt_sol_id = [1 2 3];
-[exp_sol,noisy_sol] = dopert_noisy(opts,noisy_xss,odep_bkp,pt_sol_id);
+[exp_sol,noisy_sol] = dopert_noisy(opts,noisy_xss,noisy_fss,odep_bkp,pt_sol_id);
 close all
 
 % get only data from one steady state
