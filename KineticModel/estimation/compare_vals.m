@@ -21,23 +21,25 @@ opts.tspan = 0:.1:500;
 sol = getperturbations(pt_val,@perturb_nonoise,opts);
 close all
 
-% collect all data to plot 
-exp_xss = cat(2,exp_sol.xss);
-exp_fss = cat(2,exp_sol.fss);
+% collect all data to plot [wt p#1 p#2....]
+exp_xss = [data.wt_xss cat(2,exp_sol.xss)];
+exp_fss = [wt_fss cat(2,exp_sol.fss)];
 
-est_xss = cat(2,sol.xss);
-est_fss = cat(2,sol.fss);
+est_xss = [opt_xss(:,1) cat(2,sol.xss)];
+est_fss = [opt_fss(:,1) cat(2,sol.fss)];
+% opt_xss(:,1) = [];
+% opt_fss(:,1) = [];
 
 % plot comparison
 xss_plot = zeros(np+1,2*data.nc);
 fss_plot = zeros(np+1,2*size(wt_fss,1));
 for j = 0:data.nc-1
     xss_plot(:,2*j+1:2*(j+1)) =...
-    [data.wt_xss(j+1) opt_xss(j+1);exp_xss(j+1,:)' est_xss(j+1,:)'];
+    [exp_xss(j+1,:)' est_xss(j+1,:)'];
 end
 for k = 0:nf-1
     fss_plot(:,2*k+1:2*(k+1)) =...
-    [data.wt_fss(k+1) opt_fss(k+1);exp_fss(k+1,:)' est_fss(k+1,:)'];
+    [exp_fss(k+1,:)' est_fss(k+1,:)'];
 end
 figure
 for j = 0:data.nc-1
