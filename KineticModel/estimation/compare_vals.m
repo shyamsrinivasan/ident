@@ -6,8 +6,9 @@ opt_odep = data.odep;
 opt_odep(data.p_id) = xpar;
 
 % calculate new model fluxes
-% before perturbation
+% before perturbation - wt fluxes
 wt_fss = kotte_flux_noCAS(data.wt_xss,data.odep);
+% before perturbation - pertubed fluxes(using estimate concentrations)
 opt_fss = kotte_flux_noCAS(opt_xss,opt_odep);
 
 % after perturbation - perturb parameters to ascertain fluxes
