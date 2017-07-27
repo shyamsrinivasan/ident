@@ -4,6 +4,10 @@
 \usepackage{array}
 \usepackage{tabu}
 \usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage[space]{grffile}
+\usepackage{subfigure}
+\usepackage{longtable}
 
 \begin{document}
 	Optimization problem for estimation of kinetic parameters from noisy experimental data. The noisy data is generated through the use of additive noise in flux equations that use a known kinetic model to predict the responses of a metabolic network to different perturbations.\\
@@ -120,6 +124,65 @@
 		\item Solution is obtained using multisolve with IPOPT instead of aiming to obtain a global solution with SCIP.
 		\item Using approximately 14 million points for the second phase of multistart in OPTI
 	\end{itemize}
+
+	\paragraph{Results:}
+	These are the results from the parameter estimation algorithm that we have been running. I have tried estimating parameters for the Kotte model by using noisy perturbation data.
+	
+	\begin{figure}[!h]%figure1
+		\centering{\includegraphics[width=0.6\textwidth,height=1.0\textheight,keepaspectratio]{figures/figure1_phenotypes.pdf}}
+		\caption{The two stable phenotypes for acetate consumption through the gluconeogenic model. a) The high production phenotype which has a high flux throughout the network as a result of a high \textit{pep} concentration that reduces the inhibition on acetate uptake and b) The low production phenotype that is characterized by a relatively low \textit{pep} concentration and consequently increased inhibition on the acetate uptake as a result of a smaller \textit{fdp}.}\label{fig:fig1}
+	\end{figure}
+
+	\begin{table}[!tbhp]
+		\caption{Table showing the perturbed values of all fluxes used for parameter estimation.}
+		\begin{center}				
+			\begin{tabular}{ccc}
+				Designation & Perturbed Fluxes & Perturbed Values\\
+				\hline
+				P1 & $v_1$ & 2\\
+				P2 & $v_2$ & 0.2\\
+				P3 & $v_3$ & 0.5
+			\end{tabular}
+		\end{center}	
+	\label{tab:pval}
+	\end{table}
+	
+	\paragraph{Estimation for $v_1$}: The steady state data from the above perturbations in Table \ref{tab:pval} were used to estimate the value of the parameters $k_1^{cat}$ and $K_1^{acetate}$ for flux $v_1$.
+	
+	The comparison of the estimated and the experimental (noisy model generated) data are shown below. Notice that the model estimates do not match well with the noisy data for perturbation P1 (Table \ref{tab:pval}). This is the observed case for all other parameter estimations. This could be due to the effect of perturbation to the acetate uptake flux ($v_1$) on the steady states of the system. (Note that a higher acetate uptake flux lets the system reach the higher steady state).
+	
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=1.0\textwidth,height=1.0\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux1/est_flux1_conc_Jul20}}
+		\caption{Plot comparing noisy model generated steady state metabolite concentrations with model estimates obtained using an optimized model for $v_1$. pep, fdp and enzyme E (Top to bottom)}
+	\end{figure}
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=1.0\textwidth,height=1.0\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux1/est_flux1_flux_Jul20}}
+		\caption{plot comparing noisy model generated steady state fluxes with model estimates obtained using an optimized model for $v_1$.}
+	\end{figure}
+	\clearpage
+
+	\paragraph{Estimation for $v_2$}: The steady state data from the above perturbations in Table \ref{tab:pval} were used to estimate the value of the parameters $V_2^{max}$ and $K_2^{pep}$ for flux $v_2$.
+		
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=1.0\textwidth,height=1.0\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux2/est_flux2_conc_Jul20}}
+		\caption{Plot comparing noisy model generated steady state metabolite concentrations with model estimates obtained using an optimized model for $v_2$. pep, fdp and enzyme E (Top to bottom)}
+	\end{figure}
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=1.0\textwidth,height=1.0\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux2/est_flux2_flux_Jul20}}
+		\caption{plot comparing noisy model generated steady state fluxes with model estimates obtained using an optimized model for $v_2$.}
+	\end{figure}
+
+	The estimation of parameter for flux $v_2$ also runs into the same issues mentioned above for flux $v_1$.	
+	
+	\paragraph{Estimation for $v_3$}: The steady state data from the above perturbations in Table \ref{tab:pval} were used to estimate the value of the parameters $V_3^{max}$, $K_3^{fdp}$ and $K_3^{pep}$ for flux $v_2$. 
+	
+	The optimization cannot find an optimal solution for this problem. The optimization problem using IPOPT with the OPTI Toolbox  ends with a cannot find an optimal solution error despite increasing the number of multistart points considerably.
+	
+	\begin{itemize}
+		\item Noise to original steady state was 5\%.
+		\item Bounds for both fluxes and concentrations in the aforementioned formulation were fixed at 50\%.
+	\end{itemize} 
+
 	
 \end{document}
 
