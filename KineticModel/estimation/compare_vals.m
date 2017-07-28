@@ -25,35 +25,37 @@ else
 end
 
 % after perturbation - perturb parameters to ascertain fluxes
-np = length(find(exp_data_id));
+% np = length(find(exp_data_id));
+pt_datasize = length(find(exp_data_id(1:end-1)));
 nf = size(wt_exp_fss,1);
 opts.odep = opt_odep;
 opts.tspan = 0:.1:500;
-if np == size(exp_sol,2)
-    [pt_val(1:np-1).exp_pid] = exp_sol(1:end-1).exp_pid;
-    [pt_val(1:np-1).exp_pval] = exp_sol(1:end-1).exp_pval;
-else
-    [pt_val(1:np).exp_pid] = exp_sol(exp_data_id).exp_pid;
-    [pt_val(1:np).exp_pval] = exp_sol(exp_data_id).exp_pval;
-end
+% if np == size(exp_sol,2)
+%     [pt_val(1:np-1).exp_pid] = exp_sol(1:end-1).exp_pid;
+%     [pt_val(1:np-1).exp_pval] = exp_sol(1:end-1).exp_pval;
+% else
+    [pt_val(1:pt_datasize).exp_pid] = exp_sol(exp_data_id(1:end-1)).exp_pid;
+    [pt_val(1:pt_datasize).exp_pval] = exp_sol(exp_data_id(1:end-1)).exp_pval;
+% end
 sol = getperturbations(pt_val,@perturb_nonoise,opts);
 close all
 
-% collect all data to plot [wt p#1 p#2....]  
+% collect all data to plot [p#1 p#2....  wt]  
 exp_xss = cat(2,exp_sol.xss);
-exp_xss = [exp_xss(:,end) exp_xss(:,1:end-1)];
+exp_xss = exp_xss(:,exp_data_id);
+% exp_xss = [exp_xss(:,end) exp_xss(:,1:end-1)];
 exp_fss = cat(2,exp_sol.fss);
-exp_fss = [exp_fss(:,end) exp_fss(:,1:end-1)];
+exp_fss = exp_fss(:,exp_data_id);
+% exp_fss = [exp_fss(:,end) exp_fss(:,1:end-1)];
 
-if np<size(exp_sol,2) % wt not included in estimation
-    est_xss = [wt_est_xss cat(2,sol.xss)];
-    est_fss = [wt_est_fss cat(2,sol.fss)];
-    nplot = np+1;
+if ~exp_data_id(end) % wt not included in estimation
+    est_xss = [cat(2,sol.xss) wt_est_xss];
+    est_fss = [cat(2,sol.fss) wt_est_fss];    
 else
-    est_xss = [opt_xss(:,end) cat(2,sol.xss)];
-    est_fss = [opt_fss(:,end) cat(2,sol.fss)];
-    nplot = np;
+    est_xss = [cat(2,sol.xss) opt_xss(:,end)];
+    est_fss = [cat(2,sol.fss) opt_fss(:,end)];
 end
+nplot = pt_datasize+1;
 % opt_xss(:,1) = [];
 % opt_fss(:,1) = [];
 
