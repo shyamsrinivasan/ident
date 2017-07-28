@@ -1,6 +1,7 @@
 function compare_vals(optsol,exp_sol,data,opts,exp_data_id)
 
 exp_data_id = logical(exp_data_id);
+all_labels = {'P1','P2','P3','WT'};
 
 % parse data to get optimal concentrations and parameters
 [opt_xss,xpar] = parsesolvec(optsol,data);
@@ -40,20 +41,23 @@ opts.tspan = 0:.1:500;
 sol = getperturbations(pt_val,@perturb_nonoise,opts);
 close all
 
-% collect all data to plot [p#1 p#2....  wt]  
 exp_xss = cat(2,exp_sol.xss);
-exp_xss = exp_xss(:,exp_data_id);
-% exp_xss = [exp_xss(:,end) exp_xss(:,1:end-1)];
 exp_fss = cat(2,exp_sol.fss);
-exp_fss = exp_fss(:,exp_data_id);
-% exp_fss = [exp_fss(:,end) exp_fss(:,1:end-1)];
 
+% collect all data to plot [p#1 p#2....  wt]  
 if ~exp_data_id(end) % wt not included in estimation
     est_xss = [cat(2,sol.xss) wt_est_xss];
-    est_fss = [cat(2,sol.fss) wt_est_fss];    
+    est_fss = [cat(2,sol.fss) wt_est_fss];
+    rel_labels = all_labels(exp_data_id);
 else
+    % experimental
+    exp_xss = exp_xss(:,exp_data_id);
+    exp_fss = exp_fss(:,exp_data_id);
+    % estimated
     est_xss = [cat(2,sol.xss) opt_xss(:,end)];
     est_fss = [cat(2,sol.fss) opt_fss(:,end)];
+    % axis labels
+    rel_labels = [all_labels(exp_data_id) all_labels(end)];
 end
 nplot = pt_datasize+1;
 % opt_xss(:,1) = [];
@@ -76,7 +80,7 @@ for j = 0:data.nc-1
     bh = bar(ahc,xss_plot(:,2*j+1:2*(j+1)));
     [~,ylbl] = getKotteaxislabels(2,2,[1,j+1]);
     ahc.YLabel.String = ylbl;    
-    ahc.XTickLabel = {'WT','P1','P2','P3'};
+    ahc.XTickLabel = rel_labels;
 end
 ahc.XLabel.String = 'WT and Perturbations';
 legend('Noisy Data','Model Estimate');
@@ -87,7 +91,7 @@ for k = 0:nf-1
     bh = bar(ahf,fss_plot(:,2*k+1:2*(k+1)));
     [~,ylbl] = getKotteaxislabels(2,1,[1,k+1]);
     ahf.YLabel.String = ylbl;  
-    ahf.XTickLabel = {'WT','P1','P2','P3'};
+    ahf.XTickLabel = rel_labels;
 end
 ahf.XLabel.String = 'WT and Perturbations';
 legend('Noisy Data','Model Estimate');
