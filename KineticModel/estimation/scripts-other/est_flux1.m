@@ -24,7 +24,7 @@ close all
 
 % get only data from one steady state
 pss = ones(1,numel(exp_sol.exp_pval));
-% pss(end) = 0;
+% pss(2) = 0;
 % pss(exp_sol.xss(1,:)>exp_sol.xss(2,:)) = 0;    
 
 % options structure for solving problem
