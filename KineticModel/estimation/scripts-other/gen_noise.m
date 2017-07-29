@@ -64,7 +64,9 @@ setup_opts.nle = allnle;
 [prob,optimdata] = setup_optim_prob(setup_opts);
 
 % initial values for consrained nl(or quadratic?) optimization
-x0 = getrandomivals(optimdata,.1,100);
+x0 = getrandomivals(optimdata,.1,1000);
+optsol = multistart_search(prob,x0,optimdata);
+
 x0 = [optimdata.xexp;optimdata.odep(optimdata.p_id)';optimdata.vexp];
 
 solveropt = struct('solver','ipopt','multi',1,'multi_pts',[2 2]);
