@@ -7,9 +7,11 @@ end
 
 npts = size(x0,2);
 cell_optsol = cell(npts,1);
+ts = tic;
 parfor ix0 = 1:npts % change this between serial/parallel 
     cell_optsol{ix0} = nlconsopt(prob,x0(:,ix0),solveropt,optimdata);     
 end
+fprintf('Total time for completion :%4.2g\n',toc(ts));
 
 % convert cell_optsol to structure array
 optsol = struct();
