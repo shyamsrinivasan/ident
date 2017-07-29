@@ -18,7 +18,7 @@ x0 = [optimdata.xexp;optimdata.odep(optimdata.p_id)';optimdata.vexp];
 if nval>1
     pd = makedist('Uniform','lower',-eps,'upper',eps);
     sampled_pts = random(pd,nvar,nval);
-    rnd_pts = x0.*(1+sampled_pts);
+    rnd_pts = repmat(x0,1,nval).*(1+sampled_pts);
 else
     rnd_pts = x0;
 end
