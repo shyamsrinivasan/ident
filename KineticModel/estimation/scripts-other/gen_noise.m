@@ -65,17 +65,10 @@ setup_opts.nle = allnle;
 
 % initial values for consrained nl(or quadratic?) optimization
 x0 = getrandomivals(optimdata,.1,1000);
-optsol = multistart_search(prob,x0,optimdata);
-
-x0 = [optimdata.xexp;optimdata.odep(optimdata.p_id)';optimdata.vexp];
-
-solveropt = struct('solver','ipopt','multi',1,'multi_pts',[2 2]);
-optsol = nlconsopt(prob,x0,solveropt,optimdata);
+solveropt = struct('solver','ipopt','multi',0);
+optsol = choose_nlconsopt(prob,x0,optimdata,solveropt);
 
 % compare fluxes and concentrations
 compare_vals(optsol,noisy_sol,optimdata,opts,pss);
-
-
-
 
 
