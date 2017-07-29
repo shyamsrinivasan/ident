@@ -63,9 +63,9 @@ setup_opts.nle = allnle;
 [prob,optimdata] = setup_optim_prob(setup_opts);
 
 % initial values for consrained nl(or quadratic?) optimization
+x0 = getrandomivals(optimdata,.1,100);
 x0 = [optimdata.xexp;optimdata.odep(optimdata.p_id)';optimdata.vexp];
 
-% prob = struct('obj',obj,'nlcons',nlcons,'nlrhs',nlrhs,'nle',nle,'lb',lb,'ub',ub);
 solveropt = struct('solver','ipopt','multi',1,'multi_pts',[2 2]);
 optsol = nlconsopt(prob,x0,solveropt,optimdata);
 
