@@ -4,7 +4,9 @@ exp_data_id = logical(exp_data_id);
 all_labels = {'P1','P2','P3','WT'};
 
 % parse data to get optimal concentrations and parameters
-[opt_xss,xpar] = parsesolvec(optsol,data);
+[opt_xss,xpar] = parsesolvec(optsol.xval,data);
+% rearrange xconc to nc x npert matrix
+opt_xss = reshape(opt_xss,[data.nc data.npert]);
 opt_odep = data.odep;
 opt_odep(data.p_id) = xpar;
 
