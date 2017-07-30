@@ -24,7 +24,7 @@ if ~exp_data_id(end)
     wt_est_fss = kotte_flux_noCAS(wt_est_xss,opt_odep);
 else
     wt_est_xss = opt_xss(:,end);
-    wt_est_fss = kotte_flux_noCAS(wt_est_xss,opt_odep);
+    wt_est_fss = opt_fss(:,end);
 end
 
 % after perturbation - perturb parameters to ascertain fluxes
@@ -47,17 +47,20 @@ exp_xss = cat(2,exp_sol.xss);
 exp_fss = cat(2,exp_sol.fss);
 
 % collect all data to plot [p#1 p#2....  wt]  
+% estimated
+est_xss = [cat(2,sol.xss) wt_est_xss];
+est_fss = [cat(2,sol.fss) wt_est_fss];
 if ~exp_data_id(end) % wt not included in estimation
-    est_xss = [cat(2,sol.xss) wt_est_xss];
-    est_fss = [cat(2,sol.fss) wt_est_fss];
+%     est_xss = [cat(2,sol.xss) wt_est_xss];
+%     est_fss = [cat(2,sol.fss) wt_est_fss];
     rel_labels = all_labels(exp_data_id);
 else
     % experimental
     exp_xss = exp_xss(:,exp_data_id);
     exp_fss = exp_fss(:,exp_data_id);
     % estimated
-    est_xss = [cat(2,sol.xss) opt_xss(:,end)];
-    est_fss = [cat(2,sol.fss) opt_fss(:,end)];
+%     est_xss = [cat(2,sol.xss) opt_xss(:,end)];
+%     est_fss = [cat(2,sol.fss) opt_fss(:,end)];
     % axis labels
     rel_labels = [all_labels(exp_data_id) all_labels(end)];
 end
