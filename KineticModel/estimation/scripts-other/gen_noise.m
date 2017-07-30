@@ -29,7 +29,7 @@ pss = ones(1,numel(exp_sol.exp_pval));
 % pss(exp_sol.xss(1,:)>exp_sol.xss(2,:)) = 0;    
 
 % options structure for solving problem
-optimdata = struct('nc',3,'nf',1,'flxid',1,'eps',.5,...
+optimdata = struct('nc',3,'nflx',6,'nf',1,'flxid',1,'eps',.5,...
                     'vexp',exp_sol.fss(:,logical(pss)),...
                     'xexp',exp_sol.xss(:,logical(pss)),...
                     'odep',odep_bkp,...
@@ -64,9 +64,12 @@ setup_opts.nle = allnle;
 [prob,optimdata] = setup_optim_prob(setup_opts);
 
 % initial values for consrained nl(or quadratic?) optimization
-x0 = getrandomivals(optimdata,.1,1000);
+x0 = getrandomivals(optimdata,.1,1);
 solveropt = struct('solver','ipopt','multi',0);
 optsol = choose_nlconsopt(prob,x0,optimdata,solveropt);
+
+% combine results for comparison plot
+est_data = combine_results(optsol,opts,noisy_sol,optimdata,pss,pss);
 
 % compare fluxes and concentrations
 compare_vals(optsol,noisy_sol,optimdata,opts,pss);
