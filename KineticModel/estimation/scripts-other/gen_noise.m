@@ -72,6 +72,6 @@ optsol = choose_nlconsopt(prob,x0,optimdata,solveropt);
 est_data = combine_results(optsol,opts,noisy_sol,optimdata,pss,pss);
 
 % compare fluxes and concentrations
-compare_vals(optsol,noisy_sol,optimdata,opts,pss);
+compare_vals(est_data,noisy_sol,optimdata,opts,pss);
 
 
