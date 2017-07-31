@@ -1,6 +1,7 @@
 % combine results from multiple optimization problems run for multi start
 % search for comparison
-function est_data = combine_results(optsol,odeopts,exp_data,data,given_data_id,test_data_id)
+function est_data =...
+combine_results(optsol,odeopts,exp_data,data,given_data_id,test_data_id)
 % taken from parts of compare_vals
 % given_data_id - sets in exp_data used for estimation
 % test_data_id - sets in exp_data used for testing estimated parameters
@@ -81,13 +82,13 @@ est_par = zeros(npar,1);
 est_par_err = zeros(npar,1);
 % concentrations
 for ic = 1:data.nc
-    est_xss(ic,:) = sum(conc(ic:data.nc:data.nc*nval,:))./nval;    
-    est_xss_err(ic,:) = std(conc(ic:data.nc:data.nc*nval,:));
+    est_xss(ic,:) = sum(conc(ic:data.nc:data.nc*nval,:),1)./nval;    
+    est_xss_err(ic,:) = std(conc(ic:data.nc:data.nc*nval,:),0,1);
 end
 % fluxes
 for iflx = 1:data.nflx
-    est_fss(iflx,:) = sum(flux(iflx:data.nflx:data.nflx*nval,:))./nval;
-    est_fss_err(iflx,:) = std(flux(iflx:data.nflx:data.nflx*nval,:));
+    est_fss(iflx,:) = sum(flux(iflx:data.nflx:data.nflx*nval,:),1)./nval;
+    est_fss_err(iflx,:) = std(flux(iflx:data.nflx:data.nflx*nval,:),0,1);
 end
 % parameters
 for ipar = 1:npar
