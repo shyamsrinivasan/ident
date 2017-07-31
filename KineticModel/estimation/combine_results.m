@@ -28,26 +28,50 @@ exp_fss = cat(2,exp_data.fss);
 wt_exp_xss = exp_xss(:,end);
 wt_exp_fss = exp_fss(:,end);
 % cell_optsol = cell(nval,1);
+
+% assign same perturbations as required by test_data_id
+[pt_val(1:pt_datasize).exp_pid] = exp_data(test_data_id(1:end-1)).exp_pid;
+[pt_val(1:pt_datasize).exp_pval] = exp_data(test_data_id(1:end-1)).exp_pval;
+
+% create nval matrix of parameters and nval structure array of options
+odeopts_struct = struct();
+opts_odep = repmat(data.odep,nval,1);
+wt_est_xss_all = zeros(data.nc,nval);
 for ival = 1:nval
-    pss = ones(1,data.npert);
     if ~test_data_id(end)
-        wt_est_xss = wt_exp_xss; % model wt xss = exp wt xss         
+        wt_est_xss_all(:,ival) = wt_exp_xss; % model wt xss = exp wt xss         
     else
-        wt_est_xss = optsol(ival).xconc(:,end);           
+        wt_est_xss_all(:,ival) = optsol(ival).xconc(:,end);           
     end    
-    xpar = optsol(ival).xpar;
-    opt_odep = data.odep;
-    opt_odep(data.p_id) = xpar;    
     
-    wt_est_fss = kotte_flux_noCAS(wt_est_xss,opt_odep);
+    % create options structure array
+    opts_odep(ival,data.p_id) = optsol(ival).xpar;
+    odeopts_struct(ival).tspan = odeopts.tspan;
+    odeopts_struct(ival).x0 = odeopts.x0;
+    odeopts_struct(ival).solver_opts = odeopts.solver_opts;
+    odeopts_struct(ival).odep = opts_odep(ival,:);    
+end
+
+npert = data.npert;
+parfor ival = 1:nval
+    pss = ones(1,npert);
+    % choose opts structure
+    odeopts = odeopts_struct(ival);
     
-    odeopts.odep = opt_odep;
-    odeopts.tspan = 0:.1:500;
-    odeopts.x0 = wt_est_xss;
+%     if ~test_data_id(end)
+%         wt_est_xss = wt_exp_xss; % model wt xss = exp wt xss         
+%     else
+%         wt_est_xss = optsol(ival).xconc(:,end);           
+%     end    
+%     xpar = optsol(ival).xpar;
+%     opt_odep = data.odep;
+%     opt_odep(data.p_id) = xpar;    
     
-    % assign same perturbations as required by test_data_id
-    [pt_val(1:pt_datasize).exp_pid] = exp_data(test_data_id(1:end-1)).exp_pid;
-    [pt_val(1:pt_datasize).exp_pval] = exp_data(test_data_id(1:end-1)).exp_pval;
+    wt_est_fss = kotte_flux_noCAS(wt_est_xss_all(:,ival),odeopts.odep);
+    
+%     odeopts.odep = opt_odep;
+%     odeopts.tspan = 0:.1:500;
+    odeopts.x0 = wt_est_xss_all(:,ival); 
     
     % recalculate perturbations for new parameters
     sol = getperturbations(pt_val,@perturb_nonoise,odeopts);
@@ -56,9 +80,11 @@ for ival = 1:nval
     % collect all solutions
 %     cell_optsol{ival}.xss = [cat(2,sol.xss) wt_est_xss];
 %     cell_optsol{ival}.fss = [cat(2,sol.fss) wt_est_fss];
-    optsol(ival).xss = [cat(2,sol.xss) wt_est_xss];
-    optsol(ival).fss = [cat(2,sol.fss) wt_est_fss];
-    pss(optsol(ival).xss(2,:)>optsol(ival).xss(1,:)) = 2;
+    xss = [cat(2,sol.xss) wt_est_xss_all(:,ival)];
+    fss = [cat(2,sol.fss) wt_est_fss];
+    optsol(ival).xss = xss;
+    optsol(ival).fss = fss;
+    pss(xss(2,:)>xss(1,:)) = 2;
     optsol(ival).pss = pss;
 end
 
