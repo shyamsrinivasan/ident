@@ -65,7 +65,7 @@ for j = 0:data.nc-1
                
     [~,ylbl] = getKotteaxislabels(2,2,[1,j+1]);
     ahc.YLabel.String = ylbl;    
-    ahc.XTickLabel = rel_labels;    
+%     ahc.XTickLabel = rel_labels;    
 end
 ahc.XLabel.String = 'WT and Perturbations';
 legend('Noisy Data','Model Estimate');
@@ -81,7 +81,7 @@ for k = 0:nf-1
                              fss_error(:,2*j+1:2*(j+1)),'LineStyle','none');
     [~,ylbl] = getKotteaxislabels(2,1,[1,k+1]);
     ahf.YLabel.String = ylbl;  
-    ahf.XTickLabel = rel_labels;
+%     ahf.XTickLabel = rel_labels;
     clear bh
 end
 ahf.XLabel.String = 'WT and Perturbations';
