@@ -56,21 +56,11 @@ npert = data.npert;
 parfor ival = 1:nval
     pss = ones(1,npert);
     % choose opts structure
-    odeopts = odeopts_struct(ival);
-    
-%     if ~test_data_id(end)
-%         wt_est_xss = wt_exp_xss; % model wt xss = exp wt xss         
-%     else
-%         wt_est_xss = optsol(ival).xconc(:,end);           
-%     end    
-%     xpar = optsol(ival).xpar;
-%     opt_odep = data.odep;
-%     opt_odep(data.p_id) = xpar;    
+    odeopts = odeopts_struct(ival); 
     
     wt_est_fss = kotte_flux_noCAS(wt_est_xss_all(:,ival),odeopts.odep);
     
-%     odeopts.odep = opt_odep;
-%     odeopts.tspan = 0:.1:500;
+    % set inital value for integration
     odeopts.x0 = wt_est_xss_all(:,ival); 
     
     % recalculate perturbations for new parameters
