@@ -76,9 +76,9 @@ for k = 0:nf-1
     set(ahf,'NextPlot','add');
     bh = bar(ahf,fss_plot(:,2*k+1:2*(k+1)));
     xerr_pos = cat(1,bh.XData)+cat(1,bh.XOffset);
-    yerr_pos = fss_plot(:,2*j+1:2*(j+1));    
+    yerr_pos = fss_plot(:,2*k+1:2*(k+1));    
     erh = errorbar(xerr_pos',yerr_pos,...
-                             fss_error(:,2*j+1:2*(j+1)),'LineStyle','none');
+                             fss_error(:,2*k+1:2*(k+1)),'LineStyle','none');
     [~,ylbl] = getKotteaxislabels(2,1,[1,k+1]);
     ahf.YLabel.String = ylbl;  
 %     ahf.XTickLabel = rel_labels;
