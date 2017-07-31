@@ -64,7 +64,7 @@ setup_opts.nle = allnle;
 [prob,optimdata] = setup_optim_prob(setup_opts);
 
 % initial values for consrained nl(or quadratic?) optimization
-x0 = getrandomivals(optimdata,.1,1);
+x0 = getrandomivals(optimdata,.1,5000);
 solveropt = struct('solver','ipopt','multi',0);
 optsol = choose_nlconsopt(prob,x0,optimdata,solveropt);
 
@@ -73,5 +73,8 @@ est_data = combine_results(optsol,opts,noisy_sol,optimdata,pss,pss);
 
 % compare fluxes and concentrations
 compare_vals(est_data,noisy_sol,optimdata,opts,pss);
+
+% compare parameters in parameter space
+compare_pars(est_data);
 
 
