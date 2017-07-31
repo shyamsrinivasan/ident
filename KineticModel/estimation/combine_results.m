@@ -53,29 +53,53 @@ for ival = 1:nval
 end
 
 npert = data.npert;
-parfor ival = 1:nval
-    pss = ones(1,npert);
-    % choose opts structure
-    odeopts = odeopts_struct(ival); 
-    
-    wt_est_fss = kotte_flux_noCAS(wt_est_xss_all(:,ival),odeopts.odep);
-    
-    % set inital value for integration
-    odeopts.x0 = wt_est_xss_all(:,ival); 
-    
-    % recalculate perturbations for new parameters
-    sol = getperturbations(pt_val,@perturb_nonoise,odeopts);
-    close all
-    
-    % collect all solutions
-%     cell_optsol{ival}.xss = [cat(2,sol.xss) wt_est_xss];
-%     cell_optsol{ival}.fss = [cat(2,sol.fss) wt_est_fss];
-    xss = [cat(2,sol.xss) wt_est_xss_all(:,ival)];
-    fss = [cat(2,sol.fss) wt_est_fss];
-    optsol(ival).xss = xss;
-    optsol(ival).fss = fss;
-    pss(xss(2,:)>xss(1,:)) = 2;
-    optsol(ival).pss = pss;
+if nval>1
+    parfor ival = 1:nval
+        pss = ones(1,npert);
+        % choose opts structure
+        odeopts = odeopts_struct(ival); 
+
+        wt_est_fss = kotte_flux_noCAS(wt_est_xss_all(:,ival),odeopts.odep);
+
+        % set inital value for integration
+        odeopts.x0 = wt_est_xss_all(:,ival); 
+
+        % recalculate perturbations for new parameters
+        sol = getperturbations(pt_val,@perturb_nonoise,odeopts);
+        close all
+
+        % collect all solutions
+    %     cell_optsol{ival}.xss = [cat(2,sol.xss) wt_est_xss];
+    %     cell_optsol{ival}.fss = [cat(2,sol.fss) wt_est_fss];
+        xss = [cat(2,sol.xss) wt_est_xss_all(:,ival)];
+        fss = [cat(2,sol.fss) wt_est_fss];
+        optsol(ival).xss = xss;
+        optsol(ival).fss = fss;
+        pss(xss(2,:)>xss(1,:)) = 2;
+        optsol(ival).pss = pss;
+    end
+else
+    for ival = 1:nval
+        pss = ones(1,npert);
+        % choose opts structure
+        odeopts = odeopts_struct(ival); 
+
+        wt_est_fss = kotte_flux_noCAS(wt_est_xss_all(:,ival),odeopts.odep);
+
+        % set inital value for integration
+        odeopts.x0 = wt_est_xss_all(:,ival); 
+
+        % recalculate perturbations for new parameters
+        sol = getperturbations(pt_val,@perturb_nonoise,odeopts);
+        close all
+
+        xss = [cat(2,sol.xss) wt_est_xss_all(:,ival)];
+        fss = [cat(2,sol.fss) wt_est_fss];
+        optsol(ival).xss = xss;
+        optsol(ival).fss = fss;
+        pss(xss(2,:)>xss(1,:)) = 2;
+        optsol(ival).pss = pss;
+    end 
 end
 
 % collect only optimal solutions
