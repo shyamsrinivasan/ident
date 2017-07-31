@@ -1,6 +1,6 @@
-function compare_vals(est_sol,exp_sol,data,opts,exp_data_id)
+function compare_vals(est_sol,exp_sol,data,opts,test_data_id)
 
-exp_data_id = logical(exp_data_id);
+test_data_id = logical(test_data_id);
 all_labels = {'P1','P2','P3','WT'};
 
 % calculate new model fluxes
@@ -10,7 +10,7 @@ wt_exp_xss = exp_sol(end).xss;
 wt_exp_fss = kotte_flux_noCAS(wt_exp_xss,data.odep);
 
 % after perturbation - perturb parameters to ascertain fluxes
-pt_datasize = length(find(exp_data_id(1:end-1)));
+pt_datasize = length(find(test_data_id(1:end-1)));
 nf = size(wt_exp_fss,1);
 
 exp_xss = cat(2,exp_sol.xss);
@@ -23,14 +23,14 @@ est_xerr = est_sol.xerr;
 est_fss = est_sol.fss;
 est_ferr = est_sol.ferr;
 
-if ~exp_data_id(end) % wt not included in estimation
-    rel_labels = all_labels(exp_data_id);
+if ~test_data_id(end) % wt not included in estimation
+    rel_labels = all_labels(test_data_id);
 else
     % experimental
-    exp_xss = exp_xss(:,exp_data_id);
-    exp_fss = exp_fss(:,exp_data_id);
+    exp_xss = exp_xss(:,test_data_id);
+    exp_fss = exp_fss(:,test_data_id);
     % axis labels
-    rel_labels = [all_labels(exp_data_id) all_labels(end)];
+    rel_labels = [all_labels(test_data_id) all_labels(end)];
 end
 nplot = pt_datasize+1;
 % opt_xss(:,1) = [];
