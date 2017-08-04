@@ -55,18 +55,21 @@ if isfield(optimdata,'ub')
 else
     ub = zeros(nvar,1);
 end
-if isfield(optimdata,'eps')
-    eps = optimdata.eps;
+if isfield(optimdata,'eps_c')
+    eps_c = optimdata.eps_c;
+end
+if isfield(optimdata,'eps_v')
+    eps_v = optimdata.eps_v;
 end
 % set bounds - concentration
-lb(1:nc*npert) = xss_exp_v.*(1-eps);
-ub(1:nc*npert) = xss_exp_v.*(1+eps);
+lb(1:nc*npert) = xss_exp_v.*(1-eps_c);
+ub(1:nc*npert) = xss_exp_v.*(1+eps_c);
 % set general bounds - parameter - specific bounds set below
 lb(nc*npert+1:nc*npert+length(p_id)) = .05*ones(length(p_id),1); 
 ub(nc*npert+1:nc*npert+length(p_id)) = 5*ones(length(p_id),1);
 % set bounds - flux
-lb(nvar-nf*npert+1:nvar) = vss_exp_v*(1-eps);
-ub(nvar-nf*npert+1:nvar) = vss_exp_v*(1+eps);
+lb(nvar-nf*npert+1:nvar) = vss_exp_v*(1-eps_v);
+ub(nvar-nf*npert+1:nvar) = vss_exp_v*(1+eps_v);
 
 % setup fresh bounds specifically for each flux parameter dependent on
 % flxid
