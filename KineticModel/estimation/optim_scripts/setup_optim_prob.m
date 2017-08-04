@@ -64,12 +64,6 @@ ub(1:nc*npert) = xss_exp_v.*(1+eps);
 % set general bounds - parameter - specific bounds set below
 lb(nc*npert+1:nc*npert+length(p_id)) = .05*ones(length(p_id),1); 
 ub(nc*npert+1:nc*npert+length(p_id)) = 5*ones(length(p_id),1);
-% % set separate bounds for Km for flux 1
-% lb(nc*npert+1:nc*npert+1) = .05*ones(1,1); 
-% ub(nc*npert+1:nc*npert+1) = 1*ones(1,1);
-% % set separate bounds for kcat for flux 1
-% lb(nc*npert+2:nc*npert+length(p_id)) = .1*ones(1,1); 
-% ub(nc*npert+2:nc*npert+length(p_id)) = 3*ones(1,1);
 % set bounds - flux
 lb(nvar-nf*npert+1:nvar) = vss_exp_v*(1-eps);
 ub(nvar-nf*npert+1:nvar) = vss_exp_v*(1+eps);
