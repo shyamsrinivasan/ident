@@ -19,14 +19,19 @@
 	
 	On the one hand, establishing the structural identifiability of parameters enables one to propose models that are not only appropriate representations of physical processes, but also are parameterized in such a way that the value of these parameters can be estimated. On the other hand, establishing practical identifiability of parameters in any model helps design experiments that are minimal, informative and useful for parameter estimation. 
 	
-	We can use a profile likelihood-based approach to determine the structural and practical identifiability of parameters in any any dynamic model. 
-	
-	We show how experimental design can have a meaningful impact on parameter identification and estimation in Figure \ref{fig:edwithpl}.
-	
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=.8\textwidth,height=.8\textheight,keepaspectratio]{figures/identifiability}}
+		\caption{The profile likelihood estimates of a) a structurally non-identifiable, b) a practically non-identifiable and c) an identifiable parameter. The practically identifiability of a parameter is dependent on the quality and quantity of experimental data used to estimate the parameter.}\label{fig:ident-pl}
+	\end{figure}
+
+	We can use a profile likelihood-based approach to determine the structural and practical identifiability of parameters in any dynamic model. The identifiability of parameters is established through the confidence intervals of their estimates, $\left[\sigma_{i}^-,\sigma_{i}^+\right]$. The confidence intervals of a structurally non-identifiable parameter are unbounded, i.e., $\left[-\infty, +\infty\right]$, while the confidence intervals of a practically non-identifiable parameter are unbounded in at least one direction, i.e., $\left[\sigma_{i}^-,\sigma_{i}^+\right]$ where either $\sigma_{i}^- = -\infty$ or $\sigma_{i}^+ = +\infty$. If a parameter's estimates have a finite confidence interval then the parameter is said to be identifiable. The visualization of structurally and practically non-identifiable parameters using the profile likelihood approach is illustrated in Figure \ref{fig:ident-pl}. 
+		
 	\begin{figure}[!tbhp]
 		\centering{\includegraphics[width=.6\textwidth,height=.6\textheight,keepaspectratio]{figures/ed_with_pl}}
 		\caption{Cartoon illustrating the utility of identifiability analysis for experimental design. a) The profile likelihood of a practically non-identifiable parameter that needs to be estimated based on both good and bad experimental data. The changes in the profile likelihood of the parameter when estimated with b) good experimental data and c) bad experimental. The identifiability of the parameter does not change due to the poor quality/quantity of experiments.}\label{fig:edwithpl}
 	\end{figure}
+
+	Due to the dependence of practical parameter identifiability on the experimental data, the profile likelihood approach can be used to design experiments in such a way that the observables that are derived from these experiments can improve the practical identifiability of the parameters. We show how experimental design can have a meaningful impact on parameter identification and estimation in Figure \ref{fig:edwithpl}.
 	
 	\section{Methods:}
 	We use a profile likelihood-based approach to establish structural and practical identifiability of parameters in nonlinear kinetic models of metabolism. Briefly, the approach seeks to establish the existence/non-existence of bounds in confidence intervals for the estimates of parameters in nonlinear models. The profile likelihood is calculated based on Equation \ref{eq:pl} for each parameter $\theta_i$ where $\chi^2(\theta_i)$ is given by Equation \ref{eq:chi2}.
@@ -51,4 +56,30 @@
 	\begin{align}\label{eq:adaptivestep}
 	\chi^2\left(\theta^{k-1}+\theta_{step}\right) - \chi^2(\theta^{k-1}) \approx q.\Delta_{\alpha}
 	\end{align}
+	
+	\subsubsection{Identifiability analysis of parameters in a kinetic model of gluconeogenesis:}
+	The proposed model for acetate consumption through gluconeogenesis and its corresponding kinetic model is used as a case study to illustrate the utility of identifiability analysis for the design of experiments for estimating parameters in kinetic models of metabolism. The kinetic model is described below.
+	\begin{equation}\label{eq:ode1}
+	\frac{d}{dt}pep=v_1-v_2-v_4
+	\end{equation}
+	\begin{equation}\label{eq:ode2}
+	\frac{d}{dt}fdp=v_2-v_3
+	\end{equation}
+	\begin{equation}\label{eq:ode3}
+	\frac{d}{dt}E=v_{e,max}\left(\frac{1}{1+\left(\frac{fdp}{K_{e}^{fdp}}\right)^{n_e}}\right) - d E
+	\end{equation}
+	The kinetic expressions for fluxes $v_1$ through $v_4$ are given below. The consumption of acetate through $v_1$ and conversion of \textit{pep} through $v_2$ are expressed in Equations (\ref{eq:flux1}) and (\ref{eq:flux2}) respectively using Michaelis-Menten kinetics. The acetate flux through $v_1$ is also governed by the quantity of available enzyme E. 
+	\begin{equation}\label{eq:flux1}
+	v_1 = k_{1}^{cat}E\frac{acetate}{acetate+K_{1}^{acetate}}
+	\end{equation}	
+	\begin{equation}\label{eq:flux2}
+	v_2 = V_{2}^{max}\frac{pep}{pep+K_{2}^{pep}}
+	\end{equation}
+	\begin{equation}\label{eq:flux3}
+	v_3 = V_{3}^{max}\frac{\tilde{fdp}\left(1+\tilde{fdp}\right)^3}{\left(1+\tilde{fdp}\right)^4+L_3\left(1+\frac{pep}{K_{3}^{pep}}\right)^{-4}}
+	\end{equation}
+	The allosterically regulated flux $v_3$ for the consumption of \textit{fdp} is expressed in Equation (\ref{eq:flux3}) using the Monod-Wyman-Changeux (MWC) model for allosterically regulated enzymes, where $\tilde{fdp}$ refers to the ratio of \textit{fdp} with respect to its allosteric binding constant $K_{3}^{fdp}$. The added flux $v_4$ for the export of \textit{pep} is expressed as a linear equation dependent on $pep$ in Equation (\ref{eq:flux4}).
+	\begin{equation}\label{eq:flux4}
+	v_4 = k_{4}^{cat}.pep
+	\end{equation}
 \end{document}
