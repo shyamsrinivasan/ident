@@ -1,4 +1,8 @@
 function compare_vals(est_sol,exp_sol,data,opts,test_data_id)
+if isempty(est_sol)
+    fprintf('No optimal solution found\n');
+    return
+end
 
 test_data_id = logical(test_data_id);
 all_labels = {'P1','P2','P3','WT'};

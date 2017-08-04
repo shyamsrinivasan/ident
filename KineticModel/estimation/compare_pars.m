@@ -1,5 +1,9 @@
 % function to plot 2-d and 3-d diagrams comapring parameters
 function compare_pars(est_data)
+if isempty(est_data)
+    fprintf('No optimal solution found\n');
+    return
+end
 
 figure
 par = est_data.xpar;

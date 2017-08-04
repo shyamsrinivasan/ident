@@ -19,14 +19,19 @@ if ~isfield(optsol,'xconc')
     optsol = parse_optsol(optsol,data);
 end
 
-nval = size(optsol,2);
+% collect only optimal solutions
+exitflags = cat(1,optsol.exitflag);
+optimal_optsol = optsol(exitflags==1);
+% recalculate nval for optimal solutions only
+nval = size(optimal_optsol,2);
+
 pt_datasize = length(find(test_data_id(1:end-1)));
 
 exp_xss = cat(2,exp_data.xss);
-exp_fss = cat(2,exp_data.fss);
+% exp_fss = cat(2,exp_data.fss);
 
 wt_exp_xss = exp_xss(:,end);
-wt_exp_fss = exp_fss(:,end);
+% wt_exp_fss = exp_fss(:,end);
 % cell_optsol = cell(nval,1);
 
 % assign same perturbations as required by test_data_id
@@ -41,11 +46,11 @@ for ival = 1:nval
     if ~test_data_id(end)
         wt_est_xss_all(:,ival) = wt_exp_xss; % model wt xss = exp wt xss         
     else
-        wt_est_xss_all(:,ival) = optsol(ival).xconc(:,end);           
+        wt_est_xss_all(:,ival) = optimal_optsol(ival).xconc(:,end);           
     end    
     
     % create options structure array
-    opts_odep(ival,data.p_id) = optsol(ival).xpar;
+    opts_odep(ival,data.p_id) = optimal_optsol(ival).xpar;
     odeopts_struct(ival).tspan = odeopts.tspan;
     odeopts_struct(ival).x0 = odeopts.x0;
     odeopts_struct(ival).solver_opts = odeopts.solver_opts;
@@ -53,58 +58,60 @@ for ival = 1:nval
 end
 
 npert = data.npert;
-if nval>1
-    parfor ival = 1:nval
-        pss = ones(1,npert);
-        % choose opts structure
-        odeopts = odeopts_struct(ival); 
+if nval>0
+    if nval>1
+        parfor ival = 1:nval
+            pss = ones(1,npert);
+            % choose opts structure
+            odeopts = odeopts_struct(ival); 
 
-        wt_est_fss = kotte_flux_noCAS(wt_est_xss_all(:,ival),odeopts.odep);
+            wt_est_fss = kotte_flux_noCAS(wt_est_xss_all(:,ival),odeopts.odep);
 
-        % set inital value for integration
-        odeopts.x0 = wt_est_xss_all(:,ival); 
+            % set inital value for integration
+            odeopts.x0 = wt_est_xss_all(:,ival); 
 
-        % recalculate perturbations for new parameters
-        sol = getperturbations(pt_val,@perturb_nonoise,odeopts);
-        close all
+            % recalculate perturbations for new parameters
+            sol = getperturbations(pt_val,@perturb_nonoise,odeopts);
+            close all
 
-        % collect all solutions
-    %     cell_optsol{ival}.xss = [cat(2,sol.xss) wt_est_xss];
-    %     cell_optsol{ival}.fss = [cat(2,sol.fss) wt_est_fss];
-        xss = [cat(2,sol.xss) wt_est_xss_all(:,ival)];
-        fss = [cat(2,sol.fss) wt_est_fss];
-        optsol(ival).xss = xss;
-        optsol(ival).fss = fss;
-        pss(xss(2,:)>xss(1,:)) = 2;
-        optsol(ival).pss = pss;
+            % collect all solutions
+        %     cell_optsol{ival}.xss = [cat(2,sol.xss) wt_est_xss];
+        %     cell_optsol{ival}.fss = [cat(2,sol.fss) wt_est_fss];
+            xss = [cat(2,sol.xss) wt_est_xss_all(:,ival)];
+            fss = [cat(2,sol.fss) wt_est_fss];
+            optimal_optsol(ival).xss = xss;
+            optimal_optsol(ival).fss = fss;
+            pss(xss(2,:)>xss(1,:)) = 2;
+            optimal_optsol(ival).pss = pss;
+        end
+    else
+        for ival = 1:nval
+            pss = ones(1,npert);
+            % choose opts structure
+            odeopts = odeopts_struct(ival); 
+
+            wt_est_fss = kotte_flux_noCAS(wt_est_xss_all(:,ival),odeopts.odep);
+
+            % set inital value for integration
+            odeopts.x0 = wt_est_xss_all(:,ival); 
+
+            % recalculate perturbations for new parameters
+            sol = getperturbations(pt_val,@perturb_nonoise,odeopts);
+            close all
+
+            xss = [cat(2,sol.xss) wt_est_xss_all(:,ival)];
+            fss = [cat(2,sol.fss) wt_est_fss];
+            optimal_optsol(ival).xss = xss;
+            optimal_optsol(ival).fss = fss;
+            pss(xss(2,:)>xss(1,:)) = 2;
+            optimal_optsol(ival).pss = pss;
+        end 
     end
 else
-    for ival = 1:nval
-        pss = ones(1,npert);
-        % choose opts structure
-        odeopts = odeopts_struct(ival); 
-
-        wt_est_fss = kotte_flux_noCAS(wt_est_xss_all(:,ival),odeopts.odep);
-
-        % set inital value for integration
-        odeopts.x0 = wt_est_xss_all(:,ival); 
-
-        % recalculate perturbations for new parameters
-        sol = getperturbations(pt_val,@perturb_nonoise,odeopts);
-        close all
-
-        xss = [cat(2,sol.xss) wt_est_xss_all(:,ival)];
-        fss = [cat(2,sol.fss) wt_est_fss];
-        optsol(ival).xss = xss;
-        optsol(ival).fss = fss;
-        pss(xss(2,:)>xss(1,:)) = 2;
-        optsol(ival).pss = pss;
-    end 
+    est_data = [];
+    fprintf('No optimal solution found\n');
+    return
 end
-
-% collect only optimal solutions
-exitflags = cat(1,optsol.exitflag);
-optimal_optsol = optsol(exitflags==1);
 
 % recalculate nval based on optimal solutions only
 nval = size(optimal_optsol,2);
