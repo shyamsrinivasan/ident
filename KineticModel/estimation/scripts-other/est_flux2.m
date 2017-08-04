@@ -27,8 +27,8 @@ pss = ones(1,numel(exp_sol.exp_pval));
 % pss(exp_sol.xss(1,:)>exp_sol.xss(2,:)) = 0;    
 
 % options structure for solving problem
-optimdata = struct('nc',3,'nflx',6,'nf',1,'flxid',4,'eps_v',.05,...
-                    'eps_c',.3,'vexp',exp_sol.fss(:,logical(pss)),...
+optimdata = struct('nc',3,'nflx',6,'nf',1,'flxid',4,'eps_v',.1,...
+                    'eps_c',.9,'vexp',exp_sol.fss(:,logical(pss)),...
                     'xexp',exp_sol.xss(:,logical(pss)),...
                     'odep',odep_bkp,...
                     'wt_xss',xss(:,1),'wt_fss',fss(:,1));
@@ -70,7 +70,7 @@ setup_opts.nle = allnle;
 [prob,optimdata] = setup_optim_prob(setup_opts);
 
 % initial values for consrained nl(or quadratic?) optimization
-x0 = getrandomivals(optimdata,.1,5000);
+x0 = getrandomivals(optimdata,.2,1000);
 solveropt = struct('solver','ipopt','multi',0);
 optsol = choose_nlconsopt(prob,x0,optimdata,solveropt);
 
