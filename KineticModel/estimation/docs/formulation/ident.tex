@@ -83,4 +83,69 @@
 	v_4 = k_{4}^{cat}.pep
 	\end{equation}
 	Simulated data 
+	
+	\subsection{Parameter estimation in kinetic models of metabolism:}
+	The formulation for parameter estimation assumes that the concentrations and the fluxes corresponding to each perturbation are variables in the optimization problem formulated to estimate kinetic parameters.
+	
+	Let $\mathbf{x}\in\mathbb{R}^m$, $\mathbf{p}\in\mathbb{R}^l$ and $\mathbf{v}\in\mathbb{R}$ be the vector of concentrations, parameters and fluxes respectively. If the number of perturbations used for parameter estimation is in $\mathbb{R}^p$, then the vector of concentrations, fluxes and parameters that need to be estimated in the optimization problem changes to $\mathbf{x}\in\mathbb{R}^{mp}, \mathbf{v}\in\mathbb{R}^{p}$ and $\mathbf{p}\in\mathbb{R}^{l}$ respectively. 
+	
+	Let $i\in\mathbb{R}^{mp}$, $j\in\mathbb{R}^{p}$ and $k\in\mathbb{R}^{l}$ represent the indices for concentrations, fluxes and parameters respectively in Equation (\ref{eq:l2norm-flux}).
+	
+	\begin{center}
+		\begin{subequations}\label{eq:l2norm-flux}
+			\begin{align}
+			\underset{\mathbf{x},\mathbf{p},\mathbf{v}}{\mathrm{min}} & \text{      }\left\Vert \mathbf{v}-\mathbf{v}^*\right\Vert\\
+			\mathrm{st}& \text{      }N(\mathbf{x},\mathbf{p}) - v_jD(\mathbf{x},\mathbf{p}) = 0 & \text{  }\forall & \text{ }j\in\mathbb{R}^p\\
+			& \text{      }x^*_i(1-\epsilon)\le x_i \le x^*_i(1+\epsilon) & \text{  }\forall & \text{ }i\in\mathbb{R}^{mp}\\	
+			& \text{      }v^*_j(1-\epsilon)\le v_j \le v^*_j(1+\epsilon) & \text{  }\forall & \text{ }j\in\mathbb{R}^{p}\\		
+			& \text{      }\mathbf{p}_{min} \le \mathbf{p} \le \mathbf{p}_{max}
+			\end{align}
+		\end{subequations}
+	\end{center}
+
+	Due to the inability of the above formulation to get feasible results, we modified the problem to include the L2-norm of the concentrations as well in the objective function in Equation (\ref{eq:free-var}a). In Equation (\ref{eq:free-var}) the flux and the concentrations are free variables, i.e.,  $\mathbf{x}\in\left[\mathbf{0},+\mathbf{\infty}\right]$. 
+	\begin{center}
+		\begin{subequations}\label{eq:free-var}
+			\begin{align}
+			\underset{\mathbf{x},\mathbf{p},\mathbf{v}}{\mathrm{min}} & \text{      }w_1\left\Vert \mathbf{v}-\mathbf{v}^*\right\Vert + w_2\left\Vert \mathbf{x}-\mathbf{x}^*\right\Vert\\
+			\mathrm{st}& \text{      }N(\mathbf{x},\mathbf{p}) - v_jD(\mathbf{x},\mathbf{p}) = 0 & \text{  }\forall & \text{ }j\in\mathbb{R}^p\\
+			& \text{      }0\le x_i \le +\infty & \text{  }\forall & \text{ }i\in\mathbb{R}^{mp}\\	
+			& \text{      }0\le v_j \le +\infty & \text{  }\forall & \text{ }j\in\mathbb{R}^{p}\\		
+			& \text{      }\mathbf{p}_{min} \le \mathbf{p} \le \mathbf{p}_{max}
+			\end{align}
+		\end{subequations}
+	\end{center}
+After testing the problem in Equation (\ref{eq:free-var}) above for the acetate uptake flux $v_1$, we found that all solutions using IPOPT exceeded the maximum number of iterations (set at 5000) and never produced an optimal solution.
+	
+	We further also test a formulation in Equation (\ref{eq:l2norm-conc}) where the flux and concentrations are constrained as earlier with a noise term.	
+	\begin{center}
+		\begin{subequations}\label{eq:l2norm-conc}
+			\begin{align}
+			\underset{\mathbf{x},\mathbf{p},\mathbf{v}}{\mathrm{min}} & \text{      }w_1\left\Vert \mathbf{v}-\mathbf{v}^*\right\Vert + w_2\left\Vert \mathbf{x}-\mathbf{x}^*\right\Vert\\
+			\mathrm{st}& \text{      }N(\mathbf{x},\mathbf{p}) - v_jD(\mathbf{x},\mathbf{p}) = 0 & \text{  }\forall & \text{ }j\in\mathbb{R}^p\\
+			& \text{      }x^*_i(1-\epsilon)\le x_i \le x^*_i(1+\epsilon) & \text{  }\forall & \text{ }i\in\mathbb{R}^{mp}\\	
+			& \text{      }v^*_j(1-\epsilon)\le v_j \le v^*_j(1+\epsilon) & \text{  }\forall & \text{ }j\in\mathbb{R}^{p}\\		
+			& \text{      }\mathbf{p}_{min} \le \mathbf{p} \le \mathbf{p}_{max}
+			\end{align}
+		\end{subequations}
+	\end{center}
+
+	A third formulation where the noise terms ($\epsilon$) used as bounds for the flux and the concentrations are included in the optimization problem as a variable to be penalized is given in Equation (\ref{eq:noise-var}) below.
+	
+	\begin{center}
+		\begin{subequations}\label{eq:noise-var}
+			\begin{align}
+			\underset{\mathbf{x},\mathbf{p},\mathbf{v},\epsilon}{\mathrm{min}} & \text{      }w_1\left\Vert \mathbf{v}-\mathbf{v}^*\right\Vert + w_2\left\Vert \mathbf{x}-\mathbf{x}^*\right\Vert + w_3\epsilon^2\\
+			\mathrm{st}& \text{      }N(\mathbf{x},\mathbf{p}) - v_jD(\mathbf{x},\mathbf{p}) = 0 & \text{  }\forall & \text{ }j\in\mathbb{R}^p\\
+			& \text{      }x^*_i(1-\epsilon)\le x_i \le x^*_i(1+\epsilon) & \text{  }\forall & \text{ }i\in\mathbb{R}^{mp}\\	
+			& \text{      }v^*_j(1-\epsilon)\le v_j \le v^*_j(1+\epsilon) & \text{  }\forall & \text{ }j\in\mathbb{R}^{p}\\		
+			& \text{      }\mathbf{p}_{min} \le \mathbf{p} \le \mathbf{p}_{max}
+			\end{align}
+		\end{subequations}
+	\end{center}
+
+
+	
+	
+	
 \end{document}
