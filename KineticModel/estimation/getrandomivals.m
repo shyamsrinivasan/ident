@@ -7,13 +7,22 @@ end
 if nargin<2
     eps = .05;
 end
+if isfield(optimdatam,'type')
+    type = optimdata.type;
+else
+    type=1;
+end
 nvar = optimdata.nvar;
 nc = optimdata.nc;
 nf = optimdata.nf;
 npert = optimdata.npert;
 
 % set initial value
-x0 = [optimdata.xexp;optimdata.odep(optimdata.p_id)';optimdata.vexp];
+if type==1
+    x0 = [optimdata.xexp;optimdata.odep(optimdata.p_id)';optimdata.vexp];
+elseif type==2
+    x0 = [optimdata.xexp;optimdata.odep(optimdata.p_id)';optimdata.vexp;.01;.01];
+end
 
 if nval>1
     pd = makedist('Uniform','lower',-eps,'upper',eps);
