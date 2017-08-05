@@ -19,6 +19,7 @@ if ~isempty(relevant_list)
 else    
     error('No parameters to estimate');
 end
+np = length(p_id);
 if isfield(optimdata,'nc')
     nc = optimdata.nc;
 end
@@ -36,12 +37,13 @@ vss_exp_v = reshape(vss_exp,[nf*npert,1]);
 xss_exp_v = reshape(xss_exp,[nc*npert,1]);
 
 % determine nvar
-nvar = nc*npert+nf*npert+length(p_id);
+nvar = nc*npert+nf*npert+np;
 newdata = optimdata;
 newdata.vexp = vss_exp_v;
 newdata.xexp = xss_exp_v;
 newdata.npert = npert;
 newdata.nvar = nvar;
+newdata.np = np;
 newdata.p_id = p_id;
 
 % setup bounds
@@ -65,8 +67,8 @@ end
 lb(1:nc*npert) = xss_exp_v.*(1-eps_c);
 ub(1:nc*npert) = xss_exp_v.*(1+eps_c);
 % set general bounds - parameter - specific bounds set below
-lb(nc*npert+1:nc*npert+length(p_id)) = .05*ones(length(p_id),1); 
-ub(nc*npert+1:nc*npert+length(p_id)) = 5*ones(length(p_id),1);
+lb(nc*npert+1:nc*npert+np) = .05*ones(np,1); 
+ub(nc*npert+1:nc*npert+np) = 5*ones(np,1);
 % set bounds - flux
 lb(nvar-nf*npert+1:nvar) = vss_exp_v*(1-eps_v);
 ub(nvar-nf*npert+1:nvar) = vss_exp_v*(1+eps_v);
