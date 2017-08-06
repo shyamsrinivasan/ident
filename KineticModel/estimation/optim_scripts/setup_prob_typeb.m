@@ -79,11 +79,11 @@ end
 % set bounds
 if type==1
     % set bounds - concentration
-    lb(1:nc*npert) = xss_exp_v.*(1-eps_c);
-    ub(1:nc*npert) = xss_exp_v.*(1+eps_c);
+    lb(1:nc*npert) = 0; % xss_exp_v.*(1-eps_c);
+    ub(1:nc*npert) = 10000; % xss_exp_v.*(1+eps_c);
     % set bounds - flux
-    lb(nvar-nf*npert+1:nvar) = vss_exp_v*(1-eps_v);
-    ub(nvar-nf*npert+1:nvar) = vss_exp_v*(1+eps_v);
+    lb(nvar-nf*npert+1:nvar) = 0; % vss_exp_v*(1-eps_v);
+    ub(nvar-nf*npert+1:nvar) = 10000; % vss_exp_v*(1+eps_v);
 elseif type==2
     % set bounds - concentration
     lb(1:nc*npert) = xss_exp_v.*(1-eps_c);
@@ -144,7 +144,7 @@ else
     if type==1
         nlrhs = zeros(npert,1);
     elseif type==2
-        nlrhs = zeros(npert+2*nc*npert+npert,1);
+        nlrhs = zeros(npert+2*nc*npert+2*npert,1);
     end
 end
 newdata.nlrhs = nlrhs;
@@ -154,7 +154,7 @@ else
     if type==1
         nle = zeros(npert,1);
     elseif type==2
-       nle = [zeros(npert,1);-ones(2*nc*npert+npert,1)];
+       nle = [zeros(npert,1);-ones(2*nc*npert+2*npert,1)];
     end
 end
 newdata.nle = nle;
