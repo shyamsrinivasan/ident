@@ -4,6 +4,14 @@ function [prob,newdata] = setup_optim_prob(optimdata)
 if isfield(optimdata,'flxid')
     flxid = optimdata.flxid;
 end
+% choose problem type
+if isfield(optimdata,'type')
+    type = optimdata.type;
+end
+if isempty(type)
+    % type a the original problem where noise is not a var
+    type = 1;
+end
 
 % all parameters available
 rxn_plist = {{'K1ac', 'k1cat'},{},{'K3fdp','K3pep','V3max'},{'K2pep','V2max'},...
@@ -37,7 +45,12 @@ vss_exp_v = reshape(vss_exp,[nf*npert,1]);
 xss_exp_v = reshape(xss_exp,[nc*npert,1]);
 
 % determine nvar
-nvar = nc*npert+nf*npert+np;
+if type==1
+    nvar = nc*npert+nf*npert+np;
+elseif type==2
+    % 2 noise vars for conc and fluxes
+    nvar = nc*npert+nf*npert+np+2;
+end
 newdata = optimdata;
 newdata.vexp = vss_exp_v;
 newdata.xexp = xss_exp_v;
@@ -63,15 +76,28 @@ end
 if isfield(optimdata,'eps_v')
     eps_v = optimdata.eps_v;
 end
-% set bounds - concentration
-lb(1:nc*npert) = xss_exp_v.*(1-eps_c);
-ub(1:nc*npert) = xss_exp_v.*(1+eps_c);
+% set bounds
+if type==1
+    % set bounds - concentration
+    lb(1:nc*npert) = 0; % xss_exp_v.*(1-eps_c);
+    ub(1:nc*npert) = 10000; % xss_exp_v.*(1+eps_c);
+    % set bounds - flux
+    lb(nvar-nf*npert+1:nvar) = 0; % vss_exp_v*(1-eps_v);
+    ub(nvar-nf*npert+1:nvar) = 10000; % vss_exp_v*(1+eps_v);
+elseif type==2
+    % set bounds - concentration
+    lb(1:nc*npert) = xss_exp_v.*(1-eps_c);
+    ub(1:nc*npert) = xss_exp_v.*(1+eps_c);
+    % set bounds - flux
+    lb(nc*npert+np+1:nc*npert+np+nf*npert) = vss_exp_v*(1-eps_v);
+    ub(nc*npert+np+1:nc*npert+np+nf*npert) = vss_exp_v*(1+eps_v);
+    % set bounds - noise
+    lb(nvar-2+1:nvar) = 0;
+    ub(nvar-2+1:nvar) = .5;
+end
 % set general bounds - parameter - specific bounds set below
 lb(nc*npert+1:nc*npert+np) = .05*ones(np,1); 
 ub(nc*npert+1:nc*npert+np) = 5*ones(np,1);
-% set bounds - flux
-lb(nvar-nf*npert+1:nvar) = vss_exp_v*(1-eps_v);
-ub(nvar-nf*npert+1:nvar) = vss_exp_v*(1+eps_v);
 
 % setup fresh bounds specifically for each flux parameter dependent on
 % flxid
@@ -115,13 +141,21 @@ newdata.nlcons = nlcons;
 if ~isempty(rhsval{flxid})
     nlrhs = rhsval{flxid};
 else
-    nlrhs = zeros(npert,1);
+    if type==1
+        nlrhs = zeros(npert,1);
+    elseif type==2
+        nlrhs = zeros(npert+2*nc*npert+2*npert,1);
+    end
 end
 newdata.nlrhs = nlrhs;
 if ~isempty(nles{flxid})
     nle = nles{flxid};
 else
-    nle = zeros(npert,1);
+    if type==1
+        nle = zeros(npert,1);
+    elseif type==2
+       nle = [zeros(npert,1);-ones(2*nc*npert+2*npert,1)];
+    end
 end
 newdata.nle = nle;
 
