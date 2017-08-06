@@ -1,5 +1,5 @@
-% objective to minimize weighted sum of L2-norm of fluxes and
-% concentrations
+% objective to minimize weighted sum of L2-norm of fluxes,
+% concentrations and noises (separate concentration and flux noise)
 function fx = obj_typec(x,p,data)
 
 nc = data.nc;
