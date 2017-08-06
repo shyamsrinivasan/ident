@@ -44,7 +44,7 @@ allobjh = {'obj_typeb',...
            []};     
        
 % define all constraint fun handles
-allconsh = {'consnoisyf1',...
+allconsh = {'cons_typeb_f1',...
             [],...
             'consnoisyf3',...
             'consnoisyf2',...
@@ -63,10 +63,10 @@ setup_opts.nlcons = allconsh;
 setup_opts.nlrhs = allnlrhs;
 setup_opts.nle = allnle;
 
-[prob,optimdata] = setup_optim_prob(setup_opts);
+[prob,optimdata] = setup_prob_typeb(setup_opts);
 
 % initial values for consrained nl(or quadratic?) optimization
-x0 = getrandomivals(optimdata,.3,1);
+x0 = getrandomivals(optimdata,.3,100);
 solveropt = struct('solver','ipopt','multi',0);
 optsol = choose_nlconsopt(prob,x0,optimdata,solveropt);
 
