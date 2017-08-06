@@ -9,6 +9,8 @@ nvar = data.nvar;
 np = data.np;
 w1 = data.flux_wt;
 w2 = data.conc_wt;
+w3 = data.eps_c_wt;
+w4 = data.eps_v_wt;
 
 % flux norm
 flux_norm = sqrt(sum((x(nc*npert+np+1:nc*npert+np+nf*npert)-data.vexp).^2));
@@ -17,5 +19,5 @@ flux_norm = sqrt(sum((x(nc*npert+np+1:nc*npert+np+nf*npert)-data.vexp).^2));
 conc_norm = sqrt(sum((x(1:nc*npert)-data.xexp).^2));
 
 % calc objective
-fx = w1.*flux_norm + w2.*conc_norm + 100.*x(nvar-1) + 100.*x(nvar);
+fx = w1.*flux_norm + w2.*conc_norm + w3.*x(nvar-1) + w4.*x(nvar);
 
