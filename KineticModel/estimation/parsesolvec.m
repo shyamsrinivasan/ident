@@ -15,7 +15,7 @@ xconc = xval(1:nc*npert,:);
 xpar = xval(nc*npert+1:nc*npert+np,:);
 xflx = xval(nc*npert+np+1:nc*npert+np+nf*npert,:);
 if type==2
-    xnoise = xval(nvar-2:nvar);
+    xnoise = xval(nvar-2:nvar,:);
 else
     xnoise = [];
 end
