@@ -1,4 +1,4 @@
-function compare_vals(est_sol,exp_sol,data,opts,test_data_id)
+function allfh = compare_vals(est_sol,exp_sol,data,opts,test_data_id)
 if isempty(est_sol)
     fprintf('No optimal solution found\n');
     return
@@ -57,7 +57,7 @@ for k = 0:nf-1
     fss_error(:,2*k+1:2*(k+1)) =...
     [zeros(1,length(exp_fss(k+1,:)))' est_ferr(k+1,:)'];
 end
-figure
+hfc = figure;
 for j = 0:data.nc-1
     ahc = subplot(data.nc,1,j+1);
     set(ahc,'NextPlot','add');
@@ -74,7 +74,7 @@ end
 ahc.XLabel.String = 'WT and Perturbations';
 legend('Noisy Data','Model Estimate');
 % fluxes
-figure
+hfv = figure;
 for k = 0:nf-1
     ahf = subplot(nf/2,2,k+1);
     set(ahf,'NextPlot','add');
@@ -90,3 +90,4 @@ for k = 0:nf-1
 end
 ahf.XLabel.String = 'WT and Perturbations';
 legend('Noisy Data','Model Estimate');
+allfh = [hfc;hfv];

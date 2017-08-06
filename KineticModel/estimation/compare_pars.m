@@ -1,5 +1,5 @@
 % function to plot 2-d and 3-d diagrams comapring parameters
-function compare_pars(est_data,plotype)
+function hfp = compare_pars(est_data,plotype)
 if nargin<2
     plotype=1;
 end
@@ -8,7 +8,7 @@ if isempty(est_data)
     return
 end
 
-figure
+hfp = figure
 xpar = est_data.xpar;
 [npar,~] = size(xpar);
 par = est_data.par;
