@@ -1,6 +1,7 @@
 function allfh = compare_vals(est_sol,exp_sol,data,opts,test_data_id)
 if isempty(est_sol)
     fprintf('No optimal solution found\n');
+    allfh = [];
     return
 end
 

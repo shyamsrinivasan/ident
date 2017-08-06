@@ -5,10 +5,11 @@ if nargin<2
 end
 if isempty(est_data)
     fprintf('No optimal solution found\n');
+    hfp = [];
     return
 end
 
-hfp = figure
+hfp = figure;
 xpar = est_data.xpar;
 [npar,~] = size(xpar);
 par = est_data.par;
