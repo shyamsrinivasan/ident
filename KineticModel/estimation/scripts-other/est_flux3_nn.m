@@ -18,11 +18,11 @@ pss = ones(1,numel(exp_sol.exp_pval));
 % pss(exp_sol.xss(1,:)>exp_sol.xss(2,:)) = 0;    
 
 % options structure for solving problem
-optimdata = struct('nc',3,'nflx',6,'nf',1,'flxid',3,'eps_v',.05,...
-                    'eps_c',.5,'vexp',exp_sol.fss(:,logical(pss)),...
+optimdata = struct('nc',3,'nflx',6,'nf',1,'flxid',3,'eps_v',.1,...
+                    'eps_c',.15,'vexp',exp_sol.fss(:,logical(pss)),...
                     'xexp',exp_sol.xss(:,logical(pss)),...
-                    'flux_wt',10000,'conc_wt',1000,...
-                    'eps_c_wt',100,'eps_v_wt',100,...
+                    'flux_wt',1000,'conc_wt',100,...
+                    'eps_c_wt',1000,'eps_v_wt',10000,...
                     'odep',odep_bkp,...
                     'wt_xss',xss(:,1),'wt_fss',fss(:,1),...
                     'type',2);
@@ -69,13 +69,33 @@ solveropt = struct('solver','ipopt','multi',0);
 optsol = choose_nlconsopt(prob,x0,optimdata,solveropt);
 
 % combine results for comparison plot
+opts.tspan = 1:.1:200;  
 est_data = combine_results(optsol,opts,no_noise_sol,optimdata,pss,pss);
 
 % compare fluxes and concentrations
-compare_vals(est_data,no_noise_sol,optimdata,opts,pss);
+hfcv = compare_vals(est_data,no_noise_sol,optimdata,opts,pss);
 
 % compare parameters in parameter space
-compare_pars(est_data);
+hfp = compare_pars(est_data);
+
+% save figure files
+dir = 'C:\Users\shyam\Documents\Courses\CHE1125Project\Results\estimation\est_flux3\no_noise\typeb\';
+if ~isempty(hfcv)
+    set(0,'CurrentFigure',hfcv(1));
+    fname = 'est_flux3_conc_aug6';
+    print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
+    close(hfcv(1));
+    set(0,'CurrentFigure',hfcv(2));
+    fname = 'est_flux3_flux_aug6';
+    print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
+    close(hfcv(2));
+end
+if ~isempty(hfp)
+    set(0,'CurrentFigure',hfp);
+    fname = 'est_flux3_par_aug6';
+    print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
+    close(hfp);
+end
 
 
 
