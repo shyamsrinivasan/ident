@@ -30,8 +30,8 @@ pss = ones(1,numel(exp_sol.exp_pval));
 optimdata = struct('nc',3,'nflx',6,'nf',1,'flxid',4,'eps_v',1,...
                     'eps_c',1,'vexp',exp_sol.fss(:,logical(pss)),...
                     'xexp',exp_sol.xss(:,logical(pss)),...
-                    'flux_wt',100,'conc_wt',100,...
-                    'eps_c_wt',10,'eps_v_wt',10,...
+                    'flux_wt',1000,'conc_wt',1000,...
+                    'eps_c_wt',100,'eps_v_wt',100,...
                     'odep',odep_bkp,...
                     'wt_xss',noisy_xss(:,1),'wt_fss',noisy_fss(:,1),...
                     'type',2);
@@ -89,19 +89,19 @@ hfcv = compare_vals(est_data,noisy_sol,optimdata,opts,pss);
 hfp = compare_pars(est_data);
 
 % save figure files
-dir = 'C:\Users\shyam\Documents\Courses\CHE1125Project\Results\estimation\est_flux2\noisy\typec\';
-set(0,'CurrentFigure',hfcv(1));
-fname = 'est_flux2_conc_aug6';
-print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
-close(hfcv(1));
-set(0,'CurrentFigure',hfcv(2));
-fname = 'est_flux2_flux_aug6';
-print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
-close(hfcv(2));
-set(0,'CurrentFigure',hfp);
-fname = 'est_flux2_par_aug6';
-print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
-close(hfp);
+% dir = 'C:\Users\shyam\Documents\Courses\CHE1125Project\Results\estimation\est_flux2\noisy\typec\';
+% set(0,'CurrentFigure',hfcv(1));
+% fname = 'est_flux2_conc_aug6';
+% print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
+% close(hfcv(1));
+% set(0,'CurrentFigure',hfcv(2));
+% fname = 'est_flux2_flux_aug6';
+% print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
+% close(hfcv(2));
+% set(0,'CurrentFigure',hfp);
+% fname = 'est_flux2_par_aug6';
+% print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
+% close(hfp);
 
 
 
