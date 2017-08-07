@@ -9,6 +9,7 @@
 \usepackage[space]{grffile}
 \usepackage{subfigure}
 \usepackage{longtable}
+\usepackage{multirow}
 \usepackage[margin=1.0in]{geometry}
 \renewcommand{\baselinestretch}{2.0}
 
@@ -89,63 +90,177 @@
 	
 	Let $\mathbf{x}\in\mathbb{R}^m$, $\mathbf{p}\in\mathbb{R}^l$ and $\mathbf{v}\in\mathbb{R}$ be the vector of concentrations, parameters and fluxes respectively. If the number of perturbations used for parameter estimation is in $\mathbb{R}^p$, then the vector of concentrations, fluxes and parameters that need to be estimated in the optimization problem changes to $\mathbf{x}\in\mathbb{R}^{mp}, \mathbf{v}\in\mathbb{R}^{p}$ and $\mathbf{p}\in\mathbb{R}^{l}$ respectively. 
 	
-	Let $i\in\mathbb{R}^{mp}$, $j\in\mathbb{R}^{p}$ and $k\in\mathbb{R}^{l}$ represent the indices for concentrations, fluxes and parameters respectively in Equation (\ref{eq:l2norm-flux}).
+	Let $i\in\mathbb{R}^{mp}$, $j\in\mathbb{R}^{p}$ and $k\in\mathbb{R}^{l}$ represent the indices for concentrations, fluxes and parameters respectively in Equations (\ref{eq:l2norm-flux})-(\ref{eq:noise-var}).
 	
-	\begin{center}
-		\begin{subequations}\label{eq:l2norm-flux}
-			\begin{align}
-			\underset{\mathbf{x},\mathbf{p},\mathbf{v}}{\mathrm{min}} & \text{      }\left\Vert \mathbf{v}-\mathbf{v}^*\right\Vert\\
-			\mathrm{st}& \text{      }N(\mathbf{x},\mathbf{p}) - v_jD(\mathbf{x},\mathbf{p}) = 0 & \text{  }\forall & \text{ }j\in\mathbb{R}^p\\
-			& \text{      }x^*_i(1-\epsilon)\le x_i \le x^*_i(1+\epsilon) & \text{  }\forall & \text{ }i\in\mathbb{R}^{mp}\\	
-			& \text{      }v^*_j(1-\epsilon)\le v_j \le v^*_j(1+\epsilon) & \text{  }\forall & \text{ }j\in\mathbb{R}^{p}\\		
-			& \text{      }\mathbf{p}_{min} \le \mathbf{p} \le \mathbf{p}_{max}
-			\end{align}
-		\end{subequations}
-	\end{center}
+	\subsubsection{Formulation a):}		
+	\begin{subequations}\label{eq:l2norm-flux}
+		\begin{align}
+		\underset{\mathbf{x},\mathbf{p},\mathbf{v}}{\mathrm{min}} & \text{      }\left\Vert \mathbf{v}-\mathbf{v}^*\right\Vert\\
+		\mathrm{st}& \text{      }N(\mathbf{x},\mathbf{p}) - v_jD(\mathbf{x},\mathbf{p}) = 0 & \text{  }\forall & \text{ }j\in\mathbb{R}^p\\
+		& \text{      }x^*_i(1-\epsilon)\le x_i \le x^*_i(1+\epsilon) & \text{  }\forall & \text{ }i\in\mathbb{R}^{mp}\\	
+		& \text{      }v^*_j(1-\epsilon)\le v_j \le v^*_j(1+\epsilon) & \text{  }\forall & \text{ }j\in\mathbb{R}^{p}\\		
+		& \text{      }\mathbf{p}_{min} \le \mathbf{p} \le \mathbf{p}_{max}
+		\end{align}
+	\end{subequations}
 
-	Due to the inability of the above formulation to get feasible results, we modified the problem to include the L2-norm of the concentrations as well in the objective function in Equation (\ref{eq:free-var}a). In Equation (\ref{eq:free-var}) the flux and the concentrations are free variables, i.e.,  $\mathbf{x}\in\left[\mathbf{0},+\mathbf{\infty}\right]$. 
-	\begin{center}
-		\begin{subequations}\label{eq:free-var}
-			\begin{align}
-			\underset{\mathbf{x},\mathbf{p},\mathbf{v}}{\mathrm{min}} & \text{      }w_1\left\Vert \mathbf{v}-\mathbf{v}^*\right\Vert + w_2\left\Vert \mathbf{x}-\mathbf{x}^*\right\Vert\\
-			\mathrm{st}& \text{      }N(\mathbf{x},\mathbf{p}) - v_jD(\mathbf{x},\mathbf{p}) = 0 & \text{  }\forall & \text{ }j\in\mathbb{R}^p\\
-			& \text{      }0\le x_i \le +\infty & \text{  }\forall & \text{ }i\in\mathbb{R}^{mp}\\	
-			& \text{      }0\le v_j \le +\infty & \text{  }\forall & \text{ }j\in\mathbb{R}^{p}\\		
-			& \text{      }\mathbf{p}_{min} \le \mathbf{p} \le \mathbf{p}_{max}
-			\end{align}
-		\end{subequations}
-	\end{center}
-After testing the problem in Equation (\ref{eq:free-var}) above for the acetate uptake flux $v_1$, we found that all solutions using IPOPT exceeded the maximum number of iterations (set at 5000) and never produced an optimal solution.
+	\subsubsection{Formulation b):}	
+	In this formulation, in Equation (\ref{eq:l2norm-conc}), the flux and concentrations are constrained as earlier with a noise term.	
+	\begin{subequations}\label{eq:l2norm-conc}
+		\begin{align}
+		\underset{\mathbf{x},\mathbf{p},\mathbf{v}}{\mathrm{min}} & \text{      }w_1\left\Vert \mathbf{v}-\mathbf{v}^*\right\Vert + w_2\left\Vert \mathbf{x}-\mathbf{x}^*\right\Vert\\
+		\mathrm{st}& \text{      }N(\mathbf{x},\mathbf{p}) - v_jD(\mathbf{x},\mathbf{p}) = 0 & \text{  }\forall & \text{ }j\in\mathbb{R}^p\\
+		& \text{      }x^*_i(1-\epsilon)\le x_i \le x^*_i(1+\epsilon) & \text{  }\forall & \text{ }i\in\mathbb{R}^{mp}\\	
+		& \text{      }v^*_j(1-\epsilon)\le v_j \le v^*_j(1+\epsilon) & \text{  }\forall & \text{ }j\in\mathbb{R}^{p}\\		
+		& \text{      }\mathbf{p}_{min} \le \mathbf{p} \le \mathbf{p}_{max}
+		\end{align}
+	\end{subequations}
 	
-	We further also test a formulation in Equation (\ref{eq:l2norm-conc}) where the flux and concentrations are constrained as earlier with a noise term.	
-	\begin{center}
-		\begin{subequations}\label{eq:l2norm-conc}
-			\begin{align}
-			\underset{\mathbf{x},\mathbf{p},\mathbf{v}}{\mathrm{min}} & \text{      }w_1\left\Vert \mathbf{v}-\mathbf{v}^*\right\Vert + w_2\left\Vert \mathbf{x}-\mathbf{x}^*\right\Vert\\
-			\mathrm{st}& \text{      }N(\mathbf{x},\mathbf{p}) - v_jD(\mathbf{x},\mathbf{p}) = 0 & \text{  }\forall & \text{ }j\in\mathbb{R}^p\\
-			& \text{      }x^*_i(1-\epsilon)\le x_i \le x^*_i(1+\epsilon) & \text{  }\forall & \text{ }i\in\mathbb{R}^{mp}\\	
-			& \text{      }v^*_j(1-\epsilon)\le v_j \le v^*_j(1+\epsilon) & \text{  }\forall & \text{ }j\in\mathbb{R}^{p}\\		
-			& \text{      }\mathbf{p}_{min} \le \mathbf{p} \le \mathbf{p}_{max}
-			\end{align}
-		\end{subequations}
-	\end{center}
-
-	A third formulation where the noise terms ($\epsilon$) used as bounds for the flux and the concentrations are included in the optimization problem as a variable to be penalized is given in Equation (\ref{eq:noise-var}) below.
-	
+	\subsubsection{Formulation c):}
+	A third formulation where the noise terms ($\epsilon$) used as bounds for the flux and the concentrations are included in the optimization objective as a variable to be penalized is given in Equation (\ref{eq:noise-var}) below. Notice that the noise term has been separated into two components, $\epsilon_x$ and $\epsilon_v$, corresponding to noise in the concentrations and the fluxes, respectively. $w_3$ and $w_4$ are the weights associated with the noise terms in the objective function.
 	\begin{center}
 		\begin{subequations}\label{eq:noise-var}
 			\begin{align}
-			\underset{\mathbf{x},\mathbf{p},\mathbf{v},\epsilon}{\mathrm{min}} & \text{      }w_1\left\Vert \mathbf{v}-\mathbf{v}^*\right\Vert + w_2\left\Vert \mathbf{x}-\mathbf{x}^*\right\Vert + w_3\epsilon^2\\
+			\underset{\mathbf{x},\mathbf{p},\mathbf{v},\epsilon_x,\epsilon_v}{\mathrm{min}} & \text{      }w_1\left\Vert \mathbf{v}-\mathbf{v}^*\right\Vert + w_2\left\Vert \mathbf{x}-\mathbf{x}^*\right\Vert + w_3\epsilon_x + w_4\epsilon_v\\
 			\mathrm{st}& \text{      }N(\mathbf{x},\mathbf{p}) - v_jD(\mathbf{x},\mathbf{p}) = 0 & \text{  }\forall & \text{ }j\in\mathbb{R}^p\\
-			& \text{      }x^*_i(1-\epsilon)\le x_i \le x^*_i(1+\epsilon) & \text{  }\forall & \text{ }i\in\mathbb{R}^{mp}\\	
-			& \text{      }v^*_j(1-\epsilon)\le v_j \le v^*_j(1+\epsilon) & \text{  }\forall & \text{ }j\in\mathbb{R}^{p}\\		
+			& \text{      }x^*_i(1-\epsilon_x)\le x_i \le x^*_i(1+\epsilon_x) & \text{  }\forall & \text{ }i\in\mathbb{R}^{mp}\\	
+			& \text{      }v^*_j(1-\epsilon_v)\le v_j \le v^*_j(1+\epsilon_v) & \text{  }\forall & \text{ }j\in\mathbb{R}^{p}\\		
 			& \text{      }\mathbf{p}_{min} \le \mathbf{p} \le \mathbf{p}_{max}
 			\end{align}
 		\end{subequations}
 	\end{center}
-
-
 	
+	\subsubsection{Formulation d):}
+	Due to the inability of Equation (\ref{eq:l2norm-flux}) to get feasible results, we modified the problem to include the L2-norm of the concentrations as well in the objective function in Equation (\ref{eq:free-var}a). In Equation (\ref{eq:free-var}) the flux and the concentrations are free variables, i.e.,  $\mathbf{x}\in\left[\mathbf{0},+\mathbf{\infty}\right]$. 
+	\begin{subequations}\label{eq:free-var}
+		\begin{align}
+		\underset{\mathbf{x},\mathbf{p},\mathbf{v}}{\mathrm{min}} & \text{      }w_1\left\Vert \mathbf{v}-\mathbf{v}^*\right\Vert + w_2\left\Vert \mathbf{x}-\mathbf{x}^*\right\Vert\\
+		\mathrm{st}& \text{      }N(\mathbf{x},\mathbf{p}) - v_jD(\mathbf{x},\mathbf{p}) = 0 & \text{  }\forall & \text{ }j\in\mathbb{R}^p\\
+		& \text{      }0\le x_i \le +\infty & \text{  }\forall & \text{ }i\in\mathbb{R}^{mp}\\	
+		& \text{      }0\le v_j \le +\infty & \text{  }\forall & \text{ }j\in\mathbb{R}^{p}\\		
+		& \text{      }\mathbf{p}_{min} \le \mathbf{p} \le \mathbf{p}_{max}
+		\end{align}
+	\end{subequations}
+
+After testing the problem in Equation (\ref{eq:free-var}) above for the acetate uptake flux $v_1$, we found that all solutions using IPOPT exceeded the maximum number of iterations (set at 5000) and never produced an optimal solution. Hence, we use a modified form of the bounds in Equation (\ref{eq:free-var}) above in Equation (\ref{eq:l2norm-conc}).
+
+	\begin{table}[!tbhp]
+		\caption{Table showing the perturbed values of all fluxes used for parameter estimation.}
+		\begin{center}				
+			\begin{tabular}{ccc}
+				Designation & Perturbed Fluxes & Perturbed Values\\
+				\hline
+				P1 & $v_1$ & 2\\
+				P2 & $v_2$ & 0.2\\
+				P3 & $v_3$ & 0.5
+			\end{tabular}
+		\end{center}	
+		\label{tab:pval}
+	\end{table}
+
+	\section{Results:}
+
+	\begin{table}[!tbhp]
+		\caption{Table showing the ability of different formulations mentioned above to estimate enzyme kinetic parameters for different fluxes based on the perturbations given in the above table.}
+		\begin{center}				
+			\begin{tabular}{cccccc}
+				\hline
+				Flux & Data Type & \multicolumn{2}{c}{Formulation (b)} & \multicolumn{2}{c}{Formulation (c)}\\
+				\hline
+				&&$\epsilon_x$(\%)&$\epsilon_v$(\%)&$\epsilon_x$(\%)&$\epsilon_v$(\%)\\
+				\hline
+				\multirow{2}{*}{flux 1} & no noise & 30 & 5 & 33.33 & 0\\
+												  &	noisy & x & x & 0 & 33.33\\
+			  	\hline
+				 \multirow{2}{*}{flux 2} & no noise & 90 & 30 & 0 & 31\\
+				 									& noisy & 85 & 40 & 0 & 30\\
+				\hline				 									
+				\multirow{2}{*}{flux 3} & no noise & 15 & 10 & 17 & 0\\
+													& noisy & x & x & 17 & 0\\
+				\hline			
+			\end{tabular}
+		\end{center}	
+		\label{tab:res1}
+	\end{table}
+	\subsection{Estimation of flux 1:}
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux1/no_noise/typec/est_flux1_conc_aug6}}
+		\caption{Plot comparing noiseless model generated steady state metabolite concentrations with model estimates obtained using an optimized model for $v_1$ using formulation (c). }
+	\end{figure}
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux1/noisy/typec/est_flux1_conc_aug6}}
+		\caption{Plot comparing noisy model generated steady state metabolite concentrations with model estimates obtained using an optimized model for $v_1$ using formulation (c). }
+	\end{figure}
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux1/no_noise/typec/est_flux1_flux_aug6}}
+		\caption{Plot comparing noiseless model generated steady state fluxes with model estimates obtained using an optimized model for $v_1$ using formulation (c). }
+	\end{figure}
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux1/noisy/typec/est_flux1_flux_aug6}}
+		\caption{Plot comparing noisy model generated steady state fluxes with model estimates obtained using an optimized model for $v_1$ using formulation (c). }
+	\end{figure}
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux1/no_noise/typec/est_flux1_par_aug6}}
+		\caption{Plot comparing noiseless model generated parameters for $v_1$ through a multi-start search algorithm using formulation (c). }
+	\end{figure}
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux1/noisy/typec/est_flux1_par_aug6}}
+		\caption{Plot comparing noisy model generated parameters for $v_1$ through a multi-start search algorithm using formulation (c). }
+	\end{figure}
+	\clearpage
+
+	\subsection{Estimation of flux 2:}
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux2/no_noise/typec/est_flux2_conc_aug6}}
+		\caption{Plot comparing noiseless model generated steady state metabolite concentrations with model estimates obtained using an optimized model for $v_2$ using formulation (c). }
+	\end{figure}
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux2/noisy/typec/est_flux2_conc_aug6}}
+		\caption{Plot comparing noisy model generated steady state metabolite concentrations with model estimates obtained using an optimized model for $v_2$ using formulation (c). }
+	\end{figure}
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux2/no_noise/typec/est_flux2_flux_aug6}}
+		\caption{Plot comparing noiseless model generated steady state fluxes with model estimates obtained using an optimized model for $v_2$ using formulation (c). }
+	\end{figure}
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux2/noisy/typec/est_flux2_flux_aug6}}
+		\caption{Plot comparing noisy model generated steady state fluxes with model estimates obtained using an optimized model for $v_2$ using formulation (c). }
+	\end{figure}
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux2/no_noise/typec/est_flux2_par_aug6}}
+		\caption{Plot comparing noiseless model generated parameters for $v_2$ through a multi-start search algorithm using formulation (c). }
+	\end{figure}
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux2/noisy/typec/est_flux2_par_aug6}}
+		\caption{Plot comparing noisy model generated parameters for $v_2$ through a multi-start search algorithm using formulation (c). }
+	\end{figure}
+	\clearpage
+	
+	\subsection{Estimation of flux 3:}
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux3/no_noise/typec/est_flux3_conc_aug6}}
+		\caption{Plot comparing noiseless model generated steady state metabolite concentrations with model estimates obtained using an optimized model for $v_3$ using formulation (c). }
+	\end{figure}
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux3/noisy/typec/est_flux3_conc_aug6}}
+		\caption{Plot comparing noisy model generated steady state metabolite concentrations with model estimates obtained using an optimized model for $v_3$ using formulation (c). }
+	\end{figure}
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux3/no_noise/typec/est_flux3_flux_aug6}}
+		\caption{Plot comparing noiseless model generated steady state fluxes with model estimates obtained using an optimized model for $v_3$ using formulation (c). }
+	\end{figure}
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux3/noisy/typec/est_flux3_flux_aug6}}
+		\caption{Plot comparing noisy model generated steady state fluxes with model estimates obtained using an optimized model for $v_3$ using formulation (c). }
+	\end{figure}
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux3/no_noise/typec/est_flux3_par_aug6}}
+		\caption{Plot comparing noiseless model generated parameters for $v_3$ through a multi-start search algorithm using formulation (c). }
+	\end{figure}
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux3/noisy/typec/est_flux3_par_aug6}}
+		\caption{Plot comparing noisy model generated parameters for $v_3$ through a multi-start search algorithm using formulation (c). }
+	\end{figure}
+	\clearpage
 	
 	
 \end{document}
