@@ -88,6 +88,20 @@ hfcv = compare_vals(est_data,noisy_sol,optimdata,opts,pss);
 % compare parameters in parameter space
 hfp = compare_pars(est_data);
 
+% save figure files
+dir = 'C:\Users\shyam\Documents\Courses\CHE1125Project\Results\estimation\est_flux1\noisy\typec\';
+set(0,'CurrentFigure',hfcv(1));
+fname = 'est_flux1_conc_aug6';
+print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
+close(hfcv(1));
+set(0,'CurrentFigure',hfcv(2));
+fname = 'est_flux1_flux_aug6';
+print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
+close(hfcv(2));
+set(0,'CurrentFigure',hfp);
+fname = 'est_flux1_par_aug6';
+print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
+close(hfp);
 
 
 
