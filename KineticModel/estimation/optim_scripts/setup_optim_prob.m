@@ -79,11 +79,11 @@ end
 % set bounds
 if type==1
     % set bounds - concentration
-    lb(1:nc*npert) = 0; % xss_exp_v.*(1-eps_c);
-    ub(1:nc*npert) = 10000; % xss_exp_v.*(1+eps_c);
+    lb(1:nc*npert) = xss_exp_v.*(1-eps_c);
+    ub(1:nc*npert) = xss_exp_v.*(1+eps_c);
     % set bounds - flux
-    lb(nvar-nf*npert+1:nvar) = 0; % vss_exp_v*(1-eps_v);
-    ub(nvar-nf*npert+1:nvar) = 10000; % vss_exp_v*(1+eps_v);
+    lb(nvar-nf*npert+1:nvar) = vss_exp_v*(1-eps_v);
+    ub(nvar-nf*npert+1:nvar) = vss_exp_v*(1+eps_v);
 elseif type==2
     % set bounds - concentration
     lb(1:nc*npert) = xss_exp_v.*(1-eps_c);
@@ -93,7 +93,7 @@ elseif type==2
     ub(nc*npert+np+1:nc*npert+np+nf*npert) = vss_exp_v*(1+eps_v);
     % set bounds - noise
     lb(nvar-2+1:nvar) = 0;
-    ub(nvar-2+1:nvar) = .5;
+    ub(nvar-2+1:nvar) = 1;
 end
 % set general bounds - parameter - specific bounds set below
 lb(nc*npert+1:nc*npert+np) = .05*ones(np,1); 
