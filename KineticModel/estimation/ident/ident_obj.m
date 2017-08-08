@@ -1,20 +1,29 @@
 % objective for identifiability analysis
 % sum of square minimization of variance weighted error
-function fx = ident_obj(x,p,data)
+function objfx = ident_obj(x,p,data)
 
-x = casadi.SX.sym('x',3,1);
-p = casadi.SX.sym('p',17,1);
+if isfield(data,'idx')
+    idx = data.idx;
+end
+if isfield(data,'xexp')
+    yexp = data.xexp;
+end
+if isifield(data,'xexp_var')
+    yexp_var = data.yexp_var;
+end
+if isfield(data,'modelfh')
+    modelfh = data.modelfh;
+end
 
-flux = kotte_flux_CAS(x,p);
+% augment parameter vector with fixed parameter vector value
+aug_p = [x(1:idx-1);p(idx);x(idx:end)];
 
-fx_sym = cell(3,1);
-fx_sym{1} = flux{1} - flux{4} - flux{5};
-fx_sym{2} = flux{4} - flux{3};
-fx_sym{3} = flux{2} - flux{6};
+% calculate ymodel(theta,t) with augmented parameter vector
+ymodel = modelfh(aug_p);
 
-fx = casadi.Function('FX',{x,p},{[fx_sym{1};...
-                                  fx_sym{2};...
-                                  fx_sym{3}]});
+objfx = sum((yexp-ymodel)./yexp_var).^2;
+
+
                               
 
 
