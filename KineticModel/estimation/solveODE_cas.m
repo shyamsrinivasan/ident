@@ -57,3 +57,8 @@ end
 yss = yout(:,end);
 fss = fout(:,end);
 
+% beta testing - foward sensitivity analysis using Casadi/SUNDIALS
+% Fint_fwd = Fint.factory('Fint_fwd',{'x0','p','fwd:p'},{'fwd:xf'});
+% res = Fint_fwd('x0',x0,'p',odep,'fwd_p',1);
+% fwd_xf = full(res.fwd_xf);
+
