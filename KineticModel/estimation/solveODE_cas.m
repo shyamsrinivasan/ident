@@ -19,7 +19,7 @@ end
 % if isfield(solver_opts,'reltol')
 %     reltol = solver_opts.reltol;
 % end
-if isfield(opts,'x0');
+if isfield(opts,'x0')
     x0 = opts.x0;
 end
 if isfield(opts,'odep')
