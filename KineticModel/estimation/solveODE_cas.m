@@ -44,18 +44,18 @@ Fint = casadi.integrator('Fint','cvodes',problem,solver_opts);
 sol = Fint('x0',x0,'p',odep);
 yout = full(sol.xf);
 
-ntime = size(yout,2);
-% fout = zeros(5,ntime);
 if givenflux
     fout = flxh(yout,odep);
-%     for i = 1:ntime
-%         fout(:,i) = full(FXflx(yout(:,i),odep));
-%     end  
-end
-  
+else
+    fout = [];
+end  
 
 yss = yout(:,end);
-fss = fout(:,end);
+if ~isempty(fout)
+    fss = fout(:,end);
+else
+    fss = [];
+end
 
 % beta testing - foward sensitivity analysis using Casadi/SUNDIALS
 % Fint_fwd = Fint.factory('Fint_fwd',{'x0','p','fwd:p'},{'fwd:xf'});
