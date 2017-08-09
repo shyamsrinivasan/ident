@@ -1,4 +1,4 @@
-function [FX,DFX,D2FX,fx_sym,x,p,FX_flux] = kotte_CAS()
+function [FX,dfx_sym,D2FX,fx_sym,x,p,FX_flux] = kotte_CAS()
 
 x = casadi.SX.sym('x',3,1);
 p = casadi.SX.sym('p',17,1);
@@ -31,6 +31,6 @@ FX_flux = casadi.Function('FX_flux',{x,p},{[flux{1};...
                                             flux{5};...
                                             flux{6}]});
                                         
-DFX = [];
+dfx_sym = jacobian([fx_sym{:}],x);
 D2FX = [];
                                         
