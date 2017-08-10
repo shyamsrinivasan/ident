@@ -1,7 +1,10 @@
 % objective for identifiability analysis
 % sum of square minimization of variance weighted error
-function objfx = ident_obj(x,p,data)
+function objfx = ident_obj(x,data,funh)
 
+if isfield(data,'odep')
+    p = data.odep;
+end
 if isfield(data,'idx')
     idx = data.idx;
 end
@@ -11,8 +14,8 @@ end
 if isifield(data,'xexp_var')
     yexp_var = data.yexp_var;
 end
-if isfield(data,'modelfh')
-    modelfh = data.modelfh;
+if isfield(funh,'modelfh')
+    modelfh = funh.modelfh;
 end
 
 % augment parameter vector with fixed parameter vector value
