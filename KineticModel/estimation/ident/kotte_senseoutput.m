@@ -6,7 +6,7 @@ if isfield(data,'x0')
     x0 = data.x0;
 end
 
-fh = @()kotteCASwSENS(3,17,@kotte_CAS); % @kotte_CAS
+fh = @()kotteCASwSENS(3,17); % @kotte_CAS
 
 solver_opts = struct('abstol',1e-6,'reltol',1e-6);
 opts = struct('tspan',data.tspan,'x0',x0,'solver_opts',solver_opts,'odep',p);
