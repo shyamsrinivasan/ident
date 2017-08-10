@@ -1,6 +1,7 @@
 function [xss_pval,fss_pval,collect_p,dyndata] = runperturbations(fh,pid,pval,opts)
+getdyndata = 0;
 if nargout>3
-    getdyndata = 1;
+    getdyndata = 1;   
 end
 
 np = length(pval);

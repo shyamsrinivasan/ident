@@ -3,7 +3,7 @@ if nargin<5
     getdyndata = 0;
 end
 npt = size(ptopts,2);
-if nargin<4
+if nargin<4 || isempty(sol)
     sol = struct([]);
     istart = 1;
 %     iend = npt;
