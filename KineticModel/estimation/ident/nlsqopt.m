@@ -1,9 +1,6 @@
 % optimization step for PLE-based identifiability
 % idx - index of parameter that is fixed
-function optsol = nlsqopt(prob,solveropts)
-if isfield(prob,'x0')
-    x0 = prob.x0;
-end
+function optsol = nlsqopt(prob,p0,solveropts)
 if isfield(prob,'obj')
     obj = prob.obj;
 else
@@ -102,11 +99,11 @@ end
 if multi
     [xval,fval,exitflag,info] = multisolve(optim_prob,[],multi_pts);   
 else
-    [xval,fval,exitflag,info] = solve(optim_prob,x0); 
+    [xval,fval,exitflag,info] = solve(optim_prob,p0); 
 end     
 % [xval,fval,exitflag,info] = solve(optim_prob,x0); 
 
-optsol.x0 = x0;
+optsol.x0 = p0;
 optsol.xval = xval;
 optsol.fval = fval;
 optsol.exitflag = exitflag;
