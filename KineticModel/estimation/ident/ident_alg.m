@@ -34,7 +34,7 @@ optim_opts = struct('pname','K1ac','nc',3,'nf',6,...
 [prob,data] = setup_ident_prob(optim_opts);
 
 % set initial parameter vales for optimization
-p0 = opts.odep(data.varid);
+p0 = opts.odep(data.varid)';
 solveropt = struct('solver','ipopt','multi',0);
 
 % 1. start by solving optimal estimation problem for fixed parameter i
