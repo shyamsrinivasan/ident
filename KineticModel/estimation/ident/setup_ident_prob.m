@@ -24,15 +24,9 @@ if ~isempty(idx)
 end
 newdata = data;
 newdata.idx = idx;   
-% newdata.nc = data.nc;
-% newdata.nf = data.nf;
+newdata.np = length(plist);
 newdata.nvar = nvar;
 newdata.varid = setdiff(1:length(plist),idx);
-% newdata.odep = data.odep;
-% newdata.tspan = data.tspan;
-% newdata.x0 = data.x0;
-% newdata.xexp = data.xexp_dyn;
-% newdata.xexp_var = data.xexp_var;
 
 % setup parameter estimation bounds - specific bounds set below
 if isfield(data,'lb')
@@ -126,6 +120,3 @@ prob =...
 struct('obj',obj,'gradobj',gradobj,...
         'nlcons',nlcons,'nlrhs',rhsval,'nle',nle,...
         'lb',lb,'ub',ub);
-
-
-
