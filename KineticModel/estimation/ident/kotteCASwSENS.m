@@ -27,7 +27,7 @@ fx_sens_vec = reshape(fx_sens,[nvar*np,1]);
 sens_var_vec = reshape(sens_var,[nvar*np,1]);
 
 aug_x = [x;sens_var_vec];
-fx_aug = [[fx_sys{:}]';fx_sens_vec{:}];
+fx_aug = [[fx_sys{:}]';fx_sens_vec(:)];
 
 FXaug = casadi.Function('FXaug',{aug_x,p},{fx_aug});
 FX = casadi.Function('FX',{x,p},{[fx_sys{:}]'});
