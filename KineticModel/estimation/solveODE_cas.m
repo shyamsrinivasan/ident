@@ -31,10 +31,15 @@ end
 
 % define casdi problem structure
 neq = size(fx,1);
-dx = casadi.SX(neq,1);
-for i = 1:neq
-    dx(i) = fx{i};
+if iscell(fx)
+    dx = casadi.SX(neq,1);
+    for i = 1:neq
+        dx(i) = fx{i};
+    end
+elseif strcmpi(class(fx),'casadi.SX')
+    dx = fx;
 end
+
 problem = struct('x',x,'ode',dx,'p',p);
 solver_opts.output_t0 = 1;
 solver_opts.print_stats = 1;
