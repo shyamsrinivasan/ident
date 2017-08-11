@@ -6,6 +6,9 @@ function yout = kotte_output(p,data)
 if isfield(data,'x0')
     x0 = data.x0;
 end
+if all(p(setdiff(1:data.np,data.idx))==0)
+    p = data.odep;
+end
 
 solver_opts = struct('abstol',1e-6,'reltol',1e-6);
 opts = struct('tspan',data.tspan,'x0',x0,'solver_opts',solver_opts,'odep',p);
