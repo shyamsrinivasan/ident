@@ -19,7 +19,7 @@ if isfield(data,'modelf')
 end
 
 % augment parameter vector with fixed parameter vector value
-aug_p = [x(1:idx-1) p(idx) x(idx:end)];
+aug_p = [x(1:idx-1);p(idx);x(idx:end)];
 
 % calculate ymodel(theta,t) with augmented parameter vector
 ymodel = modelf(aug_p);
