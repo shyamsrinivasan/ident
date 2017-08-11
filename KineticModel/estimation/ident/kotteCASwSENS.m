@@ -4,7 +4,7 @@ x = casadi.SX.sym('x',nvar,1);
 p = casadi.SX.sym('p',np,1);
 sens_var = casadi.SX.sym('sens_var',nvar,np);
 
-fx_sys = cell(3,1);
+fx_sys = cell(nvar,1);
 fx_sens = cell(np,1);
 
 % system equations
