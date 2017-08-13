@@ -22,12 +22,7 @@ optim_opts = struct('pname','K1ac','nc',3,'nf',6,...
                     'xexp',no_noise_sol(1).xdyn(:,1:100:2001));
 
 % problem & objective setup
-[obj,p] = identopt_setup(optim_opts,.1);
+prob_cas = identopt_setup(optim_opts,.1);
 
-% setup nlp
-nlp = struct('x',p,'f',obj);
-solver = casadi.nlpsol('solver','ipopt',nlp);
-p0 = opts.odep(2:13)';
-p0(6) = .1;
-sol_opt = solver('x0',opts.odep(2:13)');
-
+% solve to get optimal parameters
+solve_nlsqopt(prob_cas,opts.odep(2:13)');
