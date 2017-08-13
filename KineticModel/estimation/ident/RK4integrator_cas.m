@@ -3,23 +3,15 @@
 function [xdyn_fun,ode,x,p_all,ident_c,p_useless,acetate] =...
         RK4integrator_cas(casfh,data)
 
-if isfield(data,'pname')
-    pname = data.pname;
-end
 if isfield(data,'tspan')
     tspan = data.tspan;
 end
-npts = length(tspan)-1;
-
+if isfield(data,'npts')
+    npts = data.npts;
+end
 if isfield(data,'ident_idx')
     ident_idx = data.ident_idx;
-elseif ~isempty(pname)
-    plist = {'K1ac','K3fdp','L3fdp','K3pep','K2pep','vemax','KeFDP','ne',...
-            'd','V4max','k1cat','V3max','V2max','K1pep','K2fdp','rhoA','acetate'}; 
-    ident_idx = find(strcmpi(plist,pname));       
-else
-    error('No parameter chosen for identifiability analysis');
-end    
+end
 
 [ode,~,~,~,x,p_all,ident_c,p_useless,acetate] = casfh(ident_idx);
 % [ode,~,~,fx,x,p] = kotte_CAS();

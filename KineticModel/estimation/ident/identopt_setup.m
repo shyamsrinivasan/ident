@@ -4,6 +4,9 @@ function prob_cas = identopt_setup(data,fixed_pvalue)
 % p_useless - useless parameters not currently used in model
 % acetate - fixed parametera acetate concentrations
 
+if isfield(data,'pname')
+    pname = data.pname;
+end
 if isfield(data,'casmodelfun')
     casmodelf = data.casmodelfun;
 end
@@ -20,6 +23,17 @@ if isfield(data,'tspan')
     tspan = data.tspan;
 end
 npts = length(tspan)-1;
+data.npts = npts;
+
+if ~isfield(data,'ident_idx') && ~isempty(pname)    
+    plist = {'K1ac','K3fdp','L3fdp','K3pep','K2pep','vemax','KeFDP','ne',...
+            'd','V4max','k1cat','V3max','V2max','K1pep','K2fdp','rhoA','acetate'}; 
+    ident_idx = find(strcmpi(plist,pname));    
+    data.ident_idx = ident_idx;
+else
+    error('No parameter chosen for identifiability analysis');
+end    
+
 
 % create CAS function with custom integrator of nlsq opt
 intfun = str2func(intfun);
