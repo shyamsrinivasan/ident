@@ -26,3 +26,5 @@ prob_cas = identopt_setup(optim_opts,.1);
 
 % solve to get optimal parameters
 optsol = solve_nlsqopt(prob_cas,opts.odep(2:13)');
+
+adaptive_step(optsol.xval,prob_cas,opts.odep,.1);
