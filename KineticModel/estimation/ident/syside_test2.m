@@ -25,4 +25,4 @@ optim_opts = struct('pname','K1ac','nc',3,'nf',6,...
 prob_cas = identopt_setup(optim_opts,.1);
 
 % solve to get optimal parameters
-solve_nlsqopt(prob_cas,opts.odep(2:13)');
+optsol = solve_nlsqopt(prob_cas,opts.odep(2:13)');
