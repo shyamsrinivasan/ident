@@ -11,12 +11,14 @@ if isfield(data,'tspan')
 end
 npts = length(tspan)-1;
 
-plist = {'K1ac','K3fdp','L3fdp','K3pep','K2pep','vemax','KeFDP','ne',...
-        'd','V4max','k1cat','V3max','V2max','K1pep','K2fdp','rhoA','acetate'}; 
-if ~isempty(pname)
-    ident_idx = find(strcmpi(plist,pname));
+if isfield(data,'ident_idx')
+    ident_idx = data.ident_idx;
+elseif ~isempty(pname)
+    plist = {'K1ac','K3fdp','L3fdp','K3pep','K2pep','vemax','KeFDP','ne',...
+            'd','V4max','k1cat','V3max','V2max','K1pep','K2fdp','rhoA','acetate'}; 
+    ident_idx = find(strcmpi(plist,pname));       
 else
-    ident_idx = [];
+    error('No parameter chosen for identifiability analysis');
 end    
 
 [ode,~,~,~,x,p_all,ident_c,p_useless,acetate] = casfh(ident_idx);
