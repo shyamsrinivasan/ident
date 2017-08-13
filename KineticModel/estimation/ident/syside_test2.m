@@ -13,25 +13,16 @@ pt_sol_id = [1 2 3];
 close all
 
 optim_opts = struct('pname','K1ac','nc',3,'nf',6,...
+                    'casmodelfun',@kotteCASident,...
+                    'integratorfun','RK4integrator_cas',...
                     'odep',odep_bkp,...
                     'tspan',opts.tspan,...
-                    'x0',xss);
+                    'x0',xss,...
+                    'xinit',no_noise_sol(4).xss,...
+                    'xexp',no_noise_sol(1).xdyn(:,1:100:2001));
 
-% new sysid_test with functions
-[xdyn_fun,ode,x,p,ident_c,p_useless,acetate] =...
-RK4integrator_cas(@kotteCASident,optim_opts);
-
-xinit = no_noise_sol(4).xss;
-xexp_data = no_noise_sol(1).xdyn(:,1:100:2001);
-
-npts = length(opts.tspan)-1;
-x_sym =...
-xdyn_fun(no_noise_sol(4).xss,repmat(p,1,npts),.1,repmat(opts.odep(14:16)',1,npts),.1);
-% add initial value
-x_sym = [casadi.DM(no_noise_sol(4).xss) x_sym];
-x_model_sym = x_sym(:,1:100:2001);
-x_error = (xexp_data-x_model_sym);
-obj = .5*dot(x_error,x_error);
+% problem & objective setup
+[obj,p] = identopt_setup(optim_opts,.1);
 
 % setup nlp
 nlp = struct('x',p,'f',obj);
