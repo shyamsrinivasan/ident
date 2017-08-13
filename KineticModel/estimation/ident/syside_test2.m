@@ -27,4 +27,7 @@ prob_cas = identopt_setup(optim_opts,.1);
 % solve to get optimal parameters
 optsol = solve_nlsqopt(prob_cas,opts.odep(2:13)');
 
-adaptive_step(optsol.xval,prob_cas,opts.odep,.1);
+% generate new step size for thetai
+[theta_step,iter] = adaptive_step(optsol.xval,prob_cas,opts.odep,.1);
+
+% loop all the abopve sttements for complete identifiability algforithm
