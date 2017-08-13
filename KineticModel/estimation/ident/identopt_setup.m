@@ -1,4 +1,4 @@
-function [obj,p] = identopt_setup(data,fixed_pvalue)
+function prob_cas = identopt_setup(data,fixed_pvalue)
 % p - all parameters j!=i optimized for
 % ident_c - constant parameter identified
 % p_useless - useless parameters not currently used in model
@@ -36,3 +36,5 @@ x_model_sym = x_sym(:,1:100:2001);
 % create nlsqopt objective function
 x_error = (xexp-x_model_sym);
 obj = .5*dot(x_error,x_error);
+
+prob_cas = struct('obj',obj,'x',p);
