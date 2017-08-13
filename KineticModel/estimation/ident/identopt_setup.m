@@ -1,4 +1,4 @@
-function prob_cas = identopt_setup(data,fixed_pvalue)
+function [prob_cas,data] = identopt_setup(data,fixed_pvalue)
 % p - all parameters j!=i optimized for
 % ident_c - constant parameter identified
 % p_useless - useless parameters not currently used in model
@@ -30,7 +30,7 @@ if ~isfield(data,'ident_idx') && ~isempty(pname)
             'd','V4max','k1cat','V3max','V2max','K1pep','K2fdp','rhoA','acetate'}; 
     ident_idx = find(strcmpi(plist,pname));    
     data.ident_idx = ident_idx;
-else
+elseif ~isfield(data,'ident_idx') && isempty(pname)    
     error('No parameter chosen for identifiability analysis');
 end    
 
@@ -51,4 +51,5 @@ x_model_sym = x_sym(:,1:100:2001);
 x_error = (xexp-x_model_sym);
 obj = .5*dot(x_error,x_error);
 
-prob_cas = struct('obj',obj,'x',p);
+prob_cas = struct('obj',obj,'x',p,'xdynfun',xdyn_fun,...
+                'npts',npts,'xinit',xinit,'xexp',xexp);
