@@ -21,13 +21,43 @@ optim_opts = struct('pname','K1ac','nc',3,'nf',6,...
                     'xinit',no_noise_sol(4).xss,...
                     'xexp',no_noise_sol(1).xdyn(:,1:100:2001));
 
-% problem & objective setup
-prob_cas = identopt_setup(optim_opts,.1);
+% set confidence interval threshold for PLE 
+alpha = .50; % alpha quantile for chi2 distribution
+dof = 1; % degrees of freedom
+% chi2 alpha quantile
+delta_alpha = chi2inv(alpha,dof);      
+thetai_fixed_value = .1;
+theta_step = 0;
 
-% solve to get optimal parameters
-optsol = solve_nlsqopt(prob_cas,opts.odep(2:13)');
+% loop all the abopve statements for complete identifiability algforithm
+maxiter = 100;
+chiPLE = zeros(1,maxiter);
+xPLE = zeros(12,maxiter);
+thetai_inc = zeros(1,maxiter);
+thetai_step = zeros(1,maxiter);
 
-% generate new step size for thetai
-[theta_step,iter] = adaptive_step(optsol.xval,prob_cas,opts.odep,.1);
+% initial value for optimization
+p0 = opts.odep(2:13)';
+iter = 1;
 
-% loop all the abopve sttements for complete identifiability algforithm
+figure
+hold on
+while chiPLE(iter)<delta_alpha || iter<maxiter
+    
+    [optsol,thetai_fixed_value,theta_step] =...
+    PLEiter(thetai_fixed_value,theta_step,p0,opts.odep,delta_alpha,optim_opts);
+        
+    % new initial p0 = old optimal value
+    p0 = optsol.xval;    
+     
+    % store obj values
+    chiPLE(iter) = optsol.fval;
+    xPLE(:,iter) = optsol.xval;
+    thetai_inc(iter) = thetai_fixed_value;
+    thetai_step(iter) = theta_step;
+    
+    % figure for PLE
+    line(thetai_inc,chiPLE(iter),'LineStyle','none','Marker','.','MarkerSize',10);
+    
+    iter = iter+1;
+end
