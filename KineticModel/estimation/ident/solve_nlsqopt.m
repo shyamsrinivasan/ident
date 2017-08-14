@@ -26,5 +26,5 @@ solver = casadi.nlpsol('solver','ipopt',nlp);
 sol_opt = solver('x0',x0,'lbx',lb,'ubx',ub);
 
 optsol.xval = full(sol_opt.x);
-optsol.f = full(sol_opt.f);
+optsol.fval = full(sol_opt.f);
 optsol.lambda = full(sol_opt.lam_x);
