@@ -3,8 +3,8 @@ function optsol = solve_nlsqopt(prob,x0)
 if isfield(prob,'obj')
     obj = prob.obj;
 end
-if isfield(prob,'x')
-    x = prob.x;
+if isfield(prob,'p')
+    p = prob.p;
 end    
 if isfield(prob,'lb')
     lb = prob.lb;
@@ -19,7 +19,7 @@ else
 end
 
 % setup nlp
-nlp = struct('x',x,'f',obj);
+nlp = struct('x',p,'f',obj);
 solver = casadi.nlpsol('solver','ipopt',nlp);
 % p0 = opts.odep(2:13)';
 % p0(6) = .1;
