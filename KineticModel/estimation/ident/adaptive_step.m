@@ -2,7 +2,7 @@
 % analysis
 % obj - cas function and not a casadi symbolic object
 % theta_k - value of optimized parameters from previous iteration
-function [theta_step,iter] =...
+function [theta_step,obj_new,iter] =...
         adaptive_step(obj_k,theta_k,prob,p_val,fixed_pvalue,delta_alpha)
 
 if isfield(prob,'xdynfun')
@@ -68,7 +68,7 @@ while obj_diff>=eps && iter<=maxiter
 end
 
 % temp fixed step size
-theta_step = .01;
+% theta_step = .01;
 
 
 
