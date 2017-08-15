@@ -18,7 +18,7 @@ flux = cell(6,1);
 % parameters
 K1ac = p(1);    % or 0.02
 K3fdp = p(2);
-L3fdp = p(3);
+L3fdp = p(3)*1e6;
 K3pep = p(4);
 K2pep = p(5);
 vemax = p(6);        % for bifurcation analysis: 0.7:0.1:1.3
