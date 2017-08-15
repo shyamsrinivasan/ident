@@ -49,6 +49,21 @@ x_model_sym = x_sym(:,1:100:2001);
 x_error = (xexp-x_model_sym);
 obj = .5*dot(x_error,x_error);
 
+lb = zeros(length(p),1);
+ub = zeros(length(p),1);
+ub(1) = 2;
+ub(2) = 5;
+ub(3) = 2;
+ub(4) = 2;
+ub(5) = 2;
+ub(6) = 2;
+ub(7) = 4;
+ub(8) = 2;
+ub(9) = 1;
+ub(10) = 4;
+ub(11) = 2;
+ub(12) = 2;
+
 objfun = []; % casadi.Function('objfun',{x,p,ident_c,p_useless,acetate},{obj});
 
 % jac = jacobian(obj,p);
@@ -60,4 +75,5 @@ hessfun = []; % casadi.Function('hessfun',{x,p,ident_c,p_useless,acetate},{hess}
 prob_cas = struct('obj',obj,'x',x,'p',p,'ident_c',ident_c,....
                 'p_useless',p_useless,'acetate',acetate,'xdynfun',xdyn_fun,...
                 'objfun',objfun,'grad',jacfun,'hess',hessfun,...
-                'npts',npts,'xinit',xinit,'xexp',xexp);
+                'npts',npts,'xinit',xinit,'xexp',xexp,...
+                'lb',lb,'ub',ub);
