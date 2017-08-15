@@ -35,6 +35,7 @@ chiPLE = zeros(1,maxiter);
 xPLE = zeros(12,maxiter);
 thetai_inc = zeros(1,maxiter);
 thetai_step = zeros(1,maxiter);
+obj_step = zeros(1,maxiter);
 
 % initial value for optimization
 p0 = opts.odep(2:13)';
@@ -42,15 +43,16 @@ iter = 1;
 
 figure
 hold on
-while chiPLE(iter)<delta_alpha || iter<maxiter
+while iter<maxiter || chiPLE(iter)<delta_alpha
     
-    [optsol,thetai_fixed_value,theta_step] =...
+    [optsol,thetai_fixed_value,theta_step,obj_new] =...
     PLEiter(thetai_fixed_value,theta_step,p0,opts.odep,delta_alpha,optim_opts);
         
     % new initial p0 = old optimal value
     p0 = optsol.xval;    
      
     % store obj values
+    obj_step(iter) = obj_new;
     chiPLE(iter) = optsol.fval;
     xPLE(:,iter) = optsol.xval;
     thetai_inc(iter) = thetai_fixed_value;
