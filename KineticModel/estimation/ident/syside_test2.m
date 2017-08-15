@@ -12,7 +12,7 @@ pt_sol_id = [1 2 3];
 [exp_sol,no_noise_sol] = dopert_nonoise_dyn(opts,xss,fss,odep_bkp,pt_sol_id);
 close all
 
-optim_opts = struct('pname','k1cat','nc',3,'nf',6,...
+optim_opts = struct('pname','K1ac','nc',3,'nf',6,...
                     'casmodelfun',@kotteCASident,...
                     'integratorfun','RK4integrator_cas',...
                     'odep',odep_bkp,...
@@ -38,7 +38,9 @@ thetai_step = zeros(1,maxiter);
 obj_step = zeros(1,maxiter);
 
 % initial value for optimization
-p0 = opts.odep(2:13)';
+scale = ones(12,1);
+scale(2) = 1e6;
+p0 = opts.odep(2:13)'./scale;
 iter = 1;
 
 % figure
