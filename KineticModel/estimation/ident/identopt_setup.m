@@ -34,10 +34,9 @@ elseif ~isfield(data,'ident_idx') && isempty(pname)
     error('No parameter chosen for identifiability analysis');
 end    
 
-
 % create CAS function with custom integrator of nlsq opt
 intfun = str2func(intfun);
-[xdyn_fun,~,~,p,ident_c,p_useless,acetate] = intfun(casmodelf,data);
+[xdyn_fun,~,x,p,ident_c,p_useless,acetate] = intfun(casmodelf,data);
 
 % final symbolic expression to be used during optimization
 x_sym =...
@@ -46,10 +45,19 @@ xdyn_fun(xinit,repmat(p,1,npts),fixed_pvalue,repmat(data.odep(14:16)',1,npts),.1
 x_sym = [casadi.DM(xinit) x_sym];
 % choose only points present in experimental data
 x_model_sym = x_sym(:,1:100:2001);
-
 % create nlsqopt objective function
 x_error = (xexp-x_model_sym);
 obj = .5*dot(x_error,x_error);
 
-prob_cas = struct('obj',obj,'x',p,'xdynfun',xdyn_fun,...
+objfun = []; % casadi.Function('objfun',{x,p,ident_c,p_useless,acetate},{obj});
+
+% jac = jacobian(obj,p);
+jacfun = []; % casadi.Function('jacfun',{x,p,ident_c,p_useless,acetate},{jac});
+
+% hess = hessian(obj,p);
+hessfun = []; % casadi.Function('hessfun',{x,p,ident_c,p_useless,acetate},{hess});
+
+prob_cas = struct('obj',obj,'x',x,'p',p,'ident_c',ident_c,....
+                'p_useless',p_useless,'acetate',acetate,'xdynfun',xdyn_fun,...
+                'objfun',objfun,'grad',jacfun,'hess',hessfun,...
                 'npts',npts,'xinit',xinit,'xexp',xexp);
