@@ -33,12 +33,13 @@ eps = 1e-4;
 % cange thetai by theta_step
 new_thetai = fixed_pvalue+theta_step;
 
-x_newval_sym =...
+% x_newval is not symbolic class(x_newval) = casadi.DM
+x_newval =...
 xdynfun(xinit,repmat(theta_k,1,npts),new_thetai,repmat(p_val(14:16)',1,npts),.1);
 % add initial value
-x_newval_sym = [xinit x_newval_sym];
+x_newval = [xinit x_newval];
 % choose only points present in experimental data
-x_model_newval = x_newval_sym(:,1:100:2001);
+x_model_newval = x_newval(:,1:100:2001);
 
 % create nlsqopt objective function
 x_error = (xexp-x_model_newval);
@@ -49,12 +50,12 @@ while obj_diff>=eps && iter<=maxiter
     % cange thetai by theta_step
     new_thetai = fixed_pvalue+theta_step;
     
-    x_newval_sym =...
+    x_newval =...
     xdynfun(xinit,repmat(theta_k,1,npts),new_thetai,repmat(p_val(14:16)',1,npts),.1);
     % add initial value
-    x_newval_sym = [xinit x_newval_sym];
+    x_newval = [xinit x_newval];
     % choose only points present in experimental data
-    x_model_newval = x_newval_sym(:,1:100:2001);
+    x_model_newval = x_newval(:,1:100:2001);
 
     % create nlsqopt objective function
     x_error = (xexp-x_model_newval);
