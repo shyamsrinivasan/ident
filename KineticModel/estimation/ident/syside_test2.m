@@ -30,7 +30,7 @@ thetai_fixed_value = .1;
 theta_step = 0;
 
 % loop all the abopve statements for complete identifiability algforithm
-maxiter = 200;
+maxiter = 1000;
 chiPLE = zeros(1,maxiter);
 xPLE = zeros(12,maxiter);
 thetai_inc = zeros(1,maxiter);
