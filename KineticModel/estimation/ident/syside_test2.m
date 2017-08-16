@@ -13,6 +13,7 @@ pt_sol_id = [1 2 3];
 close all
 
 optim_opts = struct('pname','K1ac','nc',3,'nf',6,...
+                    'plim',[0.001 2],...
                     'casmodelfun',@kotteCASident,...
                     'integratorfun','RK4integrator_cas',...
                     'odep',odep_bkp,...
@@ -36,11 +37,11 @@ maxiter = 1000;
 scale = ones(12,1);
 scale(2) = 1e6;
 p0 = opts.odep(2:13)'./scale;
-% iter = 1;
+
 
 % call PLE evaluation function
 [PLEvals] =...
-getPLE(thetai_fixed_value,theta_step,p0,opts.odep,delta_alpha,optim_opts,1);
+getPLE(thetai_fixed_value,theta_step,p0,opts.odep,delta_alpha,optim_opts,maxiter);
 
 % figure
 % hold on
