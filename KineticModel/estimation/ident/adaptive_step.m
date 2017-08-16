@@ -63,7 +63,7 @@ while obj_diff>=eps && iter<=maxiter
     % calculate distance from threshold
     obj_diff = obj_new-obj_k-q*delta_alpha;
     
-    theta_step = theta_step/2;
+    theta_step = theta_step/1.1;
     iter = iter+1;
 end
 
