@@ -3,7 +3,11 @@
 % obj - cas function and not a casadi symbolic object
 % theta_k - value of optimized parameters from previous iteration
 function [theta_step,obj_new,iter] =...
-        adaptive_step(obj_k,theta_k,prob,p_val,fixed_pvalue,delta_alpha)
+        adaptive_step(obj_k,theta_k,prob,p_val,fixed_pvalue,delta_alpha,type)
+if nargin<7
+    type = 1;
+end
+% type = +1 for positive step and -1 for negative step
 
 if isfield(prob,'xdynfun')
     xdynfun = prob.xdynfun; 
@@ -31,7 +35,7 @@ eps = 1e-4;
 
 % first iteration
 % cange thetai by theta_step
-new_thetai = fixed_pvalue+theta_step;
+new_thetai = fixed_pvalue+type*theta_step;
 
 % x_newval is not symbolic class(x_newval) = casadi.DM
 x_newval =...
@@ -48,7 +52,7 @@ obj_diff = obj_new-obj_k-q*delta_alpha;
 
 while obj_diff>=eps && iter<=maxiter
     % cange thetai by theta_step
-    new_thetai = fixed_pvalue+theta_step;
+    new_thetai = fixed_pvalue+type*theta_step;
     
     x_newval =...
     xdynfun(xinit,repmat(theta_k,1,npts),new_thetai,repmat(p_val(14:16)',1,npts),.1);
