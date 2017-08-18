@@ -29,9 +29,14 @@ maxiter = 1000;
 % set threshold delta_alpha for theta_step
 % conidition of new step in thetai
 q = .1;  
-theta_step = 1;
 iter = 1;
 eps = 1e-4;
+
+if type>0
+    theta_step = 1;
+elseif type<0
+    theta_step = fixed_pvalue;
+end
 
 % first iteration
 % cange thetai by theta_step
