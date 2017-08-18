@@ -86,8 +86,8 @@ if type==1
     ub(nvar-nf*npert+1:nvar) = vss_exp_v*(1+eps_v);
 elseif type==2
     % set bounds - concentration
-    lb(1:nc*npert) = xss_exp_v.*(1-eps_c);
-    ub(1:nc*npert) = xss_exp_v.*(1+eps_c);
+    lb(1:nc*npert) = 1e-7; % xss_exp_v.*(1-eps_c);
+    ub(1:nc*npert) = 100; % xss_exp_v.*(1+eps_c);
     % set bounds - flux
     lb(nc*npert+np+1:nc*npert+np+nf*npert) = vss_exp_v*(1-eps_v);
     ub(nc*npert+np+1:nc*npert+np+nf*npert) = vss_exp_v*(1+eps_v);
