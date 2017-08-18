@@ -7,13 +7,17 @@ function [sigma,collect_eps] = pleCI_finite_sample(delta_alpha,chiPLE,thetai)
 eps = 1e-1;
 pl_diff = delta_alpha-chiPLE;
 
-while any(pl_diff<eps)
-    eps = eps/5;
+while any(pl_diff<eps)    
     if ~any(pl_diff<eps)
-        collect_eps = eps*5;
-        collect_pos_first = find(pl_diff<eps*5,1,'first');
-        collect_pos_last = find(pl_diff<eps*5,1,'last');
+        collect_eps = eps;
+        collect_pos_first = find(pl_diff<eps,1,'first');
+        collect_pos_last = find(pl_diff<eps,1,'last');
+    else
+        collect_eps = 0;
+        collect_pos_first = false;
+        collect_pos_last = false;
     end
+    eps = eps/5;
 end
 
 sigma = zeros(1,2);
