@@ -42,11 +42,6 @@ nplot = pt_datasize+1;
 % opt_fss(:,1) = [];
 
 % plot comparison
-% xss_plot = zeros(nplot,2*data.nc);
-% xss_error = zeros(nplot,2*data.nc);
-% fss_plot = zeros(nplot,2*nf);
-% fss_error = zeros(nplot,2*nf);
-
 % use cell arrays to store data for each subplot
 xss_plot = cell(data.nc,1);
 xss_error = cell(data.nc,1);
@@ -56,36 +51,27 @@ fss_error = cell(nf,1);
 barc = struct();
 for j = 1:data.nc
     xss_plot{j} = [exp_xss(j,:)' est_xss(j,:)'];
-%     xss_plot(:,2*j+1:2*(j+1)) =...
-%     [exp_xss(j+1,:)' est_xss(j+1,:)'];
     xss_error{j} = [zeros(1,length(exp_xss(j,:)))' est_xerr(j,:)'];
-%     xss_error(:,2*j+1:2*(j+1)) =...
-%     [zeros(1,length(exp_xss(j+1,:)))' est_xerr(j+1,:)'];
 end
+
 for k = 1:nf
     fss_plot{k} = [exp_fss(k,:)' est_fss(k,:)'];
     fss_error{k} = [zeros(1,length(exp_fss(k,:)))' est_ferr(k,:)'];
-%     fss_plot(:,2*k+1:2*(k+1)) =...
-%     [exp_fss(k+1,:)' est_fss(k+1,:)'];
-%     fss_error(:,2*k+1:2*(k+1)) =...
-%     [zeros(1,length(exp_fss(k+1,:)))' est_ferr(k+1,:)'];
 end
 hfc = figure;
 ahc = zeros(data.nc,1);
 for j = 1:data.nc
     ahc(j) = subplot(data.nc,1,j);
     set(ahc(j),'NextPlot','add');
-    barc(j).h = bar(ahc(j),xss_plot{j});
-    
-%     bh = bar(ahc,xss_plot(:,2*j+1:2*(j+1)));        
-%     xerr_pos = cat(1,bh.XData)+cat(1,bh.XOffset);
-%     yerr_pos = xss_plot(:,2*j+1:2*(j+1));    
-%     erh = errorbar(xerr_pos',yerr_pos,...
-%                              xss_error(:,2*j+1:2*(j+1)),'LineStyle','none');
-%                
-%     [~,ylbl] = getKotteaxislabels(2,2,[1,j+1]);
-%     ahc.YLabel.String = ylbl;    
-%     ahc.XTickLabel = rel_labels;    
+    barc(j).h = bar(ahc(j),xss_plot{j});   
+    if strcmpi(version('-release'),'2014a')
+    elseif strcmpi(version('-release'),'2014b') ||...
+           strcmpi(version('-release'),'2017a') ||...
+           strcmpi(version('-release'),'2017b')
+        [~,ylbl] = getKotteaxislabels(2,2,[1,j+1]);
+        ahc(j).YLabel.String = ylbl;    
+        ahc(j).XTickLabel = rel_labels;  
+    end
 end
 
 % collect data for error bars
@@ -118,7 +104,7 @@ for j = 1:data.nc
 end
 
 % ahc.XLabel.String = 'WT and Perturbations';
-% legend('Noisy Data','Model Estimate');
+legend('Noisy Data','Model Estimate');
 
 % fluxes
 hfv = figure;
@@ -128,14 +114,14 @@ for k = 1:nf
     ahf(k) = subplot(nf/2,2,k);    
     set(ahf(k),'NextPlot','add');
     barf(k).h = bar(ahf(k),fss_plot{k});
-%     xerr_pos = cat(1,barc.XData)+cat(1,barc.XOffset);
-%     yerr_pos = fss_plot(:,2*k+1:2*(k+1));    
-%     erh = errorbar(xerr_pos',yerr_pos,...
-%                              fss_error(:,2*k+1:2*(k+1)),'LineStyle','none');
-%     [~,ylbl] = getKotteaxislabels(2,1,[1,k+1]);
-%     ahf.YLabel.String = ylbl;  
-%     ahf.XTickLabel = rel_labels;
-%     clear bh
+    if strcmpi(version('-release'),'2014a')
+    elseif strcmpi(version('-release'),'2014b') ||...
+           strcmpi(version('-release'),'2017a') ||...
+           strcmpi(version('-release'),'2017b')
+        [~,ylbl] = getKotteaxislabels(2,1,[1,k+1]);
+        ahf(k).YLabel.String = ylbl;  
+        ahf(k).XTickLabel = rel_labels;
+    end
 end
 % collect dsata for error bars
 for k = 1:nf
@@ -165,5 +151,5 @@ for k = 1:nf
     errorbar(barf(k).xpos,barf(k).ypos,fss_error{k},'LineStyle','none');
 end
 % ahf.XLabel.String = 'WT and Perturbations';
-% legend('Noisy Data','Model Estimate');
+legend('Noisy Data','Model Estimate');
 allfh = [hfc;hfv];
