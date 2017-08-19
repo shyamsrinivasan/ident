@@ -64,11 +64,12 @@ for j = 1:data.nc
     ahc(j) = subplot(data.nc,1,j);
     set(ahc(j),'NextPlot','add');
     barc(j).h = bar(ahc(j),xss_plot{j});   
+    [~,ylbl] = getKotteaxislabels(2,2,[1,j]);
     if strcmpi(version('-release'),'2014a')
     elseif strcmpi(version('-release'),'2014b') ||...
            strcmpi(version('-release'),'2017a') ||...
            strcmpi(version('-release'),'2017b')
-        [~,ylbl] = getKotteaxislabels(2,2,[1,j+1]);
+        
         ahc(j).YLabel.String = ylbl;    
         ahc(j).XTickLabel = rel_labels;  
     end
@@ -114,11 +115,11 @@ for k = 1:nf
     ahf(k) = subplot(nf/2,2,k);    
     set(ahf(k),'NextPlot','add');
     barf(k).h = bar(ahf(k),fss_plot{k});
+    [~,ylbl] = getKotteaxislabels(2,1,[1,k]);
     if strcmpi(version('-release'),'2014a')
     elseif strcmpi(version('-release'),'2014b') ||...
            strcmpi(version('-release'),'2017a') ||...
-           strcmpi(version('-release'),'2017b')
-        [~,ylbl] = getKotteaxislabels(2,1,[1,k+1]);
+           strcmpi(version('-release'),'2017b')        
         ahf(k).YLabel.String = ylbl;  
         ahf(k).XTickLabel = rel_labels;
     end
