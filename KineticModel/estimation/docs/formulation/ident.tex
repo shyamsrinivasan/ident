@@ -1,4 +1,4 @@
-\documentclass[10pt]{report}
+\documentclass[10pt]{article}
 
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -77,47 +77,51 @@
 	
 	When parameters are estimated on the basis of noisy data, the ability to estimate unique parameter values to satisfy Equation (\ref{eq:stident}) is referred to as practical identifiability. The effect of the available experimental data on the ability to estimate unique parameter values is determined by the practical identifiability of the parameter. Accordingly, practical identifiability of a parameter is contingent upon the nature, quality and quantity of data available to estimate the parameter as opposed to the structure and parameterization of the model. 
 	%Thus, the identifiability of parameters in nonlinear models is dependent on the model structure, parameterization, and the quality and quantity of experimental data that is available for the purpose of estimation. 
-	Thus, on the one hand, establishing the structural identifiability of parameters enables one to propose models that are not only appropriate representations of physical processes, but also are parameterized in such a way that the value of these parameters can be estimated. On the other hand, establishing practical identifiability of parameters in any model helps design experiments that are minimal, informative and useful for parameter estimation. 
-	
-	A profile likelihood-based approach can be used to determine both the structural and practical identifiability of parameters in nonlinear dynamical models \parencite{Raue2009a}. The identifiability of parameters is established through the confidence intervals of their estimates, $\left[\sigma_{i}^-,\sigma_{i}^+\right]$. We provide the methods to estimate these confidence intervals below. The visualization of structurally and practically non-identifiable parameters using the profile likelihood approach is illustrated in Figure \ref{fig:identtypes}. The confidence intervals of a structurally non-identifiable parameter are unbounded, i.e., $\left[-\infty, +\infty\right]$ (Figure \ref{fig:identtypes}a), while the confidence intervals of a practically non-identifiable parameter are unbounded in at least one direction, i.e., $\left[\sigma_{i}^-,\sigma_{i}^+\right]$ where either $\sigma_{i}^- = -\infty$ or $\sigma_{i}^+ = +\infty$ (Figure \ref{fig:identtypes}b). If a parameter's estimates have a finite confidence interval then the parameter is said to be identifiable (Figure \ref{fig:identtypes}c). Note that the horizontal dotted lines in Figure \ref{fig:identtypes} represent the confidence interval thresholds ($\Delta_{\alpha}$) that are used to establish identifiability.
-		
-	\begin{figure}[!tbhp]
-		\centering{\includegraphics[width=.8\textwidth,height=.8\textheight,keepaspectratio]{figures/identifiability}}
-		\caption{The profile likelihood estimates of a) a structurally non-identifiable, b) a practically non-identifiable and c) an identifiable parameter. The horizontal axis represents the changes in the value of the parameter ($\theta_i$) whose identifiability is being determined and the profile likelihood ($\chi^2_{PL}(\theta_i)$) is shown in the vertical axis. The confidence interval thresholds ($\Delta_{\alpha}$) used to determine the identifiability of the parameter are denoted by the horizontal dotted line. The practically identifiability of a parameter is dependent on the quality and quantity of experimental data used to estimate the parameter.}\label{fig:ident-pl}
-	\end{figure}\label{fig:identtypes}
-
-	Due to the dependence of practical parameter identifiability on the experimental data, the profile likelihood approach can be used to design experiments in such a way that the observables that are derived from these experiments can improve the practical identifiability of the parameters. We show how experimental design can have a meaningful impact on parameter identification and estimation in Figure \ref{fig:edwithpl}.
-		
-	\begin{figure}[!tbhp]
-		\centering{\includegraphics[width=.6\textwidth,height=.6\textheight,keepaspectratio]{figures/ed_with_pl}}
-		\caption{Cartoon illustrating the utility of identifiability analysis for experimental design. a) The profile likelihood of a practically non-identifiable parameter that needs to be estimated based on both good and bad experimental data. The changes in the profile likelihood of the parameter when estimated with b) good experimental data and c) bad experimental. The identifiability of the parameter does not change due to the poor quality/quantity of experiments.}\label{fig:edwithpl}
-	\end{figure}	
+	Thus, on the one hand, establishing the structural identifiability of parameters enables one to propose models that are not only appropriate representations of physical processes, but also are parameterized in such a way that the value of these parameters can be estimated. On the other hand, establishing practical identifiability of parameters in any model helps design experiments that are minimal, informative and useful for parameter estimation.
 	
 	\section{Methods:}
-	We use a profile likelihood-based approach to establish structural and practical identifiability of parameters in nonlinear kinetic models of metabolism. Briefly, the approach seeks to establish the existence/non-existence of bounds in confidence intervals for the estimates of parameters in nonlinear models. The profile likelihood is calculated based on Equation \ref{eq:pl} for each parameter $\theta_i$ where $\chi^2(\theta_i)$ is given by Equation \ref{eq:chi2}.
-	\begin{align}\label{eq:pl}
-	\chi_{PL}^2(\theta_i) = \underset{\theta_{j\ne i}}{\mathrm{min}} \left[\chi^2(\theta)\right]
-	\end{align}
-	\begin{align}\label{eq:chi2}
-	\chi^2(\theta) = \sum_{k=1}^{m}\sum_{l=1}^{d}\left(\frac{y_{kl}^*-y_{kl}}{\sigma_{kl}^*}\right)^2
-	\end{align}
-	Equation \ref{eq:chi2} is typically used as the objective to be minimized in a typical parameter estimation problem where $y_{kl}^*$ is the available experimental time course data for each observable state $k$ at each $l$ time point. The difference between this data and the model estimates at these time points, $y_{kl}$ is weighted by the experimental error $\sigma_{kl}^*$. An algorithm to calculate $\chi_{PL}^2(\theta_i)$ based on Equation \ref{eq:pl} is given below.
+	 We use a profile likelihood-based approach \parencite{Raue2009a} to establish structural and practical identifiability of parameters in nonlinear kinetic models of metabolism. Briefly, the approach seeks to establish the existence/non-existence of bounds in confidence intervals for the estimates of parameters in nonlinear models. The profile likelihood is calculated based on Equation (\ref{eq:pl}) for each parameter $\theta_i$ where $\chi^2(\theta_i)$ is given by Equation (\ref{eq:chi2}).
+	 \begin{align}\label{eq:pl}
+	 \chi_{PL}^2(\theta_i) = \underset{\theta_{j\ne i}}{\mathrm{min}} \left[\chi^2(\theta)\right]
+	 \end{align}
+	 \begin{align}\label{eq:chi2}
+	 \chi^2(\theta) = \sum_{k=1}^{m}\sum_{l=1}^{d}\left(\frac{y_{kl}^*-y_{kl}}{\sigma_{kl}^*}\right)^2
+	 \end{align}
+	 In the minimization objective shown in Equation (\ref{eq:chi2}) for parameter estimation, $y_{kl}^*$ is the available experimental time course data for each observable state $k$ at each $l$ time point. The difference between the data and the model estimates at these time points, $y_{kl}$ is weighted by the variance in the experimental data $\sigma_{kl}^*$. An algorithm to calculate the profile likelihood, $\chi_{PL}^2(\theta_i)$, based on Equation \ref{eq:pl} is given below.
+	 
+	 The identifiability of parameters is established through the confidence intervals of their estimates, $\left[\sigma_{i}^-,\sigma_{i}^+\right]$. The likelihood-based confidence interval for any parameter whose profile likelihood is estimated can be written on the basis of a threshold $\Delta_{\alpha}$ in the likelihood as in Equation (\ref{eq:pleci}).
+	 \begin{align}\label{eq:pleci}
+	 \{\theta|\chi^2(\theta)-\chi^2(\hat{\theta})<\Delta_{\alpha}\}
+	 \end{align}
+	 The threshold $\Delta_{\alpha}$ in the likelihood is the 1-$\alpha$ quantile of the $\chi^2$ distribution, represented as $\chi^2(\alpha,df)$. The confidence intervals obtained hold for $df$ degrees of freedom. For a choice of $df$=1 the confidence intervals will hold for each parameter individually, and confidence intervals that hold jointly for all parameters can be obtained by choosing the number of parameters as $df$. 
 	
-	\subsubsection{Algorithm:}	
+	The visualization of structurally and practically non-identifiable parameters using the profile likelihood approach is illustrated in Figure \ref{fig:identtypes}. The points of intersection between the profile likelihood curves (solid line) with the one parameter likelihood threshold ($\Delta_{\alpha} = \chi^2(\alpha,1)$, dashed line) provide the confidence intervals of the parameter $\theta_i$. The confidence intervals of a structurally non-identifiable parameter are unbounded, i.e., $\left[-\infty, +\infty\right]$ (Figure \ref{fig:identtypes}a), while the confidence intervals of a practically non-identifiable parameter are unbounded in at least one direction, i.e., $\left[\sigma_{i}^-,\sigma_{i}^+\right]$ where either $\sigma_{i}^- = -\infty$ or $\sigma_{i}^+ = +\infty$ (Figure \ref{fig:identtypes}b). If a parameter's estimates have a finite confidence interval then the parameter is said to be identifiable (Figure \ref{fig:identtypes}c). Note that the horizontal dotted lines in Figure \ref{fig:identtypes} represent the confidence interval thresholds ($\Delta_{\alpha}$) that are used to establish identifiability.
+	
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=.8\textwidth,height=.8\textheight,keepaspectratio]{figures/identifiability}}
+		\caption{The profile likelihood estimates of a) a structurally non-identifiable, b) a practically non-identifiable and c) an identifiable parameter. The horizontal axis represents the changes in the value of the parameter ($\theta_i$) whose identifiability is being determined and the profile likelihood ($\chi^2_{PL}(\theta_i)$) is shown in the vertical axis. The confidence interval threshold ($\Delta_{\alpha}$) used to determine the identifiability of the parameter is denoted by the horizontal dotted line. Identifiable parameters are distinguished from non-identifiable parameters by the presence of both upper and lower bounds on their confidence interval estimates $\left[\sigma_{i}^-,\sigma_{i}^+\right]$. }\label{fig:identtypes}
+	\end{figure}
+	
+	\subsection{Algorithm to calculate profile likelihood:}		
 	\begin{enumerate}
 		\item Start by solving the numerical optimization problem in Equation \ref{eq:pl} for a fixed value of $\theta_i$ to determine the initial point on the profile likelihood curve.
-		\item Take an increasing/decreasing step $\theta_{step}$ in the direction of $\theta_i$.
+		\item Take an increasing/decreasing step $\theta_{step}$ in the direction of $\theta_i$.\\
+		The increasing/decreasing steps in $\theta_i$ can be adapted to the shape of the profile likelihood curve that is encountered while running the algorithm. Accordingly, the step $\theta_{step}$ should satisfy Equation (\ref{eq:adaptivestep}) below, where $\theta^{k-1}$ refers to parameter estimates obtained from iteration $k-1$ of the above algorithm and $q\in \left[0,1\right]$.
+		\begin{align}\label{eq:adaptivestep}
+		\chi^2\left(\theta^{k-1}+\theta_{step}\right) - \chi^2(\theta^{k-1}) \approx q.\Delta_{\alpha}
+		\end{align}
 		\item Re-optimize $\theta_{j\ne i}$ using Equation \ref{eq:pl}.
 		\item Repeat the last two steps until a desired threshold $\Delta_{\alpha}$ is exceeded or a maximal amount of steps is reached.
 	\end{enumerate}
-
-	\subsubsection{Adaptive step change:}
-	The increasing/decreasing steps in $\theta_i$ can be adapted to the shape of the profile likelihood curve that is encountered while running the above algorithm. Accordingly, the step $\theta_{step}$ should satisfy Equation \ref{eq:adaptivestep} below, where $\theta^{k-1}$ refers to parameter estimates obtained from iteration $k-1$ of the above algorithm, and $q\in \left[0,1\right]$.
-	\begin{align}\label{eq:adaptivestep}
-	\chi^2\left(\theta^{k-1}+\theta_{step}\right) - \chi^2(\theta^{k-1}) \approx q.\Delta_{\alpha}
-	\end{align}
 	
-	\subsubsection{Identifiability analysis of parameters in a kinetic model of gluconeogenesis:}
+	Due to the dependence of practical parameter identifiability on the experimental data, the profile likelihood approach can be used to design experiments in such a way that the observables that are derived from these experiments can improve the practical identifiability of the parameters. We show how experimental design can have a meaningful impact on parameter identification and estimation in Figure \ref{fig:edwithpl}.	Assuming a parameter $\theta_i$ is practically non-identifiable (Figure \ref{fig:edwithpl}a), performing a profile-likelihood based identifiability analysis using simulated data can help determine the nature of experiments needed to make the parameter identifiable (Figure \ref{fig:edwithpl}b). In contrast, performing non-informative experiments without prior knowledge on their ability to change the identifiability of the parameter may provide data that cannot be used to estimate parameter $\theta_i$ (Figure \ref{fig:edwithpl}c).
+	 
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=.6\textwidth,height=.6\textheight,keepaspectratio]{figures/ed_with_pl}}
+		\caption{Cartoon illustrating the utility of identifiability analysis for experimental design. a) The profile likelihood of a practically non-identifiable parameter that needs to be estimated based on both good and bad experimental data. The changes in the profile likelihood of the parameter when estimated with b) good experimental data and c) bad experimental. The practical identifiability of a parameter is dependent on the quality and quantity of experimental data used to estimate the parameter. The identifiability of the parameter, as determined using its profile likelihood, does not change due to the poor quality/quantity of experiments.}\label{fig:edwithpl}
+	\end{figure}	
+	
+	\subsection{Identifiability analysis of parameters in a kinetic model of gluconeogenesis:}
 	The proposed model for acetate consumption through gluconeogenesis and its corresponding kinetic model is used as a case study to illustrate the utility of identifiability analysis for the design of experiments for estimating parameters in kinetic models of metabolism. The kinetic model is described below.
 	\begin{equation}\label{eq:ode1}
 	\frac{d}{dt}pep=v_1-v_2-v_4
@@ -142,7 +146,6 @@
 	\begin{equation}\label{eq:flux4}
 	v_4 = k_{4}^{cat}.pep
 	\end{equation}
-	Simulated data 
 	
 	\subsection{Parameter estimation in kinetic models of metabolism:}
 	The formulation for parameter estimation assumes that the concentrations and the fluxes corresponding to each perturbation are variables in the optimization problem formulated to estimate kinetic parameters.
@@ -151,31 +154,8 @@
 	
 	Let $i\in\mathbb{R}^{mp}$, $j\in\mathbb{R}^{p}$ and $k\in\mathbb{R}^{l}$ represent the indices for concentrations, fluxes and parameters respectively in Equations (\ref{eq:l2norm-flux})-(\ref{eq:noise-var}).
 	
-	\subsubsection{Formulation a):}		
-	\begin{subequations}\label{eq:l2norm-flux}
-		\begin{align}
-		\underset{\mathbf{x},\mathbf{p},\mathbf{v}}{\mathrm{min}} & \text{      }\left\Vert \mathbf{v}-\mathbf{v}^*\right\Vert\\
-		\mathrm{st}& \text{      }N(\mathbf{x},\mathbf{p}) - v_jD(\mathbf{x},\mathbf{p}) = 0 & \text{  }\forall & \text{ }j\in\mathbb{R}^p\\
-		& \text{      }x^*_i(1-\epsilon)\le x_i \le x^*_i(1+\epsilon) & \text{  }\forall & \text{ }i\in\mathbb{R}^{mp}\\	
-		& \text{      }v^*_j(1-\epsilon)\le v_j \le v^*_j(1+\epsilon) & \text{  }\forall & \text{ }j\in\mathbb{R}^{p}\\		
-		& \text{      }\mathbf{p}_{min} \le \mathbf{p} \le \mathbf{p}_{max}
-		\end{align}
-	\end{subequations}
-
-	\subsubsection{Formulation b):}	
-	In this formulation, in Equation (\ref{eq:l2norm-conc}), the flux and concentrations are constrained as earlier with a noise term.	
-	\begin{subequations}\label{eq:l2norm-conc}
-		\begin{align}
-		\underset{\mathbf{x},\mathbf{p},\mathbf{v}}{\mathrm{min}} & \text{      }w_1\left\Vert \mathbf{v}-\mathbf{v}^*\right\Vert + w_2\left\Vert \mathbf{x}-\mathbf{x}^*\right\Vert\\
-		\mathrm{st}& \text{      }N(\mathbf{x},\mathbf{p}) - v_jD(\mathbf{x},\mathbf{p}) = 0 & \text{  }\forall & \text{ }j\in\mathbb{R}^p\\
-		& \text{      }x^*_i(1-\epsilon)\le x_i \le x^*_i(1+\epsilon) & \text{  }\forall & \text{ }i\in\mathbb{R}^{mp}\\	
-		& \text{      }v^*_j(1-\epsilon)\le v_j \le v^*_j(1+\epsilon) & \text{  }\forall & \text{ }j\in\mathbb{R}^{p}\\		
-		& \text{      }\mathbf{p}_{min} \le \mathbf{p} \le \mathbf{p}_{max}
-		\end{align}
-	\end{subequations}
-	
-	\subsubsection{Formulation c):}
-	A third formulation where the noise terms ($\epsilon$) used as bounds for the flux and the concentrations are included in the optimization objective as a variable to be penalized is given in Equation (\ref{eq:noise-var}) below. Notice that the noise term has been separated into two components, $\epsilon_x$ and $\epsilon_v$, corresponding to noise in the concentrations and the fluxes, respectively. $w_3$ and $w_4$ are the weights associated with the noise terms in the objective function.
+	\paragraph{Formulation c):}
+	In order to estimate kinetic parameters for fluxes in models of metabolism, we propose a formulation accounting for the uncertainty in the concentration and flux estimates. The uncertainty terms ($\epsilon$) are used as bounds for the flux and the concentrations and are included in the optimization objective as a variable to be penalized is given in Equation (\ref{eq:noise-var}) below. Note that the concentration and the fluxes have different uncertainties, $\epsilon_x$ and $\epsilon_v$ respectively, associated with them. $w_1$, $w_2$, $w_3$ and $w_4$ are the weights associated with the four different terms in the objective. 
 	\begin{center}
 		\begin{subequations}\label{eq:noise-var}
 			\begin{align}
@@ -188,20 +168,6 @@
 		\end{subequations}
 	\end{center}
 	
-	\subsubsection{Formulation d):}
-	Due to the inability of Equation (\ref{eq:l2norm-flux}) to get feasible results, we modified the problem to include the L2-norm of the concentrations as well in the objective function in Equation (\ref{eq:free-var}a). In Equation (\ref{eq:free-var}) the flux and the concentrations are free variables, i.e.,  $\mathbf{x}\in\left[\mathbf{0},+\mathbf{\infty}\right]$. 
-	\begin{subequations}\label{eq:free-var}
-		\begin{align}
-		\underset{\mathbf{x},\mathbf{p},\mathbf{v}}{\mathrm{min}} & \text{      }w_1\left\Vert \mathbf{v}-\mathbf{v}^*\right\Vert + w_2\left\Vert \mathbf{x}-\mathbf{x}^*\right\Vert\\
-		\mathrm{st}& \text{      }N(\mathbf{x},\mathbf{p}) - v_jD(\mathbf{x},\mathbf{p}) = 0 & \text{  }\forall & \text{ }j\in\mathbb{R}^p\\
-		& \text{      }0\le x_i \le +\infty & \text{  }\forall & \text{ }i\in\mathbb{R}^{mp}\\	
-		& \text{      }0\le v_j \le +\infty & \text{  }\forall & \text{ }j\in\mathbb{R}^{p}\\		
-		& \text{      }\mathbf{p}_{min} \le \mathbf{p} \le \mathbf{p}_{max}
-		\end{align}
-	\end{subequations}
-
-After testing the problem in Equation (\ref{eq:free-var}) above for the acetate uptake flux $v_1$, we found that all solutions using IPOPT exceeded the maximum number of iterations (set at 5000) and never produced an optimal solution. Hence, we use a modified form of the bounds in Equation (\ref{eq:free-var}) above in Equation (\ref{eq:l2norm-conc}).
-
 	\begin{table}[!tbhp]
 		\caption{Table showing the perturbed values of all fluxes used for parameter estimation.}
 		\begin{center}				
@@ -320,6 +286,44 @@ After testing the problem in Equation (\ref{eq:free-var}) above for the acetate 
 		\caption{Plot comparing noisy model generated parameters for $v_3$ through a multi-start search algorithm using formulation (c). }
 	\end{figure}
 	\clearpage
+	
+	\section{Appendix}
+	\subsection{Formulation a):}		
+	\begin{subequations}\label{eq:l2norm-flux}
+		\begin{align}
+		\underset{\mathbf{x},\mathbf{p},\mathbf{v}}{\mathrm{min}} & \text{      }\left\Vert \mathbf{v}-\mathbf{v}^*\right\Vert\\
+		\mathrm{st}& \text{      }N(\mathbf{x},\mathbf{p}) - v_jD(\mathbf{x},\mathbf{p}) = 0 & \text{  }\forall & \text{ }j\in\mathbb{R}^p\\
+		& \text{      }x^*_i(1-\epsilon)\le x_i \le x^*_i(1+\epsilon) & \text{  }\forall & \text{ }i\in\mathbb{R}^{mp}\\	
+		& \text{      }v^*_j(1-\epsilon)\le v_j \le v^*_j(1+\epsilon) & \text{  }\forall & \text{ }j\in\mathbb{R}^{p}\\		
+		& \text{      }\mathbf{p}_{min} \le \mathbf{p} \le \mathbf{p}_{max}
+		\end{align}
+	\end{subequations}
+	
+	\subsection{Formulation b):}	
+	In this formulation, in Equation (\ref{eq:l2norm-conc}), the flux and concentrations are constrained as earlier with an uncertainty term.	
+	\begin{subequations}\label{eq:l2norm-conc}
+		\begin{align}
+		\underset{\mathbf{x},\mathbf{p},\mathbf{v}}{\mathrm{min}} & \text{      }w_1\left\Vert \mathbf{v}-\mathbf{v}^*\right\Vert + w_2\left\Vert \mathbf{x}-\mathbf{x}^*\right\Vert\\
+		\mathrm{st}& \text{      }N(\mathbf{x},\mathbf{p}) - v_jD(\mathbf{x},\mathbf{p}) = 0 & \text{  }\forall & \text{ }j\in\mathbb{R}^p\\
+		& \text{      }x^*_i(1-\epsilon)\le x_i \le x^*_i(1+\epsilon) & \text{  }\forall & \text{ }i\in\mathbb{R}^{mp}\\	
+		& \text{      }v^*_j(1-\epsilon)\le v_j \le v^*_j(1+\epsilon) & \text{  }\forall & \text{ }j\in\mathbb{R}^{p}\\		
+		& \text{      }\mathbf{p}_{min} \le \mathbf{p} \le \mathbf{p}_{max}
+		\end{align}
+	\end{subequations}	
+	
+	\subsection{Formulation d):}
+	Due to the inability of Equation (\ref{eq:l2norm-flux}) to get feasible results, we modified the problem to include the L2-norm of the concentrations as well in the objective function in Equation (\ref{eq:free-var}a). In Equation (\ref{eq:free-var}) the flux and the concentrations are free variables, i.e.,  $\mathbf{x}\in\left[\mathbf{0},+\mathbf{\infty}\right]$. 
+	\begin{subequations}\label{eq:free-var}
+		\begin{align}
+		\underset{\mathbf{x},\mathbf{p},\mathbf{v}}{\mathrm{min}} & \text{      }w_1\left\Vert \mathbf{v}-\mathbf{v}^*\right\Vert + w_2\left\Vert \mathbf{x}-\mathbf{x}^*\right\Vert\\
+		\mathrm{st}& \text{      }N(\mathbf{x},\mathbf{p}) - v_jD(\mathbf{x},\mathbf{p}) = 0 & \text{  }\forall & \text{ }j\in\mathbb{R}^p\\
+		& \text{      }0\le x_i \le +\infty & \text{  }\forall & \text{ }i\in\mathbb{R}^{mp}\\	
+		& \text{      }0\le v_j \le +\infty & \text{  }\forall & \text{ }j\in\mathbb{R}^{p}\\		
+		& \text{      }\mathbf{p}_{min} \le \mathbf{p} \le \mathbf{p}_{max}
+		\end{align}
+	\end{subequations}
+	
+	After testing the problem in Equation (\ref{eq:free-var}) above for the acetate uptake flux $v_1$, we found that all solutions using IPOPT exceeded the maximum number of iterations (set at 5000) and never produced an optimal solution. Hence, we use a modified form of the bounds in Equation (\ref{eq:free-var}) above in Equation (\ref{eq:l2norm-conc}).
 	
 	\printbibliography
 \end{document}
