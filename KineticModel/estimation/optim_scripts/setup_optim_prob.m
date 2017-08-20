@@ -1,5 +1,9 @@
 % setup optimization problem for each flux in optimdata input
 function [prob,newdata] = setup_optim_prob(optimdata,expdata)
+if nargin<2
+    expdata.xexp = optimdata.xexp;
+    expdata.vexp = optimdata.vexp;
+end
 
 if isfield(optimdata,'flxid')
     flxid = optimdata.flxid;
