@@ -22,7 +22,7 @@ pss = ones(1,numel(exp_sol.exp_pval));
 optimdata = struct('nc',3,'nflx',6,'nf',1,'flxid',1,'eps_v',.01,...
                     'eps_c',.9,'vexp',exp_sol.fss(:,logical(pss)),...
                     'xexp',exp_sol.xss(:,logical(pss)),...
-                    'flux_wt',100,'conc_wt',100,...
+                    'flux_wt',100,'conc_wt',1000,...
                     'eps_c_wt',1,'eps_v_wt',1,...
                     'odep',odep_bkp,...
                     'wt_xss',xss(:,1),'wt_fss',fss(:,1),...
@@ -67,7 +67,7 @@ setup_opts.nle = allnle;
 [prob,optimdata] = setup_optim_prob(setup_opts);
 
 % initial values for consrained nl(or quadratic?) optimization
-x0 = getrandomivals(optimdata,.3,500);
+x0 = getrandomivals(optimdata,.3,100);
 solveropt = struct('solver','ipopt','multi',0);
 optsol = choose_nlconsopt(prob,x0,optimdata,solveropt);
 
@@ -77,6 +77,8 @@ est_data = combine_results(optsol,opts,no_noise_sol,optimdata,pss,pss);
 
 % compare fluxes and concentrations
 hfcv = compare_vals(est_data,no_noise_sol,optimdata,opts,pss);
+
+compare_vals_scatter(est_data,no_noise_sol,optimdata,opts,pss);
 
 % compare parameters in parameter space
 hfp = compare_pars(est_data);
