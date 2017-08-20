@@ -78,6 +78,8 @@ est_data = combine_results(optsol,opts,no_noise_sol,optimdata,pss,pss);
 % compare fluxes and concentrations
 hfcv = compare_vals(est_data,no_noise_sol,optimdata,opts,pss);
 
+compare_vals_scatter(est_data,no_noise_sol,optimdata,opts,pss);
+
 % compare parameters in parameter space
 hfp = compare_pars(est_data);
 
