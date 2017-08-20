@@ -48,7 +48,7 @@ xss_error = cell(data.nc,1);
 fss_plot = cell(nf,1);
 fss_error = cell(nf,1);
 
-barc = struct();
+% collect all data
 for j = 1:data.nc
     xss_plot{j} = [exp_xss(j,:)' est_xss(j,:)'];
     xss_error{j} = [zeros(1,length(exp_xss(j,:)))' est_xerr(j,:)'];
@@ -58,8 +58,11 @@ for k = 1:nf
     fss_plot{k} = [exp_fss(k,:)' est_fss(k,:)'];
     fss_error{k} = [zeros(1,length(exp_fss(k,:)))' est_ferr(k,:)'];
 end
+
+% plot concentrations
 hfc = figure;
 ahc = zeros(data.nc,1);
+barc = struct();
 for j = 1:data.nc
     ahc(j) = subplot(data.nc,1,j);
     set(ahc(j),'NextPlot','add');
