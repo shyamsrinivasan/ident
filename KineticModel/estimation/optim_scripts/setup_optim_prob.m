@@ -1,5 +1,5 @@
 % setup optimization problem for each flux in optimdata input
-function [prob,newdata] = setup_optim_prob(optimdata)
+function [prob,newdata] = setup_optim_prob(optimdata,expdata)
 
 if isfield(optimdata,'flxid')
     flxid = optimdata.flxid;
@@ -34,11 +34,11 @@ end
 if isfield(optimdata,'nf')
     nf = optimdata.nf;
 end
-if isfield(optimdata,'vexp')
-    vss_exp = optimdata.vexp(flxid,:);    
+if isfield(expdata,'vexp')
+    vss_exp = expdata.vexp(flxid,:);    
 end
-if isfield(optimdata,'xexp')
-    xss_exp = optimdata.xexp;
+if isfield(expdata,'xexp')
+    xss_exp = expdata.xexp;
 end
 npert = size(xss_exp,2);
 vss_exp_v = reshape(vss_exp,[nf*npert,1]);
