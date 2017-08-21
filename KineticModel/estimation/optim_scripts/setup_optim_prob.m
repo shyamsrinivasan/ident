@@ -1,5 +1,9 @@
 % setup optimization problem for each flux in optimdata input
-function [prob,newdata] = setup_optim_prob(optimdata)
+function [prob,newdata] = setup_optim_prob(optimdata,expdata)
+if nargin<2
+    expdata.xexp = optimdata.xexp;
+    expdata.vexp = optimdata.vexp;
+end
 
 if isfield(optimdata,'flxid')
     flxid = optimdata.flxid;
@@ -34,11 +38,11 @@ end
 if isfield(optimdata,'nf')
     nf = optimdata.nf;
 end
-if isfield(optimdata,'vexp')
-    vss_exp = optimdata.vexp(flxid,:);    
+if isfield(expdata,'vexp')
+    vss_exp = expdata.vexp(flxid,:);    
 end
-if isfield(optimdata,'xexp')
-    xss_exp = optimdata.xexp;
+if isfield(expdata,'xexp')
+    xss_exp = expdata.xexp;
 end
 npert = size(xss_exp,2);
 vss_exp_v = reshape(vss_exp,[nf*npert,1]);
@@ -87,10 +91,10 @@ if type==1
 elseif type==2
     % set bounds - concentration
     lb(1:nc*npert) = 1e-7; % xss_exp_v.*(1-eps_c);
-    ub(1:nc*npert) = 100; % xss_exp_v.*(1+eps_c);
+    ub(1:nc*npert) = 300; % xss_exp_v.*(1+eps_c);
     % set bounds - flux
-    lb(nc*npert+np+1:nc*npert+np+nf*npert) = vss_exp_v*(1-eps_v);
-    ub(nc*npert+np+1:nc*npert+np+nf*npert) = vss_exp_v*(1+eps_v);
+    lb(nc*npert+np+1:nc*npert+np+nf*npert) = 0; % vss_exp_v*(1-eps_v);
+    ub(nc*npert+np+1:nc*npert+np+nf*npert) = 100; % vss_exp_v*(1+eps_v);
     % set bounds - noise
     lb(nvar-2+1:nvar) = 0;
     ub(nvar-2+1:nvar) = 1;

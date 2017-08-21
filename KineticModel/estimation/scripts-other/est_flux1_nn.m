@@ -19,14 +19,16 @@ pss = ones(1,numel(exp_sol.exp_pval));
 % pss(exp_sol.xss(1,:)>exp_sol.xss(2,:)) = 0;    
 
 % options structure for solving problem
-optimdata = struct('nc',3,'nflx',6,'nf',1,'flxid',1,'eps_v',.01,...
+optimdata = struct('nc',3,'nflx',6,'nf',1,'flxid',1,'eps_v',1,...
                     'eps_c',.9,'vexp',exp_sol.fss(:,logical(pss)),...
                     'xexp',exp_sol.xss(:,logical(pss)),...
-                    'flux_wt',100,'conc_wt',1000,...
-                    'eps_c_wt',1,'eps_v_wt',1,...
+                    'flux_wt',100,'conc_wt',100,...
+                    'eps_c_wt',1,'eps_v_wt',1000,...
                     'odep',odep_bkp,...
                     'wt_xss',xss(:,1),'wt_fss',fss(:,1),...
                     'type',2);
+expdata = struct('vexp',exp_sol.fss(:,logical(pss)),...
+                'xexp',exp_sol.xss(:,logical(pss)));
 
 % define all bound fun handles
 allboundh = {'boundsf1',...
@@ -64,10 +66,10 @@ setup_opts.nlcons = allconsh;
 setup_opts.nlrhs = allnlrhs;
 setup_opts.nle = allnle;
 
-[prob,optimdata] = setup_optim_prob(setup_opts);
+[prob,optimdata] = setup_optim_prob(setup_opts,expdata);
 
 % initial values for consrained nl(or quadratic?) optimization
-x0 = getrandomivals(optimdata,.3,100);
+x0 = getrandomivals(optimdata,.3,5000);
 solveropt = struct('solver','ipopt','multi',0);
 optsol = choose_nlconsopt(prob,x0,optimdata,solveropt);
 
@@ -75,6 +77,7 @@ optsol = choose_nlconsopt(prob,x0,optimdata,solveropt);
 opts.tspan = 1:.1:200;
 est_data = combine_results(optsol,opts,no_noise_sol,optimdata,pss,pss);
 
+% load('C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/mat_files/est_flux1_nn_5000');
 % compare fluxes and concentrations
 hfcv = compare_vals(est_data,no_noise_sol,optimdata,opts,pss);
 

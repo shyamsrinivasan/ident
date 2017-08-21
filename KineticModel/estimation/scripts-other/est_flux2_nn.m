@@ -21,12 +21,14 @@ pss = ones(1,numel(exp_sol.exp_pval));
 optimdata = struct('nc',3,'nflx',6,'nf',1,'flxid',4,'eps_v',1,...
                     'eps_c',1,'vexp',exp_sol.fss(:,logical(pss)),...
                     'xexp',exp_sol.xss(:,logical(pss)),...
-                    'flux_wt',1000,'conc_wt',100,...
-                    'eps_c_wt',1000,'eps_v_wt',10000,...
+                    'flux_wt',1000,'conc_wt',1,...
+                    'eps_c_wt',1,'eps_v_wt',1000,...
                     'odep',odep_bkp,...
                     'wt_xss',xss(:,1),'wt_fss',fss(:,1),...
                     'type',2);
-                
+expdata = struct('vexp',exp_sol.fss(:,logical(pss)),...
+                'xexp',exp_sol.xss(:,logical(pss)));
+            
 % define all bound fun handles
 allboundh = {[],...
              [],...
@@ -45,7 +47,7 @@ allobjh = {[],...
 allconsh = {[],...
             [],...
             [],...
-            'cons_typeb_f2',...
+            'cons_typec_f2',...
             [],...
             []};
 % define all rhs for nl cons
@@ -61,7 +63,7 @@ setup_opts.nlcons = allconsh;
 setup_opts.nlrhs = allnlrhs;
 setup_opts.nle = allnle;
 
-[prob,optimdata] = setup_optim_prob(setup_opts);
+[prob,optimdata] = setup_optim_prob(setup_opts,expdata);
 
 % initial values for consrained nl(or quadratic?) optimization
 x0 = getrandomivals(optimdata,.3,1000);
@@ -79,23 +81,23 @@ hfcv = compare_vals(est_data,no_noise_sol,optimdata,opts,pss);
 hfp = compare_pars(est_data);
 
 % save figure files
-dir = 'C:\Users\shyam\Documents\Courses\CHE1125Project\Results\estimation\est_flux2\no_noise\typec\';
-if ~isempty(hfcv)
-    set(0,'CurrentFigure',hfcv(1));
-    fname = 'est_flux2_conc_aug6';
-    print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
-    close(hfcv(1));
-    set(0,'CurrentFigure',hfcv(2));
-    fname = 'est_flux2_flux_aug6';
-    print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
-    close(hfcv(2));
-end
-if ~isempty(hfp)
-    set(0,'CurrentFigure',hfp);
-    fname = 'est_flux2_par_aug6';
-    print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
-    close(hfp);
-end
+% dir = 'C:\Users\shyam\Documents\Courses\CHE1125Project\Results\estimation\est_flux2\no_noise\typec\';
+% if ~isempty(hfcv)
+%     set(0,'CurrentFigure',hfcv(1));
+%     fname = 'est_flux2_conc_aug6';
+%     print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
+%     close(hfcv(1));
+%     set(0,'CurrentFigure',hfcv(2));
+%     fname = 'est_flux2_flux_aug6';
+%     print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
+%     close(hfcv(2));
+% end
+% if ~isempty(hfp)
+%     set(0,'CurrentFigure',hfp);
+%     fname = 'est_flux2_par_aug6';
+%     print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
+%     close(hfp);
+% end
 
 
 

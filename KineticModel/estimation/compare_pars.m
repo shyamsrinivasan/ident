@@ -18,8 +18,17 @@ perr = est_data.perr;
 if plotype==1 % plot a bar graph of parameter value averages and error bars
     set(gca,'NextPlot','add');
     bh = bar(par);
-    xerr_pos = cat(1,bh.XData)+cat(1,bh.XOffset);
-    yerr_pos = par;
+    if strcmpi(version('-release'),'2014a')
+        xpos_d = get(get(bh,'children'),'xdata');
+        ypos_d = get(get(bh,'children'),'ydata');
+        xerr_pos = ((xpos_d(2,:)+xpos_d(3,:))/2)';
+        yerr_pos = ypos_d(2,:)';
+    elseif strcmpi(version('-release'),'2014b') ||...
+           strcmpi(version('-release'),'2017a') ||...
+           strcmpi(version('-release'),'2017b')
+        xerr_pos = cat(1,bh.XData)+cat(1,bh.XOffset);
+        yerr_pos = par;
+    end
     erh = errorbar(xerr_pos,yerr_pos,perr,'LineStyle','none');
 elseif plotype==2
     if npar<=2 % 2-d plot
