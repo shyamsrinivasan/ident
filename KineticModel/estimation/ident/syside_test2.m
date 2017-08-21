@@ -39,8 +39,11 @@ scale(2) = 1e6;
 p0 = opts.odep(2:13)'./scale;
 
 % call PLE evaluation function
-[PLEvals_pos] =...
-getPLE(thetai_fixed_value,theta_step,p0,opts.odep,delta_alpha,optim_opts,maxiter,1);
+[PLEvals] =...
+getPLE(thetai_fixed_value,theta_step,p0,opts.odep,delta_alpha,optim_opts,maxiter,2);
+
+% get confidence interval bounds from pl data
+sigma = pleCI_finite_sample(delta_alpha,PLEvals_pos.chiPLE,PLEvals_pos.thetai_inc)
 
 % figure
 % hold on
