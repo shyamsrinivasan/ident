@@ -1,36 +1,45 @@
 % get finite sample confidence intervals (CI) for PLE 
 % does not need hessians of the objective function at the optimal solution
-function [sigma,collect_eps] = pleCI_finite_sample(delta_alpha,chiPLE,thetai)
+function sigma =...
+        pleCI_finite_sample(delta_alpha,chiPLE,thetai,thetai_start)
 
 % theta s.t. obj(theta)-obj(optimal_theta)<delta_alpha
 % get point of intersection of PL curve with threshold line (delta_alpha)
-eps = 1e-1;
+sigma = zeros(1,2);
 pl_diff = delta_alpha-chiPLE;
 
-while any(pl_diff<eps)    
-    if ~any(pl_diff<eps)
-        collect_eps = eps;
-        collect_pos_first = find(pl_diff<eps,1,'first');
-        collect_pos_last = find(pl_diff<eps,1,'last');
-    else
-        collect_eps = 0;
-        collect_pos_first = false;
-        collect_pos_last = false;
-    end
-    eps = eps/5;
+% find position of sign change in pl_diff
+bounds_lb_id = find(sign(pl_diff)<0,1,'first');
+bounds_ub_id = find(sign(pl_diff)<0,1,'last');
+
+if ~isempty(bounds_lb_id)
+    bounds_lb = thetai(bounds_lb_id);
+else
+    bounds_lb = [];
+end
+if ~isempty(bounds_ub_id)
+    bounds_ub = thetai(bounds_ub_id);
+else
+    bounds_ub = [];
 end
 
-sigma = zeros(1,2);
-if collect_pos_first==collect_pos_last
-    % only one confidence interval is finite
-    sigma(1) = thetai(collect_pos_first);
-    sigma(2) = sigma(1); %
-else
-    % finite confidence intervals on both ends
-    % CI lb
-    sigma(1) = thetai(collect_pos_first);
-    sigma(2) = thetai(collect_pos_last);
+if ~isempty(bounds_lb) && ~isempty(bounds_ub)
+    if bounds_lb==bounds_ub % only one bound (practical non-identifiability)
+        if bounds_ub>thetai_start % bound is ub
+            sigma(2) = bounds_ub;
+            sigma(1) = -Inf;
+        elseif bounds_lb<thetai_start % bound is lb
+            sigma(1) = bounds_lb;
+            sigma(2) = +Inf;
+        end
+    else
+        sigma(1) = bounds_lb;
+        sigma(2) = bounds_ub;
+    end
 end
+
+
+
         
 
 
