@@ -24,6 +24,7 @@ for i = 1:npt
     else
         [xss,fss,collect_p,dyndata] = runperturbations(fh,exp_pid,exp_pval,opts);
     end
+    sol(istart).x0 = opts.x0;
     sol(istart).xss = xss;
     sol(istart).fss = fss;
     if getdyndata
