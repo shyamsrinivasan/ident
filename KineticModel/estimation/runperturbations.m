@@ -15,7 +15,9 @@ collect_p = zeros(np,n_odep);
 dyndata = struct();
 
 for ival = 1:np
-    opts.odep(pid) = pval(ival);
+    if pid % else do wt w/o perturbation
+        opts.odep(pid) = pval(ival);    
+    end
     [xdyn,fdyn,xss,fss] = fh(opts);
     xss_pval(:,ival) = xss;
     fss_pval(:,ival) = fss;
