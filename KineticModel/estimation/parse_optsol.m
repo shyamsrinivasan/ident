@@ -12,10 +12,10 @@ end
 
 % reshape and add to structure array
 for ival = 1:nval
-    new_optsol(ival).xconc = reshape(xconc(:,ival),[data.nc,data.npert]);
+    new_optsol(ival).xss = reshape(xconc(:,ival),[data.nc,data.npert]);
     new_optsol(ival).xpar = xpar(:,ival);
-    new_optsol(ival).xflx = xflx(:,ival)';
+    new_optsol(ival).fss = xflx(:,ival)';
     if ~isempty(xnoise)
-        new_optsol(ival).xnoise = xnoise(:,ival);
+        new_optsol(ival).eps_cf = xnoise(:,ival);
     end
 end
