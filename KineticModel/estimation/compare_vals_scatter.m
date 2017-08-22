@@ -49,4 +49,14 @@ for k = 1:nf
     fss_error{k} = [zeros(1,length(exp_fss(k,:)))' est_ferr(k,:)'];
 end
 
-hfc = figure
+hfc = figure;
+for j = 1:data.nc
+    set(gca,'NextPlot','add');    
+    line(xss_plot{j}(:,1),xss_plot{j}(:,1),'Color','k','LineWidth',2)
+    line(xss_plot{j}(:,1),xss_plot{j}(:,2),'LineStyle','none',...
+                                            'Marker','.',...
+                                            'MarkerSize',16);
+end
+% overlay error bars
+
+
