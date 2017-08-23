@@ -1,4 +1,4 @@
-function proc_data =...
+function [proc_data,exp_data] =...
 combine_results_v1(est_data,exp_data,val_data,data,odeopts)
 
 if ~isfield(est_data,'xconc')
@@ -9,18 +9,6 @@ end
 exitflags = cat(1,est_data.exitflag);
 optsol = est_data(exitflags==1);
 nval = size(optsol,2); % recalculate nval for optimal solutions only
-
-% combine all estimated data
-% est_xss = cat(1,optsol.xss);
-% est_fss = cat(2,est_data.fss);
-% est_par = cat(2,optsol.xpar);
-
-% combine all experimental data
-% 
-% exp_fss = cat(1,exp_data.fss);
-
-% wt_exp_xss = exp_xss(:,end); % wt exp data
-% wt_est_xss = est_xss(:,end); % wt est data
 
 % re-do perturbations in exp_data to check for consistency of solutions
 % initial value for these perturbations is taken from the wt model estimate
@@ -38,6 +26,7 @@ proc_data.opt_fss = cat(1,optsol.fss);
 proc_data.opt_pss = cat(1,optsol.pss_opt);
 
 npar = length(data.p_id);
+npert = size(exp_data,2);
 
 conc = cat(1,optsol.xss_calc);
 flux = cat(1,optsol.fss_calc);
@@ -61,7 +50,8 @@ proc_data.calc_p_err = sigma2.sigma2_p;
 exp_xss = cat(2,exp_data.xss);
 exp_pss = ones(1,size(exp_data,2));
 exp_pss(exp_xss(2,:)>exp_xss(1,:)) = 2;
-exp_data.pss = exp_pss;
+cellp = num2cell(exp_pss);
+[exp_data(1:npert).pss] = deal(cellp{:});
 
 proc_data.calc_xss1
 % proc_data.calc_xss2
