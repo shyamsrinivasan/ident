@@ -85,6 +85,10 @@ if type==1 % bar chart
     [hfv,barv] = plotbars(data.nflx,fss_plot,fss_error,1);
     
 elseif type==2 % scatter plot
+    % plot concentrations
+    xss_scatter_data = scatterdata();
+    
+    % plot fluxes
 end
     
 % ahc.XLabel.String = 'WT and Perturbations';
