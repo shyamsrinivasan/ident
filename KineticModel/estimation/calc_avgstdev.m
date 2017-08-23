@@ -29,7 +29,7 @@ end
 
 if ~isempty(flux)
     npert = size(flux,2);
-    avg_f = zeros(nc,npert);
+    avg_f = zeros(nf,npert);
     sigma2_f = zeros(1,npert);
     for ifx = 1:nf
         avg_f(ifx,:) = sum(flux(ifx:nf:nf*nval,:),1)./nval;
