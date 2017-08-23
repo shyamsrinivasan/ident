@@ -28,12 +28,18 @@ wt_pt_val = pt_val(end);
 other_pt_val = pt_val(1:end-1);
 
 if nval>0
+    % determine ss of optimal estimated concentrations
+    for ival = 1:nval
+        opt_pss = ones(1,npert);        
+        opt_pss(optsol(ival).xss(2,:)>optsol(ival).xss(1,:)) = 2;
+        optsol(ival).pss_opt = opt_pss;
+    end
     if nval>1
         parfor ival = 1:nval
             pss = ones(1,npert);
             % calculate fss for estimated xss
             odep = newodep(ival,:); 
-            wt_est_fss = kotte_flux_noCAS(wt_est_xss(3*(ival-1)+1:3*ival),odep);
+%             wt_est_fss = kotte_flux_noCAS(wt_est_xss(3*(ival-1)+1:3*ival),odep);
 
             new_odeopts = opts(ival);
             % do wt perturbation first to get ss (if it already is not @ ss)
@@ -51,7 +57,10 @@ if nval>0
             optsol(ival).xss_calc = xss;
             optsol(ival).fss_calc = fss;
             pss(xss(2,:)>xss(1,:)) = 2;
-            optsol(ival).pss = pss;
+            optsol(ival).pss_calc = pss;
+                        
+
+            
         end
     else
         for ival = 1:nval
