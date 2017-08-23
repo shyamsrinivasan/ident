@@ -79,12 +79,16 @@ x0 = getrandomivals(optimdata,.3,5000);
 solveropt = struct('solver','ipopt','multi',0);
 optsol = choose_nlconsopt(prob,x0,optimdata,solveropt);
 
+% load('C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/mat_files/est_flux2_5000_aug22');
 % combine results for comparison plot
 opts.tspan = 1:.1:200;
-est_data = combine_results(optsol,opts,noisy_sol,optimdata,pss,pss);
+[proc_data,noisy_sol] = recalcss(optsol,noisy_sol,[],optimdata,opts);
+% est_data = combine_results(optsol,opts,noisy_sol,optimdata,pss,pss);
 
 % compare fluxes and concentrations
-hfcv = compare_vals(est_data,noisy_sol,optimdata,opts,pss);
+hfcv = compare_vals(proc_data,noisy_sol,[],optimdata,1);
+
+compare_vals_scatter(est_data,no_noise_sol,optimdata,opts,pss);
 
 % compare parameters in parameter space
 hfp = compare_pars(est_data);

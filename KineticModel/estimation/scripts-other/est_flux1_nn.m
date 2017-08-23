@@ -75,7 +75,8 @@ optsol = choose_nlconsopt(prob,x0,optimdata,solveropt);
 
 % combine results for comparison plot
 opts.tspan = 1:.1:200;
-est_data = combine_results(optsol,opts,no_noise_sol,optimdata,pss,pss);
+[proc_data,exp_data] = recalcss(optsol,no_noise_sol,[],optimdata,opts);
+% est_data = combine_results(optsol,opts,no_noise_sol,optimdata,pss,pss);
 
 % load('C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/mat_files/est_flux1_nn_5000');
 % compare fluxes and concentrations
