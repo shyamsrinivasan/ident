@@ -85,16 +85,74 @@ if type==1 % bar chart
     [hfv,barv] = plotbars(data.nflx,fss_plot,fss_error,1);
     
 elseif type==2 % scatter plot
-    % plot concentrations
-    xss_scatter_data = scatterdata();
+    % plot concentration averages as scatter
+    xss_scatter =...
+    scatterdata(data.nc,xss,[],opt_xss_avg,opt_xss_err,calc_xss_avg,calc_xss_err);
+    x_ss = xss_scatter.x;
+    x_err = xss_scatter.x_err;
+    if ~isempty(xss_scatter.y{1,1})
+        y_ss_1 = xss_scatter.y(:,1);
+        y_err_1 = xss_scatter.y_err(:,1);
+    else
+        y_ss_1 = [];
+        y_err_1 = [];
+    end
+    if ~isempty(xss_scatter.y{1,2})
+        y_ss_2 = xss_scatter.y(:,2);
+        y_err_2 = xss_scatter.y_err(:,2);
+    else
+        y_ss_2 = [];
+        y_err_2 = [];
+    end        
+    [hfc,barc] = plotdots(data.nc,x_ss,x_err,y_ss_1,y_err_1,y_ss_2,y_err_2);
     
     % plot fluxes
+    hfv = [];
+    barv = [];
 end
     
 % ahc.XLabel.String = 'WT and Perturbations';
 legend('Noisy Data','Optimal Estimate','Model SS');
 allfh = [hfc;hfv];
 barh = {barc;barv};
+
+function [hf,dotfs] = plotdots(nplot,ss_x,err_x,ss_y1,err_y1,ss_y2,err_y2,fc)
+if nargin<8
+    fc = 2;
+end
+
+hf = figure;
+dotfs = struct();
+for j = 1:nplot
+    if fc==2
+        dotfs(j).ah = subplot(nplot,1,j);        
+    elseif fc==1
+        dotfs(j).ah = subplot(nplot/2,2,j);            
+    end
+    set(dotfs(j).ah,'NextPlot','add');
+    line(dotfs(j).ah,ss_x{j},ss_x{j},'Color','k','LineWidth',2);
+    if ~isempty(ss_y1{j})        
+        dotfs(j).h = line(dotfs(j).ah,ss_x{j},ss_y1{j},...
+                          'LineStyle','none','Marker','.',...
+                          'MarkerSize',18);
+    end
+    if ~isempty(ss_y2{j})
+        dotfs(j).h = line(dotfs(j).ah,ss_x{j},ss_y2{j},...
+                          'LineStyle','none','Marker','.',...
+                          'MarkerSize',18,'Color','r');
+    end
+    [~,ylbl] = getKotteaxislabels(2,fc,[1,j]);
+    if strcmpi(version('-release'),'2014a')
+    elseif strcmpi(version('-release'),'2014b') ||...
+           strcmpi(version('-release'),'2017a') ||...
+           strcmpi(version('-release'),'2017b')
+
+        dotfs(j).ah.YLabel.String = ylbl{1};    
+%         ah(j).XTickLabel = rel_labels;  
+    end
+    % need to fill in data for error bars
+end
+
 
 function [hf,barfs] = plotbars(nplot,ss_plot,error_plot,fc)
 if nargin<4
