@@ -106,9 +106,30 @@ elseif type==2 % scatter plot
     end        
     [hfc,barc] = plotdots(data.nc,x_ss,x_err,y_ss_1,y_err_1,y_ss_2,y_err_2);
     
-    % plot fluxes
-    hfv = [];
-    barv = [];
+    % plot fluxes    
+    fss_scatter =...
+    scatterdata(data.nflx,fss,[],...
+                [opt_fss_avg;zeros(data.nflx-1,length(opt_fss_avg))],...
+                [opt_fss_err;zeros(data.nflx-1,length(opt_fss_err))],...
+                calc_fss_avg,calc_fss_err);
+    x_fss = fss_scatter.x;
+    x_ferr = fss_scatter.x_err;
+    if ~isempty(fss_scatter.y{1,1})
+        y_fss_1 = fss_scatter.y(:,1);
+        y_ferr_1 = fss_scatter.y_err(:,1);
+    else
+        y_fss_1 = [];
+        y_ferr_1 = [];
+    end
+    if ~isempty(fss_scatter.y{1,2})
+        y_fss_2 = fss_scatter.y(:,2);
+        y_ferr_2 = fss_scatter.y_err(:,2);
+    else
+        y_fss_2 = [];
+        y_ferr_2 = [];
+    end        
+    [hfv,barv] =...
+    plotdots(data.nflx,x_fss,x_ferr,y_fss_1,y_ferr_1,y_fss_2,y_ferr_2,1);    
 end
     
 % ahc.XLabel.String = 'WT and Perturbations';
