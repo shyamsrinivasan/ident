@@ -1,42 +1,28 @@
 % estimate fluxes for flux 2 in kotte model pep ---> fdp
 
-% generate experimental data - get initial ss
-tspan = 0:0.1:100;
-[xdyn,fdyn,xss1,fss1,opts] = run_nonoise(tspan);
+% run gen_data for experimental data
+%% gen_data
 
-% backup parameters and initial conditions
-ival_bkp = opts.x0;
-odep_bkp = opts.odep;
+% or load pre-calculated data
+load('C:/Users/shyam/Documents/Courses/CHE1125Project/IntegratedModels/KineticModel/estimation/noisy_model/pdata_aug24');
 
-% generate nsmp samples by adding random noise to ss values
-nsmp = 10;
-[noisy_xss,noisy_fss] = addnoise(repmat(xss1,1,nsmp),odep_bkp);
-
-% figure
-% boxplot([noisy_fss';fss1']);
-% figure
-% boxplot([noisy_xss';xss1']);
-
-% perturb system from noisy initial conditions
-pt_sol_id = [1 2 3];
-[exp_sol,noisy_sol] = dopert_noisy(opts,noisy_xss,noisy_fss,odep_bkp,pt_sol_id);
-close all
-
+%% run optimization
+id = 1;
 % get only data from one steady state
-pss = ones(1,numel(exp_sol.exp_pval));
+pss = ones(1,numel(exp_sol{id}.exp_pval));
 % pss(exp_sol.xss(1,:)>exp_sol.xss(2,:)) = 0;    
 
 % options structure for solving problem
 optimdata = struct('nc',3,'nflx',6,'nf',1,'flxid',4,'eps_v',1,...
-                    'eps_c',1,'vexp',exp_sol.fss(:,logical(pss)),...
-                    'xexp',exp_sol.xss(:,logical(pss)),...
+                    'eps_c',1,'vexp',exp_sol{id}.fss(:,logical(pss)),...
+                    'xexp',exp_sol{id}.xss(:,logical(pss)),...
                     'flux_wt',1000,'conc_wt',1,...
                     'eps_c_wt',1,'eps_v_wt',1000,...
                     'odep',odep_bkp,...
                     'wt_xss',noisy_xss(:,1),'wt_fss',noisy_fss(:,1),...
                     'type',2);
-expdata = struct('vexp',exp_sol.fss(:,logical(pss)),...
-                'xexp',exp_sol.xss(:,logical(pss)));
+expdata = struct('vexp',exp_sol{id}.fss(:,logical(pss)),...
+                'xexp',exp_sol{id}.xss(:,logical(pss)));
                 
 % define all bound fun handles
 allboundh = {[],...
@@ -79,7 +65,10 @@ x0 = getrandomivals(optimdata,.3,5000);
 solveropt = struct('solver','ipopt','multi',0);
 optsol = choose_nlconsopt(prob,x0,optimdata,solveropt);
 
-% load('C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/mat_files/est_flux2_5000_aug22');
+%% parse results
+% load stored data
+load('C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/mat_files/est_flux2_5000_aug22');
+
 % combine results for comparison plot
 opts.tspan = 1:.1:200;
 [proc_data,noisy_sol] = recalcss(optsol,noisy_sol,[],optimdata,opts);
@@ -87,11 +76,12 @@ opts.tspan = 1:.1:200;
 
 % compare fluxes and concentrations
 hfcv = compare_vals(proc_data,noisy_sol,[],optimdata,1);
+hfdotcv = compare_vals(proc_data,noisy_sol,[],optimdata,2);
 
-compare_vals_scatter(est_data,no_noise_sol,optimdata,opts,pss);
+% compare_vals_scatter(proc_data,noisy_sol,optimdata,opts,pss);
 
 % compare parameters in parameter space
-hfp = compare_pars(est_data);
+% hfp = compare_pars(est_data);
 
 % save figure files
 % dir = 'C:\Users\shyam\Documents\Courses\CHE1125Project\Results\estimation\est_flux2\noisy\typec\';
