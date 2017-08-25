@@ -74,11 +74,12 @@ opts.tspan = 1:.1:200;
 [proc_data,noisy_sol] = recalcss(optsol,noisy_sol,[],optimdata,opts);
 % est_data = combine_results(optsol,opts,noisy_sol,optimdata,pss,pss);
 
-% compare fluxes and concentrations
+%% compare fluxes and concentrations
 hfcv = compare_vals(proc_data,noisy_sol,[],optimdata,1);
 hfdotcv = compare_vals(proc_data,noisy_sol,[],optimdata,2);
 
-% compare_vals_scatter(proc_data,noisy_sol,optimdata,opts,pss);
+compare_vals_scatter(noisy_sol,[],proc_data.opt_xss,proc_data.calc_xss,optimdata,2);
+compare_vals_scatter(noisy_sol,[],proc_data.opt_xss,proc_data.calc_xss,optimdata,1);
 
 % compare parameters in parameter space
 % hfp = compare_pars(est_data);
