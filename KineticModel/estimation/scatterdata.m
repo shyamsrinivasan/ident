@@ -1,6 +1,7 @@
 % collect data s.t. x-axis is experimental data
 % yaxis is opt and calc data
-function plot_data = scatterdata(nplots,exp_xss,exp_xerr,opt_xss,opt_xerr,calc_xss,calc_xerr,type)
+function plot_data =...
+scatterdata(nplots,exp_xss,exp_xerr,opt_xss,opt_xerr,calc_xss,calc_xerr,type)
 if nargin<8
     type=1; % averages
 end
