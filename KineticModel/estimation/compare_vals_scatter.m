@@ -1,10 +1,36 @@
 % scatter plot of experimental and estimated data
-function compare_vals_scatter(est_sol,exp_sol,data,opts,test_data_id)
-if isempty(est_sol)
-    fprintf('No optimal solution found\n');
-    allfh = [];
-    return
+% plot all data in proc_data struct
+function compare_vals_scatter(exp_sol,nexp,opt_xss,calc_xss,nval,nvar,npert,fc)
+if nargin<8
+    fc = 2; % concentrations plots
 end
+
+% experimental data
+if fc==1
+    [~,exp_fss] = extract_expdata(exp_sol,1,nval,[],nvar,npert);
+    % optimal data curation into different conc/var
+    xss = cell(nvar,1);
+    for j = 1:nvar    
+        xss{j,1} = exp_fss(j:nvar:nvar*nval,:);
+        xss{j,2} = opt_xss(j:nvar:nvar*nval,:);
+        xss{j,3} = calc_xss(j:nvar:nvar*nval,:);         
+    end
+elseif fc==2
+    exp_xss = extract_expdata(exp_sol,1,nval,nvar,[],npert);
+    xss = cell(nvar,1);
+    for j = 1:nvar    
+        xss{j,1} = exp_xss(j:nvar:nvar*nval,:);
+        xss{j,2} = opt_xss(j:nvar:nvar*nval,:);
+        xss{j,3} = calc_xss(j:nvar:nvar*nval,:);        
+    end
+end
+
+% plot scatter of xss{j,1} vs xss{j,2} and xss{j,3}
+
+
+
+
+
 
 test_data_id = logical(test_data_id);
 all_labels = {'P1','P2','P3','WT'};
@@ -19,8 +45,7 @@ wt_exp_fss = kotte_flux_noCAS(wt_exp_xss,data.odep);
 pt_datasize = length(find(test_data_id(1:end-1)));
 nf = size(wt_exp_fss,1);
 
-exp_xss = cat(2,exp_sol.xss);
-exp_fss = cat(2,exp_sol.fss);
+
 
 % collect all data to plot [p#1 p#2....  wt]  
 % estimated
