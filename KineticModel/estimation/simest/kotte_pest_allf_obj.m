@@ -4,7 +4,7 @@ x = casadi.SX.sym('x',nc*npert,1);
 p = casadi.SX.sym('p',13,1);
 p_usl = casadi.SX.sym('p_usl',3,1);
 ac = casadi.SX.sym('ac',1,1);
-flux = casadi.SX.sym(nf*npert,1);
+flux = casadi.SX.sym('flux',nf*npert,1);
 vareps = casadi.SX.sym('vareps',2,1);
 wts = casadi.SX.sym('wts',4,1);
 
@@ -35,7 +35,10 @@ fx4 = V2max.*x(1:nc:nc*npert) - flux(4:nf:nf*npert).*(x(1:nc:nc*npert)+K2pep);
 fx5 = V4max.*x(1:nc:nc*npert) - flux(5:nf:nf*npert);
 fx6 = d.*x(3:nc:nc*npert)-flux(6:nf:nf*npert);
 
-vmodel = [fx1;fx2;fx3;fx4;fx5;fx6];
+vmodel = [];
+for i = 1:npert
+    vmodel = [vmodel;fx1(i);fx2(i);fx3(i);fx4(i);fx5(i);fx6(i)];
+end
 
 v_error = vexp-vmodel;
 v_norm = .5*dot(v_error,v_error);
