@@ -1,10 +1,5 @@
-function [cons,x,p,vareps,p_usl,ac,flux] = kotte_pest_allf_cons()
-x = casadi.SX.sym('x',3,1);
-p = casadi.SX.sym('p',13,1);
-p_usl = casadi.SX.sym('p_usl',3,1);
-ac = casadi.SX.sym('ac',1,1);
-flux = casadi.SX.sym(6,1);
-vareps = casadi.SX.sym('vareps',2,1);
+function cons =...
+kotte_pest_allf_cons(xexp,vexp,nc,nf,npert,x,p,p_usl,ac,flux,vareps)
 
 p_all = [p;p_usl;ac];
 
@@ -24,13 +19,14 @@ V3max = p_all(12);
 V2max = p_all(13);   
 ac = p_all(17);
 
-fx1 = k1cat.*x(3).*ac - flux(1).*(ac+K1ac);
-fx2 = -vemax + (vemax - flux(2)).*(1+(KeFDP./x(2)).^ne);
-ratio = 1+x(2)./K3fdp;
-fx3 = V3max.*(ratio-1).*(ratio).^3 - flux(3).*(ratio.^4+L3fdp.*(1+x(1)./K3pep).^(-4));
-fx4 = V2max.*x(1) - flux(4).*(x(1)+K2pep);
-fx5 = V4max.*x(1) - flux(5);
-fx6 = d.*x(3)-flux(6);
+fx1 = k1cat.*x(3:nc:nc*npert).*ac - flux(1:nf:nf*npert).*(ac+K1ac);
+fx2 = -vemax + (vemax - flux(2:nf:nf*npert)).*(1+(KeFDP./x(2:nc:nc*npert)).^ne);
+ratio = 1+x(2:nc:nc*npert)./K3fdp;
+fx3 = V3max.*(ratio-1).*(ratio).^3 -...
+      flux(3:nf:nf*npert).*(ratio.^4+L3fdp.*(1+x(1:nc:nc*npert)./K3pep).^(-4));
+fx4 = V2max.*x(1:nc:nc*npert) - flux(4:nf:nf*npert).*(x(1:nc:nc*npert)+K2pep);
+fx5 = V4max.*x(1:nc:nc*npert) - flux(5:nf:nf*npert);
+fx6 = d.*x(3:nc:nc*npert)-flux(6:nf:nf*npert);
 
 % nle
 nlerhs = [fx1-fx4-fx5;...
