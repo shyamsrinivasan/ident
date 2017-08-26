@@ -38,12 +38,12 @@ nlerhs = [fx1-fx4-fx5;...
           fx2-fx6];  
       
 % concentration noise cons
-x_noise_lb = x - casadi.DM(xexp)*(1+vareps(1));
-x_noise_ub = -x + casadi.DM(xexp)*(1-vareps(1));
+x_noise_lb = x - xexp*(1+vareps(1));
+x_noise_ub = -x + xexp*(1-vareps(1));
       
 % flux noise cons
-v_noise_lb = flux - data.vexp*(1+vareps(2));
-v_noise_ub = -flux + data.vexp*(1-vareps(2));      
+v_noise_lb = flux - vexp*(1+vareps(2));
+v_noise_ub = -flux + vexp*(1-vareps(2));      
       
 cons = [fx1;fx2;fx3;fx4;fx5;fx6;nlerhs;...
         x_noise_lb;x_noise_ub;...

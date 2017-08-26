@@ -35,9 +35,9 @@ fx6 = d.*x(3)-flux(6);
 
 vmodel = [fx1;fx2;fx3;fx4;fx5;fx6];
 
-v_error = casadi.DM(vexp)-vmodel;
+v_error = vexp-vmodel;
 v_norm = .5*dot(v_error,v_error);
-x_error = casadi.DM(xexp)-x;
+x_error = xexp-x;
 x_norm = .5*dot(x_error,x_error);
 
 obj = wts(1)*v_norm + wts(2)*x_norm + wts(3)*vareps(1) + wts(4)*vareps(2);
