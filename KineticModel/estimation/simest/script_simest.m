@@ -1,3 +1,5 @@
+% estimationn script - simultaneous ss estimation of fluxes, concenrations
+% and parameters
 % or load pre-calculated data
 load('C:/Users/shyam/Documents/Courses/CHE1125Project/IntegratedModels/KineticModel/estimation/noisy_model/pdata_aug24');
 
