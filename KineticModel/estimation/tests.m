@@ -31,6 +31,7 @@ par_val = [p0_const;weigths];
 
 % get initial value
 x0 = [xexp;p0_obj.*scale;vexp;0;0];
+
 % set bounds for x0
 lb = zeros(nvar,1);
 ub = zeros(nvar,1);
@@ -45,6 +46,14 @@ ub(nvar-2+1:nvar) = 1;
 % set bounds for cons
 lbg = zeros(ncons,1);
 ubg = zeros(ncons,1);
+% ss cons bounds (=)
+lbg(1:nc*npert) = 0;
+ubg(1:nc*npert) = 0;
+% nl flux cons (=)
+lbg(nc*npert+1:nc*npert+nf*npert) = 0;
+ubg(nc*npert+1:nc*npert+nf*npert) = 0;
+% nl noisy conc cons (<=)
+% lbg(nc*npert+nf*npert+1:nc*npert+nf*npert+2*nc*npert) = 
 
 
 estprob = struct('x',var,'f',obj,'g',cons);
