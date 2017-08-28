@@ -16,10 +16,10 @@ vexp = reshape(vexp,[nf*npert,1]);
 
 % sym obj
 [obj,var,par,x,p,flux,vareps,p_usl,ac,wts] =...
-kotte_pest_allf_obj(xexp,vexp,nc,nf,npert);
+kotte_pest_allf_typeb_obj(xexp,vexp,nc,nf,npert);
 % sym cons
 cons =...
-kotte_pest_allf_cons(xexp,vexp,nc,nf,npert,x,p,flux,vareps,p_usl,ac);
+kotte_pest_allf_typeb_cons(xexp,vexp,nc,nf,npert,x,p,flux,vareps,p_usl,ac);
 ncons = size(cons,1);
 consfun = casadi.Function('consfun',{var,par},{cons});
 
@@ -28,12 +28,12 @@ p0_obj = odep_bkp(1:13)';
 scale = ones(np,1);
 scale(3) = 1e-6;
 
-weigths = [1000;1;1;100];
+weigths = [1;1;1;1];
 p0_const = odep_bkp(14:end)';
 par_val = [p0_const;weigths];
 
 % get initial value
-xval = [xexp;p0_obj.*scale;vexp].*(1+.1);
+xval = [xexp;p0_obj.*scale;vexp];
 x0 = [xval;0;0];
 cons_check = full(consfun(x0,par_val));
 
@@ -58,20 +58,30 @@ ub(nvar-1+1:nvar) = 1;
 % set bounds for cons
 lbg = ones(ncons,1);
 ubg = ones(ncons,1);
-% ss cons bounds (=)
-lbg(1:nc*npert) = 0;
-ubg(1:nc*npert) = 0;
-% nl flux cons (=)
-lbg(nc*npert+1:nc*npert+nf*npert) = 0;
+% ss cons bounds (=) type a 
+% lbg(1:nc*npert) = 0;
+% ubg(1:nc*npert) = 0;
+% % nl flux cons (=)
+% lbg(nc*npert+1:nc*npert+nf*npert) = 0;
+% ubg(nc*npert+1:nc*npert+nf*npert) = 0;
+% % nl noisy conc cons (<=)
+% lbg(nc*npert+nf*npert+1:nc*npert+nf*npert+2*nc*npert) = -Inf;
+% ubg(nc*npert+nf*npert+1:nc*npert+nf*npert+2*nc*npert) = 0;
+% % nl noisy flux cons (<=)
+% lbg(nc*npert+nf*npert+2*nc*npert+1:nc*npert+nf*npert+2*nc*npert+2*nf*npert) = -Inf;
+% ubg(nc*npert+nf*npert+2*nc*npert+1:nc*npert+nf*npert+2*nc*npert+2*nf*npert) = 0;
+% set flux cons bounds type b
+lbg(1:nf*npert) = 0;
 ubg(nc*npert+1:nc*npert+nf*npert) = 0;
 % nl noisy conc cons (<=)
-lbg(nc*npert+nf*npert+1:nc*npert+nf*npert+2*nc*npert) = -Inf;
-ubg(nc*npert+nf*npert+1:nc*npert+nf*npert+2*nc*npert) = 0;
+lbg(nf*npert+1:nf*npert+2*nc*npert) = -Inf;
+ubg(nf*npert+1:nf*npert+2*nc*npert) = 0;
 % nl noisy flux cons (<=)
-lbg(nc*npert+nf*npert+2*nc*npert+1:nc*npert+nf*npert+2*nc*npert+2*nf*npert) = -Inf;
-ubg(nc*npert+nf*npert+2*nc*npert+1:nc*npert+nf*npert+2*nc*npert+2*nf*npert) = 0;
+lbg(nf*npert+2*nc*npert+1:nf*npert+2*nc*npert+2*nf*npert) = -Inf;
+ubg(nf*npert+2*nc*npert+1:nf*npert+2*nc*npert+2*nf*npert) = 0;
 
 estprob = struct('x',var,'f',obj,'g',cons,'p',par);
+options.warn_initial_bounds = 1;
 options.ipopt.fixed_variable_treatment = 'make_constraint';
 solver = casadi.nlpsol('solver','ipopt',estprob,options);
 sol = solver('x0',x0,'p',par_val,'lbx',lb,'ubx',ub,'lbg',lbg,'ubg',ubg);
