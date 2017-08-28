@@ -57,10 +57,7 @@ if nval>0
             optsol(ival).xss_calc = xss;
             optsol(ival).fss_calc = fss;
             pss(xss(2,:)>xss(1,:)) = 2;
-            optsol(ival).pss_calc = pss;
-                        
-
-            
+            optsol(ival).pss_calc = pss;           
         end
     else
         for ival = 1:nval
@@ -85,7 +82,7 @@ if nval>0
             optsol(ival).xss_calc = xss;
             optsol(ival).fss_calc = fss;
             pss(xss(2,:)>xss(1,:)) = 2;
-            optsol(ival).pss = pss;
+            optsol(ival).pss_calc = pss;
         end
     end
 else    
