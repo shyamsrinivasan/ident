@@ -57,6 +57,6 @@ ss_obj_norm = .5*dot(ss_obj,ss_obj);
 var = [x;p;flux;vareps];
 par = [p_usl;ac;wts];
 
-obj = ss_obj_norm + wts(1)*v_norm + wts(2)*x_norm + wts(3)*vareps(1) + wts(4)*vareps(2);
+obj = 100*ss_obj_norm + wts(1)*v_norm + wts(2)*x_norm + wts(3)*vareps(1) + wts(4)*vareps(2);
 
 
