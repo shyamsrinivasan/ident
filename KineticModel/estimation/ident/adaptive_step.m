@@ -3,8 +3,8 @@
 % obj - cas function and not a casadi symbolic object
 % theta_k - value of optimized parameters from previous iteration
 function [theta_step,obj_new,iter] =...
-        adaptive_step(obj_k,theta_k,prob,p_val,fixed_pvalue,delta_alpha,type)
-if nargin<7
+        adaptive_step(obj_k,theta_k,prob,p_val,fixed_pvalue,delta_alpha,freq,type)
+if nargin<8
     type = 1;
 end
 % type = +1 for positive step and -1 for negative step
@@ -48,7 +48,7 @@ xdynfun(xinit,repmat(theta_k,1,npts),new_thetai,repmat(p_val(14:16)',1,npts),.1)
 % add initial value
 x_newval = [xinit x_newval];
 % choose only points present in experimental data
-x_model_newval = x_newval(:,1:100:2001);
+x_model_newval = x_newval(:,freq);
 
 % create nlsqopt objective function
 x_error = (xexp-x_model_newval);
@@ -64,7 +64,7 @@ while obj_diff>=eps && iter<=maxiter
     % add initial value
     x_newval = [xinit x_newval];
     % choose only points present in experimental data
-    x_model_newval = x_newval(:,1:100:2001);
+    x_model_newval = x_newval(:,freq);
 
     % create nlsqopt objective function
     x_error = (xexp-x_model_newval);

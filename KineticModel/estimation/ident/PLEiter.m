@@ -10,6 +10,7 @@ optsol = solve_nlsqopt(prob_cas,xval);
 
 % adpative step in thetai
 [theta_step,obj_new,iter_theta_step] =...
-adaptive_step(optsol.fval,optsol.xval,prob_cas,p_val,thetai_fixed_value,PLE_threshold,type);
+adaptive_step(optsol.fval,optsol.xval,prob_cas,p_val,...
+              thetai_fixed_value,PLE_threshold,setup_opts.freq,type);
     
     
