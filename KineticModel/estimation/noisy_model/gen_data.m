@@ -1,4 +1,4 @@
-% script to generate data (noisy and non-noisy) to be used for analysis 
+% script to generate data (noisy) to be used for analysis 
 % in this git repo estimation and identifiability)
 % generate experimental data - get initial ss
 tspan = 0:0.1:100;
