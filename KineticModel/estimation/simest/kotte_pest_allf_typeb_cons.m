@@ -28,14 +28,6 @@ fx4 = V2max.*x(1:nc:nc*npert) - flux(4:nf:nf*npert).*(x(1:nc:nc*npert)+K2pep);
 fx5 = V4max.*x(1:nc:nc*npert) - flux(5:nf:nf*npert);
 fx6 = d.*x(3:nc:nc*npert)-flux(6:nf:nf*npert);
 
-% nle
-% nlerhs = [];
-% for i = 1:npert
-%     nlerhs = [nlerhs;fx1(i)-fx4(i)-fx5(i);...
-%             fx4(i)-fx3(i);...
-%             fx2(i)-fx6(i)];  
-% end
-      
 % concentration noise cons
 x_noise_lb = x - xexp*(1+vareps(1));
 x_noise_ub = -x + xexp*(1-vareps(1));
@@ -45,12 +37,6 @@ v_noise_lb = flux - vexp*(1+vareps(2));
 v_noise_ub = -flux + vexp*(1-vareps(2));      
 
 cons = [];
-% for i = 1:npert
-%     nlerhs = [fx1(i)-fx4(i)-fx5(i);...
-%               fx4(i)-fx3(i);...
-%               fx2(i)-fx6(i)];  
-%     cons = [cons;nlerhs];            
-% end
 for i = 1:npert
     cons = [cons;fx1(i);fx2(i);fx3(i);fx4(i);fx5(i);fx6(i)];
 end
