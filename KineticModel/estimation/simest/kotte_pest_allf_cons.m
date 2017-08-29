@@ -1,4 +1,4 @@
-function cons =...
+function [cons,ss_con] =...
 kotte_pest_allf_cons(xexp,vexp,nc,nf,npert,x,p,flux,vareps,p_usl,ac)
 
 p_all = [p;p_usl;ac];
@@ -28,13 +28,22 @@ fx4 = V2max.*x(1:nc:nc*npert) - flux(4:nf:nf*npert).*(x(1:nc:nc*npert)+K2pep);
 fx5 = V4max.*x(1:nc:nc*npert) - flux(5:nf:nf*npert);
 fx6 = d.*x(3:nc:nc*npert)-flux(6:nf:nf*npert);
 
-% nle
-% nlerhs = [];
-% for i = 1:npert
-%     nlerhs = [nlerhs;fx1(i)-fx4(i)-fx5(i);...
-%             fx4(i)-fx3(i);...
-%             fx2(i)-fx6(i)];  
-% end
+cons = [];
+% nlae cons
+for i = 1:npert
+    cons = [cons;fx1(i);fx2(i);fx3(i);fx4(i);fx5(i);fx6(i)];
+end
+
+% ss cons
+ss_con = [];
+for i = 1:npert
+    flux_pert = flux(nf*(i-1)+1:nf*i);
+    nlerhs = [flux_pert(1)-flux_pert(4)-flux_pert(5);...
+              flux_pert(4)-flux_pert(3);...
+              flux_pert(2)-flux_pert(6)];  
+    ss_con = [ss_con;nlerhs];
+end
+cons = [cons;ss_con];
       
 % concentration noise cons
 x_noise_lb = x - xexp*(1+vareps(1));
@@ -44,16 +53,6 @@ x_noise_ub = -x + xexp*(1-vareps(1));
 v_noise_lb = flux - vexp*(1+vareps(2));
 v_noise_ub = -flux + vexp*(1-vareps(2));      
 
-cons = [];
-for i = 1:npert
-    nlerhs = [fx1(i)-fx4(i)-fx5(i);...
-              fx4(i)-fx3(i);...
-              fx2(i)-fx6(i)];  
-    cons = [cons;nlerhs];            
-end
-for i = 1:npert
-    cons = [cons;fx1(i);fx2(i);fx3(i);fx4(i);fx5(i);fx6(i)];
-end
 cons = [cons;...
         x_noise_lb;x_noise_ub;...
         v_noise_lb;v_noise_ub];
