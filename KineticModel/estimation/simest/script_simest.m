@@ -15,12 +15,14 @@ xexp = reshape(xexp,[nc*npert,1]);
 vexp = reshape(vexp,[nf*npert,1]);
 
 % sym obj
-[obj,var,par,x,p,flux,vareps,p_usl,ac,wts] =...
+[obj,var,par,x,p,flux,vareps,p_usl,ac,wts,ss_obj] =...
 kotte_pest_allf_typeb_obj(xexp,vexp,nc,nf,npert);
 % sym cons
 cons =...
 kotte_pest_allf_typeb_cons(xexp,vexp,nc,nf,npert,x,p,flux,vareps,p_usl,ac);
 ncons = size(cons,1);
+objfun = casadi.Function('objfun',{var,par},{obj});
+ssobjfun = casadi.Function('objfun',{var,par},{ss_obj});
 consfun = casadi.Function('consfun',{var,par},{cons});
 
 % get parameters
