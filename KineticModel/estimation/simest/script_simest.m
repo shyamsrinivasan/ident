@@ -1,7 +1,7 @@
 % estimationn script - simultaneous ss estimation of fluxes, concenrations
 % and parameters
 % or load pre-calculated data
-load('C:/Users/shyam/Documents/Courses/CHE1125Project/IntegratedModels/KineticModel/estimation/noisy_model/pdata_aug24');
+load('C:/Users/shyam/Documents/Courses/CHE1125Project/IntegratedModels/KineticModel/estimation/noiseless_model/pdata_nn_aug29');
 
 nc = 3;
 nf = 6;
@@ -9,21 +9,22 @@ npert = 4;
 np = 13;
 nvar = nc*npert+np+nf*npert+2;
 
-xexp = exp_sol{1}.xss;
-vexp = exp_sol{1}.fss;
+xexp = exp_sol.xss;
+vexp = exp_sol.fss;
 xexp = reshape(xexp,[nc*npert,1]);
 vexp = reshape(vexp,[nf*npert,1]);
 
 % sym obj
-[obj,var,par,x,p,flux,vareps,p_usl,ac,wts,ss_obj] =...
+[obj,var,par,x,p,flux,vareps,p_usl,ac,wts,sscon] =...
 kotte_pest_allf_typeb_obj(xexp,vexp,nc,nf,npert);
 % sym cons
-cons =...
+[cons] =...
 kotte_pest_allf_typeb_cons(xexp,vexp,nc,nf,npert,x,p,flux,vareps,p_usl,ac);
 ncons = size(cons,1);
 objfun = casadi.Function('objfun',{var,par},{obj});
-ssobjfun = casadi.Function('objfun',{var,par},{ss_obj});
+ssfun = casadi.Function('objfun',{var,par},{sscon});
 consfun = casadi.Function('consfun',{var,par},{cons});
+ssconsfun = casadi.Function('consfun',{var,par},{sscon});
 
 % get parameters
 p0_obj = odep_bkp(1:13)';
@@ -81,12 +82,13 @@ ubg(1:nf*npert) = 0;
 lbg(nf*npert+1:nf*npert+2*nc*npert) = -Inf;
 ubg(nf*npert+1:nf*npert+2*nc*npert) = 0;
 % nl noisy flux cons (<=)
-lbg(nf*npert+2*nc*npert+1:nf*npert+2*nc*npert+2*nf*npert) = -1;
+lbg(nf*npert+2*nc*npert+1:nf*npert+2*nc*npert+2*nf*npert) = -Inf;
 ubg(nf*npert+2*nc*npert+1:nf*npert+2*nc*npert+2*nf*npert) = 0;
 
 estprob = struct('x',var,'f',obj,'g',cons,'p',par);
 options.warn_initial_bounds = 1;
 options.ipopt.fixed_variable_treatment = 'make_constraint';
+options.ipopt.max_iter = 10000;
 solver = casadi.nlpsol('solver','ipopt',estprob,options);
 sol = solver('x0',x0,'p',par_val,'lbx',lb,'ubx',ub,'lbg',lbg,'ubg',ubg);
 optsol_sim.xval = full(sol.x);
@@ -99,15 +101,15 @@ data = struct('nc',nc,'nf',nf,'nflx',nf,'nvar',nvar,'npert',npert,...
               'pscale',scale,'flxid',1);
 % exp_data = exp_sol{1};
 opts.tspan = 0:.1:600;
-[proc_data,exp_data] = recalcss(optsol_sim,noisy_sol{1},[],data,opts);
+[proc_data,exp_data] = recalcss(optsol_sim,no_noise_sol,[],data,opts);
 
 %% figures
-exp_xss = cat(2,noisy_sol{1}.xss);
+exp_xss = cat(2,no_noise_sol.xss);
 pep = [proc_data.opt_xss(1,:)' proc_data.calc_xss(1,:)' exp_xss(1,:)'];
 fdp = [proc_data.opt_xss(2,:)' proc_data.calc_xss(2,:)' exp_xss(2,:)'];
 enz = [proc_data.opt_xss(3,:)' proc_data.calc_xss(3,:)' exp_xss(3,:)'];
 
-exp_fss = cat(2,noisy_sol{1}.fss);
+exp_fss = cat(2,no_noise_sol.fss);
 f1 = [proc_data.opt_fss(1,:)' proc_data.calc_fss(1,:)' exp_fss(1,:)'];
 f3 = [proc_data.opt_fss(3,:)' proc_data.calc_fss(3,:)' exp_fss(3,:)'];
 f4 = [proc_data.opt_fss(4,:)' proc_data.calc_fss(4,:)' exp_fss(4,:)'];
@@ -139,9 +141,9 @@ hf6=figure;
 bar(f4);
 ylabel('v3 a.u.');
 legend('Optimal Value','Calculated Value','Noisy Data');
-bar(f5);
-ylabel('v4 a.u.');
-legend('Optimal Value','Calculated Value','Noisy Data');
+% bar(f5);
+% ylabel('v4 a.u.');
+% legend('Optimal Value','Calculated Value','Noisy Data');
 
 % scatter plots
 hf7 = figure;
@@ -199,75 +201,67 @@ ylabel('Optimal/ODE Sim v3 a.u.');
 legend('Noisy Data Line','Optimal Value','Calculated Value');
 
 %% save figure files
-dir = 'C:\Users\shyam\Documents\Courses\CHE1125Project\Results\estimation\simest\typeb\';
-set(0,'CurrentFigure',hf1);
-fname = 'simest_noisy_pep_aug28';
-print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
-print([dir fname],'-dpng','-r200');
-close(hf1);
-set(0,'CurrentFigure',hf2);
-fname = 'simest_noisy_fdp_aug28';
-print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
-print([dir fname],'-dpng','-r200');
-close(hf2);
-set(0,'CurrentFigure',hf3);
-fname = 'simest_noisy_enz_aug28';
-print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
-print([dir fname],'-dpng','-r200');
-close(hf3);
-set(0,'CurrentFigure',hf4);
-fname = 'simest_noisy_v1_aug28';
-print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
-print([dir fname],'-dpng','-r200');
-close(hf4);
-set(0,'CurrentFigure',hf5);
-fname = 'simest_noisy_v2_aug28';
-print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
-print([dir fname],'-dpng','-r200');
-close(hf5);
-set(0,'CurrentFigure',hf6);
-fname = 'simest_noisy_v3_aug28';
-print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
-print([dir fname],'-dpng','-r200');
-close(hf6);
-set(0,'CurrentFigure',hf7);
-fname = 'simest_noisy_pep_scatter_aug28';
-print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
-print([dir fname],'-dpng','-r200');
-close(hf7);
-set(0,'CurrentFigure',hf8);
-fname = 'simest_noisy_fdp_scatter_aug28';
-print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
-print([dir fname],'-dpng','-r200');
-close(hf8);
-set(0,'CurrentFigure',hf9);
-fname = 'simest_noisy_enz_scatter_aug28';
-print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
-print([dir fname],'-dpng','-r200');
-close(hf9);
-set(0,'CurrentFigure',hf10);
-fname = 'simest_noisy_v1_scatter_aug28';
-print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
-print([dir fname],'-dpng','-r200');
-close(hf10);
-set(0,'CurrentFigure',hf11);
-fname = 'simest_noisy_v2_scatter_aug28';
-print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
-print([dir fname],'-dpng','-r200');
-close(hf11);
-set(0,'CurrentFigure',hf12);
-fname = 'simest_noisy_v3_scatter_aug28';
-print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
-print([dir fname],'-dpng','-r200');
-close(hf12);
-
-
-
-
-
-
-
-
+% dir = 'C:\Users\shyam\Documents\Courses\CHE1125Project\Results\estimation\simest\typeb\';
+% set(0,'CurrentFigure',hf1);
+% fname = 'simest_noisy_pep_aug28';
+% print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
+% print([dir fname],'-dpng','-r200');
+% close(hf1);
+% set(0,'CurrentFigure',hf2);
+% fname = 'simest_noisy_fdp_aug28';
+% print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
+% print([dir fname],'-dpng','-r200');
+% close(hf2);
+% set(0,'CurrentFigure',hf3);
+% fname = 'simest_noisy_enz_aug28';
+% print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
+% print([dir fname],'-dpng','-r200');
+% close(hf3);
+% set(0,'CurrentFigure',hf4);
+% fname = 'simest_noisy_v1_aug28';
+% print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
+% print([dir fname],'-dpng','-r200');
+% close(hf4);
+% set(0,'CurrentFigure',hf5);
+% fname = 'simest_noisy_v2_aug28';
+% print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
+% print([dir fname],'-dpng','-r200');
+% close(hf5);
+% set(0,'CurrentFigure',hf6);
+% fname = 'simest_noisy_v3_aug28';
+% print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
+% print([dir fname],'-dpng','-r200');
+% close(hf6);
+% set(0,'CurrentFigure',hf7);
+% fname = 'simest_noisy_pep_scatter_aug28';
+% print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
+% print([dir fname],'-dpng','-r200');
+% close(hf7);
+% set(0,'CurrentFigure',hf8);
+% fname = 'simest_noisy_fdp_scatter_aug28';
+% print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
+% print([dir fname],'-dpng','-r200');
+% close(hf8);
+% set(0,'CurrentFigure',hf9);
+% fname = 'simest_noisy_enz_scatter_aug28';
+% print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
+% print([dir fname],'-dpng','-r200');
+% close(hf9);
+% set(0,'CurrentFigure',hf10);
+% fname = 'simest_noisy_v1_scatter_aug28';
+% print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
+% print([dir fname],'-dpng','-r200');
+% close(hf10);
+% set(0,'CurrentFigure',hf11);
+% fname = 'simest_noisy_v2_scatter_aug28';
+% print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
+% print([dir fname],'-dpng','-r200');
+% close(hf11);
+% set(0,'CurrentFigure',hf12);
+% fname = 'simest_noisy_v3_scatter_aug28';
+% print([dir fname],'-depsc','-painters','-loose','-tiff','-r200');
+% print([dir fname],'-dpng','-r200');
+% close(hf12);
 
 
 % hfcv = compare_vals(proc_data,noisy_sol{1},[],data,1);
