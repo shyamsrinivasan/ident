@@ -13,7 +13,7 @@ if isfield(data,'ident_idx')
     ident_idx = data.ident_idx;
 end
 
-[ode,~,~,~,x,p_all,ident_c,p_useless,acetate] = casfh(ident_idx);
+[ode,~,~,~,x,p_all,ident_c,p_useless,acetate] = casfh(ident_idx,data.nc,data.nf,data.npert);
 % [ode,~,~,fx,x,p] = kotte_CAS();
 
 % RK4 integrator
