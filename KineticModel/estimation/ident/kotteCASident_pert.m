@@ -31,18 +31,21 @@ V3max = p(12);
 V2max = p(13);   
 ac = p(17);
 
-flux{1} = k1cat.*x(3).*ac./(ac+K1ac);
-flux{2} = vemax.*(1-1./(1+(KeFDP./x(2)).^ne));
-ratio = 1+x(2)./K3fdp;
-flux{3} = V3max.*(ratio-1).*(ratio).^3./...
-            (ratio.^4+L3fdp.*(1+x(1)./K3pep).^(-4));
-flux{4} = V2max.*x(1)./(x(1)+K2pep);  
-flux{5} = V4max.*x(1);
-flux{6} = d.*x(3);
+flux1 = k1cat.*x(3:nc:nc*npert).*ac./(ac+K1ac);
+flux2 = vemax.*(1-1./(1+(KeFDP./x(2:nc:nc*npert)).^ne));
+ratio = 1+x(2:nc:nc*npert)./K3fdp;
+flux3 = V3max.*(ratio-1).*(ratio).^3./...
+            (ratio.^4+L3fdp.*(1+x(1:nc:nc*npert)./K3pep).^(-4));
+flux4 = V2max.*x(1:nc:nc*npert)./(x(1:nc:nc*npert)+K2pep);  
+flux5 = V4max.*x(1:nc:nc*npert);
+flux6 = d.*x(3:nc:nc*npert);
 
-oderhs = [flux{1} - flux{4} - flux{5};...
-          flux{4} - flux{3};...
-          flux{2} - flux{6}];
+oderhs = [];
+for i = 1:npert
+    oderhs = [oderhs;flux1(i) - flux4(i) - flux5(i);...
+                     flux4(i) - flux3(i);...
+                     flux2(i) - flux6(i)];
+end             
 ode = casadi.Function('ode',{x,p_all,ident_c,p_useless,acetate},{oderhs}); 
 
 dfx_sym = [];
