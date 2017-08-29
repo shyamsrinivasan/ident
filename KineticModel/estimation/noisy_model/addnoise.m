@@ -2,14 +2,14 @@
 function [noisy_xss,noisy_fss] = addnoise(x,p)
 
 nvar = size(x,1);
-npar = size(p,1);
-no_noise_flux = zeros(length(kotte_flux_noCAS(x,p(1,:))),npar);
-for i = 1:npar
-    no_noise_flux(:,i) = kotte_flux_noCAS(x,p(i,:));
-end
-nflx = size(no_noise_flux,1);
-
 nsmp = size(x,2);
+% npar = size(p,1);
+% no_noise_flux = zeros(size(kotte_flux_noCAS(x,p(1,:)),1),nsmp);
+% for i = 1:npar
+no_noise_flux = kotte_flux_noCAS(x,p);
+nflx = size(no_noise_flux,1);
+% end
+% nflx = size(no_noise_flux,1);
 
 if nsmp>1    
     pd = makedist('Uniform','lower',-.05,'upper',.05);    
@@ -22,6 +22,7 @@ noisy_xss = x.*(1+met_noise);
 % additive noise on flux
 flux_noise = random(pd,nflx,nsmp);
 noisy_fss = no_noise_flux.*(1+flux_noise);
+% noisy_fss = [];
 
 % nonlinear noise on flux from concentration
 % if npar>1
