@@ -22,6 +22,9 @@ end
 if isfield(data,'tspan')
     tspan = data.tspan;
 end
+if isfield(data,'freq')
+    freq = data.freq;
+end
 npts = length(tspan)-1;
 data.npts = npts;
 
@@ -44,25 +47,12 @@ xdyn_fun(xinit,repmat(p,1,npts),fixed_pvalue,repmat(data.odep(14:16)',1,npts),.1
 % add initial value
 x_sym = [casadi.DM(xinit) x_sym];
 % choose only points present in experimental data
-x_model_sym = x_sym(:,1:100:2001);
+x_model_sym = x_sym(:,freq);
 % create nlsqopt objective function
 x_error = (xexp-x_model_sym);
 obj = .5*dot(x_error,x_error);
 
-lb = zeros(length(p),1);
-ub = zeros(length(p),1);
-ub(1) = 2;
-ub(2) = 2;
-ub(3) = 5;
-ub(4) = 2;
-ub(5) = 2;
-ub(6) = 2;
-ub(7) = 4;
-ub(8) = 4;
-ub(9) = 1;
-ub(10) = 1;
-ub(11) = 2;
-ub(12) = 2;
+[lb,ub] = ident_bounds(length(p));
 
 objfun = []; % casadi.Function('objfun',{x,p,ident_c,p_useless,acetate},{obj});
 
