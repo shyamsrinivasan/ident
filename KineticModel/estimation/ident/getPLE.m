@@ -26,8 +26,8 @@ p0_start = p0;
 if pos_neg==2 || pos_neg==1
     iter_pos = 1;
     pre_chiPLE = chiPLE_pos(1);
-    while iter_pos<=maxiter && pre_chiPLE<=delta_alpha &&...
-                            thetai_fixed_value<=plim(2)    
+    while iter_pos<=maxiter && thetai_fixed_value<=plim(2) &&...
+            pre_chiPLE<=delta_alpha 
 
         [optsol,thetai_fixed_value,theta_step,obj_new] =...
         PLEiter(thetai_fixed_value,theta_step,p0,p_val,delta_alpha,data,1);
@@ -62,8 +62,8 @@ if pos_neg==2 || pos_neg==3
     p0 = p0_start;
     iter_neg = 1;
     pre_chiPLE = chiPLE_neg(1);
-    while iter_neg<=maxiter && pre_chiPLE<=delta_alpha &&...
-                            thetai_fixed_value>=plim(1)    
+    while iter_neg<=maxiter && thetai_fixed_value>=plim(1) &&...
+            pre_chiPLE<=delta_alpha 
 
         [optsol,thetai_fixed_value,theta_step,obj_new] =...
         PLEiter(thetai_fixed_value,theta_step,p0,p_val,delta_alpha,data,-1);
