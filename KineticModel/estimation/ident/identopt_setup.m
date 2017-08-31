@@ -46,16 +46,16 @@ intfun = str2func(intfun);
 x_sym =...
 xdyn_fun(xinit,repmat(p,1,npts),fixed_pvalue,repmat(data.odep(14:16)',1,npts),.1);
 
-y_sym = [sum(x_sym(1:3,:));sum(x_sym(4:6,:));sum(x_sym(7:9,:))];
+y_sym = x_sym; % [sum(x_sym(1:3,:));sum(x_sym(4:6,:));sum(x_sym(7:9,:))];
 % add initial value
-% x_sym = [casadi.DM(xinit) x_sym];
-y_sym = [casadi.DM([sum(xinit(1:3,:));sum(xinit(4:6,:));sum(xinit(7:9,:))]) y_sym];
+y_sym = [casadi.DM(xinit) y_sym];
+% y_sym = [casadi.DM([sum(xinit(1:3,:));sum(xinit(4:6,:));sum(xinit(7:9,:))]) y_sym];
 % choose only points present in experimental data
 % x_model_sym = x_sym(:,freq);
 y_model_sym = y_sym(:,freq);
 % create nlsqopt objective function
 % x_error = (xexp-x_model_sym);
-y_error = (yexp-y_model_sym);
+y_error = (xexp-y_model_sym);
 obj = .5*dot(y_error,y_error);
 
 [lb,ub] = ident_bounds(length(p));
