@@ -31,7 +31,8 @@ p0_obj = odep_bkp(1:13)';
 scale = ones(np,1);
 scale(3) = 1e-6;
 
-weigths = [1;1;1;100];
+% objective weigths
+weigths = [1;1;1;1000];
 p0_const = odep_bkp(14:end)';
 par_val = [p0_const;weigths];
 
