@@ -1,4 +1,4 @@
-function [ode,dfx_sym,D2FX,oderhs,x,p_all,ident_c,p_useless,acetate] =...
+function [ode,flux,D2FX,oderhs,x,p_all,ident_c,p_useless,acetate] =...
         kotteCASident_pert(idx,nc,nf,npert)
 
 x = casadi.SX.sym('x',nc*npert,1);
@@ -40,6 +40,11 @@ flux4 = V2max.*x(1:nc:nc*npert)./(x(1:nc:nc*npert)+K2pep);
 flux5 = V4max.*x(1:nc:nc*npert);
 flux6 = d.*x(3:nc:nc*npert);
 
+fluxeq = [];
+for j = 1:npert
+    fluxeq = [flux1(j);flux2(j);flux3(j);flux4(j);flux5(j);flux6(j)];
+end
+
 oderhs = [];
 for i = 1:npert
     oderhs = [oderhs;flux1(i) - flux4(i) - flux5(i);...
@@ -47,8 +52,10 @@ for i = 1:npert
                      flux2(i) - flux6(i)];
 end             
 ode = casadi.Function('ode',{x,p_all,ident_c,p_useless,acetate},{oderhs}); 
+flux = casadi.Function('flux',{x,p_all,ident_c,p_useless,acetate},...
+                                {fluxeq});
 
-dfx_sym = [];
+% dfx_sym = [];
 D2FX = [];
 
 
