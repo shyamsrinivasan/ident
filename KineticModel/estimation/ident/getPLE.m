@@ -29,7 +29,7 @@ if pos_neg==2 || pos_neg==1
     pre_chiPLE = chiPLE_pos(1);
     while iter_pos<=maxiter && thetai_fixed_value<=plim(2) % &&...
             % pre_chiPLE<=delta_alpha 
-
+        fprintf('\n Positive Perturbation, Iteration # %d of # %d\n',iter_pos,maxiter);
         [optsol,thetai_fixed_value,theta_step,obj_new] =...
         PLEiter(thetai_fixed_value,theta_step,p0,p_val,delta_alpha,data,1);
 
@@ -67,7 +67,7 @@ if pos_neg==2 || pos_neg==3
     pre_chiPLE = chiPLE_neg(1);
     while iter_neg<=maxiter && thetai_fixed_value>=plim(1) % &&...
             % pre_chiPLE<=delta_alpha 
-
+        fprintf('\n Negative Perturbation, Iteration # %d of # %d\n',iter_neg,maxiter);
         [optsol,thetai_fixed_value,theta_step,obj_new] =...
         PLEiter(thetai_fixed_value,theta_step,p0,p_val,delta_alpha,data,-1);
 
