@@ -46,7 +46,7 @@ thetai_fixed_value = .1;
 theta_step = 0;
 
 % loop all the abopve statements for complete identifiability algforithm
-maxiter = 100;
+maxiter = 1000;
 
 % initial value for optimization
 scale = ones(12,1);
