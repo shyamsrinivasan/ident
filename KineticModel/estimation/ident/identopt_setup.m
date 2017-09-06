@@ -58,6 +58,8 @@ y_model_sym = y_sym(:,freq);
 y_error = (xexp-y_model_sym);
 obj = .5*dot(y_error,y_error);
 
+% objfun = casadi.Function('objfun',{xinit,},{obj});
+
 [lb,ub] = ident_bounds(length(p));
 
 objfun = []; % casadi.Function('objfun',{x,p,ident_c,p_useless,acetate},{obj});
