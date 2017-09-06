@@ -27,6 +27,7 @@ xinit = repmat(exp_select_sol.xss(:,end),npert,1);
 
 freq = 1:3000:3001;
 optim_opts = struct('pname','V2max','nc',3,'nf',6,'npert',npert,...
+                    'nunpert',10,...
                     'plim',[0.001 6],...
                     'casmodelfun',@kotteCASident_pert,...
                     'integratorfun','RK4integrator_cas',...
@@ -50,7 +51,7 @@ theta_step = 0;
 maxiter = 1000;
 
 % initial value for optimization
-scale = ones(12,1);
+scale = ones(10,1);
 
 % p0 for K1ac
 % scale(2) = 1e6;
@@ -58,7 +59,7 @@ scale = ones(12,1);
 
 % p0 for k1cat
 scale(3) = 1e6;
-p0 = opts.odep(1:12)'./scale;
+p0 = [opts.odep(1:10)'./scale;repmat(opts.odep(11:12)',npert,1)];
 identobj(p0,.1,optim_opts);
 
 %% call PLE evaluation function
