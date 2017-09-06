@@ -35,7 +35,8 @@ optim_opts = struct('pname','V2max','nc',3,'nf',6,'npert',npert,...
                     'freq',freq,...
                     'x0',xss,...
                     'xinit',xinit,...
-                    'xexp',exp_select_sol.xdyn(:,freq));
+                    'xexp',exp_select_sol.xdyn(:,freq),...
+                    'p_pert',exp_select_sol.p_pert);
 
 % set confidence interval threshold for PLE 
 alpha = .90; % alpha quantile for chi2 distribution
@@ -57,7 +58,8 @@ scale = ones(12,1);
 
 % p0 for k1cat
 scale(3) = 1e6;
-p0 = [opts.odep(1:10)';opts.odep(12:13)']./scale;
+p0 = opts.odep(1:12)'./scale;
+identobj(p0,.1,optim_opts);
 
 %% call PLE evaluation function
 [PLEvals] =...
