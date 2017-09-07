@@ -36,7 +36,7 @@ end
 
 p_unch = xvar(1:nunpert);
 if idx<nunpert
-    p_pert = xvar(nunpert+1:nunpert+3*npert);
+    p_pert = xvar(nunpert+1:end);
     p_all = [p_unch(1:idx-1);ident_c;p_unch(idx:end);odep(end);p_pert];
 elseif idx>nunpert
     p_pert(end-(14-idx):-2:1) = ident_c;
