@@ -25,6 +25,8 @@ npert = length(use_pert);
 % use wt as initial value for all perturbations
 xinit = repmat(exp_select_sol.xss(:,end),npert,1);
 
+
+
 freq = 1:3000:3001;
 optim_opts = struct('pname','V2max','nc',3,'nf',6,'npert',npert,...
                     'nunpert',10,...
@@ -37,7 +39,9 @@ optim_opts = struct('pname','V2max','nc',3,'nf',6,'npert',npert,...
                     'x0',xss,...
                     'xinit',xinit,...
                     'xexp',exp_select_sol.xdyn(:,freq),...
-                    'p_pert',exp_select_sol.p_pert);
+                    'p_pert',exp_select_sol.p_pert,...
+                    'p_pert_logical',exp_select_sol.p_pert_logical,...
+                    'objfun',@identobj);
 
 % set confidence interval threshold for PLE 
 alpha = .90; % alpha quantile for chi2 distribution
@@ -59,8 +63,12 @@ scale = ones(10,1);
 
 % p0 for k1cat
 scale(3) = 1e6;
-p0 = [opts.odep(1:10)'./scale;repmat(opts.odep(11:12)',npert,1)];
-identobj(p0,.1,optim_opts);
+p_unch = opts.odep(1:10)'./scale;
+p_pert = [opts.odep(11:13)';opts.odep(11:13)'];
+p0 = [p_unch;p_pert];
+% identobj(p0,.1,optim_opts);
+
+[prob_struct,data] = identopt_setup_v2(optim_opts,1);
 
 %% call PLE evaluation function
 [PLEvals] =...
