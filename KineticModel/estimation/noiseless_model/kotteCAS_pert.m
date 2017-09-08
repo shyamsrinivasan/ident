@@ -1,4 +1,4 @@
-function [ode,flux,oderhs,fluxeq,x,p_unch,dfx,dfxfun] = kotteCAS_pert(nc,npert)
+function [ode,flux,oderhs,fluxeq,x,p,dfx,dfxfun] = kotteCAS_pert(nc,npert)
 
 x = casadi.SX.sym('x',nc*npert,1);
 p_unch = casadi.SX.sym('p_unch',11,1);
@@ -20,12 +20,12 @@ k1cat = p_pert(1:3:3*npert);
 V3max = p_pert(2:3:3*npert);    
 V2max = p_pert(3:3:3*npert);   
 
-flux1 = k1cat(1:3).*x(3:nc:nc*npert).*ac./(ac+K1ac);
+flux1 = k1cat(1:npert).*x(3:nc:nc*npert).*ac./(ac+K1ac);
 flux2 = vemax.*(1-1./(1+(KeFDP./x(2:nc:nc*npert)).^ne));
 ratio = 1+x(2:nc:nc*npert)./K3fdp;
-flux3 = V3max(1:3).*(ratio-1).*(ratio).^3./...
+flux3 = V3max(1:npert).*(ratio-1).*(ratio).^3./...
             (ratio.^4+L3fdp.*(1+x(1:nc:nc*npert)./K3pep).^(-4));
-flux4 = V2max(1:3).*x(1:nc:nc*npert)./(x(1:nc:nc*npert)+K2pep);  
+flux4 = V2max(1:npert).*x(1:nc:nc*npert)./(x(1:nc:nc*npert)+K2pep);  
 flux5 = V4max.*x(1:nc:nc*npert);
 flux6 = d.*x(3:nc:nc*npert);
 
@@ -40,7 +40,7 @@ for i = 1:npert
                      flux4(i) - flux3(i);...
                      flux2(i) - flux6(i)];
 end   
-p = [p_unch;p_pert];
+p = [p_unch(1:10);p_pert;p_unch(11)];
 
 dfx = jacobian(oderhs,x);
 dfxfun = casadi.Function('dfxfun',{x,p},{dfx});
