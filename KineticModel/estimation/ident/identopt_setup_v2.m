@@ -25,9 +25,9 @@ end
 if isfield(data,'tspan')
     tspan = data.tspan;
 end
-if isfield(data,'freq')
-    freq = data.freq;
-end
+% if isfield(data,'freq')
+%     freq = data.freq;
+% end
 % if isfield(data,'p_pert')
 %     p_pert = data.p_pert;
 % end
