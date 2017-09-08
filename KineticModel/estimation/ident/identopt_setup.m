@@ -18,7 +18,7 @@ if isfield(data,'xinit')
 end
 if isfield(data,'xexp')
     xexp = data.xexp;
-    yexp = [sum(xexp(1:3,:));sum(xexp(4:6,:));sum(xexp(7:9,:))];
+    yexp = xexp;
 end
 if isfield(data,'tspan')
     tspan = data.tspan;
@@ -55,7 +55,7 @@ y_sym = [casadi.DM(xinit) y_sym];
 y_model_sym = y_sym(:,freq);
 % create nlsqopt objective function
 % x_error = (xexp-x_model_sym);
-y_error = (xexp-y_model_sym);
+y_error = (yexp-y_model_sym);
 obj = .5*dot(y_error,y_error);
 
 % objfun = casadi.Function('objfun',{xinit,},{obj});
