@@ -60,18 +60,20 @@ data.np_chang = size(data.p_pert_logical,1);
 
 % objective and bounds
 obj = @(xvar)objfun(xvar,fixed_pvalue,data);
-[lb,ub] = ident_bounds(nvar);
+lb = zeros(nvar,1);
+ub = zeros(nvar,1);
+[lb,ub] = ident_bounds(np_unchg,lb,ub);
 jacfun = [];
 hessfun = [];
 
 % test objfun
-scale = ones(10,1);
-scale(3) = 1e6;
-p_unch = data.odep(1:10)'./scale;
-% p_pert = [data.odep(11)';data.odep(13)';data.odep(11)';data.odep(13)'];
-p_pert = [2;.1;1;1];
-p0 = [p_unch;p_pert];
-objval = obj(p0);
+% scale = ones(10,1);
+% scale(3) = 1e6;
+% p_unch = data.odep(1:10)'./scale;
+% % p_pert = [data.odep(11)';data.odep(13)';data.odep(11)';data.odep(13)'];
+% p_pert = [2;.1;1;1];
+% p0 = [p_unch;p_pert];
+% objval = obj(p0);
 
 prob_struct = struct('objfun',obj,'grad',jacfun,'hess',hessfun,...                
                 'lb',lb,'ub',ub,...
