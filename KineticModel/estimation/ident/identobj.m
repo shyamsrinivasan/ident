@@ -3,9 +3,12 @@ function objfun = identobj(xvar,ident_c,data)
 if isfield(data,'xinit')
     xinit = data.xinit;
 end
+if isfield(data,'freq')
+    freq = data.freq;
+end
 if isfield(data,'xexp')
     xexp = data.xexp;
-    yexp = [sum(xexp(1:3,:));sum(xexp(4:6,:));sum(xexp(7:9,:))];
+%     yexp = [sum(xexp(1:3,:));sum(xexp(4:6,:));sum(xexp(7:9,:))];
 end
 if isfield(data,'ident_idx')
     idx = data.ident_idx;
@@ -27,17 +30,20 @@ end
 if isfield(data,'nunpert')
     nunpert = data.nunpert;
 end
-if isfield(data,'nlaefh')
-    nlaefh = data.nlaefh;
-else
-    nlaefh = @kotteCAS_pert;
-end
+% if isfield(data,'nlaefh')
+%     nlaefh = data.nlaefh;
+% else
+%     nlaefh = @kotteCAS_pert;
+% end
 if isfield(data,'odefh')
     casfh = data.odefh;
 else
     casfh = @kotteCAS_pert;
 end
 
+if ~any(xvar)
+    xvar = ones(length(xvar),1);
+end
 p_unch = xvar(1:nunpert);
 p_pert = xvar(nunpert+1:end);
 p_pert_logical = data.p_pert_logical;
@@ -64,8 +70,9 @@ end
 % ac = data.odep(end);
 % p_all = [xvar(1:idx-1);ident_c;xvar(idx:end);ac;p_pert];
 % dynamic case
-options = struct('grid',tspan,'output_t0',1,'print_stats',1);
+options = struct('grid',tspan,'output_t0',1,'print_stats',0);
 ymodel = solve_model_ode(casfh,nc,npert,xinit,p_all,options);
+ymodel = ymodel(:,freq);
 % ss case
 % ymodel = solve_model_nlae(nlaefh,nc,npert,xinit,p_all);
 yerror = sum(xexp-ymodel,2);
