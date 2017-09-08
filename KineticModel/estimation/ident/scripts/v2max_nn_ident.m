@@ -27,7 +27,7 @@ xinit = repmat(exp_select_sol.xss(:,end),npert,1);
 
 
 
-freq = 1:1:3001;
+freq = 1:200:3001;
 optim_opts = struct('pname','V2max','nc',3,'nf',6,'npert',npert,...
                     'nunpert',10,...
                     'plim',[0.001 6],...
@@ -61,15 +61,27 @@ scale = ones(10,1);
 % scale(2) = 1e6;
 % p0 = opts.odep(2:13)'./scale;
 
-% p0 for k1cat
+% p0 for V2max
 scale(3) = 1e6;
 p_unch = opts.odep(1:10)'./scale;
-p_pert = [opts.odep(11:13)';opts.odep(11:13)'];
+% p_pert = [opts.odep(11:13)';opts.odep(11:13)'];
+p_pert = [2;.1;1;1];
 p0 = [p_unch;p_pert];
-% identobj(p0,.1,optim_opts);
 
 [prob_struct,data] = identopt_setup_v2(optim_opts,1);
-
+% solver_opts = ipoptset('max_cpu_time',1e8);
+opts = optiset('solver','ipopt',...
+              'maxiter',10000,...
+              'maxfeval',500000,...
+              'tolrfun',1e-6,...
+              'tolafun',1e-6,...
+              'display','iter',...
+              'maxtime',3000);  
+% test obj
+objval = prob_struct.objfun(p0);
+prob =...
+opti('obj',prob_struct.objfun,'bounds',prob_struct.lb,prob_struct.ub,'options',opts);  
+[xval,fval,exitflag,info] = solve(prob,p0); 
 %% call PLE evaluation function
 [PLEvals] =...
 getPLE(thetai_fixed_value,theta_step,p0,opts.odep,delta_alpha,optim_opts,maxiter,2);
