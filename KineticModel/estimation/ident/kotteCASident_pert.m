@@ -6,14 +6,8 @@ p_all = casadi.SX.sym('p_all',12,1);
 ident_c = casadi.SX.sym('ident_c',1,1);
 p_useless = casadi.SX.sym('p_useless',3,1);
 acetate = casadi.SX.sym('acetate',1,1);
-% if idx==1
-%     p = [ident_c;p_all];
-% else
-    p = [p_all(1:idx-1);ident_c;p_all(idx:end);p_useless;acetate];
-% end
-% p = [p_all(1:idx-1);ident_c;p_all(idx+1:end)];
-
-flux = cell(6,1);
+% rearrange parameters
+p = [p_all(1:idx-1);ident_c;p_all(idx:end);p_useless;acetate];
 
 % parameters
 K1ac = p(1);    % or 0.02
