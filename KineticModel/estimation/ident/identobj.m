@@ -3,6 +3,10 @@ function objfun = identobj(xvar,ident_c,data)
 if isfield(data,'xinit')
     xinit = data.xinit;
 end
+if isfield(data,'xexp')
+    xexp = data.xexp;
+    yexp = [sum(xexp(1:3,:));sum(xexp(4:6,:));sum(xexp(7:9,:))];
+end
 if isfield(data,'ident_idx')
     idx = data.ident_idx;
 else
@@ -63,6 +67,6 @@ end
 options = struct('grid',tspan,'output_t0',1,'print_stats',1);
 ymodel = solve_model_ode(casfh,nc,npert,xinit,p_all,options);
 % ss case
-ymodel = solve_model_nlae(nlaefh,nc,npert,xinit,p_all);
-yerror = yexpt-ymodel;
+% ymodel = solve_model_nlae(nlaefh,nc,npert,xinit,p_all);
+yerror = sum(xexp-ymodel,2);
 objfun = .5*dot(yerror,yerror);
