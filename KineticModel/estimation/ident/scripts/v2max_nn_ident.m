@@ -18,12 +18,12 @@ end
 %% set PLE options
 % collect only needed perturbations for analysis
 avail_pert = size(no_noise_sol,2);
-use_pert = avail_pert;
+use_pert = 1; % avail_pert;
 npert = length(use_pert);
 [exp_select_sol,no_noise_select_sol] = parseperturbations(no_noise_sol,use_pert);
 
 % use wt as initial value for all perturbations
-xinit = repmat(exp_select_sol.xss(:,end),npert,1);
+xinit = repmat(xss,npert,1);
 
 freq = 1:200:3001;
 optim_opts = struct('pname','V2max','nc',3,'nf',6,'npert',npert,...                    
@@ -35,7 +35,8 @@ optim_opts = struct('pname','V2max','nc',3,'nf',6,'npert',npert,...
                     'freq',freq,...
                     'x0',xss,...
                     'xinit',xinit,...
-                    'xexp',exp_select_sol.xdyn(:,freq));
+                    'xexp',exp_select_sol.xdyn(:,freq),...
+                    'yexp',exp_select_sol.xdyn(1:2,freq));
 
 % set confidence interval threshold for PLE 
 alpha = .90; % alpha quantile for chi2 distribution

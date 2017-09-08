@@ -24,6 +24,11 @@ end
 if isfield(prob,'xexp') 
     xexp = prob.xexp; 
 end
+if isfield(prob,'yexp')
+    yexp = prob.yexp;
+else
+    yexp = xexp;
+end
 
 maxiter = 1000;
 % set threshold delta_alpha for theta_step
@@ -45,14 +50,15 @@ new_thetai = fixed_pvalue+type*theta_step;
 % x_newval is not symbolic class(x_newval) = casadi.DM
 x_newval =...
 xdynfun(xinit,repmat(theta_k,1,npts),new_thetai,repmat(p_val(14:16)',1,npts),.1);
+y_newval = x_newval;
 % add initial value
-x_newval = [xinit x_newval];
+y_newval = [xinit y_newval];
 % choose only points present in experimental data
-x_model_newval = x_newval(:,freq);
+y_model_newval = y_newval(1:2,freq);
 
 % create nlsqopt objective function
-x_error = (xexp-x_model_newval);
-obj_new = full(.5*dot(x_error,x_error));
+y_error = (yexp-y_model_newval);
+obj_new = full(.5*dot(y_error,y_error));
 obj_diff = obj_new-obj_k-q*delta_alpha;
 
 while obj_diff>=eps && iter<=maxiter
@@ -61,14 +67,15 @@ while obj_diff>=eps && iter<=maxiter
     
     x_newval =...
     xdynfun(xinit,repmat(theta_k,1,npts),new_thetai,repmat(p_val(14:16)',1,npts),.1);
+    y_newval = x_newval;
     % add initial value
-    x_newval = [xinit x_newval];
+    y_newval = [xinit y_newval];
     % choose only points present in experimental data
-    x_model_newval = x_newval(:,freq);
+    y_model_newval = y_newval(:,freq);
 
     % create nlsqopt objective function
-    x_error = (xexp-x_model_newval);
-    obj_new = full(.5*dot(x_error,x_error));
+    y_error = (xexp-y_model_newval);
+    obj_new = full(.5*dot(y_error,y_error));
     
     % calculate distance from threshold
     obj_diff = obj_new-obj_k-q*delta_alpha;
