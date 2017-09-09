@@ -42,14 +42,15 @@ optim_opts = struct('pname','V2max','nc',3,'nf',6,'npert',npert,...
 
 % set confidence interval threshold for PLE 
 alpha = .90; % alpha quantile for chi2 distribution
-dof = 1; % degrees of freedom
+dof = 12; % degrees of freedom
 % chi2 alpha quantile
-delta_alpha = chi2inv(alpha,dof);      
+delta_alpha_1 = chi2inv(alpha,1);      
+delta_alpha_all = chi2inv(alpha,dof);
 thetai_fixed_value = .1;
 theta_step = 0;
 
 % loop all the abopve statements for complete identifiability algforithm
-maxiter = 1;
+maxiter = 500;
 
 % initial value for optimization
 scale = ones(12,1);
@@ -65,7 +66,8 @@ p0 = [opts.odep(1:10)';opts.odep(11:12)']./scale;
 %% call PLE evaluation function
 [PLEvals] =...
 getPLE(thetai_fixed_value,theta_step,p0,opts.odep,delta_alpha,optim_opts,maxiter,2);
-                
+
+plotPLE(PLEvals,delta_alpha_1,delta_alpha_all);
 %%    
 
 
