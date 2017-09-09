@@ -3,12 +3,21 @@
 % obj - cas function and not a casadi symbolic object
 % theta_k - value of optimized parameters from previous iteration
 function [theta_step,obj_new,iter] =...
-        adaptive_step(obj_k,theta_k,prob,p_val,fixed_pvalue,delta_alpha,freq,type)
-if nargin<8
+        adaptive_step(obj_k,theta_k,prob,p_val,fixed_pvalue,step_opts,freq)
+
+% type = +1 for positive step and -1 for negative step
+if isfield(step_opts,'type')
+    type = step_opts.type;
+else
     type = 1;
 end
-% type = +1 for positive step and -1 for negative step
-
+if isfield(step_opts,'PLE_threshold')
+    delta_alpha = step_opts.PLE_threshold;
+end
+if isfield(step_opts,'minmax_step')
+    min_step = step_opts.minmax_step(1);
+    max_step = step_opts.minmax_step(2);
+end
 if isfield(prob,'xdynfun')
     xdynfun = prob.xdynfun; 
 end
@@ -87,9 +96,9 @@ while obj_diff>=eps && iter<=maxiter
     iter = iter+1;
 end
 
-% temp fixed step size
-% theta_step = .01;
-
-
-
-
+% lb < theta_step < ub to avoid PL discontinuities
+if theta_step>max_step
+    theta_step = max_step;
+elseif theta_step<min_step
+    theta_step=min_step;
+end   
