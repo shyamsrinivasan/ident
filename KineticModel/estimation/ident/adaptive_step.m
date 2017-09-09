@@ -72,7 +72,7 @@ while obj_diff>=eps && iter<=maxiter
     xdynfun(xinit,repmat(theta_k,1,npts),new_thetai,repmat(p_val(14:16)',1,npts),.1);    
     % add initial value
     x_newval = [xinit x_newval];
-    y_newval = [xinit y_newval];
+    y_newval = [yinit y_newval];
     % choose only points present in experimental data
     y_model_newval = y_newval([1 3 4 5],freq);
 
