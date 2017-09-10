@@ -66,8 +66,9 @@ p0 = [opts.odep(1:10)';opts.odep(12:13)']./scale;
 
 %% call PLE evaluation function
 [PLEvals] =...
-getPLE(thetai_fixed_value,theta_step,p0,opts.odep,delta_alpha,optim_opts,maxiter,2);
-                
+getPLE(thetai_fixed_value,theta_step,p0,opts.odep,delta_alpha_1,optim_opts,maxiter,2);
+
+plotPLE(PLEvals,delta_alpha_1,delta_alpha_all);                
 %%    
 
 
