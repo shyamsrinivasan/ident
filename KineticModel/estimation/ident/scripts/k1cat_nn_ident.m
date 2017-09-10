@@ -18,16 +18,18 @@ end
 %% set PLE options
 % collect only needed perturbations for analysis
 avail_pert = size(no_noise_sol,2);
-use_pert = [1 2 3 avail_pert];
+use_pert = 1;
 npert = length(use_pert);
 [exp_select_sol,no_noise_select_sol] = parseperturbations(no_noise_sol,use_pert);
 
 % use wt as initial value for all perturbations
-xinit = repmat(exp_select_sol.xss(:,end),npert,1);
+xinit = repmat(xss,npert,1);
+yinit = repmat(fss,npert,1);
 
-freq = 1:3000:3001;
-optim_opts = struct('pname','k1cat','nc',3,'nf',6,'npert',npert,...
+freq = [1:50:1500 1501:1500:3001];
+optim_opts = struct('pname','k1cat','nc',3,'nf',6,'npert',npert,...                    
                     'plim',[0.001 6],...
+                    'minmax_step',[1e-6 .4],...
                     'casmodelfun',@kotteCASident_pert,...
                     'integratorfun','RK4integrator_cas',...
                     'odep',odep_bkp,...
@@ -35,18 +37,21 @@ optim_opts = struct('pname','k1cat','nc',3,'nf',6,'npert',npert,...
                     'freq',freq,...
                     'x0',xss,...
                     'xinit',xinit,...
-                    'xexp',exp_select_sol.xdyn(:,freq));
+                    'yinit',yinit,...
+                    'xexp',exp_select_sol.xdyn(:,freq),...
+                    'yexp',exp_select_sol.fdyn([1 3 4 5],freq));
 
 % set confidence interval threshold for PLE 
 alpha = .90; % alpha quantile for chi2 distribution
-dof = 1; % degrees of freedom
+dof = 12; % degrees of freedom
 % chi2 alpha quantile
-delta_alpha = chi2inv(alpha,dof);      
+delta_alpha_1 = chi2inv(alpha,1);      
+delta_alpha_all = chi2inv(alpha,dof);
 thetai_fixed_value = .1;
 theta_step = 0;
 
 % loop all the abopve statements for complete identifiability algforithm
-maxiter = 10;
+maxiter = 1;
 
 % initial value for optimization
 scale = ones(12,1);
