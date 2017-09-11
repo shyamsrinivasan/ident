@@ -1,13 +1,13 @@
-function [ode,dfx_sym,D2FX,oderhs,x,p_all,ident_c,p_useless,acetate] =...
-        kotteCASident(idx,nc)
+function [ode,flux,D2FX,oderhs,x,p_all,p_useless,acetate] =...
+        kotteCASident(nc)
 
 x = casadi.SX.sym('x',nc,1);
-p_all = casadi.SX.sym('p_all',12,1);
-ident_c = casadi.SX.sym('ident_c',1,1);
+p_all = casadi.SX.sym('p_all',13,1);
+% ident_c = casadi.SX.sym('ident_c',1,1);
 p_useless = casadi.SX.sym('p_useless',3,1);
 acetate = casadi.SX.sym('acetate',1,1);
 
-p = [p_all(1:idx-1);ident_c;p_all(idx:end);p_useless;acetate];
+p = [p_all;p_useless;acetate];
 
 flux = cell(6,1);
 
@@ -39,9 +39,10 @@ flux{6} = d.*x(3);
 oderhs = [flux{1} - flux{4} - flux{5};...
           flux{4} - flux{3};...
           flux{2} - flux{6}];
-ode = casadi.Function('ode',{x,p_all,ident_c,p_useless,acetate},{oderhs}); 
+ode = casadi.Function('ode',{x,p_all,p_useless,acetate},{oderhs}); 
 
-dfx_sym = [];
+fluxeq = [flux{1};flux{2};flux{3};flux{4};flux{5};flux{6}];
+flux = casadi.Function('flux',{x,p_all,p_useless,acetate},{fluxeq});
 D2FX = [];
 
 
