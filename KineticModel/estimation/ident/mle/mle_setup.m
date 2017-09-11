@@ -1,14 +1,8 @@
 function prob = mle_setup(data)
 
-if isfield(data,'pname')
-    pname = data.pname;
-end
 if isfield(data,'casmodelfun')
     casfh = data.casmodelfun;
 end
-% if isfield(data,'integratorfun')
-%     intfun = data.integratorfun;
-% end
 if isfield(data,'xinit')
     xinit = data.xinit;
 end
