@@ -1,17 +1,13 @@
 function [ode,dfx_sym,D2FX,oderhs,x,p_all,ident_c,p_useless,acetate] =...
-        kotteCASident(idx)
+        kotteCASident(idx,nc)
 
-x = casadi.SX.sym('x',3,1);
+x = casadi.SX.sym('x',nc,1);
 p_all = casadi.SX.sym('p_all',12,1);
 ident_c = casadi.SX.sym('ident_c',1,1);
 p_useless = casadi.SX.sym('p_useless',3,1);
 acetate = casadi.SX.sym('acetate',1,1);
-% if idx==1
-%     p = [ident_c;p_all];
-% else
-    p = [p_all(1:idx-1);ident_c;p_all(idx:end);p_useless;acetate];
-% end
-% p = [p_all(1:idx-1);ident_c;p_all(idx+1:end)];
+
+p = [p_all(1:idx-1);ident_c;p_all(idx:end);p_useless;acetate];
 
 flux = cell(6,1);
 
