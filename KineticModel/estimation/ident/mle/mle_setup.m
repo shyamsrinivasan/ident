@@ -21,17 +21,14 @@ end
 if isfield(data,'yexp')
     yexp = data.yexp;
 end
+if isfield(data,'y_noise')
+    % measurement noise/error => y ~ N(0,sigma^2);
+    y_noise = data.y_noise;
+else
+    y_noise = ones(size(yexp,1),size(yexp,2));
+%     ynoise(y_noise==1) = .01;
+end
 npts = length(tspan)-1;
-data.npts = npts;
-
-if ~isfield(data,'ident_idx') && ~isempty(pname)    
-    plist = {'K1ac','K3fdp','L3fdp','K3pep','K2pep',...
-            'V4max','k1cat','V3max','V2max'}; 
-    ident_idx = find(strcmpi(plist,pname));    
-    data.ident_idx = ident_idx;
-elseif ~isfield(data,'ident_idx') && isempty(pname)    
-    error('No parameter chosen for identifiability analysis');
-end   
 
 % create CAS function with custom integrator of nlsq opt
 [ode,flux,~,~,x,p_var,p_other,acetate] = casfh(data.nc);
