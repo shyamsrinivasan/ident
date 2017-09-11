@@ -67,9 +67,21 @@ x_sym = [casadi.DM(xinit) x_sym];
 y_sym = [casadi.DM(yinit) y_sym];
 
 y_model_sym = y_sym([1 3 4 5],freq);
-y_error = (yexp-y_model_sym);
-y_error = sum(y_error,2);
-obj = .5*dot(y_error,y_error);
+y_error = (yexp-y_model_sym); % ./y_noise;
+nlsq = y_error.^2;
+% norm_lsq = dot(y_error,y_error);
+% obj = .5*dot(y_error,y_error);
+obj = sum(sum(nlsq,2));
+% norm_lsq = sum(sum((y_error).^2)); % ./y_noise
+% norm_lsq = (y_error./y_noise).^2;
+% norm_lsq = sum(sum(norm_lsq,2));
+% obj = log L = const - 1/2(normalized sum of squared error)
+% obj = norm_lsq;
+
+% working version of objective
+% y_error = (yexp-y_model_sym);
+% y_error = sum(y_error,2);
+% obj = .5*dot(y_error,y_error);
 
 % define obj as function to be used outside casadi implementation of ipopt
 objfun = casadi.Function('objfun',{p_var,p_fixed,x},{obj});
