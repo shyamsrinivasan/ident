@@ -83,7 +83,11 @@ obj = .5*dot(y_error,y_error);
 
 % define obj as function to be used outside casadi implementation of ipopt
 objfun = casadi.Function('objfun',{p_var,p_fixed,x},{obj});
-objfh = @(x)full(objfun(x,data.odep(14:17)',xinit));
+
+% fixed parameters in p_fixed = {'vemax','KeFDP','ne','d','acetate'}
+fixed_p = [data.odep(6:9)';data.odep(17)]; 
+objfh = @(x)full(objfun(x,fixed_p,xinit));
+
 % input for jac fun is same as objfun (function whose jacobian is calculated)
 gradfun = jacobian(objfun); % this generates a function for jacobian
 gradfh = @(x)full(gradfun(x,data.odep(14:17)',xinit));
