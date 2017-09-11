@@ -83,16 +83,16 @@ obj = .5*dot(y_error,y_error);
 
 % define obj as function to be used outside casadi implementation of ipopt
 objfun = casadi.Function('objfun',{p,p_fixed,x},{obj});
+objfh = @(x)full(objfun(x,data.odep(14:17)',xinit));
 % input for jac fun is same as objfun (function whose jacobian is calculated)
 gradfun = jacobian(objfun); % this generates a function for jacobian
+gradfh = @(x)full(gradfun(x,data.odep(14:17)',xinit));
 
-
-% gradfun = casadi.Function('gradfun',{p,p_fixed,x},{grad_obj});
 % bounds for mle estimate of all 13 parameters for given input (acetate)
-[lb,ub] = ident_bounds(length(p));
+[lb,ub] = ident_bounds_mle(length(p));
 hessfun = [];
 
-prob = struct('objfun',objfun,'grad',gradfun,'hess',hessfun,...
+prob = struct('objfun',objfh,'grad',gradfh,'hess',hessfun,...
             'npts',npts,'xinit',xinit,'yinit',yinit,...
             'xexp',xexp,'yexp',yexp,...
             'lb',lb,'ub',ub);
