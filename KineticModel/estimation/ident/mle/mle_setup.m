@@ -32,7 +32,6 @@ npts = length(tspan)-1;
 
 % create CAS function with custom integrator of nlsq opt
 [ode,flux,~,~,x,p_var,p_other,acetate] = casfh(data.nc);
-% [ode,~,~,fx,x,p] = kotte_CAS();
 
 % RK4 integrator
 dt = tspan(end)/npts;
@@ -77,11 +76,12 @@ objfun = casadi.Function('objfun',{p_var,p_fixed,x},{obj});
 
 % fixed parameters in p_fixed = {'vemax','KeFDP','ne','d','acetate'}
 fixed_p = [data.odep(6:9)';data.odep(17)]; 
+% fixed_p = data.odep(17); 
 objfh = @(p)full(objfun(p,fixed_p,xinit));
 
 % input for jac fun is same as objfun (function whose jacobian is calculated)
-gradfun = jacobian(objfun); % this generates a function for jacobian
-gradfh = @(p)full(gradfun(p,fixed_p,xinit));
+gradfun = []; % jacobian(objfun); % this generates a function for jacobian
+gradfh = []; % @(p)full(gradfun(p,fixed_p,xinit));
 
 % bounds for mle estimate of all 13 parameters for given input (acetate)
 [lb,ub] = ident_bounds_mle(length(p_var));
