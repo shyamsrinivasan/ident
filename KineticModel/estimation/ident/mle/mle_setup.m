@@ -31,8 +31,8 @@ npts = length(tspan)-1;
 data.npts = npts;
 
 if ~isfield(data,'ident_idx') && ~isempty(pname)    
-    plist = {'K1ac','K3fdp','L3fdp','K3pep','K2pep','vemax','KeFDP','ne',...
-            'd','V4max','k1cat','V3max','V2max','K1pep','K2fdp','rhoA','acetate'}; 
+    plist = {'K1ac','K3fdp','L3fdp','K3pep','K2pep',...
+            'V4max','k1cat','V3max','V2max','acetate'}; 
     ident_idx = find(strcmpi(plist,pname));    
     data.ident_idx = ident_idx;
 elseif ~isfield(data,'ident_idx') && isempty(pname)    
