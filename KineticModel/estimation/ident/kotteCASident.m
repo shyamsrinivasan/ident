@@ -1,10 +1,10 @@
 function [ode,flux,D2FX,oderhs,x,p_var,p_other,acetate] =...
         kotteCASident(nc)
 
-x = casadi.SX.sym('x',nc,1);
-p_var = casadi.SX.sym('p_all',9,1);
-p_other = casadi.SX.sym('p_other',4,1);
-acetate = casadi.SX.sym('acetate',1,1);
+x = casadi.MX.sym('x',nc,1);
+p_var = casadi.MX.sym('p_all',9,1);
+p_other = casadi.MX.sym('p_other',4,1);
+acetate = casadi.MX.sym('acetate',1,1);
 
 p_all = [p_var;p_other;acetate];
 
