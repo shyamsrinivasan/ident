@@ -6,6 +6,11 @@ end
 if isfield(prob,'p')
     p = prob.p;
 end    
+if isfield(prob,'x')
+    x = prob.x;
+else 
+    x = [];
+end
 if isfield(prob,'lb')
     lb = prob.lb;
 else
@@ -19,8 +24,14 @@ else
 end
 
 % setup nlp
-nlp = struct('x',p,'f',obj);
+if ~isempty(x)
+    nlp = struct('x',p,'p',x,'f',obj);
+else
+    nlp = struct('x',p,'f',obj);
+end
 opts.ipopt.max_iter = 10000;
+opts.ipopt.max_cpu_time = 1.5e6;
+% opts.ipopt.fixed_variable_treatment = 'make_constraint';
 solver = casadi.nlpsol('solver','ipopt',nlp,opts);
 % p0 = opts.odep(2:13)';
 % p0(6) = .1;
