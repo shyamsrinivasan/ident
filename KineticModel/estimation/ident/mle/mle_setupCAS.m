@@ -54,7 +54,7 @@ xdyn_fun = xstate_onepoint.mapaccum('all_samples',npts);
 % intfun = str2func(intfun);
 % [xdyn_fun,~,x,p,ident_c,p_useless,acetate] = intfun(casmodelf,data);
 % p_all = [p(1:ident_idx-1);ident_c;p(ident_idx:end)]; % ;
-p_fixed = [p_other;acetate];
+% p_fixed = [p_other;acetate];
 
 % final symbolic expression to be used during optimization
 % [x_sym,y_sym] =...
@@ -70,14 +70,14 @@ y_model_sym = y_sym([1 3 4 5],freq);
 y_error = (yexp-y_model_sym)./ynoise;
 obj = .5*dot(y_error,y_error);
 
-objfun = casadi.Function('objfun',{p_var,p_fixed,x},{obj});
+% objfun = casadi.Function('objfun',{p_var},{obj});
 
 % bounds for mle estimate of all 13 parameters for given input (acetate)
 [lb,ub] = ident_bounds_mle(length(p_var));
 gradfh = [];
 hessfun = [];
 
-prob = struct('obj',obj,'x',x,'p',p_var,'grad',gradfh,'hess',hessfun,...
+prob = struct('obj',obj,'p',p_var,'grad',gradfh,'hess',hessfun,...
             'npts',npts,'xinit',xinit,'yinit',yinit,...
             'xexp',xexp,'yexp',yexp,...
             'lb',lb,'ub',ub);
