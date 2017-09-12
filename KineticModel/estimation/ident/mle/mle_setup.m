@@ -26,7 +26,7 @@ if isfield(data,'y_noise')
     y_noise = data.y_noise;
 else
     y_noise = ones(size(yexp,1),size(yexp,2));
-%     ynoise(y_noise==1) = .01;
+    ynoise(y_noise==1) = .001;
 end
 npts = length(tspan)-1;
 
@@ -67,11 +67,11 @@ x_sym = [casadi.DM(xinit) x_sym];
 y_sym = [casadi.DM(yinit) y_sym];
 
 y_model_sym = y_sym([1 3 4 5],freq);
-y_error = (yexp-y_model_sym); % ./y_noise;
-nlsq = y_error.^2;
+y_error = (yexp-y_model_sym)./y_noise;
+nlsq = y_error*y_error';
 % norm_lsq = dot(y_error,y_error);
 % obj = .5*dot(y_error,y_error);
-obj = sum(sum(nlsq,2));
+obj = .5*sum(sum(nlsq,2));
 % norm_lsq = sum(sum((y_error).^2)); % ./y_noise
 % norm_lsq = (y_error./y_noise).^2;
 % norm_lsq = sum(sum(norm_lsq,2));
