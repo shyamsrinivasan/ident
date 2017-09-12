@@ -23,9 +23,9 @@ if isfield(data,'yexp')
 end
 if isfield(data,'y_noise')
     % measurement noise/error => y ~ N(0,sigma^2);
-    y_noise = data.y_noise;
+    ynoise = data.ynoise;
 else
-    y_noise = ones(size(yexp,1),size(yexp,2));
+    ynoise = ones(size(yexp,1),size(yexp,2));
 %     y_noise(y_noise==1) = .001;
 end
 npts = length(tspan)-1;
@@ -60,23 +60,23 @@ p_fixed = [p_other;acetate];
 % [x_sym,y_sym] =...
 % xdyn_fun(xinit,repmat(p,1,npts),repmat(data.odep(14:16)',1,npts),.1);
 [x_sym,y_sym] =...
-xdyn_fun(xinit,repmat(p_var,1,npts),repmat(p_other,1,npts),acetate);
+xdyn_fun(xinit,repmat(p_var,1,npts),repmat(data.odep(6:9)',1,npts),data.odep(17));
 
 % add initial value
 x_sym = [casadi.DM(xinit) x_sym];
 y_sym = [casadi.DM(yinit) y_sym];
 
 y_model_sym = y_sym([1 3 4 5],freq);
-y_error = (yexp-y_model_sym)./y_noise;
+y_error = (yexp-y_model_sym)./ynoise;
 obj = .5*dot(y_error,y_error);
 
 % define obj as function to be used outside casadi implementation of ipopt
-objfun = casadi.Function('objfun',{p_var,p_fixed,x},{obj});
+objfun = casadi.Function('objfun',{p_var},{obj});
 
 % fixed parameters in p_fixed = {'vemax','KeFDP','ne','d','acetate'}
 fixed_p = [data.odep(6:9)';data.odep(17)]; 
 % fixed_p = data.odep(17); 
-objfh = @(p)full(objfun(p,fixed_p,xinit));
+objfh = @(p)full(objfun(p));
 
 % input for jac fun is same as objfun (function whose jacobian is calculated)
 gradfun = []; % jacobian(objfun); % this generates a function for jacobian
