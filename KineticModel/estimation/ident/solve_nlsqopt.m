@@ -20,7 +20,7 @@ end
 
 % setup nlp
 nlp = struct('x',p,'f',obj);
-opts.ipopt.max_iter = 5000;
+opts.ipopt.max_iter = 10000;
 solver = casadi.nlpsol('solver','ipopt',nlp,opts);
 % p0 = opts.odep(2:13)';
 % p0(6) = .1;
