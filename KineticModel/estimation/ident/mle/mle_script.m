@@ -46,5 +46,5 @@ scale = ones(9,1);
 scale(3) = 1e6;
 p0 = [odep_bkp(1:5)';odep_bkp(10:13)']./scale;
 
-MLEvals = getMLE(mle_opts,p0,scale);  
-% MLE_no_noise = getMLE_CAS(mle_opts,p0,scale);
+% MLEvals = getMLE(mle_opts,p0,scale);  
+MLE_no_noise = getMLE_CAS(mle_opts,p0,scale);
