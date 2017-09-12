@@ -21,7 +21,7 @@ end
 if isfield(data,'yexp')
     yexp = data.yexp;
 end
-if isfield(data,'y_noise')
+if isfield(data,'ynoise')
     % measurement noise/error => y ~ N(0,sigma^2);
     ynoise = data.ynoise;
 else
@@ -79,8 +79,8 @@ fixed_p = [data.odep(6:9)';data.odep(17)];
 objfh = @(p)full(objfun(p));
 
 % input for jac fun is same as objfun (function whose jacobian is calculated)
-gradfun = []; % jacobian(objfun); % this generates a function for jacobian
-gradfh = []; % @(p)full(gradfun(p,fixed_p,xinit));
+gradfun = jacobian(objfun); % this generates a function for jacobian
+gradfh = @(p)full(gradfun(p));
 
 % bounds for mle estimate of all 13 parameters for given input (acetate)
 [lb,ub] = ident_bounds_mle(length(p_var));
