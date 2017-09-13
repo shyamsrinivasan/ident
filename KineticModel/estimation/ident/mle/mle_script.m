@@ -10,9 +10,9 @@ else
 end
 
 if status == 1    
-    load('C:/Users/shyam/Documents/Courses/CHE1125Project/IntegratedModels/KineticModel/estimation/noisy_model/pdata_sep12');
+    load('C:/Users/shyam/Documents/Courses/CHE1125Project/IntegratedModels/KineticModel/estimation/noisy_model/pdata_sep13');
 elseif status == 2    
-    load('~/Documents/Courses/CHE1125Project/IntegratedModels/KineticModel/estimation/noisy_model/pdata_sep12');    
+    load('~/Documents/Courses/CHE1125Project/IntegratedModels/KineticModel/estimation/noisy_model/pdata_sep13');    
 end
 
 %% collect only needed perturbations for analysis
