@@ -6,6 +6,12 @@ if npert_used<npert
     newsol = sol(use_pert);
     exp_sol.xss = cat(2,newsol.xss);
     exp_sol.fss = cat(2,newsol.fss);
+    if isfield(newsol,'noise_xss')
+        exp_sol.noise_xss = cat(2,newsol.noise_xss);
+    end
+    if isfield(newsol,'noise_fss')
+        exp_sol.noise_fss = cat(2,newsol.noise_fss);
+    end
     p_pert = cat(1,newsol.odep);
     p_wt = repmat(p_pert(end,11:13),npert_used,1);    
     p_pert = p_pert(:,11:13);    
@@ -27,9 +33,15 @@ if npert_used<npert
             newsol(use_pert==npert).xdyn = repmat(wt_xdyn_ss,1,t_freq);
         end        
         exp_sol.xdyn = cat(1,newsol.xdyn);
+        if isfield(newsol,'noise_xdyn')
+            exp_sol.noise_xdyn = cat(1,newsol.noise_xdyn);
+        end
     end
     if isfield(newsol,'fdyn')
         exp_sol.fdyn = cat(1,newsol.fdyn);
+        if isfield(newsol,'noise_fdyn')
+            exp_sol.noise_fdyn = cat(1,newsol.noise_fdyn);
+        end
     end
     exp_sol.exp_pid = cat(2,newsol.exp_pid);
     exp_sol.exp_pval = cat(2,newsol.exp_pval);
