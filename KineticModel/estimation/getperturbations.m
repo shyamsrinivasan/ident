@@ -1,3 +1,5 @@
+% get perturbation data for input perturbations
+% include time course info if getdyndata == 1, 0 default
 function sol = getperturbations(ptopts,fh,opts,sol,getdyndata)
 if nargin<5
     getdyndata = 0;
