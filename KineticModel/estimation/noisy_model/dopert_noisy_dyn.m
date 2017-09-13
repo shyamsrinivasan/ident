@@ -1,10 +1,11 @@
 function [exp_sol_start,noisy_sol_start] =...
-        dopert_noisy_dyn(opts_temp,noisy_xss,noisy_fss,odep_bkp,pt_sol_id,xdyn,fdyn)
+        dopert_noisy_dyn(opts_temp,noisy_xss,noisy_fss,odep_bkp,...
+        pt_sol_id,noisy_xdyn,noisy_fdyn)
 if nargin<7
-    fdyn = [];
+    noisy_fdyn = [];
 end
 if nargin<6
-    xdyn = [];
+    noisy_xdyn = [];
 end
 
 % create optionss structure for parallel loop
@@ -34,6 +35,16 @@ if nstart>10
     parfor ist = 1:nstart 
         xss_temp = noisy_xss(:,ist);
         fss_temp = noisy_fss(:,ist);
+        if ~isempty(noisy_xdyn)
+            xdyn_temp = noisy_xdyn{ist};
+        else
+            xdyn_temp = [];
+        end
+        if ~isempty(noisy_fdyn)
+            fdyn_temp = noisy_fdyn{ist};
+        else
+            fdyn_temp = [];
+        end
 
         opts_temp = options(ist);
         sol = getperturbations(pt_val,@perturb_nonoise,opts_temp,[],1);
@@ -46,15 +57,21 @@ if nstart>10
         for j = 1:length(pt_sol_id)
             noisy_sol(j).xss = noisy_ss(j).xss;
             noisy_sol(j).fss = noisy_ss(j).fss;
+            if isfield(noisy_ss,'xdyn')
+                noisy_sol(j).xdyn = noisy_ss(j).xdyn;                
+            end
+            if isfield(noisy_ss,'fdyn')
+                noisy_sol(j).fdyn = noisy_ss(j).fdyn;
+            end
         end
         % include wt (unperturbed) data
         noisy_sol(j+1).xss = xss_temp;
         noisy_sol(j+1).fss = fss_temp;
-        if ~isempty(xdyn)
-            noisy_sol(j+1).xdyn = xdyn;
+        if ~isempty(xdyn_temp)
+            noisy_sol(j+1).xdyn = xdyn_temp;
         end
-        if ~isempty(fdyn)
-            noisy_sol(j+1).fdyn = fdyn;
+        if ~isempty(fdyn_temp)
+            noisy_sol(j+1).fdyn = fdyn_temp;
         end
         noisy_sol(j+1).exp_pid = 0;
         noisy_sol(j+1).exp_pval = 0;
@@ -76,6 +93,16 @@ else
     for ist = 1:nstart 
         xss_temp = noisy_xss(:,ist);
         fss_temp = noisy_fss(:,ist);
+        if ~isempty(noisy_xdyn)
+            xdyn_temp = noisy_xdyn{ist};
+        else
+            xdyn_temp = [];
+        end
+        if ~isempty(noisy_fdyn)
+            fdyn_temp = noisy_fdyn{ist};
+        else
+            fdyn_temp = [];
+        end
 
         opts_temp = options(ist);
         sol = getperturbations(pt_val,@perturb_nonoise,opts_temp,[],1);
@@ -88,15 +115,21 @@ else
         for j = 1:length(pt_sol_id)
             noisy_sol(j).xss = noisy_ss(j).xss;
             noisy_sol(j).fss = noisy_ss(j).fss;
+            if isfield(noisy_ss,'xdyn')
+                noisy_sol(j).xdyn = noisy_ss(j).xdyn;                
+            end
+            if isfield(noisy_ss,'fdyn')
+                noisy_sol(j).fdyn = noisy_ss(j).fdyn;
+            end
         end
         % include wt (unperturbed) data
         noisy_sol(j+1).xss = xss_temp;
         noisy_sol(j+1).fss = fss_temp;
-        if ~isempty(xdyn)
-            noisy_sol(j+1).xdyn = xdyn;
+        if ~isempty(xdyn_temp)
+            noisy_sol(j+1).xdyn = xdyn_temp;
         end
-        if ~isempty(fdyn)
-            noisy_sol(j+1).fdyn = fdyn;
+        if ~isempty(fdyn_temp)
+            noisy_sol(j+1).fdyn = fdyn_temp;
         end
         noisy_sol(j+1).exp_pid = 0;
         noisy_sol(j+1).exp_pval = 0;
