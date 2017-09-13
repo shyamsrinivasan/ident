@@ -52,7 +52,7 @@ thetai_fixed_value = MLE_noisy.mle_pval(11);
 theta_step = 0;
 
 % loop all the abopve statements for complete identifiability algforithm
-maxiter = 1000;
+maxiter = 30;
 
 % initial value for optimization
 scale = ones(8,1);
@@ -69,7 +69,7 @@ p0 = [opts.odep(1:5)';opts.odep(10);opts.odep(12:13)']./scale;
 pos_neg = [1 3];
 nid = length(pos_neg);
 PLEvals = cell(nid,1);
-parfor id = 1:nid
+for id = 1:1 % nid
     PLEvals{id} =...
     getPLE(thetai_fixed_value,theta_step,p0,opts.odep,...
            delta_alpha_1,optim_opts,maxiter,pos_neg(id));
