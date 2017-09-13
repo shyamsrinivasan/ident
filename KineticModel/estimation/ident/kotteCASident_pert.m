@@ -1,11 +1,11 @@
 function [ode,flux,D2FX,oderhs,x,p_var,p_ident,p_fixed,acetate] =...
         kotteCASident_pert(idx,nc,nf,npert)
 
-x = casadi.SX.sym('x',nc*npert,1);
-p_var = casadi.SX.sym('p_var',8,1);
-p_ident = casadi.SX.sym('p_ident',1,1);
-p_fixed = casadi.SX.sym('p_fixed',4,1);
-acetate = casadi.SX.sym('acetate',1,1);
+x = casadi.MX.sym('x',nc*npert,1);
+p_var = casadi.MX.sym('p_var',8,1);
+p_ident = casadi.MX.sym('p_ident',1,1);
+p_fixed = casadi.MX.sym('p_fixed',4,1);
+acetate = casadi.MX.sym('acetate',1,1);
 % rearrange parameters
 p = [p_var(1:idx-1);p_ident;p_var(idx:end);p_fixed;acetate];
 
