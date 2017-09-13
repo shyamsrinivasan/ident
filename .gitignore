@@ -4,3 +4,5 @@
 *.log
 # syntec files (from tex)
 *.gz
+# asv binary files from matlab
+*.asv
