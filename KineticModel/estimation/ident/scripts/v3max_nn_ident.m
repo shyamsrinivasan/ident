@@ -48,7 +48,7 @@ dof = 12; % degrees of freedom
 % chi2 alpha quantile
 delta_alpha_1 = chi2inv(alpha,1);      
 delta_alpha_all = chi2inv(alpha,dof);
-thetai_fixed_value = MLE_no_noise.mle_pval(13);
+thetai_fixed_value = MLE_no_noise.mle_pval(12);
 theta_step = 0;
 
 % loop all the abopve statements for complete identifiability algforithm
