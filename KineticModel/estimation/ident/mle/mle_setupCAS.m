@@ -70,14 +70,14 @@ y_model_sym = y_sym([1 3 4 5],freq);
 y_error = (yexp-y_model_sym)./ynoise;
 obj = .5*dot(y_error,y_error);
 
-% objfun = casadi.Function('objfun',{p_var},{obj});
+objfun = casadi.Function('objfun',{p_var},{obj});
 
 % bounds for mle estimate of all 13 parameters for given input (acetate)
 [lb,ub] = ident_bounds_mle(length(p_var));
 gradfh = [];
 hessfun = [];
 
-prob = struct('obj',obj,'p',p_var,'grad',gradfh,'hess',hessfun,...
+prob = struct('obj',obj,'objfun',objfun,'p',p_var,'grad',gradfh,'hess',hessfun,...
             'npts',npts,'xinit',xinit,'yinit',yinit,...
             'xexp',xexp,'yexp',yexp,...
             'lb',lb,'ub',ub);
