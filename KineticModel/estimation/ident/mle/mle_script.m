@@ -22,8 +22,8 @@ npert = length(use_pert);
 [exp_select_sol,noisy_select_sol] = parseperturbations(noisy_sol{1},use_pert);
 
 % use wt as initial value for all perturbations
-xinit = repmat(noisy_xss,npert,1);
-yinit = repmat(noisy_fss,npert,1);
+xinit = repmat(noisy_xss(:,1),npert,1);
+yinit = repmat(noisy_fss(:,1),npert,1);
 
 freq = [1:50:1500 1501:1500:3001];
 pd = makedist('Normal','mu',0,'sigma',.05);
