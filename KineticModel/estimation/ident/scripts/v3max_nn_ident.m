@@ -29,7 +29,7 @@ yinit = repmat(fss,npert,1);
 freq = [1:50:1500 1501:1500:3001];
 optim_opts = struct('pname','V3max','nc',3,'nf',6,'npert',npert,...                    
                     'plim',[0.001 6],...
-                    'minmax_step',[1e-6 .4],...
+                    'minmax_step',[1e-6 .2],...
                     'casmodelfun',@kotteCASident_pert,...
                     'integratorfun','RK4integrator_cas',...
                     'odep',odep_bkp,...
@@ -39,7 +39,8 @@ optim_opts = struct('pname','V3max','nc',3,'nf',6,'npert',npert,...
                     'xinit',xinit,...
                     'yinit',yinit,...
                     'xexp',exp_select_sol.xdyn(:,freq),...
-                    'yexp',exp_select_sol.fdyn([1 3 4 5],freq));
+                    'yexp',exp_select_sol.fdyn([1 3 4 5],freq)); % ,...
+%                     'ynoise',ynoise);
 
 % set confidence interval threshold for PLE 
 alpha = .90; % alpha quantile for chi2 distribution
@@ -47,14 +48,14 @@ dof = 12; % degrees of freedom
 % chi2 alpha quantile
 delta_alpha_1 = chi2inv(alpha,1);      
 delta_alpha_all = chi2inv(alpha,dof);
-thetai_fixed_value = .1;
+thetai_fixed_value = MLE_no_noise.mle_pval(13);
 theta_step = 0;
 
 % loop all the abopve statements for complete identifiability algforithm
 maxiter = 1000;
 
 % initial value for optimization
-scale = ones(12,1);
+scale = ones(8,1);
 
 % p0 for K1ac
 % scale(2) = 1e6;
@@ -62,19 +63,19 @@ scale = ones(12,1);
 
 % p0 for k1cat
 scale(3) = 1e6;
-p0 = [opts.odep(1:10)';opts.odep(11)';opts.odep(13)']./scale;
+p0 = [opts.odep(1:5)';opts.odep(10:11)';opts.odep(13)']./scale;
 
 %% call PLE evaluation function
 pos_neg = [1 3];
 nid = length(pos_neg);
 PLEvals = cell(nid,1);
-% for id = 1:nid
+parfor id = 1:nid
     PLEvals{id} =...
     getPLE(thetai_fixed_value,theta_step,p0,opts.odep,...
-           delta_alpha_1,optim_opts,maxiter,2);
+           delta_alpha_1,optim_opts,maxiter,pos_neg(id));
 
-    plotPLE(PLEvals{id},delta_alpha_1,delta_alpha_all);                
-% end
+%     plotPLE(PLEvals{id},delta_alpha_1,delta_alpha_all);                
+end
 %%    
 
 
