@@ -9,7 +9,7 @@ ival_bkp = opts.x0;
 odep_bkp = opts.odep;
 
 % generate nsmp samples by adding random noise to ss values
-nsmp = 100;
+nsmp = 11;
 [noisy_xss,noisy_fss] = addnoise(repmat(xss,1,nsmp),odep_bkp);
 
 % perturb system from noisy initial conditions
