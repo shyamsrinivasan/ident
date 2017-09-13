@@ -26,8 +26,9 @@ xinit = repmat(noisy_xss(:,1),npert,1);
 yinit = repmat(noisy_fss(:,1),npert,1);
 
 freq = [1:50:1500 1501:1500:3001];
-pd = makedist('Normal','mu',0,'sigma',.05);
-ynoise = random(pd,4,length(freq));
+% pd = makedist('Normal','mu',0,'sigma',.05);
+% ynoise = random(pd,4,length(freq));
+ynoise = exp_select_sol.noise_fdyn([1 3 4 5],freq);
 
 mle_opts = struct('nc',3,'nf',6,'npert',npert,...                  
                   'casmodelfun',@kotteCASident,...
