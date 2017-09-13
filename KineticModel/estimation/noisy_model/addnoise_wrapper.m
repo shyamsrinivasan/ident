@@ -13,11 +13,11 @@ for j = 1:nptsol
     if isfield(solstruct,'xdyn')
         [noisy_xdyn,~,noise] = addnoise(solstruct(pt_sol_id(j)).xdyn);
         noisy_ss(j).xdyn = noisy_xdyn;
-        noisy_ss(j).xdyn_noise = noise;
+        noisy_ss(j).xdyn_noise = noise.x;
     end
     if isfield(solstruct,'fdyn')
         [~,noisy_fdyn,noise] = addnoise([],solstruct(pt_sol_id(j)).fdyn);
         noisy_ss(j).fdyn = noisy_fdyn;
-        noisy_ss(j).fdyn_noise = noise;
+        noisy_ss(j).fdyn_noise = noise.f;
     end
 end
