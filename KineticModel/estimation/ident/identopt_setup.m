@@ -30,8 +30,8 @@ end
 if isfield(data,'ynoise_var')
     % measurement noise/error => y ~ N(0,sigma^2);
     ynoise_var = data.ynoise_var;
-else
-    ynoise_var = ones(size(yexp,1),size(yexp,2));
+% else
+%     ynoise_var = ones(size(yexp,1),size(yexp,2));
 %     y_noise(y_noise==1) = ;
 end
 if isfield(data,'tspan')
