@@ -74,8 +74,8 @@ y_sym = [casadi.DM(yinit) y_sym];
 y_model_sym = y_sym([1 3 4 5],freq);
 % create nlsqopt objective function
 % x_error = (xexp-x_model_sym);
-y_error = (yexp-y_model_sym)./ynoise;
-obj = .5*dot(y_error,y_error);
+y_error = ((yexp-y_model_sym).^2)./ynoise;
+obj = .5*sum(sum(y_error));
 
 objfun = casadi.Function('objfun',{p_var},{obj});
 
