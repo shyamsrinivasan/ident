@@ -21,11 +21,11 @@ end
 if isfield(data,'yexp')
     yexp = data.yexp;
 end
-if isfield(data,'ynoise')
+if isfield(data,'ynoise_var')
     % measurement noise/error => y ~ N(0,sigma^2);
-    ynoise = data.ynoise;
-else
-    ynoise = ones(size(yexp,1),size(yexp,2));
+    ynoise_var = data.ynoise_var;
+% else
+%     ynoise_var = ones(size(yexp,1),size(yexp,2));
 %     y_noise(y_noise==1) = ;
 end
 npts = length(tspan)-1;
@@ -67,8 +67,8 @@ x_sym = [casadi.DM(xinit) x_sym];
 y_sym = [casadi.DM(yinit) y_sym];
 
 y_model_sym = y_sym([1 3 4 5],freq);
-y_error = (yexp-y_model_sym)./ynoise;
-obj = .5*dot(y_error,y_error);
+y_error = ((yexp-y_model_sym).^2)./ynoise_var;
+obj = .5*sum(sum(y_error));
 
 objfun = casadi.Function('objfun',{p_var},{obj});
 
