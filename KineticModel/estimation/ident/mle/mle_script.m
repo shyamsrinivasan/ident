@@ -30,7 +30,7 @@ freq = [1:50:1500 1501:1500:3001];
 % ynoise = random(pd,4,length(freq));
 % ynoise = exp_select_sol.noise_fdyn([1 3 4 5],freq);
 ynoise_var = .01;
-logL_const = -length(freq)/(2*sum(log(ynoise_var)));
+logL_const = -length(freq)/2*sum(log(ynoise_var));
 
 mle_opts = struct('nc',3,'nf',6,'npert',npert,...                  
                   'casmodelfun',@kotteCASident,...
