@@ -27,11 +27,11 @@ if isfield(data,'yexp')
 else
     yexp = xexp;
 end
-if isfield(data,'ynoise')
+if isfield(data,'ynoise_var')
     % measurement noise/error => y ~ N(0,sigma^2);
-    ynoise = data.ynoise;
+    ynoise_var = data.ynoise_var;
 else
-    ynoise = ones(size(yexp,1),size(yexp,2));
+    ynoise_var = ones(size(yexp,1),size(yexp,2));
 %     y_noise(y_noise==1) = ;
 end
 if isfield(data,'tspan')
@@ -74,8 +74,8 @@ y_sym = [casadi.DM(yinit) y_sym];
 y_model_sym = y_sym([1 3 4 5],freq);
 % create nlsqopt objective function
 % x_error = (xexp-x_model_sym);
-y_error = ((yexp-y_model_sym).^2)./ynoise;
-obj = .5*sum(sum(y_error));
+y_error = ((yexp-y_model_sym).^2)./ynoise_var;
+obj = sum(sum(y_error));
 
 objfun = casadi.Function('objfun',{p_var},{obj});
 
