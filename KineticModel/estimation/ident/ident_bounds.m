@@ -7,8 +7,8 @@ if nargin<2
 end
 
 % k1cat - PLE
-lb(:) = .01;
-lb(3) = 1;
+lb(:) = .05;
+lb(3) = 2;
 lb(6) = .05;
 lb(7) = .1;
 lb(8) = .1;
