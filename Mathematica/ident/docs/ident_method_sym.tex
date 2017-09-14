@@ -1,0 +1,77 @@
+\documentclass[10pt]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{array}
+\usepackage{tabu}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage[space]{grffile}
+\usepackage{subfigure}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage[margin=1.0in]{geometry}
+\renewcommand{\baselinestretch}{2.0}
+
+%\usepackage[font=small,labelfont=bf,labelsep=period]{caption}
+\usepackage[style=authoryear,sorting=nyt,url=false,isbn=false,doi=false,firstinits=true,backend=biber]{biblatex}
+
+\renewcommand{\baselinestretch}{2.0}
+\renewcommand*\contentsname{Table of Contents}
+%\captionsetup{font={stretch=2.0}}
+
+\DeclareNameAlias{default}{last-first}
+
+\DefineBibliographyStrings{english}{%
+	andothers = {\addcomma\addspace\textsc{et\addabbrvspace al}\adddot},
+	and = {\textsc{and}}
+}
+\renewcommand*{\labelnamepunct}{\space\space}
+
+\renewbibmacro{in:}
+{%
+	\ifentrytype{article}{%
+	}{%
+		\printtext{\bibstring{in}\intitlepunct}%
+	}%
+}
+\renewbibmacro*{volume+number}{%
+	\printfield{volume}%
+	\setunit*{\addcomma\space}%
+	\printfield{number}%
+	\setunit{\addcomma\space}}
+
+\DeclareFieldFormat{pages}{#1}
+
+\renewbibmacro*{publisher+location+date}{%
+	\printlist{publisher}%
+	\setunit*{\addcomma\space}%
+	\printlist{location}%
+	\setunit*{\addcomma\space}%
+	\usebibmacro{date}%
+	\newunit}
+
+\renewcommand{\newunitpunct}{\addcomma\space}
+\DeclareFieldFormat[article,inbook,incollection,inproceedings,patent,thesis,unpublished]{title}{#1} 
+\DeclareFieldFormat{year}{#1} 
+
+\addbibresource{refs/ident_refs.bib}
+
+\begin{document}
+	\section{Introduction:}
+	\subsection{A method to establish posterior identifiability of metabolic network models:}
+	This document details a method to establish the practical (posterior) identifiability of metabolic network models using the algebraic relationship between fluxes.
+	Every flux, $v$, in a kinetic model of a metabolic network can be expressed as a nonlinear algebraic equation (Equation \ref{eq:flux_gen}). The fluxes are expressed as a function of the metabolite concentrations $x$ and the kinetic parameters $\theta$ in Equation (\ref{eq:flux_gen}).
+	\begin{align}\label{eq:flux_gen}
+	v = f(\mathbf{x},\mathbf{\theta})
+	\end{align}
+	Given the nonlinear nature of this model, the function $f$ in Equation (\ref{eq:flux_gen}) can expressed, without loss of generality as,
+	\begin{align}\label{eq:nr_dr}
+	v = \frac{N(\mathbf{x},\theta)}{D(\mathbf{x},\theta)}
+	\end{align}
+	where $N(\mathbf{x},\theta)$ is the numerator of $f$, and $D(\mathbf{x},\theta)$ is the denominator of $f$.
+	
+	If $\theta \in \mathbb{R}^p$, given a set of experimental measurements for the metabolite concentrations $\mathbf{x}$ and the reaction fluxes $\mathbf{v}$, theoretically, it is possible to choose $p$ sets of data from these measurements to solve for the $p$ parameters in $\theta$. However, if any these datasets do not satisfy the condition that $D(\mathbf{x},\theta) \neq 0$, then the number of experiments required to estimate the $p$ parameters in $\theta$ can be established to be greater than $p$. An example is shown below.
+	
+	This analysis can be performed for each flux in a metabolic network independent of all the other fluxes. This enables this method to be scalable to even genome-scale models.
+\end{document}
