@@ -42,8 +42,11 @@ if pos_neg==2 || pos_neg==1
         xPLE_pos(:,iter_pos) = optsol.xval;
         thetai_inc_pos(iter_pos) = thetai_fixed_value;
         thetai_step_pos(iter_pos) = theta_step;
-        pos_info(iter_pos).info = optsol.info;
-
+        % all info fields
+        f_names = fieldnames(optsol.info);
+        for jname = 1:length(f_names)
+            pos_info(iter_pos).(f_names{jname}) = optsol.info.(f_names{jname});
+        end
         pre_chiPLE = optsol.fval;    
         iter_pos = iter_pos+1;
     end
@@ -80,8 +83,10 @@ if pos_neg==2 || pos_neg==3
         xPLE_neg(:,iter_neg) = optsol.xval;
         thetai_inc_neg(iter_neg) = thetai_fixed_value;
         thetai_step_neg(iter_neg) = theta_step;
-        neg_info(iter_neg).info = optsol.info;
-
+        f_names = fieldnames(optsol.info);
+        for jname = 1:length(f_names)
+            neg_info(iter_pos).(f_names{jname}) = optsol.info.(f_names{jname});
+        end
         pre_chiPLE = optsol.fval;    
         iter_neg = iter_neg+1;
     end
