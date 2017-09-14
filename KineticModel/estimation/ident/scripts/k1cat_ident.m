@@ -26,7 +26,7 @@ end
 xinit = repmat(noisy_xss(:,1),npert,1);
 yinit = repmat(noisy_fss(:,1),npert,1);
 
-freq = [1:50:1500 1501:1500:3001];
+freq = 1:1:3001;
 ynoise_var = .01;
 
 optim_opts = struct('pname','k1cat','nc',3,'nf',6,'npert',npert,...                    
@@ -54,14 +54,10 @@ thetai_fixed_value = MLE_noisy.mle_pval(11);
 theta_step = 0;
 
 % loop all the abopve statements for complete identifiability algforithm
-maxiter = 5;
+maxiter = 1000;
 
 % initial value for optimization
 scale = ones(8,1);
-
-% p0 for K1ac
-% scale(2) = 1e6;
-% p0 = opts.odep(2:13)'./scale;
 
 % p0 for k1cat
 scale(3) = 1e6;
@@ -71,16 +67,14 @@ p0 = [opts.odep(1:5)';opts.odep(10);opts.odep(12:13)']./scale;
 pos_neg = [1 3];
 nid = length(pos_neg);
 PLEvals = cell(nid,1);
-for id = 1:nid
+parfor id = 1:nid
     PLEvals{id} =...
     getPLE(thetai_fixed_value,theta_step,p0,opts.odep,...
-           delta_alpha_1,optim_opts,maxiter,pos_neg(id));
-
-%     plotPLE(PLEvals{id},delta_alpha_1,delta_alpha_all);                
+           delta_alpha_1,optim_opts,maxiter,pos_neg(id));             
 end
 
-%% collect data from parallel estimation
+%% collect data and plot from parallel estimation
 PLE_unify = unifyPLEres(PLEvals);
-
+plotPLE(PLE_unify,delta_alpha_1,delta_alpha_all);  
 
 
