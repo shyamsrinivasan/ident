@@ -25,14 +25,16 @@ if __name__=='__main__':
 
     y0 = np.array([5, 1, 1])
     cvode_options = ['Newton', 'Adams', 1e-6, 1e-6, 100]
+    ode_par_val = np.array([.1, .1, 4e6, .1, .3, 1.1, .45, 2, .25, .2, 1, 1, 1, 1])
+    cvode_options.append(ode_par_val)
 
-    time, y_dynamic = run_example(kotte_ode, y0, cvode_options, 50)[:2]
+    time, y_dynamic = run_example(kotte_ode, y0, cvode_options, 100)[:2]
 
     # get flux data for all dynamic concentrations in y_dynamic
-    par_val = np.array([.1, .1, 4e6, .1, .3, 1.1, .45, 2, .25, .2, 1, 1, 1, .1])
+    # par_val = np.array([.1, .1, 4e6, .1, .3, 1.1, .45, 2, .25, .2, 1, 1, 1, .1])
 
     # plot dynamic flux data
-    flux_function = lambda x: kotte_flux(x, par_val)
+    flux_function = lambda x: kotte_flux(x, ode_par_val)
     flux_dynamic = map(flux_function, y_dynamic)
     plt.plot(time, flux_dynamic, color="b")
     plt.show()
