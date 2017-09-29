@@ -2,10 +2,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 # define rhs function - defined in kotte_model.py
-from kotte_model import kotte_ode
-from kotte_model import kotte_flux
-from kotte_model import kotte_ck_ode
-from kotte_model import kotte_ck_flux
+from kotte_model import *
 from simulate_ode import simulate_ode
 
 
