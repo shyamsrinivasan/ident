@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     19152,        629]
-NotebookOptionsPosition[     18004,        584]
-NotebookOutlinePosition[     18495,        604]
-CellTagsIndexPosition[     18452,        601]
+NotebookDataLength[     22196,        715]
+NotebookOptionsPosition[     21005,        669]
+NotebookOutlinePosition[     21497,        689]
+CellTagsIndexPosition[     21454,        686]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -453,6 +453,11 @@ Cell[BoxData[
    RowBox[{
    "3", " ", "sets", " ", "of", " ", "experimental", " ", "data", " ", "for", 
     " ", "v3"}], "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "symbolic", " ", "expression", " ", "is", " ", "too", " ", "complicated", 
+    " ", "to", " ", "get", " ", "closed", " ", "form", " ", "solutions", " ", 
+    "for", " ", "parameters"}], " ", "*)"}], "\[IndentingNewLine]", 
   RowBox[{
    RowBox[{
     RowBox[{"met", "=", 
@@ -576,14 +581,94 @@ Cell[BoxData[
      "]"}], ";"}], "\[IndentingNewLine]"}]}]], "Input",
  CellChangeTimes->{{3.71439000000187*^9, 3.7143900478425684`*^9}, {
   3.71439092106979*^9, 3.714391201037572*^9}, {3.7144009143449326`*^9, 
-  3.7144011101751337`*^9}}],
+  3.7144011101751337`*^9}, {3.715773947529896*^9, 3.7157739673076997`*^9}}],
 
 Cell[BoxData["$Aborted"], "Output",
  CellChangeTimes->{3.7144009010141697`*^9, 3.714410180559769*^9}]
-}, Open  ]]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "3", " ", "sets", " ", "of", " ", "experimental", " ", "data", " ", "for", 
+    " ", "v3", " ", "using", " ", "convenience", " ", "kinetics"}], " ", 
+   "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{"expression", " ", "taken", " ", "from", " ", "sympy"}], " ", "-",
+     " ", 
+    RowBox[{
+    "cross", " ", "checking", " ", "with", " ", "mathematica", " ", "on", " ",
+      "home", " ", "desktop"}]}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"met", " ", "=", " ", 
+     RowBox[{"{", 
+      RowBox[{"x11", ",", "x12", ",", "x21", ",", "x22"}], "}"}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"flux", "=", 
+     RowBox[{"{", 
+      RowBox[{"v31", ",", "v32"}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"parameters", "=", 
+     RowBox[{"{", 
+      RowBox[{"V3max", ",", "K3fdp", ",", "K3pep"}], "}"}]}], ";"}], 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"reg1", "=", 
+     RowBox[{"1", "/", 
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        RowBox[{"K3pep", "/", "x11"}]}], ")"}]}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"reg2", "=", 
+     RowBox[{"1", "/", 
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        RowBox[{"K3pep", "/", "x12"}]}], ")"}]}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"fdpsat1", "=", 
+     RowBox[{"x21", "/", "K3fdp"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"fdpsat2", "=", 
+     RowBox[{"x22", "/", "K3fdp"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"flux31", ":=", 
+     RowBox[{
+      RowBox[{"v31", "-", 
+       RowBox[{"reg1", "*", "V3max", "*", 
+        RowBox[{"fdpsat1", "/", 
+         RowBox[{"(", 
+          RowBox[{"1", "+", "fdpsat1"}], ")"}]}]}]}], "\[Equal]", "0"}]}], 
+    ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"flux32", ":=", 
+     RowBox[{
+      RowBox[{"v32", "-", 
+       RowBox[{"reg2", "*", "V3max", "*", 
+        RowBox[{"fdpsat2", "/", 
+         RowBox[{"(", 
+          RowBox[{"1", "+", "fdpsat2"}], ")"}]}]}]}], "\[Equal]", "0"}]}], 
+    ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"p", "=", 
+     RowBox[{"{", 
+      RowBox[{"K3fdp", ",", "K3pep"}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{"Solve", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"flux31", ",", "flux32"}], "}"}], ",", "p"}], "]"}], 
+   "\[IndentingNewLine]"}]}]], "Input",
+ CellChangeTimes->{{3.715773972327777*^9, 3.715774018975993*^9}, {
+  3.715774222804191*^9, 3.7157744905218034`*^9}, {3.7157745277798758`*^9, 
+  3.7157746269713993`*^9}}]
 },
 WindowSize->{767, 502},
-WindowMargins->{{36, Automatic}, {Automatic, 0}},
+WindowMargins->{{Automatic, 34}, {58, Automatic}},
 PrintingCopies->1,
 PrintingPageRange->{32000, 32000},
 PrintingOptions->{"Magnification"->1.,
@@ -628,9 +713,10 @@ Cell[11449, 379, 1235, 38, 132, "Input"],
 Cell[12687, 419, 857, 25, 47, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[13581, 449, 4303, 129, 352, "Input"],
-Cell[17887, 580, 101, 1, 64, "Output"]
-}, Open  ]]
+Cell[13581, 449, 4611, 134, 392, "Input"],
+Cell[18195, 585, 101, 1, 31, "Output"]
+}, Open  ]],
+Cell[18311, 589, 2690, 78, 332, "Input"]
 }
 ]
 *)
