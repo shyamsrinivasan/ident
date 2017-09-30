@@ -15,7 +15,7 @@ nsmp = 2;
 
 
 % perturb system from noisy initial conditions
-pt_sol_id = [1 2 3 4 5 6];
+pt_sol_id = [1 2 3 4 5 6 7 8];
 [exp_sol,noisy_sol] =...
 dopert_noisy_dyn(opts,noisy_xss,noisy_fss,odep_bkp,pt_sol_id,...
                 noisy_xdyn,noisy_fdyn,noise_ss,noise_dyn);
