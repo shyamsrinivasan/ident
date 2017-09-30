@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     22196,        715]
-NotebookOptionsPosition[     21005,        669]
-NotebookOutlinePosition[     21497,        689]
-CellTagsIndexPosition[     21454,        686]
+NotebookDataLength[     42496,       1197]
+NotebookOptionsPosition[     41226,       1148]
+NotebookOutlinePosition[     41718,       1168]
+CellTagsIndexPosition[     41675,       1165]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -587,6 +587,8 @@ Cell[BoxData["$Aborted"], "Output",
  CellChangeTimes->{3.7144009010141697`*^9, 3.714410180559769*^9}]
 }, Open  ]],
 
+Cell[CellGroupData[{
+
 Cell[BoxData[
  RowBox[{
   RowBox[{"(*", " ", 
@@ -665,7 +667,484 @@ Cell[BoxData[
    "\[IndentingNewLine]"}]}]], "Input",
  CellChangeTimes->{{3.715773972327777*^9, 3.715774018975993*^9}, {
   3.715774222804191*^9, 3.7157744905218034`*^9}, {3.7157745277798758`*^9, 
-  3.7157746269713993`*^9}}]
+  3.7157746269713993`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"K3fdp", "\[Rule]", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"-", "v31"}], " ", "v32", " ", "x11", " ", "x21"}], "+", 
+         RowBox[{"v32", " ", "V3max", " ", "x11", " ", "x21"}], "+", 
+         RowBox[{"v31", " ", "v32", " ", "x12", " ", "x21"}], "-", 
+         RowBox[{"v31", " ", "v32", " ", "x11", " ", "x22"}], "+", 
+         RowBox[{"v31", " ", "v32", " ", "x12", " ", "x22"}], "-", 
+         RowBox[{"v31", " ", "V3max", " ", "x12", " ", "x22"}], "-", 
+         RowBox[{"\[Sqrt]", 
+          RowBox[{"(", 
+           RowBox[{
+            SuperscriptBox[
+             RowBox[{"(", 
+              RowBox[{
+               RowBox[{"v31", " ", "v32", " ", "x11", " ", "x21"}], "-", 
+               RowBox[{"v32", " ", "V3max", " ", "x11", " ", "x21"}], "-", 
+               RowBox[{"v31", " ", "v32", " ", "x12", " ", "x21"}], "+", 
+               RowBox[{"v31", " ", "v32", " ", "x11", " ", "x22"}], "-", 
+               RowBox[{"v31", " ", "v32", " ", "x12", " ", "x22"}], "+", 
+               RowBox[{"v31", " ", "V3max", " ", "x12", " ", "x22"}]}], ")"}],
+              "2"], "-", 
+            RowBox[{"4", " ", 
+             RowBox[{"(", 
+              RowBox[{
+               RowBox[{"v31", " ", "v32", " ", "x11"}], "-", 
+               RowBox[{"v31", " ", "v32", " ", "x12"}]}], ")"}], " ", 
+             RowBox[{"(", 
+              RowBox[{
+               RowBox[{
+               "v31", " ", "v32", " ", "x11", " ", "x21", " ", "x22"}], "-", 
+               RowBox[{
+               "v32", " ", "V3max", " ", "x11", " ", "x21", " ", "x22"}], "-", 
+               RowBox[{
+               "v31", " ", "v32", " ", "x12", " ", "x21", " ", "x22"}], "+", 
+               RowBox[{
+               "v31", " ", "V3max", " ", "x12", " ", "x21", " ", "x22"}]}], 
+              ")"}]}]}], ")"}]}]}], ")"}], "/", 
+       RowBox[{"(", 
+        RowBox[{"2", " ", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"v31", " ", "v32", " ", "x11"}], "-", 
+           RowBox[{"v31", " ", "v32", " ", "x12"}]}], ")"}]}], ")"}]}]}], ",", 
+     RowBox[{"K3pep", "\[Rule]", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"-", "v31"}], " ", "v32", " ", "x11", " ", "x21"}], "+", 
+         RowBox[{"v32", " ", "V3max", " ", "x11", " ", "x21"}], "+", 
+         FractionBox[
+          RowBox[{
+           SuperscriptBox["v31", "2"], " ", 
+           SuperscriptBox["v32", "2"], " ", 
+           SuperscriptBox["x11", "2"], " ", "x21"}], 
+          RowBox[{"2", " ", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"v31", " ", "v32", " ", "x11"}], "-", 
+             RowBox[{"v31", " ", "v32", " ", "x12"}]}], ")"}]}]], "-", 
+         FractionBox[
+          RowBox[{"v31", " ", 
+           SuperscriptBox["v32", "2"], " ", "V3max", " ", 
+           SuperscriptBox["x11", "2"], " ", "x21"}], 
+          RowBox[{"2", " ", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"v31", " ", "v32", " ", "x11"}], "-", 
+             RowBox[{"v31", " ", "v32", " ", "x12"}]}], ")"}]}]], "-", 
+         FractionBox[
+          RowBox[{
+           SuperscriptBox["v31", "2"], " ", 
+           SuperscriptBox["v32", "2"], " ", "x11", " ", "x12", " ", "x21"}], 
+          RowBox[{
+           RowBox[{"v31", " ", "v32", " ", "x11"}], "-", 
+           RowBox[{"v31", " ", "v32", " ", "x12"}]}]], "+", 
+         FractionBox[
+          RowBox[{"v31", " ", 
+           SuperscriptBox["v32", "2"], " ", "V3max", " ", "x11", " ", "x12", 
+           " ", "x21"}], 
+          RowBox[{"2", " ", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"v31", " ", "v32", " ", "x11"}], "-", 
+             RowBox[{"v31", " ", "v32", " ", "x12"}]}], ")"}]}]], "+", 
+         FractionBox[
+          RowBox[{
+           SuperscriptBox["v31", "2"], " ", 
+           SuperscriptBox["v32", "2"], " ", 
+           SuperscriptBox["x12", "2"], " ", "x21"}], 
+          RowBox[{"2", " ", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"v31", " ", "v32", " ", "x11"}], "-", 
+             RowBox[{"v31", " ", "v32", " ", "x12"}]}], ")"}]}]], "+", 
+         RowBox[{"v31", " ", "v32", " ", "x12", " ", "x22"}], "-", 
+         RowBox[{"v31", " ", "V3max", " ", "x12", " ", "x22"}], "+", 
+         FractionBox[
+          RowBox[{
+           SuperscriptBox["v31", "2"], " ", 
+           SuperscriptBox["v32", "2"], " ", 
+           SuperscriptBox["x11", "2"], " ", "x22"}], 
+          RowBox[{"2", " ", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"v31", " ", "v32", " ", "x11"}], "-", 
+             RowBox[{"v31", " ", "v32", " ", "x12"}]}], ")"}]}]], "-", 
+         FractionBox[
+          RowBox[{
+           SuperscriptBox["v31", "2"], " ", 
+           SuperscriptBox["v32", "2"], " ", "x11", " ", "x12", " ", "x22"}], 
+          RowBox[{
+           RowBox[{"v31", " ", "v32", " ", "x11"}], "-", 
+           RowBox[{"v31", " ", "v32", " ", "x12"}]}]], "+", 
+         FractionBox[
+          RowBox[{
+           SuperscriptBox["v31", "2"], " ", "v32", " ", "V3max", " ", "x11", 
+           " ", "x12", " ", "x22"}], 
+          RowBox[{"2", " ", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"v31", " ", "v32", " ", "x11"}], "-", 
+             RowBox[{"v31", " ", "v32", " ", "x12"}]}], ")"}]}]], "+", 
+         FractionBox[
+          RowBox[{
+           SuperscriptBox["v31", "2"], " ", 
+           SuperscriptBox["v32", "2"], " ", 
+           SuperscriptBox["x12", "2"], " ", "x22"}], 
+          RowBox[{"2", " ", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"v31", " ", "v32", " ", "x11"}], "-", 
+             RowBox[{"v31", " ", "v32", " ", "x12"}]}], ")"}]}]], "-", 
+         FractionBox[
+          RowBox[{
+           SuperscriptBox["v31", "2"], " ", "v32", " ", "V3max", " ", 
+           SuperscriptBox["x12", "2"], " ", "x22"}], 
+          RowBox[{"2", " ", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"v31", " ", "v32", " ", "x11"}], "-", 
+             RowBox[{"v31", " ", "v32", " ", "x12"}]}], ")"}]}]], "+", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"v31", " ", "v32", " ", "x11", " ", 
+            RowBox[{"\[Sqrt]", 
+             RowBox[{"(", 
+              RowBox[{
+               SuperscriptBox[
+                RowBox[{"(", 
+                 RowBox[{
+                  RowBox[{"v31", " ", "v32", " ", "x11", " ", "x21"}], "-", 
+                  RowBox[{"v32", " ", "V3max", " ", "x11", " ", "x21"}], "-", 
+                  RowBox[{"v31", " ", "v32", " ", "x12", " ", "x21"}], "+", 
+                  RowBox[{"v31", " ", "v32", " ", "x11", " ", "x22"}], "-", 
+                  RowBox[{"v31", " ", "v32", " ", "x12", " ", "x22"}], "+", 
+                  RowBox[{"v31", " ", "V3max", " ", "x12", " ", "x22"}]}], 
+                 ")"}], "2"], "-", 
+               RowBox[{"4", " ", 
+                RowBox[{"(", 
+                 RowBox[{
+                  RowBox[{"v31", " ", "v32", " ", "x11"}], "-", 
+                  RowBox[{"v31", " ", "v32", " ", "x12"}]}], ")"}], " ", 
+                RowBox[{"(", 
+                 RowBox[{
+                  RowBox[{
+                  "v31", " ", "v32", " ", "x11", " ", "x21", " ", "x22"}], 
+                  "-", 
+                  RowBox[{
+                  "v32", " ", "V3max", " ", "x11", " ", "x21", " ", "x22"}], 
+                  "-", 
+                  RowBox[{
+                  "v31", " ", "v32", " ", "x12", " ", "x21", " ", "x22"}], 
+                  "+", 
+                  RowBox[{
+                  "v31", " ", "V3max", " ", "x12", " ", "x21", " ", "x22"}]}],
+                  ")"}]}]}], ")"}]}]}], ")"}], "/", 
+          RowBox[{"(", 
+           RowBox[{"2", " ", 
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{"v31", " ", "v32", " ", "x11"}], "-", 
+              RowBox[{"v31", " ", "v32", " ", "x12"}]}], ")"}]}], ")"}]}], 
+         "-", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"v31", " ", "v32", " ", "x12", " ", 
+            RowBox[{"\[Sqrt]", 
+             RowBox[{"(", 
+              RowBox[{
+               SuperscriptBox[
+                RowBox[{"(", 
+                 RowBox[{
+                  RowBox[{"v31", " ", "v32", " ", "x11", " ", "x21"}], "-", 
+                  RowBox[{"v32", " ", "V3max", " ", "x11", " ", "x21"}], "-", 
+                  RowBox[{"v31", " ", "v32", " ", "x12", " ", "x21"}], "+", 
+                  RowBox[{"v31", " ", "v32", " ", "x11", " ", "x22"}], "-", 
+                  RowBox[{"v31", " ", "v32", " ", "x12", " ", "x22"}], "+", 
+                  RowBox[{"v31", " ", "V3max", " ", "x12", " ", "x22"}]}], 
+                 ")"}], "2"], "-", 
+               RowBox[{"4", " ", 
+                RowBox[{"(", 
+                 RowBox[{
+                  RowBox[{"v31", " ", "v32", " ", "x11"}], "-", 
+                  RowBox[{"v31", " ", "v32", " ", "x12"}]}], ")"}], " ", 
+                RowBox[{"(", 
+                 RowBox[{
+                  RowBox[{
+                  "v31", " ", "v32", " ", "x11", " ", "x21", " ", "x22"}], 
+                  "-", 
+                  RowBox[{
+                  "v32", " ", "V3max", " ", "x11", " ", "x21", " ", "x22"}], 
+                  "-", 
+                  RowBox[{
+                  "v31", " ", "v32", " ", "x12", " ", "x21", " ", "x22"}], 
+                  "+", 
+                  RowBox[{
+                  "v31", " ", "V3max", " ", "x12", " ", "x21", " ", "x22"}]}],
+                  ")"}]}]}], ")"}]}]}], ")"}], "/", 
+          RowBox[{"(", 
+           RowBox[{"2", " ", 
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{"v31", " ", "v32", " ", "x11"}], "-", 
+              RowBox[{"v31", " ", "v32", " ", "x12"}]}], ")"}]}], ")"}]}]}], 
+        ")"}], "/", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"v31", " ", "v32", " ", "x21"}], "-", 
+         RowBox[{"v31", " ", "v32", " ", "x22"}]}], ")"}]}]}]}], "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"K3fdp", "\[Rule]", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"-", "v31"}], " ", "v32", " ", "x11", " ", "x21"}], "+", 
+         RowBox[{"v32", " ", "V3max", " ", "x11", " ", "x21"}], "+", 
+         RowBox[{"v31", " ", "v32", " ", "x12", " ", "x21"}], "-", 
+         RowBox[{"v31", " ", "v32", " ", "x11", " ", "x22"}], "+", 
+         RowBox[{"v31", " ", "v32", " ", "x12", " ", "x22"}], "-", 
+         RowBox[{"v31", " ", "V3max", " ", "x12", " ", "x22"}], "+", 
+         RowBox[{"\[Sqrt]", 
+          RowBox[{"(", 
+           RowBox[{
+            SuperscriptBox[
+             RowBox[{"(", 
+              RowBox[{
+               RowBox[{"v31", " ", "v32", " ", "x11", " ", "x21"}], "-", 
+               RowBox[{"v32", " ", "V3max", " ", "x11", " ", "x21"}], "-", 
+               RowBox[{"v31", " ", "v32", " ", "x12", " ", "x21"}], "+", 
+               RowBox[{"v31", " ", "v32", " ", "x11", " ", "x22"}], "-", 
+               RowBox[{"v31", " ", "v32", " ", "x12", " ", "x22"}], "+", 
+               RowBox[{"v31", " ", "V3max", " ", "x12", " ", "x22"}]}], ")"}],
+              "2"], "-", 
+            RowBox[{"4", " ", 
+             RowBox[{"(", 
+              RowBox[{
+               RowBox[{"v31", " ", "v32", " ", "x11"}], "-", 
+               RowBox[{"v31", " ", "v32", " ", "x12"}]}], ")"}], " ", 
+             RowBox[{"(", 
+              RowBox[{
+               RowBox[{
+               "v31", " ", "v32", " ", "x11", " ", "x21", " ", "x22"}], "-", 
+               RowBox[{
+               "v32", " ", "V3max", " ", "x11", " ", "x21", " ", "x22"}], "-", 
+               RowBox[{
+               "v31", " ", "v32", " ", "x12", " ", "x21", " ", "x22"}], "+", 
+               RowBox[{
+               "v31", " ", "V3max", " ", "x12", " ", "x21", " ", "x22"}]}], 
+              ")"}]}]}], ")"}]}]}], ")"}], "/", 
+       RowBox[{"(", 
+        RowBox[{"2", " ", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"v31", " ", "v32", " ", "x11"}], "-", 
+           RowBox[{"v31", " ", "v32", " ", "x12"}]}], ")"}]}], ")"}]}]}], ",", 
+     RowBox[{"K3pep", "\[Rule]", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"-", "v31"}], " ", "v32", " ", "x11", " ", "x21"}], "+", 
+         RowBox[{"v32", " ", "V3max", " ", "x11", " ", "x21"}], "+", 
+         FractionBox[
+          RowBox[{
+           SuperscriptBox["v31", "2"], " ", 
+           SuperscriptBox["v32", "2"], " ", 
+           SuperscriptBox["x11", "2"], " ", "x21"}], 
+          RowBox[{"2", " ", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"v31", " ", "v32", " ", "x11"}], "-", 
+             RowBox[{"v31", " ", "v32", " ", "x12"}]}], ")"}]}]], "-", 
+         FractionBox[
+          RowBox[{"v31", " ", 
+           SuperscriptBox["v32", "2"], " ", "V3max", " ", 
+           SuperscriptBox["x11", "2"], " ", "x21"}], 
+          RowBox[{"2", " ", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"v31", " ", "v32", " ", "x11"}], "-", 
+             RowBox[{"v31", " ", "v32", " ", "x12"}]}], ")"}]}]], "-", 
+         FractionBox[
+          RowBox[{
+           SuperscriptBox["v31", "2"], " ", 
+           SuperscriptBox["v32", "2"], " ", "x11", " ", "x12", " ", "x21"}], 
+          RowBox[{
+           RowBox[{"v31", " ", "v32", " ", "x11"}], "-", 
+           RowBox[{"v31", " ", "v32", " ", "x12"}]}]], "+", 
+         FractionBox[
+          RowBox[{"v31", " ", 
+           SuperscriptBox["v32", "2"], " ", "V3max", " ", "x11", " ", "x12", 
+           " ", "x21"}], 
+          RowBox[{"2", " ", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"v31", " ", "v32", " ", "x11"}], "-", 
+             RowBox[{"v31", " ", "v32", " ", "x12"}]}], ")"}]}]], "+", 
+         FractionBox[
+          RowBox[{
+           SuperscriptBox["v31", "2"], " ", 
+           SuperscriptBox["v32", "2"], " ", 
+           SuperscriptBox["x12", "2"], " ", "x21"}], 
+          RowBox[{"2", " ", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"v31", " ", "v32", " ", "x11"}], "-", 
+             RowBox[{"v31", " ", "v32", " ", "x12"}]}], ")"}]}]], "+", 
+         RowBox[{"v31", " ", "v32", " ", "x12", " ", "x22"}], "-", 
+         RowBox[{"v31", " ", "V3max", " ", "x12", " ", "x22"}], "+", 
+         FractionBox[
+          RowBox[{
+           SuperscriptBox["v31", "2"], " ", 
+           SuperscriptBox["v32", "2"], " ", 
+           SuperscriptBox["x11", "2"], " ", "x22"}], 
+          RowBox[{"2", " ", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"v31", " ", "v32", " ", "x11"}], "-", 
+             RowBox[{"v31", " ", "v32", " ", "x12"}]}], ")"}]}]], "-", 
+         FractionBox[
+          RowBox[{
+           SuperscriptBox["v31", "2"], " ", 
+           SuperscriptBox["v32", "2"], " ", "x11", " ", "x12", " ", "x22"}], 
+          RowBox[{
+           RowBox[{"v31", " ", "v32", " ", "x11"}], "-", 
+           RowBox[{"v31", " ", "v32", " ", "x12"}]}]], "+", 
+         FractionBox[
+          RowBox[{
+           SuperscriptBox["v31", "2"], " ", "v32", " ", "V3max", " ", "x11", 
+           " ", "x12", " ", "x22"}], 
+          RowBox[{"2", " ", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"v31", " ", "v32", " ", "x11"}], "-", 
+             RowBox[{"v31", " ", "v32", " ", "x12"}]}], ")"}]}]], "+", 
+         FractionBox[
+          RowBox[{
+           SuperscriptBox["v31", "2"], " ", 
+           SuperscriptBox["v32", "2"], " ", 
+           SuperscriptBox["x12", "2"], " ", "x22"}], 
+          RowBox[{"2", " ", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"v31", " ", "v32", " ", "x11"}], "-", 
+             RowBox[{"v31", " ", "v32", " ", "x12"}]}], ")"}]}]], "-", 
+         FractionBox[
+          RowBox[{
+           SuperscriptBox["v31", "2"], " ", "v32", " ", "V3max", " ", 
+           SuperscriptBox["x12", "2"], " ", "x22"}], 
+          RowBox[{"2", " ", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"v31", " ", "v32", " ", "x11"}], "-", 
+             RowBox[{"v31", " ", "v32", " ", "x12"}]}], ")"}]}]], "-", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"v31", " ", "v32", " ", "x11", " ", 
+            RowBox[{"\[Sqrt]", 
+             RowBox[{"(", 
+              RowBox[{
+               SuperscriptBox[
+                RowBox[{"(", 
+                 RowBox[{
+                  RowBox[{"v31", " ", "v32", " ", "x11", " ", "x21"}], "-", 
+                  RowBox[{"v32", " ", "V3max", " ", "x11", " ", "x21"}], "-", 
+                  RowBox[{"v31", " ", "v32", " ", "x12", " ", "x21"}], "+", 
+                  RowBox[{"v31", " ", "v32", " ", "x11", " ", "x22"}], "-", 
+                  RowBox[{"v31", " ", "v32", " ", "x12", " ", "x22"}], "+", 
+                  RowBox[{"v31", " ", "V3max", " ", "x12", " ", "x22"}]}], 
+                 ")"}], "2"], "-", 
+               RowBox[{"4", " ", 
+                RowBox[{"(", 
+                 RowBox[{
+                  RowBox[{"v31", " ", "v32", " ", "x11"}], "-", 
+                  RowBox[{"v31", " ", "v32", " ", "x12"}]}], ")"}], " ", 
+                RowBox[{"(", 
+                 RowBox[{
+                  RowBox[{
+                  "v31", " ", "v32", " ", "x11", " ", "x21", " ", "x22"}], 
+                  "-", 
+                  RowBox[{
+                  "v32", " ", "V3max", " ", "x11", " ", "x21", " ", "x22"}], 
+                  "-", 
+                  RowBox[{
+                  "v31", " ", "v32", " ", "x12", " ", "x21", " ", "x22"}], 
+                  "+", 
+                  RowBox[{
+                  "v31", " ", "V3max", " ", "x12", " ", "x21", " ", "x22"}]}],
+                  ")"}]}]}], ")"}]}]}], ")"}], "/", 
+          RowBox[{"(", 
+           RowBox[{"2", " ", 
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{"v31", " ", "v32", " ", "x11"}], "-", 
+              RowBox[{"v31", " ", "v32", " ", "x12"}]}], ")"}]}], ")"}]}], 
+         "+", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"v31", " ", "v32", " ", "x12", " ", 
+            RowBox[{"\[Sqrt]", 
+             RowBox[{"(", 
+              RowBox[{
+               SuperscriptBox[
+                RowBox[{"(", 
+                 RowBox[{
+                  RowBox[{"v31", " ", "v32", " ", "x11", " ", "x21"}], "-", 
+                  RowBox[{"v32", " ", "V3max", " ", "x11", " ", "x21"}], "-", 
+                  RowBox[{"v31", " ", "v32", " ", "x12", " ", "x21"}], "+", 
+                  RowBox[{"v31", " ", "v32", " ", "x11", " ", "x22"}], "-", 
+                  RowBox[{"v31", " ", "v32", " ", "x12", " ", "x22"}], "+", 
+                  RowBox[{"v31", " ", "V3max", " ", "x12", " ", "x22"}]}], 
+                 ")"}], "2"], "-", 
+               RowBox[{"4", " ", 
+                RowBox[{"(", 
+                 RowBox[{
+                  RowBox[{"v31", " ", "v32", " ", "x11"}], "-", 
+                  RowBox[{"v31", " ", "v32", " ", "x12"}]}], ")"}], " ", 
+                RowBox[{"(", 
+                 RowBox[{
+                  RowBox[{
+                  "v31", " ", "v32", " ", "x11", " ", "x21", " ", "x22"}], 
+                  "-", 
+                  RowBox[{
+                  "v32", " ", "V3max", " ", "x11", " ", "x21", " ", "x22"}], 
+                  "-", 
+                  RowBox[{
+                  "v31", " ", "v32", " ", "x12", " ", "x21", " ", "x22"}], 
+                  "+", 
+                  RowBox[{
+                  "v31", " ", "V3max", " ", "x12", " ", "x21", " ", "x22"}]}],
+                  ")"}]}]}], ")"}]}]}], ")"}], "/", 
+          RowBox[{"(", 
+           RowBox[{"2", " ", 
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{"v31", " ", "v32", " ", "x11"}], "-", 
+              RowBox[{"v31", " ", "v32", " ", "x12"}]}], ")"}]}], ")"}]}]}], 
+        ")"}], "/", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"v31", " ", "v32", " ", "x21"}], "-", 
+         RowBox[{"v31", " ", "v32", " ", "x22"}]}], ")"}]}]}]}], "}"}]}], 
+  "}"}]], "Output",
+ CellChangeTimes->{3.7157765753947625`*^9}]
+}, Open  ]]
 },
 WindowSize->{767, 502},
 WindowMargins->{{Automatic, 34}, {58, Automatic}},
@@ -716,7 +1195,10 @@ Cell[CellGroupData[{
 Cell[13581, 449, 4611, 134, 392, "Input"],
 Cell[18195, 585, 101, 1, 31, "Output"]
 }, Open  ]],
-Cell[18311, 589, 2690, 78, 332, "Input"]
+Cell[CellGroupData[{
+Cell[18333, 591, 2690, 78, 332, "Input"],
+Cell[21026, 671, 20184, 474, 1336, "Output"]
+}, Open  ]]
 }
 ]
 *)
