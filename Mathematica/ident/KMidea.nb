@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     43636,       1225]
-NotebookOptionsPosition[     42365,       1176]
-NotebookOutlinePosition[     42857,       1196]
-CellTagsIndexPosition[     42814,       1193]
+NotebookDataLength[     59054,       1670]
+NotebookOptionsPosition[     57497,       1612]
+NotebookOutlinePosition[     57989,       1632]
+CellTagsIndexPosition[     57946,       1629]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -608,6 +608,9 @@ Cell[BoxData[
    "Does", " ", "not", " ", "work", " ", "for", " ", "simultaneous", " ", 
     "detection", " ", "of", " ", "V3max", " ", "with", " ", "other", " ", "2",
      " ", "binding", " ", "parameters"}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{"estimate", " ", "K3pep", " ", "and", " ", "K3fdp"}], " ", "*)"}], 
+  "\[IndentingNewLine]", 
   RowBox[{
    RowBox[{
     RowBox[{"met", " ", "=", " ", 
@@ -693,7 +696,8 @@ Cell[BoxData[
   3.715774222804191*^9, 3.7157744905218034`*^9}, {3.7157745277798758`*^9, 
   3.7157746269713993`*^9}, {3.715776661515688*^9, 3.7157767266314125`*^9}, {
   3.7157767832836533`*^9, 3.7157767889199753`*^9}, {3.7157768706246486`*^9, 
-  3.715776887203597*^9}, {3.7157769295250177`*^9, 3.715776973171514*^9}}],
+  3.715776887203597*^9}, {3.7157769295250177`*^9, 3.715776973171514*^9}, {
+  3.7157771481065197`*^9, 3.7157771608602495`*^9}}],
 
 Cell[BoxData[
  RowBox[{"{", 
@@ -1172,7 +1176,439 @@ Cell[BoxData[
  CellChangeTimes->{
   3.7157765753947625`*^9, 3.715776778783396*^9, {3.715776864479297*^9, 
    3.715776890837805*^9}}]
-}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "3", " ", "sets", " ", "of", " ", "experimental", " ", "data", " ", "for", 
+    " ", "v3", " ", "using", " ", "convenience", " ", "kinetics"}], " ", 
+   "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{"expression", " ", "taken", " ", "from", " ", "sympy"}], " ", "-",
+     " ", 
+    RowBox[{
+    "cross", " ", "checking", " ", "with", " ", "mathematica", " ", "on", " ",
+      "home", " ", "desktop"}]}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "Does", " ", "not", " ", "work", " ", "for", " ", "simultaneous", " ", 
+    "detection", " ", "of", " ", "V3max", " ", "with", " ", "other", " ", "2",
+     " ", "binding", " ", "parameters"}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{"estimate", " ", "K3pep", " ", "and", " ", "V3max"}], " ", "*)"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"met", " ", "=", " ", 
+     RowBox[{"{", 
+      RowBox[{"x11", ",", "x12", ",", "x21", ",", "x22"}], "}"}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"flux", "=", 
+     RowBox[{"{", 
+      RowBox[{"v31", ",", "v32"}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"parameters", "=", 
+     RowBox[{"{", 
+      RowBox[{"V3max", ",", "K3fdp", ",", "K3pep"}], "}"}]}], ";"}], 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"reg1", "=", 
+     RowBox[{"1", "/", 
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        RowBox[{"K3pep", "/", "x11"}]}], ")"}]}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"reg2", "=", 
+     RowBox[{"1", "/", 
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        RowBox[{"K3pep", "/", "x12"}]}], ")"}]}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"reg3", "=", 
+     RowBox[{"1", "/", 
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        RowBox[{"K3pep", "/", "x13"}]}], ")"}]}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"fdpsat1", "=", 
+     RowBox[{"x21", "/", "K3fdp"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"fdpsat2", "=", 
+     RowBox[{"x22", "/", "K3fdp"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"fdpsat3", "=", 
+     RowBox[{"x23", "/", "K3fdp"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"flux31", ":=", 
+     RowBox[{
+      RowBox[{"v31", "-", 
+       RowBox[{"reg1", "*", "V3max", "*", 
+        RowBox[{"fdpsat1", "/", 
+         RowBox[{"(", 
+          RowBox[{"1", "+", "fdpsat1"}], ")"}]}]}]}], "\[Equal]", "0"}]}], 
+    ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"flux32", ":=", 
+     RowBox[{
+      RowBox[{"v32", "-", 
+       RowBox[{"reg2", "*", "V3max", "*", 
+        RowBox[{"fdpsat2", "/", 
+         RowBox[{"(", 
+          RowBox[{"1", "+", "fdpsat2"}], ")"}]}]}]}], "\[Equal]", "0"}]}], 
+    ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"flux33", ":=", 
+     RowBox[{
+      RowBox[{"v33", "-", 
+       RowBox[{"reg3", "*", "V3max", "*", 
+        RowBox[{"fdpsat3", "/", 
+         RowBox[{"(", 
+          RowBox[{"1", "+", "fdpsat3"}], ")"}]}]}]}], "\[Equal]", "0"}]}], 
+    ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"p", "=", 
+     RowBox[{"{", 
+      RowBox[{"V3max", ",", "K3pep"}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{"Solve", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"flux31", ",", "flux32"}], "}"}], ",", "p"}], 
+    "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.7157771877927895`*^9, 3.7157771971923275`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"V3max", "\[Rule]", 
+     RowBox[{"-", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"-", 
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{"K3fdp", " ", "v31", " ", "x11"}], "+", 
+              RowBox[{"v31", " ", "x11", " ", "x21"}]}], ")"}]}], " ", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"K3fdp", " ", "v32"}], "+", 
+             RowBox[{"v32", " ", "x22"}]}], ")"}]}], "+", 
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"K3fdp", " ", "v31"}], "+", 
+             RowBox[{"v31", " ", "x21"}]}], ")"}], " ", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"K3fdp", " ", "v32", " ", "x12"}], "+", 
+             RowBox[{"v32", " ", "x12", " ", "x22"}]}], ")"}]}]}], ")"}], "/", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"K3fdp", " ", "v32", " ", "x11", " ", "x21"}], "-", 
+          RowBox[{"K3fdp", " ", "v31", " ", "x12", " ", "x22"}], "+", 
+          RowBox[{"v32", " ", "x11", " ", "x21", " ", "x22"}], "-", 
+          RowBox[{"v31", " ", "x12", " ", "x21", " ", "x22"}]}], ")"}]}], 
+       ")"}]}]}], ",", 
+    RowBox[{"K3pep", "\[Rule]", 
+     FractionBox[
+      RowBox[{"x11", " ", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"-", "K3fdp"}], " ", "v32", " ", "x12", " ", "x21"}], "+", 
+         RowBox[{"K3fdp", " ", "v31", " ", "x12", " ", "x22"}], "+", 
+         RowBox[{"v31", " ", "x12", " ", "x21", " ", "x22"}], "-", 
+         RowBox[{"v32", " ", "x12", " ", "x21", " ", "x22"}]}], ")"}]}], 
+      RowBox[{
+       RowBox[{"K3fdp", " ", "v32", " ", "x11", " ", "x21"}], "-", 
+       RowBox[{"K3fdp", " ", "v31", " ", "x12", " ", "x22"}], "+", 
+       RowBox[{"v32", " ", "x11", " ", "x21", " ", "x22"}], "-", 
+       RowBox[{"v31", " ", "x12", " ", "x21", " ", "x22"}]}]]}]}], "}"}], 
+  "}"}]], "Output",
+ CellChangeTimes->{3.715777228271105*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "3", " ", "sets", " ", "of", " ", "experimental", " ", "data", " ", "for", 
+    " ", "v3", " ", "using", " ", "convenience", " ", "kinetics"}], " ", 
+   "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{"expression", " ", "taken", " ", "from", " ", "sympy"}], " ", "-",
+     " ", 
+    RowBox[{
+    "cross", " ", "checking", " ", "with", " ", "mathematica", " ", "on", " ",
+      "home", " ", "desktop"}]}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "Does", " ", "not", " ", "work", " ", "for", " ", "simultaneous", " ", 
+    "detection", " ", "of", " ", "V3max", " ", "with", " ", "other", " ", "2",
+     " ", "binding", " ", "parameters"}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{"estimate", " ", "K3fdp", " ", "and", " ", "V3max"}], " ", "*)"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"met", " ", "=", " ", 
+     RowBox[{"{", 
+      RowBox[{"x11", ",", "x12", ",", "x21", ",", "x22"}], "}"}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"flux", "=", 
+     RowBox[{"{", 
+      RowBox[{"v31", ",", "v32"}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"parameters", "=", 
+     RowBox[{"{", 
+      RowBox[{"V3max", ",", "K3fdp", ",", "K3pep"}], "}"}]}], ";"}], 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"reg1", "=", 
+     RowBox[{"1", "/", 
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        RowBox[{"K3pep", "/", "x11"}]}], ")"}]}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"reg2", "=", 
+     RowBox[{"1", "/", 
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        RowBox[{"K3pep", "/", "x12"}]}], ")"}]}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"reg3", "=", 
+     RowBox[{"1", "/", 
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        RowBox[{"K3pep", "/", "x13"}]}], ")"}]}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"fdpsat1", "=", 
+     RowBox[{"x21", "/", "K3fdp"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"fdpsat2", "=", 
+     RowBox[{"x22", "/", "K3fdp"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"fdpsat3", "=", 
+     RowBox[{"x23", "/", "K3fdp"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"flux31", ":=", 
+     RowBox[{
+      RowBox[{"v31", "-", 
+       RowBox[{"reg1", "*", "V3max", "*", 
+        RowBox[{"fdpsat1", "/", 
+         RowBox[{"(", 
+          RowBox[{"1", "+", "fdpsat1"}], ")"}]}]}]}], "\[Equal]", "0"}]}], 
+    ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"flux32", ":=", 
+     RowBox[{
+      RowBox[{"v32", "-", 
+       RowBox[{"reg2", "*", "V3max", "*", 
+        RowBox[{"fdpsat2", "/", 
+         RowBox[{"(", 
+          RowBox[{"1", "+", "fdpsat2"}], ")"}]}]}]}], "\[Equal]", "0"}]}], 
+    ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"flux33", ":=", 
+     RowBox[{
+      RowBox[{"v33", "-", 
+       RowBox[{"reg3", "*", "V3max", "*", 
+        RowBox[{"fdpsat3", "/", 
+         RowBox[{"(", 
+          RowBox[{"1", "+", "fdpsat3"}], ")"}]}]}]}], "\[Equal]", "0"}]}], 
+    ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"p", "=", 
+     RowBox[{"{", 
+      RowBox[{"V3max", ",", "K3fdp"}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{"Solve", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"flux31", ",", "flux32"}], "}"}], ",", "p"}], 
+    "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.715777210552091*^9, 3.7157772174034834`*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"V3max", "\[Rule]", 
+     RowBox[{"-", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"-", 
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{"K3pep", " ", "v32"}], "+", 
+              RowBox[{"v32", " ", "x12"}]}], ")"}]}], " ", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"K3pep", " ", "v31", " ", "x21"}], "+", 
+             RowBox[{"v31", " ", "x11", " ", "x21"}]}], ")"}]}], "+", 
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"K3pep", " ", "v31"}], "+", 
+             RowBox[{"v31", " ", "x11"}]}], ")"}], " ", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"K3pep", " ", "v32", " ", "x22"}], "+", 
+             RowBox[{"v32", " ", "x12", " ", "x22"}]}], ")"}]}]}], ")"}], "/", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"K3pep", " ", "v32", " ", "x11", " ", "x21"}], "+", 
+          RowBox[{"v32", " ", "x11", " ", "x12", " ", "x21"}], "-", 
+          RowBox[{"K3pep", " ", "v31", " ", "x12", " ", "x22"}], "-", 
+          RowBox[{"v31", " ", "x11", " ", "x12", " ", "x22"}]}], ")"}]}], 
+       ")"}]}]}], ",", 
+    RowBox[{"K3fdp", "\[Rule]", 
+     FractionBox[
+      RowBox[{"x21", " ", 
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"-", "K3pep"}], " ", "v32", " ", "x11", " ", "x22"}], "+", 
+         RowBox[{"K3pep", " ", "v31", " ", "x12", " ", "x22"}], "+", 
+         RowBox[{"v31", " ", "x11", " ", "x12", " ", "x22"}], "-", 
+         RowBox[{"v32", " ", "x11", " ", "x12", " ", "x22"}]}], ")"}]}], 
+      RowBox[{
+       RowBox[{"K3pep", " ", "v32", " ", "x11", " ", "x21"}], "+", 
+       RowBox[{"v32", " ", "x11", " ", "x12", " ", "x21"}], "-", 
+       RowBox[{"K3pep", " ", "v31", " ", "x12", " ", "x22"}], "-", 
+       RowBox[{"v31", " ", "x11", " ", "x12", " ", "x22"}]}]]}]}], "}"}], 
+  "}"}]], "Output",
+ CellChangeTimes->{3.7157772249469147`*^9}]
+}, Open  ]],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "3", " ", "sets", " ", "of", " ", "experimental", " ", "data", " ", "for", 
+    " ", "v3", " ", "using", " ", "convenience", " ", "kinetics"}], " ", 
+   "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{"expression", " ", "taken", " ", "from", " ", "sympy"}], " ", "-",
+     " ", 
+    RowBox[{
+    "cross", " ", "checking", " ", "with", " ", "mathematica", " ", "on", " ",
+      "home", " ", "desktop"}]}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "Does", " ", "not", " ", "work", " ", "for", " ", "simultaneous", " ", 
+    "detection", " ", "of", " ", "V3max", " ", "with", " ", "other", " ", "2",
+     " ", "binding", " ", "parameters"}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{"estimate", " ", "K3pep", " ", "and", " ", "V3max"}], " ", "*)"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"met", " ", "=", " ", 
+     RowBox[{"{", 
+      RowBox[{
+      "x11", ",", "x12", ",", "x13", ",", "x21", ",", "x22", ",", "x23"}], 
+      "}"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"flux", "=", 
+     RowBox[{"{", 
+      RowBox[{"v31", ",", "v32", ",", " ", "v33"}], "}"}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"parameters", "=", 
+     RowBox[{"{", 
+      RowBox[{"V3max", ",", "K3fdp", ",", "K3pep"}], "}"}]}], ";"}], 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"reg1", "=", 
+     RowBox[{"1", "/", 
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        RowBox[{"K3pep", "/", "x11"}]}], ")"}]}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"reg2", "=", 
+     RowBox[{"1", "/", 
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        RowBox[{"K3pep", "/", "x12"}]}], ")"}]}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"reg3", "=", 
+     RowBox[{"1", "/", 
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        RowBox[{"K3pep", "/", "x13"}]}], ")"}]}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"fdpsat1", "=", 
+     RowBox[{"x21", "/", "K3fdp"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"fdpsat2", "=", 
+     RowBox[{"x22", "/", "K3fdp"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"fdpsat3", "=", 
+     RowBox[{"x23", "/", "K3fdp"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"flux31", ":=", 
+     RowBox[{
+      RowBox[{"v31", "-", 
+       RowBox[{"reg1", "*", "V3max", "*", 
+        RowBox[{"fdpsat1", "/", 
+         RowBox[{"(", 
+          RowBox[{"1", "+", "fdpsat1"}], ")"}]}]}]}], "\[Equal]", "0"}]}], 
+    ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"flux32", ":=", 
+     RowBox[{
+      RowBox[{"v32", "-", 
+       RowBox[{"reg2", "*", "V3max", "*", 
+        RowBox[{"fdpsat2", "/", 
+         RowBox[{"(", 
+          RowBox[{"1", "+", "fdpsat2"}], ")"}]}]}]}], "\[Equal]", "0"}]}], 
+    ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"flux33", ":=", 
+     RowBox[{
+      RowBox[{"v33", "-", 
+       RowBox[{"reg3", "*", "V3max", "*", 
+        RowBox[{"fdpsat3", "/", 
+         RowBox[{"(", 
+          RowBox[{"1", "+", "fdpsat3"}], ")"}]}]}]}], "\[Equal]", "0"}]}], 
+    ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"p", "=", 
+     RowBox[{"{", 
+      RowBox[{"V3max", ",", "K3pep", ",", "K3fdp"}], "}"}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"Solve", "[", 
+    RowBox[{
+     RowBox[{"{", 
+      RowBox[{"flux31", ",", "flux32", ",", "flux33"}], "}"}], ",", "p"}], 
+    "]"}]}]}]], "Input",
+ CellChangeTimes->{{3.715777293250821*^9, 3.715777321102414*^9}}]
 },
 WindowSize->{767, 502},
 WindowMargins->{{Automatic, 34}, {58, Automatic}},
@@ -1224,9 +1660,18 @@ Cell[13581, 449, 4611, 134, 392, "Input"],
 Cell[18195, 585, 101, 1, 31, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[18333, 591, 3754, 104, 432, "Input"],
-Cell[22090, 697, 20259, 476, 1241, "Output"]
-}, Open  ]]
+Cell[18333, 591, 3934, 108, 452, "Input"],
+Cell[22270, 701, 20259, 476, 1241, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[42566, 1182, 3559, 103, 432, "Input"],
+Cell[46128, 1287, 2054, 52, 117, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[48219, 1344, 3557, 103, 432, "Input"],
+Cell[51779, 1449, 2056, 52, 117, "Output"]
+}, Open  ]],
+Cell[53850, 1504, 3643, 106, 432, "Input"]
 }
 ]
 *)
