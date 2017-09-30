@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     42496,       1197]
-NotebookOptionsPosition[     41226,       1148]
-NotebookOutlinePosition[     41718,       1168]
-CellTagsIndexPosition[     41675,       1165]
+NotebookDataLength[     43636,       1225]
+NotebookOptionsPosition[     42365,       1176]
+NotebookOutlinePosition[     42857,       1196]
+CellTagsIndexPosition[     42814,       1193]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -603,6 +603,11 @@ Cell[BoxData[
     RowBox[{
     "cross", " ", "checking", " ", "with", " ", "mathematica", " ", "on", " ",
       "home", " ", "desktop"}]}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "Does", " ", "not", " ", "work", " ", "for", " ", "simultaneous", " ", 
+    "detection", " ", "of", " ", "V3max", " ", "with", " ", "other", " ", "2",
+     " ", "binding", " ", "parameters"}], " ", "*)"}], "\[IndentingNewLine]", 
   RowBox[{
    RowBox[{
     RowBox[{"met", " ", "=", " ", 
@@ -633,11 +638,21 @@ Cell[BoxData[
         RowBox[{"K3pep", "/", "x12"}]}], ")"}]}]}], ";"}], 
    "\[IndentingNewLine]", 
    RowBox[{
+    RowBox[{"reg3", "=", 
+     RowBox[{"1", "/", 
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        RowBox[{"K3pep", "/", "x13"}]}], ")"}]}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
     RowBox[{"fdpsat1", "=", 
      RowBox[{"x21", "/", "K3fdp"}]}], ";"}], "\[IndentingNewLine]", 
    RowBox[{
     RowBox[{"fdpsat2", "=", 
      RowBox[{"x22", "/", "K3fdp"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"fdpsat3", "=", 
+     RowBox[{"x23", "/", "K3fdp"}]}], ";"}], "\[IndentingNewLine]", 
    RowBox[{
     RowBox[{"flux31", ":=", 
      RowBox[{
@@ -657,6 +672,15 @@ Cell[BoxData[
           RowBox[{"1", "+", "fdpsat2"}], ")"}]}]}]}], "\[Equal]", "0"}]}], 
     ";"}], "\[IndentingNewLine]", 
    RowBox[{
+    RowBox[{"flux33", ":=", 
+     RowBox[{
+      RowBox[{"v33", "-", 
+       RowBox[{"reg3", "*", "V3max", "*", 
+        RowBox[{"fdpsat3", "/", 
+         RowBox[{"(", 
+          RowBox[{"1", "+", "fdpsat3"}], ")"}]}]}]}], "\[Equal]", "0"}]}], 
+    ";"}], "\[IndentingNewLine]", 
+   RowBox[{
     RowBox[{"p", "=", 
      RowBox[{"{", 
       RowBox[{"K3fdp", ",", "K3pep"}], "}"}]}], ";"}], "\[IndentingNewLine]", 
@@ -667,7 +691,9 @@ Cell[BoxData[
    "\[IndentingNewLine]"}]}]], "Input",
  CellChangeTimes->{{3.715773972327777*^9, 3.715774018975993*^9}, {
   3.715774222804191*^9, 3.7157744905218034`*^9}, {3.7157745277798758`*^9, 
-  3.7157746269713993`*^9}}],
+  3.7157746269713993`*^9}, {3.715776661515688*^9, 3.7157767266314125`*^9}, {
+  3.7157767832836533`*^9, 3.7157767889199753`*^9}, {3.7157768706246486`*^9, 
+  3.715776887203597*^9}, {3.7157769295250177`*^9, 3.715776973171514*^9}}],
 
 Cell[BoxData[
  RowBox[{"{", 
@@ -1143,7 +1169,9 @@ Cell[BoxData[
          RowBox[{"v31", " ", "v32", " ", "x21"}], "-", 
          RowBox[{"v31", " ", "v32", " ", "x22"}]}], ")"}]}]}]}], "}"}]}], 
   "}"}]], "Output",
- CellChangeTimes->{3.7157765753947625`*^9}]
+ CellChangeTimes->{
+  3.7157765753947625`*^9, 3.715776778783396*^9, {3.715776864479297*^9, 
+   3.715776890837805*^9}}]
 }, Open  ]]
 },
 WindowSize->{767, 502},
@@ -1196,8 +1224,8 @@ Cell[13581, 449, 4611, 134, 392, "Input"],
 Cell[18195, 585, 101, 1, 31, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[18333, 591, 2690, 78, 332, "Input"],
-Cell[21026, 671, 20184, 474, 1336, "Output"]
+Cell[18333, 591, 3754, 104, 432, "Input"],
+Cell[22090, 697, 20259, 476, 1241, "Output"]
 }, Open  ]]
 }
 ]
