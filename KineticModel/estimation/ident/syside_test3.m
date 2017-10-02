@@ -1,3 +1,27 @@
+% load noisy data
+if ~exist('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\KineticModel')
+    status = 2;
+    fprintf('\nLinux System\n');
+else 
+    status = 1;
+    fprintf('\nWindows System\n');
+end
+
+if status == 1    
+    load('C:/Users/shyam/Documents/Courses/CHE1125Project/IntegratedModels/KineticModel/estimation/noisy_model/pdata_oct2');
+elseif status == 2    
+    load('~/Documents/Courses/CHE1125Project/IntegratedModels/KineticModel/estimation/noisy_model/pdata_oct2');    
+end
+
+% % collect only needed perturbations for analysis
+% avail_pert = size(noisy_sol{1},2);
+% use_pert = 1;
+% npert = length(use_pert);
+% [exp_select_sol,noisy_select_sol] = parseperturbations(noisy_sol{1},use_pert);
+% 
+% % use wt as initial value for all perturbations
+% xinit = repmat(noisy_xss(:,1),npe1rt,1);
+% yinit = repmat(noisy_fss(:,1),npert,1);
 % get rhs fun (ode is casadi fun)
 [ode,flux,D2FX,oderhs,x,p_var,p_other,acetate] = kotteCASident(3);
 
@@ -48,7 +72,7 @@ xdyn_fun(xinit,...
          repmat(odep_bkp(6:9)',1,npts),...
          acetate_data);
      
-e = y_data([1 3 4 5]) - y_sym([1 3 4 5]);
+e = y_data([1 3 4 5],:) - y_sym([1 3 4 5],:);
 nlp = struct('x', p_var, 'f', 0.5*dot(e,e));
 solver = casadi.nlpsol('solver','ipopt', nlp);
 
