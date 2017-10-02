@@ -61,7 +61,7 @@ end
 xstate_onepoint =...
 casadi.Function('xstate_onepoint',{x,p_var,p_other,acetate},{xstate,ystate});
 xstate_onepoint = xstate_onepoint.expand();
-xdyn_fun = xstate_onepoint.mapaccum('all_samples',npts);
+xdyn_fun = xstate_onepoint.mapaccum('xdyn_fun',npts);
 % final symbolic expression to be used during optimization
 [x_sym,y_sym] =...
 xdyn_fun(xinit,repmat(p_var,1,npts),repmat(data.odep(6:9)',1,npts),input_data);
