@@ -121,6 +121,22 @@
 		\caption{Cartoon illustrating the utility of identifiability analysis for experimental design. a) The profile likelihood of a practically non-identifiable parameter that needs to be estimated based on both good and bad experimental data. The changes in the profile likelihood of the parameter when estimated with b) good experimental data and c) bad experimental. The practical identifiability of a parameter is dependent on the quality and quantity of experimental data used to estimate the parameter. The identifiability of the parameter, as determined using its profile likelihood, does not change due to the poor quality/quantity of experiments.}\label{fig:edwithpl}
 	\end{figure}	
 	
+	\subsection{A method to establish posterior identifiability of metabolic network models:}
+	This section details a method to establish the practical (posterior) identifiability of metabolic network models using the algebraic relationship between fluxes.
+	Every flux, $v$, in a kinetic model of a metabolic network can be expressed as a nonlinear algebraic equation (Equation \ref{eq:flux_gen}). The fluxes are expressed as a function of the metabolite concentrations $x$ and the kinetic parameters $\theta$ in Equation (\ref{eq:flux_gen}).
+	\begin{align}\label{eq:flux_gen}
+		v = f(\mathbf{x},\mathbf{\theta})
+	\end{align}
+	Given the nonlinear nature of this model, the function $f$ in Equation (\ref{eq:flux_gen}) can expressed, without loss of generality as,
+	\begin{align}\label{eq:nr_dr}
+		v = \frac{N(\mathbf{x},\theta)}{D(\mathbf{x},\theta)}
+	\end{align}
+	where $N(\mathbf{x},\theta)$ is the numerator of $f$, and $D(\mathbf{x},\theta)$ is the denominator of $f$.
+	
+	If $\theta \in \mathbb{R}^p$, given a set of experimental measurements for the metabolite concentrations $\mathbf{x}$ and the reaction fluxes $\mathbf{v}$, theoretically, it is possible to choose $p$ sets of data from these measurements to solve for the $p$ parameters in $\theta$. However, if any these datasets do not satisfy the condition that $D(\mathbf{x},\theta) \neq 0$, then the number of experiments required to estimate the $p$ parameters in $\theta$ can be established to be greater than $p$. An example is shown below.
+	
+	This analysis can be performed for each flux in a metabolic network independent of all the other fluxes. This enables this method to be scalable to even genome-scale models. The following section demonstrates this methodology for one of the fluxes in the gluconeogenic model of Kotte et al., \parencite{Kotte2014}.
+		
 	\subsection{Identifiability analysis of parameters in a kinetic model of gluconeogenesis:}
 	The proposed model for acetate consumption through gluconeogenesis and its corresponding kinetic model is used as a case study to illustrate the utility of identifiability analysis for the design of experiments for estimating parameters in kinetic models of metabolism. The kinetic model is described below.
 	\begin{equation}\label{eq:ode1}
@@ -146,6 +162,17 @@
 	\begin{equation}\label{eq:flux4}
 	v_4 = k_{4}^{cat}.pep
 	\end{equation}
+	
+	We use flux $v_2$ to demonstrate the identifiability analysis method described in the previous section. Flux $v_2$ has two parameters, $V_2^{max}$ and $K_2^{pep}$ that need to be estimated from experimental data. Here, we assume that at least two different sets of experimental data for the concentrations and fluxes are available. Accordingly, we label these dataset as ${pep}^1$, ${v_2}^1$ and ${pep}^2$, ${v_2}^2$ respectively. Subsequently, these experimental datasets can be included in the model to form two simultaneous nonlinear algebraic equations in the parameters $V_2^{max}$ and $K_2^{pep}$ (Equation \ref{eq:v2_par}).
+	
+	\begin{subequations}\label{eq:v2_par}
+		\begin{align}		
+		V_2^{max} = \frac{v_2^1v_2^2(pep^1-pep^2)}{v_2^2pep^1-v_2^1pep^2}\\
+		K_2^{pep} = \frac{pep^1(v_2^1pep^2-v_2^2pep^2)}{v_2^2pep^1-v_2^1pep^2}
+		\end{align}
+	\end{subequations}
+	
+	
 	
 	\subsection{Parameter estimation in kinetic models of metabolism:}
 	The formulation for parameter estimation assumes that the concentrations and the fluxes corresponding to each perturbation are variables in the optimization problem formulated to estimate kinetic parameters.
@@ -207,85 +234,85 @@
 		\label{tab:res1}
 	\end{table}
 	\subsection{Estimation of flux 1:}
-	\begin{figure}[!tbhp]
-		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux1/no_noise/typec/est_flux1_conc_aug6}}
-		\caption{Plot comparing noiseless model generated steady state metabolite concentrations with model estimates obtained using an optimized model for $v_1$ using formulation (c). }
-	\end{figure}
-	\begin{figure}[!tbhp]
-		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux1/noisy/typec/est_flux1_conc_aug6}}
-		\caption{Plot comparing noisy model generated steady state metabolite concentrations with model estimates obtained using an optimized model for $v_1$ using formulation (c). }
-	\end{figure}
-	\begin{figure}[!tbhp]
-		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux1/no_noise/typec/est_flux1_flux_aug6}}
-		\caption{Plot comparing noiseless model generated steady state fluxes with model estimates obtained using an optimized model for $v_1$ using formulation (c). }
-	\end{figure}
-	\begin{figure}[!tbhp]
-		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux1/noisy/typec/est_flux1_flux_aug6}}
-		\caption{Plot comparing noisy model generated steady state fluxes with model estimates obtained using an optimized model for $v_1$ using formulation (c). }
-	\end{figure}
-	\begin{figure}[!tbhp]
-		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux1/no_noise/typec/est_flux1_par_aug6}}
-		\caption{Plot comparing noiseless model generated parameters for $v_1$ through a multi-start search algorithm using formulation (c). }
-	\end{figure}
-	\begin{figure}[!tbhp]
-		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux1/noisy/typec/est_flux1_par_aug6}}
-		\caption{Plot comparing noisy model generated parameters for $v_1$ through a multi-start search algorithm using formulation (c). }
-	\end{figure}
+	%\begin{figure}[!tbhp]
+	%	\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux1/no_noise/typec/est_flux1_conc_aug6}}
+	%	\caption{Plot comparing noiseless model generated steady state metabolite concentrations with model estimates obtained using an optimized model for $v_1$ using formulation (c). }
+	%\end{figure}
+	%\begin{figure}[!tbhp]
+	%	\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux1/noisy/typec/est_flux1_conc_aug6}}
+	%	\caption{Plot comparing noisy model generated steady state metabolite concentrations with model estimates obtained using an optimized model for $v_1$ using formulation (c). }
+	%\end{figure}
+	%\begin{figure}[!tbhp]
+	%	\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux1/no_noise/typec/est_flux1_flux_aug6}}
+	%	\caption{Plot comparing noiseless model generated steady state fluxes with model estimates obtained using an optimized model for $v_1$ using formulation (c). }
+	%\end{figure}
+	%\begin{figure}[!tbhp]
+	%	\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux1/noisy/typec/est_flux1_flux_aug6}}
+	%	\caption{Plot comparing noisy model generated steady state fluxes with model estimates obtained using an optimized model for $v_1$ using formulation (c). }
+	%\end{figure}
+	%\begin{figure}[!tbhp]
+	%	\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux1/no_noise/typec/est_flux1_par_aug6}}
+	%	\caption{Plot comparing noiseless model generated parameters for $v_1$ through a multi-start search algorithm using formulation (c). }
+	%\end{figure}
+	%\begin{figure}[!tbhp]
+	%	\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux1/noisy/typec/est_flux1_par_aug6}}
+	%	\caption{Plot comparing noisy model generated parameters for $v_1$ through a multi-start search algorithm using formulation (c). }
+	%\end{figure}
 	\clearpage
 
 	\subsection{Estimation of flux 2:}
-	\begin{figure}[!tbhp]
-		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux2/no_noise/typec/est_flux2_conc_aug6}}
-		\caption{Plot comparing noiseless model generated steady state metabolite concentrations with model estimates obtained using an optimized model for $v_2$ using formulation (c). }
-	\end{figure}
-	\begin{figure}[!tbhp]
-		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux2/noisy/typec/est_flux2_conc_aug6}}
-		\caption{Plot comparing noisy model generated steady state metabolite concentrations with model estimates obtained using an optimized model for $v_2$ using formulation (c). }
-	\end{figure}
-	\begin{figure}[!tbhp]
-		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux2/no_noise/typec/est_flux2_flux_aug6}}
-		\caption{Plot comparing noiseless model generated steady state fluxes with model estimates obtained using an optimized model for $v_2$ using formulation (c). }
-	\end{figure}
-	\begin{figure}[!tbhp]
-		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux2/noisy/typec/est_flux2_flux_aug6}}
-		\caption{Plot comparing noisy model generated steady state fluxes with model estimates obtained using an optimized model for $v_2$ using formulation (c). }
-	\end{figure}
-	\begin{figure}[!tbhp]
-		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux2/no_noise/typec/est_flux2_par_aug6}}
-		\caption{Plot comparing noiseless model generated parameters for $v_2$ through a multi-start search algorithm using formulation (c). }
-	\end{figure}
-	\begin{figure}[!tbhp]
-		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux2/noisy/typec/est_flux2_par_aug6}}
-		\caption{Plot comparing noisy model generated parameters for $v_2$ through a multi-start search algorithm using formulation (c). }
-	\end{figure}
+	%\begin{figure}[!tbhp]
+	%	\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux2/no_noise/typec/est_flux2_conc_aug6}}
+	%	\caption{Plot comparing noiseless model generated steady state metabolite concentrations with model estimates obtained using an optimized model for $v_2$ using formulation (c). }
+	%\end{figure}
+	%\begin{figure}[!tbhp]
+	%	\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux2/noisy/typec/est_flux2_conc_aug6}}
+	%	\caption{Plot comparing noisy model generated steady state metabolite concentrations with model estimates obtained using an optimized model for $v_2$ using formulation (c). }
+	%\end{figure}
+	%\begin{figure}[!tbhp]
+	%	\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux2/no_noise/typec/est_flux2_flux_aug6}}
+	%	\caption{Plot comparing noiseless model generated steady state fluxes with model estimates obtained using an optimized model for $v_2$ using formulation (c). }
+	%\end{figure}
+	%\begin{figure}[!tbhp]
+	%	\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux2/noisy/typec/est_flux2_flux_aug6}}
+	%	\caption{Plot comparing noisy model generated steady state fluxes with model estimates obtained using an optimized model for $v_2$ using formulation (c). }
+	%\end{figure}
+	%\begin{figure}[!tbhp]
+	%	\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux2/no_noise/typec/est_flux2_par_aug6}}
+	%	\caption{Plot comparing noiseless model generated parameters for $v_2$ through a multi-start search algorithm using formulation (c). }
+	%\end{figure}
+	%\begin{figure}[!tbhp]
+	%	\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux2/noisy/typec/est_flux2_par_aug6}}
+	%	\caption{Plot comparing noisy model generated parameters for $v_2$ through a multi-start search algorithm using formulation (c). }
+	%\end{figure}
 	\clearpage
 	
 	\subsection{Estimation of flux 3:}
-	\begin{figure}[!tbhp]
-		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux3/no_noise/typec/est_flux3_conc_aug6}}
-		\caption{Plot comparing noiseless model generated steady state metabolite concentrations with model estimates obtained using an optimized model for $v_3$ using formulation (c). }
-	\end{figure}
-	\begin{figure}[!tbhp]
-		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux3/noisy/typec/est_flux3_conc_aug6}}
-		\caption{Plot comparing noisy model generated steady state metabolite concentrations with model estimates obtained using an optimized model for $v_3$ using formulation (c). }
-	\end{figure}
-	\begin{figure}[!tbhp]
-		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux3/no_noise/typec/est_flux3_flux_aug6}}
-		\caption{Plot comparing noiseless model generated steady state fluxes with model estimates obtained using an optimized model for $v_3$ using formulation (c). }
-	\end{figure}
-	\begin{figure}[!tbhp]
-		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux3/noisy/typec/est_flux3_flux_aug6}}
-		\caption{Plot comparing noisy model generated steady state fluxes with model estimates obtained using an optimized model for $v_3$ using formulation (c). }
-	\end{figure}
-	\begin{figure}[!tbhp]
-		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux3/no_noise/typec/est_flux3_par_aug6}}
-		\caption{Plot comparing noiseless model generated parameters for $v_3$ through a multi-start search algorithm using formulation (c). }
-	\end{figure}
-	\begin{figure}[!tbhp]
-		\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux3/noisy/typec/est_flux3_par_aug6}}
-		\caption{Plot comparing noisy model generated parameters for $v_3$ through a multi-start search algorithm using formulation (c). }
-	\end{figure}
-	\clearpage
+	%\begin{figure}[!tbhp]
+	%	\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux3/no_noise/typec/est_flux3_conc_aug6}}
+	%	\caption{Plot comparing noiseless model generated steady state metabolite concentrations with model estimates obtained using an optimized model for $v_3$ using formulation (c). }
+	%\end{figure}
+	%\begin{figure}[!tbhp]
+	%	\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux3/noisy/typec/est_flux3_conc_aug6}}
+	%	\caption{Plot comparing noisy model generated steady state metabolite concentrations with model estimates obtained using an optimized model for $v_3$ using formulation (c). }
+	%\end{figure}
+	%\begin{figure}[!tbhp]
+	%	\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux3/no_noise/typec/est_flux3_flux_aug6}}
+	%	\caption{Plot comparing noiseless model generated steady state fluxes with model estimates obtained using an optimized model for $v_3$ using formulation (c). }
+	%\end{figure}
+	%\begin{figure}[!tbhp]
+	%	\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux3/noisy/typec/est_flux3_flux_aug6}}
+	%	\caption{Plot comparing noisy model generated steady state fluxes with model estimates obtained using an optimized model for $v_3$ using formulation (c). }
+	%\end{figure}
+	%\begin{figure}[!tbhp]
+	%	\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux3/no_noise/typec/est_flux3_par_aug6}}
+	%	\caption{Plot comparing noiseless model generated parameters for $v_3$ through a multi-start search algorithm using formulation (c). }
+	%\end{figure}
+	%\begin{figure}[!tbhp]
+	%	\centering{\includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/estimation/est_flux3/noisy/typec/est_flux3_par_aug6}}
+	%	\caption{Plot comparing noisy model generated parameters for $v_3$ through a multi-start search algorithm using formulation (c). }
+	%\end{figure}
+	%\clearpage
 	
 	\section{Appendix}
 	\subsection{Formulation a):}		
