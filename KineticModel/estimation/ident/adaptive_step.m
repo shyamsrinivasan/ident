@@ -27,9 +27,9 @@ end
 if isfield(prob,'yinit')
     yinit = prob.yinit;
 end
-if isfield(prob,'x')
-    p = prob.x; 
-end
+% if isfield(prob,'x')
+%     p = prob.x; 
+% end
 if isfield(prob,'npts')
     npts = prob.npts; 
 end
@@ -61,19 +61,20 @@ new_thetai = fixed_pvalue+type*theta_step;
 
 % x_newval is not symbolic class(x_newval) = casadi.DM
 [x_newval,y_newval] =...
-xdynfun(xinit,repmat(theta_k,1,npts),...
-              new_thetai,...
-              repmat(p_val(6:9)',1,npts),...
-              p_val(17));
+xdynfun(xinit,...
+        repmat(theta_k,1,npts),...
+        new_thetai,...
+        repmat(p_val(6:9)',1,npts),...
+        p_val(17));
 % add initial value
-x_newval = [xinit x_newval];
-y_newval = [yinit y_newval];
+% x_newval = [xinit x_newval];
+% y_newval = [yinit y_newval];
 % choose only points present in experimental data
-y_model_newval = y_newval([1 3 4 5],freq);
+y_model_newval = y_newval([1 3 4 5],:);
 
 % create nlsqopt objective function
 y_error = (yexp-y_model_newval);
-obj_new = full(.5*dot(y_error,y_error));
+obj_new = full(.5*sum(sum(y_error)));
 obj_diff = obj_new-obj_k-q*delta_alpha;
 
 while obj_diff>=eps && iter<=maxiter
@@ -81,19 +82,21 @@ while obj_diff>=eps && iter<=maxiter
     new_thetai = fixed_pvalue+type*theta_step;
     
     [x_newval,y_newval] =...
-    xdynfun(xinit,repmat(theta_k,1,npts),...
-                  new_thetai,...
-                  repmat(p_val(6:9)',1,npts),...
-                  p_val(17));    
+    xdynfun(xinit,...
+            repmat(theta_k,1,npts),...
+            new_thetai,...
+            repmat(p_val(6:9)',1,npts),...
+            p_val(17));    
     % add initial value
-    x_newval = [xinit x_newval];
-    y_newval = [yinit y_newval];
+%     x_newval = [xinit x_newval];
+%     y_newval = [yinit y_newval];
     % choose only points present in experimental data
-    y_model_newval = y_newval([1 3 4 5],freq);
+    y_model_newval = y_newval([1 3 4 5],:);
 
     % create nlsqopt objective function
-    y_error = (yexp-y_model_newval);
-    obj_new = full(.5*dot(y_error,y_error));
+    y_error = ((yexp-y_model_newval).^2)./ynoise_var;
+    obj_new_sym = .5*sum(sum(y_error));
+    obj_new = full(obj_new_sym);
     
     % calculate distance from threshold
     obj_diff = obj_new-obj_k-q*delta_alpha;
