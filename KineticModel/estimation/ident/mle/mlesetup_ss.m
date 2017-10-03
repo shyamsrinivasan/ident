@@ -41,7 +41,7 @@ end
 [ode,flux,~,~,x,p_var,p_other,acetate] = casfh(data.nc);
 
 % RK4 integrator
-dt = .1; % tspan(end)/freq;
+dt = freq;
 k1 = ode(x,p_var,p_other,acetate);
 k2 = ode(x+dt/2.0*k1,p_var,p_other,acetate);
 k3 = ode(x+dt/2.0*k2,p_var,p_other,acetate);
