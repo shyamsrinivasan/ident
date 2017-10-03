@@ -41,6 +41,10 @@ if isfield(prob,'yexp')
 else
     yexp = xexp;
 end
+if isfield(data,'ynoise_var')
+    % measurement noise/error => y ~ N(0,sigma^2);
+    ynoise_var = data.ynoise_var;
+end
 
 maxiter = 1000;
 % set threshold delta_alpha for theta_step
@@ -73,7 +77,7 @@ xdynfun(xinit,...
 y_model_newval = y_newval([1 3 4 5],:);
 
 % create nlsqopt objective function
-y_error = (yexp-y_model_newval);
+y_error = ((yexp-y_model_newval).^2)./ynoise_var;
 obj_new = full(.5*sum(sum(y_error)));
 obj_diff = obj_new-obj_k-q*delta_alpha;
 
