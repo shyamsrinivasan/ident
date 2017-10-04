@@ -11,7 +11,7 @@ end
 if status == 1    
     load('C:/Users/shyam/Documents/Courses/CHE1125Project/results/ple/mle_all_acetate_oct2.mat');
 elseif status == 2    
-    load('~/Documents/Courses/CHE1125Project/results/ple/mle_all_acetate_oct2.mat');    
+    load('~/Documents/Courses/CHE1125Project/results/PLE/mle_all_acetate_oct2.mat');    
 end
 
 % use wt as initial value for all perturbations
