@@ -16,13 +16,13 @@ reg3_term = 1/(1+K3pep/x13)
 fdp_sat_1 = x21/K3fdp
 fdp_sat_2 = x22/K3fdp
 fdp_sat_3 = x23/K3fdp
-flux_31 = v31 - (reg1_term*V3max*fdp_sat_1/(1+fdp_sat_1))
-flux_32 = v32 - (reg2_term*V3max*fdp_sat_2/(1+fdp_sat_2))
-flux_33 = v33 - (reg3_term*V3max*fdp_sat_3/(1+fdp_sat_3))
+flux_31 = v31 - reg1_term*V3max*fdp_sat_1/(1+fdp_sat_1)
+flux_32 = v32 - reg2_term*V3max*fdp_sat_2/(1+fdp_sat_2)
+flux_33 = v33 - reg3_term*V3max*fdp_sat_3/(1+fdp_sat_3)
 
 # nonlinear solution for parameters
-system_flux = [flux_31, flux_32] # , flux_33]
-parameters = [K3fdp, K3pep] # , K3fdp, K3pep]
+system_flux = [flux_31, flux_32, flux_33]
+parameters = [K3fdp, K3pep, V3max] # K3fdp, K3pep]
 variables = [x11, x21, v31, x12, x22, v32, x13, x23, v33]
 solutions = nonlinsolve(system_flux, parameters)
 solutions = list(solutions)
