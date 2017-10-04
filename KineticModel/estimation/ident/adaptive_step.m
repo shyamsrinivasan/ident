@@ -3,7 +3,8 @@
 % obj - cas function and not a casadi symbolic object
 % theta_k - value of optimized parameters from previous iteration
 function [theta_step,obj_new,iter] =...
-        adaptive_step(obj_k,theta_k,prob,p_val,fixed_pvalue,step_opts,ynoise_var)
+        adaptive_step(obj_k,theta_k,prob,p_val,fixed_pvalue,...
+                      step_opts,input_data,ynoise_var)
 
 % type = +1 for positive step and -1 for negative step
 if isfield(step_opts,'type')
@@ -24,9 +25,9 @@ end
 if isfield(prob,'xinit')
     xinit = prob.xinit; 
 end
-if isfield(prob,'yinit')
-    yinit = prob.yinit;
-end
+% if isfield(prob,'yinit')
+%     yinit = prob.yinit;
+% end
 % if isfield(prob,'x')
 %     p = prob.x; 
 % end
@@ -69,7 +70,7 @@ xdynfun(xinit,...
         repmat(theta_k,1,npts),...
         new_thetai,...
         repmat(p_val(6:9)',1,npts),...
-        p_val(17));
+        input_data);
 % add initial value
 % x_newval = [xinit x_newval];
 % y_newval = [yinit y_newval];
