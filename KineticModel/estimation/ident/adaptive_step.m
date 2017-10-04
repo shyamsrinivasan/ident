@@ -3,7 +3,7 @@
 % obj - cas function and not a casadi symbolic object
 % theta_k - value of optimized parameters from previous iteration
 function [theta_step,obj_new,iter] =...
-        adaptive_step(obj_k,theta_k,prob,p_val,fixed_pvalue,step_opts,freq)
+        adaptive_step(obj_k,theta_k,prob,p_val,fixed_pvalue,step_opts,ynoise_var)
 
 % type = +1 for positive step and -1 for negative step
 if isfield(step_opts,'type')
@@ -41,10 +41,10 @@ if isfield(prob,'yexp')
 else
     yexp = xexp;
 end
-if isfield(data,'ynoise_var')
-    % measurement noise/error => y ~ N(0,sigma^2);
-    ynoise_var = data.ynoise_var;
-end
+% if isfield(data,'ynoise_var')
+%     % measurement noise/error => y ~ N(0,sigma^2);
+%     ynoise_var = data.ynoise_var;
+% end
 
 maxiter = 1000;
 % set threshold delta_alpha for theta_step
