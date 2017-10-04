@@ -61,7 +61,7 @@ p0 = [opts.odep(1:5)';opts.odep(10);opts.odep(12:13)']./scale;
 pos_neg = [1 3];
 nid = length(pos_neg);
 PLEvals = cell(nid,1);
-for id = 1:1 % nid
+parfor id = 1:nid
     PLEvals{id} =...
     getPLE(thetai_fixed_value,theta_step,p0,opts.odep,...
            delta_alpha_1,optim_opts,maxiter,pos_neg(id));             
@@ -69,4 +69,4 @@ end
 
 %% collect data and plot from parallel estimation
 PLE_unify = unifyPLEres(PLEvals);
-plotPLE(PLE_unify,delta_alpha_1,delta_alpha_all);  
+% plotPLE(PLE_unify,delta_alpha_1,delta_alpha_all);  
