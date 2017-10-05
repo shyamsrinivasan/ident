@@ -18,6 +18,9 @@ end
 if isfield(data,'yexp')
     yexp = data.yexp;
 end
+if isfield(data,'xnoise_var')
+    xnoise_var = data.xnoise_var;
+end
 if isfield(data,'ynoise_var')
     % measurement noise/error => y ~ N(0,sigma^2);
     ynoise_var = data.ynoise_var;
@@ -65,9 +68,15 @@ xdyn_fun = xstate_onepoint.mapaccum('xdyn_fun',npts);
 % final symbolic expression to be used during optimization
 [x_sym,y_sym] =...
 xdyn_fun(xinit,repmat(p_var,1,npts),repmat(data.odep(6:9)',1,npts),input_data);
-y_model_sym = y_sym([1 3 4 5],:);
+if isfield(data,'wcon') && data.wcon
+    % add mets concentration 
+    y_model_sym = [y_sym([1 3 4 5],:);x_sym([1 2],:)]; 
+    y_error = (([yexp;xexp]-y_model_sym).^2)./ynoise_var;
+else
+    y_model_sym = y_sym([1 3 4 5],:);
+    y_error = ((yexp-y_model_sym).^2)./ynoise_var;
+end
 
-y_error = ((yexp-y_model_sym).^2)./ynoise_var;
 obj = .5*sum(sum(y_error));
 objfun = casadi.Function('objfun',{p_var},{obj});
 
