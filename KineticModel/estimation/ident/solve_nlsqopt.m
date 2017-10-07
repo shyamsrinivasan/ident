@@ -12,12 +12,22 @@ else
     x = [];
 end
 if isfield(prob,'lb')
-    lb = prob.lb;
+    if ~isempty(prob.lb)
+        lb = prob.lb;
+    else
+        lb = zeros(length(x0),1);
+        lb(lb==0) = .001;
+    end
 else
     lb = zeros(length(x0),1);
 end
-if isfield(prob,'ub')
-    ub = prob.ub;
+if isfield(prob,'ub') 
+    if ~isempty(prob.ub)
+        ub = prob.ub;
+    else
+        ub = zeros(length(x0),1);
+        ub(ub==0) = Inf;
+    end
 else
     ub = zeros(length(x0),1);
     ub(ub==0) = Inf;
