@@ -81,7 +81,8 @@ obj = .5*sum(sum(y_error));
 objfun = casadi.Function('objfun',{p_var},{obj});
 
 % bounds for mle estimate of all 13 parameters for given input (acetate)
-[lb,ub] = ident_bounds_mle(length(p_var));
+% [lb,ub] = ident_bounds_mle(length(p_var));
+lb = []; ub = [];
 gradfh = [];
 hessfun = [];
 
