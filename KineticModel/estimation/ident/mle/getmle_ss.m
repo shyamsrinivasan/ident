@@ -15,6 +15,8 @@ MLEvals.logL = -optsol.fval+data.logL_const;
 MLEvals.fval = optsol.fval;
 % MLEvals.exitflag = exitflag;
 MLEvals.info = optsol.info;
+MLEvals.lb = prob_struct.lb;
+MLEvals.ub = prob_struct.ub;
 
 
 
