@@ -9,7 +9,7 @@ end
 % k1cat - MLE holding transcription parameters and acetate constant 
 % {'vemax','KeFDP','ne','d','acetate'}
 lb(:) = .05;
-lb(3) = 3.9;
+lb(3) = 3.5;
 lb(6) = .1;
 lb(7) = .1;
 lb(8) = .1;
@@ -18,7 +18,7 @@ lb(9) = .1;
 ub(:) = 3;
 ub(1) = .5;
 ub(2) = .5;
-ub(3) = 4.1;
+ub(3) = 4.2;
 ub(4) = .5;
 ub(5) = .5;
 ub(6) = .5;
