@@ -25,7 +25,7 @@ def simulate_ode(fun, y_initial, tf, opts):
 
     return time_course, y_result, prob, solver
 
-def run_ode_sims(fun, y_initial, opts, t_final=500, args_1=True):
+def run_ode_sims(fun, y_initial, opts, t_final=500, args_1=False):
     """run kotte model ode using cvode from assimulo"""
 
     # def_par_val = np.array([.1, .1, 4e6, .1, .3, 1.1, .45, 2, .25, .2, 1, 1, 1, .1])
