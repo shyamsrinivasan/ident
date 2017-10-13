@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 # define rhs function - defined in kotte_model.py
 from kotte_model import *
 from simulate_ode import run_ode_sims
+from add_noise import add_noise_dynamic
 
 # main function
 if __name__=='__main__':
@@ -13,15 +14,37 @@ if __name__=='__main__':
     cvode_options.append(ode_par_val)
 
     time, y_dynamic = run_ode_sims(kotte_ode, y0, cvode_options, 100)[:2]
-    # calculate and plot dynamic flux data
-    flux_function = lambda x: kotte_flux(x, ode_par_val)
-    flux_dynamic = map(flux_function, y_dynamic)
+    # calculate dynamic flux data
+    flux_dynamic = np.array(map(lambda x: kotte_flux(x, ode_par_val), y_dynamic))
+    # add noise to dynamic data
+    noisy_y_dynamic, noisy_flux_dynamic = add_noise_dynamic(y_dynamic, flux_dynamic)
+
+    # get ss info from dynamic data
+    y_steady_state = y_dynamic[-1,:]
+    flux_steady_state = flux_dynamic[-1, :]
+    # get noisy ss from dynamic data
+    y_noisy_steady_state = noisy_y_dynamic[-1, :]
+    flux_noisy_steady_state = noisy_flux_dynamic[-1, :]
+
+    # plot noisy data
+    plt.plot(time, noisy_y_dynamic, color="r")
+    plt.show()
+    plt.plot(time, noisy_flux_dynamic, color="g")
+    plt.show()
+
+    # plot dynamic flux data
     plt.plot(time, flux_dynamic, color="b")
     plt.show()
 
-    time_ck, y_dynamic_ck = run_ode_sims(kotte_ck_ode, y0, cvode_options, 100)[:2]
-    # calculate and plot dynamic ck flux data
-    flux_function_ck = lambda x: kotte_ck_flux(x, ode_par_val)
-    flux_dynamic_ck = map(flux_function_ck, y_dynamic_ck)
-    plt.plot(time, flux_dynamic_ck, color="g")
+    time_ck, y_ck_dynamic = run_ode_sims(kotte_ck_ode, y0, cvode_options, 100)[:2]
+    # get ss info from dynamic data
+    y_ck_steady_state = y_ck_dynamic[-1, :]
+
+    # calculate dynamic flux
+    flux_ck_dynamic = np.array(map(lambda x: kotte_ck_flux(x, ode_par_val), y_ck_dynamic))
+    # get ss flux
+    flux_ck_steady_state = flux_ck_dynamic[-1, :]
+
+    # plot dynamic ck flux data
+    plt.plot(time, flux_ck_dynamic, color="g")
     plt.show()
