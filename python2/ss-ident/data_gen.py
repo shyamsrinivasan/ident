@@ -7,7 +7,7 @@ from add_noise import add_noise_dynamic
 from plot_profiles import plot_dynamic_course
 
 # main function
-if __name__=='__main__':
+if __name__ == '__main__':
 
     y0 = np.array([5, 1, 1])
     cvode_options = ['Newton', 'Adams', 1e-6, 1e-6, 100]
@@ -24,7 +24,7 @@ if __name__=='__main__':
     plot_dynamic_course(time, noisy_y_dynamic, noisy_flux_dynamic, 3)
 
     # get ss info from dynamic data
-    y_steady_state = y_dynamic[-1,:]
+    y_steady_state = y_dynamic[-1, :]
     flux_steady_state = flux_dynamic[-1, :]
     # get noisy ss from dynamic data
     y_noisy_steady_state = noisy_y_dynamic[-1, :]
@@ -48,14 +48,13 @@ if __name__=='__main__':
 
     #
     f, axx = plt.subplots(2, 2, sharex='col', sharey='row')
-    axx[0,0].plot(time, y_dynamic, color='r')
-    axx[0,0].set_title('Concentrations, No Noise')
-    axx[0,1].plot(time, noisy_y_dynamic, color='r')
-    axx[0,1].set_title('Concentrations, Noisy')
-    axx[1,0].plot(time, flux_dynamic, color='b')
-    axx[1,0].set_title('Flux, No Noise')
-    axx[1,1].plot(time, noisy_flux_dynamic, color='b')
-    axx[1,1].set_title('Flux, Noisy')
+    axx[0, 0].plot(time, y_dynamic, color='r')
+    axx[0, 0].set_title('Concentrations, MWC Kinetics')
+    axx[0, 1].plot(time, y_ck_dynamic, color='r')
+    axx[0, 1].set_title('Concentrations, Convenience Kinetics')
+    axx[1, 0].plot(time, flux_dynamic, color='b')
+    axx[1, 0].set_title('Flux, MWC Kinetics')
+    axx[1, 1].plot(time, flux_ck_dynamic, color='b')
+    axx[1, 1].set_title('Flux, Convenience Kinetics')
     f.subplots_adjust(hspace=.3)
     plt.show()
-
