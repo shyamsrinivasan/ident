@@ -24,14 +24,14 @@ def add_noise_dynamic(concentration_dynamic=np.zeros(shape=[0,3]), flux_dynamic=
     """function to add noise to input dynamic data"""
     if concentration_dynamic.any():
         rows, columns = concentration_dynamic.shape
-        concentration_noise = np.random.normal(0, .01, [rows, columns])
+        concentration_noise = np.random.normal(0, .05, [rows, columns])
         noisy_dynamic_concentration = concentration_dynamic * (1 + concentration_noise)
     else:
         noisy_dynamic_concentration = concentration_dynamic
 
     if flux_dynamic.any():
         rows, columns = flux_dynamic.shape
-        flux_noise = np.random.normal(0, .01, [rows, columns])
+        flux_noise = np.random.normal(0, .05, [rows, columns])
         noisy_dynamic_flux = flux_dynamic * (1 + flux_noise)
     else:
         noisy_dynamic_flux = flux_dynamic
