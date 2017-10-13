@@ -4,8 +4,8 @@ from simulate_ode import run_ode_sims
 from add_noise import add_noise_dynamic
 
 
-def generate_data(kinetics):
-    y0 = np.array([5, 1, 1])
+def generate_data(y0, kinetics):
+    # y0 = np.array([5, 1, 1])
     cvode_options = ['Newton', 'Adams', 1e-6, 1e-6, 100]
     ode_par_val = np.array([.1, .1, 4e6, .1, .3, 1.1, .45, 2, .25, .2, 1, 1, 1, .1])
     cvode_options.append(ode_par_val)
@@ -30,13 +30,16 @@ def generate_data(kinetics):
     return time, y_steady_state, flux_steady_state, y_dynamic, flux_dynamic
 
 
-def generate_noisy_data(kinetics):
+def generate_noisy_data(y0, kinetics):
     tout, concentration_steady_state, flux_steady_state, \
-    concentration_dynamic, flux_dynamic = generate_data(kinetics)
+    concentration_dynamic, flux_dynamic = generate_data(y0, kinetics)
 
     # add noise to dynamic data
     noisy_concentration_dynamic, noisy_flux_dynamic = add_noise_dynamic(concentration_dynamic, flux_dynamic)
     noisy_concentration_steady_state = noisy_concentration_dynamic[-1, :]
     noisy_flux_steady_state = noisy_flux_dynamic[-1, :]
 
-    return noisy_concentration_steady_state, noisy_flux_steady_state, noisy_concentration_dynamic, noisy_flux_dynamic
+    return tout, noisy_concentration_steady_state, noisy_flux_steady_state, \
+            noisy_concentration_dynamic, noisy_flux_dynamic, \
+            concentration_steady_state, flux_steady_state, \
+            concentration_dynamic, flux_dynamic
