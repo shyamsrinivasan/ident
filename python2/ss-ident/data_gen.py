@@ -37,13 +37,23 @@ if __name__=='__main__':
     plt.show()
 
     time_ck, y_ck_dynamic = run_ode_sims(kotte_ck_ode, y0, cvode_options, 100)[:2]
-    # get ss info from dynamic data
-    y_ck_steady_state = y_ck_dynamic[-1, :]
-
     # calculate dynamic flux
     flux_ck_dynamic = np.array(map(lambda x: kotte_ck_flux(x, ode_par_val), y_ck_dynamic))
-    # get ss flux
+    # add noise to dynamic data
+    noisy_y_ck_dynamic, noisy_flux_ck_dynamic = add_noise_dynamic(y_ck_dynamic, flux_ck_dynamic)
+
+    # get ss info from dynamic data
+    y_ck_steady_state = y_ck_dynamic[-1, :]
     flux_ck_steady_state = flux_ck_dynamic[-1, :]
+    # get noisy ss from dynamic data
+    y_ck_noisy_steady_state = noisy_y_ck_dynamic[-1, :]
+    flux_ck_noisy_steady_state = noisy_flux_ck_dynamic[-1, :]
+
+    # plot noisy ck data
+    plt.plot(time, noisy_y_ck_dynamic, color="r")
+    plt.show()
+    plt.plot(time, noisy_flux_ck_dynamic, color="g")
+    plt.show()
 
     # plot dynamic ck flux data
     plt.plot(time, flux_ck_dynamic, color="g")
