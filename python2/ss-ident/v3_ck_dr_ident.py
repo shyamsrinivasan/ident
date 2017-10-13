@@ -1,7 +1,12 @@
 from sympy import *
+import numpy as np
+from generate_noisy_data import generate_noisy_data
 
 # generate noisy experimental data for testing identifiability
-
+y0 = np.array([5, 1, 1])
+# generate data using MWC Kinetics
+    _, y_noisy_steady_state, flux_noisy_steady_state, _, _, y_steady_state, flux_steady_state = \
+        generate_noisy_data(y0, 1)
 
 variables = [x11, x21, v31, x12, x22, v32, x13, x23, v33]
 
