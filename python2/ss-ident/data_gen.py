@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from kotte_model import *
 from simulate_ode import run_ode_sims
 from add_noise import add_noise_dynamic
+from plot_profiles import plot_dynamic_course
 
 # main function
 if __name__=='__main__':
@@ -18,6 +19,9 @@ if __name__=='__main__':
     flux_dynamic = np.array(map(lambda x: kotte_flux(x, ode_par_val), y_dynamic))
     # add noise to dynamic data
     noisy_y_dynamic, noisy_flux_dynamic = add_noise_dynamic(y_dynamic, flux_dynamic)
+    # plot no noise data
+    plot_dynamic_course(time, y_dynamic, flux_dynamic, 3)
+    plot_dynamic_course(time, noisy_y_dynamic, noisy_flux_dynamic, 3)
 
     # get ss info from dynamic data
     y_steady_state = y_dynamic[-1,:]
@@ -26,21 +30,14 @@ if __name__=='__main__':
     y_noisy_steady_state = noisy_y_dynamic[-1, :]
     flux_noisy_steady_state = noisy_flux_dynamic[-1, :]
 
-    # plot noisy data
-    plt.plot(time, noisy_y_dynamic, color="r")
-    plt.show()
-    plt.plot(time, noisy_flux_dynamic, color="g")
-    plt.show()
-
-    # plot dynamic flux data
-    plt.plot(time, flux_dynamic, color="b")
-    plt.show()
-
     time_ck, y_ck_dynamic = run_ode_sims(kotte_ck_ode, y0, cvode_options, 100)[:2]
     # calculate dynamic flux
     flux_ck_dynamic = np.array(map(lambda x: kotte_ck_flux(x, ode_par_val), y_ck_dynamic))
     # add noise to dynamic data
     noisy_y_ck_dynamic, noisy_flux_ck_dynamic = add_noise_dynamic(y_ck_dynamic, flux_ck_dynamic)
+    # plot ck dynamic data
+    plot_dynamic_course(time_ck, y_ck_dynamic, flux_ck_dynamic, 3)
+    plot_dynamic_course(time_ck, noisy_y_ck_dynamic, noisy_flux_ck_dynamic, 3)
 
     # get ss info from dynamic data
     y_ck_steady_state = y_ck_dynamic[-1, :]
@@ -49,12 +46,16 @@ if __name__=='__main__':
     y_ck_noisy_steady_state = noisy_y_ck_dynamic[-1, :]
     flux_ck_noisy_steady_state = noisy_flux_ck_dynamic[-1, :]
 
-    # plot noisy ck data
-    plt.plot(time, noisy_y_ck_dynamic, color="r")
-    plt.show()
-    plt.plot(time, noisy_flux_ck_dynamic, color="g")
+    #
+    f, axx = plt.subplots(2, 2, sharex='col', sharey='row')
+    axx[0,0].plot(time, y_dynamic, color='r')
+    axx[0,0].set_title('Concentrations, No Noise')
+    axx[0,1].plot(time, noisy_y_dynamic, color='r')
+    axx[0,1].set_title('Concentrations, Noisy')
+    axx[1,0].plot(time, flux_dynamic, color='b')
+    axx[1,0].set_title('Flux, No Noise')
+    axx[1,1].plot(time, noisy_flux_dynamic, color='b')
+    axx[1,1].set_title('Flux, Noisy')
+    f.subplots_adjust(hspace=.3)
     plt.show()
 
-    # plot dynamic ck flux data
-    plt.plot(time, flux_ck_dynamic, color="g")
-    plt.show()
