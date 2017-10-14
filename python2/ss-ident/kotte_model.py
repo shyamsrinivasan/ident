@@ -4,7 +4,8 @@ import numpy as np
 # K1ac, K3fdp, L3fdp, K3pep, K2pep, vemax, Kefdp, ne, d, V4max, k1cat, V3max, V2max, ac
 def_par_val = np.array([.1, .1, 4e6, .1, .3, 1.1, .45, 2, .25, .2, 1, 1, 1, .1])
 
-def kotte_ck_flux(y,p=def_par_val):
+
+def kotte_ck_flux(y, p=def_par_val):
     """calculate flux using convenience kinetics"""
 
     K1ac, K3fdp, L3fdp, K3pep, K2pep, vemax, Kefdp, ne, d, V4max, k1cat, V3max, V2max, ac = p
@@ -26,7 +27,8 @@ def kotte_ck_flux(y,p=def_par_val):
 
     return all_flux
 
-def kotte_ck_ode(t,y,par_val):
+
+def kotte_ck_ode(t, y, par_val):
     """ode calculation using convenience kinetics for flux 3"""
 
     flux = kotte_ck_flux(y, par_val)
@@ -35,6 +37,7 @@ def kotte_ck_ode(t,y,par_val):
     yd_e = flux[1] - flux[5]
 
     return np.hstack((yd_pep, yd_fdp, yd_e))
+
 
 def kotte_flux(y, p=def_par_val):
     """function doc_string"""
@@ -53,7 +56,8 @@ def kotte_flux(y, p=def_par_val):
 
     return all_flux
 
-def kotte_ode(t,y,par_val):
+
+def kotte_ode(t, y, par_val):
 
     # K1ac, K3fdp, L3fdp, K3pep, K2pep, vemax, Kefdp, ne, d, V4max, k1cat, V3max, V2max, ac = \
     #     [.1, .1, 4e6, .1, .3, 1.1, .45, 2, .25, .2, 1, 1, 1, .1]
