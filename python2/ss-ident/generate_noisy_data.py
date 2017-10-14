@@ -40,6 +40,6 @@ def generate_noisy_data(y0, kinetics):
     noisy_flux_steady_state = noisy_flux_dynamic[-1, :]
 
     return tout, noisy_concentration_steady_state, noisy_flux_steady_state, \
-            noisy_concentration_dynamic, noisy_flux_dynamic, \
-            concentration_steady_state, flux_steady_state, \
-            concentration_dynamic, flux_dynamic
+           noisy_concentration_dynamic, noisy_flux_dynamic, \
+           concentration_steady_state, flux_steady_state, \
+           concentration_dynamic, flux_dynamic
