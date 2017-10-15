@@ -4,10 +4,8 @@ from simulate_ode import run_ode_sims
 from add_noise import add_noise_dynamic
 
 
-def generate_data(y0, kinetics):
-    # y0 = np.array([5, 1, 1])
-    cvode_options = ['Newton', 'Adams', 1e-6, 1e-6, 100]
-    ode_par_val = np.array([.1, .1, 4e6, .1, .3, 1.1, .45, 2, .25, .2, 1, 1, 1, .1])
+def generate_data(y0, all_options, kinetics):
+    cvode_options, ode_par_val = all_options
     cvode_options.append(ode_par_val)
     if kinetics == 1:  # MWC kinetics
         time, y_dynamic = run_ode_sims(kotte_ode, y0, cvode_options, 100)[:2]
@@ -30,9 +28,9 @@ def generate_data(y0, kinetics):
     return time, y_steady_state, flux_steady_state, y_dynamic, flux_dynamic
 
 
-def generate_noisy_data(y0, kinetics):
+def generate_noisy_data(y0, all_options, kinetics):
     tout, concentration_steady_state, flux_steady_state, \
-    concentration_dynamic, flux_dynamic = generate_data(y0, kinetics)
+    concentration_dynamic, flux_dynamic = generate_data(y0, all_options, kinetics)
 
     # add noise to dynamic data
     noisy_concentration_dynamic, noisy_flux_dynamic = add_noise_dynamic(concentration_dynamic, flux_dynamic)
