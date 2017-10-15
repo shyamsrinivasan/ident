@@ -16,10 +16,10 @@ variables = [x11, x21, v31, x12, x22, v32, x13, x23, v33]
 # K3pep_sol_1
 V3max_sol_1 = -v32*v33*x11*x12*x21 + v32*v33*x11*x13*x21 + v31*v33*x11*x12*x22 - \
               v31*v33*x12*x13*x22 - v31*v32*x11*x13*x23 + v31*v32*x12*x13*x23
-v3max_fun_expression = lambdify(variables, V3max_sol_1, "numpy")
-experimental_data = [y_noisy_steady_state[0:2], flux_noisy_steady_state[2],
-                     y_noisy_steady_state[0:2], flux_noisy_steady_state[2],
-                     y_noisy_steady_state[0:2], flux_noisy_steady_state[2]]
+v3max_fun_expression = lambdify([variables], V3max_sol_1, "numpy")
+experimental_data = np.hstack((y_noisy_steady_state[0:2], flux_noisy_steady_state[2],
+                               y_noisy_steady_state[0:2], flux_noisy_steady_state[2],
+                               y_noisy_steady_state[0:2], flux_noisy_steady_state[2]))
 print(experimental_data)
 print(v3max_fun_expression(experimental_data))
 
