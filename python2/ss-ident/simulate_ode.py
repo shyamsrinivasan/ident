@@ -7,7 +7,8 @@ from assimulo.problem import Explicit_Problem
 def simulate_ode(fun, y_initial, tf, opts):
     "function to run CVode solver on given problem"
     # get options
-    iter, discretization_method, atol, rtol, time_points, ode_system_options = opts
+    ode_opts, ode_system_options = opts
+    iter, discretization_method, atol, rtol, time_points = ode_opts
 
     ode_function = lambda t, x : fun(t,x,ode_system_options)
 

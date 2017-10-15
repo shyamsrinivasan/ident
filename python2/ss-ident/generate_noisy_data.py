@@ -6,14 +6,13 @@ from add_noise import add_noise_dynamic
 
 def generate_data(y0, all_options, kinetics):
     cvode_options, ode_par_val = all_options
-    cvode_options.append(ode_par_val)
     if kinetics == 1:  # MWC kinetics
-        time, y_dynamic = run_ode_sims(kotte_ode, y0, cvode_options, 100)[:2]
+        time, y_dynamic = run_ode_sims(kotte_ode, y0, all_options, 100)[:2]
         # calculate dynamic flux data
         flux_dynamic = np.array(map(lambda x: kotte_flux(x, ode_par_val), y_dynamic))
 
     elif kinetics == 2:  # Convenience kinetics
-        time, y_dynamic = run_ode_sims(kotte_ck_ode, y0, cvode_options, 100)[:2]
+        time, y_dynamic = run_ode_sims(kotte_ck_ode, y0, all_options, 100)[:2]
         # calculate dynamic flux
         flux_dynamic = np.array(map(lambda x: kotte_ck_flux(x, ode_par_val), y_dynamic))
     else:
