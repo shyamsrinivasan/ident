@@ -1,5 +1,4 @@
 import numpy as np
-from sympy import *
 from generate_noisy_data import generate_noisy_data
 from kotte_model import flux_1_ident_expression
 from kotte_model import flux_2_ident_expression
@@ -38,15 +37,6 @@ exp_flux_index = np.array([0, 3, 2, 4])
 experimental_data = np.hstack((ode_par_val_experiment_1[-1], y_nss_exp1, flux_nss_exp1[exp_flux_index],
                                ode_par_val_experiment_2[-1], y_nss_exp2, flux_nss_exp2[exp_flux_index],
                                ode_par_val_experiment_3[-1], y_nss_exp3, flux_nss_exp3[exp_flux_index]))
-
-# symbolic expression for flux 3
-ac1, ac2, ac3, x11, x12, x13, x21, x22, x23, x31, x32, x33, \
-v31, v32, v33, v11, v12, v13, v21, v22, v23, v41, v42, v43 = \
-    symbols('ac1, ac2, ac3, x11, x12, x13, x21, x22, x23, x31, x32, x33,'
-            ' v31, v32, v33, v11, v12, v13, v21, v22, v23, v41, v42, v43', positive=True)
-variables = [ac1, x11, x21, x31, v11, v21, v31, v41,
-             ac2, x12, x22, x32, v12, v22, v32, v42,
-             ac3, x13, x23, x33, v13, v23, v33, v43]
 
 # identifiability value for v1
 no_enzyme_dr, enzyme_dr = flux_1_ident_expression(experimental_data)
