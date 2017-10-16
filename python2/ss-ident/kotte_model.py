@@ -1,4 +1,5 @@
 import numpy as np
+from sympy import *
 # import scipy.linalg
 
 # K1ac, K3fdp, L3fdp, K3pep, K2pep, vemax, Kefdp, ne, d, V4max, k1cat, V3max, V2max, ac
@@ -69,3 +70,52 @@ def kotte_ode(t, y, par_val):
     yd_e = flux[1] - flux[5]
 
     return np.hstack((yd_pep,yd_fdp,yd_e))
+
+
+def define_sym_variables():
+    """define all required symbolic variables for sympy expressions"""
+    ac1, ac2, ac3, x11, x12, x13, x21, x22, x23, x31, x32, x33, \
+    v31, v32, v33, v11, v12, v13, v21, v22, v23, v41, v42, v43 = \
+        symbols('ac1, ac2, ac3, x11, x12, x13, x21, x22, x23, x31, x32, x33,'
+                ' v31, v32, v33, v11, v12, v13, v21, v22, v23, v41, v42, v43', positive=True)
+    variables = [ac1, x11, x21, x31, v11, v21, v31, v41,
+                 ac2, x12, x22, x32, v12, v22, v32, v42,
+                 ac3, x13, x23, x33, v13, v23, v33, v43]
+    return variables, ac1, ac2, ac3, x11, x12, x13, x21, x22, x23, x31, x32, x33, \
+           v31, v32, v33, v11, v12, v13, v21, v22, v23, v41, v42, v43
+
+
+def flux_1_ident_expression(experimental_data):
+    """symbolic and lambdify expression for flux 1 denominator from mathematica"""
+    # define symbols and variables (obtained through experimental data
+    variables, ac1, ac2, _,\
+        _, _, _, _, _, _, x31, x32, _,\
+        _, _, _, v11, v12, _, \
+        _, _, _, _, _, _ = define_sym_variables()
+
+    # symbolic expression for flux v1 w/o enzyme concentration data
+    v1max_sol = -(ac2 * v11 - ac1 * v12)
+    k1ac_v1max_sol = -ac2 * v11 + ac1 * v12
+    v1max_fun_expression = lambdify([variables], v1max_sol, "numpy")
+    k1ac_v1max_fun_expression = lambdify([variables], k1ac_v1max_sol, "numpy")
+    v1max_no_enzyme_denominator_value = v1max_fun_expression(experimental_data)
+    k1ac_no_enzyme_denominator_value = k1ac_v1max_fun_expression(experimental_data)
+
+    # symbolic expression for flux v1 w/ enzyme concentration data
+    k1cat_sol = -(ac1 * v12 * x31 - ac2 * v11 * x32)
+    k1ac_sol = ac1 * v12 * x31 - ac2 * v11 * x32
+    k1cat_fun_expression = lambdify([variables], k1cat_sol, "numpy")
+    k1ac_fun_expression = lambdify([variables], k1ac_sol, "numpy")
+    k1cat_enzyme_denominator_value = k1cat_fun_expression(experimental_data)
+    k1ac_enzyme_denominator_value = k1ac_fun_expression(experimental_data)
+
+    return [v1max_no_enzyme_denominator_value, k1ac_no_enzyme_denominator_value], \
+           [k1cat_enzyme_denominator_value, k1ac_enzyme_denominator_value]
+
+
+def flux_2_ident_expression(experimental_data):
+    pass
+
+
+def flux_3_ident_expression(experimental_data):
+    pass
