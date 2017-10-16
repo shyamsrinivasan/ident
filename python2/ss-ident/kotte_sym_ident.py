@@ -31,15 +31,19 @@ all_options_exp_3.append(ode_par_val_experiment_3)
 _, y_nss_exp3, flux_nss_exp3, _, _, _, _, _, _ = generate_noisy_data(y0, all_options_exp_3, 1)
 
 # experimental data based on order of inputs for lambdify expressions
-experimental_data = np.hstack((ode_par_val_experiment_1[-1], y_nss_exp1, flux_nss_exp1[2],
-                               ode_par_val_experiment_2[-1], y_nss_exp2, flux_nss_exp2[2],
-                               ode_par_val_experiment_3[-1], y_nss_exp3, flux_nss_exp3[2]))
+exp_flux_index = np.array([0, 3, 2, 4])
+experimental_data = np.hstack((ode_par_val_experiment_1[-1], y_nss_exp1, flux_nss_exp1[exp_flux_index],
+                               ode_par_val_experiment_2[-1], y_nss_exp2, flux_nss_exp2[exp_flux_index],
+                               ode_par_val_experiment_3[-1], y_nss_exp3, flux_nss_exp3[exp_flux_index]))
 
 # symbolic expression for flux 3
-ac1, ac2, ac3, x11, x12, x13, x21, x22, x23, x31, x32, x33, v31, v32, v33, v11, v12, v13, v21, v22, v23 = \
+ac1, ac2, ac3, x11, x12, x13, x21, x22, x23, x31, x32, x33, \
+v31, v32, v33, v11, v12, v13, v21, v22, v23, v41, v42, v43 = \
     symbols('ac1, ac2, ac3, x11, x12, x13, x21, x22, x23, x31, x32, x33,'
-            ' v31, v32, v33, v11, v12, v13, v21, v22, v23', positive=True)
-variables = [ac1, x11, x21, x31, v11, v21, v31, ac2, x12, x22, x32, v12, v22, v32, ac3, x13, x23, x33, v13, v23, v33]
+            ' v31, v32, v33, v11, v12, v13, v21, v22, v23, v41, v42, v43', positive=True)
+variables = [ac1, x11, x21, x31, v11, v21, v31, v41,
+             ac2, x12, x22, x32, v12, v22, v32, v42,
+             ac3, x13, x23, x33, v13, v23, v33, v43]
 
 # use denominator generated from mathematica to test identifiability for all fluxes
 # V3max
@@ -65,13 +69,15 @@ print("K3pep Denominator:", k3pep_fun_expression(experimental_data))
 # V3max_sol_2 = -v32*v33*x11*x12*x21 + v32*v33*x11*x13*x21 + v31*v33*x11*x12*x22 - \
 #               v31*v33*x12*x13*x22 - v31*v32*x11*x13*x23 + v31*v32*x12*x13*x23
 
-# symbolic expression for flux v1
+# symbolic expression for flux v1 w/ enzyme concentration data
 k1cat_sol = ac1*v12*x31 - ac2*v11*x32
 k1cat_fun_expression = lambdify([variables], k1cat_sol, "numpy")
 
 k1ac_sol = ac1*v12*x31 - ac2*v11*x32
 k1ac_fun_expression = lambdify([variables], k1ac_sol, "numpy")
 print("K1ac Denominator:", k1ac_fun_expression(experimental_data))
+
+# symbolic expression for flux v1 w/o enzyme concentration data
 
 # symbolic expression for flux v2
 v2max_sol = v22*x21 - v21*x22
