@@ -69,6 +69,14 @@ print("K3pep Denominator:", k3pep_fun_expression(experimental_data))
 # V3max_sol_2 = -v32*v33*x11*x12*x21 + v32*v33*x11*x13*x21 + v31*v33*x11*x12*x22 - \
 #               v31*v33*x12*x13*x22 - v31*v32*x11*x13*x23 + v31*v32*x12*x13*x23
 
+# symbolic expression for flux v1 w/o enzyme concentration data
+v1max_sol = -(ac2*v11 - ac1*v12)
+k1ac_v1max_sol = -ac2*v11 + ac1*v12
+v1max_fun_expression = lambdify([variables], v1max_sol, "numpy")
+k1ac_v1max_fun_expression = lambdify([variables], k1ac_v1max_sol, "numpy")
+print("V1max Denominator (No enzyme data):", v1max_fun_expression(experimental_data))
+print("K1ac Denominator (No enzyme data):", k1ac_v1max_fun_expression(experimental_data))
+
 # symbolic expression for flux v1 w/ enzyme concentration data
 k1cat_sol = ac1*v12*x31 - ac2*v11*x32
 k1cat_fun_expression = lambdify([variables], k1cat_sol, "numpy")
