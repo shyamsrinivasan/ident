@@ -1,6 +1,7 @@
 import numpy as np
 from sympy import *
 from generate_noisy_data import generate_noisy_data
+from kotte_model import flux_1_ident_expression
 
 # generate noisy experimental data for testing identifiability
 y0 = np.array([5, 1, 1])
@@ -69,22 +70,12 @@ print("K3pep Denominator:", k3pep_fun_expression(experimental_data))
 # V3max_sol_2 = -v32*v33*x11*x12*x21 + v32*v33*x11*x13*x21 + v31*v33*x11*x12*x22 - \
 #               v31*v33*x12*x13*x22 - v31*v32*x11*x13*x23 + v31*v32*x12*x13*x23
 
-# symbolic expression for flux v1 w/o enzyme concentration data
-v1max_sol = -(ac2*v11 - ac1*v12)
-k1ac_v1max_sol = -ac2*v11 + ac1*v12
-v1max_fun_expression = lambdify([variables], v1max_sol, "numpy")
-k1ac_v1max_fun_expression = lambdify([variables], k1ac_v1max_sol, "numpy")
-print("V1max Denominator (No enzyme data):", v1max_fun_expression(experimental_data))
-print("K1ac Denominator (No enzyme data):", k1ac_v1max_fun_expression(experimental_data))
-
-# symbolic expression for flux v1 w/ enzyme concentration data
-k1cat_sol = -(ac1*v12*x31 - ac2*v11*x32)
-k1cat_fun_expression = lambdify([variables], k1cat_sol, "numpy")
-print("k1cat Denominator (w/ enzyme data):", k1cat_fun_expression(experimental_data))
-
-k1ac_sol = ac1*v12*x31 - ac2*v11*x32
-k1ac_fun_expression = lambdify([variables], k1ac_sol, "numpy")
-print("K1ac Denominator (w/ enzyme data):", k1ac_fun_expression(experimental_data))
+# identifiability value for v1
+no_enzyme_dr, enzyme_dr = flux_1_ident_expression(experimental_data)
+print("V1max Denominator (No enzyme data):", no_enzyme_dr[0])
+print("K1ac Denominator (No enzyme data):", no_enzyme_dr[1])
+print("k1cat Denominator (w/ enzyme data):", enzyme_dr[0])
+print("K1ac Denominator (w/ enzyme data):", enzyme_dr[1])
 
 # symbolic expression for flux v2
 v2max_sol = v22*x21 - v21*x22
