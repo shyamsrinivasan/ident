@@ -30,21 +30,30 @@ all_options_exp_3.append(ode_par_val_experiment_3)
 # generate data using MWC Kinetics
 _, y_nss_exp3, flux_nss_exp3, _, _, _, _, _, _ = generate_noisy_data(y0, all_options_exp_3, 1)
 
+# experimental data based on order of inputs for lambdify expressions
+experimental_data = np.hstack((y_nss_exp1[0:2], flux_nss_exp1[2],
+                               y_nss_exp2[0:2], flux_nss_exp2[2],
+                               y_nss_exp3[0:2], flux_nss_exp3[2]))
+
 # symbolic expression for flux 3
 x11, x12, x13, x21, x22, x23, v31, v32, v33 = symbols('x11, x12, x13, x21, x22, x23, v31, v32, v33', positive=True)
 variables = [x11, x21, v31, x12, x22, v32, x13, x23, v33]
 
 # use denominator generated from mathematica to test identifiability for all fluxes
-# K3fdp_sol_1
-# K3pep_sol_1
+# V3max
 V3max_sol_1 = -v32*v33*x11*x12*x21 + v32*v33*x11*x13*x21 + v31*v33*x11*x12*x22 - \
               v31*v33*x12*x13*x22 - v31*v32*x11*x13*x23 + v31*v32*x12*x13*x23
 v3max_fun_expression = lambdify([variables], V3max_sol_1, "numpy")
-experimental_data = np.hstack((y_nss_exp1[0:2], flux_nss_exp1[2],
-                               y_nss_exp2[0:2], flux_nss_exp2[2],
-                               y_nss_exp3[0:2], flux_nss_exp3[2]))
-print(experimental_data)
 print(v3max_fun_expression(experimental_data))
+
+# K3fdp
+# K3fdp_sol_1 - dr same as V3max_sol_1
+
+# K3pep
+K3pep_sol_1 = 2*(-v32*v33*x11*x21*x22 + v31*v33*x12*x21*x22 + v32*v33*x11*x21*x23 -
+                 v31*v32*x13*x21*x23 - v31*v33*x12*x22*x23 + v31*v32*x13*x22*x23)
+k3pep_fun_expression = lambdify([variables], K3pep_sol_1, "numpy")
+print(k3pep_fun_expression(experimental_data))
 
 # K3fdp_sol_2
 # K3pep_sol_2
