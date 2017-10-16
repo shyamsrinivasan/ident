@@ -113,8 +113,29 @@ def flux_1_ident_expression(experimental_data):
            [k1cat_enzyme_denominator_value, k1ac_enzyme_denominator_value]
 
 
+def flux_2_ident_expression(experimental_data):
+    """symbolic and lambdify expression for flux 2 denominator from mathematica"""
+    # define symbols and variables (obtained through experimental data
+    variables, _, _, _, \
+    _, _, _, x21, x22, _, _, _, _, \
+    _, _, _, _, _, _, \
+    v21, v22, _, _, _, _ = define_sym_variables()
+
+    # symbolic expression for v2
+    # V2max
+    v2max_sol = v22 * x21 - v21 * x22
+    # K2pep
+    k2pep_sol = v22 * x21 - v21 * x22
+    v2max_fun_expression = lambdify([variables], v2max_sol, "numpy")
+    k2pep_fun_expression = lambdify([variables], k2pep_sol, "numpy")
+    v2max_denominator_value = v2max_fun_expression(experimental_data)
+    k2pep_denominator_value = k2pep_fun_expression(experimental_data)
+
+    return [v2max_denominator_value, k2pep_denominator_value]
+
+
 def flux_3_ident_expression(experimental_data):
-    """symbolic and lambdify expression for flux 1 denominator from mathematica"""
+    """symbolic and lambdify expression for flux 3 denominator from mathematica"""
     # define symbols and variables (obtained through experimental data
     variables, _, _, _, \
     x11, x12, x13, x21, x22, x23, _, _, _, \
@@ -145,6 +166,3 @@ def flux_3_ident_expression(experimental_data):
     k3pep_denominator_value = k3pep_fun_expression(experimental_data)
 
     return [v3max_denominator_value, k3fdp_denominator_value, k3pep_denominator_value]
-
-def flux_2_ident_expression(experimental_data):
-    pass
