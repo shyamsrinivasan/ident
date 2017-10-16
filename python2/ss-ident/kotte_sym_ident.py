@@ -78,14 +78,13 @@ print("V1max Denominator (No enzyme data):", v1max_fun_expression(experimental_d
 print("K1ac Denominator (No enzyme data):", k1ac_v1max_fun_expression(experimental_data))
 
 # symbolic expression for flux v1 w/ enzyme concentration data
-k1cat_sol = ac1*v12*x31 - ac2*v11*x32
+k1cat_sol = -(ac1*v12*x31 - ac2*v11*x32)
 k1cat_fun_expression = lambdify([variables], k1cat_sol, "numpy")
+print("k1cat Denominator (w/ enzyme data):", k1cat_fun_expression(experimental_data))
 
 k1ac_sol = ac1*v12*x31 - ac2*v11*x32
 k1ac_fun_expression = lambdify([variables], k1ac_sol, "numpy")
-print("K1ac Denominator:", k1ac_fun_expression(experimental_data))
-
-# symbolic expression for flux v1 w/o enzyme concentration data
+print("K1ac Denominator (w/ enzyme data):", k1ac_fun_expression(experimental_data))
 
 # symbolic expression for flux v2
 v2max_sol = v22*x21 - v21*x22
