@@ -113,9 +113,38 @@ def flux_1_ident_expression(experimental_data):
            [k1cat_enzyme_denominator_value, k1ac_enzyme_denominator_value]
 
 
-def flux_2_ident_expression(experimental_data):
-    pass
-
-
 def flux_3_ident_expression(experimental_data):
+    """symbolic and lambdify expression for flux 1 denominator from mathematica"""
+    # define symbols and variables (obtained through experimental data
+    variables, _, _, _, \
+    x11, x12, x13, x21, x22, x23, _, _, _, \
+    v31, v32, v33, _, _, _, \
+    _, _, _, _, _, _ = define_sym_variables()
+
+    # symbolic expression for v3
+    # V3max
+    V3max_sol_1 = -v32 * v33 * x11 * x12 * x21 + v32 * v33 * x11 * x13 * x21 + v31 * v33 * x11 * x12 * x22 - \
+                  v31 * v33 * x12 * x13 * x22 - v31 * v32 * x11 * x13 * x23 + v31 * v32 * x12 * x13 * x23
+    # K3fdp
+    K3fdp_sol_1 = -v32 * v33 * x11 * x12 * x21 + v32 * v33 * x11 * x13 * x21 + v31 * v33 * x11 * x12 * x22 - \
+                  v31 * v33 * x12 * x13 * x22 - v31 * v32 * x11 * x13 * x23 + v31 * v32 * x12 * x13 * x23
+    # K3pep
+    K3pep_sol_1 = 2 * (-v32 * v33 * x11 * x21 * x22 + v31 * v33 * x12 * x21 * x22 + v32 * v33 * x11 * x21 * x23 -
+                       v31 * v32 * x13 * x21 * x23 - v31 * v33 * x12 * x22 * x23 + v31 * v32 * x13 * x22 * x23)
+
+    # K3fdp_sol_2
+    # K3pep_sol_2
+    # V3max_sol_2 = -v32*v33*x11*x12*x21 + v32*v33*x11*x13*x21 + v31*v33*x11*x12*x22 - \
+    #               v31*v33*x12*x13*x22 - v31*v32*x11*x13*x23 + v31*v32*x12*x13*x23
+
+    v3max_fun_expression = lambdify([variables], V3max_sol_1, "numpy")
+    k3fdp_fun_expression = lambdify([variables], K3fdp_sol_1, "numpy")
+    k3pep_fun_expression = lambdify([variables], K3pep_sol_1, "numpy")
+    v3max_denominator_value = v3max_fun_expression(experimental_data)
+    k3fdp_denominator_value = k3fdp_fun_expression(experimental_data)
+    k3pep_denominator_value = k3pep_fun_expression(experimental_data)
+
+    return [v3max_denominator_value, k3fdp_denominator_value, k3pep_denominator_value]
+
+def flux_2_ident_expression(experimental_data):
     pass
