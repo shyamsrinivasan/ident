@@ -2,6 +2,7 @@ import numpy as np
 from sympy import *
 from generate_noisy_data import generate_noisy_data
 from kotte_model import flux_1_ident_expression
+from kotte_model import flux_3_ident_expression
 
 # generate noisy experimental data for testing identifiability
 y0 = np.array([5, 1, 1])
@@ -46,36 +47,20 @@ variables = [ac1, x11, x21, x31, v11, v21, v31, v41,
              ac2, x12, x22, x32, v12, v22, v32, v42,
              ac3, x13, x23, x33, v13, v23, v33, v43]
 
-# use denominator generated from mathematica to test identifiability for all fluxes
-# V3max
-V3max_sol_1 = -v32*v33*x11*x12*x21 + v32*v33*x11*x13*x21 + v31*v33*x11*x12*x22 - \
-              v31*v33*x12*x13*x22 - v31*v32*x11*x13*x23 + v31*v32*x12*x13*x23
-v3max_fun_expression = lambdify([variables], V3max_sol_1, "numpy")
-print("V3max Denominator:", v3max_fun_expression(experimental_data))
-
-# K3fdp
-K3fdp_sol_1 = -v32*v33*x11*x12*x21 + v32*v33*x11*x13*x21 + v31*v33*x11*x12*x22 - \
-              v31*v33*x12*x13*x22 - v31*v32*x11*x13*x23 + v31*v32*x12*x13*x23
-k3fdp_fun_expression = lambdify([variables], K3fdp_sol_1, "numpy")
-print("K3fdp Denominator:", k3fdp_fun_expression(experimental_data))
-
-# K3pep
-K3pep_sol_1 = 2*(-v32*v33*x11*x21*x22 + v31*v33*x12*x21*x22 + v32*v33*x11*x21*x23 -
-                 v31*v32*x13*x21*x23 - v31*v33*x12*x22*x23 + v31*v32*x13*x22*x23)
-k3pep_fun_expression = lambdify([variables], K3pep_sol_1, "numpy")
-print("K3pep Denominator:", k3pep_fun_expression(experimental_data))
-
-# K3fdp_sol_2
-# K3pep_sol_2
-# V3max_sol_2 = -v32*v33*x11*x12*x21 + v32*v33*x11*x13*x21 + v31*v33*x11*x12*x22 - \
-#               v31*v33*x12*x13*x22 - v31*v32*x11*x13*x23 + v31*v32*x12*x13*x23
-
 # identifiability value for v1
 no_enzyme_dr, enzyme_dr = flux_1_ident_expression(experimental_data)
 print("V1max Denominator (No enzyme data):", no_enzyme_dr[0])
 print("K1ac Denominator (No enzyme data):", no_enzyme_dr[1])
 print("k1cat Denominator (w/ enzyme data):", enzyme_dr[0])
 print("K1ac Denominator (w/ enzyme data):", enzyme_dr[1])
+
+# identifiability value for v3
+v3_no_enzyme_dr = flux_3_ident_expression(experimental_data)
+print("V3max Denominator (No enzyme data):", v3_no_enzyme_dr[0])
+print("K3fdp Denominator (No enzyme data):", v3_no_enzyme_dr[1])
+print("K3pep Denominator (No enzyme data):", v3_no_enzyme_dr[2])
+
+
 
 # symbolic expression for flux v2
 v2max_sol = v22*x21 - v21*x22
