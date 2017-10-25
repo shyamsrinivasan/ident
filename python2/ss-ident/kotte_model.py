@@ -213,12 +213,12 @@ def flux_3_ident_expression(experimental_data):
                                                 v31*v32*x11*x12*x13*x22*x23 - v31*v33*x11*x12*x13*x22*x23))))/ \
                     (2*(-v32*v33*x11*x21*x22 + v31*v33*x12*x21*x22 + v32*v33*x11*x21*x23 -
                         v31*v32*x13*x21*x23 - v31*v33*x12*x22*x23 + v31*v32*x13*x22*x23)) + \
-                    (v31*v32*v33*x11*x22*(-v31*v33*x11*x12*x21*x22 + v32*v33*x11*x12*x21*x22 +
-                                          v32*v33*x11*x13*x21*x22 - v31*v33*x12*x13*x21*x22 -
-                                          v32*v33*x11*x12*x21*x23 + v31*v32*x11*x13*x21*x23 -
-                                          v32*v33*x11*x13*x21*x23 + v31*v32*x12*x13*x21*x23 +
-                                          v31*v33*x11*x12*x22*x23 - v31*v32*x11*x13*x22*x23 -
-                                          v31*v32*x12*x13*x22*x23 + v31*v33*x12*x13*x22*x23 -
+                    (v31*v32*v33*x11*x22*(-v31*v33*x11*x12*x21*x22 - v31*v33*x12*x13*x21*x22 +
+                                          v31*v33*x12*x13*x22*x23 + v31*v33*x11*x12*x22*x23 +
+                                          v32*v33*x11*x12*x21*x22 + v32*v33*x11*x13*x21*x22 -
+                                          v32*v33*x11*x12*x21*x23 - v32*v33*x11*x13*x21*x23 +
+                                          v31*v32*x11*x13*x21*x23 + v31*v32*x12*x13*x21*x23 -
+                                          v31*v32*x11*x13*x22*x23 - v31*v32*x12*x13*x22*x23  -
                                           sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
                                                 v32*v33*x11*x13*x21*x22 + v31*v33*x12*x13*x21*x22 +
                                                 v32*v33*x11*x12*x21*x23 - v31*v32*x11*x13*x21*x23 +
@@ -268,30 +268,235 @@ def flux_3_ident_expression(experimental_data):
                                                 v31*v32*x11*x12*x13*x22*x23 - v31*v33*x11*x12*x13*x22*x23))))/\
                     (2*(-v32*v33*x11*x21*x22 + v31*v33*x12*x21*x22 + v32*v33*x11*x21*x23 -
                         v31*v32*x13*x21*x23 - v31*v33*x12*x22*x23 + v31*v32*x13*x22*x23)) + \
-                      (v31*v32*v33*x12*x23*(-v31*v33*x11*x12*x21*x22 + v32*v33*x11*x12*x21*x22 +
-                                            v32*v33*x11*x13*x21*x22 - v31*v33*x12*x13*x21*x22 -
-                                            v32*v33*x11*x12*x21*x23 + v31*v32*x11*x13*x21*x23 -
-                                            v32*v33*x11*x13*x21*x23 + v31*v32*x12*x13*x21*x23 +
-                                            v31*v33*x11*x12*x22*x23 - v31*v32*x11*x13*x22*x23 -
-                                            v31*v32*x12*x13*x22*x23 + v31*v33*x12*x13*x22*x23 -
-                                            sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
-                                                  v32*v33*x11*x13*x21*x22 + v31*v33*x12*x13*x21*x22 +
-                                                  v32*v33*x11*x12*x21*x23 - v31*v32*x13*x21*x23*(x11 - x12) +
-                                                  v32*v33*x11*x13*x21*x23 - v31*v33*x11*x12*x22*x23 +
-                                                  v31*v32*x11*x13*x22*x23 + v31*v32*x12*x13*x22*x23 -
-                                                  v31*v33*x12*x13*x22*x23)**2 -
-                                                 4*(-v32*v33*x11*x21*(x22 - x23) + v31*v33*x12*x22*(x21 - x23) -
-                                                    v31*v32*x13*x23*(x21 - x22))*(v31*v33*x11*x12*x13*x22*(x21 - x23) -
-                                                  v32*v33*x11*x12*x13*x21*(x22 - x23) -
-                                                  v31*v32*x11*x12*x13*x23(x21 - x22)))))/\
+                      (v31*v32*v33*x12*x23*(-v31*v33*x12*x22*(x11*x21 + x13*x21 - x11*x23 - x13*x23) +
+                                            v32*v33*x11*x21*(x12*x22 + x13*x22 - x12*x23 - x13*x23) +
+                                            v31*v32*x13*x23*(x11*x21 + x12*x21 - x11*x22 - x12*x22) -
+                                            sqrt((v31*v33*x12*x22*(x11*x21 + x13*x21 - x11*x23 - x13*x23) -
+                                                  v32*v33*x11*x21*(x22*x12 + x13*x22 - x12*x23 - x13*x23) -
+                                                  v31*v32*x13*x23*(x11*x21 - x12*x21 - x11*x22 - x12*x22))**2 -
+                                                 4*(v31*v33*x12*x22*(x21 - x23) - v31*v32*x13*x23*(x21 - x22) -
+                                                    v32*v33*x11*x21*(x22 - x23))*(v31*v33*x11*x12*x13*x22*(x21 - x23) -
+                                                                                  v32*v33*x11*x12*x13*x21*(x22 - x23) -
+                                                                                  v31*v32*x11*x12*x13*x23(x21 - x22)))))/\
                     (2*(-v32*v33*x11*x21*(x22 - x23) + v31*v33*x12*x22*(x21 - x23) - v31*v32*x13*x23*(x21 - x22)))
-    V3max_sol_1 = -v32 * v33 * x11 * x12 * x21 + v32 * v33 * x11 * x13 * x21 + v31 * v33 * x11 * x12 * x22 - \
+    v3max_nr_expr = lambdify([variables], v3max_numerator, "numpy")
+    v3max_nr_value = v3max_nr_expr(experimental_data)
+    v3max_denominator = -v32 * v33 * x11 * x12 * x21 + v32 * v33 * x11 * x13 * x21 + v31 * v33 * x11 * x12 * x22 - \
                   v31 * v33 * x12 * x13 * x22 - v31 * v32 * x11 * x13 * x23 + v31 * v32 * x12 * x13 * x23
+    v3max_dr_expr = lambdify([variables], v3max_denominator, "numpy")
+    v3max_dr_value = v3max_dr_expr(experimental_data)
+    v3max_expr = lambdify([variables], v3max_numerator/v3max_denominator, "numpy")
+    v3max_value = v3max_expr(experimental_data)
     # K3fdp
-    K3fdp_sol_1 = -v32 * v33 * x11 * x12 * x21 + v32 * v33 * x11 * x13 * x21 + v31 * v33 * x11 * x12 * x22 - \
+    v3max_numerator_2 = -v31*v32*v33*(x11*x12*x21 - x11*x13*x21 - x11*x12*x22 + x12*x13*x22 + x11*x13*x23 - x12*x13*x23) - \
+                    (v31*v32*v33*x12*x21*(-v31*v33*x12*x22*(x11*x21  + x13*x21 - x11*x23 - x13*x23) +
+                                            v32*v33*x11*x21*(x12*x22 + x13*x22 - x12*x23 - x13*x23) +
+                                          v31*v32*x13*x23*(x11*x21 + x12*x21 - x11*x22 - x12*x22)  +
+                                          sqrt((v31*v33*x12*x22*(x11*x21 + x13*x21 - x11*x23 - x13*x23) -
+                                                v32*v33*x11*x21*(x12*x22 + x13*x22 - x12*x23 - x13*x23) -
+                                                v31*v32*x13*x23*(x12*x21 - x11*x22 - x12*x22 + x11*x21))**2 -
+                                               4*(-v32*v33*x11*x21*(x22 - x23) - v31*v32*x13*x23*(x21 - x22) -
+                                                  v31*v33*x12*x22*(x23 + x21))*(v31*v33*x11*x12*x13*x22*(x21 - x23) -
+                                                                                v32*v33*x11*x12*x13*x21*(x22 - x23) -
+                                                                                v31*v32*x11*x12*x13*x23*(x21 - x22)))))/\
+                    (2*(-v32*v33*x11*x21*(x22 - x23) + v31*v33*x12*x22*(x21 - x23) - v31*v32*x13*x23*(x21 - x22))) + \
+                        (v31*v32*v33*x13*x21*(v31*v33*x12*x22*(x11*x23 + x13*x23 - x11*x21 - x13*x21) +
+                                          v32*v33*x11*x21*(x12*x22 + x13*x22 - x12*x23 - x13*x23) +
+                                          v31*v32*x13*x23*(x11*x21 + x12*x21 - x11*x22 - x12*x22) +
+                                          sqrt((v31*v33*(x11*x12*x21*x22 + x12*x13*x21*x22 -
+                                                         x12*x13*x22*x23 - x11*x12*x22*x23) -
+                                                v32*v33*(x11*x12*x21*x22 + x11*x13*x21*x22  -
+                                                         x11*x12*x21*x23 - x11*x13*x21*x23) -
+                                                v31*v32*(x11*x13*x21*x23 + x12*x13*x21*x23 -
+                                                         x11*x13*x22*x23 - x12*x13*x22*x23))**2 -
+                                               4*(v32*v33*(x11*x21*x23 - x11*x21*x22) +
+                                                  v31*v33*(x12*x21*x22 - x12*x22*x23) +
+                                                  v31*v32*(x13*x22*x23 - x13*x21*x23))*
+                                               (v31*v33*(x11*x12*x13*x21*x22 - x11*x12*x13*x22*x23) -
+                                                v32*v33*(x11*x12*x13*x21*x22 - x11*x12*x13*x21*x23) +
+                                                v31*v32*(x11*x12*x13*x22*x23 - x11*x12*x13*x21*x23)))))/\
+                        (2*(-v32*v33*(x11*x21*x22 - x11*x21*x23) + v31*v32*(x13*x22*x23 - x13*x21*x23) +
+                            v31*v33*(x12*x21*x22 - x12*x22*x23))) +\
+                        (v31*v32*v33*x11*x22*(-v32*v33*(x11*x12*x21*x23 + x11*x13*x21*x23 -
+                                                        x11*x12*x21*x22 - x11*x13*x21*x22) +
+                                              v31*v32*(x11*x13*x21*x23 + x12*x13*x21*x23 -
+                                                       x11*x13*x22*x23 - x12*x13*x22*x23) +
+                                              v31*v33*(x11*x12*x22*x23 + x12*x13*x22*x23 -
+                                                       x11*x12*x21*x22 - x12*x13*x21*x22) +
+                                              sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
+                                                    v32*v33*x11*x13*x21*x22 + v31*v33*x12*x13*x21*x22 +
+                                                    v32*v33*x11*x12*x21*x23 - v31*v32*x11*x13*x21*x23 +
+                                                    v32*v33*x11*x13*x21*x23 - v31*v32*x12*x13*x21*x23 -
+                                                    v31*v33*x11*x12*x22*x23 + v31*v32*x11*x13*x22*x23 +
+                                                    v31*v32*x12*x13*x22*x23 - v31*v33*x12*x13*x22*x23)**2 -
+                                                   4*(-v32*v33*x11*x21*x22 + v31*v33*x12*x21*x22 +
+                                                      v32*v33*x11*x21*x23 - v31*v32*x13*x21*x23 -
+                                                      v31*v33*x12*x22*x23 + v31*v32*x13*x22*x23)*
+                                                   (v31*v33*x11*x12*x13*x21*x22 - v32*v33*x11*x12*x13*x21*x22 -
+                                                    v31*v32*x11*x12*x13*x21*x23 + v32*v33*x11*x12*x13*x21*x23 +
+                                                    v31*v32*x11*x12*x13*x22*x23 - v31*v33*x11*x12*x13*x22*x23))))/\
+                        (2*(-v32*v33*x11*x21*x22 + v31*v33*x12*x21*x22 + v32*v33*x11*x21*x23 - v31*v32*x13*x21*x23 -
+                            v31*v33*x12*x22*x23 + v31*v32*x13*x22*x23)) -\
+                        (v31*v32*v33*x13*x22*(-v31*v33*x11*x12*x21*x22 + v32*v33*x11*x12*x21*x22 +
+                                              v32*v33*x11*x13*x21*x22 - v31*v33*x12*x13*x21*x22 -
+                                              v32*v33*x11*x12*x21*x23 + v31*v32*x11*x13*x21*x23 -
+                                              v32*v33*x11*x13*x21*x23 + v31*v32*x12*x13*x21*x23 +
+                                              v31*v33*x11*x12*x22*x23 - v31*v32*x11*x13*x22*x23 -
+                                              v31*v32*x12*x13*x22*x23 + v31*v33*x12*x13*x22*x23 +
+                                              sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
+                                                    v32*v33*x11*x13*x21*x22 + v31*v33*x12*x13*x21*x22 +
+                                                    v32*v33*x11*x12*x21*x23 - v31*v32*x11*x13*x21*x23 +
+                                                    v32*v33*x11*x13*x21*x23 - v31*v32*x12*x13*x21*x23 -
+                                                    v31*v33*x11*x12*x22*x23 + v31*v32*x11*x13*x22*x23 +
+                                                    v31*v32*x12*x13*x22*x23 - v31*v33*x12*x13*x22*x23)**2 -
+                                                   4*(-v32*v33*x11*x21*x22 + v31*v33*x12*x21*x22 +
+                                                      v32*v33*x11*x21*x23 - v31*v32*x13*x21*x23 -
+                                                      v31*v33*x12*x22*x23 + v31*v32*x13*x22*x23)*
+                                                   (v31*v33*x11*x12*x13*x21*x22 - v32*v33*x11*x12*x13*x21*x22 -
+                                                    v31*v32*x11*x12*x13*x21*x23 + v32*v33*x11*x12*x13*x21*x23 +
+                                                    v31*v32*x11*x12*x13*x22*x23 - v31*v33*x11*x12*x13*x22*x23))))/\
+                        (2*(-v32*v33*x11*x21*x22 + v31*v33*x12*x21*x22 + v32*v33*x11*x21*x23 - v31*v32*x13*x21*x23 -
+                            v31*v33*x12*x22*x23 + v31*v32*x13*x22*x23)) - \
+                        (v31*v32*v33*x11*x23*(-v31*v33*x11*x12*x21*x22 + v32*v33*x11*x12*x21*x22 +
+                                              v32*v33*x11*x13*x21*x22 - v31*v33*x12*x13*x21*x22 -
+                                              v32*v33*x11*x12*x21*x23 + v31*v32*x11*x13*x21*x23 -
+                                              v32*v33*x11*x13*x21*x23 + v31*v32*x12*x13*x21*x23 +
+                                              v31*v33*x11*x12*x22*x23 - v31*v32*x11*x13*x22*x23 -
+                                              v31*v32*x12*x13*x22*x23 + v31*v33*x12*x13*x22*x23 +
+                                              sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
+                                                    v32*v33*x11*x13*x21*x22 + v31*v33*x12*x13*x21*x22 +
+                                                    v32*v33*x11*x12*x21*x23 - v31*v32*x11*x13*x21*x23 +
+                                                    v32*v33*x11*x13*x21*x23 - v31*v32*x12*x13*x21*x23 -
+                                                    v31*v33*x11*x12*x22*x23 + v31*v32*x11*x13*x22*x23 +
+                                                    v31*v32*x12*x13*x22*x23 - v31*v33*x12*x13*x22*x23)**2 -
+                                                   4*(-v32*v33*x11*x21*x22 + v31*v33*x12*x21*x22 +
+                                                      v32*v33*x11*x21*x23 - v31*v32*x13*x21*x23 -
+                                                      v31*v33*x12*x22*x23 + v31*v32*x13*x22*x23)*
+                                                   (v31*v33*x11*x12*x13*x21*x22 - v32*v33*x11*x12*x13*x21*x22 -
+                                                    v31*v32*x11*x12*x13*x21*x23 + v32*v33*x11*x12*x13*x21*x23 +
+                                                    v31*v32*x11*x12*x13*x22*x23 - v31*v33*x11*x12*x13*x22*x23))))/\
+                        (2*(-v32*v33*x11*x21*x22 + v31*v33*x12*x21*x22 + v32*v33*x11*x21*x23 - v31*v32*x13*x21*x23 -
+                            v31*v33*x12*x22*x23 + v31*v32*x13*x22*x23)) + \
+                        (v31*v32*v33*x12*x23*(-v31*v33*x11*x12*x21*x22 + v32*v33*x11*x12*x21*x22 +
+                                              v32*v33*x11*x13*x21*x22 - v31*v33*x12*x13*x21*x22 -
+                                              v32*v33*x11*x12*x21*x23 + v31*v32*x11*x13*x21*x23 -
+                                              v32*v33*x11*x13*x21*x23 + v31*v32*x12*x13*x21*x23 +
+                                              v31*v33*x11*x12*x22*x23 - v31*v32*x11*x13*x22*x23 -
+                                              v31*v32*x12*x13*x22*x23 + v31*v33*x12*x13*x22*x23 +
+                                              sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
+                                                    v32*v33*x11*x13*x21*x22 + v31*v33*x12*x13*x21*x22 +
+                                                    v32*v33*x11*x12*x21*x23 - v31*v32*x11*x13*x21*x23 +
+                                                    v32*v33*x11*x13*x21*x23 - v31*v32*x12*x13*x21*x23 -
+                                                    v31*v33*x11*x12*x22*x23 + v31*v32*x11*x13*x22*x23 +
+                                                    v31*v32*x12*x13*x22*x23 - v31*v33*x12*x13*x22*x23)**2 -
+                                                   4*(-v32*v33*x11*x21*x22 + v31*v33*x12*x21*x22 +
+                                                      v32*v33*x11*x21*x23 - v31*v32*x13*x21*x23 -
+                                                      v31*v33*x12*x22*x23 + v31*v32*x13*x22*x23)*
+                                                   (v31*v33*x11*x12*x13*x21*x22 - v32*v33*x11*x12*x13*x21*x22 -
+                                                    v31*v32*x11*x12*x13*x21*x23 + v32*v33*x11*x12*x13*x21*x23 +
+                                                    v31*v32*x11*x12*x13*x22*x23 - v31*v33*x11*x12*x13*x22*x23))))/\
+                        (2*(-v32*v33*x11*x21*x22 + v31*v33*x12*x21*x22 + v32*v33*x11*x21*x23 - v31*v32*x13*x21*x23 -
+                            v31*v33*x12*x22*x23 + v31*v32*x13*x22*x23))
+    k3fdp_numerator = -v31*v33*x11*x12*x21*x22 + v32*v33*x11*x12*x21*x22 + v31*v32*x11*x13*x21*x23 - v32 v33 x11 x13 x21 x23 - v31 v32 x12 x13 x22 x23 + v31 v33 x12 x13 x22 x23 + (v32 v33 x11 x21 x22 (-v31 v33 x11 x12 x21*x22 + v32 v33 x11 x12 x21 x22 + v32 v33 x11 x13 x21 x22 -
+                              v31 v33 x12 x13 x21 x22 - v32 v33 x11 x12 x21 x23 + v31 v32 x11 x13 x21 x23 - v32 v33 x11 x13 x21 x23 + v31 v32 x12 x13 x21 x23 + v31 v33 x11 x12 x22 x23 - v31 v32 x11 x13 x22 x23 - v31 v32 x12 x13 x22 x23 +
+                              v31 v33 x12 x13 x22 x23 - sqrt((v31 v33 x11 x12 x21 x22 - v32 v33 x11 x12 x21 x22 - v32 v33 x11 x13 x21 x22 + v31 v33 x12 x13 x21 x22 + v32 v33 x11 x12 x21 x23 - v31 v32 x11 x13 x21 x23 + v32 v33 x11 x13 x21 x23 -
+                                   v31 v32 x12 x13 x21 x23 - v31 v33 x11 x12 x22 x23 + v31 v32 x11 x13 x22 x23 + v31 v32 x12 x13 x22 x23 - v31 v33 x12 x13 x22 x23)^2 - 4 (-v32 v33 x11 x21 x22 + v31 v33 x12 x21 x22 +
+                                    v32 v33 x11 x21 x23 - v31 v32 x13 x21 x23 - v31 v33 x12 x22 x23 + v31 v32 x13 x22 x23) (v31 v33 x11 x12 x13 x21 x22 - v32 v33 x11 x12 x13 x21 x22 - v31 v32 x11 x12 x13 x21 x23 +
+                                    v32 v33 x11 x12 x13 x21 x23 + v31 v32 x11 x12 x13 x22 x23 - v31 v33 x11 x12 x13 x22 x23))))/(2 (-v32 v33 x11 x21 x22 + v31 v33 x12 x21 x22 + v32 v33 x11 x21 x23 - v31 v32 x13 x21 x23 - v31 v33 x12 x22 x23 +
+                              v31 v32 x13 x22 x23)) - (v31 v33 x12 x21 x22 (-v31 v33 x11 x12*x21 x22 + v32 v33 x11 x12 x21 x22 + v32 v33 x11 x13 x21 x22 - v31 v33 x12 x13 x21 x22 - v32 v33 x11 x12 x21 x23 + v31 v32 x11 x13 x21 x23 - v32 v33 x11 x13 x21 x23 +
+                              v31 v32 x12 x13 x21 x23 + v31 v33 x11 x12 x22 x23 - v31 v32 x11 x13 x22 x23 - v31 v32 x12 x13 x22 x23 + v31 v33 x12 x13 x22 x23 - sqrt((v31 v33 x11 x12 x21 x22 - v32 v33 x11 x12 x21 x22 - v32 v33 x11 x13 x21 x22 +
+                                   v31 v33 x12 x13 x21 x22 + v32 v33 x11 x12 x21 x23 - v31 v32 x11 x13 x21 x23 + v32 v33 x11 x13 x21 x23 - v31 v32 x12 x13 x21 x23 - v31 v33 x11 x12 x22 x23 + v31 v32 x11 x13 x22 x23 + v31 v32 x12 x13 x22 x23 -
+                                   v31 v33 x12 x13 x22 x23)^2 - 4 (-v32 v33 x11 x21 x22 + v31 v33 x12 x21 x22 + v32 v33 x11 x21 x23 - v31 v32 x13 x21 x23 - v31 v33 x12 x22 x23 + v31 v32 x13 x22 x23) (v31 v33 x11 x12 x13 x21 x22 -
+                                    v32 v33 x11 x12 x13 x21 x22 - v31 v32 x11 x12 x13 x21 x23 + v32 v33 x11 x12 x13 x21 x23 + v31 v32 x11 x12 x13 x22 x23 - v31 v33 x11 x12 x13 x22 x23))))/(2 (-v32 v33 x11 x21 x22 +
+                               v31 v33 x12 x21 x22 + v32 v33 x11 x21 x23 - v31 v32 x13 x21 x23 - v31 v33 x12 x22 x23 + v31 v32 x13 x22 x23)) - (v32 v33 x11 x21 x23 (-v31 v33 x11 x12*x21 x22 + v32 v33 x11 x12 x21 x22 + v32 v33 x11 x13 x21 x22 -
+                              v31 v33 x12 x13 x21 x22 - v32 v33 x11 x12 x21 x23 + v31 v32 x11 x13 x21 x23 - v32 v33 x11 x13 x21 x23 + v31 v32 x12 x13 x21 x23 + v31 v33 x11 x12 x22 x23 - v31 v32 x11 x13 x22 x23 - v31 v32 x12 x13 x22 x23 +
+                              v31 v33 x12 x13 x22 x23 - sqrt((v31 v33 x11 x12 x21 x22 - v32 v33 x11 x12 x21 x22 - v32 v33 x11 x13 x21 x22 + v31 v33 x12 x13 x21 x22 + v32 v33 x11 x12 x21 x23 -
+                                   v31 v32 x11 x13 x21 x23 + v32 v33 x11 x13 x21 x23 - v31 v32 x12 x13 x21 x23 - v31 v33 x11 x12 x22 x23 + v31 v32 x11 x13 x22 x23 + v31 v32 x12 x13 x22 x23 -
+                                   v31 v33 x12 x13 x22 x23)^2 - 4 (-v32 v33 x11 x21 x22 + v31 v33 x12 x21 x22 + v32 v33 x11 x21 x23 - v31 v32 x13 x21 x23 - v31 v33 x12 x22 x23 + v31 v32 x13 x22 x23) (v31 v33 x11 x12 x13 x21 x22 -
+                                    v32 v33 x11 x12 x13 x21 x22 -
+                                    v31 v32 x11 x12 x13 x21 x23 +
+                                    v32 v33 x11 x12 x13 x21 x23 +
+                                    v31 v32 x11 x12 x13 x22 x23 -
+                                    v31 v33 x11 x12 x13 x22 x23))))/(2 (-v32 v33 x11 x21 x22 +
+                               v31 v33 x12 x21 x22 + v32 v33 x11 x21 x23 -
+                              v31 v32 x13 x21 x23 - v31 v33 x12 x22 x23 +
+                              v31 v32 x13 x22 x23)) + (v31 v32 x13 x21 x23 (-v31 v33 x11 x12 \
+                        x21 x22 + v32 v33 x11 x12 x21 x22 + v32 v33 x11 x13 x21 x22 -
+                              v31 v33 x12 x13 x21 x22 - v32 v33 x11 x12 x21 x23 +
+                              v31 v32 x11 x13 x21 x23 - v32 v33 x11 x13 x21 x23 +
+                              v31 v32 x12 x13 x21 x23 + v31 v33 x11 x12 x22 x23 -
+                              v31 v32 x11 x13 x22 x23 - v31 v32 x12 x13 x22 x23 +
+                              v31 v33 x12 x13 x22 x23 - \[Sqrt]((v31 v33 x11 x12 x21 x22 -
+                                   v32 v33 x11 x12 x21 x22 - v32 v33 x11 x13 x21 x22 +
+                                   v31 v33 x12 x13 x21 x22 + v32 v33 x11 x12 x21 x23 -
+                                   v31 v32 x11 x13 x21 x23 + v32 v33 x11 x13 x21 x23 -
+                                   v31 v32 x12 x13 x21 x23 - v31 v33 x11 x12 x22 x23 +
+                                   v31 v32 x11 x13 x22 x23 + v31 v32 x12 x13 x22 x23 -
+                                   v31 v33 x12 x13 x22 x23)^2 -
+                                 4 (-v32 v33 x11 x21 x22 + v31 v33 x12 x21 x22 +
+                                    v32 v33 x11 x21 x23 - v31 v32 x13 x21 x23 -
+                                    v31 v33 x12 x22 x23 +
+                                    v31 v32 x13 x22 x23) (v31 v33 x11 x12 x13 x21 x22 -
+                                    v32 v33 x11 x12 x13 x21 x22 -
+                                    v31 v32 x11 x12 x13 x21 x23 +
+                                    v32 v33 x11 x12 x13 x21 x23 +
+                                    v31 v32 x11 x12 x13 x22 x23 -
+                                    v31 v33 x11 x12 x13 x22 x23))))/(2 (-v32 v33 x11 x21 x22 +
+                               v31 v33 x12 x21 x22 + v32 v33 x11 x21 x23 -
+                              v31 v32 x13 x21 x23 - v31 v33 x12 x22 x23 +
+                              v31 v32 x13 x22 x23)) + (v31 v33 x12 x22 x23 (-v31 v33 x11 x12 \
+                        x21 x22 + v32 v33 x11 x12 x21 x22 + v32 v33 x11 x13 x21 x22 -
+                              v31 v33 x12 x13 x21 x22 - v32 v33 x11 x12 x21 x23 +
+                              v31 v32 x11 x13 x21 x23 - v32 v33 x11 x13 x21 x23 +
+                              v31 v32 x12 x13 x21 x23 + v31 v33 x11 x12 x22 x23 -
+                              v31 v32 x11 x13 x22 x23 - v31 v32 x12 x13 x22 x23 +
+                              v31 v33 x12 x13 x22 x23 - \[Sqrt]((v31 v33 x11 x12 x21 x22 -
+                                   v32 v33 x11 x12 x21 x22 - v32 v33 x11 x13 x21 x22 +
+                                   v31 v33 x12 x13 x21 x22 + v32 v33 x11 x12 x21 x23 -
+                                   v31 v32 x11 x13 x21 x23 + v32 v33 x11 x13 x21 x23 -
+                                   v31 v32 x12 x13 x21 x23 - v31 v33 x11 x12 x22 x23 +
+                                   v31 v32 x11 x13 x22 x23 + v31 v32 x12 x13 x22 x23 -
+                                   v31 v33 x12 x13 x22 x23)^2 -
+                                 4 (-v32 v33 x11 x21 x22 + v31 v33 x12 x21 x22 +
+                                    v32 v33 x11 x21 x23 - v31 v32 x13 x21 x23 -
+                                    v31 v33 x12 x22 x23 +
+                                    v31 v32 x13 x22 x23) (v31 v33 x11 x12 x13 x21 x22 -
+                                    v32 v33 x11 x12 x13 x21 x22 -
+                                    v31 v32 x11 x12 x13 x21 x23 +
+                                    v32 v33 x11 x12 x13 x21 x23 +
+                                    v31 v32 x11 x12 x13 x22 x23 -
+                                    v31 v33 x11 x12 x13 x22 x23))))/(2 (-v32 v33 x11 x21 x22 +
+                               v31 v33 x12 x21 x22 + v32 v33 x11 x21 x23 -
+                              v31 v32 x13 x21 x23 - v31 v33 x12 x22 x23 +
+                              v31 v32 x13 x22 x23)) - (v31 v32 x13 x22 x23 (-v31 v33 x11 x12 \
+                        x21 x22 + v32 v33 x11 x12 x21 x22 + v32 v33 x11 x13 x21 x22 -
+                              v31 v33 x12 x13 x21 x22 - v32 v33 x11 x12 x21 x23 +
+                              v31 v32 x11 x13 x21 x23 - v32 v33 x11 x13 x21 x23 +
+                              v31 v32 x12 x13 x21 x23 + v31 v33 x11 x12 x22 x23 -
+                              v31 v32 x11 x13 x22 x23 - v31 v32 x12 x13 x22 x23 +
+                              v31 v33 x12 x13 x22 x23 - \[Sqrt]((v31 v33 x11 x12 x21 x22 -
+                                   v32 v33 x11 x12 x21 x22 - v32 v33 x11 x13 x21 x22 +
+                                   v31 v33 x12 x13 x21 x22 + v32 v33 x11 x12 x21 x23 -
+                                   v31 v32 x11 x13 x21 x23 + v32 v33 x11 x13 x21 x23 -
+                                   v31 v32 x12 x13 x21 x23 - v31 v33 x11 x12 x22 x23 +
+                                   v31 v32 x11 x13 x22 x23 + v31 v32 x12 x13 x22 x23 -
+                                   v31 v33 x12 x13 x22 x23)^2 -
+                                 4 (-v32 v33 x11 x21 x22 + v31 v33 x12 x21 x22 +
+                                    v32 v33 x11 x21 x23 - v31 v32 x13 x21 x23 -
+                                    v31 v33 x12 x22 x23 +
+                                    v31 v32 x13 x22 x23) (v31 v33 x11 x12 x13 x21 x22 -
+                                    v32 v33 x11 x12 x13 x21 x22 -
+                                    v31 v32 x11 x12 x13 x21 x23 +
+                                    v32 v33 x11 x12 x13 x21 x23 +
+                                    v31 v32 x11 x12 x13 x22 x23 -
+                                    v31 v33 x11 x12 x13 x22 x23))))/(2 (-v32 v33 x11 x21 x22 +
+                               v31 v33 x12 x21 x22 + v32 v33 x11 x21 x23 -
+                              v31 v32 x13 x21 x23 - v31 v33 x12 x22 x23 +
+                              v31 v32 x13 x22 x23))
+    k3fdp_denominator = -v32 * v33 * x11 * x12 * x21 + v32 * v33 * x11 * x13 * x21 + v31 * v33 * x11 * x12 * x22 - \
                   v31 * v33 * x12 * x13 * x22 - v31 * v32 * x11 * x13 * x23 + v31 * v32 * x12 * x13 * x23
     # K3pep
-    K3pep_sol_1 = 2 * (-v32 * v33 * x11 * x21 * x22 + v31 * v33 * x12 * x21 * x22 + v32 * v33 * x11 * x21 * x23 -
+    k3pep_denominator = 2 * (-v32 * v33 * x11 * x21 * x22 + v31 * v33 * x12 * x21 * x22 + v32 * v33 * x11 * x21 * x23 -
                        v31 * v32 * x13 * x21 * x23 - v31 * v33 * x12 * x22 * x23 + v31 * v32 * x13 * x22 * x23)
 
     # K3fdp_sol_2
@@ -299,11 +504,11 @@ def flux_3_ident_expression(experimental_data):
     # V3max_sol_2 = -v32*v33*x11*x12*x21 + v32*v33*x11*x13*x21 + v31*v33*x11*x12*x22 - \
     #               v31*v33*x12*x13*x22 - v31*v32*x11*x13*x23 + v31*v32*x12*x13*x23
 
-    v3max_fun_expression = lambdify([variables], V3max_sol_1, "numpy")
-    k3fdp_fun_expression = lambdify([variables], K3fdp_sol_1, "numpy")
-    k3pep_fun_expression = lambdify([variables], K3pep_sol_1, "numpy")
-    v3max_denominator_value = v3max_fun_expression(experimental_data)
-    k3fdp_denominator_value = k3fdp_fun_expression(experimental_data)
-    k3pep_denominator_value = k3pep_fun_expression(experimental_data)
 
-    return [v3max_denominator_value, k3fdp_denominator_value, k3pep_denominator_value]
+    k3fdp_dr_expr = lambdify([variables], k3fdp_denominator, "numpy")
+    k3pep_dr_expr = lambdify([variables], k3pep_denominator, "numpy")
+
+    k3fdp_dr_value = k3fdp_dr_expr(experimental_data)
+    k3pep_dr_value = k3pep_dr_expr(experimental_data)
+
+    return [v3max_nr_value, v3max_dr_value, v3max_value, k3fdp_dr_value, k3pep_dr_value]
