@@ -39,19 +39,48 @@ experimental_data = np.hstack((ode_par_val_experiment_1[-1], y_nss_exp1, flux_ns
                                ode_par_val_experiment_3[-1], y_nss_exp3, flux_nss_exp3[exp_flux_index]))
 
 # identifiability value for v1
-no_enzyme_dr, enzyme_dr = flux_1_ident_expression(experimental_data)
-print("V1max Denominator (No enzyme data):", no_enzyme_dr[0])
-print("K1ac Denominator (No enzyme data):", no_enzyme_dr[1])
-print("k1cat Denominator (w/ enzyme data):", enzyme_dr[0])
-print("K1ac Denominator (w/ enzyme data):", enzyme_dr[1])
+v1max_no_enzyme, k1ac_no_enzyme, k1cat_enzyme, k1ac_enzyme = flux_1_ident_expression(experimental_data)
+print 'Parameter'.rjust(5), 'Numerator'.rjust(5), 'Denominator'.rjust(5), 'Value'.rjust(5)
+print('V1max:'.rjust(5), '{}'.rjust(5).format(v1max_no_enzyme[0]),
+                        '{}'.rjust(5).format(v1max_no_enzyme[1]),
+                        '{}'.rjust(5).format(v1max_no_enzyme[2]))
+print('K1ac:'.rjust(5), '{}'.rjust(5).format(k1ac_no_enzyme[0]),
+                        '{}'.rjust(5).format(k1ac_no_enzyme[1]),
+                        '{}'.rjust(5).format(k1ac_no_enzyme[2]))
+print('k1cat:'.rjust(5), '{}'.rjust(5).format(k1cat_enzyme[0]),
+                        '{}'.rjust(5).format(k1cat_enzyme[1]),
+                        '{}'.rjust(5).format(k1cat_enzyme[2]))
+print('K1ac:'.rjust(5), '{}'.rjust(5).format(k1ac_enzyme[0]),
+                        '{}'.rjust(5).format(k1ac_enzyme[1]),
+                        '{}'.rjust(5).format(k1ac_enzyme[2]))
 
 # identifiability value for v2
-v2_no_enzyme_dr = flux_2_ident_expression(experimental_data)
-print("V2max Denominator (No enzyme data):", v2_no_enzyme_dr[0])
-print("K2pep Denominator (No enzyme data):", v2_no_enzyme_dr[1])
+v2max, k2pep = flux_2_ident_expression(experimental_data)
+print('V2max:'.rjust(5), '{}'.rjust(5).format(v2max[0]),
+                        '{}'.rjust(5).format(v2max[1]),
+                        '{}'.rjust(5).format(v2max[2]))
+print('K2pep:'.rjust(5), '{}'.rjust(5).format(k2pep[0]),
+                        '{}'.rjust(5).format(k2pep[1]),
+                        '{}'.rjust(5).format(k2pep[2]))
 
 # identifiability value for v3
-v3_no_enzyme_dr = flux_3_ident_expression(experimental_data)
-print("V3max Denominator (No enzyme data):", v3_no_enzyme_dr[0])
-print("K3fdp Denominator (No enzyme data):", v3_no_enzyme_dr[1])
-print("K3pep Denominator (No enzyme data):", v3_no_enzyme_dr[2])
+v3max_1, k3fdp_1, k3pep_1, v3max_2, k3fdp_2, k3pep_2 = flux_3_ident_expression(experimental_data)
+print('V3max 1:'.rjust(5), '{}'.rjust(5).format(v3max_1[0]),
+                        '{}'.rjust(5).format(v3max_1[1]),
+                        '{}'.rjust(5).format(v3max_1[2]))
+print('V3max 2:'.rjust(5), '{}'.rjust(5).format(v3max_2[0]),
+                        '{}'.rjust(5).format(v3max_2[1]),
+                        '{}'.rjust(5).format(v3max_2[2]))
+print('K3fdp 1:'.rjust(5), '{}'.rjust(5).format(k3fdp_1[0]),
+                        '{}'.rjust(5).format(k3fdp_1[1]),
+                        '{}'.rjust(5).format(k3fdp_1[2]))
+print('K3fdp 2:'.rjust(5), '{}'.rjust(5).format(k3fdp_2[0]),
+                        '{}'.rjust(5).format(k3fdp_2[1]),
+                        '{}'.rjust(5).format(k3fdp_2[2]))
+print('K3pep 1:'.rjust(5), '{}'.rjust(5).format(k3pep_1[0]),
+                        '{}'.rjust(5).format(k3pep_1[1]),
+                        '{}'.rjust(5).format(k3pep_1[2]))
+print('K3pep 2:'.rjust(5), '{}'.rjust(5).format(k3pep_2[0]),
+                        '{}'.rjust(5).format(k3pep_2[1]),
+                        '{}'.rjust(5).format(k3pep_2[2]))
+
