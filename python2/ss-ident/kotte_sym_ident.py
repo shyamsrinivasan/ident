@@ -40,46 +40,35 @@ experimental_data = np.hstack((ode_par_val_experiment_1[-1], y_nss_exp1, flux_ns
 
 # identifiability value for v1
 v1max_no_enzyme, k1ac_no_enzyme, k1cat_enzyme, k1ac_enzyme = flux_1_ident_expression(experimental_data)
-print '{0:10}'.format('Parameter'), '{0:10}'.format('Numerator'), '{0:10}'.format('Denominator'), '{0:10}'.format('Value')
-print '{0:10}'.format('V1max:'), '{0:.5f}'.format(v1max_no_enzyme[0]),\
-                        '{0:.5f}'.format(v1max_no_enzyme[1]),\
-                        '{0:.5f}'.format(v1max_no_enzyme[2])
-print '{0:10}'.format('K1ac:'), '{0:.5f}'.format(k1ac_no_enzyme[0]),\
-                        '{0:.5f}'.format(k1ac_no_enzyme[1]),\
-                        '{0:.5f}'.format(k1ac_no_enzyme[2])
-print '{0:10}'.format('k1cat:'), '{0:.5f}'.format(k1cat_enzyme[0]),\
-                        '{0:.5f}'.format(k1cat_enzyme[1]),\
-                        '{0:.5f}'.format(k1cat_enzyme[2])
-print '{0:10}'.format('K1ac:'), '{0:.5f}'.format(k1ac_enzyme[0]),\
-                        '{0:.5f}'.format(k1ac_enzyme[1]),\
-                        '{0:.5f}'.format(k1ac_enzyme[2])
+print('{0:10}'.format('Parameter'), '{0:10}'.format('Numerator'),
+      '{0:10}'.format('Denominator'), '{0:10}'.format('Value'))
+print('{0:10}'.format('V1max:'), '{0:.5f}'.format(v1max_no_enzyme[0]),
+      '{0:.5f}'.format(v1max_no_enzyme[1]), '{0:.5f}'.format(v1max_no_enzyme[2]))
+print('{0:10}'.format('K1ac:'), '{0:.5f}'.format(k1ac_no_enzyme[0]),
+      '{0:.5f}'.format(k1ac_no_enzyme[1]), '{0:.5f}'.format(k1ac_no_enzyme[2]))
+print('{0:10}'.format('k1cat:'), '{0:.5f}'.format(k1cat_enzyme[0]),
+      '{0:.5f}'.format(k1cat_enzyme[1]), '{0:.5f}'.format(k1cat_enzyme[2]))
+print('{0:10}'.format('K1ac:'), '{0:.5f}'.format(k1ac_enzyme[0]),
+      '{0:.5f}'.format(k1ac_enzyme[1]), '{0:.5f}'.format(k1ac_enzyme[2]))
 
 # identifiability value for v2
 v2max, k2pep = flux_2_ident_expression(experimental_data)
-print '{0:10}'.format('V2max:'), '{0:.5f}'.rjust(10).format(v2max[0]),\
-                        '{0:.5f}'.rjust(10).format(v2max[1]),\
-                        '{0:.5f}'.rjust(10).format(v2max[2])
-print '{0:10}'.format('K2pep:'), '{0:.5f}'.rjust(10).format(k2pep[0]),\
-                        '{0:.5f}'.rjust(10).format(k2pep[1]),\
-                        '{0:.5f}'.rjust(10).format(k2pep[2])
+print('{0:10}'.format('V2max:'), '{0:.5f}'.rjust(10).format(v2max[0]),
+      '{0:.5f}'.rjust(10).format(v2max[1]), '{0:.5f}'.rjust(10).format(v2max[2]))
+print('{0:10}'.format('K2pep:'), '{0:.5f}'.rjust(10).format(k2pep[0]),
+      '{0:.5f}'.rjust(10).format(k2pep[1]), '{0:.5f}'.rjust(10).format(k2pep[2]))
 
 # identifiability value for v3
 v3max_1, k3fdp_1, k3pep_1, v3max_2, k3fdp_2, k3pep_2 = flux_3_ident_expression(experimental_data)
-print '{0:10}'.format('V3max 1:'), '{0:.5f}'.format(v3max_1[0]),\
-                        '{0:.5f}'.format(v3max_1[1]),\
-                        '{0:.5f}'.format(v3max_1[2])
-print '{0:10}'.format('V3max 2:'), '{0:.5f}'.format(v3max_2[0]),\
-                        '{0:.5f}'.format(v3max_2[1]),\
-                        '{0:.5f}'.format(v3max_2[2])
-print '{0:10}'.format('K3fdp 1:'), '{0:.5f}'.format(k3fdp_1[0]),\
-                        '{0:.5f}'.format(k3fdp_1[1]),\
-                        '{0:.5f}'.format(k3fdp_1[2])
-print '{0:10}'.format('K3fdp 2:'), '{0:.5f}'.format(k3fdp_2[0]),\
-                        '{0:.5f}'.format(k3fdp_2[1]),\
-                        '{0:.5f}'.format(k3fdp_2[2])
-print '{0:10}'.format('K3pep 1:'), '{0:.5f}'.format(k3pep_1[0]),\
-                        '{0:.5f}'.format(k3pep_1[1]),\
-                        '{0:.5f}'.format(k3pep_1[2])
-print '{0:10}'.format('K3pep 2:'), '{0:.5f}'.format(k3pep_2[0]),\
-                        '{0:.5f}'.format(k3pep_2[1]),\
-                        '{0:.5f}'.format(k3pep_2[2])
+print('{0:10}'.format('V3max 1:'), '{0:.5f}'.format(v3max_1[0]),
+      '{0:.5f}'.format(v3max_1[1]), '{0:.5f}'.format(v3max_1[2]))
+print('{0:10}'.format('V3max 2:'), '{0:.5f}'.format(v3max_2[0]),
+      '{0:.5f}'.format(v3max_2[1]), '{0:.5f}'.format(v3max_2[2]))
+print('{0:10}'.format('K3fdp 1:'), '{0:.5f}'.format(k3fdp_1[0]),
+      '{0:.5f}'.format(k3fdp_1[1]), '{0:.5f}'.format(k3fdp_1[2]))
+print('{0:10}'.format('K3fdp 2:'), '{0:.5f}'.format(k3fdp_2[0]),
+      '{0:.5f}'.format(k3fdp_2[1]), '{0:.5f}'.format(k3fdp_2[2]))
+print('{0:10}'.format('K3pep 1:'), '{0:.5f}'.format(k3pep_1[0]),
+      '{0:.5f}'.format(k3pep_1[1]), '{0:.5f}'.format(k3pep_1[2]))
+print('{0:10}'.format('K3pep 2:'), '{0:.5f}'.format(k3pep_2[0]),
+      '{0:.5f}'.format(k3pep_2[1]), '{0:.5f}'.format(k3pep_2[2]))
