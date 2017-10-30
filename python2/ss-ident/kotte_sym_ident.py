@@ -24,7 +24,7 @@ noisy_initial_ss, _, _, _ = generate_noisy_data(y0, initial_options, 1)
 # all parameter perturbations
 parameter_perturbation = [(14, 4), (14, 9)]
 perturbation_options = {'ode_parameters':ode_paramater_values, 'cvode_options':cvode_options}
-noisy_ss, noisy_dynamic = run_noisy_parameter_perturbation(parameter_perturbation, noisy_initial_ss[0], perturbation_options)
+noisy_ss, noisy_dynamic, perturbed_parameter_values = run_noisy_parameter_perturbation(parameter_perturbation, noisy_initial_ss[0], perturbation_options)
 
 noisy_exp_xss = []
 noisy_exp_fss = []
@@ -32,37 +32,11 @@ for index, ss_values in enumerate(noisy_ss):
     noisy_exp_xss.append(ss_values[0])
     noisy_exp_fss.append(ss_values[1])
 
-
-# experiment 1
-ode_par_val_experiment_1 = np.array([.1, .1, 4e6, .1, .3, 1.1, .45, 2, .25, .2, 1, 1, 1, .1])
-all_options_exp_1.append(cvode_options)
-all_options_exp_1.append(ode_par_val_experiment_1)
-# generate data using MWC Kinetics
-noisy_ss_exp1, _, _, _ = generate_noisy_data(y0, all_options_exp_1, 1)
-y_nss_exp1, flux_nss_exp1 = noisy_ss_exp1
-# _, y_nss_exp1, flux_nss_exp1, _, _, _, _, _, _ = generate_noisy_data(y0, all_options_exp_1, 1)
-
-# experiment 2
-ode_par_val_experiment_2 = np.array([.1, .1, 4e6, .1, .3, 1.1, .45, 2, .25, .2, 1, 1, 1, .5])
-all_options_exp_2.append(cvode_options)
-all_options_exp_2.append(ode_par_val_experiment_2)
-# generate data using MWC Kinetics
-noisy_ss_exp2, _, _, _ = generate_noisy_data(y0, all_options_exp_2, 1)
-y_nss_exp2, flux_nss_exp2 = noisy_ss_exp2
-
-# experiment 3
-ode_par_val_experiment_3 = np.array([.1, .1, 4e6, .1, .3, 1.1, .45, 2, .25, .2, 1, 1, 1, 1])
-all_options_exp_3.append(cvode_options)
-all_options_exp_3.append(ode_par_val_experiment_3)
-# generate data using MWC Kinetics
-noisy_ss_exp3, _, _, _ = generate_noisy_data(y0, all_options_exp_3, 1)
-y_nss_exp3, flux_nss_exp3 = noisy_ss_exp3
-
 # experimental data based on order of inputs for lambdify expressions
 exp_flux_index = np.array([0, 3, 2, 4])
-experimental_data = np.hstack((ode_par_val_experiment_1[-1], y_nss_exp1, flux_nss_exp1[exp_flux_index],
-                               ode_par_val_experiment_2[-1], y_nss_exp2, flux_nss_exp2[exp_flux_index],
-                               ode_par_val_experiment_3[-1], y_nss_exp3, flux_nss_exp3[exp_flux_index]))
+experimental_data = np.hstack((ode_paramater_values[-1], noisy_initial_ss[0], noisy_initial_ss[1][exp_flux_index],
+                               perturbed_parameter_values[0][-1], noisy_exp_xss[0], noisy_exp_fss[0][exp_flux_index],
+                               perturbed_parameter_values[1][-1], noisy_exp_xss[1], noisy_exp_fss[1][exp_flux_index]))
 
 # identifiability value for v1
 v1max_no_enzyme, k1ac_no_enzyme, k1cat_enzyme, k1ac_enzyme = flux_1_ident_expression(experimental_data)
