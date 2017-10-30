@@ -41,11 +41,3 @@ def run_ode_sims(fun, y_initial, opts, t_final=500, args_1=False):
     return time_points, y_dynamic, prob, solver
 
 
-def run_parameter_perturbation(parameter_perturbation, y0, other_options):
-    """run parameter perturbations based on tuple input parameter perturbation
-    with first position of tuple being parameter id and second index being
-    parameter value"""
-    parameter_id, parameter_change = parameter_perturbation
-
-    return None
-
