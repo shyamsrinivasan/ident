@@ -1,7 +1,6 @@
 # clear workspace (removes all module names and objects)
 import sys
 sys.modules[__name__].__dict__.clear()
-
 import numpy as np
 from generate_noisy_data import generate_noisy_data
 from generate_noisy_data import run_noisy_parameter_perturbation
@@ -16,12 +15,10 @@ all_options_exp_2 = []
 all_options_exp_3 = []
 # default parameter values
 cvode_options = ('Newton', 'Adams', 1e-6, 1e-6, 100)
-ode_paramater_values = np.array((.1, .1, 4e6, .1, .3, 1.1, .45, 2, .25, .2, 1, 1, 1, .1))
+ode_paramater_values = np.array([.1, .1, 4e6, .1, .3, 1.1, .45, 2, .25, .2, 1, 1, 1, .1])
 
 # get initial noisy system steady state
-initial_options = []
-initial_options.append(cvode_options)
-initial_options.append(ode_paramater_values)
+initial_options = (cvode_options, ode_paramater_values)
 noisy_initial_ss, _, _, _ = generate_noisy_data(y0, initial_options, 1)
 
 # all parameter perturbations
