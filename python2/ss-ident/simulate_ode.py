@@ -1,4 +1,3 @@
-import numpy as np
 import matplotlib.pyplot as plt
 from assimulo.solvers import CVode
 from assimulo.problem import Explicit_Problem
