@@ -25,7 +25,7 @@ def generate_data(y0, all_options, kinetics):
     y_steady_state = y_dynamic[-1, :]
     flux_steady_state = flux_dynamic[-1, :]
 
-    return [y_steady_state, flux_steady_state], [time, y_dynamic, flux_dynamic]
+    return (y_steady_state, flux_steady_state), (time, y_dynamic, flux_dynamic)
 
 
 def run_parameter_perturbation(parameter_perturbation, y0, other_options):
@@ -65,8 +65,8 @@ def generate_noisy_data(y0, all_options, kinetics):
     noisy_concentration_steady_state = noisy_concentration_dynamic[-1, :]
     noisy_flux_steady_state = noisy_flux_dynamic[-1, :]
 
-    return [noisy_concentration_steady_state, noisy_flux_steady_state], \
-           [noisy_concentration_dynamic, noisy_flux_dynamic], \
+    return (noisy_concentration_steady_state, noisy_flux_steady_state), \
+           (noisy_concentration_dynamic, noisy_flux_dynamic), \
            steady_state_info, dynamic_info
 
 
@@ -85,9 +85,7 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options):
         parameter_id, parameter_change = p_value
         changed_ode_parameter = deepcopy(ode_parameters)
         changed_ode_parameter[parameter_id-1] = ode_parameters[parameter_id-1]*(1 + parameter_change)
-        all_options = []
-        all_options.append(cvode_options)
-        all_options.append(changed_ode_parameter)
+        all_options = (cvode_options, changed_ode_parameter)
         # generate data using MWC Kinetics
         noisy_ss_iter, noisy_dynamic_iter, _, _ = generate_noisy_data(y0, all_options, 1)
         noisy_ss.append(noisy_ss_iter)
