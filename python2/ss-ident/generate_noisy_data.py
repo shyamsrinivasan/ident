@@ -37,6 +37,7 @@ def run_parameter_perturbation(parameter_perturbation, y0, other_options):
     cvode_options = other_options['cvode_options']
     ss_data = []
     dynamic_data = []
+    perturbed_parameter = []
 
     for index, p_value in enumerate(parameter_perturbation):
         print('Perturbation {}\n'.format(index + 1))
@@ -48,9 +49,9 @@ def run_parameter_perturbation(parameter_perturbation, y0, other_options):
         ss_iter, dynamic_iter = generate_data(y0, all_options, 1)
         ss_data.append(ss_iter)
         dynamic_data.append(dynamic_iter)
-        print('{} \n {}'.format(parameter_id, parameter_change))
+        perturbed_parameter.append(changed_ode_parameter)
 
-    return ss_data, dynamic_data
+    return ss_data, dynamic_data, tuple(perturbed_parameter)
 
 
 def generate_noisy_data(y0, all_options, kinetics):
@@ -90,6 +91,5 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options):
         noisy_ss.append(noisy_ss_iter)
         noisy_dynamic.append(noisy_dynamic_iter)
         perturbed_parameter.append(changed_ode_parameter)
-        print('{} \n {}'.format(parameter_id, parameter_change))
 
     return noisy_ss, noisy_dynamic, tuple(perturbed_parameter)
