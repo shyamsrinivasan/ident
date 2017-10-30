@@ -2,6 +2,7 @@
 from kotte_model import *
 from simulate_ode import run_ode_sims
 from add_noise import add_noise_dynamic
+from copy import deepcopy
 
 
 def generate_data(y0, all_options, kinetics):
@@ -27,6 +28,33 @@ def generate_data(y0, all_options, kinetics):
     return [y_steady_state, flux_steady_state], [time, y_dynamic, flux_dynamic]
 
 
+def run_parameter_perturbation(parameter_perturbation, y0, other_options):
+    """run parameter perturbations based on tuple input parameter perturbation
+    with first position of tuple being parameter id and second index being
+    parameter value"""
+
+    ode_parameters = other_options['ode_parameters']
+    cvode_options = other_options['cvode_options']
+    ss_data = []
+    dynamic_data = []
+
+    for index, p_value in enumerate(parameter_perturbation):
+        print('Perturbation {}\n'.format(index + 1))
+        parameter_id, parameter_change = p_value
+        changed_ode_parameter = deepcopy(ode_parameters)
+        changed_ode_parameter[parameter_id - 1] = ode_parameters[parameter_id - 1] * (1 + parameter_change)
+        all_options = []
+        all_options.append(cvode_options)
+        all_options.append(changed_ode_parameter)
+        # generate data using MWC Kinetics
+        ss_iter, dynamic_iter = generate_data(y0, all_options, 1)
+        ss_data.append(ss_iter)
+        dynamic_data.append(dynamic_iter)
+        print('{} \n {}'.format(parameter_id, parameter_change))
+
+    return ss_data, dynamic_data
+
+
 def generate_noisy_data(y0, all_options, kinetics):
     steady_state_info, dynamic_info = generate_data(y0, all_options, kinetics)
     # dynamic data
@@ -41,3 +69,29 @@ def generate_noisy_data(y0, all_options, kinetics):
            [noisy_concentration_dynamic, noisy_flux_dynamic], \
            steady_state_info, dynamic_info
 
+
+def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options):
+    """run parameter perturbations based on tuple input parameter perturbation
+    with first position of tuple being parameter id and second index being
+    parameter value"""
+
+    ode_parameters = other_options['ode_parameters']
+    cvode_options = other_options['cvode_options']
+    noisy_ss = []
+    noisy_dynamic = []
+
+    for index, p_value in enumerate(parameter_perturbation):
+        print('Perturbation {}\n'.format(index+1))
+        parameter_id, parameter_change = p_value
+        changed_ode_parameter = deepcopy(ode_parameters)
+        changed_ode_parameter[parameter_id-1] = ode_parameters[parameter_id-1]*(1 + parameter_change)
+        all_options = []
+        all_options.append(cvode_options)
+        all_options.append(changed_ode_parameter)
+        # generate data using MWC Kinetics
+        noisy_ss_iter, noisy_dynamic_iter, _, _ = generate_noisy_data(y0, all_options, 1)
+        noisy_ss.append(noisy_ss_iter)
+        noisy_dynamic.append(noisy_dynamic_iter)
+        print('{} \n {}'.format(parameter_id, parameter_change))
+
+    return noisy_ss, noisy_dynamic
