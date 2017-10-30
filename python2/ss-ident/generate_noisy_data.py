@@ -24,19 +24,20 @@ def generate_data(y0, all_options, kinetics):
     y_steady_state = y_dynamic[-1, :]
     flux_steady_state = flux_dynamic[-1, :]
 
-    return time, y_steady_state, flux_steady_state, y_dynamic, flux_dynamic
+    return [y_steady_state, flux_steady_state], [time, y_dynamic, flux_dynamic]
 
 
 def generate_noisy_data(y0, all_options, kinetics):
-    tout, concentration_steady_state, flux_steady_state, \
-    concentration_dynamic, flux_dynamic = generate_data(y0, all_options, kinetics)
+    steady_state_info, dynamic_info = generate_data(y0, all_options, kinetics)
+    # dynamic data
+    _, concentration_dynamic, flux_dynamic = dynamic_info
 
     # add noise to dynamic data
     noisy_concentration_dynamic, noisy_flux_dynamic = add_noise_dynamic(concentration_dynamic, flux_dynamic)
     noisy_concentration_steady_state = noisy_concentration_dynamic[-1, :]
     noisy_flux_steady_state = noisy_flux_dynamic[-1, :]
 
-    return tout, noisy_concentration_steady_state, noisy_flux_steady_state, \
-           noisy_concentration_dynamic, noisy_flux_dynamic, \
-           concentration_steady_state, flux_steady_state, \
-           concentration_dynamic, flux_dynamic
+    return [noisy_concentration_steady_state, noisy_flux_steady_state], \
+           [noisy_concentration_dynamic, noisy_flux_dynamic], \
+           steady_state_info, dynamic_info
+
