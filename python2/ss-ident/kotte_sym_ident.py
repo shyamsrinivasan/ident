@@ -16,21 +16,25 @@ ode_par_val_experiment_1 = np.array([.1, .1, 4e6, .1, .3, 1.1, .45, 2, .25, .2, 
 all_options_exp_1.append(cvode_options)
 all_options_exp_1.append(ode_par_val_experiment_1)
 # generate data using MWC Kinetics
-_, y_nss_exp1, flux_nss_exp1, _, _, _, _, _, _ = generate_noisy_data(y0, all_options_exp_1, 1)
+noisy_ss_exp1, _, _, _ = generate_noisy_data(y0, all_options_exp_1, 1)
+y_nss_exp1, flux_nss_exp1 = noisy_ss_exp1
+# _, y_nss_exp1, flux_nss_exp1, _, _, _, _, _, _ = generate_noisy_data(y0, all_options_exp_1, 1)
 
 # experiment 2
 ode_par_val_experiment_2 = np.array([.1, .1, 4e6, .1, .3, 1.1, .45, 2, .25, .2, 1, 1, 1, .5])
 all_options_exp_2.append(cvode_options)
 all_options_exp_2.append(ode_par_val_experiment_2)
 # generate data using MWC Kinetics
-_, y_nss_exp2, flux_nss_exp2, _, _, _, _, _, _ = generate_noisy_data(y0, all_options_exp_2, 1)
+noisy_ss_exp2, _, _, _ = generate_noisy_data(y0, all_options_exp_2, 1)
+y_nss_exp2, flux_nss_exp2 = noisy_ss_exp2
 
 # experiment 3
 ode_par_val_experiment_3 = np.array([.1, .1, 4e6, .1, .3, 1.1, .45, 2, .25, .2, 1, 1, 1, 1])
 all_options_exp_3.append(cvode_options)
 all_options_exp_3.append(ode_par_val_experiment_3)
 # generate data using MWC Kinetics
-_, y_nss_exp3, flux_nss_exp3, _, _, _, _, _, _ = generate_noisy_data(y0, all_options_exp_3, 1)
+noisy_ss_exp3, _, _, _ = generate_noisy_data(y0, all_options_exp_3, 1)
+y_nss_exp3, flux_nss_exp3 = noisy_ss_exp3
 
 # experimental data based on order of inputs for lambdify expressions
 exp_flux_index = np.array([0, 3, 2, 4])
