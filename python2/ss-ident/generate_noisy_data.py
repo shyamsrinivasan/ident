@@ -6,7 +6,7 @@ from copy import deepcopy
 
 
 def generate_data(y0, all_options, kinetics):
-    cvode_options, ode_par_val = all_options
+    _, ode_par_val = all_options
     if kinetics == 1:  # MWC kinetics
         time, y_dynamic = run_ode_sims(kotte_ode, y0, all_options, 100)[:2]
         # calculate dynamic flux data
@@ -43,9 +43,7 @@ def run_parameter_perturbation(parameter_perturbation, y0, other_options):
         parameter_id, parameter_change = p_value
         changed_ode_parameter = deepcopy(ode_parameters)
         changed_ode_parameter[parameter_id - 1] = ode_parameters[parameter_id - 1] * (1 + parameter_change)
-        all_options = []
-        all_options.append(cvode_options)
-        all_options.append(changed_ode_parameter)
+        all_options = (cvode_options, changed_ode_parameter)
         # generate data using MWC Kinetics
         ss_iter, dynamic_iter = generate_data(y0, all_options, 1)
         ss_data.append(ss_iter)
@@ -79,6 +77,7 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options):
     cvode_options = other_options['cvode_options']
     noisy_ss = []
     noisy_dynamic = []
+    perturbed_parameter = []
 
     for index, p_value in enumerate(parameter_perturbation):
         print('Perturbation {}\n'.format(index+1))
@@ -90,6 +89,7 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options):
         noisy_ss_iter, noisy_dynamic_iter, _, _ = generate_noisy_data(y0, all_options, 1)
         noisy_ss.append(noisy_ss_iter)
         noisy_dynamic.append(noisy_dynamic_iter)
+        perturbed_parameter.append(changed_ode_parameter)
         print('{} \n {}'.format(parameter_id, parameter_change))
 
-    return noisy_ss, noisy_dynamic
+    return noisy_ss, noisy_dynamic, tuple(perturbed_parameter)
