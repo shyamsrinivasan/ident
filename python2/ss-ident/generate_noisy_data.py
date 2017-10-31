@@ -2,7 +2,7 @@
 from kotte_model import *
 from simulate_ode import run_ode_sims
 from add_noise import add_noise_dynamic
-from copy import deepcopy
+# from copy import deepcopy
 
 
 def generate_data(y0, all_options, kinetics):
@@ -42,7 +42,7 @@ def run_parameter_perturbation(parameter_perturbation, y0, other_options):
     for index, p_value in enumerate(parameter_perturbation):
         print('Perturbation {}\n'.format(index + 1))
         parameter_id, parameter_change = p_value
-        changed_ode_parameter = deepcopy(ode_parameters)
+        changed_ode_parameter = ode_parameters[:]
         changed_ode_parameter[parameter_id - 1] = ode_parameters[parameter_id - 1] * (1 + parameter_change)
         all_options = (cvode_options, changed_ode_parameter)
         # generate data using MWC Kinetics
@@ -83,7 +83,7 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options):
     for index, p_value in enumerate(parameter_perturbation):
         print('Perturbation {}\n'.format(index+1))
         parameter_id, parameter_change = p_value
-        changed_ode_parameter = deepcopy(ode_parameters)
+        changed_ode_parameter = ode_parameters[:]
         changed_ode_parameter[parameter_id-1] = ode_parameters[parameter_id-1]*(1 + parameter_change)
         all_options = (cvode_options, changed_ode_parameter)
         # generate data using MWC Kinetics
