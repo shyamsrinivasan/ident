@@ -743,26 +743,26 @@ def establish_kotte_flux_identifiability(experimental_data_list):
         print('Identifiability for Dataset {}'.format(index+1))
         # identifiability for flux 1
         v1max_no_enzyme, k1ac_no_enzyme, k1cat_enzyme, k1ac_enzyme = flux_1_ident_expression(dataset)
-        print("{0:10s} {1:10s} {2:10s} {3:10s}".format("Parameter", "Numerator", "Denominator", "Value"))
-        print('{0:10s} {1:.5f} {2:.5f} {3:.5f}'.
+        print("{0:10}\t{1:10}\t{2:10}\t{3:10}".format("Parameter", "Numerator", "Denominator", "Value"))
+        print('{0:10}\t\t{1:.2f}\t{2:.2f}\t\t{3:.2f}'.
               format('V1max:', v1max_no_enzyme[0], v1max_no_enzyme[1], v1max_no_enzyme[2]))
-        print('{0:10s} {1:.5f} {2:.5f} {3:.5f}'.format('K1ac:', k1ac_no_enzyme[0], k1ac_no_enzyme[1], k1ac_no_enzyme[2]))
-        print('{0:10s} {1:.5f} {2:.5f} {3:.5f}'.format('k1cat:', k1cat_enzyme[0], k1cat_enzyme[1], k1cat_enzyme[2]))
-        print('{0:10s} {1:.5f} {2:.5f} {3:.5f}'.format('K1ac:', k1ac_enzyme[0], k1ac_enzyme[1], k1ac_enzyme[2]))
+        print('{0:10}\t\t{1:.2f}\t{2:.2f}\t\t{3:.2f}'.format('K1ac:', k1ac_no_enzyme[0], k1ac_no_enzyme[1], k1ac_no_enzyme[2]))
+        print('{0:10}\t\t{1:.2f}\t{2:.2f}\t\t{3:.2f}'.format('k1cat:', k1cat_enzyme[0], k1cat_enzyme[1], k1cat_enzyme[2]))
+        print('{0:10}\t\t{1:.2f}\t{2:.2f}\t\t{3:.2f}'.format('K1ac:', k1ac_enzyme[0], k1ac_enzyme[1], k1ac_enzyme[2]))
 
         # identifiability for flux 2
         v2max, k2pep = flux_2_ident_expression(dataset)
-        print('{0:10s} {1:.5f} {2:.5f} {3:.5f}'.format('V2max:', v2max[0], v2max[1], v2max[2]))
-        print('{0:10s} {1:.5f} {2:.5f} {3:.5f}'.format('K2pep:', k2pep[0], k2pep[1], k2pep[2]))
+        print('{0:10}\t\t{1:.2f}\t{2:.2f}\t\t{3:.2f}'.format('V2max:', v2max[0], v2max[1], v2max[2]))
+        print('{0:10}\t\t{1:.2f}\t{2:.2f}\t\t{3:.2f}'.format('K2pep:', k2pep[0], k2pep[1], k2pep[2]))
 
         # identifiability for flux 3
         v3max_1, k3fdp_1, k3pep_1, v3max_2, k3fdp_2, k3pep_2 = flux_3_ident_expression(dataset)
-        print('{0:10s} {1:.5f} {2:.5f} {3:.5f}'.format('V3max 1:', v3max_1[0], v3max_1[1], v3max_1[2]))
-        print('{0:10s} {1:.5f} {2:.5f} {3:.5f}'.format('V3max 2:', v3max_2[0], v3max_2[1], v3max_2[2]))
-        print('{0:10s} {1:.5f} {2:.5f} {3:.5f}'.format('K3fdp 1:', k3fdp_1[0], k3fdp_1[1], k3fdp_1[2]))
-        print('{0:10s} {1:.5f} {2:.5f} {3:.5f}'.format('K3fdp 2:', k3fdp_2[0], k3fdp_2[1], k3fdp_2[2]))
-        print('{0:10s} {1:.5f} {2:.5f} {3:.5f}'.format('K3pep 1:', k3pep_1[0], k3pep_1[1], k3pep_1[2]))
-        print('{0:10s} {1:.5f} {2:.5f} {3:.5f}'.format('K3pep 2:', k3pep_2[0], k3pep_2[1], k3pep_2[2]))
+        print('{0:10}\t\t{1:.2f}\t{2:.2f}\t\t{3:.2f}'.format('V3max 1:', v3max_1[0], v3max_1[1], v3max_1[2]))
+        print('{0:10}\t\t{1:.2f}\t{2:.2f}\t\t{3:.2f}'.format('V3max 2:', v3max_2[0], v3max_2[1], v3max_2[2]))
+        print('{0:10}\t\t{1:.2f}\t{2:.2f}\t\t{3:.2f}'.format('K3fdp 1:', k3fdp_1[0], k3fdp_1[1], k3fdp_1[2]))
+        print('{0:10}\t\t{1:.2f}\t{2:.2f}\t\t{3:.2f}'.format('K3fdp 2:', k3fdp_2[0], k3fdp_2[1], k3fdp_2[2]))
+        print('{0:10}\t\t{1:.2f}\t{2:.2f}\t\t{3:.2f}'.format('K3pep 1:', k3pep_1[0], k3pep_1[1], k3pep_1[2]))
+        print('{0:10}\t\t{1:.2f}\t{2:.2f}\t\t{3:.2f}'.format('K3pep 2:', k3pep_2[0], k3pep_2[1], k3pep_2[2]))
 
     return None
 
