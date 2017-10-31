@@ -777,3 +777,29 @@ def establish_kotte_flux_identifiability(experimental_data_list):
               '{0:.5f}'.format(k3pep_2[1]), '{0:.5f}'.format(k3pep_2[2]))
 
     return None
+
+
+def arrange_experimental_data(xss, fss, parameters, flux_id=np.array([0, 1, 2, 3, 4, 5])):
+    """get combinations of datasets using xss, fss and parameters for kotte model.
+    see identifiability functions above for order of values in datasets"""
+    datasets = []
+    # first dataset
+    for index1 in range(len(xss)):
+        first_data = np.hstack((parameters[index1][-1],
+                                xss[index1],
+                                fss[index1][flux_id]))
+        # second dataset
+        for index2 in range(len(xss)):
+            if index2 != index1:
+                second_data = np.hstack((parameters[index2][-1],
+                                         xss[index2],
+                                         fss[index2][flux_id]))
+                # third dataset
+                for index3 in range(len(xss)):
+                    if index3 != index2 and index3 != index1:
+                        third_data = np.hstack((parameters[index3][-1],
+                                                xss[index3],
+                                                fss[index3][flux_id]))
+                        datasets.append(np.hstack((first_data, second_data, third_data)))
+
+    return datasets
