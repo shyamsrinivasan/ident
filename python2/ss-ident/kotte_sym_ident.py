@@ -39,7 +39,7 @@ experimental_datasets = \
     arrange_experimental_data(noisy_exp_xss, noisy_exp_fss, perturbed_parameter_values, exp_flux_index)
 
 # identifiability for all kotte fluxes
-establish_kotte_flux_identifiability(experimental_datasets)
+establish_kotte_flux_identifiability(experimental_datasets[100:103])
 
 # clear workspace (removes all module names and objects)
 # import sys
