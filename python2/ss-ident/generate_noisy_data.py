@@ -2,6 +2,7 @@
 from kotte_model import *
 from simulate_ode import run_ode_sims
 from add_noise import add_noise_dynamic
+import numpy as np
 # from copy import deepcopy
 
 
@@ -74,7 +75,7 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options):
     with first position of tuple being parameter id and second index being
     parameter value"""
 
-    ode_parameters = other_options['ode_parameters']
+    ode_parameters = tuple(other_options['ode_parameters'])
     cvode_options = other_options['cvode_options']
     noisy_ss = []
     noisy_dynamic = []
@@ -83,13 +84,13 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options):
     for index, p_value in enumerate(parameter_perturbation):
         print('Perturbation {}\n'.format(index+1))
         parameter_id, parameter_change = p_value
-        changed_ode_parameter = ode_parameters[:]
-        changed_ode_parameter[parameter_id-1] = ode_parameters[parameter_id-1]*(1 + parameter_change)
+        changed_ode_parameter = np.array(ode_parameters[:])
+        changed_ode_parameter[parameter_id-1] = changed_ode_parameter[parameter_id-1]*(1 + parameter_change)
         all_options = (cvode_options, changed_ode_parameter)
         # generate data using MWC Kinetics
         noisy_ss_iter, noisy_dynamic_iter, _, _ = generate_noisy_data(y0, all_options, 1)
         noisy_ss.append(noisy_ss_iter)
         noisy_dynamic.append(noisy_dynamic_iter)
-        perturbed_parameter.append(changed_ode_parameter)
+        perturbed_parameter.append(changed_ode_parameter[:])
 
     return noisy_ss, noisy_dynamic, tuple(perturbed_parameter)
