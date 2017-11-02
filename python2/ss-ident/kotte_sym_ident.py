@@ -41,14 +41,14 @@ experimental_datasets = \
 # identifiability for all kotte fluxes
 flux1, flux2, flux3 = establish_kotte_flux_identifiability(experimental_datasets[0:100])
 print('Flux 1 Identifiability:\n')
-for data in flux1:
-    print data
+for index in range(1, 100):
+    print flux1[0][index, :], flux1[1][index, :], flux1[2][index, :]
 print('Flux 2 Identifiability:\n')
-for data in flux2:
-    print data
+for index in range(1, 100):
+    print flux2[0][index, :], flux2[1][index, :], flux2[2][index, :]
 print('Flux 3 Identifiability:\n')
-for data in flux3:
-    print data
+for index in range(1, 100):
+    print flux3[0][index, :], flux3[1][index, :], flux3[2][index, :]
 
 # clear workspace (removes all module names and objects)
 # import sys
