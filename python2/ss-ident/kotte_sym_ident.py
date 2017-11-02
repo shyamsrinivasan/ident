@@ -10,7 +10,7 @@ all_options_exp_1 = []
 all_options_exp_2 = []
 all_options_exp_3 = []
 # default parameter values
-cvode_options = ('Newton', 'Adams', 1e-6, 1e-6, 100)
+cvode_options = ('Newton', 'Adams', 1e-8, 1e-8, 100)
 ode_paramater_values = np.array([.1, .1, 4e6, .1, .3, 1.1, .45, 2, .25, .2, 1, 1, 1, .1])
 
 # get initial noisy system steady state
