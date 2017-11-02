@@ -39,7 +39,9 @@ experimental_datasets = \
     arrange_experimental_data(noisy_exp_xss, noisy_exp_fss, perturbed_parameter_values, exp_flux_index)
 
 # identifiability for all kotte fluxes
-flux1, flux2, flux3 = establish_kotte_flux_identifiability(experimental_datasets[0:100])
+perturbation_list, flux1, flux2, flux3 = establish_kotte_flux_identifiability(experimental_datasets)
+print('Perturbations allowing identifiability:\n')
+print 'Flux 1\n{}\nFlux 2\n{}\nFlux 3\n{}\n'.format(perturbation_list[0], perturbation_list[1], perturbation_list[2])
 print('Flux 1 Identifiability:\n')
 for index in range(1, 100):
     print flux1[0][index, :], flux1[1][index, :], flux1[2][index, :]
