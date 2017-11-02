@@ -750,9 +750,9 @@ def establish_kotte_flux_identifiability(experimental_data_list):
         v3max_1, k3fdp_1, k3pep_1, v3max_2, k3fdp_2, k3pep_2 = flux_3_ident_expression(dataset)
         write_2_file_data.append(['Identifiability Data {}'.format(index+1)])
         write_2_file_data.append(['V1max', v1max_no_enzyme[0], v1max_no_enzyme[1], v1max_no_enzyme[2]])
-        write_2_file_data.append(['K1ac', k1ac_no_enzyme[0], k1ac_no_enzyme[1], k1ac_no_enzyme[2]])
+        write_2_file_data.append(['K1ac 1', k1ac_no_enzyme[0], k1ac_no_enzyme[1], k1ac_no_enzyme[2]])
         write_2_file_data.append(['k1cat', k1cat_enzyme[0], k1cat_enzyme[1], k1cat_enzyme[2]])
-        write_2_file_data.append(['K1ac:', k1ac_enzyme[0], k1ac_enzyme[1], k1ac_enzyme[2]])
+        write_2_file_data.append(['K1ac 2', k1ac_enzyme[0], k1ac_enzyme[1], k1ac_enzyme[2]])
         write_2_file_data.append(['V2max:', v2max[0], v2max[1], v2max[2]])
         write_2_file_data.append(['K2pep:', k2pep[0], k2pep[1], k2pep[2]])
         write_2_file_data.append(['V3max 1:', v3max_1[0], v3max_1[1], v3max_1[2]])
@@ -762,6 +762,77 @@ def establish_kotte_flux_identifiability(experimental_data_list):
         write_2_file_data.append(['K3fdp 2:', k3fdp_2[0], k3fdp_2[1], k3fdp_2[2]])
         write_2_file_data.append(['K3pep 2:', k3pep_2[0], k3pep_2[1], k3pep_2[2]])
 
+    # create boolean array for identifiability
+    set_number = 0
+    flux1_sign_numerator = np.zeros((len(experimental_data_list),4))
+    flux1_sign_denominator = np.zeros((len(experimental_data_list), 4))
+    flux1_sign_values = np.zeros((len(experimental_data_list), 4))
+    flux2_sign_numerator = np.zeros((len(experimental_data_list), 2))
+    flux2_sign_denominator = np.zeros((len(experimental_data_list), 2))
+    flux2_sign_values = np.zeros((len(experimental_data_list), 2))
+    flux3_sign_numerator = np.zeros((len(experimental_data_list), 6))
+    flux3_sign_denominator = np.zeros((len(experimental_data_list), 6))
+    flux3_sign_values = np.zeros((len(experimental_data_list), 6))
+    for ident_data in write_2_file_data:
+        parameter = ident_data[0]
+        if len(ident_data)>1:
+            values = ident_data[1:]
+            if parameter == 'V1max':
+                flux1_sign_numerator[set_number, 0], \
+                flux1_sign_denominator[set_number, 0], \
+                flux1_sign_values[set_number, 0] = np.transpose(np.sign(values))
+            elif parameter == 'K1ac 1':
+                flux1_sign_numerator[set_number, 1], \
+                flux1_sign_denominator[set_number, 1], \
+                flux1_sign_values[set_number, 1] = np.transpose(np.sign(values))
+            elif parameter == 'k1cat':
+                flux1_sign_numerator[set_number, 2], \
+                flux1_sign_denominator[set_number, 2], \
+                flux1_sign_values[set_number, 2] = np.transpose(np.sign(values))
+            elif parameter == 'K1ac 2':
+                flux1_sign_numerator[set_number, 3], \
+                flux1_sign_denominator[set_number, 3], \
+                flux1_sign_values[set_number, 3] = np.transpose(np.sign(values))
+            elif parameter == 'V2max':
+                flux2_sign_numerator[set_number, 0], \
+                flux2_sign_denominator[set_number, 0], \
+                flux2_sign_values[set_number, 0] = np.transpose(np.sign(values))
+            elif parameter == 'K2pep':
+                flux2_sign_numerator[set_number, 1], \
+                flux2_sign_denominator[set_number, 1], \
+                flux2_sign_values[set_number, 1] = np.transpose(np.sign(values))
+            elif parameter == 'V3max 1':
+                flux3_sign_numerator[set_number, 0], \
+                flux3_sign_denominator[set_number, 0], \
+                flux3_sign_values[set_number, 0] = np.transpose(np.sign(values))
+            elif parameter == 'V3max 2':
+                flux3_sign_numerator[set_number, 3], \
+                flux3_sign_denominator[set_number, 3], \
+                flux3_sign_values[set_number, 3] = np.transpose(np.sign(values))
+            elif parameter == 'K3fdp 1':
+                flux3_sign_numerator[set_number, 1], \
+                flux3_sign_denominator[set_number, 1], \
+                flux3_sign_values[set_number, 1] = np.transpose(np.sign(values))
+            elif parameter == 'K3fdp 2':
+                flux3_sign_numerator[set_number, 4], \
+                flux3_sign_denominator[set_number, 4], \
+                flux3_sign_values[set_number, 4] = np.transpose(np.sign(values))
+            elif parameter == 'K3pep 1':
+                flux3_sign_numerator[set_number, 2], \
+                flux3_sign_denominator[set_number, 2], \
+                flux3_sign_values[set_number, 2] = np.transpose(np.sign(values))
+            elif parameter == 'K3pep 2':
+                flux3_sign_numerator[set_number, 5], \
+                flux3_sign_denominator[set_number, 5], \
+                flux3_sign_values[set_number, 5] = np.transpose(np.sign(values))
+        else:
+            if set_number != 0:
+                set_number += 1
+
+
+
+
+    # write results to file
     path = "~" + "shyam" + r"\Documents\Courses\CHE1125Project\Results\ident\python2\kotte_ident_results.txt"
     fullpath = os.path.expanduser(path)
     with open(fullpath, 'a') as fh:
