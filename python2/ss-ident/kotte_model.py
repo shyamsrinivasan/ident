@@ -852,6 +852,21 @@ def establish_kotte_flux_identifiability(experimental_data_list):
             if index != 0:
                 set_number += 1
 
+    # identify perturbations that result in positive value for identifiability
+    perturbation_list_flux_1 = []
+    for parameter_id in range(0, 4):
+        perturbation_list_flux_1.append(
+            tuple([id for id in range(flux1_sign_values.shape[0]) if (flux1_sign_values[id, parameter_id]>0)]))
+    perturbation_list_flux_2 = []
+    for parameter_id in range(0, 2):
+        perturbation_list_flux_2.append(
+            tuple([id for id in range(flux2_sign_values.shape[0]) if (flux2_sign_values[id, parameter_id]>0)]))
+    perturbation_list_flux_3 = []
+    for parameter_id in range(0, 6):
+        perturbation_list_flux_3.append(
+            tuple([id for id in range(flux3_sign_values.shape[0]) if (flux3_sign_values[id, parameter_id]>0)]))
+
+
     # write results to file
     path = "~" + "shyam" + r"\Documents\Courses\CHE1125Project\Results\ident\python2\kotte_ident_results.txt"
     fullpath = os.path.expanduser(path)
@@ -860,7 +875,8 @@ def establish_kotte_flux_identifiability(experimental_data_list):
         [writer.writerow(r) for r in write_2_file_data]
         fh.close()
 
-    return [flux1_sign_nr, flux1_sign_dr, flux1_sign_values], \
+    return [tuple(perturbation_list_flux_1), tuple(perturbation_list_flux_2), tuple(perturbation_list_flux_3)], \
+           [flux1_sign_nr, flux1_sign_dr, flux1_sign_values], \
            [flux2_sign_nr, flux2_sign_dr, flux2_sign_values], \
            [flux3_sign_nr, flux3_sign_dr, flux3_sign_values]
 
