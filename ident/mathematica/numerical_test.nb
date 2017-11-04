@@ -1,0 +1,193 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 10.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      5816,        183]
+NotebookOptionsPosition[      5466,        166]
+NotebookOutlinePosition[      5806,        181]
+CellTagsIndexPosition[      5763,        178]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "3", " ", "sets", " ", "of", " ", "experimental", " ", "data", " ", "for", 
+    " ", "v3", " ", "using", " ", "convenience", " ", "kinetics"}], " ", 
+   "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+    RowBox[{"expression", " ", "taken", " ", "from", " ", "sympy"}], " ", "-",
+     " ", 
+    RowBox[{
+    "cross", " ", "checking", " ", "with", " ", "mathematica", " ", "on", " ",
+      "home", " ", "desktop"}]}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{
+   "Does", " ", "not", " ", "work", " ", "for", " ", "simultaneous", " ", 
+    "detection", " ", "of", " ", "V3max", " ", "with", " ", "other", " ", "2",
+     " ", "binding", " ", "parameters"}], " ", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", " ", 
+   RowBox[{"estimate", " ", "K3pep", " ", "and", " ", "V3max"}], " ", "*)"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"met", " ", "=", " ", 
+     RowBox[{"{", 
+      RowBox[{
+      "x11", ",", "x12", ",", "x13", ",", "x21", ",", "x22", ",", "x23"}], 
+      "}"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"flux", "=", 
+     RowBox[{"{", 
+      RowBox[{"v31", ",", "v32", ",", " ", "v33"}], "}"}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"parameters", "=", 
+     RowBox[{"{", 
+      RowBox[{"V3max", ",", "K3fdp", ",", "K3pep"}], "}"}]}], ";"}], 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"reg1", "=", 
+     RowBox[{"1", "/", 
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        RowBox[{"K3pep", "/", "x11"}]}], ")"}]}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"reg2", "=", 
+     RowBox[{"1", "/", 
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        RowBox[{"K3pep", "/", "x12"}]}], ")"}]}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"reg3", "=", 
+     RowBox[{"1", "/", 
+      RowBox[{"(", 
+       RowBox[{"1", "+", 
+        RowBox[{"K3pep", "/", "x13"}]}], ")"}]}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"fdpsat1", "=", 
+     RowBox[{"x21", "/", "K3fdp"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"fdpsat2", "=", 
+     RowBox[{"x22", "/", "K3fdp"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"fdpsat3", "=", 
+     RowBox[{"x23", "/", "K3fdp"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"flux31", ":=", 
+     RowBox[{
+      RowBox[{"v31", "-", 
+       RowBox[{"reg1", "*", "V3max", "*", 
+        RowBox[{"fdpsat1", "/", 
+         RowBox[{"(", 
+          RowBox[{"1", "+", "fdpsat1"}], ")"}]}]}]}], "\[Equal]", "0"}]}], 
+    ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"flux32", ":=", 
+     RowBox[{
+      RowBox[{"v32", "-", 
+       RowBox[{"reg2", "*", "V3max", "*", 
+        RowBox[{"fdpsat2", "/", 
+         RowBox[{"(", 
+          RowBox[{"1", "+", "fdpsat2"}], ")"}]}]}]}], "\[Equal]", "0"}]}], 
+    ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"flux33", ":=", 
+     RowBox[{
+      RowBox[{"v33", "-", 
+       RowBox[{"reg3", "*", "V3max", "*", 
+        RowBox[{"fdpsat3", "/", 
+         RowBox[{"(", 
+          RowBox[{"1", "+", "fdpsat3"}], ")"}]}]}]}], "\[Equal]", "0"}]}], 
+    ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"p", "=", 
+     RowBox[{"{", 
+      RowBox[{"V3max", ",", "K3pep", ",", "K3fdp"}], "}"}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"sol", "=", 
+     RowBox[{"Solve", "[", 
+      RowBox[{
+       RowBox[{"{", 
+        RowBox[{"flux31", ",", "flux32", ",", "flux33"}], "}"}], ",", "p", 
+       ",", 
+       RowBox[{"Cubics", "\[Rule]", "False"}], ",", 
+       RowBox[{"Quartics", "\[Rule]", "False"}]}], "]"}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"p1", "=", 
+     RowBox[{"V3max", "/.", "sol"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"p2", "=", 
+     RowBox[{"K3fdp", "/.", "sol"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"p3", "=", 
+     RowBox[{"K3pep", "/.", "sol"}]}], ";"}]}]}]], "Input"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"p1", "[", 
+   RowBox[{"[", "1", "]"}], "]"}], "/.", 
+  RowBox[{"{", 
+   RowBox[{
+    RowBox[{"v31", "\[Rule]", "2.0"}], ",", " ", 
+    RowBox[{"v32", "\[Rule]", "1.0"}], ",", " ", 
+    RowBox[{"v33", "\[Rule]", "2.0"}], ",", " ", 
+    RowBox[{"x11", "\[Rule]", "1.5"}], ",", 
+    RowBox[{"x12", "\[Rule]", "1.0"}], ",", 
+    RowBox[{"x13", "\[Rule]", "1.1"}], ",", 
+    RowBox[{"x21", "\[Rule]", "2.5"}], ",", 
+    RowBox[{"x22", "\[Rule]", "2.0"}], ",", 
+    RowBox[{"x23", "\[Rule]", "1.5"}]}], "}"}]}]], "Input",
+ CellChangeTimes->{{3.7179367994705276`*^9, 3.7179368018261323`*^9}, {
+  3.717937590374717*^9, 3.717937723505351*^9}}],
+
+Cell[BoxData[
+ RowBox[{"-", "0.5718875646994863`"}]], "Output",
+ CellChangeTimes->{3.7179368087525444`*^9, 3.7179377402285805`*^9}]
+}, Open  ]]
+},
+WindowSize->{1350, 686},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+FrontEndVersion->"10.0 for Microsoft Windows (64-bit) (July 1, 2014)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 4064, 119, 452, "Input"],
+Cell[CellGroupData[{
+Cell[4647, 143, 669, 16, 31, "Input"],
+Cell[5319, 161, 131, 2, 31, "Output"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
+
