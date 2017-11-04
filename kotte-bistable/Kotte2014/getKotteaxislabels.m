@@ -3,9 +3,15 @@ if nargin <3
     idx = [];
 end
 
+<<<<<<< HEAD:KineticModel/Kotte2014/getKotteaxislabels.m
 fluxlist = {'v1 a.u.','ENZC a.u.','ECbiomass(v3) a.u.',...
            'v2 a.u.','v4 a.u.','ENZR a.u.'};
 cnclist = {'pep a.u.','fdp a.u.','ENZ a.u.'};  
+=======
+fluxlist = {'v1 a.u','ENZC a.u','ECbiomass(v3) a.u',...
+           'v2 a.u','v4 a.u'};
+cnclist = {'pep a.u','fdp a.u','ENZ a.u'};  
+>>>>>>> master:kotte-bistable/Kotte2014/getKotteaxislabels.m
 parlist = {'K1acetate a.u.','K3fdp a.u.','L3','K3pep a.u.','K2pep a.u.','vemax',...
            'Kefdp a.u.','ne','acetate a.u.','d a.u.','kPEPout a.u.',...
            'k1cat a.u.','v3max a.u.','v2max a.u'};
