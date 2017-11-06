@@ -41,7 +41,13 @@ experimental_datasets = \
 # identifiability for all kotte fluxes
 perturbation_list, flux1, flux2, flux3 = establish_kotte_flux_identifiability(experimental_datasets)
 print('Perturbations allowing identifiability:\n')
-print 'Flux 1\n{}\nFlux 2\n{}\nFlux 3\n{}\n'.format(perturbation_list[0], perturbation_list[1], perturbation_list[2])
+print 'Flux 1 Parameter 1\n{}\nFlux 1 Parameter 2\n{}\nFlux 1 Parameter 3\n{}\nFlux 1 Parameter 4\n{}\n'.\
+    format(perturbation_list[0][0], perturbation_list[0][1], perturbation_list[0][2], perturbation_list[0][3])
+print 'Flux 2 Parameter 1\n{}\nFlux 2 Parameter 2\n{}\n'.format(perturbation_list[1][0], perturbation_list[1][1])
+print 'Flux 3 Parameter 1\n{}\nFlux 3 Parameter 2\n{}\nFlux 3 Parameter 3\n{}\n' \
+      'Flux 3 Parameter 4\n{}\nFlux 3 Parameter 5\n{}\nFlux 3 Parameter 6\n{}\n'.\
+    format(perturbation_list[2][0], perturbation_list[2][1], perturbation_list[2][2],
+           perturbation_list[2][3], perturbation_list[2][4], perturbation_list[2][5])
 print('Flux 1 Identifiability:\n')
 for index in range(1, 100):
     print flux1[0][index, :], flux1[1][index, :], flux1[2][index, :]
