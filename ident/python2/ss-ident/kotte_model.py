@@ -811,6 +811,7 @@ def establish_kotte_flux_identifiability(experimental_data_list):
         write_2_file_data.append(['Flux {}, Parameter {}'.format(flux_id, parameter_id)])
         # print(['Flux {}, Parameter {}'.format(flux_id, parameter_id)])
         write_2_file_data.append(values)
+        write_2_file_data.append(np.sign(values))
         if parameter_id < parameters_per_flux[flux_id-1]:
             parameter_id += 1
         else:
@@ -819,77 +820,8 @@ def establish_kotte_flux_identifiability(experimental_data_list):
             else:
                 flux_id = 1
             parameter_id = 1
-            
-    # create boolean array for identifiability
-    set_number = 0
-    flux1_sign_nr = np.zeros((len(experimental_data_list),4))
-    flux1_sign_dr = np.zeros((len(experimental_data_list), 4))
-    flux1_sign_values = np.zeros((len(experimental_data_list), 4))
-    flux2_sign_nr = np.zeros((len(experimental_data_list), 2))
-    flux2_sign_dr = np.zeros((len(experimental_data_list), 2))
-    flux2_sign_values = np.zeros((len(experimental_data_list), 2))
-    flux3_sign_nr = np.zeros((len(experimental_data_list), 6))
-    flux3_sign_dr = np.zeros((len(experimental_data_list), 6))
-    flux3_sign_values = np.zeros((len(experimental_data_list), 6))
-    for index, ident_data in enumerate(write_2_file_data):
-        parameter = ident_data[0]
-        if len(ident_data)>1:
-            values = ident_data[1:]
-            if not np.isnan(values).any():
-                signed_values = np.sign(values)
-            else:
-                signed_values = np.transpose(np.array([0, 0, 0]))
-            if parameter == 'V1max':
-                flux1_sign_nr[set_number, 0], \
-                flux1_sign_dr[set_number, 0], \
-                flux1_sign_values[set_number, 0] = signed_values
-            elif parameter == 'K1ac 1':
-                flux1_sign_nr[set_number, 1], \
-                flux1_sign_dr[set_number, 1], \
-                flux1_sign_values[set_number, 1] = signed_values
-            elif parameter == 'k1cat':
-                flux1_sign_nr[set_number, 2], \
-                flux1_sign_dr[set_number, 2], \
-                flux1_sign_values[set_number, 2] = signed_values
-            elif parameter == 'K1ac 2':
-                flux1_sign_nr[set_number, 3], \
-                flux1_sign_dr[set_number, 3], \
-                flux1_sign_values[set_number, 3] = signed_values
-            elif parameter == 'V2max':
-                flux2_sign_nr[set_number, 0], \
-                flux2_sign_dr[set_number, 0], \
-                flux2_sign_values[set_number, 0] = signed_values
-            elif parameter == 'K2pep':
-                flux2_sign_nr[set_number, 1], \
-                flux2_sign_dr[set_number, 1], \
-                flux2_sign_values[set_number, 1] = signed_values
-            elif parameter == 'V3max 1':
-                flux3_sign_nr[set_number, 0], \
-                flux3_sign_dr[set_number, 0], \
-                flux3_sign_values[set_number, 0] = signed_values
-            elif parameter == 'V3max 2':
-                flux3_sign_nr[set_number, 3], \
-                flux3_sign_dr[set_number, 3], \
-                flux3_sign_values[set_number, 3] = signed_values
-            elif parameter == 'K3fdp 1':
-                flux3_sign_nr[set_number, 1], \
-                flux3_sign_dr[set_number, 1], \
-                flux3_sign_values[set_number, 1] = signed_values
-            elif parameter == 'K3fdp 2':
-                flux3_sign_nr[set_number, 4], \
-                flux3_sign_dr[set_number, 4], \
-                flux3_sign_values[set_number, 4] = signed_values
-            elif parameter == 'K3pep 1':
-                flux3_sign_nr[set_number, 2], \
-                flux3_sign_dr[set_number, 2], \
-                flux3_sign_values[set_number, 2] = signed_values
-            elif parameter == 'K3pep 2':
-                flux3_sign_nr[set_number, 5], \
-                flux3_sign_dr[set_number, 5], \
-                flux3_sign_values[set_number, 5] = signed_values
-        else:
-            if index != 0:
-                set_number += 1
+    # create signed boolean array for identifiability
+    signed_ident_values = np.sign(ident_values)
 
     # identify perturbations that result in positive value for identifiability
     perturbation_list_flux_1 = []
