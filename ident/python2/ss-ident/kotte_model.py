@@ -757,8 +757,55 @@ def call_truncate_method(ident_value_list, parameter_count, expression_count=3):
         flux_ident_value[i, :] = np.array(trunc_value)
     return flux_ident_value
 
+
+def run_flux_ident(ident_function_list, data):
+    number_of_parameters = 0
+    number_of_parameters_per_flux = np.zeros((len(ident_function_list), 1))
+    ident_value_list = []
+    iterator = 0
+    for function in ident_function_list:
+        ident_value = function(data)
+        ident_value_list.append(ident_value)
+        number_of_expressions = len(ident_value[0])
+        number_of_parameters_per_flux[iterator] = len(ident_value)
+        iterator += 1
+        number_of_parameters += len(ident_value)
+
+    ident_value_array = np.zeros((number_of_parameters, number_of_expressions))
+    irow = 0
+    for iflux in ident_value_list:
+        truncated_ident_value = call_truncate_method(iflux, len(iflux))
+        nrows, ncolumns = np.shape(truncated_ident_value)
+        ident_value_array[irow:(irow + nrows), :] = truncated_ident_value
+        irow += nrows
+    return ident_value_array, number_of_parameters_per_flux, ncolumns
+
+
+def get_ident_value(ident_function_list, experimental_data_list):
+    all_data_ident_lists = []
+    for index, data_set in enumerate(experimental_data_list):
+        print('Identifiability for Dataset {} of {}\n'.format(index + 1, len(experimental_data_list)))
+        identifiability_values, number_of_parameters_per_flux, number_of_expressions_per_parameter = \
+            run_flux_ident(ident_function_list, data_set)
+        all_data_ident_lists.append(identifiability_values)
+
+    number_of_data_sets = len(experimental_data_list)
+    total_parameters_identified = np.sum(number_of_parameters_per_flux)
+    all_identifiability_values = \
+        np.zeros((number_of_data_sets * total_parameters_identified, number_of_expressions_per_parameter))
+    array_index = 0
+    for idata in all_data_ident_lists:
+        all_identifiability_values[array_index:(array_index + total_parameters_identified), :] = idata
+        array_index += total_parameters_identified
+    return all_identifiability_values, number_of_parameters_per_flux
+
+
 def establish_kotte_flux_identifiability(experimental_data_list):
     """call all identifiability evaluation funcs above and print numerical results"""
+    ident_function_list = (flux_1_ident_expression, flux_2_ident_expression, flux_3_ident_expression)
+    get_ident_value(ident_function_list, experimental_data_list)
+
+
     write_2_file_data = []
     for index, dataset in enumerate(experimental_data_list):
         print('Identifiability for Dataset {} of {}\n'.format(index + 1, len(experimental_data_list)))
@@ -866,6 +913,14 @@ def establish_kotte_flux_identifiability(experimental_data_list):
         perturbation_list_flux_3.append(
             tuple([id for id in range(flux3_sign_values.shape[0]) if (flux3_sign_values[id, parameter_id]>0)]))
 
+    # get common perturbation ids between differnt perturbation tuples above
+    perturbation_list = [tuple(perturbation_list_flux_1),
+                         tuple(perturbation_list_flux_2),
+                         tuple(perturbation_list_flux_3)]
+    #list_length = 3
+    #for ilist in perturbation_list:
+    #    number_of_pramaters = len(ilist)
+    #    print number_of_pramaters
 
     # write results to file
     path = "~" + "shyam" + r"\Documents\Courses\CHE1125Project\Results\ident\python2\kotte_ident_results.txt"
