@@ -803,31 +803,23 @@ def get_ident_value(ident_function_list, experimental_data_list):
 def establish_kotte_flux_identifiability(experimental_data_list):
     """call all identifiability evaluation funcs above and print numerical results"""
     ident_function_list = (flux_1_ident_expression, flux_2_ident_expression, flux_3_ident_expression)
+    number_fluxes = len(ident_function_list)
     ident_values, parameters_per_flux = get_ident_value(ident_function_list, experimental_data_list)
-
-
     write_2_file_data = []
-    for index, dataset in enumerate(experimental_data_list):
-        print('Identifiability for Dataset {} of {}\n'.format(index + 1, len(experimental_data_list)))
-        flux_1_ident_value = call_truncate_method(flux_1_ident_expression(dataset), 4, 3)
-        flux_2_ident_value = call_truncate_method(flux_2_ident_expression(dataset), 2, 3)
-        flux_3_ident_value = call_truncate_method(flux_3_ident_expression(dataset), 6, 3)
-        # v2max, k2pep = flux_2_ident_expression(dataset)
-        # v3max_1, k3fdp_1, k3pep_1, v3max_2, k3fdp_2, k3pep_2 = flux_3_ident_expression(dataset)
-        write_2_file_data.append(['Identifiability Data {}'.format(index+1)])
-        write_2_file_data.append(['V1max', flux_1_ident_value[0][0], flux_1_ident_value[0][1], flux_1_ident_value[0][2]])
-        write_2_file_data.append(['K1ac 1', flux_1_ident_value[1][0], flux_1_ident_value[1][1], flux_1_ident_value[1][2]])
-        write_2_file_data.append(['k1cat', flux_1_ident_value[2][0], flux_1_ident_value[2][1], flux_1_ident_value[2][2]])
-        write_2_file_data.append(['K1ac 2', flux_1_ident_value[3][0], flux_1_ident_value[3][1], flux_1_ident_value[3][2]])
-        write_2_file_data.append(['V2max', flux_2_ident_value[0][0], flux_2_ident_value[0][1], flux_2_ident_value[0][2]])
-        write_2_file_data.append(['K2pep', flux_2_ident_value[1][0], flux_2_ident_value[1][1], flux_2_ident_value[1][2]])
-        write_2_file_data.append(['V3max 1', flux_3_ident_value[0][0], flux_3_ident_value[0][1], flux_3_ident_value[0][2]])
-        write_2_file_data.append(['K3fdp 1', flux_3_ident_value[1][0], flux_3_ident_value[1][1], flux_3_ident_value[1][2]])
-        write_2_file_data.append(['K3pep 1', flux_3_ident_value[2][0], flux_3_ident_value[2][1], flux_3_ident_value[2][2]])
-        write_2_file_data.append(['V3max 2', flux_3_ident_value[3][0], flux_3_ident_value[3][1], flux_3_ident_value[3][2]])
-        write_2_file_data.append(['K3fdp 2', flux_3_ident_value[4][0], flux_3_ident_value[4][1], flux_3_ident_value[4][2]])
-        write_2_file_data.append(['K3pep 2', flux_3_ident_value[5][0], flux_3_ident_value[5][1], flux_3_ident_value[5][2]])
-
+    flux_id, parameter_id = 1, 1
+    for values in ident_values:
+        write_2_file_data.append(['Flux {}, Parameter {}'.format(flux_id, parameter_id)])
+        # print(['Flux {}, Parameter {}'.format(flux_id, parameter_id)])
+        write_2_file_data.append(values)
+        if parameter_id < parameters_per_flux[flux_id-1]:
+            parameter_id += 1
+        else:
+            if flux_id < number_fluxes:
+                flux_id += 1
+            else:
+                flux_id = 1
+            parameter_id = 1
+            
     # create boolean array for identifiability
     set_number = 0
     flux1_sign_nr = np.zeros((len(experimental_data_list),4))
