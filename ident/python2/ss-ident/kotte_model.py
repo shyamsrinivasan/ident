@@ -760,7 +760,7 @@ def call_truncate_method(ident_value_list, parameter_count, expression_count=3):
 
 def run_flux_ident(ident_function_list, data):
     number_of_parameters = 0
-    number_of_parameters_per_flux = np.zeros((len(ident_function_list), 1))
+    number_of_parameters_per_flux = [None] * len(ident_function_list)
     ident_value_list = []
     iterator = 0
     for function in ident_function_list:
@@ -790,7 +790,7 @@ def get_ident_value(ident_function_list, experimental_data_list):
         all_data_ident_lists.append(identifiability_values)
 
     number_of_data_sets = len(experimental_data_list)
-    total_parameters_identified = np.sum(number_of_parameters_per_flux)
+    total_parameters_identified = sum(number_of_parameters_per_flux)
     all_identifiability_values = \
         np.zeros((number_of_data_sets * total_parameters_identified, number_of_expressions_per_parameter))
     array_index = 0
@@ -803,7 +803,7 @@ def get_ident_value(ident_function_list, experimental_data_list):
 def establish_kotte_flux_identifiability(experimental_data_list):
     """call all identifiability evaluation funcs above and print numerical results"""
     ident_function_list = (flux_1_ident_expression, flux_2_ident_expression, flux_3_ident_expression)
-    get_ident_value(ident_function_list, experimental_data_list)
+    ident_values, parameters_per_flux = get_ident_value(ident_function_list, experimental_data_list)
 
 
     write_2_file_data = []
