@@ -829,14 +829,14 @@ def establish_kotte_flux_identifiability(experimental_data_list):
     # build dictionary of results
     perturbation_dict = dict(zip(fp_list, parameter_perturbation_list))
 
-    # write/append all data to file
+    # create data for write/append all data to file
     write_2_file_data = []
+    write_2_file_data.append(['Identifiable Perturbations'])
     flux_id, parameter_id = 1, 1
-    for values in ident_values:
+    for values in perturbation_dict:
         write_2_file_data.append(['Flux {}, Parameter {}'.format(flux_id, parameter_id)])
-        # print(['Flux {}, Parameter {}'.format(flux_id, parameter_id)])
-        write_2_file_data.append(values)
-        write_2_file_data.append(np.sign(values))
+        write_2_file_data.append(['Identifiable Perturbations'])
+        write_2_file_data.append(perturbation_dict[values])
         if parameter_id < parameters_per_flux[flux_id-1]:
             parameter_id += 1
         else:
@@ -846,7 +846,21 @@ def establish_kotte_flux_identifiability(experimental_data_list):
                 flux_id = 1
             parameter_id = 1
 
-
+    for values in ident_values:
+        write_2_file_data.append(['Flux {}, Parameter {}'.format(flux_id, parameter_id)])
+        # print(['Flux {}, Parameter {}'.format(flux_id, parameter_id)])
+        write_2_file_data.append(values)
+        write_2_file_data.append(np.sign(values))
+        #write_2_file_data.append(['Identifiable Perturbations'])
+        #write_2_file_data.append
+        if parameter_id < parameters_per_flux[flux_id-1]:
+            parameter_id += 1
+        else:
+            if flux_id < number_fluxes:
+                flux_id += 1
+            else:
+                flux_id = 1
+            parameter_id = 1
 
     # write results to file
     path = "~" + "shyam" + r"\Documents\Courses\CHE1125Project\Results\ident\python2\kotte_ident_results.txt"
