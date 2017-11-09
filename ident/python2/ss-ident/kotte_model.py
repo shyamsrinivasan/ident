@@ -842,40 +842,6 @@ def establish_kotte_flux_identifiability(experimental_data_list):
     fp_list = ['flux{}p{}'.format(f_index + 1, p_index + 1)
                for f_index, p_limit in enumerate(parameters_per_flux)
                for p_index in range(0, p_limit)]
-    p_id_list = [[(p[i - 1] + 12 * id, p[i] + 12 * id)
-                       for id in range(0, number_data)]
-                      for i in range(1, len(p))]
-    starting_indices = [[x[0] for x in p_id] for p_id in p_id_list]
-    ending_indices = [[x[1] for x in p_id] for p_id in p_id_list]
-    flux_based_list = []
-    flux_based_array = np.zeros((number_data*p[-1], 3))
-    flux_based_signed_array = np.zeros((number_data*p[-1], 3))
-    pos = 0
-    #set = 0
-    for fluxid in range(0, number_fluxes):
-        all_id_list = []
-        all_id_signed_list = []
-        #p_list = ['p{}'.format(p_index+1) for p_index in range(0, parameters_per_flux[fluxid])]
-        for id1, id2 in zip(starting_indices[fluxid], ending_indices[fluxid]):
-            nrows = len(range(id1, id2))
-            flux_based_array[pos:pos+nrows, :] = ident_values[id1:id2, :]
-            flux_based_signed_array[pos:pos + nrows, :] = signed_ident_values[id1:id2, :]
-            all_id_list.append(ident_values[id1:id2, :])
-            all_id_signed_list.append(signed_ident_values[id1:id2, :])
-            pos += nrows
-        flux_based_list.append(all_id_list)
-
-    #pos = 0
-    #for id1 in parameters_per_flux:
-    #    rel_data = flux_based_signed_array[pos:pos+id1*number_data, :]
-    #    [id for id in range(0, len(rel_data)) if rel_data[:, -1]>0]
-
-    #perturbation_list = {}
-    #for exp_id in range(0, number_data):
-    #    [exp_id if signed_ident_values[i*12:(i+1)*12]]
-    #for flux_id in range(0, number_fluxes):
-    #    [id for id in range(0, number_data) if flux_based_signed_array[id, -1]>0]
-
 
     perturbation_list_flux_1 = []
     for parameter_id in range(0, 4):
