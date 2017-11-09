@@ -806,6 +806,7 @@ def establish_kotte_flux_identifiability(experimental_data_list):
     """call all identifiability evaluation funcs above and print numerical results"""
     ident_function_list = (flux_1_ident_expression, flux_2_ident_expression, flux_3_ident_expression)
     number_fluxes = len(ident_function_list)
+    number_data = len(experimental_data_list)
     ident_values, parameters_per_flux = get_ident_value(ident_function_list, experimental_data_list)
     write_2_file_data = []
     flux_id, parameter_id = 1, 1
@@ -826,22 +827,48 @@ def establish_kotte_flux_identifiability(experimental_data_list):
     signed_ident_values = np.sign(ident_values)
 
     # identify perturbations that result in positive value for identifiability
-    # flux_list = ['flux {}'.format(flux_index+1) for flux_index in range(0, number_fluxes)]
-    # p_list = ['p {}'.format(p_index+1) for p_index in range(0, sum(parameters_per_flux))]
+    p = [0] + parameters_per_flux
+    p = np.cumsum(p).tolist()
+    #for iset in range(0, number_data):
+    #    rel_data = ident_values[0*(iset+1):p[-1]*(iset+1), :]
+    #    [id for id in range(0, len(rel_data)) if rel_data[:, -1]>0]
+
+
+
     fp_list = ['flux{}p{}'.format(f_index + 1, p_index + 1)
                for f_index, p_limit in enumerate(parameters_per_flux)
                for p_index in range(0, p_limit)]
-    p_id_list = []
-    p = [0] + parameters_per_flux
-    p = np.cumsum(p).tolist()
     p_id_list = [[(p[i - 1] + 12 * id, p[i] + 12 * id)
-                       for id in range(0, len(experimental_data_list))]
+                       for id in range(0, number_data)]
                       for i in range(1, len(p))]
+    starting_indices = [[x[0] for x in p_id] for p_id in p_id_list]
+    ending_indices = [[x[1] for x in p_id] for p_id in p_id_list]
+    flux_based_list = []
+    flux_based_array = np.zeros((number_data*p[-1], 3))
+    flux_based_signed_array = np.zeros((number_data*p[-1], 3))
+    pos = 0
+    for fluxid in range(0, number_fluxes):
+        all_id_list = []
+        all_id_signed_list = []
+        for id1, id2 in zip(starting_indices[fluxid], ending_indices[fluxid]):
+            nrows = len(range(id1, id2))
+            flux_based_array[pos:pos+nrows, :] = ident_values[id1:id2, :]
+            flux_based_signed_array[pos:pos + nrows, :] = signed_ident_values[id1:id2, :]
+            all_id_list.append(ident_values[id1:id2, :])
+            all_id_signed_list.append(signed_ident_values[id1:id2, :])
+            pos += nrows
+        flux_based_list.append(all_id_list)
 
-    perturbation_list = {}
+    #pos = 0
+    #for id1 in parameters_per_flux:
+    #    rel_data = flux_based_signed_array[pos:pos+id1*number_data, :]
+    #    [id for id in range(0, len(rel_data)) if rel_data[:, -1]>0]
 
-
-
+    #perturbation_list = {}
+    #for exp_id in range(0, number_data):
+    #    [exp_id if signed_ident_values[i*12:(i+1)*12]]
+    #for flux_id in range(0, number_fluxes):
+    #    [id for id in range(0, number_data) if flux_based_signed_array[id, -1]>0]
 
 
     perturbation_list_flux_1 = []
