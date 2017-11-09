@@ -39,7 +39,7 @@ experimental_datasets = \
     arrange_experimental_data(noisy_exp_xss, noisy_exp_fss, perturbed_parameter_values, exp_flux_index)
 
 # identifiability for all kotte fluxes
-perturbation_list, flux1, flux2, flux3 = establish_kotte_flux_identifiability(experimental_datasets)
+perturbation_list, identifiability_value_signs = establish_kotte_flux_identifiability(experimental_datasets[0:10])
 print('Perturbations allowing identifiability:\n')
 print 'Flux 1 Parameter 1\n{}\nFlux 1 Parameter 2\n{}\nFlux 1 Parameter 3\n{}\nFlux 1 Parameter 4\n{}\n'.\
     format(perturbation_list[0][0], perturbation_list[0][1], perturbation_list[0][2], perturbation_list[0][3])
@@ -48,15 +48,15 @@ print 'Flux 3 Parameter 1\n{}\nFlux 3 Parameter 2\n{}\nFlux 3 Parameter 3\n{}\n'
       'Flux 3 Parameter 4\n{}\nFlux 3 Parameter 5\n{}\nFlux 3 Parameter 6\n{}\n'.\
     format(perturbation_list[2][0], perturbation_list[2][1], perturbation_list[2][2],
            perturbation_list[2][3], perturbation_list[2][4], perturbation_list[2][5])
-print('Flux 1 Identifiability:\n')
-for index in range(1, 100):
-    print flux1[0][index, :], flux1[1][index, :], flux1[2][index, :]
-print('Flux 2 Identifiability:\n')
-for index in range(1, 100):
-    print flux2[0][index, :], flux2[1][index, :], flux2[2][index, :]
-print('Flux 3 Identifiability:\n')
-for index in range(1, 100):
-    print flux3[0][index, :], flux3[1][index, :], flux3[2][index, :]
+#print('Flux 1 Identifiability:\n')
+#for index in range(1, 100):
+#    print flux1[0][index, :], flux1[1][index, :], flux1[2][index, :]
+#print('Flux 2 Identifiability:\n')
+#for index in range(1, 100):
+#    print flux2[0][index, :], flux2[1][index, :], flux2[2][index, :]
+#print('Flux 3 Identifiability:\n')
+#for index in range(1, 100):
+#    print flux3[0][index, :], flux3[1][index, :], flux3[2][index, :]
 
 # clear workspace (removes all module names and objects)
 # import sys
