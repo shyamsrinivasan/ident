@@ -783,6 +783,8 @@ def run_flux_ident(ident_function_list, data):
 
 def get_ident_value(ident_function_list, experimental_data_list):
     all_data_ident_lists = []
+    number_of_parameters_per_flux = [0]*len(ident_function_list)
+    number_of_expressions_per_parameter = 0
     for index, data_set in enumerate(experimental_data_list):
         print('Identifiability for Dataset {} of {}\n'.format(index + 1, len(experimental_data_list)))
         identifiability_values, number_of_parameters_per_flux, number_of_expressions_per_parameter = \
@@ -824,6 +826,22 @@ def establish_kotte_flux_identifiability(experimental_data_list):
     signed_ident_values = np.sign(ident_values)
 
     # identify perturbations that result in positive value for identifiability
+    # flux_list = ['flux {}'.format(flux_index+1) for flux_index in range(0, number_fluxes)]
+    # p_list = ['p {}'.format(p_index+1) for p_index in range(0, sum(parameters_per_flux))]
+    fp_list = ['flux{}p{}'.format(f_index + 1, p_index + 1)
+               for f_index, p_limit in enumerate(parameters_per_flux)
+               for p_index in range(0, p_limit)]
+    p_id_list = []
+    for flux_id in range(0, number_fluxes):
+        p_id_tuple_list = [[(beg_id_id*12, beg_id*12 + parameter_number) for beg_id in range(0, len(experimental_data_list))] for parameter_number in parameters_per_flux]
+
+
+    perturbation_list = {}
+
+
+
+
+
     perturbation_list_flux_1 = []
     for parameter_id in range(0, 4):
         perturbation_list_flux_1.append(
@@ -855,9 +873,7 @@ def establish_kotte_flux_identifiability(experimental_data_list):
         fh.close()
 
     return [tuple(perturbation_list_flux_1), tuple(perturbation_list_flux_2), tuple(perturbation_list_flux_3)], \
-           [flux1_sign_nr, flux1_sign_dr, flux1_sign_values], \
-           [flux2_sign_nr, flux2_sign_dr, flux2_sign_values], \
-           [flux3_sign_nr, flux3_sign_dr, flux3_sign_values]
+           signed_ident_values
 
 
 def arrange_experimental_data(xss, fss, parameters, flux_id=np.array([0, 1, 2, 3, 4, 5])):
