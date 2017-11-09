@@ -833,9 +833,11 @@ def establish_kotte_flux_identifiability(experimental_data_list):
     write_2_file_data = []
     write_2_file_data.append(['Identifiable Perturbations'])
     flux_id, parameter_id = 1, 1
-    for values in perturbation_dict:
+    perturbation_keys = perturbation_dict.keys()
+    for id in range(0, len(perturbation_keys)):
         write_2_file_data.append(['Flux {}, Parameter {}'.format(flux_id, parameter_id)])
-        write_2_file_data.append(perturbation_dict[values])
+        key_id = 'flux{}p{}'.format(flux_id, parameter_id)
+        write_2_file_data.append(perturbation_dict[key_id])
         if parameter_id < parameters_per_flux[flux_id-1]:
             parameter_id += 1
         else:
