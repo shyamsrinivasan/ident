@@ -808,6 +808,28 @@ def establish_kotte_flux_identifiability(experimental_data_list):
     number_fluxes = len(ident_function_list)
     number_data = len(experimental_data_list)
     ident_values, parameters_per_flux = get_ident_value(ident_function_list, experimental_data_list)
+
+    # create signed boolean array for identifiability
+    signed_ident_values = np.sign(ident_values)
+
+    ident_fun_val = []
+    for id in range(0, number_data):
+        ident_fun_val.append(signed_ident_values[id * 12:(id + 1) * 12, -1])
+    p_list = [[p_id for p_id, val in enumerate(data_set) if val > 0] for data_set in ident_fun_val]
+
+    # identify perturbations that result in positive value for identifiability
+    parameter_perturbation_list = []
+    for all_parameter_iter in range(0, 12):
+        parameter_perturbation_list.append(tuple([id for id, parameter_ids in enumerate(p_list)
+                                                  if all_parameter_iter in parameter_ids]))
+    fp_list = ['flux{}p{}'.format(f_index + 1, p_index + 1)
+               for f_index, p_limit in enumerate(parameters_per_flux)
+               for p_index in range(0, p_limit)]
+
+    # build dictionary of results
+    perturbation_dict = dict(zip(fp_list, parameter_perturbation_list))
+
+    # write/append all data to file
     write_2_file_data = []
     flux_id, parameter_id = 1, 1
     for values in ident_values:
@@ -823,23 +845,8 @@ def establish_kotte_flux_identifiability(experimental_data_list):
             else:
                 flux_id = 1
             parameter_id = 1
-    # create signed boolean array for identifiability
-    signed_ident_values = np.sign(ident_values)
-    ident_fun_val = []
-    for id in range(0, number_data):
-        ident_fun_val.append(signed_ident_values[id*12:(id+1)*12, -1])
-    p_list = [[p_id for p_id, val in enumerate(data_set) if val > 0] for data_set in ident_fun_val]
 
-    # identify perturbations that result in positive value for identifiability
-    parameter_perturbation_list = []
-    for all_parameter_iter in range(0, 12):
-        parameter_perturbation_list.append(tuple([id for id, parameter_ids in enumerate(p_list)
-                                            if all_parameter_iter in parameter_ids]))
-    fp_list = ['flux{}p{}'.format(f_index + 1, p_index + 1)
-               for f_index, p_limit in enumerate(parameters_per_flux)
-               for p_index in range(0, p_limit)]
-    # build dictionary of results
-    perturbation_dict = dict(zip(fp_list, parameter_perturbation_list))
+
 
     # write results to file
     path = "~" + "shyam" + r"\Documents\Courses\CHE1125Project\Results\ident\python2\kotte_ident_results.txt"
