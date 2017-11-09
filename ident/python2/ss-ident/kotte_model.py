@@ -830,6 +830,7 @@ def establish_kotte_flux_identifiability(experimental_data_list):
         ident_fun_val.append(signed_ident_values[id*12:(id+1)*12, -1])
     p_list = [[p_id for p_id, val in enumerate(data_set) if val > 0] for data_set in ident_fun_val]
 
+    # identify perturbations that result in positive value for identifiability
     parameter_perturbation_list = []
     for all_parameter_iter in range(0, 12):
         parameter_perturbation_list.append(tuple([id for id, parameter_ids in enumerate(p_list)
@@ -838,35 +839,7 @@ def establish_kotte_flux_identifiability(experimental_data_list):
                for f_index, p_limit in enumerate(parameters_per_flux)
                for p_index in range(0, p_limit)]
     # build dictionary of results
-    fp_dict = dict(zip(fp_list, parameter_perturbation_list))
-
-    # identify perturbations that result in positive value for identifiability
-    p = [0] + parameters_per_flux
-    p = np.cumsum(p).tolist()
-
-
-
-    perturbation_list_flux_1 = []
-    for parameter_id in range(0, 4):
-        perturbation_list_flux_1.append(
-            tuple([id for id in range(flux1_sign_values.shape[0]) if (flux1_sign_values[id, parameter_id]>0)]))
-    perturbation_list_flux_2 = []
-    for parameter_id in range(0, 2):
-        perturbation_list_flux_2.append(
-            tuple([id for id in range(flux2_sign_values.shape[0]) if (flux2_sign_values[id, parameter_id]>0)]))
-    perturbation_list_flux_3 = []
-    for parameter_id in range(0, 6):
-        perturbation_list_flux_3.append(
-            tuple([id for id in range(flux3_sign_values.shape[0]) if (flux3_sign_values[id, parameter_id]>0)]))
-
-    # get common perturbation ids between differnt perturbation tuples above
-    perturbation_list = [tuple(perturbation_list_flux_1),
-                         tuple(perturbation_list_flux_2),
-                         tuple(perturbation_list_flux_3)]
-    #list_length = 3
-    #for ilist in perturbation_list:
-    #    number_of_pramaters = len(ilist)
-    #    print number_of_pramaters
+    perturbation_dict = dict(zip(fp_list, parameter_perturbation_list))
 
     # write results to file
     path = "~" + "shyam" + r"\Documents\Courses\CHE1125Project\Results\ident\python2\kotte_ident_results.txt"
@@ -876,8 +849,7 @@ def establish_kotte_flux_identifiability(experimental_data_list):
         [writer.writerow(r) for r in write_2_file_data]
         fh.close()
 
-    return [tuple(perturbation_list_flux_1), tuple(perturbation_list_flux_2), tuple(perturbation_list_flux_3)], \
-           signed_ident_values
+    return perturbation_dict, signed_ident_values
 
 
 def arrange_experimental_data(xss, fss, parameters, flux_id=np.array([0, 1, 2, 3, 4, 5])):
