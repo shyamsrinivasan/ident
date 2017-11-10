@@ -10,7 +10,7 @@ all_options_exp_1 = []
 all_options_exp_2 = []
 all_options_exp_3 = []
 # default parameter values
-cvode_options = ('Newton', 'Adams', 1e-8, 1e-8, 100)
+cvode_options = ('Newton', 'Adams', 1e-10, 1e-10, 100)
 ode_paramater_values = np.array([.1, .1, 4e6, .1, .3, 1.1, .45, 2, .25, .2, 1, 1, 1, .1])
 
 # get initial noisy system steady state
@@ -39,7 +39,7 @@ experimental_datasets = \
     arrange_experimental_data(noisy_exp_xss, noisy_exp_fss, perturbed_parameter_values, exp_flux_index)
 
 # identifiability for all kotte fluxes
-perturbation_list, _ = establish_kotte_flux_identifiability(experimental_datasets)
+perturbation_list, _ = establish_kotte_flux_identifiability(experimental_datasets[0:50])
 print('Perturbation analysis for identifiability complete.\n')
 
 
