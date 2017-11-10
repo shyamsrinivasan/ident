@@ -871,7 +871,7 @@ def establish_kotte_flux_identifiability(experimental_data_list):
         [writer.writerow(r) for r in write_2_file_data]
         fh.close()
 
-    return parameter_list, perturbation_list, signed_ident_values
+    return parameter_list, perturbation_list, parameters_ident_each_perturbation
 
 
 def arrange_experimental_data(xss, fss, parameters, flux_id=np.array([0, 1, 2, 3, 4, 5])):
