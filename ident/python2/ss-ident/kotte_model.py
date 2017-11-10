@@ -825,9 +825,7 @@ def establish_kotte_flux_identifiability(experimental_data_list):
     fp_list = ['flux{}p{}'.format(f_index + 1, p_index + 1)
                for f_index, p_limit in enumerate(parameters_per_flux)
                for p_index in range(0, p_limit)]
-
-    # build dictionary of results
-    perturbation_dict = dict(zip(fp_list, parameter_perturbation_list))
+    perturbation_name_list = ['data set{}'.format(perturbation_id+1) for perturbation_id in range(0, number_data)]
 
     # calculate perturbations required for all parameters in network
     p = np.cumsum([0] + parameters_per_flux).tolist()
@@ -835,19 +833,27 @@ def establish_kotte_flux_identifiability(experimental_data_list):
                                        else False for data_id in range(0, number_data)] for id in range(0, p[-1])]
     list_index = range(0, number_data)
     ones_zeros = [[list_index[parameter_perturbation_boolean[p_id][i]] for i in range(0, number_data)] for p_id in range(0, p[-1])]
-    ones_zeros = np.array(ones_zeros)
+    ones_zeros_array = np.array(ones_zeros)
     parameter_perturbation_boolean = np.array(parameter_perturbation_boolean)
+    parameters_ident_each_perturbation = np.sum(ones_zeros_array, 0)
 
+    # paremeters identified by each perturbation
+    parameters_ident_perturbation = \
+        [[p_id for p_id in range(0, 12) if ones_zeros[p_id, data_id] > 0] for data_id in range(0, number_data)]
+
+    # build dictionary of results
+    parameter_list = dict(zip(fp_list, parameter_perturbation_list))
+    perturbation_list = dict(zip(perturbation_name_list, parameters_ident_perturbation))
 
     # create data for write/append all data to file
     write_2_file_data = []
     write_2_file_data.append(['Identifiable Perturbations'])
     flux_id, parameter_id = 1, 1
-    perturbation_keys = perturbation_dict.keys()
+    perturbation_keys = parameter_list.keys()
     for id in range(0, len(perturbation_keys)):
         write_2_file_data.append(['Flux {}, Parameter {}'.format(flux_id, parameter_id)])
         key_id = 'flux{}p{}'.format(flux_id, parameter_id)
-        write_2_file_data.append(perturbation_dict[key_id])
+        write_2_file_data.append(parameter_list[key_id])
         if parameter_id < parameters_per_flux[flux_id-1]:
             parameter_id += 1
         else:
@@ -865,7 +871,7 @@ def establish_kotte_flux_identifiability(experimental_data_list):
         [writer.writerow(r) for r in write_2_file_data]
         fh.close()
 
-    return perturbation_dict, signed_ident_values
+    return parameter_list, perturbation_list, signed_ident_values
 
 
 def arrange_experimental_data(xss, fss, parameters, flux_id=np.array([0, 1, 2, 3, 4, 5])):
