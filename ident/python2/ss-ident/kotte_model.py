@@ -829,6 +829,16 @@ def establish_kotte_flux_identifiability(experimental_data_list):
     # build dictionary of results
     perturbation_dict = dict(zip(fp_list, parameter_perturbation_list))
 
+    # calculate perturbations required for all parameters in network
+    p = np.cumsum([0] + parameters_per_flux).tolist()
+    parameter_perturbation_boolean = [[True if data_id in parameter_perturbation_list[id]
+                                       else False for data_id in range(0, number_data)] for id in range(0, p[-1])]
+    list_index = range(0, number_data)
+    ones_zeros = [[list_index[parameter_perturbation_boolean[p_id][i]] for i in range(0, 10)] for p_id in range(0, p[-1])]
+    ones_zeros = np.array(ones_zeros)
+    parameter_perturbation_boolean = np.array(parameter_perturbation_boolean)
+
+
     # create data for write/append all data to file
     write_2_file_data = []
     write_2_file_data.append(['Identifiable Perturbations'])
