@@ -825,7 +825,7 @@ def establish_kotte_flux_identifiability(experimental_data_list):
     fp_list = ['flux{}p{}'.format(f_index + 1, p_index + 1)
                for f_index, p_limit in enumerate(parameters_per_flux)
                for p_index in range(0, p_limit)]
-    perturbation_name_list = ['data set{}'.format(perturbation_id+1) for perturbation_id in range(0, number_data)]
+    perturbation_name_list = ['dataset{}'.format(perturbation_id+1) for perturbation_id in range(0, number_data)]
 
     # calculate perturbations required for all parameters in network
     p = np.cumsum([0] + parameters_per_flux).tolist()
@@ -850,7 +850,7 @@ def establish_kotte_flux_identifiability(experimental_data_list):
     write_2_file_data.append(['Identifiable Perturbations'])
     flux_id, parameter_id = 1, 1
     perturbation_keys = parameter_list.keys()
-    for id in range(0, len(perturbation_keys)):
+    while flux_id <= number_fluxes:
         write_2_file_data.append(['Flux {}, Parameter {}'.format(flux_id, parameter_id)])
         key_id = 'flux{}p{}'.format(flux_id, parameter_id)
         write_2_file_data.append(parameter_list[key_id])
@@ -862,6 +862,10 @@ def establish_kotte_flux_identifiability(experimental_data_list):
             else:
                 flux_id = 1
             parameter_id = 1
+    for id in range(0, number_data):
+        write_2_file_data.append(['Parameters Identified by Data set {}'.format(id)])
+        key_id = 'dataset{}'.format(id+1)
+        write_2_file_data.append(perturbation_list[key_id])
 
     # write results to file
     path = "~" + "shyam" + r"\Documents\Courses\CHE1125Project\Results\ident\python2\kotte_ident_results.txt"
