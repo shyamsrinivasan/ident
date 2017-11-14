@@ -35,12 +35,12 @@ for ss_values in noisy_ss:
 # experimental data based on order of inputs for lambdify expressions
 exp_flux_index = np.array([0, 3, 2, 4])
 # get combinations of experimental datasets
-experimental_datasets = \
+experimental_datasets, data_combination_id = \
     arrange_experimental_data(noisy_exp_xss, noisy_exp_fss, perturbed_parameter_values, exp_flux_index)
 
 # identifiability for all kotte fluxes
-parameter_list, perturbation_list, parameters_ident_each_perturbation = \
-    establish_kotte_flux_identifiability(experimental_datasets)
+parameter_list, perturbation_ident_list, perturbation_list, parameters_ident_each_perturbation = \
+    establish_kotte_flux_identifiability(experimental_datasets, data_combination_id)
 print('Perturbation analysis for identifiability complete.\n')
 
 
