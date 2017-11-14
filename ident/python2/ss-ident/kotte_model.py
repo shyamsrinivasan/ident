@@ -802,7 +802,7 @@ def get_ident_value(ident_function_list, experimental_data_list):
     return all_identifiability_values, number_of_parameters_per_flux
 
 
-def establish_kotte_flux_identifiability(experimental_data_list):
+def establish_kotte_flux_identifiability(experimental_data_list, data_set_id):
     """call all identifiability evaluation funcs above and print numerical results"""
     ident_fun_list = (flux_1_ident_expression, flux_2_ident_expression, flux_3_ident_expression)
     number_fluxes = len(ident_fun_list)
@@ -834,7 +834,7 @@ def establish_kotte_flux_identifiability(experimental_data_list):
     list_index = range(0, number_data)
     ones_zeros = [[list_index[parameter_perturbation_boolean[p_id][i]] for i in range(0, number_data)] for p_id in range(0, p[-1])]
     ones_zeros = np.array(ones_zeros)
-    parameter_perturbation_boolean = np.array(parameter_perturbation_boolean)
+    # parameter_perturbation_boolean = np.array(parameter_perturbation_boolean)
     parameters_ident_each_perturbation = np.sum(ones_zeros, 0)
 
     # paremeters identified by each perturbation
@@ -843,13 +843,14 @@ def establish_kotte_flux_identifiability(experimental_data_list):
 
     # build dictionary of results
     parameter_list = dict(zip(fp_list, parameter_perturbation_list))
-    perturbation_list = dict(zip(perturbation_name_list, parameters_ident_perturbation))
+    perturbation_ident_list = dict(zip(perturbation_name_list, parameters_ident_perturbation))
+    perturbation_list = dict(zip(perturbation_name_list, data_set_id))
 
     # create data for write/append all data to file
     write_2_file_data = []
     write_2_file_data.append(['Identifiable Perturbations'])
     flux_id, parameter_id, i = 1, 1, 0
-    perturbation_keys = parameter_list.keys()
+    # perturbation_keys = parameter_list.keys()
     while i < p[-1]:
         write_2_file_data.append(['Flux {}, Parameter {}'.format(flux_id, parameter_id)])
         key_id = 'flux{}p{}'.format(flux_id, parameter_id)
@@ -864,9 +865,10 @@ def establish_kotte_flux_identifiability(experimental_data_list):
             parameter_id = 1
         i += 1
     for j in range(0, number_data):
-        write_2_file_data.append(['Parameters Identified by Data set {}'.format(id)])
+        write_2_file_data.append(['Parameters Identified by Data set {}'.format(j+1)])
         key_id = 'dataset{}'.format(j+1)
-        write_2_file_data.append(perturbation_list[key_id])
+        write_2_file_data.append(perutbation_list[key_id])
+        write_2_file_data.append(perturbation_ident_list[key_id])
 
     # write results to file
     path = "~" + "shyam" + r"\Documents\Courses\CHE1125Project\Results\ident\python2\kotte_ident_results.txt"
@@ -876,13 +878,15 @@ def establish_kotte_flux_identifiability(experimental_data_list):
         [writer.writerow(r) for r in write_2_file_data]
         fh.close()
 
-    return parameter_list, perturbation_list, parameters_ident_each_perturbation
+    return parameter_list, perturbation_ident_list, perturbation_list, \
+           parameters_ident_each_perturbation
 
 
 def arrange_experimental_data(xss, fss, parameters, flux_id=np.array([0, 1, 2, 3, 4, 5])):
     """get combinations of datasets using xss, fss and parameters for kotte model.
     see identifiability functions above for order of values in datasets"""
     datasets = []
+    dataset_id = []
     # first dataset
     for index1 in range(len(xss)):
         first_data = np.hstack((parameters[index1][-1],
@@ -901,5 +905,6 @@ def arrange_experimental_data(xss, fss, parameters, flux_id=np.array([0, 1, 2, 3
                                                 xss[index3],
                                                 fss[index3][flux_id]))
                         datasets.append(np.hstack((first_data, second_data, third_data)))
+                        dataset_id.append(np.hstack((index1, index2, index3)))
 
-    return datasets
+    return datasets, dataset_id
