@@ -867,7 +867,7 @@ def establish_kotte_flux_identifiability(experimental_data_list, data_set_id):
     for j in range(0, number_data):
         write_2_file_data.append(['Parameters Identified by Data set {}'.format(j+1)])
         key_id = 'dataset{}'.format(j+1)
-        write_2_file_data.append(perutbation_list[key_id])
+        write_2_file_data.append(perturbation_list[key_id])
         write_2_file_data.append(perturbation_ident_list[key_id])
 
     # write results to file
