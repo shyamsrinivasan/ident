@@ -23,10 +23,10 @@ def generate_data(y0, all_options, kinetics):
         flux_dynamic = []
 
     # get ss info from dynamic data
-    y_steady_state = y_dynamic[-1, :]
-    flux_steady_state = flux_dynamic[-1, :]
+    steady_state_info = {"y":y_dynamic[-1, :], "flux":flux_dynamic[-1, :]}
+    dynamic_info = {"y":y_dynamic, "flux":flux_dynamic, "time":time}
 
-    return (y_steady_state, flux_steady_state), (time, y_dynamic, flux_dynamic)
+    return steady_state_info, dynamic_info
 
 
 def run_parameter_perturbation(parameter_perturbation, y0, other_options):
@@ -44,7 +44,7 @@ def run_parameter_perturbation(parameter_perturbation, y0, other_options):
         print('Perturbation {}\n'.format(index + 1))
         parameter_id, parameter_change = p_value
         changed_ode_parameter = ode_parameters[:]
-        changed_ode_parameter[parameter_id - 1] = ode_parameters[parameter_id - 1] * (1 + parameter_change)
+        changed_ode_parameter[parameter_id - 1] = changed_ode_parameter[parameter_id - 1] * (1 + parameter_change)
         all_options = (cvode_options, changed_ode_parameter)
         # generate data using MWC Kinetics
         ss_iter, dynamic_iter = generate_data(y0, all_options, 1)
@@ -58,15 +58,17 @@ def run_parameter_perturbation(parameter_perturbation, y0, other_options):
 def generate_noisy_data(y0, all_options, kinetics):
     steady_state_info, dynamic_info = generate_data(y0, all_options, kinetics)
     # dynamic data
-    _, concentration_dynamic, flux_dynamic = dynamic_info
+    concentration_dynamic = dynamic_info["y"]
+    flux_dynamic = dynamic_info["flux"]
 
     # add noise to dynamic data
     noisy_concentration_dynamic, noisy_flux_dynamic = add_noise_dynamic(concentration_dynamic, flux_dynamic)
-    noisy_concentration_steady_state = noisy_concentration_dynamic[-1, :]
-    noisy_flux_steady_state = noisy_flux_dynamic[-1, :]
+    noisy_dynamic_info = {"y":noisy_concentration_dynamic, "flux":noisy_flux_dynamic, "time":dynamic_info["time"]}
+    noisy_steady_state_info = {"y":noisy_concentration_dynamic[-1, :], "flux":noisy_flux_dynamic[-1, :]}
+    # noisy_concentration_steady_state =
+    # noisy_flux_steady_state =
 
-    return (noisy_concentration_steady_state, noisy_flux_steady_state), \
-           (noisy_concentration_dynamic, noisy_flux_dynamic), \
+    return noisy_steady_state_info, noisy_dynamic_info, \
            steady_state_info, dynamic_info
 
 
