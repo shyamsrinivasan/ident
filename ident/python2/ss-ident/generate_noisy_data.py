@@ -81,6 +81,8 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options):
     cvode_options = other_options['cvode_options']
     noisy_ss = []
     noisy_dynamic = []
+    ss_info = []
+    dynamic_info = []
     perturbed_parameter = []
 
     for index, p_value in enumerate(parameter_perturbation):
@@ -90,9 +92,11 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options):
         changed_ode_parameter[parameter_id-1] = changed_ode_parameter[parameter_id-1]*(1 + parameter_change)
         all_options = (cvode_options, changed_ode_parameter)
         # generate data using MWC Kinetics
-        noisy_ss_iter, noisy_dynamic_iter, _, _ = generate_noisy_data(y0, all_options, 1)
+        noisy_ss_iter, noisy_dynamic_iter, ss_iter, dynamic_iter = generate_noisy_data(y0, all_options, 1)
         noisy_ss.append(noisy_ss_iter)
         noisy_dynamic.append(noisy_dynamic_iter)
+        ss_info.append(ss_iter)
+        dynamic_info.append(dynamic_iter)
         perturbed_parameter.append(changed_ode_parameter[:])
 
-    return noisy_ss, noisy_dynamic, tuple(perturbed_parameter)
+    return noisy_ss, noisy_dynamic, tuple(perturbed_parameter), ss_info, dynamic_info
