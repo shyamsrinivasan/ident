@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+plt.ion()
 
 
 def plot_dynamic_course(time, concentration_data=np.array([]), flux_data=np.array([]), type=1):
@@ -25,7 +26,7 @@ def plot_dynamic_course(time, concentration_data=np.array([]), flux_data=np.arra
         print('Incorrect plot type')
 
     #plt.show()
-    plt.pause(0.001)
+    #plt.pause(0.001)
     return None
 
 
@@ -45,6 +46,8 @@ def plot_multiple_dynamics(data):
         except KeyError:
             time = set_number[2]
         plot_dynamic_course(time, y_data, f_data, 3)
+        plt.pause(0.0001)
+    plt.ioff()
     plt.show()
     return None
 
