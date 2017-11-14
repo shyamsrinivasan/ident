@@ -1,6 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
-from plot_profiles import plot_multiple_dynamics
 from generate_noisy_data import generate_noisy_data
 from generate_noisy_data import run_noisy_parameter_perturbation
 from kotte_model import establish_kotte_flux_identifiability
@@ -28,10 +26,10 @@ perturbation_options = {'ode_parameters':ode_paramater_values, 'cvode_options':c
 noisy_ss, noisy_dynamic, perturbed_parameter_values, _, dynamic_info = \
     run_noisy_parameter_perturbation(parameter_perturbation, noisy_initial_ss["y"], perturbation_options)
 # plot all dynamic courses
-plot_multiple_dynamics(noisy_dynamic)
-plt.close("all")
-plot_multiple_dynamics(dynamic_info)
-plt.close("all")
+# plot_multiple_dynamics(noisy_dynamic)
+# plt.close("all")
+# plot_multiple_dynamics(dynamic_info)
+# plt.close("all")
 
 noisy_exp_xss = []
 noisy_exp_fss = []

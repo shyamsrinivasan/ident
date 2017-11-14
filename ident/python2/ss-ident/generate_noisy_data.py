@@ -1,8 +1,9 @@
 # generate noisy data for different types of kinetics used for regulated metabolic reactions
+import matplotlib.pyplot as plt
 from kotte_model import *
 from simulate_ode import run_ode_sims
 from add_noise import add_noise_dynamic
-import numpy as np
+from plot_profiles import plot_multiple_dynamics
 # from copy import deepcopy
 
 
@@ -72,7 +73,7 @@ def generate_noisy_data(y0, all_options, kinetics):
            steady_state_info, dynamic_info
 
 
-def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options):
+def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options, plot_arg=0):
     """run parameter perturbations based on tuple input parameter perturbation
     with first position of tuple being parameter id and second index being
     parameter value"""
@@ -98,5 +99,13 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options):
         ss_info.append(ss_iter)
         dynamic_info.append(dynamic_iter)
         perturbed_parameter.append(changed_ode_parameter[:])
+
+    # plot all dynamic courses
+    if plot_arg:
+        plot_multiple_dynamics(noisy_dynamic)
+        plt.close("all")
+        plot_multiple_dynamics(dynamic_info)
+        plt.close("all")
+
 
     return noisy_ss, noisy_dynamic, tuple(perturbed_parameter), ss_info, dynamic_info
