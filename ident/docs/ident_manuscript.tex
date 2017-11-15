@@ -96,17 +96,19 @@
 	
 	Algorithms have been extensively developed for establishing structural identifiability of dynamic models, that of biological systems in particular (IEEE Trans paper from 2007), that involve methods based on differential algebra (Glad and Ljung, 1994). However, these methods not only scale poorly with increases in size of the modeled system, but also require dynamic time course data of the observable variables of the system. While computational burden due to poor scalability can be partly addressed with the current increase in computational power, the ability to obtain dynamic data for establishing identifiability of parameters in kinetic models of metabolism still remains a challenge. 
 	
-	In this paper, we propose a methodology to establish practical identifiability of parameters in kinetic models of metabolism that addresses the twin issues of scalability as well as data availability. 
+	In this paper, we propose a methodology to establish practical identifiability of parameters in kinetic models of metabolism that addresses the twin issues of scalability as well as data availability. We illustrate the utility of our methods by demonstrating its ability to establish identifiability for a small network of gluconeogenesis in \textit{E. coli} and a relatively larger metabolic network of the human red blood cell hepatocyte. 
+	
+	Here, we present a computer algebra-based method to establish practical identifiability of kinetic models of metabolic networks. Our method establishes posterior identifiability for each individual flux separately and can potentially be scaled-up to models of large metabolic networks. To illustrate this point, we have demonstrated the application of our methodology for the kinetic model of the red blood cell hepatocyte metabolic network.
+	
 	
 	\paragraph{Outline:}
 	\begin{itemize}
-		\item How dynamic models of metabolism are defined in biology
-		\item How parameter values are important for model-based prediction and design of metabolism
-		\item importance of parameter identifiability, structural and practical identifiability for dynamic models of metabolism
-		\item work done in the are of structural identifiability (numerical and symbolic/computer algebra methods) - local vs global identifiability
-		\item work done in the area of practical identifiability (numerical and symbolic/computer algebra methods)
-		\item work done in this paper for practical identifiability\\
-		Here, we present a computer algebra-based method to establish practical identifiability of kinetic models of metabolic networks. Our method establishes posterior identifiability for each individual flux separately and can potentially be scaled-up to models of large metabolic networks. To illustrate this point, we have demonstrated the application of our methodology for the kinetic model of the red blood cell hepatocyte metabolic network.
+		\item Importance of parameter values for estimating in vivo response using kinetic models of metabolism and consequently for metabolic network design using kinetic models of metabolism
+		\item The need for parameter identifiability to determine unique and true parameter values from observed data
+		\item Types and purpose of identifiability for parameters
+		\item Methods for structural identifiability and existing methods for practical identifiability
+		\item Lack of methods for practical identifiability and consequently experimental design
+		\item work done in this paper for practical identifiability\\			
 		\item scalability of computer algebra-based methods for structural identifiability (using CRNT to reduce networks to make structural identifiability scalable) (move to discussion - may be)
 	\end{itemize}
 	
