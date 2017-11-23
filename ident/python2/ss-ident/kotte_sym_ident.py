@@ -10,7 +10,7 @@ all_options_exp_1 = []
 all_options_exp_2 = []
 all_options_exp_3 = []
 # default parameter values
-cvode_options = ('Newton', 'Adams', 1e-10, 1e-10, 100)
+cvode_options = ('Newton', 'Adams', 1e-10, 1e-10, 200)
 ode_paramater_values = np.array([.1, .1, 4e6, .1, .3, 1.1, .45, 2, .25, .2, 1, 1, 1, .1])
 
 # get initial noisy system steady state
@@ -23,14 +23,19 @@ parameter_perturbation = [(14, 0), (14, 4), (14, 9),
                           (12, .1), (12, .5), (12, 1), (12, -.1), (12, -.5),
                           (13, .1), (13, .5), (13, 1), (13, -.1), (13, -.5)]
 perturbation_options = {'ode_parameters':ode_paramater_values, 'cvode_options':cvode_options}
-noisy_ss, noisy_dynamic, perturbed_parameter_values = \
-    run_noisy_parameter_perturbation(parameter_perturbation, noisy_initial_ss[0], perturbation_options)
+noisy_ss, noisy_dynamic, perturbed_parameter_values, _, dynamic_info = \
+    run_noisy_parameter_perturbation(parameter_perturbation, noisy_initial_ss["y"], perturbation_options)
+# plot all dynamic courses
+# plot_multiple_dynamics(noisy_dynamic)
+# plt.close("all")
+# plot_multiple_dynamics(dynamic_info)
+# plt.close("all")
 
 noisy_exp_xss = []
 noisy_exp_fss = []
 for ss_values in noisy_ss:
-    noisy_exp_xss.append(ss_values[0])
-    noisy_exp_fss.append(ss_values[1])
+    noisy_exp_xss.append(ss_values["y"])
+    noisy_exp_fss.append(ss_values["flux"])
 
 # experimental data based on order of inputs for lambdify expressions
 exp_flux_index = np.array([0, 3, 2, 4])
@@ -40,7 +45,7 @@ experimental_datasets, data_combination_id = \
 
 # identifiability for all kotte fluxes
 parameter_list, perturbation_ident_list, perturbation_list, parameters_ident_each_perturbation = \
-    establish_kotte_flux_identifiability(experimental_datasets, data_combination_id)
+    establish_kotte_flux_identifiability(experimental_datasets[0:10], data_combination_id)
 print('Perturbation analysis for identifiability complete.\n')
 
 

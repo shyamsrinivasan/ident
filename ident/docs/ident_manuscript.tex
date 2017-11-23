@@ -58,18 +58,62 @@
 \addbibresource{refs/ident_refs.bib}
 
 \begin{document}
-	\section{Introduction:}
+	\section{Introduction:}	
+	Kinetic models of metabolic networks are typically represented as ordinary differential equations (ODE) wherein the metabolite concentrations, $\mathbf{x}$, are state variables (Equation \ref{eq:kinode}a). The changes in $\mathbf{x}$ are expressed as the product of the stoichiometric matrix, $S$, and the vector of the metabolic network reaction fluxes, $\mathbf{v}$. 
+	\begin{subequations}\label{eq:kinode}
+		\begin{align}
+		\dot{\mathbf{x}} = S\mathbf{v}\\
+		\mathbf{v} = \mathbf{f}(\mathbf{x}, p, u)
+		\end{align}
+	\end{subequations}	
+	The fluxes on the right hand side of Equation (\ref{eq:kinode}a) can be expressed as nonlinear functions of the states ($\mathbf{x}$), kinetic parameters ($p$) and other input variables ($u$) as in Equation (\ref{eq:kinode}b). In silico simulation of Equation (\ref{eq:kinode}) to predict responses of the in vivo system to changes in either the enzyme kinetic parameters ($p$) or other inputs ($u$) requires knowledge of the parameter values under in vivo conditions. Accordingly, parameter estimation based on experimentally observed states is an integral component of kinetic modeling of metabolism. 
+	
+	However, not all states are typically observable through experiments. Hence, for parameter estimation, Equation (\ref{eq:kinode}) is usually augmented with a system that defines the relationship between the experimentally observable output variables ($y$) and the states ($x$) as in Equation (\ref{eq:output}). The parameters used to establish this relationship in Equation (\ref{eq:output}b), $\mu$, may or may not include system parameters $p$ defined in Equation (\ref{eq:output}a).
+	\begin{subequations}\label{eq:output}
+		\begin{align}
+		\dot{\mathbf{x}} = g(\mathbf{x}, p, u)\\
+		\mathbf{y} = h(\mathbf{x},\mu,u)
+		\end{align}
+	\end{subequations}
+
+	The parameter estimation problem is commonly formulated as a nonlinear programming problem with the objective of minimizing of least square error between the measured ($y_{kl}^*$) and modeled ($y_{kl}$) outputs over the time course ($l = {1, ..., d}$) for which experimental data is collected (Equation \ref{eq:chi2}) (Raue et al., and other parameter estimation/identifiability papers).  
+	\begin{align}\label{eq:chi2}
+	\chi^2(\theta) = \sum_{k=1}^{m}\sum_{l=1}^{d}\left(\frac{y_{kl}^*-y_{kl}}{\sigma_{kl}^*}\right)^2
+	\end{align}
+	The difference between the data and the model estimate for each state and at each time point is weighted by the variance in the experimental data $\sigma_{kl}^*$ for that corresponding variable and time point. For large and computationally intractable optimization problems, parameter estimation can also be posed as a Bayesian problem (Neilsen, Scientific Reports). 	
+	The ability to determine a unique solution to the parameters ($p$ and $\mu$) in Equation (\ref{eq:output}) through the aforementioned parameter estimation problem is however governed by the identifiability of the parameters in the model \parencite{McLean2012}. 
+	
+	The identifiability of parameters in nonlinear models can be classified into two categories: structural (or a priori) and practical (or posterior) identifiability. 	
+	Any system (Equation \ref{eq:output}) is said to be structurally identifiable if, for an input-output mapping defined by $\mathbf{y} = \Phi(\mu,u)$ for at least one input function $u$, any two values of parameters $\mathbf{\mu}_1$ and $\mathbf{\mu}_2$ satisfy the relationship in Equation (\ref{eq:stident}) below.
+	\begin{align}\label{eq:stident}
+	\Phi(\mathbf{\mu}_1,u) = \Phi(\mathbf{\mu}_2,u) \iff \mathbf{\mu}_1 = \mathbf{\mu}_2
+	\end{align}
+	Accordingly, any system that has an infinite number of solutions to the parameter estimation problem for all input functions is said to structurally non-identifiable. Thus, the structural identifiability of parameters in a dynamic model helps establish the presence or absence of a relationship between the unobservable system states and the observable system outputs. Accordingly, the effect of model structure and parameterization on the ability to infer true parameter values from experimental data is determined by the structural identifiability of the parameter. 
+	
+	Experimental data from biological systems is usually noisy, and when parameters are estimated on the basis of noisy data, the ability to estimate unique parameter values to satisfy Equation (\ref{eq:stident}) is referred to as practical identifiability. The effect of the available experimental data on the ability to estimate unique parameter values is determined by the practical identifiability of the parameter. Accordingly, practical identifiability of a parameter is contingent upon the nature, quality and quantity of data available to estimate the parameter as opposed to the structure and parameterization of the model. 
+	
+	Thus, on the one hand, establishing the structural identifiability of parameters enables one to propose models that are not only appropriate representations of physical processes, but also are parameterized in such a way that the value of these parameters can be estimated. On the other hand, establishing practical identifiability of parameters in any model helps design experiments that are minimal, informative and useful for parameter estimation.
+	
+	Algorithms have been extensively developed for establishing structural identifiability of dynamic models, that of biological systems in particular (IEEE Trans paper from 2007), that involve methods based on differential algebra (Glad and Ljung, 1994). However, these methods not only scale poorly with increases in size of the modeled system, but also require dynamic time course data of the observable variables of the system. While computational burden due to poor scalability can be partly addressed with the current increase in computational power, the ability to obtain dynamic data for establishing identifiability of parameters in kinetic models of metabolism still remains a challenge. 
+	
+	In this paper, we propose a methodology to establish practical identifiability of parameters in kinetic models of metabolism that addresses the twin issues of scalability as well as data availability. We illustrate the utility of our methods by demonstrating its ability to establish identifiability for a small network of gluconeogenesis in \textit{E. coli} and a relatively larger metabolic network of the human red blood cell hepatocyte. 
+	
+	Here, we present a computer algebra-based method to establish practical identifiability of kinetic models of metabolic networks. Our method establishes posterior identifiability for each individual flux separately and can potentially be scaled-up to models of large metabolic networks. To illustrate this point, we have demonstrated the application of our methodology for the kinetic model of the red blood cell hepatocyte metabolic network.
+	
+	
 	\paragraph{Outline:}
 	\begin{itemize}
-		\item How dynamic models of metabolism are defined in biology
-		\item How parameter values is important for model-based prediction and design of metabolism
-		\item importance of parameter identifiability, structural and practical identifiability for dynamic models of metabolism
-		\item work done in the are of structural identifiability (numerical and symbolic/computer algebra methods) - local vs global identifiability
-		\item work done in the area of practical identifiability (numerical and symbolic/computer algebra methods)
-		\item work done in this paper for practical identifiability
-		Here, we present a computer algebra-based method to establish practical identifiability of kinetic models of metabolic networks. Our method establishes posterior identifiability for each individual flux separately and can potentially be scaled-up to models of large metabolic networks. To illustrate this point, we have demonstrated the application of our methodology for the kinetic model of the red blood cell hepatocyte metabolic network.
+		\item Importance of parameter values for estimating in vivo response using kinetic models of metabolism and consequently for metabolic network design using kinetic models of metabolism
+		\item The need for parameter identifiability to determine unique and true parameter values from observed data
+		\item Types and purpose of identifiability for parameters
+		\item Methods for structural identifiability and existing methods for practical identifiability
+		\item Lack of methods for practical identifiability and consequently experimental design
+		\item work done in this paper for practical identifiability\\			
 		\item scalability of computer algebra-based methods for structural identifiability (using CRNT to reduce networks to make structural identifiability scalable) (move to discussion - may be)
 	\end{itemize}
+	
+	
+	
 	\subsection{Identifiability analysis: Definitions and Formulations}
 	Any nonlinear dynamical system can be represented by a set of states $\mathbf{x}$, observables $\mathbf{y}$ that are dependent on the states, parameters $\mathbf{\mu}$, and inputs $u$ as in Equation (\ref{eq:dynmodel}). 
 	\begin{subequations}\label{eq:dynmodel}
@@ -79,25 +123,16 @@
 		\end{align}
 	\end{subequations}
 	Identifiability concerns with the ability to determine a unique solution to the problem of estimating parameters $\mathbf{\mu}$ from given data on the system observables $\mathbf{y}$ for inputs $u$ \parencite{McLean2012}.	The identifiability of parameters in nonlinear models of physical processes can be classified into two categories: structural and practical identifiability. 
-	
-	Any system (Equation \ref{eq:dynmodel}) is said to be structurally or a priori identifiable if, for an input-output mapping defined by $\mathbf{y} = \Phi(\mu,u)$ for at least one input function $u$, any two values of parameters $\mathbf{\mu}_1$ and $\mathbf{\mu}_2$ satisfy the relationship in Equation (\ref{eq:stident}) below.
-	\begin{align}\label{eq:stident}
-	\Phi(\mathbf{\mu}_1,u) = \Phi(\mathbf{\mu}_2,u) \iff \mathbf{\mu}_1 = \mathbf{\mu}_2
-	\end{align}
-	Accordingly, any system that has an infinite number of solutions to the parameter estimation problem for all input functions is said to structurally non-identifiable. The effect of model structure and parameterization on the ability to infer true parameter values from experimental data is determined by the structural identifiability of the parameter. 
-	
-	When parameters are estimated on the basis of noisy data, the ability to estimate unique parameter values to satisfy Equation (\ref{eq:stident}) is referred to as practical identifiability. The effect of the available experimental data on the ability to estimate unique parameter values is determined by the practical identifiability of the parameter. Accordingly, practical identifiability of a parameter is contingent upon the nature, quality and quantity of data available to estimate the parameter as opposed to the structure and parameterization of the model. 
+		
 	%Thus, the identifiability of parameters in nonlinear models is dependent on the model structure, parameterization, and the quality and quantity of experimental data that is available for the purpose of estimation. 
-	Thus, on the one hand, establishing the structural identifiability of parameters enables one to propose models that are not only appropriate representations of physical processes, but also are parameterized in such a way that the value of these parameters can be estimated. On the other hand, establishing practical identifiability of parameters in any model helps design experiments that are minimal, informative and useful for parameter estimation.
+	
 	
 	\section{Methods:}
 	 We use a profile likelihood-based approach \parencite{Raue2009a} to establish structural and practical identifiability of parameters in nonlinear kinetic models of metabolism. Briefly, the approach seeks to establish the existence/non-existence of bounds in confidence intervals for the estimates of parameters in nonlinear models. The profile likelihood is calculated based on Equation (\ref{eq:pl}) for each parameter $\theta_i$ where $\chi^2(\theta_i)$ is given by Equation (\ref{eq:chi2}).
 	 \begin{align}\label{eq:pl}
 	 \chi_{PL}^2(\theta_i) = \underset{\theta_{j\ne i}}{\mathrm{min}} \left[\chi^2(\theta)\right]
 	 \end{align}
-	 \begin{align}\label{eq:chi2}
-	 \chi^2(\theta) = \sum_{k=1}^{m}\sum_{l=1}^{d}\left(\frac{y_{kl}^*-y_{kl}}{\sigma_{kl}^*}\right)^2
-	 \end{align}
+	 
 	 In the minimization objective shown in Equation (\ref{eq:chi2}) for parameter estimation, $y_{kl}^*$ is the available experimental time course data for each observable state $k$ at each $l$ time point. The difference between the data and the model estimates at these time points, $y_{kl}$ is weighted by the variance in the experimental data $\sigma_{kl}^*$. An algorithm to calculate the profile likelihood, $\chi_{PL}^2(\theta_i)$, based on Equation \ref{eq:pl} is given below.
 	 
 	 The identifiability of parameters is established through the confidence intervals of their estimates, $\left[\sigma_{i}^-,\sigma_{i}^+\right]$. The likelihood-based confidence interval for any parameter whose profile likelihood is estimated can be written on the basis of a threshold $\Delta_{\alpha}$ in the likelihood as in Equation (\ref{eq:pleci}).
@@ -181,7 +216,19 @@
 	\end{table}
 
 	\section{Results:}
-
+	\paragraph{Outline:}
+	\begin{itemize}
+		\item parameter estimation is a well developed field typically using minimization of least square error to estimate model parameters from available experimental data
+		\item if parameters are structurally identifiable, it does not guarantee practical identifiability from noisy experimental data
+		\item identifiability dependent on whether given datasets (outputs) for estimation can sufficiently distinguish between different parameter values
+	\end{itemize}
+	
+	\paragraph{Sections:}
+	\begin{itemize}
+		\item datasets required for parameter estimation in kinetic models of metabolism (methods?)		
+		\item identifiability in kotte model - scalability, number of experiments required, requirements for time course data(? in the intro)		
+		\item identifiability in large rbc model
+	\end{itemize}
 	
 	\printbibliography
 \end{document}
