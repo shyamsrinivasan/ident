@@ -58,59 +58,50 @@
 \addbibresource{refs/ident_refs.bib}
 
 \begin{document}
-	\section{Introduction:}	
-	Kinetic models of metabolic networks are typically represented as ordinary differential equations (ODE) wherein the metabolite concentrations, $\mathbf{x}$, are state variables (Equation \ref{eq:kinode}a). The changes in $\mathbf{x}$ are expressed as the product of the stoichiometric matrix, $S$, and the vector of the metabolic network reaction fluxes, $\mathbf{v}$. 
-	\begin{subequations}\label{eq:kinode}
-		\begin{align}
-		\dot{\mathbf{x}} = S\mathbf{v}\\
-		\mathbf{v} = \mathbf{f}(\mathbf{x}, p, u)
-		\end{align}
-	\end{subequations}	
-	The fluxes on the right hand side of Equation (\ref{eq:kinode}a) can be expressed as nonlinear functions of the states ($\mathbf{x}$), kinetic parameters ($p$) and other input variables ($u$) as in Equation (\ref{eq:kinode}b). In silico simulation of Equation (\ref{eq:kinode}) to predict responses of the in vivo system to changes in either the enzyme kinetic parameters ($p$) or other inputs ($u$) requires knowledge of the parameter values under in vivo conditions. Accordingly, parameter estimation based on experimentally observed states is an integral component of kinetic modeling of metabolism. 
-	
-	However, not all states are typically observable through experiments. Hence, for parameter estimation, Equation (\ref{eq:kinode}) is usually augmented with a system that defines the relationship between the experimentally observable output variables ($y$) and the states ($x$) as in Equation (\ref{eq:output}). The parameters used to establish this relationship in Equation (\ref{eq:output}b), $\mu$, may or may not include system parameters $p$ defined in Equation (\ref{eq:output}a).
-	\begin{subequations}\label{eq:output}
-		\begin{align}
-		\dot{\mathbf{x}} = g(\mathbf{x}, p, u)\\
-		\mathbf{y} = h(\mathbf{x},\mu,u)
-		\end{align}
-	\end{subequations}
+\section{Introduction:}	
+The dynamic response of any system can be modeled as a set of ordinary differential equations (ode) (Equation \ref{eq:output}a) in the state variables ($\mathbf{x}$). The changes in the state variables are expressed as a function of the state variables, the system parameters ($p$) and the inputs to the system ($u$).	
+\begin{subequations}\label{eq:output}
+	\begin{align}
+	\dot{\mathbf{x}} = g(\mathbf{x}, p, u)\\
+	\mathbf{y} = h(\mathbf{x},\mu,u)
+	\end{align}
+\end{subequations}
+When not all states are observable, Equation (\ref{eq:output}a) is usually augmented with a system that defines the relationship between the observable output variables ($\mathbf{y}$) and the state variables ($\mathbf{x}$) as in Equation (\ref{eq:output}b). The parameters used to establish this relationship (Equation \ref{eq:output}b), $\mu$, may or may not include system parameters $p$ defined in Equation (\ref{eq:output}a).
 
-	The parameter estimation problem is commonly formulated as a nonlinear programming problem with the objective of minimizing of least square error between the measured ($y_{kl}^*$) and modeled ($y_{kl}$) outputs over the time course ($l = {1, ..., d}$) for which experimental data is collected (Equation \ref{eq:chi2}) (Raue et al., and other parameter estimation/identifiability papers).  
-	\begin{align}\label{eq:chi2}
-	\chi^2(\theta) = \sum_{k=1}^{m}\sum_{l=1}^{d}\left(\frac{y_{kl}^*-y_{kl}}{\sigma_{kl}^*}\right)^2
-	\end{align}
-	The difference between the data and the model estimate for each state and at each time point is weighted by the variance in the experimental data $\sigma_{kl}^*$ for that corresponding variable and time point. For large and computationally intractable optimization problems, parameter estimation can also be posed as a Bayesian problem (Neilsen, Scientific Reports). 	
-	The ability to determine a unique solution to the parameters ($p$ and $\mu$) in Equation (\ref{eq:output}) through the aforementioned parameter estimation problem is however governed by the identifiability of the parameters in the model \parencite{McLean2012}. 
+Typically, a nonlinear programming formulation with the objective of minimizing the least square error between the measured ($y_{kl}^*$) and modeled ($y_{kl}$) outputs over the time course ($l = {1, ..., d}$) for which experimental data is collected (Equation \ref{eq:minnlp}) (Raue et al., and other parameter estimation/identifiability papers), is used to estimate parameters $p$ and $\mu$ in Equation \ref{eq:output}.
+\begin{align}\label{eq:minnlp}
+\chi^2(\theta) = \sum_{k=1}^{m}\sum_{l=1}^{d}\left(\frac{y_{kl}^*-y_{kl}}{\sigma_{kl}^*}\right)^2
+\end{align}
+The difference between the data and the model estimate for each output, and at each time point, is weighted by the variance in the experimental data $\sigma_{kl}^*$ for that corresponding variable and time point.
+The minimization problem is solved subject to constraints on the state and output variables expressed in Equation \ref{eq:output}, as well as bounds on the estimated parameter values. The ability to determine a unique solution to the parameter estimation problem is however governed by the identifiability of the parameters in the model \parencite{McLean2012}. 
+
+The identifiability of parameters in nonlinear models can be classified into two categories: structural (or a priori) and practical (or posterior) identifiability. 	
+Any system (Equation \ref{eq:output}) is said to be structurally identifiable if, for an input-output mapping defined by $\mathbf{y} = \Phi(\mu,u)$ for at least one input function $u$, any two values of parameters $\mathbf{\mu}_1$ and $\mathbf{\mu}_2$ satisfy the relationship in Equation (\ref{eq:stident}) below.
+\begin{align}\label{eq:stident}
+\Phi(\mathbf{\mu}_1,u) = \Phi(\mathbf{\mu}_2,u) \iff \mathbf{\mu}_1 = \mathbf{\mu}_2
+\end{align}
+Accordingly, any system that has an infinite number of solutions to the parameter estimation problem for all input functions is said to structurally non-identifiable. Thus, the structural identifiability of parameters in a dynamic model helps establish the presence or absence of a relationship between the unobservable system states and the observable system outputs. Accordingly, the effect of model structure and parameterization on the ability to infer true parameter values from experimental data is determined by the structural identifiability of the parameter. 
+
+Experimental data from many physical systems is usually noisy, and when parameters are estimated on the basis of noisy data, the ability to estimate unique parameter values to satisfy Equation (\ref{eq:stident}) is referred to as practical identifiability. The effect of the available experimental data on the ability to estimate unique parameter values is determined by the practical identifiability of the parameter. Accordingly, practical identifiability of a parameter is contingent upon the nature, quality and quantity of data available to estimate the parameter as opposed to the structure and parameterization of the model. 
+
+Thus, on the one hand, establishing the structural identifiability of parameters enables one to propose models that are not only appropriate representations of physical processes, but also are parameterized in such a way that the value of these parameters can be estimated. On the other hand, establishing practical identifiability of parameters in any model helps design experiments that are minimal, informative and useful for parameter estimation.
+
+The dynamics of metabolic networks can also be represented by Equation (\ref{eq:output}) wherein the metabolite concentrations, $\mathbf{x}$, are state variables. The changes in the metabolite concentrations ($\mathbf{x}$) are expressed as a function of reaction rates dependent on enzyme kinetics, which are in turn expressed as nonlinear functions of the states ($\mathbf{x}$), kinetic parameters ($p$) and other input variables ($u$). 
+
+Algorithms have been extensively developed for establishing structural identifiability of dynamic models of biological systems (IEEE Trans paper from 2007). Most of these algorithms use methods based on differential algebra (Glad and Ljung, 1994). More recent methods take a profile-likelihood-based approach (2012 Paper) to establish both structural and practical identifiability. However, these methods not only scale poorly with increases in size of the modeled system, but also require dynamic time course data of the observable variables of the system. While computational burden due to poor scalability can be partly addressed with the current increases in computational power, the ability to obtain dynamic data for establishing identifiability of parameters in kinetic models of metabolism still remains a challenge. 
+
+In this paper, we propose a methodology to establish practical identifiability for parameters in kinetic models of metabolism. We present a computer algebra-based method that can facilitate experimental design for estimating parameters separately for each individual reaction within a metabolic network based on available steady state experimental data. This enables us to address the twin issues of scalability and data availability. We illustrate the utility of this method by applying it for a small network of gluconeogenesis in \textit{E. coli} and demonstrating our ability to propose experiments that will facilitate parameter estimation for a kinetic model of this network. We also demonstrate the scalability of the proposed methodology to facilitate experimental design by applying it to a relatively larger metabolic network of the human red blood cell hepatocyte. 
 	
-	The identifiability of parameters in nonlinear models can be classified into two categories: structural (or a priori) and practical (or posterior) identifiability. 	
-	Any system (Equation \ref{eq:output}) is said to be structurally identifiable if, for an input-output mapping defined by $\mathbf{y} = \Phi(\mu,u)$ for at least one input function $u$, any two values of parameters $\mathbf{\mu}_1$ and $\mathbf{\mu}_2$ satisfy the relationship in Equation (\ref{eq:stident}) below.
-	\begin{align}\label{eq:stident}
-	\Phi(\mathbf{\mu}_1,u) = \Phi(\mathbf{\mu}_2,u) \iff \mathbf{\mu}_1 = \mathbf{\mu}_2
-	\end{align}
-	Accordingly, any system that has an infinite number of solutions to the parameter estimation problem for all input functions is said to structurally non-identifiable. Thus, the structural identifiability of parameters in a dynamic model helps establish the presence or absence of a relationship between the unobservable system states and the observable system outputs. Accordingly, the effect of model structure and parameterization on the ability to infer true parameter values from experimental data is determined by the structural identifiability of the parameter. 
-	
-	Experimental data from biological systems is usually noisy, and when parameters are estimated on the basis of noisy data, the ability to estimate unique parameter values to satisfy Equation (\ref{eq:stident}) is referred to as practical identifiability. The effect of the available experimental data on the ability to estimate unique parameter values is determined by the practical identifiability of the parameter. Accordingly, practical identifiability of a parameter is contingent upon the nature, quality and quantity of data available to estimate the parameter as opposed to the structure and parameterization of the model. 
-	
-	Thus, on the one hand, establishing the structural identifiability of parameters enables one to propose models that are not only appropriate representations of physical processes, but also are parameterized in such a way that the value of these parameters can be estimated. On the other hand, establishing practical identifiability of parameters in any model helps design experiments that are minimal, informative and useful for parameter estimation.
-	
-	Algorithms have been extensively developed for establishing structural identifiability of dynamic models, that of biological systems in particular (IEEE Trans paper from 2007), that involve methods based on differential algebra (Glad and Ljung, 1994). However, these methods not only scale poorly with increases in size of the modeled system, but also require dynamic time course data of the observable variables of the system. While computational burden due to poor scalability can be partly addressed with the current increase in computational power, the ability to obtain dynamic data for establishing identifiability of parameters in kinetic models of metabolism still remains a challenge. 
-	
-	In this paper, we propose a methodology to establish practical identifiability of parameters in kinetic models of metabolism that addresses the twin issues of scalability as well as data availability. We illustrate the utility of our methods by demonstrating its ability to establish identifiability for a small network of gluconeogenesis in \textit{E. coli} and a relatively larger metabolic network of the human red blood cell hepatocyte. 
-	
-	Here, we present a computer algebra-based method to establish practical identifiability of kinetic models of metabolic networks. Our method establishes posterior identifiability for each individual flux separately and can potentially be scaled-up to models of large metabolic networks. To illustrate this point, we have demonstrated the application of our methodology for the kinetic model of the red blood cell hepatocyte metabolic network.
-	
-	
-	\paragraph{Outline:}
-	\begin{itemize}
-		\item Importance of parameter values for estimating in vivo response using kinetic models of metabolism and consequently for metabolic network design using kinetic models of metabolism
-		\item The need for parameter identifiability to determine unique and true parameter values from observed data
-		\item Types and purpose of identifiability for parameters
-		\item Methods for structural identifiability and existing methods for practical identifiability
-		\item Lack of methods for practical identifiability and consequently experimental design
-		\item work done in this paper for practical identifiability\\			
-		\item scalability of computer algebra-based methods for structural identifiability (using CRNT to reduce networks to make structural identifiability scalable) (move to discussion - may be)
-	\end{itemize}
+\paragraph{Outline:}
+\begin{itemize}
+	\item Importance of parameter values for estimating in vivo response using kinetic models of metabolism and consequently for metabolic network design using kinetic models of metabolism
+	\item The need for parameter identifiability to determine unique and true parameter values from observed data
+	\item Types and purpose of identifiability for parameters
+	\item Methods for structural identifiability and existing methods for practical identifiability
+	\item Lack of methods for practical identifiability and consequently experimental design (not covered?)
+	\item work done in this paper for practical identifiability			
+	\item scalability of computer algebra-based methods for structural identifiability (using CRNT to reduce networks to make structural identifiability scalable) (move to discussion - may be in discussion)
+\end{itemize}
 	
 	
 	
@@ -128,44 +119,22 @@
 	
 	
 	\section{Methods:}
-	 We use a profile likelihood-based approach \parencite{Raue2009a} to establish structural and practical identifiability of parameters in nonlinear kinetic models of metabolism. Briefly, the approach seeks to establish the existence/non-existence of bounds in confidence intervals for the estimates of parameters in nonlinear models. The profile likelihood is calculated based on Equation (\ref{eq:pl}) for each parameter $\theta_i$ where $\chi^2(\theta_i)$ is given by Equation (\ref{eq:chi2}).
-	 \begin{align}\label{eq:pl}
-	 \chi_{PL}^2(\theta_i) = \underset{\theta_{j\ne i}}{\mathrm{min}} \left[\chi^2(\theta)\right]
-	 \end{align}
-	 
-	 In the minimization objective shown in Equation (\ref{eq:chi2}) for parameter estimation, $y_{kl}^*$ is the available experimental time course data for each observable state $k$ at each $l$ time point. The difference between the data and the model estimates at these time points, $y_{kl}$ is weighted by the variance in the experimental data $\sigma_{kl}^*$. An algorithm to calculate the profile likelihood, $\chi_{PL}^2(\theta_i)$, based on Equation \ref{eq:pl} is given below.
-	 
-	 The identifiability of parameters is established through the confidence intervals of their estimates, $\left[\sigma_{i}^-,\sigma_{i}^+\right]$. The likelihood-based confidence interval for any parameter whose profile likelihood is estimated can be written on the basis of a threshold $\Delta_{\alpha}$ in the likelihood as in Equation (\ref{eq:pleci}).
-	 \begin{align}\label{eq:pleci}
-	 \{\theta|\chi^2(\theta)-\chi^2(\hat{\theta})<\Delta_{\alpha}\}
-	 \end{align}
-	 The threshold $\Delta_{\alpha}$ in the likelihood is the 1-$\alpha$ quantile of the $\chi^2$ distribution, represented as $\chi^2(\alpha,df)$. The confidence intervals obtained hold for $df$ degrees of freedom. For a choice of $df$=1 the confidence intervals will hold for each parameter individually, and confidence intervals that hold jointly for all parameters can be obtained by choosing the number of parameters as $df$. 
-	
-	The visualization of structurally and practically non-identifiable parameters using the profile likelihood approach is illustrated in Figure \ref{fig:identtypes}. The points of intersection between the profile likelihood curves (solid line) with the one parameter likelihood threshold ($\Delta_{\alpha} = \chi^2(\alpha,1)$, dashed line) provide the confidence intervals of the parameter $\theta_i$. The confidence intervals of a structurally non-identifiable parameter are unbounded, i.e., $\left[-\infty, +\infty\right]$ (Figure \ref{fig:identtypes}a), while the confidence intervals of a practically non-identifiable parameter are unbounded in at least one direction, i.e., $\left[\sigma_{i}^-,\sigma_{i}^+\right]$ where either $\sigma_{i}^- = -\infty$ or $\sigma_{i}^+ = +\infty$ (Figure \ref{fig:identtypes}b). If a parameter's estimates have a finite confidence interval then the parameter is said to be identifiable (Figure \ref{fig:identtypes}c). Note that the horizontal dotted lines in Figure \ref{fig:identtypes} represent the confidence interval thresholds ($\Delta_{\alpha}$) that are used to establish identifiability.
-	
-	\begin{figure}[!tbhp]
-		\centering{\includegraphics[width=.8\textwidth,height=.8\textheight,keepaspectratio]{figures/identifiability}}
-		\caption{The profile likelihood estimates of a) a structurally non-identifiable, b) a practically non-identifiable and c) an identifiable parameter. The horizontal axis represents the changes in the value of the parameter ($\theta_i$) whose identifiability is being determined and the profile likelihood ($\chi^2_{PL}(\theta_i)$) is shown in the vertical axis. The confidence interval threshold ($\Delta_{\alpha}$) used to determine the identifiability of the parameter is denoted by the horizontal dotted line. Identifiable parameters are distinguished from non-identifiable parameters by the presence of both upper and lower bounds on their confidence interval estimates $\left[\sigma_{i}^-,\sigma_{i}^+\right]$. }\label{fig:identtypes}
-	\end{figure}	
-	
-	Due to the dependence of practical parameter identifiability on the experimental data, the profile likelihood approach can be used to design experiments in such a way that the observables that are derived from these experiments can improve the practical identifiability of the parameters. We show how experimental design can have a meaningful impact on parameter identification and estimation in Figure \ref{fig:edwithpl}.	Assuming a parameter $\theta_i$ is practically non-identifiable (Figure \ref{fig:edwithpl}a), performing a profile-likelihood based identifiability analysis using simulated data can help determine the nature of experiments needed to make the parameter identifiable (Figure \ref{fig:edwithpl}b). In contrast, performing non-informative experiments without prior knowledge on their ability to change the identifiability of the parameter may provide data that cannot be used to estimate parameter $\theta_i$ (Figure \ref{fig:edwithpl}c).	
-	
 	\subsection{A method to establish posterior identifiability of metabolic network models:}
 	This section details a method to establish the practical (posterior) identifiability of metabolic network models using the algebraic relationship between fluxes.
 	Every flux, $v$, in a kinetic model of a metabolic network can be expressed as a nonlinear algebraic equation (Equation \ref{eq:flux_gen}). The fluxes are expressed as a function of the metabolite concentrations $x$ and the kinetic parameters $\theta$ in Equation (\ref{eq:flux_gen}).
 	\begin{align}\label{eq:flux_gen}
-		v = f(\mathbf{x},\mathbf{\theta})
+	v = f(\mathbf{x},\mathbf{\theta})
 	\end{align}
 	Given the nonlinear nature of this model, the function $f$ in Equation (\ref{eq:flux_gen}) can expressed, without loss of generality as,
 	\begin{align}\label{eq:nr_dr}
-		v = \frac{N(\mathbf{x},\theta)}{D(\mathbf{x},\theta)}
+	v = \frac{N(\mathbf{x},\theta)}{D(\mathbf{x},\theta)}
 	\end{align}
 	where $N(\mathbf{x},\theta)$ is the numerator of $f$, and $D(\mathbf{x},\theta)$ is the denominator of $f$.
 	
 	If $\theta \in \mathbb{R}^p$, given a set of experimental measurements for the metabolite concentrations $\mathbf{x}$ and the reaction fluxes $\mathbf{v}$, theoretically, it is possible to choose $p$ sets of data from these measurements to solve for the $p$ parameters in $\theta$. However, if any these datasets do not satisfy the condition that $D(\mathbf{x},\theta) \neq 0$, then the number of experiments required to estimate the $p$ parameters in $\theta$ can be established to be greater than $p$. An example is shown below.
 	
 	This analysis can be performed for each flux in a metabolic network independent of all the other fluxes. This enables this method to be scalable to even genome-scale models. The following section demonstrates this methodology for one of the fluxes in the gluconeogenic model of Kotte et al., \parencite{Kotte2014}.
-		
+	
 	\subsection{Identifiability analysis of parameters in a kinetic model of gluconeogenesis:}
 	The proposed model for acetate consumption through gluconeogenesis and its corresponding kinetic model is used as a case study to illustrate the utility of identifiability analysis for the design of experiments for estimating parameters in kinetic models of metabolism. The kinetic model is described below.
 	\begin{equation}\label{eq:ode1}
@@ -214,7 +183,30 @@
 		\end{center}	
 		\label{tab:pval}
 	\end{table}
-
+	
+	 We use a profile likelihood-based approach \parencite{Raue2009a} to establish structural and practical identifiability of parameters in nonlinear kinetic models of metabolism. Briefly, the approach seeks to establish the existence/non-existence of bounds in confidence intervals for the estimates of parameters in nonlinear models. The profile likelihood is calculated based on Equation (\ref{eq:pl}) for each parameter $\theta_i$ where $\chi^2(\theta_i)$ is given by Equation (\ref{eq:chi2}).
+	 \begin{align}\label{eq:pl}
+	 \chi_{PL}^2(\theta_i) = \underset{\theta_{j\ne i}}{\mathrm{min}} \left[\chi^2(\theta)\right]
+	 \end{align}
+	 
+	 In the minimization objective shown in Equation (\ref{eq:chi2}) for parameter estimation, $y_{kl}^*$ is the available experimental time course data for each observable state $k$ at each $l$ time point. The difference between the data and the model estimates at these time points, $y_{kl}$ is weighted by the variance in the experimental data $\sigma_{kl}^*$. An algorithm to calculate the profile likelihood, $\chi_{PL}^2(\theta_i)$, based on Equation \ref{eq:pl} is given below.
+	 
+	 The identifiability of parameters is established through the confidence intervals of their estimates, $\left[\sigma_{i}^-,\sigma_{i}^+\right]$. The likelihood-based confidence interval for any parameter whose profile likelihood is estimated can be written on the basis of a threshold $\Delta_{\alpha}$ in the likelihood as in Equation (\ref{eq:pleci}).
+	 \begin{align}\label{eq:pleci}
+	 \{\theta|\chi^2(\theta)-\chi^2(\hat{\theta})<\Delta_{\alpha}\}
+	 \end{align}
+	 The threshold $\Delta_{\alpha}$ in the likelihood is the 1-$\alpha$ quantile of the $\chi^2$ distribution, represented as $\chi^2(\alpha,df)$. The confidence intervals obtained hold for $df$ degrees of freedom. For a choice of $df$=1 the confidence intervals will hold for each parameter individually, and confidence intervals that hold jointly for all parameters can be obtained by choosing the number of parameters as $df$. 
+	
+	The visualization of structurally and practically non-identifiable parameters using the profile likelihood approach is illustrated in Figure \ref{fig:identtypes}. The points of intersection between the profile likelihood curves (solid line) with the one parameter likelihood threshold ($\Delta_{\alpha} = \chi^2(\alpha,1)$, dashed line) provide the confidence intervals of the parameter $\theta_i$. The confidence intervals of a structurally non-identifiable parameter are unbounded, i.e., $\left[-\infty, +\infty\right]$ (Figure \ref{fig:identtypes}a), while the confidence intervals of a practically non-identifiable parameter are unbounded in at least one direction, i.e., $\left[\sigma_{i}^-,\sigma_{i}^+\right]$ where either $\sigma_{i}^- = -\infty$ or $\sigma_{i}^+ = +\infty$ (Figure \ref{fig:identtypes}b). If a parameter's estimates have a finite confidence interval then the parameter is said to be identifiable (Figure \ref{fig:identtypes}c). Note that the horizontal dotted lines in Figure \ref{fig:identtypes} represent the confidence interval thresholds ($\Delta_{\alpha}$) that are used to establish identifiability.
+	
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=.8\textwidth,height=.8\textheight,keepaspectratio]{figures/identifiability}}
+		\caption{The profile likelihood estimates of a) a structurally non-identifiable, b) a practically non-identifiable and c) an identifiable parameter. The horizontal axis represents the changes in the value of the parameter ($\theta_i$) whose identifiability is being determined and the profile likelihood ($\chi^2_{PL}(\theta_i)$) is shown in the vertical axis. The confidence interval threshold ($\Delta_{\alpha}$) used to determine the identifiability of the parameter is denoted by the horizontal dotted line. Identifiable parameters are distinguished from non-identifiable parameters by the presence of both upper and lower bounds on their confidence interval estimates $\left[\sigma_{i}^-,\sigma_{i}^+\right]$. }\label{fig:identtypes}
+	\end{figure}	
+	
+	Due to the dependence of practical parameter identifiability on the experimental data, the profile likelihood approach can be used to design experiments in such a way that the observables that are derived from these experiments can improve the practical identifiability of the parameters. We show how experimental design can have a meaningful impact on parameter identification and estimation in Figure \ref{fig:edwithpl}.	Assuming a parameter $\theta_i$ is practically non-identifiable (Figure \ref{fig:edwithpl}a), performing a profile-likelihood based identifiability analysis using simulated data can help determine the nature of experiments needed to make the parameter identifiable (Figure \ref{fig:edwithpl}b). In contrast, performing non-informative experiments without prior knowledge on their ability to change the identifiability of the parameter may provide data that cannot be used to estimate parameter $\theta_i$ (Figure \ref{fig:edwithpl}c).	
+	
+	
 	\section{Results:}
 	\paragraph{Outline:}
 	\begin{itemize}
