@@ -1,5 +1,6 @@
 import numpy as np
-from sympy import *
+import sympy as sym
+import itertools as it
 import os.path
 import csv
 # import scipy.linalg
@@ -78,7 +79,7 @@ def define_sym_variables():
     """define all required symbolic variables for sympy expressions"""
     ac1, ac2, ac3, x11, x12, x13, x21, x22, x23, x31, x32, x33, \
     v31, v32, v33, v11, v12, v13, v21, v22, v23, v41, v42, v43 = \
-        symbols('ac1, ac2, ac3, x11, x12, x13, x21, x22, x23, x31, x32, x33,'
+        sym.symbols('ac1, ac2, ac3, x11, x12, x13, x21, x22, x23, x31, x32, x33,'
                 ' v31, v32, v33, v11, v12, v13, v21, v22, v23, v41, v42, v43', positive=True)
     variables = [ac1, x11, x21, x31, v11, v21, v31, v41,
                  ac2, x12, x22, x32, v12, v22, v32, v42,
@@ -100,12 +101,12 @@ def flux_1_ident_expression(experimental_data):
     v1max_denominator = -(ac2 * v11 - ac1 * v12)
     k1ac_numerator = ac1 * (ac2 * v11 - ac2 * v12)
     k1ac_denominator = -ac2 * v11 + ac1 * v12
-    v1max_nr_expr = lambdify([variables], v1max_numerator, "numpy")
-    v1max_dr_expr = lambdify([variables], v1max_denominator, "numpy")
-    k1ac_nr_expr = lambdify([variables], k1ac_numerator, "numpy")
-    k1ac_dr_expr = lambdify([variables], k1ac_denominator, "numpy")
-    v1max_expression = lambdify([variables], v1max_numerator/v1max_denominator, "numpy")
-    k1ac_expression = lambdify([variables], k1ac_numerator/k1ac_denominator, "numpy")
+    v1max_nr_expr = sym.lambdify([variables], v1max_numerator, "numpy")
+    v1max_dr_expr = sym.lambdify([variables], v1max_denominator, "numpy")
+    k1ac_nr_expr = sym.lambdify([variables], k1ac_numerator, "numpy")
+    k1ac_dr_expr = sym.lambdify([variables], k1ac_denominator, "numpy")
+    v1max_expression = sym.lambdify([variables], v1max_numerator/v1max_denominator, "numpy")
+    k1ac_expression = sym.lambdify([variables], k1ac_numerator/k1ac_denominator, "numpy")
     v1max_no_enzyme_numerator_value = v1max_nr_expr(experimental_data)
     v1max_no_enzyme_denominator_value = v1max_dr_expr(experimental_data)
     v1max_no_enzyme_value = v1max_expression(experimental_data)
@@ -116,9 +117,9 @@ def flux_1_ident_expression(experimental_data):
     # symbolic expression for flux v1 w/ enzyme concentration data
     k1cat_nr = - ac1 * v11 * v12 + ac2 * v11 * v12
     k1cat_dr = -(ac1 * v12 * x31 - ac2 * v11 * x32)
-    k1cat_nr_expr = lambdify([variables], k1cat_nr, "numpy")
-    k1cat_dr_expr = lambdify([variables], k1cat_dr, "numpy")
-    k1cat_expression = lambdify([variables], k1cat_nr / k1cat_dr, "numpy")
+    k1cat_nr_expr = sym.lambdify([variables], k1cat_nr, "numpy")
+    k1cat_dr_expr = sym.lambdify([variables], k1cat_dr, "numpy")
+    k1cat_expression = sym.lambdify([variables], k1cat_nr / k1cat_dr, "numpy")
     k1ac_nr = ac1 * (-ac2 * v12 * x31 + ac2 * v11 * x32)
     k1ac_dr = ac1 * v12 * x31 - ac2 * v11 * x32
     k1ac_nr_expr = lambdify([variables], k1ac_nr, "numpy")
@@ -152,12 +153,12 @@ def flux_2_ident_expression(experimental_data):
     # K2pep
     k2pep_numerator = x21 * (v21 * x22 - v22 * x22)
     k2pep_denominator = v22 * x21 - v21 * x22
-    v2max_nr_expr = lambdify([variables], v2max_numerator, "numpy")
-    v2max_dr_expr = lambdify([variables], v2max_denominator, "numpy")
-    v2max_expr = lambdify([variables], v2max_numerator/v2max_denominator, "numpy")
-    k2pep_nr_expr = lambdify([variables], k2pep_numerator, "numpy")
-    k2pep_dr_expr = lambdify([variables], k2pep_denominator, "numpy")
-    k2pep_expr = lambdify([variables], k2pep_numerator/k2pep_denominator, "numpy")
+    v2max_nr_expr = sym.lambdify([variables], v2max_numerator, "numpy")
+    v2max_dr_expr = sym.lambdify([variables], v2max_denominator, "numpy")
+    v2max_expr = sym.lambdify([variables], v2max_numerator/v2max_denominator, "numpy")
+    k2pep_nr_expr = sym.lambdify([variables], k2pep_numerator, "numpy")
+    k2pep_dr_expr = sym.lambdify([variables], k2pep_denominator, "numpy")
+    k2pep_expr = sym.lambdify([variables], k2pep_numerator/k2pep_denominator, "numpy")
     v2max_numerator_value = v2max_nr_expr(experimental_data)
     v2max_denominator_value = v2max_dr_expr(experimental_data)
     v2max_value = v2max_expr(experimental_data)
@@ -187,7 +188,7 @@ def flux_3_ident_expression(experimental_data):
                                             v32*v33*x11*x13*x21*x23 + v31*v32*x12*x13*x21*x23 +
                                             v31*v33*x11*x12*x22*x23 - v31*v32*x11*x13*x22*x23 -
                                             v31*v32*x12*x13*x22*x23 + v31*v33*x12*x13*x22*x23 -
-                                            sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
+                                            sym.sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
                                                   v32*v33*x11*x13*x21*x22 + v31*v33*x12*x13*x21*x22 +
                                                   v32*v33*x11*x12*x21*x23 - v31*v32*x11*x13*x21*x23 +
                                                   v32*v33*x11*x13*x21*x23 - v31*v32*x12*x13*x21*x23 -
@@ -206,7 +207,7 @@ def flux_3_ident_expression(experimental_data):
                                             v32*v33*x11*x13*x21*x23 + v31*v32*x12*x13*x21*x23 +
                                             v31*v33*x11*x12*x22*x23 - v31*v32*x11*x13*x22*x23 -
                                             v31*v32*x12*x13*x22*x23 + v31*v33*x12*x13*x22*x23 -
-                                            sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
+                                            sym.sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
                                                   v32*v33*x11*x13*x21*x22 + v31*v33*x12*x13*x21*x22 +
                                                   v32*v33*x11*x12*x21*x23 - v31*v32*x11*x13*x21*x23 +
                                                   v32*v33*x11*x13*x21*x23 - v31*v32*x12*x13*x21*x23 -
@@ -225,7 +226,7 @@ def flux_3_ident_expression(experimental_data):
                                             v32*v33*x11*x13*x21*x23 + v31*v32*x12*x13*x21*x23 +
                                             v31*v33*x11*x12*x22*x23 - v31*v32*x11*x13*x22*x23 -
                                             v31*v32*x12*x13*x22*x23 + v31*v33*x12*x13*x22*x23 -
-                                            sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
+                                            sym.sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
                                                   v32*v33*x11*x13*x21*x22 + v31*v33*x12*x13*x21*x22 +
                                                   v32*v33*x11*x12*x21*x23 - v31*v32*x11*x13*x21*x23 +
                                                   v32*v33*x11*x13*x21*x23 - v31*v32*x12*x13*x21*x23 -
@@ -244,7 +245,7 @@ def flux_3_ident_expression(experimental_data):
                                             v32*v33*x11*x13*x21*x23 + v31*v32*x12*x13*x21*x23 +
                                             v31*v33*x11*x12*x22*x23 - v31*v32*x11*x13*x22*x23 -
                                             v31*v32*x12*x13*x22*x23 + v31*v33*x12*x13*x22*x23 -
-                                            sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
+                                            sym.sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
                                                   v32*v33*x11*x13*x21*x22 + v31*v33*x12*x13*x21*x22 +
                                                   v32*v33*x11*x12*x21*x23 - v31*v32*x11*x13*x21*x23 +
                                                   v32*v33*x11*x13*x21*x23 - v31*v32*x12*x13*x21*x23 -
@@ -263,7 +264,7 @@ def flux_3_ident_expression(experimental_data):
                                             v32*v33*x11*x13*x21*x23 + v31*v32*x12*x13*x21*x23 +
                                             v31*v33*x11*x12*x22*x23 - v31*v32*x11*x13*x22*x23 -
                                             v31*v32*x12*x13*x22*x23 + v31*v33*x12*x13*x22*x23 -
-                                            sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
+                                            sym.sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
                                                   v32*v33*x11*x13*x21*x22 + v31*v33*x12*x13*x21*x22 +
                                                   v32*v33*x11*x12*x21*x23 - v31*v32*x11*x13*x21*x23 +
                                                   v32*v33*x11*x13*x21*x23 - v31*v32*x12*x13*x21*x23 -
@@ -282,7 +283,7 @@ def flux_3_ident_expression(experimental_data):
                                             v32*v33*x11*x13*x21*x23 + v31*v32*x12*x13*x21*x23 +
                                             v31*v33*x11*x12*x22*x23 - v31*v32*x11*x13*x22*x23 -
                                             v31*v32*x12*x13*x22*x23 + v31*v33*x12*x13*x22*x23 -
-                                            sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
+                                            sym.sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
                                                   v32*v33*x11*x13*x21*x22 + v31*v33*x12*x13*x21*x22 +
                                                   v32*v33*x11*x12*x21*x23 - v31*v32*x11*x13*x21*x23 +
                                                   v32*v33*x11*x13*x21*x23 - v31*v32*x12*x13*x21*x23 -
@@ -297,9 +298,9 @@ def flux_3_ident_expression(experimental_data):
                           v31*v33*x12*x22*x23 + v31*v32*x13*x22*x23))
     v3max_denominator_1 = -v32*v33*x11*x12*x21 + v32*v33*x11*x13*x21 + v31*v33*x11*x12*x22 -  \
                         v31*v33*x12*x13*x22 - v31*v32*x11*x13*x23 + v31*v32*x12*x13*x23
-    v3max_nr_1_expr = lambdify([variables], v3max_numerator_1, "numpy")
-    v3max_dr_1_expr = lambdify([variables], v3max_denominator_1, "numpy")
-    v3max_1_expr = lambdify([variables], v3max_numerator_1 / v3max_denominator_1, "numpy")
+    v3max_nr_1_expr = sym.lambdify([variables], v3max_numerator_1, "numpy")
+    v3max_dr_1_expr = sym.lambdify([variables], v3max_denominator_1, "numpy")
+    v3max_1_expr = sym.lambdify([variables], v3max_numerator_1 / v3max_denominator_1, "numpy")
     v3max_nr_1_value = v3max_nr_1_expr(experimental_data)
     v3max_dr_1_value = v3max_dr_1_expr(experimental_data)
     v3max_1_value = v3max_1_expr(experimental_data)
