@@ -803,12 +803,28 @@ def get_ident_value(ident_function_list, experimental_data_list):
     return all_identifiability_values, number_of_parameters_per_flux
 
 
-def establish_kotte_flux_identifiability(experimental_data_list, data_set_id):
+def kotte_parameter_name(parameter_id):
+    parameter_list = ['K1ac', 'K3fdp', 'L3fdp', 'K3pep',
+                      'K2pep', 'vemax', 'Kefdp', 'ne', 'd',
+                      'V4max', 'k1cat', 'V3max', 'V2max', 'ac']
+    return parameter_list[parameter_id]
+
+
+def process_ident_data(ident_values):
+    # create signed boolean array for identifiability
+    signed_ident_values = np.sign(ident_values)
+    return None
+
+
+def establish_kotte_flux_identifiability(all_data, choose):
     """call all identifiability evaluation funcs above and print numerical results"""
+    chosen_values = list(all_data["values"][0:choose, :])
+    chosen_details = all_data["details"][0:choose, :]
+
     ident_fun_list = (flux_1_ident_expression, flux_2_ident_expression, flux_3_ident_expression)
     number_fluxes = len(ident_fun_list)
-    number_data = len(experimental_data_list)
-    ident_values, parameters_per_flux = get_ident_value(ident_fun_list, experimental_data_list)
+    number_data = len(chosen_values)
+    ident_values, parameters_per_flux = get_ident_value(ident_fun_list, chosen_values)
 
     # create signed boolean array for identifiability
     signed_ident_values = np.sign(ident_values)
@@ -845,7 +861,7 @@ def establish_kotte_flux_identifiability(experimental_data_list, data_set_id):
     # build dictionary of results
     parameter_list = dict(zip(fp_list, parameter_perturbation_list))
     perturbation_ident_list = dict(zip(perturbation_name_list, parameters_ident_perturbation))
-    perturbation_list = dict(zip(perturbation_name_list, data_set_id))
+    perturbation_list = dict(zip(perturbation_name_list, chosen_details))
 
     # create data for write/append all data to file
     write_2_file_data = []
@@ -944,6 +960,6 @@ def arrange_experimental_data(xss, fss, perturbation_details, experiments_per_se
         dataset_value_array[data_index, :] = np.hstack(data[:])
         all_parameter_changes[data_index, :] = np.hstack(changes[:])
 
-    dataset_keys = ['values', 'parameter_change']
+    dataset_keys = ['values', 'details']
     experimental_data = dict(zip(dataset_keys, [dataset_value_array, all_parameter_changes]))
     return experimental_data
