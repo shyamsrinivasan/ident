@@ -122,9 +122,9 @@ def flux_1_ident_expression(experimental_data):
     k1cat_expression = sym.lambdify([variables], k1cat_nr / k1cat_dr, "numpy")
     k1ac_nr = ac1 * (-ac2 * v12 * x31 + ac2 * v11 * x32)
     k1ac_dr = ac1 * v12 * x31 - ac2 * v11 * x32
-    k1ac_nr_expr = lambdify([variables], k1ac_nr, "numpy")
-    k1ac_dr_expr = lambdify([variables], k1ac_dr, "numpy")
-    k1ac_expression = lambdify([variables], k1ac_nr/k1ac_dr, "numpy")
+    k1ac_nr_expr = sym.lambdify([variables], k1ac_nr, "numpy")
+    k1ac_dr_expr = sym.lambdify([variables], k1ac_dr, "numpy")
+    k1ac_expression = sym.lambdify([variables], k1ac_nr/k1ac_dr, "numpy")
     k1cat_enzyme_numerator_value = k1cat_nr_expr(experimental_data)
     k1cat_enzyme_denominator_value = k1cat_dr_expr(experimental_data)
     k1cat_enzyme_value = k1cat_expression(experimental_data)
@@ -314,7 +314,7 @@ def flux_3_ident_expression(experimental_data):
                                               v32*v33*x11*x13*x21*x23 + v31*v32*x12*x13*x21*x23 +
                                               v31*v33*x11*x12*x22*x23 - v31*v32*x11*x13*x22*x23 -
                                               v31*v32*x12*x13*x22*x23 + v31*v33*x12*x13*x22*x23 +
-                                              sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
+                                              sym.sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
                                                     v32*v33*x11*x13*x21*x22 + v31*v33*x12*x13*x21*x22 +
                                                     v32*v33*x11*x12*x21*x23 - v31*v32*x11*x13*x21*x23 +
                                                     v32*v33*x11*x13*x21*x23 - v31*v32*x12*x13*x21*x23 -
@@ -333,7 +333,7 @@ def flux_3_ident_expression(experimental_data):
                                               v32*v33*x11*x13*x21*x23 + v31*v32*x12*x13*x21*x23 +
                                               v31*v33*x11*x12*x22*x23 - v31*v32*x11*x13*x22*x23 -
                                               v31*v32*x12*x13*x22*x23 + v31*v33*x12*x13*x22*x23 +
-                                              sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
+                                              sym.sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
                                                     v32*v33*x11*x13*x21*x22 + v31*v33*x12*x13*x21*x22 +
                                                     v32*v33*x11*x12*x21*x23 - v31*v32*x11*x13*x21*x23 +
                                                     v32*v33*x11*x13*x21*x23 - v31*v32*x12*x13*x21*x23 -
@@ -352,7 +352,7 @@ def flux_3_ident_expression(experimental_data):
                                               v32*v33*x11*x13*x21*x23 + v31*v32*x12*x13*x21*x23 +
                                               v31*v33*x11*x12*x22*x23 - v31*v32*x11*x13*x22*x23 -
                                               v31*v32*x12*x13*x22*x23 + v31*v33*x12*x13*x22*x23 +
-                                              sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
+                                              sym.sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
                                                     v32*v33*x11*x13*x21*x22 + v31*v33*x12*x13*x21*x22 +
                                                     v32*v33*x11*x12*x21*x23 - v31*v32*x11*x13*x21*x23 +
                                                     v32*v33*x11*x13*x21*x23 - v31*v32*x12*x13*x21*x23 -
@@ -371,7 +371,7 @@ def flux_3_ident_expression(experimental_data):
                                               v32*v33*x11*x13*x21*x23 + v31*v32*x12*x13*x21*x23 +
                                               v31*v33*x11*x12*x22*x23 - v31*v32*x11*x13*x22*x23 -
                                               v31*v32*x12*x13*x22*x23 + v31*v33*x12*x13*x22*x23 +
-                                              sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
+                                              sym.sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
                                                     v32*v33*x11*x13*x21*x22 + v31*v33*x12*x13*x21*x22 +
                                                     v32*v33*x11*x12*x21*x23 - v31*v32*x11*x13*x21*x23 +
                                                     v32*v33*x11*x13*x21*x23 - v31*v32*x12*x13*x21*x23 -
@@ -390,7 +390,7 @@ def flux_3_ident_expression(experimental_data):
                                               v32*v33*x11*x13*x21*x23 + v31*v32*x12*x13*x21*x23 +
                                               v31*v33*x11*x12*x22*x23 - v31*v32*x11*x13*x22*x23 -
                                               v31*v32*x12*x13*x22*x23 + v31*v33*x12*x13*x22*x23 +
-                                              sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
+                                              sym.sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
                                                     v32*v33*x11*x13*x21*x22 + v31*v33*x12*x13*x21*x22 +
                                                     v32*v33*x11*x12*x21*x23 - v31*v32*x11*x13*x21*x23 +
                                                     v32*v33*x11*x13*x21*x23 - v31*v32*x12*x13*x21*x23 -
@@ -409,7 +409,7 @@ def flux_3_ident_expression(experimental_data):
                                               v32*v33*x11*x13*x21*x23 + v31*v32*x12*x13*x21*x23 +
                                               v31*v33*x11*x12*x22*x23 - v31*v32*x11*x13*x22*x23 -
                                               v31*v32*x12*x13*x22*x23 + v31*v33*x12*x13*x22*x23 +
-                                              sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
+                                              sym.sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
                                                     v32*v33*x11*x13*x21*x22 + v31*v33*x12*x13*x21*x22 +
                                                     v32*v33*x11*x12*x21*x23 - v31*v32*x11*x13*x21*x23 +
                                                     v32*v33*x11*x13*x21*x23 - v31*v32*x12*x13*x21*x23 -
@@ -424,9 +424,9 @@ def flux_3_ident_expression(experimental_data):
                             v31*v33*x12*x22*x23 + v31*v32*x13*x22*x23))
     v3max_denominator_2 = -v32*v33*x11*x12*x21 + v32*v33*x11*x13*x21 + v31*v33*x11*x12*x22 -  \
                           v31*v33*x12*x13*x22 - v31*v32*x11*x13*x23 + v31*v32*x12*x13*x23
-    v3max_nr_2_expr = lambdify([variables], v3max_numerator_2, "numpy")
-    v3max_dr_2_expr = lambdify([variables], v3max_denominator_2, "numpy")
-    v3max_2_expr = lambdify([variables], v3max_numerator_2/v3max_denominator_2, "numpy")
+    v3max_nr_2_expr = sym.lambdify([variables], v3max_numerator_2, "numpy")
+    v3max_dr_2_expr = sym.lambdify([variables], v3max_denominator_2, "numpy")
+    v3max_2_expr = sym.lambdify([variables], v3max_numerator_2/v3max_denominator_2, "numpy")
     v3max_nr_2_value = v3max_nr_2_expr(experimental_data)
     v3max_dr_2_value = v3max_dr_2_expr(experimental_data)
     v3max_2_value = v3max_2_expr(experimental_data)
@@ -440,7 +440,7 @@ def flux_3_ident_expression(experimental_data):
                                               v32*v33*x11*x13*x21*x23 + v31*v32*x12*x13*x21*x23 +
                                               v31*v33*x11*x12*x22*x23 - v31*v32*x11*x13*x22*x23 -
                                               v31*v32*x12*x13*x22*x23 + v31*v33*x12*x13*x22*x23 -
-                                              sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
+                                              sym.sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
                                                     v32*v33*x11*x13*x21*x22 + v31*v33*x12*x13*x21*x22 +
                                                     v32*v33*x11*x12*x21*x23 - v31*v32*x11*x13*x21*x23 +
                                                     v32*v33*x11*x13*x21*x23 - v31*v32*x12*x13*x21*x23 -
@@ -460,7 +460,7 @@ def flux_3_ident_expression(experimental_data):
                                               v32*v33*x11*x13*x21*x23 + v31*v32*x12*x13*x21*x23 +
                                               v31*v33*x11*x12*x22*x23 - v31*v32*x11*x13*x22*x23 -
                                               v31*v32*x12*x13*x22*x23 + v31*v33*x12*x13*x22*x23 -
-                                              sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
+                                              sym.sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
                                                     v32*v33*x11*x13*x21*x22 + v31*v33*x12*x13*x21*x22 +
                                                     v32*v33*x11*x12*x21*x23 - v31*v32*x11*x13*x21*x23 +
                                                     v32*v33*x11*x13*x21*x23 - v31*v32*x12*x13*x21*x23 -
@@ -480,7 +480,7 @@ def flux_3_ident_expression(experimental_data):
                                               v32*v33*x11*x13*x21*x23 + v31*v32*x12*x13*x21*x23 +
                                               v31*v33*x11*x12*x22*x23 - v31*v32*x11*x13*x22*x23 -
                                               v31*v32*x12*x13*x22*x23 + v31*v33*x12*x13*x22*x23 -
-                                              sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
+                                              sym.sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
                                                     v32*v33*x11*x13*x21*x22 + v31*v33*x12*x13*x21*x22 +
                                                     v32*v33*x11*x12*x21*x23 - v31*v32*x11*x13*x21*x23 +
                                                     v32*v33*x11*x13*x21*x23 - v31*v32*x12*x13*x21*x23 -
@@ -500,7 +500,7 @@ def flux_3_ident_expression(experimental_data):
                                               v32*v33*x11*x13*x21*x23 + v31*v32*x12*x13*x21*x23 +
                                               v31*v33*x11*x12*x22*x23 - v31*v32*x11*x13*x22*x23 -
                                               v31*v32*x12*x13*x22*x23 + v31*v33*x12*x13*x22*x23 -
-                                              sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
+                                              sym.sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
                                                     v32*v33*x11*x13*x21*x22 + v31*v33*x12*x13*x21*x22 +
                                                     v32*v33*x11*x12*x21*x23 - v31*v32*x11*x13*x21*x23 +
                                                     v32*v33*x11*x13*x21*x23 - v31*v32*x12*x13*x21*x23 -
@@ -520,7 +520,7 @@ def flux_3_ident_expression(experimental_data):
                                               v32*v33*x11*x13*x21*x23 + v31*v32*x12*x13*x21*x23 +
                                               v31*v33*x11*x12*x22*x23 - v31*v32*x11*x13*x22*x23 -
                                               v31*v32*x12*x13*x22*x23 + v31*v33*x12*x13*x22*x23 -
-                                              sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
+                                              sym.sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
                                                     v32*v33*x11*x13*x21*x22 + v31*v33*x12*x13*x21*x22 +
                                                     v32*v33*x11*x12*x21*x23 - v31*v32*x11*x13*x21*x23 +
                                                     v32*v33*x11*x13*x21*x23 - v31*v32*x12*x13*x21*x23 -
@@ -540,7 +540,7 @@ def flux_3_ident_expression(experimental_data):
                                               v32*v33*x11*x13*x21*x23 + v31*v32*x12*x13*x21*x23 +
                                               v31*v33*x11*x12*x22*x23 - v31*v32*x11*x13*x22*x23 -
                                               v31*v32*x12*x13*x22*x23 + v31*v33*x12*x13*x22*x23 -
-                                              sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
+                                              sym.sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
                                                     v32*v33*x11*x13*x21*x22 + v31*v33*x12*x13*x21*x22 +
                                                     v32*v33*x11*x12*x21*x23 - v31*v32*x11*x13*x21*x23 +
                                                     v32*v33*x11*x13*x21*x23 - v31*v32*x12*x13*x21*x23 -
@@ -556,9 +556,9 @@ def flux_3_ident_expression(experimental_data):
                             v31*v33*x12*x22*x23 + v31*v32*x13*x22*x23))
     k3fdp_denominator_1 = -v32*v33*x11*x12*x21 + v32*v33*x11*x13*x21 + v31*v33*x11*x12*x22 -  \
                           v31*v33*x12*x13*x22 - v31*v32*x11*x13*x23 + v31*v32*x12*x13*x23
-    k3fdp_nr_1_expr = lambdify([variables], k3fdp_numerator_1, "numpy")
-    k3fdp_dr_1_expr = lambdify([variables], k3fdp_denominator_1, "numpy")
-    k3fdp_1_expr = lambdify([variables], k3fdp_numerator_1 / k3fdp_denominator_1, "numpy")
+    k3fdp_nr_1_expr = sym.lambdify([variables], k3fdp_numerator_1, "numpy")
+    k3fdp_dr_1_expr = sym.lambdify([variables], k3fdp_denominator_1, "numpy")
+    k3fdp_1_expr = sym.lambdify([variables], k3fdp_numerator_1 / k3fdp_denominator_1, "numpy")
     k3fdp_nr_1_value = k3fdp_nr_1_expr(experimental_data)
     k3fdp_dr_1_value = k3fdp_dr_1_expr(experimental_data)
     k3fdp_1_value = k3fdp_1_expr(experimental_data)
@@ -572,7 +572,7 @@ def flux_3_ident_expression(experimental_data):
                                               v32*v33*x11*x13*x21*x23 + v31*v32*x12*x13*x21*x23 +
                                               v31*v33*x11*x12*x22*x23 - v31*v32*x11*x13*x22*x23 -
                                               v31*v32*x12*x13*x22*x23 + v31*v33*x12*x13*x22*x23 +
-                                              sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
+                                              sym.sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
                                                     v32*v33*x11*x13*x21*x22 + v31*v33*x12*x13*x21*x22 +
                                                     v32*v33*x11*x12*x21*x23 - v31*v32*x11*x13*x21*x23 +
                                                     v32*v33*x11*x13*x21*x23 - v31*v32*x12*x13*x21*x23 -
@@ -591,7 +591,7 @@ def flux_3_ident_expression(experimental_data):
                                               v32*v33*x11*x13*x21*x23 + v31*v32*x12*x13*x21*x23 +
                                               v31*v33*x11*x12*x22*x23 - v31*v32*x11*x13*x22*x23 -
                                               v31*v32*x12*x13*x22*x23 + v31*v33*x12*x13*x22*x23 +
-                                              sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
+                                              sym.sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
                                                     v32*v33*x11*x13*x21*x22 + v31*v33*x12*x13*x21*x22 +
                                                     v32*v33*x11*x12*x21*x23 - v31*v32*x11*x13*x21*x23 +
                                                     v32*v33*x11*x13*x21*x23 - v31*v32*x12*x13*x21*x23 -
@@ -610,7 +610,7 @@ def flux_3_ident_expression(experimental_data):
                                               v32*v33*x11*x13*x21*x23 + v31*v32*x12*x13*x21*x23 +
                                               v31*v33*x11*x12*x22*x23 - v31*v32*x11*x13*x22*x23 -
                                               v31*v32*x12*x13*x22*x23 + v31*v33*x12*x13*x22*x23 +
-                                              sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
+                                              sym.sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
                                                     v32*v33*x11*x13*x21*x22 + v31*v33*x12*x13*x21*x22 +
                                                     v32*v33*x11*x12*x21*x23 - v31*v32*x11*x13*x21*x23 +
                                                     v32*v33*x11*x13*x21*x23 - v31*v32*x12*x13*x21*x23 -
@@ -629,7 +629,7 @@ def flux_3_ident_expression(experimental_data):
                                               v32*v33*x11*x13*x21*x23 + v31*v32*x12*x13*x21*x23 +
                                               v31*v33*x11*x12*x22*x23 - v31*v32*x11*x13*x22*x23 -
                                               v31*v32*x12*x13*x22*x23 + v31*v33*x12*x13*x22*x23 +
-                                              sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
+                                              sym.sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
                                                     v32*v33*x11*x13*x21*x22 + v31*v33*x12*x13*x21*x22 +
                                                     v32*v33*x11*x12*x21*x23 - v31*v32*x11*x13*x21*x23 +
                                                     v32*v33*x11*x13*x21*x23 - v31*v32*x12*x13*x21*x23 -
@@ -648,7 +648,7 @@ def flux_3_ident_expression(experimental_data):
                                               v32*v33*x11*x13*x21*x23 + v31*v32*x12*x13*x21*x23 +
                                               v31*v33*x11*x12*x22*x23 - v31*v32*x11*x13*x22*x23 -
                                               v31*v32*x12*x13*x22*x23 + v31*v33*x12*x13*x22*x23 +
-                                              sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
+                                              sym.sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
                                                     v32*v33*x11*x13*x21*x22 + v31*v33*x12*x13*x21*x22 +
                                                     v32*v33*x11*x12*x21*x23 - v31*v32*x11*x13*x21*x23 +
                                                     v32*v33*x11*x13*x21*x23 - v31*v32*x12*x13*x21*x23 -
@@ -667,7 +667,7 @@ def flux_3_ident_expression(experimental_data):
                                               v32*v33*x11*x13*x21*x23 + v31*v32*x12*x13*x21*x23 +
                                               v31*v33*x11*x12*x22*x23 - v31*v32*x11*x13*x22*x23 -
                                               v31*v32*x12*x13*x22*x23 + v31*v33*x12*x13*x22*x23 +
-                                              sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
+                                              sym.sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 -
                                                     v32*v33*x11*x13*x21*x22 + v31*v33*x12*x13*x21*x22 +
                                                     v32*v33*x11*x12*x21*x23 - v31*v32*x11*x13*x21*x23 +
                                                     v32*v33*x11*x13*x21*x23 - v31*v32*x12*x13*x21*x23 -
@@ -682,9 +682,9 @@ def flux_3_ident_expression(experimental_data):
                             v31*v33*x12*x22*x23 + v31*v32*x13*x22*x23))
     k3fdp_denominator_2 = -v32*v33*x11*x12*x21 + v32*v33*x11*x13*x21 + v31*v33*x11*x12*x22 -  \
                           v31*v33*x12*x13*x22 - v31*v32*x11*x13*x23 + v31*v32*x12*x13*x23
-    k3fdp_nr_2_expr = lambdify([variables], k3fdp_numerator_2, "numpy")
-    k3fdp_dr_2_expr = lambdify([variables], k3fdp_denominator_2, "numpy")
-    k3fdp_2_expr = lambdify([variables], k3fdp_numerator_2 / k3fdp_denominator_2, "numpy")
+    k3fdp_nr_2_expr = sym.lambdify([variables], k3fdp_numerator_2, "numpy")
+    k3fdp_dr_2_expr = sym.lambdify([variables], k3fdp_denominator_2, "numpy")
+    k3fdp_2_expr = sym.lambdify([variables], k3fdp_numerator_2 / k3fdp_denominator_2, "numpy")
     k3fdp_nr_2_value = k3fdp_nr_2_expr(experimental_data)
     k3fdp_dr_2_value = k3fdp_dr_2_expr(experimental_data)
     k3fdp_2_value = k3fdp_2_expr(experimental_data)
@@ -694,7 +694,7 @@ def flux_3_ident_expression(experimental_data):
                         v31*v33*x12*x13*x21*x22 - v32*v33*x11*x12*x21*x23 + v31*v32*x11*x13*x21*x23 - \
                         v32*v33*x11*x13*x21*x23 + v31*v32*x12*x13*x21*x23 + v31*v33*x11*x12*x22*x23 - \
                         v31*v32*x11*x13*x22*x23 - v31*v32*x12*x13*x22*x23 + v31*v33*x12*x13*x22*x23 - \
-                        sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 - v32*v33*x11*x13*x21*x22 +
+                        sym.sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 - v32*v33*x11*x13*x21*x22 +
                               v31*v33*x12*x13*x21*x22 + v32*v33*x11*x12*x21*x23 - v31*v32*x11*x13*x21*x23 +
                               v32*v33*x11*x13*x21*x23 - v31*v32*x12*x13*x21*x23 - v31*v33*x11*x12*x22*x23 +
                               v31*v32*x11*x13*x22*x23 + v31*v32*x12*x13*x22*x23 - v31*v33*x12*x13*x22*x23)**2 -
@@ -704,9 +704,9 @@ def flux_3_ident_expression(experimental_data):
                               v32*v33*x11*x12*x13*x21*x23 + v31*v32*x11*x12*x13*x22*x23 - v31*v33*x11*x12*x13*x22*x23))
     k3pep_denominator_1 = 2*(-v32*v33*x11*x21*x22 + v31*v33*x12*x21*x22 + v32*v33*x11*x21*x23 -
                              v31*v32*x13*x21*x23 - v31*v33*x12*x22*x23 + v31*v32*x13*x22*x23)
-    k3pep_nr_1_expr = lambdify([variables], k3pep_numerator_1, "numpy")
-    k3pep_dr_1_expr = lambdify([variables], k3pep_denominator_1, "numpy")
-    k3pep_1_expr = lambdify([variables], k3pep_numerator_1 / k3pep_denominator_1, "numpy")
+    k3pep_nr_1_expr = sym.lambdify([variables], k3pep_numerator_1, "numpy")
+    k3pep_dr_1_expr = sym.lambdify([variables], k3pep_denominator_1, "numpy")
+    k3pep_1_expr = sym.lambdify([variables], k3pep_numerator_1 / k3pep_denominator_1, "numpy")
     k3pep_nr_1_value = k3pep_nr_1_expr(experimental_data)
     k3pep_dr_1_value = k3pep_dr_1_expr(experimental_data)
     k3pep_1_value = k3pep_1_expr(experimental_data)
@@ -715,7 +715,7 @@ def flux_3_ident_expression(experimental_data):
                         v31*v33*x12*x13*x21*x22 - v32*v33*x11*x12*x21*x23 + v31*v32*x11*x13*x21*x23 - \
                         v32*v33*x11*x13*x21*x23 + v31*v32*x12*x13*x21*x23 + v31*v33*x11*x12*x22*x23 - \
                         v31*v32*x11*x13*x22*x23 - v31*v32*x12*x13*x22*x23 + v31*v33*x12*x13*x22*x23 + \
-                        sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 - v32*v33*x11*x13*x21*x22 +
+                        sym.sqrt((v31*v33*x11*x12*x21*x22 - v32*v33*x11*x12*x21*x22 - v32*v33*x11*x13*x21*x22 +
                               v31*v33*x12*x13*x21*x22 + v32*v33*x11*x12*x21*x23 - v31*v32*x11*x13*x21*x23 +
                               v32*v33*x11*x13*x21*x23 - v31*v32*x12*x13*x21*x23 - v31*v33*x11*x12*x22*x23 +
                               v31*v32*x11*x13*x22*x23 + v31*v32*x12*x13*x22*x23 - v31*v33*x12*x13*x22*x23)**2 -
@@ -725,9 +725,9 @@ def flux_3_ident_expression(experimental_data):
                               v32*v33*x11*x12*x13*x21*x23 + v31*v32*x11*x12*x13*x22*x23 - v31*v33*x11*x12*x13*x22*x23))
     k3pep_denominator_2 = 2*(-v32*v33*x11*x21*x22 + v31*v33*x12*x21*x22 + v32*v33*x11*x21*x23 -
                              v31*v32*x13*x21*x23 - v31*v33*x12*x22*x23 + v31*v32*x13*x22*x23)
-    k3pep_nr_2_expr = lambdify([variables], k3pep_numerator_2, "numpy")
-    k3pep_dr_2_expr = lambdify([variables], k3pep_denominator_2, "numpy")
-    k3pep_2_expr = lambdify([variables], k3pep_numerator_2 / k3pep_denominator_2, "numpy")
+    k3pep_nr_2_expr = sym.lambdify([variables], k3pep_numerator_2, "numpy")
+    k3pep_dr_2_expr = sym.lambdify([variables], k3pep_denominator_2, "numpy")
+    k3pep_2_expr = sym.lambdify([variables], k3pep_numerator_2 / k3pep_denominator_2, "numpy")
     k3pep_nr_2_value = k3pep_nr_2_expr(experimental_data)
     k3pep_dr_2_value = k3pep_dr_2_expr(experimental_data)
     k3pep_2_value = k3pep_2_expr(experimental_data)
