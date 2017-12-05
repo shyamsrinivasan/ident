@@ -84,7 +84,7 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options, 
     noisy_dynamic = []
     ss_info = []
     dynamic_info = []
-    perturbed_parameter = []
+    perturbed_parameter = np.zeros((len(parameter_perturbation), len(ode_parameters)))
 
     for index, p_value in enumerate(parameter_perturbation):
         print('Perturbation {}\n'.format(index+1))
@@ -98,7 +98,7 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options, 
         noisy_dynamic.append(noisy_dynamic_iter)
         ss_info.append(ss_iter)
         dynamic_info.append(dynamic_iter)
-        perturbed_parameter.append(changed_ode_parameter[:])
+        perturbed_parameter[index, :] = changed_ode_parameter[:]
 
     # plot all dynamic courses
     if plot_arg:
@@ -108,4 +108,4 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options, 
         plt.close("all")
 
 
-    return noisy_ss, noisy_dynamic, tuple(perturbed_parameter), ss_info, dynamic_info
+    return noisy_ss, noisy_dynamic, perturbed_parameter, ss_info, dynamic_info
