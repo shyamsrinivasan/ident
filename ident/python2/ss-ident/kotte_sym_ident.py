@@ -23,7 +23,7 @@ parameter_perturbation = [(14, 0), (14, 4), (14, 9),
                           (12, .1), (12, .5), (12, 1), (12, -.1), (12, -.5),
                           (13, .1), (13, .5), (13, 1), (13, -.1), (13, -.5)]
 perturbation_options = {'ode_parameters':ode_parameter_values, 'cvode_options':cvode_options}
-noisy_ss, noisy_dynamic, perturbed_parameter_values, _, dynamic_info = \
+noisy_ss, noisy_dynamic, perturbation_details, _, dynamic_info = \
     run_noisy_parameter_perturbation(parameter_perturbation, noisy_initial_ss["y"], perturbation_options)
 # plot all dynamic courses
 # plot_multiple_dynamics(noisy_dynamic)
@@ -40,8 +40,8 @@ for ss_values in noisy_ss:
 # experimental data based on order of inputs for lambdify expressions
 exp_flux_index = np.array([0, 3, 2, 4])
 # get combinations of experimental datasets
-experimental_datasets, data_combination_id, dataset_boolean = \
-    arrange_experimental_data(noisy_exp_xss, noisy_exp_fss, perturbed_parameter_values, exp_flux_index)
+experimental_datasets = \
+    arrange_experimental_data(noisy_exp_xss, noisy_exp_fss, perturbation_details, 3, exp_flux_index)
 
 # identifiability for all kotte fluxes
 parameter_list, perturbation_ident_list, perturbation_list, parameters_ident_each_perturbation = \
