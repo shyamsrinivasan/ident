@@ -884,34 +884,66 @@ def establish_kotte_flux_identifiability(experimental_data_list, data_set_id):
            parameters_ident_each_perturbation
 
 
-def arrange_experimental_data(xss, fss, parameters, flux_id=np.array([0, 1, 2, 3, 4, 5])):
+def parameter_change(new_value, old_value):
+    return (new_value-old_value)/old_value
+
+
+def get_changed_parameters(original_parameters, changed_parameters, experiment_index, parameter_index):
+    parameter_array = np.zeros((1, 4))
+    parameter_array[0, 0] = experiment_index
+    parameter_array[0, 1] = parameter_index
+    parameter_array[0, 2] = changed_parameters[experiment_index, parameter_index]
+    parameter_array[0, 3] = parameter_change(changed_parameters[experiment_index, parameter_index],
+                                              original_parameters[parameter_index])
+    return parameter_array
+
+
+def select_experiment_for_dataset(experiment_id):
+    return None
+
+def loop_through_experiments(experiments_per_dataset, total_experiments):
+    chosen_ids = [0]
+    for experiment in experiments_per_dataset:
+
+        pass
+    experimental_data = []
+    return experimental_data
+
+
+def arrange_experimental_data(xss, fss, perturbation_details, experiments_per_set, flux_id=np.array([0, 1, 2, 3, 4, 5])):
     """get combinations of datasets using xss, fss and parameters for kotte model.
     see identifiability functions above for order of values in datasets"""
-    datasets = []
-    dataset_id = []
-    dataset_boolean = []
-    # first dataset
-    for index1 in range(len(xss)):
-        first_data = np.hstack((parameters[index1][-1],
-                                xss[index1],
-                                fss[index1][flux_id]))
-        # second dataset
-        for index2 in range(len(xss)):
-            if index2 != index1:
-                second_data = np.hstack((parameters[index2][-1],
-                                         xss[index2],
-                                         fss[index2][flux_id]))
-                # third dataset
-                for index3 in range(len(xss)):
-                    if index3 != index2 and index3 != index1:
-                        third_data = np.hstack((parameters[index3][-1],
-                                                xss[index3],
-                                                fss[index3][flux_id]))
-                        datasets.append(np.hstack((first_data, second_data, third_data)))
-                        dataset_id.append(np.hstack((index1, index2, index3)))
-                        bool_dataset = [False] * len(xss)
-                        for indices in [index1, index2, index3]:
-                            bool_dataset[indices] = True
-                        dataset_boolean.append(bool_dataset[:])
+    parameters = perturbation_details["values"]
+    experiment_indices = perturbation_details["indices"]
+    original = perturbation_details["original"]
 
-    return datasets, dataset_id, dataset_boolean
+    # get all experiment combinations based on experiments_per_set
+    number_of_experiments = len(xss)
+    data_combinations = []
+    for item in it.permutations(range(0, number_of_experiments), experiments_per_set):
+        data_combinations.append(item)
+
+    # initialize vectors/arrays and other lists for arrangement
+    number_data_sets = len(data_combinations)
+    size_of_data_set = 8
+    dataset_value_array = np.zeros((number_data_sets, size_of_data_set * experiments_per_set))
+    all_parameter_changes = np.zeros((number_data_sets, 4 * experiments_per_set))
+
+    # arrange and collect parameter/ss values
+    for data_index, experiment_index in enumerate(data_combinations):
+        data = []
+        changes = []
+        for index in experiment_index:
+            data.append(np.hstack((parameters[index][-1],
+                              xss[index],
+                              fss[index][flux_id])))
+            changes.append(get_changed_parameters(original_parameters=original,
+                                                  changed_parameters=parameters,
+                                                  experiment_index=index,
+                                                  parameter_index=int(experiment_indices[index, 0])))
+        dataset_value_array[data_index, :] = np.hstack(data[:])
+        all_parameter_changes[data_index, :] = np.hstack(changes[:])
+
+    dataset_keys = ['values', 'parameter_change']
+    experimental_data = dict(zip(dataset_keys, [dataset_value_array, all_parameter_changes]))
+    return experimental_data
