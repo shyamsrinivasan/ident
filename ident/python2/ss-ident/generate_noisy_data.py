@@ -110,6 +110,7 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options, 
         plt.close("all")
 
 
-    perturbation_field_names = ['values', 'indices']
-    perturbation_details = dict(zip(perturbation_field_names, [perturbed_parameter, perturbation_indices]))
+    perturbation_field_names = ['values', 'indices', 'original']
+    perturbation_details = dict(zip(perturbation_field_names,
+                                    [perturbed_parameter, perturbation_indices, np.array(ode_parameters[:])]))
     return noisy_ss, noisy_dynamic, perturbation_details, ss_info, dynamic_info
