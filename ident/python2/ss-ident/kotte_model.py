@@ -888,6 +888,7 @@ def arrange_experimental_data(xss, fss, parameters, flux_id=np.array([0, 1, 2, 3
     see identifiability functions above for order of values in datasets"""
     datasets = []
     dataset_id = []
+    dataset_boolean = []
     # first dataset
     for index1 in range(len(xss)):
         first_data = np.hstack((parameters[index1][-1],
@@ -907,5 +908,9 @@ def arrange_experimental_data(xss, fss, parameters, flux_id=np.array([0, 1, 2, 3
                                                 fss[index3][flux_id]))
                         datasets.append(np.hstack((first_data, second_data, third_data)))
                         dataset_id.append(np.hstack((index1, index2, index3)))
+                        bool_dataset = [False] * len(xss)
+                        for indices in [index1, index2, index3]:
+                            bool_dataset[indices] = True
+                        dataset_boolean.append(bool_dataset[:])
 
-    return datasets, dataset_id
+    return datasets, dataset_id, dataset_boolean
