@@ -810,10 +810,16 @@ def kotte_parameter_name(parameter_id):
     return parameter_list[parameter_id]
 
 
-def process_ident_data(ident_values):
+def process_ident_data(ident_values, number_data):
     # create signed boolean array for identifiability
     signed_ident_values = np.sign(ident_values)
-    return None
+    ident_fun_val = []
+    for id in range(0, number_data):
+        ident_fun_val.append(signed_ident_values[id * 12:(id + 1) * 12, -1])
+    p_list = [[p_id for p_id, val in enumerate(data_set) if val > 0] for data_set in ident_fun_val]
+    p_list_boolean = [[True if parameter_id in list_1 else False for parameter_id in range(0, 12)] for list_1 in p_list]
+
+    return p_list, p_list_boolean
 
 
 def establish_kotte_flux_identifiability(all_data, choose):
@@ -826,13 +832,8 @@ def establish_kotte_flux_identifiability(all_data, choose):
     number_data = len(chosen_values)
     ident_values, parameters_per_flux = get_ident_value(ident_fun_list, chosen_values)
 
-    # create signed boolean array for identifiability
-    signed_ident_values = np.sign(ident_values)
-
-    ident_fun_val = []
-    for id in range(0, number_data):
-        ident_fun_val.append(signed_ident_values[id * 12:(id + 1) * 12, -1])
-    p_list = [[p_id for p_id, val in enumerate(data_set) if val > 0] for data_set in ident_fun_val]
+    # process identifiability data
+    p_list, p_list_boolean = process_ident_data(ident_values, number_data)
 
     # identify perturbations that result in positive value for identifiability
     parameter_perturbation_list = []
