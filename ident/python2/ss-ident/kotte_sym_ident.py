@@ -43,8 +43,7 @@ exp_flux_index = np.array([0, 3, 2, 4])
 experimental_datasets = arrange_experimental_data(noisy_exp_xss, noisy_exp_fss, perturbation_details, 3, exp_flux_index)
 
 # identifiability for all kotte fluxes
-parameter_list, perturbation_ident_list, perturbation_list, parameters_ident_each_perturbation = \
-    establish_kotte_flux_identifiability(experimental_datasets, choose=10)
+boolean_ident_values, fp_list, data_list = establish_kotte_flux_identifiability(experimental_datasets, choose=10)
 print('Perturbation analysis for identifiability complete.\n')
 
 
