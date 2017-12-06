@@ -844,6 +844,35 @@ def data_based_processing(plist_boolean, parameters_per_flux):
     return data_list
 
 
+def create_data_for_file(plist_boolean, parameters_per_flux, number_fluxes, fp_list, data_list):
+    """create data for write/append all data to file"""
+    number_data, p = plist_boolean.shape
+    write_2_file_data = []
+    write_2_file_data.append(['Identifiable Perturbations'])
+    flux_id, parameter_id, i = 1, 1, 0
+    # perturbation_keys = parameter_list.keys()
+    while i < p:
+        write_2_file_data.append(['Flux {}, Parameter {}'.format(flux_id, parameter_id)])
+        key_id = 'flux{}p{}'.format(flux_id, parameter_id)
+        write_2_file_data.append(fp_list[key_id])
+        if parameter_id < parameters_per_flux[flux_id - 1]:
+            parameter_id += 1
+        else:
+            if flux_id < number_fluxes:
+                flux_id += 1
+            else:
+                flux_id = 1
+            parameter_id = 1
+        i += 1
+    for j in range(0, number_data):
+        write_2_file_data.append(['Parameters Identified by Data set {}'.format(j + 1)])
+        key_id = 'dataset{}'.format(j + 1)
+        write_2_file_data.append(data_list[key_id])
+        # write_2_file_data.append(['Parameter Perturbations in Data Set {}'.format(j+1)])
+        # write_2_file_data.append(perturbation_list[key_id])
+    return write_2_file_data
+
+
 def establish_kotte_flux_identifiability(all_data, choose):
     """call all identifiability evaluation funcs above and print numerical results"""
     chosen_values = list(all_data["values"][0:choose, :])
@@ -864,29 +893,7 @@ def establish_kotte_flux_identifiability(all_data, choose):
     data_list = data_based_processing(plist_boolean, parameters_per_flux)
 
     # create data for write/append all data to file
-    write_2_file_data = []
-    write_2_file_data.append(['Identifiable Perturbations'])
-    flux_id, parameter_id, i = 1, 1, 0
-    # perturbation_keys = parameter_list.keys()
-    while i < p[-1]:
-        write_2_file_data.append(['Flux {}, Parameter {}'.format(flux_id, parameter_id)])
-        key_id = 'flux{}p{}'.format(flux_id, parameter_id)
-        write_2_file_data.append(parameter_list[key_id])
-        if parameter_id < parameters_per_flux[flux_id-1]:
-            parameter_id += 1
-        else:
-            if flux_id < number_fluxes:
-                flux_id += 1
-            else:
-                flux_id = 1
-            parameter_id = 1
-        i += 1
-    for j in range(0, number_data):
-        write_2_file_data.append(['Parameters Identified by Data set {}'.format(j+1)])
-        key_id = 'dataset{}'.format(j+1)
-        write_2_file_data.append(perturbation_ident_list[key_id])
-        write_2_file_data.append(['Parameter Perturbations in Data Set {}'.format(j+1)])
-        write_2_file_data.append(perturbation_list[key_id])
+    write_2_file_data = create_data_for_file(plist_boolean, parameters_per_flux, number_fluxes, fp_list, data_list)
 
     # write results to file
     path = "~" + "shyam" + r"\Documents\Courses\CHE1125Project\Results\ident\python2\kotte_ident_results.txt"
@@ -895,9 +902,7 @@ def establish_kotte_flux_identifiability(all_data, choose):
         writer = csv.writer(fh, delimiter="\t")
         [writer.writerow(r) for r in write_2_file_data]
         fh.close()
-
-    return parameter_list, perturbation_ident_list, perturbation_list, \
-           parameters_ident_each_perturbation
+    return plist_boolean, fp_list, data_list
 
 
 def parameter_change(new_value, old_value):
