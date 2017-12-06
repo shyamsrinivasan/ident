@@ -931,7 +931,8 @@ def loop_through_experiments(experiments_per_dataset, total_experiments):
     return experimental_data
 
 
-def arrange_experimental_data(xss, fss, perturbation_details, experiments_per_set, flux_id=np.array([0, 1, 2, 3, 4, 5])):
+def arrange_experimental_data(xss, fss,
+                              perturbation_details, experiments_per_set, flux_id=np.array([0, 1, 2, 3, 4, 5])):
     """get combinations of datasets using xss, fss and parameters for kotte model.
     see identifiability functions above for order of values in datasets"""
     parameters = perturbation_details["values"]
@@ -943,6 +944,11 @@ def arrange_experimental_data(xss, fss, perturbation_details, experiments_per_se
     data_combinations = []
     for item in it.permutations(range(0, number_of_experiments), experiments_per_set):
         data_combinations.append(item)
+
+    data_combination_boolean = [[True if experiment_id in list_1 else False
+                                 for experiment_id in range(0, number_of_experiments)]
+                                for list_1 in data_combinations]
+    data_combination_boolean = np.array(data_combination_boolean)
 
     # initialize vectors/arrays and other lists for arrangement
     number_data_sets = len(data_combinations)
@@ -956,8 +962,8 @@ def arrange_experimental_data(xss, fss, perturbation_details, experiments_per_se
         changes = []
         for index in experiment_index:
             data.append(np.hstack((parameters[index][-1],
-                              xss[index],
-                              fss[index][flux_id])))
+                                   xss[index],
+                                   fss[index][flux_id])))
             changes.append(get_changed_parameters(original_parameters=original,
                                                   changed_parameters=parameters,
                                                   experiment_index=index,
@@ -965,6 +971,6 @@ def arrange_experimental_data(xss, fss, perturbation_details, experiments_per_se
         dataset_value_array[data_index, :] = np.hstack(data[:])
         all_parameter_changes[data_index, :] = np.hstack(changes[:])
 
-    dataset_keys = ['values', 'details']
-    experimental_data = dict(zip(dataset_keys, [dataset_value_array, all_parameter_changes]))
+    dataset_keys = ['values', 'details', 'boolean']
+    experimental_data = dict(zip(dataset_keys, [dataset_value_array, all_parameter_changes, data_combination_boolean]))
     return experimental_data
