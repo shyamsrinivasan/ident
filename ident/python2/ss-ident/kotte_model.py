@@ -818,8 +818,30 @@ def process_ident_data(ident_values, number_data):
         ident_fun_val.append(signed_ident_values[id * 12:(id + 1) * 12, -1])
     p_list = [[p_id for p_id, val in enumerate(data_set) if val > 0] for data_set in ident_fun_val]
     p_list_boolean = [[True if parameter_id in list_1 else False for parameter_id in range(0, 12)] for list_1 in p_list]
+    return p_list, np.array(p_list_boolean)
 
-    return p_list, p_list_boolean
+
+def parameter_based_processing(plist_boolean, parameters_per_flux):
+    """parameter-based classification of experimental datasets"""
+    number_data, p = plist_boolean.shape
+    # p = np.cumsum([0] + parameters_per_flux).tolist()
+    fp_list_keys = ['flux{}p{}'.format(f_index + 1, p_index + 1)
+                    for f_index, p_limit in enumerate(parameters_per_flux)
+                    for p_index in range(0, p_limit)]
+    fp_list_values = [[data_id for data_id in it.compress(range(0, number_data), list(plist_boolean[:, parameter_id]))]
+                      for parameter_id in range(0, p)]
+    fp_list = dict(zip(fp_list_keys, fp_list_values))
+    return fp_list
+
+
+def data_based_processing(plist_boolean, parameters_per_flux):
+    """dataset dependent classification of parameters"""
+    number_data, p = plist_boolean.shape
+    data_list_keys = ['dataset{}'.format(perturbation_id + 1) for perturbation_id in range(0, number_data)]
+    data_list_values = [[parameter_id for parameter_id in it.compress(range(0, p), list(plist_boolean[data_id, :]))]
+                        for data_id in range(0, number_data)]
+    data_list = dict(zip(data_list_keys, data_list_values))
+    return data_list
 
 
 def establish_kotte_flux_identifiability(all_data, choose):
@@ -833,36 +855,13 @@ def establish_kotte_flux_identifiability(all_data, choose):
     ident_values, parameters_per_flux = get_ident_value(ident_fun_list, chosen_values)
 
     # process identifiability data
-    p_list, p_list_boolean = process_ident_data(ident_values, number_data)
+    p_list, plist_boolean = process_ident_data(ident_values, number_data)
 
-    # identify perturbations that result in positive value for identifiability
-    parameter_perturbation_list = []
-    for k in range(0, 12):
-        parameter_perturbation_list.append(tuple([id for id, parameter_ids in enumerate(p_list)
-                                                  if k in parameter_ids]))
-    fp_list = ['flux{}p{}'.format(f_index + 1, p_index + 1)
-               for f_index, p_limit in enumerate(parameters_per_flux)
-               for p_index in range(0, p_limit)]
-    perturbation_name_list = ['dataset{}'.format(perturbation_id+1) for perturbation_id in range(0, number_data)]
+    # parameter-based classification of experimental datasets
+    fp_list = parameter_based_processing(plist_boolean, parameters_per_flux)
 
-    # calculate perturbations required for all parameters in network
-    p = np.cumsum([0] + parameters_per_flux).tolist()
-    parameter_perturbation_boolean = [[True if data_id in parameter_perturbation_list[id]
-                                       else False for data_id in range(0, number_data)] for id in range(0, p[-1])]
-    list_index = range(0, number_data)
-    ones_zeros = [[list_index[parameter_perturbation_boolean[p_id][i]] for i in range(0, number_data)] for p_id in range(0, p[-1])]
-    ones_zeros = np.array(ones_zeros)
-    # parameter_perturbation_boolean = np.array(parameter_perturbation_boolean)
-    parameters_ident_each_perturbation = np.sum(ones_zeros, 0)
-
-    # paremeters identified by each perturbation
-    parameters_ident_perturbation = \
-        [[p_id for p_id in range(0, p[-1]) if ones_zeros[p_id, data_id] > 0] for data_id in range(0, number_data)]
-
-    # build dictionary of results
-    parameter_list = dict(zip(fp_list, parameter_perturbation_list))
-    perturbation_ident_list = dict(zip(perturbation_name_list, parameters_ident_perturbation))
-    perturbation_list = dict(zip(perturbation_name_list, chosen_details))
+    # dataset dependent classification of parameters
+    data_list = data_based_processing(plist_boolean, parameters_per_flux)
 
     # create data for write/append all data to file
     write_2_file_data = []
