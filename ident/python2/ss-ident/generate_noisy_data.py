@@ -84,6 +84,7 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options, 
     noisy_dynamic = []
     ss_info = []
     dynamic_info = []
+    experiment_info_boolean = []
     perturbed_parameter = np.zeros((len(parameter_perturbation), len(ode_parameters)))
     perturbation_indices = np.zeros((len(parameter_perturbation), 2))
 
@@ -101,6 +102,9 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options, 
         dynamic_info.append(dynamic_iter)
         perturbed_parameter[index, :] = changed_ode_parameter[:]
         perturbation_indices[index, :] = parameter_id-1, parameter_change
+        boolean_info = [False]*len(ode_parameters)
+        boolean_info[parameter_id-1] = True
+        experiment_info_boolean.append(boolean_info)
 
     # plot all dynamic courses
     if plot_arg:
@@ -110,7 +114,8 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options, 
         plt.close("all")
 
 
-    perturbation_field_names = ['values', 'indices', 'original']
+    perturbation_field_names = ['values', 'indices', 'original', 'boolean']
     perturbation_details = dict(zip(perturbation_field_names,
-                                    [perturbed_parameter, perturbation_indices, np.array(ode_parameters[:])]))
+                                    [perturbed_parameter, perturbation_indices,
+                                     np.array(ode_parameters[:]), np.array(experiment_info_boolean[:])]))
     return noisy_ss, noisy_dynamic, perturbation_details, ss_info, dynamic_info
