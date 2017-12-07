@@ -895,9 +895,6 @@ def process_info(ident_details, number_fluxes):
     # dataset dependent classification of parameters
     data_list = data_based_processing(ident_details)
 
-    # create data for write_2_file and write to file
-    write_results_2_file(ident_details, number_fluxes, fp_list, data_list)
-
     return fp_list, data_list
 
 
