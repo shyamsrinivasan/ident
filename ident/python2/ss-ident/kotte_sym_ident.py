@@ -3,6 +3,8 @@ from generate_noisy_data import generate_noisy_data
 from generate_noisy_data import run_noisy_parameter_perturbation
 from kotte_model import establish_kotte_flux_identifiability
 from kotte_model import arrange_experimental_data
+from kotte_model import process_info
+from kotte_model import write_results_2_file
 
 # generate noisy experimental data for testing identifiability
 y0 = np.array([5, 1, 1])
@@ -43,8 +45,14 @@ exp_flux_index = np.array([0, 3, 2, 4])
 experimental_datasets = arrange_experimental_data(noisy_exp_xss, noisy_exp_fss, perturbation_details, 3, exp_flux_index)
 
 # identifiability for all kotte fluxes
-boolean_ident_values, fp_list, data_list = establish_kotte_flux_identifiability(experimental_datasets, choose=10)
+ident_details = establish_kotte_flux_identifiability(experimental_datasets, choose=10)
 print('Perturbation analysis for identifiability complete.\n')
+
+# data processing
+fp_list, data_list = process_info(ident_details, 3)
+
+# create data for write_2_file and write to file
+write_results_2_file(ident_details, 3, fp_list, data_list)
 
 
 # clear workspace (removes all module names and objects)
