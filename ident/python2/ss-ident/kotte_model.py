@@ -810,6 +810,29 @@ def kotte_parameter_name(parameter_id):
     return parameter_list[parameter_id]
 
 
+def parameter_based_processing(ident_details):
+    """parameter-based classification of experimental datasets"""
+    number_data, p = ident_details["boolean"].shape
+    # p = np.cumsum([0] + parameters_per_flux).tolist()
+    fp_list_keys = ['flux{}p{}'.format(f_index + 1, p_index + 1)
+                    for f_index, p_limit in enumerate(ident_details["parameters"])
+                    for p_index in range(0, p_limit)]
+    fp_list_values = [[data_id for data_id in it.compress(range(0, number_data), list(ident_details["boolean"][:, parameter_id]))]
+                      for parameter_id in range(0, p)]
+    fp_list = dict(zip(fp_list_keys, fp_list_values))
+    return fp_list
+
+
+def data_based_processing(ident_details):
+    """dataset dependent classification of parameters"""
+    number_data, p = ident_details["boolean"].shape
+    data_list_keys = ['dataset{}'.format(perturbation_id + 1) for perturbation_id in range(0, number_data)]
+    data_list_values = [[parameter_id for parameter_id in it.compress(range(0, p), list(ident_details["boolean"][data_id, :]))]
+                        for data_id in range(0, number_data)]
+    data_list = dict(zip(data_list_keys, data_list_values))
+    return data_list
+
+
 def process_ident_data(ident_values, number_data):
     # create signed boolean array for identifiability
     signed_ident_values = np.sign(ident_values)
@@ -821,32 +844,9 @@ def process_ident_data(ident_values, number_data):
     return p_list, np.array(p_list_boolean)
 
 
-def parameter_based_processing(plist_boolean, parameters_per_flux):
-    """parameter-based classification of experimental datasets"""
-    number_data, p = plist_boolean.shape
-    # p = np.cumsum([0] + parameters_per_flux).tolist()
-    fp_list_keys = ['flux{}p{}'.format(f_index + 1, p_index + 1)
-                    for f_index, p_limit in enumerate(parameters_per_flux)
-                    for p_index in range(0, p_limit)]
-    fp_list_values = [[data_id for data_id in it.compress(range(0, number_data), list(plist_boolean[:, parameter_id]))]
-                      for parameter_id in range(0, p)]
-    fp_list = dict(zip(fp_list_keys, fp_list_values))
-    return fp_list
-
-
-def data_based_processing(plist_boolean, parameters_per_flux):
-    """dataset dependent classification of parameters"""
-    number_data, p = plist_boolean.shape
-    data_list_keys = ['dataset{}'.format(perturbation_id + 1) for perturbation_id in range(0, number_data)]
-    data_list_values = [[parameter_id for parameter_id in it.compress(range(0, p), list(plist_boolean[data_id, :]))]
-                        for data_id in range(0, number_data)]
-    data_list = dict(zip(data_list_keys, data_list_values))
-    return data_list
-
-
-def create_data_for_file(plist_boolean, parameters_per_flux, number_fluxes, fp_list, data_list):
+def create_data_for_file(ident_details, number_fluxes, fp_list, data_list):
     """create data for write/append all data to file"""
-    number_data, p = plist_boolean.shape
+    number_data, p = ident_details["boolean"].shape
     write_2_file_data = []
     write_2_file_data.append(['Identifiable Perturbations'])
     flux_id, parameter_id, i = 1, 1, 0
@@ -855,7 +855,7 @@ def create_data_for_file(plist_boolean, parameters_per_flux, number_fluxes, fp_l
         write_2_file_data.append(['Flux {}, Parameter {}'.format(flux_id, parameter_id)])
         key_id = 'flux{}p{}'.format(flux_id, parameter_id)
         write_2_file_data.append(fp_list[key_id])
-        if parameter_id < parameters_per_flux[flux_id - 1]:
+        if parameter_id < ident_details["parameters"][flux_id - 1]:
             parameter_id += 1
         else:
             if flux_id < number_fluxes:
@@ -873,36 +873,49 @@ def create_data_for_file(plist_boolean, parameters_per_flux, number_fluxes, fp_l
     return write_2_file_data
 
 
-def establish_kotte_flux_identifiability(all_data, choose):
-    """call all identifiability evaluation funcs above and print numerical results"""
-    chosen_values = list(all_data["values"][0:choose, :])
-    chosen_details = all_data["details"][0:choose, :]
-
-    ident_fun_list = (flux_1_ident_expression, flux_2_ident_expression, flux_3_ident_expression)
-    number_fluxes = len(ident_fun_list)
-    number_data = len(chosen_values)
-    ident_values, parameters_per_flux = get_ident_value(ident_fun_list, chosen_values)
-
-    # process identifiability data
-    p_list, plist_boolean = process_ident_data(ident_values, number_data)
-
-    # parameter-based classification of experimental datasets
-    fp_list = parameter_based_processing(plist_boolean, parameters_per_flux)
-
-    # dataset dependent classification of parameters
-    data_list = data_based_processing(plist_boolean, parameters_per_flux)
-
-    # create data for write/append all data to file
-    write_2_file_data = create_data_for_file(plist_boolean, parameters_per_flux, number_fluxes, fp_list, data_list)
-
+def write_results_2_file(ident_details, number_fluxes, fp_list, data_list):
+    write_2_file_data = create_data_for_file(ident_details, number_fluxes, fp_list, data_list)
     # write results to file
     path = "~" + "shyam" + r"\Documents\Courses\CHE1125Project\Results\ident\python2\kotte_ident_results.txt"
     fullpath = os.path.expanduser(path)
     with open(fullpath, 'a') as fh:
-        writer = csv.writer(fh, delimiter="\t")
-        [writer.writerow(r) for r in write_2_file_data]
-        fh.close()
-    return plist_boolean, fp_list, data_list
+       writer = csv.writer(fh, delimiter="\t")
+       [writer.writerow(r) for r in write_2_file_data]
+       fh.close()
+    return None
+
+
+def process_info(ident_details, number_fluxes):
+    # process identifiability data
+    # p_list, plist_boolean = process_ident_data(ident_values, number_data)
+
+    # parameter-based classification of experimental datasets
+    fp_list = parameter_based_processing(ident_details)
+
+    # dataset dependent classification of parameters
+    data_list = data_based_processing(ident_details)
+
+    # create data for write_2_file and write to file
+    write_results_2_file(ident_details, number_fluxes, fp_list, data_list)
+
+    return fp_list, data_list
+
+
+def establish_kotte_flux_identifiability(all_data, choose):
+    """call all identifiability evaluation funcs above and print numerical results"""
+    chosen_values = list(all_data["values"][0:choose, :])
+    # chosen_details = all_data["details"][0:choose, :]
+
+    ident_fun_list = (flux_1_ident_expression, flux_2_ident_expression, flux_3_ident_expression)
+    # number_fluxes = len(ident_fun_list)
+    number_data = len(chosen_values)
+    ident_values, parameters_per_flux = get_ident_value(ident_fun_list, chosen_values)
+
+    # process identifiability data
+    _, plist_boolean = process_ident_data(ident_values, number_data)
+    ident_details = {"boolean":plist_boolean, "values":ident_values, "parameters":parameters_per_flux}
+
+    return ident_details
 
 
 def parameter_change(new_value, old_value):
