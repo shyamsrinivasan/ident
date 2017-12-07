@@ -803,11 +803,20 @@ def get_ident_value(ident_function_list, experimental_data_list):
     return all_identifiability_values, number_of_parameters_per_flux
 
 
+def ident_parameter_name(parameter_id):
+    parameter_list = ['V1max', 'K1ac', 'k1cat', 'K1ac',
+                      'V2max', 'K2pep',
+                      'V3max_option1', 'K3fdp_option1', 'K3pep_option1',
+                      'V3max_option2', 'K3fdp_option2', 'K3pep_option2']
+    return [parameter_list[id] for id in parameter_id]
+
+
 def kotte_parameter_name(parameter_id):
     parameter_list = ['K1ac', 'K3fdp', 'L3fdp', 'K3pep',
                       'K2pep', 'vemax', 'Kefdp', 'ne', 'd',
                       'V4max', 'k1cat', 'V3max', 'V2max', 'ac']
-    return parameter_list[parameter_id]
+
+    return [parameter_list[id] for id in parameter_id]
 
 
 def parameter_based_processing(ident_details):
@@ -885,15 +894,34 @@ def write_results_2_file(ident_details, number_fluxes, fp_list, data_list):
     return None
 
 
-def process_info(ident_details, number_fluxes):
-    # process identifiability data
-    # p_list, plist_boolean = process_ident_data(ident_values, number_data)
-
+def process_info(ident_details, experimental_details, perturbation_details, number_fluxes):
     # parameter-based classification of experimental datasets
     fp_list = parameter_based_processing(ident_details)
 
     # dataset dependent classification of parameters
     data_list = data_based_processing(ident_details)
+
+    # most useful dataset - based on number of parameter identified
+    number_data, number_parameter = ident_details["boolean"].shape
+    identified_parameters = [] # np.zeros((number_data, 1))
+    for idata in range(0, number_data):
+        ip = [p_id for p_id in it.compress(range(0, number_parameter), ident_details["boolean"][idata, :])]
+        identified_parameters.append(len(ip))
+    # identified_parameters = list(identified_parameters)
+
+    # get parameters identified by most useful data set
+    useful_data_id = identified_parameters.index(max(identified_parameters))
+
+    # most easily identifieable parameter - based on frequency of identification
+    identifying_data = [] # np.zeros((number_parameter, 1))
+    for iparameter in range(0, number_parameter):
+        idata = [data_id for data_id in it.compress(range(0, number_data), ident_details["boolean"][:, iparameter])]
+        identifying_data.append(len(idata))
+    # identifying_data = list(identifying_data)
+
+    # get
+
+    ident_parameter_names = ident_parameter_name(range(0, 12))
 
     return fp_list, data_list
 
