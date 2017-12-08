@@ -75,6 +75,16 @@ def kotte_ode(t, y, par_val):
     return np.hstack((yd_pep, yd_fdp, yd_e))
 
 
+def truncate_values(f, n=3):
+    """truncates floats to n specified values after the decimal"""
+    if not np.isnan(f):
+        s = '{}'.format(f)  # convert float to string
+        i, p, d = s.partition('.')
+        return float('.'.join([i, (d+'0'*n)[:n]]))
+    else:
+        return f
+
+
 def define_sym_variables():
     """define all required symbolic variables for sympy expressions"""
     ac1, ac2, ac3, x11, x12, x13, x21, x22, x23, x31, x32, x33, \
@@ -156,6 +166,9 @@ def flux_2_ident_expression(experimental_data):
 
 def flux_3_ident_expression(experimental_data):
     """symbolic and lambdify expression for flux 3 denominator from mathematica"""
+
+    # truncate experiment values
+    experimental_data = map(truncate_values, list(experimental_data))
 
     # get variable values (w/o sympy directly from experimental data)
     ac1, x11, x21, x31, v11, v21, v31, v41, \
@@ -699,16 +712,6 @@ def flux_3_ident_expression(experimental_data):
            [v3max_nr_2_value, v3max_dr_2_value, v3max_2_value], \
            [k3fdp_nr_2_value, k3fdp_dr_2_value, k3fdp_2_value], \
            [k3pep_nr_2_value, k3pep_dr_2_value, k3pep_2_value]
-
-
-def truncate_values(f, n=3):
-    """truncates floats to n specified values after the decimal"""
-    if not np.isnan(f):
-        s = '{}'.format(f)  # convert float to string
-        i, p, d = s.partition('.')
-        return float('.'.join([i, (d+'0'*n)[:n]]))
-    else:
-        return f
 
 
 def call_truncate_method(ident_value_list, parameter_count, expression_count=3):
