@@ -49,10 +49,10 @@ ident_details = establish_kotte_flux_identifiability(experimental_datasets, choo
 print('Perturbation analysis for identifiability complete.\n')
 
 # data processing
-fp_list, data_list = process_info(ident_details, experimental_datasets, perturbation_details, 3)
+data_list, new_combos, max_parameter = process_info(ident_details, experimental_datasets, perturbation_details, 3)
 
 # create data for write_2_file and write to file
-write_results_2_file(ident_details, 3, fp_list, data_list)
+# write_results_2_file(ident_details, 3, fp_list, data_list)
 
 
 # clear workspace (removes all module names and objects)
