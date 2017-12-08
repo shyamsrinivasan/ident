@@ -128,31 +128,27 @@ def flux_1_ident_expression(experimental_data):
 
 def flux_2_ident_expression(experimental_data):
     """symbolic and lambdify expression for flux 2 denominator from mathematica"""
-    # define symbols and variables (obtained through experimental data
-    variables, _, _, _, \
-    _, _, _, x21, x22, _, _, _, _, \
-    _, _, _, _, _, _, \
-    v21, v22, _, _, _, _ = define_sym_variables()
+    # get variable values (w/o sympy directly from experimental data)
+    ac1, x11, x21, x31, v11, v21, v31, v41, \
+    ac2, x12, x22, x32, v12, v22, v32, v42, \
+    ac3, x13, x23, x33, v13, v23, v33, v43 = list(experimental_data)
+    # ac = experimental_data[range(0, 24, 8)]
+    # x_ranges = [range(i, 24, 8) for i in range(1, 4)]
+    # all_x_ranges = [list(np.array(x_ranges)[:, i]) for i in range(0, 3)]
+    # x = [experimental_data[all_x_ranges[i]] for i in range(0, 3)]
+    # v_ranges = [range(i, 24, 8) for i in range(4, 8)]
+    # all_v_ranges = [list(np.array(v_ranges)[:, j]) for j in range(0, 3)]
+    # v = [experimental_data[all_v_ranges[j]] for j in range(0, 3)]
 
     # symbolic expression for v2
     # V2max
-    v2max_numerator = -v21 * v22 * x21 + v21 * v22 * x22
-    v2max_denominator = -(v22 * x21 - v21 * x22)
+    v2max_numerator_value = -v21 * v22 * x21 + v21 * v22 * x22
+    v2max_denominator_value = -(v22 * x21 - v21 * x22)
     # K2pep
-    k2pep_numerator = x21 * (v21 * x22 - v22 * x22)
-    k2pep_denominator = v22 * x21 - v21 * x22
-    v2max_nr_expr = sym.lambdify([variables], v2max_numerator, "numpy")
-    v2max_dr_expr = sym.lambdify([variables], v2max_denominator, "numpy")
-    v2max_expr = sym.lambdify([variables], v2max_numerator/v2max_denominator, "numpy")
-    k2pep_nr_expr = sym.lambdify([variables], k2pep_numerator, "numpy")
-    k2pep_dr_expr = sym.lambdify([variables], k2pep_denominator, "numpy")
-    k2pep_expr = sym.lambdify([variables], k2pep_numerator/k2pep_denominator, "numpy")
-    v2max_numerator_value = v2max_nr_expr(experimental_data)
-    v2max_denominator_value = v2max_dr_expr(experimental_data)
-    v2max_value = v2max_expr(experimental_data)
-    k2pep_numerator_value = k2pep_nr_expr(experimental_data)
-    k2pep_denominator_value = k2pep_dr_expr(experimental_data)
-    k2pep_value = k2pep_expr(experimental_data)
+    k2pep_numerator_value = x21 * (v21 * x22 - v22 * x22)
+    k2pep_denominator_value = v22 * x21 - v21 * x22
+    v2max_value = v2max_numerator_value/v2max_denominator_value
+    k2pep_value = k2pep_numerator_value/k2pep_denominator_value
 
     return [v2max_numerator_value, v2max_denominator_value, v2max_value], \
            [k2pep_numerator_value, k2pep_denominator_value, k2pep_value]
