@@ -96,41 +96,35 @@ def flux_1_ident_expression(experimental_data):
         _, _, _, v11, v12, _, \
         _, _, _, _, _, _ = define_sym_variables()
 
+    # get variable values (w/o sympy directly from experimental data)
+    ac1, x11, x21, x31, v11, v21, v31, v41, \
+    ac2, x12, x22, x32, v12, v22, v32, v42, \
+    ac3, x13, x23, x33, v13, v23, v33, v43 = list(experimental_data)
+    #ac = experimental_data[range(0, 24, 8)]
+    #x_ranges = [range(i, 24, 8) for i in range(1, 4)]
+    #all_x_ranges = [list(np.array(x_ranges)[:, i]) for i in range(0, 3)]
+    #x = [experimental_data[all_x_ranges[i]] for i in range(0, 3)]
+    #v_ranges = [range(i, 24, 8) for i in range(4, 8)]
+    #all_v_ranges = [list(np.array(v_ranges)[:, j]) for j in range(0, 3)]
+    #v = [experimental_data[all_v_ranges[j]] for j in range(0, 3)]
+
+    # flux numerator and denominator w/o sympy
     # symbolic expression for flux v1 w/o enzyme concentration data
-    v1max_numerator = ac1 * v11 * v12 - ac2 * v11 * v12
-    v1max_denominator = -(ac2 * v11 - ac1 * v12)
-    k1ac_numerator = ac1 * (ac2 * v11 - ac2 * v12)
-    k1ac_denominator = -ac2 * v11 + ac1 * v12
-    v1max_nr_expr = sym.lambdify([variables], v1max_numerator, "numpy")
-    v1max_dr_expr = sym.lambdify([variables], v1max_denominator, "numpy")
-    k1ac_nr_expr = sym.lambdify([variables], k1ac_numerator, "numpy")
-    k1ac_dr_expr = sym.lambdify([variables], k1ac_denominator, "numpy")
-    v1max_expression = sym.lambdify([variables], v1max_numerator/v1max_denominator, "numpy")
-    k1ac_expression = sym.lambdify([variables], k1ac_numerator/k1ac_denominator, "numpy")
-    v1max_no_enzyme_numerator_value = v1max_nr_expr(experimental_data)
-    v1max_no_enzyme_denominator_value = v1max_dr_expr(experimental_data)
-    v1max_no_enzyme_value = v1max_expression(experimental_data)
-    k1ac_no_enzyme_numerator_value = k1ac_nr_expr(experimental_data)
-    k1ac_no_enzyme_denominator_value = k1ac_dr_expr(experimental_data)
-    k1ac_no_enzyme_value = k1ac_expression(experimental_data)
+    v1max_no_enzyme_numerator_value = ac1 * v11 * v12 - ac2 * v11 * v12
+    v1max_no_enzyme_denominator_value = -(ac2 * v11 - ac1 * v12)
+    k1ac_no_enzyme_numerator_value = ac1 * (ac2 * v11 - ac2 * v12)
+    k1ac_no_enzyme_denominator_value = -ac2 * v11 + ac1 * v12
+
+    v1max_no_enzyme_value = v1max_no_enzyme_numerator_value/v1max_no_enzyme_denominator_value
+    k1ac_no_enzyme_value = k1ac_no_enzyme_numerator_value/k1ac_no_enzyme_denominator_value
 
     # symbolic expression for flux v1 w/ enzyme concentration data
-    k1cat_nr = - ac1 * v11 * v12 + ac2 * v11 * v12
-    k1cat_dr = -(ac1 * v12 * x31 - ac2 * v11 * x32)
-    k1cat_nr_expr = sym.lambdify([variables], k1cat_nr, "numpy")
-    k1cat_dr_expr = sym.lambdify([variables], k1cat_dr, "numpy")
-    k1cat_expression = sym.lambdify([variables], k1cat_nr / k1cat_dr, "numpy")
-    k1ac_nr = ac1 * (-ac2 * v12 * x31 + ac2 * v11 * x32)
-    k1ac_dr = ac1 * v12 * x31 - ac2 * v11 * x32
-    k1ac_nr_expr = sym.lambdify([variables], k1ac_nr, "numpy")
-    k1ac_dr_expr = sym.lambdify([variables], k1ac_dr, "numpy")
-    k1ac_expression = sym.lambdify([variables], k1ac_nr/k1ac_dr, "numpy")
-    k1cat_enzyme_numerator_value = k1cat_nr_expr(experimental_data)
-    k1cat_enzyme_denominator_value = k1cat_dr_expr(experimental_data)
-    k1cat_enzyme_value = k1cat_expression(experimental_data)
-    k1ac_enzyme_numerator_value = k1ac_nr_expr(experimental_data)
-    k1ac_enzyme_denominator_value = k1ac_dr_expr(experimental_data)
-    k1ac_enzyme_value = k1ac_expression(experimental_data)
+    k1cat_enzyme_numerator_value = - ac1 * v11 * v12 + ac2 * v11 * v12
+    k1cat_enzyme_denominator_value = -(ac1 * v12 * x31 - ac2 * v11 * x32)
+    k1cat_enzyme_value = k1cat_enzyme_numerator_value/k1cat_enzyme_denominator_value
+    k1ac_enzyme_numerator_value = ac1 * (-ac2 * v12 * x31 + ac2 * v11 * x32)
+    k1ac_enzyme_denominator_value = ac1 * v12 * x31 - ac2 * v11 * x32
+    k1ac_enzyme_value = k1ac_enzyme_numerator_value/k1ac_enzyme_denominator_value
 
     return [v1max_no_enzyme_numerator_value, v1max_no_enzyme_denominator_value, v1max_no_enzyme_value], \
            [k1ac_no_enzyme_numerator_value, k1ac_no_enzyme_denominator_value, k1ac_no_enzyme_value], \
