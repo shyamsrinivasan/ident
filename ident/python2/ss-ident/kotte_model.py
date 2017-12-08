@@ -91,10 +91,10 @@ def define_sym_variables():
 def flux_1_ident_expression(experimental_data):
     """symbolic and lambdify expression for flux 1 denominator from mathematica"""
     # define symbols and variables (obtained through experimental data
-    variables, ac1, ac2, _,\
-        _, _, _, _, _, _, x31, x32, _,\
-        _, _, _, v11, v12, _, \
-        _, _, _, _, _, _ = define_sym_variables()
+    #variables, ac1, ac2, _,\
+    #    _, _, _, _, _, _, x31, x32, _,\
+    #    _, _, _, v11, v12, _, \
+    #    _, _, _, _, _, _ = define_sym_variables()
 
     # get variable values (w/o sympy directly from experimental data)
     ac1, x11, x21, x31, v11, v21, v31, v41, \
