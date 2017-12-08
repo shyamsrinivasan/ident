@@ -1030,6 +1030,7 @@ def calculate_experiment_combos(ident_details, experiment_details, perturbation_
 
 
 def process_info(ident_details, experiment_details, perturbation_details, number_fluxes):
+    number_data, p = ident_details["boolean"].shape
     # parameter-based classification of experimental datasets
     fp_list = parameter_based_processing(ident_details)
 
