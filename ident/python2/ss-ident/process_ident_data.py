@@ -161,9 +161,9 @@ def calculate_experiment_combos(ident_details, experiment_details, perturbation_
                 new_option_name = 'combination {}'.format(new_combo_number + 1)
                 new_option_composition = [chosen_data["id"], dict_id[options]["id"]]
                 new_option_experiments = [chosen_data["experiments"], dict_id[options]["experiments"]]
-                new_option_parameters = list(set(chosen_data["parameters"]) | set(dict_id[options]["parameters"]))
                 new_options_parameter_ids = list(
                     set(chosen_data["parameter_ids"]) | set(dict_id[options]["parameter_ids"]))
+                new_option_parameters = ident_parameter_name(new_options_parameter_ids)
                 combo_info = {'id': new_option_composition,
                               'experiments': new_option_experiments, 'parameters': new_option_parameters,
                               'parameter_ids': new_options_parameter_ids}
