@@ -3,7 +3,9 @@ from generate_noisy_data import generate_noisy_data
 from generate_noisy_data import run_noisy_parameter_perturbation
 from kotte_model import establish_kotte_flux_identifiability
 from kotte_model import arrange_experimental_data
-from kotte_model import process_info
+from kotte_model import ident_parameter_name
+from kotte_model import kotte_parameter_name
+from process_ident_data import process_info
 from kotte_model import write_results_2_file
 
 # generate noisy experimental data for testing identifiability
@@ -49,7 +51,8 @@ ident_details = establish_kotte_flux_identifiability(experimental_datasets, choo
 print('Perturbation analysis for identifiability complete.\n')
 
 # data processing
-data_list, new_combos, max_parameter = process_info(ident_details, experimental_datasets, perturbation_details, 3)
+data_list, new_combos, max_parameter = process_info(ident_details, experimental_datasets, perturbation_details, 3,
+                                                    ident_parameter_name, kotte_parameter_name)
 
 # create data for write_2_file and write to file
 # write_results_2_file(ident_details, 3, fp_list, data_list)
