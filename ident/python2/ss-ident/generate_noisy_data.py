@@ -23,9 +23,17 @@ def generate_data(y0, all_options, kinetics):
         y_dynamic = []
         flux_dynamic = []
 
+    # info on bistability
+    if y_dynamic[-1, 0] > y_dynamic[-1, 1]:
+        bistable = 1
+    elif y_dynamic[-1, 0] < y_dynamic[-1, 1]:
+        bistable = 2
+    else:
+        bistable = 0
+
     # get ss info from dynamic data
-    steady_state_info = {"y":y_dynamic[-1, :], "flux":flux_dynamic[-1, :]}
-    dynamic_info = {"y":y_dynamic, "flux":flux_dynamic, "time":time}
+    steady_state_info = {"y":y_dynamic[-1, :], "flux":flux_dynamic[-1, :], "ssid":bistable}
+    dynamic_info = {"y":y_dynamic, "flux":flux_dynamic, "time":time, "ssid":bistable}
 
     return steady_state_info, dynamic_info
 
@@ -64,10 +72,17 @@ def generate_noisy_data(y0, all_options, kinetics):
 
     # add noise to dynamic data
     noisy_concentration_dynamic, noisy_flux_dynamic = add_noise_dynamic(concentration_dynamic, flux_dynamic)
-    noisy_dynamic_info = {"y":noisy_concentration_dynamic, "flux":noisy_flux_dynamic, "time":dynamic_info["time"]}
-    noisy_steady_state_info = {"y":noisy_concentration_dynamic[-1, :], "flux":noisy_flux_dynamic[-1, :]}
-    # noisy_concentration_steady_state =
-    # noisy_flux_steady_state =
+    # info on bistability
+    if noisy_concentration_dynamic[-1, 0] > noisy_concentration_dynamic[-1, 1]:
+        bistable = 1
+    elif noisy_concentration_dynamic[-1, 0] < noisy_concentration_dynamic[-1, 1]:
+        bistable = 2
+    else:
+        bistable = 0
+    noisy_dynamic_info = {"y":noisy_concentration_dynamic, "flux":noisy_flux_dynamic,
+                          "time":dynamic_info["time"], "ssid":bistable}
+    noisy_steady_state_info = {"y":noisy_concentration_dynamic[-1, :],
+                               "flux":noisy_flux_dynamic[-1, :], "ssid":bistable}
 
     return noisy_steady_state_info, noisy_dynamic_info, \
            steady_state_info, dynamic_info
@@ -87,6 +102,7 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options, 
     experiment_info_boolean = []
     perturbed_parameter = np.zeros((len(parameter_perturbation), len(ode_parameters)))
     perturbation_indices = np.zeros((len(parameter_perturbation), 2))
+    perturbation_ssid = np.zeros((len(parameter_perturbation), 2))
 
     for index, p_value in enumerate(parameter_perturbation):
         print('Perturbation {}\n'.format(index+1))
@@ -100,6 +116,14 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options, 
         noisy_dynamic.append(noisy_dynamic_iter)
         ss_info.append(ss_iter)
         dynamic_info.append(dynamic_iter)
+        # initial ss info
+        if y0[0] > y0[1]:
+            perturbation_ssid[index, 0] = 1
+        elif y0[0] < y0[1]:
+            perturbation_ssid[index, 0] = 2
+        # final ss info
+        perturbation_ssid[index, 1] = noisy_ss_iter["ssid"]
+
         perturbed_parameter[index, :] = changed_ode_parameter[:]
         perturbation_indices[index, :] = parameter_id-1, parameter_change
         boolean_info = [False]*len(ode_parameters)
@@ -113,9 +137,9 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options, 
         plot_multiple_dynamics(dynamic_info)
         plt.close("all")
 
-
-    perturbation_field_names = ['values', 'indices', 'original', 'boolean']
+    perturbation_field_names = ['values', 'indices', 'original', 'boolean', 'ssid']
     perturbation_details = dict(zip(perturbation_field_names,
                                     [perturbed_parameter, perturbation_indices,
-                                     np.array(ode_parameters[:]), np.array(experiment_info_boolean[:])]))
+                                     np.array(ode_parameters[:]), np.array(experiment_info_boolean[:]),
+                                     perturbation_ssid]))
     return noisy_ss, noisy_dynamic, perturbation_details, ss_info, dynamic_info

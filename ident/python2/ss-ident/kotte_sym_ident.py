@@ -37,9 +37,11 @@ noisy_ss, noisy_dynamic, perturbation_details, _, dynamic_info = \
 
 noisy_exp_xss = []
 noisy_exp_fss = []
+noisy_exp_ssid = []
 for ss_values in noisy_ss:
     noisy_exp_xss.append(ss_values["y"])
     noisy_exp_fss.append(ss_values["flux"])
+    noisy_exp_ssid.append(ss_values["ssid"])
 
 # experimental data based on order of inputs for lambdify expressions
 exp_flux_index = np.array([0, 3, 2, 4])
