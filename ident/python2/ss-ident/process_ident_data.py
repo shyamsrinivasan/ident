@@ -74,13 +74,16 @@ def get_useful_data_info(ident_boolean_array, experiment_details, perturbation_d
                           for i in it.compress(range(0, p), list(ident_boolean_array[data_id, :]))]
         data_set_ident_id = [i for i in it.compress(range(0, p), list(ident_boolean_array[data_id, :]))]
         # identify all experiments for given data set
-        perturbation_id = [int(i) for i in experiment_details["details"][data_id, range(0, 12, 4)].tolist()]
+        #perturbation_id = [int(i) for i in experiment_details["details"][data_id, range(0, 12, 4)].tolist()]
+        perturbation_id = experiment_details["experiment_id"][data_id]
         # identify parameters perturbed by said experiment
         perturbed_parameters = perturbation_details["indices"][perturbation_id, :]
+        #perturbed_parameters = experiment_details["parameter_ids"][data_id]
         # get parameter names from parameter indices
         perturbed_parameter_name = [(model_parameter_name(int(j[0])), j[1]) for j in perturbed_parameters.tolist()]
         info = {'id': data_id, 'parameters': data_set_ident,
-                'experiments': perturbed_parameter_name, 'parameter_ids':data_set_ident_id}
+                'experiments': perturbed_parameter_name, 'parameter_ids':data_set_ident_id,
+                'experiment_id':perturbation_id, 'ssid':experiment_details["ssid"][data_id]}
         parameters_identified_by_max_data_id.append((data_set_name, info))
         data_needed_id += 1
     data_list = dict(parameters_identified_by_max_data_id)
