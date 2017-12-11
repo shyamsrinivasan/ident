@@ -767,15 +767,58 @@ def get_ident_value(ident_function_list, experimental_data_list):
     return all_identifiability_values, number_of_parameters_per_flux
 
 
-def ident_parameter_name(parameter_id):
-    parameter_list = ['V1max', 'K1ac', 'k1cat', 'K1ac',
+def ident_parameter_name(parameter_id, flux_name=()):
+    parameter_list = ['V1max', 'K1ac_no_enzyme', 'k1cat', 'K1ac_enzyme',
                       'V2max', 'K2pep',
                       'V3max_option1', 'K3fdp_option1', 'K3pep_option1',
                       'V3max_option2', 'K3fdp_option2', 'K3pep_option2']
+    flux_parameter_list = {"flux1":['V1max', 'K1ac_no_enzyme', 'k1cat', 'K1ac_enzyme'],
+                           "flux2":['V2max', 'K2pep'],
+                           "flux3":['V3max_option1', 'K3fdp_option1', 'K3pep_option1',
+                                    'V3max_option2', 'K3fdp_option2', 'K3pep_option2']}
+    if flux_name:
+        parameter_name = [flux_parameter_list[name][id] for name, id in zip(flux_name, parameter_id)]
+    else:
+        try:
+            parameter_name = [parameter_list[id] for id in parameter_id]
+        except TypeError:
+            parameter_name = parameter_list[parameter_id]
+    return parameter_name
+
+
+def return_flux_based_id(parameter_id):
+    parameter_list = ['V1max', 'K1ac_no_enzyme', 'k1cat', 'K1ac_enzyme',
+                      'V2max', 'K2pep',
+                      'V3max_option1', 'K3fdp_option1', 'K3pep_option1',
+                      'V3max_option2', 'K3fdp_option2', 'K3pep_option2']
+    flux_parameter_list = {"flux1": ['V1max', 'K1ac_no_enzyme', 'k1cat', 'K1ac_enzyme'],
+                           "flux2": ['V2max', 'K2pep'],
+                           "flux3": ['V3max_option1', 'K3fdp_option1', 'K3pep_option1',
+                                     'V3max_option2', 'K3fdp_option2', 'K3pep_option2']}
     try:
-        return [parameter_list[id] for id in parameter_id]
+        parameter_name = [parameter_list[id] for id in parameter_id]
     except TypeError:
-        return parameter_list[parameter_id]
+        parameter_name = parameter_list[parameter_id]
+    chosen_flux_name = []
+    chosen_flux_parameter_id = []
+    if isinstance(parameter_name, list):
+        for j_parameter in parameter_name:
+            p_boolean = []
+            for flux_name in flux_parameter_list:
+                boolean_existence = [True if j_parameter==parameter_k_flux else False
+                                     for parameter_k_flux in flux_parameter_list[flux_name]]
+                p_boolean.append(boolean_existence)
+                if any(boolean_existence):
+                    chosen_flux_name.append(flux_name)
+                    chosen_flux_parameter_id.append([i for i, val in enumerate(boolean_existence) if val][0])
+    else:
+        for flux_name in flux_parameter_list:
+            boolean_existence = [True if parameter_name == parameter_k_flux else False
+                                 for parameter_k_flux in flux_parameter_list[flux_name]]
+            if any(boolean_existence):
+                chosen_flux_name.append(flux_name)
+                chosen_flux_parameter_id.append([i for i, val in enumerate(boolean_existence) if val])
+    return chosen_flux_name, chosen_flux_parameter_id
 
 
 def kotte_parameter_name(parameter_id):
@@ -865,6 +908,9 @@ def establish_kotte_flux_identifiability(all_data, choose):
     # process identifiability data
     _, plist_boolean = process_ident_data(ident_values, number_data)
     ident_details = {"boolean":plist_boolean, "values":ident_values, "parameters":parameters_per_flux}
+
+    # flux_name, parameter_id = return_flux_based_id([5])
+    # parameter_name = ident_parameter_name(parameter_id, flux_name)
 
     return ident_details
 
