@@ -902,6 +902,7 @@ def arrange_experimental_data(xss, fss,
     parameters = perturbation_details["values"]
     experiment_indices = perturbation_details["indices"]
     original = perturbation_details["original"]
+    ssid = perturbation_details["ssid"]
 
     # get all experiment combinations based on experiments_per_set
     number_of_experiments = len(xss)
@@ -918,13 +919,23 @@ def arrange_experimental_data(xss, fss,
     number_data_sets = len(data_combinations)
     size_of_data_set = 8
     dataset_value_array = np.zeros((number_data_sets, size_of_data_set * experiments_per_set))
-    all_parameter_changes = np.zeros((number_data_sets, 4 * experiments_per_set))
+    all_parameter_change = np.zeros((number_data_sets, 4 * experiments_per_set))
 
     # arrange and collect parameter/ss values
+    experiment_index_iter = []
+    all_parameter_ids = []
+    all_parameter_values = []
+    all_parameter_changes = []
+    all_ssid = []
     for data_index, experiment_index in enumerate(data_combinations):
         data = []
+        parameter_id = []
         changes = []
-        for index in experiment_index:
+        experiment_index_iter.append(experiment_index)
+        parameter_value = []
+        parameter_change = []
+        ssid_changes = []
+        for iter, index in enumerate(experiment_index):
             data.append(np.hstack((parameters[index][-1],
                                    xss[index],
                                    fss[index][flux_id])))
@@ -932,9 +943,21 @@ def arrange_experimental_data(xss, fss,
                                                   changed_parameters=parameters,
                                                   experiment_index=index,
                                                   parameter_index=int(experiment_indices[index, 0])))
-        dataset_value_array[data_index, :] = np.hstack(data[:])
-        all_parameter_changes[data_index, :] = np.hstack(changes[:])
+            parameter_id.append(int(experiment_indices[index, 0]))
+            parameter_value.append(parameters[index, parameter_id[iter]])
+            parameter_change.append(changes[iter][0, 3])
+            ssid_changes.append(list(ssid[index, :]))
 
-    dataset_keys = ['values', 'details', 'boolean']
-    experimental_data = dict(zip(dataset_keys, [dataset_value_array, all_parameter_changes, data_combination_boolean]))
+        dataset_value_array[data_index, :] = np.hstack(data[:])
+        all_parameter_change[data_index, :] = np.hstack(changes[:])
+        all_parameter_ids.append(parameter_id)
+        all_parameter_values.append(parameter_value)
+        all_parameter_changes.append(parameter_change)
+        all_ssid.append(np.array(ssid_changes))
+
+    dataset_keys = ['values', 'details', 'boolean', 'parameter_ids',
+                    'parameter_values', 'parameter_changes', 'ssid', 'experiment_id']
+    experimental_data = dict(zip(dataset_keys, [dataset_value_array, all_parameter_change, data_combination_boolean,
+                                                all_parameter_ids, all_parameter_values, all_parameter_changes,
+                                                all_ssid, experiment_index_iter]))
     return experimental_data
