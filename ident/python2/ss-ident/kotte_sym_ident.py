@@ -7,6 +7,7 @@ from kotte_model import ident_parameter_name
 from kotte_model import kotte_parameter_name
 from process_ident_data import process_info
 from kotte_model import write_results_2_file
+from plot_ident_results import plot_identifiable_parameter
 
 # generate noisy experimental data for testing identifiability
 y0 = np.array([5, 1, 1])
@@ -56,8 +57,11 @@ print('Perturbation analysis for identifiability complete.\n')
 data_list, new_combos, max_parameter = process_info(ident_details, experimental_datasets, perturbation_details, 3,
                                                     ident_parameter_name, kotte_parameter_name)
 
+# plot results
+plot_identifiable_parameter(max_parameter)
+
 # create data for write_2_file and write to file
-# write_results_2_file(ident_details, 3, fp_list, data_list)
+write_results_2_file(ident_details, 3, fp_list, data_list)
 
 
 # clear workspace (removes all module names and objects)
