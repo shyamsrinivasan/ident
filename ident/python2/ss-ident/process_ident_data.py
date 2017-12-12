@@ -232,6 +232,18 @@ def process_info(ident_details, experiment_details, perturbation_details,
                                                  temp_list)
         combination_data.append(new_combos)
 
+    # print total individual data sets required and combinations found
+    number_original_data = 0
+    number_combination_data = 0
+    for list_pos, i_data in enumerate(original_data)):
+        # original data sets
+        print('Original Data sets that can detect {} parameters: {}'.format(data_usefulness["parameters_ided"],
+                                                                            len(i_data)))
+        number_original_data += len(i_data)
+        # combination data sets
+        print('Combination Data sets for more parameters: {}'.format(len(combination_data[list_pos])))
+        number_combination_data += len(combination_data[list_pos])
+
     # decide which experiments to perform for each parameter based on above calculations
 
     # most easily identifieable parameter - based on frequency of identification
