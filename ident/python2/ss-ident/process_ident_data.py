@@ -36,6 +36,14 @@ def process_ident_data(ident_values, number_data):
     return p_list, np.array(p_list_boolean)
 
 
+def get_all_indices(mother_list, value):
+    current_value_id = []
+    for i in it.compress(range(0, len(mother_list)),
+                         [True if j_id == value else False for j_id in mother_list]):
+        current_value_id.append(i)
+    return current_value_id
+
+
 def get_most_useful_dataset(ident_boolean_array):
     """get data identifying most parameters (most useful data set)"""
     # most useful dataset - based on number of parameter identified
@@ -47,13 +55,7 @@ def get_most_useful_dataset(ident_boolean_array):
 
     # get data identifying most parameters (most useful data set)
     max_useful_data = max(identified_parameters)
-    max_data_id = [identified_parameters.index(max(identified_parameters))]
-    for idata, number_identified_parameter in enumerate(identified_parameters):
-        if number_identified_parameter == max_useful_data and idata not in max_data_id:
-            max_data_id.append(idata)
-        elif number_identified_parameter > max_useful_data:
-            max_useful_data = number_identified_parameter
-            max_data_id = [idata]
+    max_data_id = get_all_indices(identified_parameters, max_useful_data)
     max_data = {"maximum": max_useful_data,
                 "id": max_data_id,
                 "parameters": identified_parameters}
@@ -69,25 +71,24 @@ def get_useful_data_info(ident_boolean_array, experiment_details, perturbation_d
     # get parameters identified by data_needed
     data_needed_id = 0
     for data_id in data_needed:
-        data_set_name = 'option {}'.format(data_needed_id + 1)
-        data_set_ident = [ident_parameter_name(i)
-                          for i in it.compress(range(0, p), list(ident_boolean_array[data_id, :]))]
+        # data_set_name = 'option {}'.format(data_needed_id + 1)
+        # data_set_ident = [ident_parameter_name(i)
+        #                   for i in it.compress(range(0, p), list(ident_boolean_array[data_id, :]))]
         data_set_ident_id = [i for i in it.compress(range(0, p), list(ident_boolean_array[data_id, :]))]
         # identify all experiments for given data set
         #perturbation_id = [int(i) for i in experiment_details["details"][data_id, range(0, 12, 4)].tolist()]
         perturbation_id = experiment_details["experiment_id"][data_id]
         # identify parameters perturbed by said experiment
-        perturbed_parameters = perturbation_details["indices"][perturbation_id, :]
-        #perturbed_parameters = experiment_details["parameter_ids"][data_id]
+        # perturbed_parameters = perturbation_details["indices"][perturbation_id, :]
+        # perturbed_parameters = experiment_details["parameter_ids"][data_id]
         # get parameter names from parameter indices
-        perturbed_parameter_name = [(model_parameter_name(int(j[0])), j[1]) for j in perturbed_parameters.tolist()]
-        info = {'id': data_id, 'parameters': data_set_ident,
-                'experiments': perturbed_parameter_name, 'parameter_ids':data_set_ident_id,
+        # perturbed_parameter_name = [(model_parameter_name(int(j[0])), j[1]) for j in perturbed_parameters.tolist()]
+        info = {'id': data_id, 'parameter_ids':data_set_ident_id,
                 'experiment_id':perturbation_id, 'ssid':experiment_details["ssid"][data_id]}
-        parameters_identified_by_max_data_id.append((data_set_name, info))
+        parameters_identified_by_max_data_id.append(info)
         data_needed_id += 1
-    data_list = dict(parameters_identified_by_max_data_id)
-    return data_list
+    #data_list = dict(parameters_identified_by_max_data_id)
+    return parameters_identified_by_max_data_id
 
 
 def get_additional_data(ident_details, experiment_details, perturbation_details,
@@ -114,7 +115,8 @@ def get_additional_data(ident_details, experiment_details, perturbation_details,
                                              perturbation_details,
                                              list_elements,
                                              ident_parameter_name, model_parameter_name)
-            extra_data_details.append(data_list)
+            for dictionary in data_list:
+                extra_data_details.append(dictionary)
         else:
             extra_data_details.append({})
 
@@ -144,8 +146,8 @@ def calculate_experiment_combos(ident_details, experiment_details, perturbation_
     number_data, p = ident_details["boolean"].shape
     new_combos = []
     new_combo_number = 0
-    for option_id in data_list:
-        chosen_data = data_list[option_id]
+    for chosen_data in data_list:
+        # chosen_data = data_list[option_id]
         data_set_id = chosen_data["id"]
         # get parameters identified
         identified_parameters = [i for i in it.compress(range(0, p), list(ident_details["boolean"][data_set_id, :]))]
@@ -160,22 +162,53 @@ def calculate_experiment_combos(ident_details, experiment_details, perturbation_
                                          ident_parameter_name,
                                          model_parameter_name)
         for extra_id, dict_id in enumerate(extra_data):
-            for id, options in enumerate(dict_id):
-                new_option_name = 'combination {}'.format(new_combo_number + 1)
-                new_option_composition = [chosen_data["id"], dict_id[options]["id"]]
-                new_option_experiments = [chosen_data["experiments"], dict_id[options]["experiments"]]
-                new_option_experiment_id = [chosen_data["experiment_id"], dict_id[options]["experiment_id"]]
-                new_option_ssid = [chosen_data["ssid"], dict_id[options]["ssid"]]
-                new_options_parameter_ids = \
-                    list(set(chosen_data["parameter_ids"]) | set(dict_id[options]["parameter_ids"]))
-                new_option_parameters = ident_parameter_name(new_options_parameter_ids)
-                combo_info = {'id': new_option_composition,
-                              'experiments': new_option_experiments, 'parameters': new_option_parameters,
-                              'parameter_ids': new_options_parameter_ids, 'experiment_ids':new_option_experiment_id,
-                              'ssid':new_option_ssid}
-                new_combos.append((new_option_name, combo_info))
-                new_combo_number += 1
+            new_option_name = 'combination {}'.format(new_combo_number + 1)
+            new_option_composition = [chosen_data["id"], dict_id["id"]]
+            new_option_experiment_id = [chosen_data["experiment_id"], dict_id["experiment_id"]]
+            new_option_ssid = [chosen_data["ssid"], dict_id["ssid"]]
+            new_options_parameter_ids = \
+                list(set(chosen_data["parameter_ids"]) | set(dict_id["parameter_ids"]))
+            combo_info = {'id': new_option_composition, 'parameter_ids': new_options_parameter_ids,
+                          'experiment_ids': new_option_experiment_id,
+                          'ssid': new_option_ssid}
+            new_combos.append(combo_info)
+            new_combo_number += 1
     return new_combos
+
+
+def get_top_useful_data(max_data):
+    number_parameters_ided = max_data["parameters"]
+    maximum_val = max(number_parameters_ided)
+    all_current_values = []
+    all_data_id = []
+    current_value = maximum_val
+    while current_value >= min(number_parameters_ided):
+        current_value_id = get_all_indices(number_parameters_ided, current_value)
+        all_data_id.append(current_value_id)
+        all_current_values.append(current_value)
+        current_value -= 1
+    return all_current_values, all_data_id
+
+
+def data_usefulness_percentage(ident_details):
+    """get percentage of data identifying n, n-1, n-2, ... number of parameters. n is the maximum number of
+    parameters identified by a data set"""
+    number_data, _ = ident_details["boolean"].shape
+    # most useful dataset - based on number of parameter identified
+    max_data = get_most_useful_dataset(ident_details["boolean"])
+
+    # get top n, n-1, n-2, .... parameters identifying data sets
+    number_parameters_identified, data_id = get_top_useful_data(max_data)
+
+    # percentage of datasets identifying x number of parameters
+    percentage_of_total = []
+    for i, j_parameter_identified in enumerate(number_parameters_identified):
+        number_data_identifying_j = len(data_id[i])
+        percentage_of_total.append(float(number_data_identifying_j) / float(number_data) * 100)
+    data_usefulness = {'number_parameters_ided': number_parameters_identified,
+                       'index': data_id,
+                       'percentage': percentage_of_total}
+    return data_usefulness
 
 
 def process_info(ident_details, experiment_details, perturbation_details, number_fluxes,
@@ -189,6 +222,16 @@ def process_info(ident_details, experiment_details, perturbation_details, number
 
     # most useful dataset - based on number of parameter identified
     max_data = get_most_useful_dataset(ident_details["boolean"])
+
+    # get data identification percentages to classify utility of data sets
+    data_usefulness = data_usefulness_percentage(ident_details)
+
+    # get info all the aforementioned data sets
+    temp_list = get_useful_data_info(ident_details["boolean"],
+                                     experiment_details,
+                                     perturbation_details,
+                                     data_usefulness["index"][0],
+                                     ident_parameter_name, model_parameter_name)
 
     # decide which experiments to perform for each parameter based on above calculations
     # get all info on most identifiable data sets (most useful data set)
