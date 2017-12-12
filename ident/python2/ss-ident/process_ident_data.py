@@ -62,8 +62,7 @@ def get_most_useful_dataset(ident_boolean_array):
     return max_data
 
 
-def get_useful_data_info(ident_boolean_array, experiment_details, perturbation_details, data_needed,
-                         ident_parameter_name, model_parameter_name):
+def get_useful_data_info(ident_boolean_array, experiment_details, perturbation_details, data_needed):
     """get info all data sets that identify maximum number of parameters"""
     _, p = ident_boolean_array.shape
     # data_needed = max_data["id"]
@@ -91,8 +90,7 @@ def get_useful_data_info(ident_boolean_array, experiment_details, perturbation_d
     return parameters_identified_by_max_data_id
 
 
-def get_additional_data(ident_details, experiment_details, perturbation_details,
-                        unidentified_parameter_ids, ident_parameter_name, model_parameter_name):
+def get_additional_data(ident_details, experiment_details, perturbation_details, unidentified_parameter_ids):
     """find data sets that identify parameters in unidentified set"""
     number_data, p = ident_details["boolean"].shape
     # get boolean for unidentified parameters
@@ -113,8 +111,7 @@ def get_additional_data(ident_details, experiment_details, perturbation_details,
             data_list = get_useful_data_info(ident_details["boolean"],
                                              experiment_details,
                                              perturbation_details,
-                                             list_elements,
-                                             ident_parameter_name, model_parameter_name)
+                                             list_elements)
             for dictionary in data_list:
                 extra_data_details.append(dictionary)
         else:
@@ -138,8 +135,7 @@ def get_additional_data(ident_details, experiment_details, perturbation_details,
     return extra_data_details
 
 
-def calculate_experiment_combos(ident_details, experiment_details, perturbation_details, data_list,
-                                ident_parameter_name, model_parameter_name):
+def calculate_experiment_combos(ident_details, experiment_details, perturbation_details, data_list):
     """choose additional data sets and consequently, experiments (if possible) to identify other parameters not
     identified by chosen data set(s)"""
     # get parameters identified by chosen data set
@@ -158,9 +154,7 @@ def calculate_experiment_combos(ident_details, experiment_details, perturbation_
         extra_data = get_additional_data(ident_details,
                                          experiment_details,
                                          perturbation_details,
-                                         nonidentified_parameters,
-                                         ident_parameter_name,
-                                         model_parameter_name)
+                                         nonidentified_parameters)
         for extra_id, dict_id in enumerate(extra_data):
             if dict_id:
                 new_option_name = 'combination {}'.format(new_combo_number + 1)
@@ -212,7 +206,7 @@ def data_usefulness_percentage(ident_details):
     return data_usefulness
 
 
-def process_info(ident_details, experiment_details, perturbation_details, number_fluxes,
+def process_info(ident_details, experiment_details, perturbation_details,
                  ident_parameter_name, model_parameter_name):
     number_data, p = ident_details["boolean"].shape
 
@@ -227,8 +221,7 @@ def process_info(ident_details, experiment_details, perturbation_details, number
         temp_list = get_useful_data_info(ident_details["boolean"],
                                          experiment_details,
                                          perturbation_details,
-                                         data_usefulness["index"][i_data],
-                                         ident_parameter_name, model_parameter_name)
+                                         data_usefulness["index"][i_data])
         original_data.append(temp_list)
 
         # choose additional data sets and consequently, experiments (if possible) to identify other parameters not
@@ -236,8 +229,7 @@ def process_info(ident_details, experiment_details, perturbation_details, number
         new_combos = calculate_experiment_combos(ident_details,
                                                  experiment_details,
                                                  perturbation_details,
-                                                 temp_list,
-                                                 ident_parameter_name, model_parameter_name)
+                                                 temp_list)
         combination_data.append(new_combos)
 
     # decide which experiments to perform for each parameter based on above calculations
