@@ -54,8 +54,12 @@ ident_details = establish_kotte_flux_identifiability(experimental_datasets, choo
 print('Perturbation analysis for identifiability complete.\n')
 
 # data processing
-data_list, new_combos, max_parameter = process_info(ident_details, experimental_datasets, perturbation_details, 3,
-                                                    ident_parameter_name, kotte_parameter_name)
+data_list, original_data_ident, combo_data_ident, max_parameter = \
+    process_info(ident_details,
+                 experimental_datasets,
+                 perturbation_details,
+                 3,
+                 ident_parameter_name, kotte_parameter_name)
 
 # plot results
 plot_identifiable_parameter(max_parameter)
