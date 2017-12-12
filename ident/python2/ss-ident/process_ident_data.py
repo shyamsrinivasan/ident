@@ -215,11 +215,6 @@ def data_usefulness_percentage(ident_details):
 def process_info(ident_details, experiment_details, perturbation_details, number_fluxes,
                  ident_parameter_name, model_parameter_name):
     number_data, p = ident_details["boolean"].shape
-    # parameter-based classification of experimental datasets
-    fp_list = parameter_based_processing(ident_details)
-
-    # dataset dependent classification of parameters
-    # data_list = data_based_processing(ident_details)
 
     # get data identification percentages to classify utility of data sets
     data_usefulness = data_usefulness_percentage(ident_details)
@@ -235,12 +230,7 @@ def process_info(ident_details, experiment_details, perturbation_details, number
                                          data_usefulness["index"][i_data],
                                          ident_parameter_name, model_parameter_name)
         original_data.append(temp_list)
-        # decide which experiments to perform for each parameter based on above calculations
-        #data_list = get_useful_data_info(ident_details["boolean"],
-        #                                 experiment_details,
-        #                                 perturbation_details,
-        #                                 max_data["id"],
-        #                                 ident_parameter_name, model_parameter_name)
+
         # choose additional data sets and consequently, experiments (if possible) to identify other parameters not
         # identified by chosen data set(s)
         new_combos = calculate_experiment_combos(ident_details,
@@ -249,6 +239,8 @@ def process_info(ident_details, experiment_details, perturbation_details, number
                                                  temp_list,
                                                  ident_parameter_name, model_parameter_name)
         combination_data.append(new_combos)
+
+    # decide which experiments to perform for each parameter based on above calculations
 
     # most easily identifieable parameter - based on frequency of identification
     identifying_data = [] # np.zeros((number_parameter, 1))
@@ -271,4 +263,4 @@ def process_info(ident_details, experiment_details, perturbation_details, number
 
     # ident_parameter_names = ident_parameter_name(range(0, 12))
 
-    return data_list, new_combos, max_parameter
+    return data_usefulness, original_data, combination_data, max_parameter
