@@ -162,17 +162,18 @@ def calculate_experiment_combos(ident_details, experiment_details, perturbation_
                                          ident_parameter_name,
                                          model_parameter_name)
         for extra_id, dict_id in enumerate(extra_data):
-            new_option_name = 'combination {}'.format(new_combo_number + 1)
-            new_option_composition = [chosen_data["id"], dict_id["id"]]
-            new_option_experiment_id = [chosen_data["experiment_id"], dict_id["experiment_id"]]
-            new_option_ssid = [chosen_data["ssid"], dict_id["ssid"]]
-            new_options_parameter_ids = \
-                list(set(chosen_data["parameter_ids"]) | set(dict_id["parameter_ids"]))
-            combo_info = {'id': new_option_composition, 'parameter_ids': new_options_parameter_ids,
-                          'experiment_ids': new_option_experiment_id,
-                          'ssid': new_option_ssid}
-            new_combos.append(combo_info)
-            new_combo_number += 1
+            if dict_id:
+                new_option_name = 'combination {}'.format(new_combo_number + 1)
+                new_option_composition = [chosen_data["id"], dict_id["id"]]
+                new_option_experiment_id = [chosen_data["experiment_id"], dict_id["experiment_id"]]
+                new_option_ssid = [chosen_data["ssid"], dict_id["ssid"]]
+                new_options_parameter_ids = \
+                    list(set(chosen_data["parameter_ids"]) | set(dict_id["parameter_ids"]))
+                combo_info = {'id': new_option_composition, 'parameter_ids': new_options_parameter_ids,
+                              'experiment_ids': new_option_experiment_id,
+                              'ssid': new_option_ssid}
+                new_combos.append(combo_info)
+                new_combo_number += 1
     return new_combos
 
 
@@ -220,31 +221,34 @@ def process_info(ident_details, experiment_details, perturbation_details, number
     # dataset dependent classification of parameters
     # data_list = data_based_processing(ident_details)
 
-    # most useful dataset - based on number of parameter identified
-    max_data = get_most_useful_dataset(ident_details["boolean"])
-
     # get data identification percentages to classify utility of data sets
     data_usefulness = data_usefulness_percentage(ident_details)
 
     # get info all the aforementioned data sets
-    temp_list = get_useful_data_info(ident_details["boolean"],
-                                     experiment_details,
-                                     perturbation_details,
-                                     data_usefulness["index"][0],
-                                     ident_parameter_name, model_parameter_name)
-
-    # decide which experiments to perform for each parameter based on above calculations
-    # get all info on most identifiable data sets (most useful data set)
-    data_list = get_useful_data_info(ident_details["boolean"],
-                                     experiment_details,
-                                     perturbation_details,
-                                     max_data["id"],
-                                     ident_parameter_name, model_parameter_name)
-
-    # choose additional data sets and consequently, experiments (if possible) to identify other parameters not
-    # identified by chosen data set(s)
-    new_combos = calculate_experiment_combos(ident_details, experiment_details, perturbation_details, data_list,
-                                             ident_parameter_name, model_parameter_name)
+    original_data = []
+    combination_data = []
+    for i_data in range(0, len(data_usefulness["number_parameters_ided"])):
+        # get all info on all data sets present in useful data from above
+        temp_list = get_useful_data_info(ident_details["boolean"],
+                                         experiment_details,
+                                         perturbation_details,
+                                         data_usefulness["index"][i_data],
+                                         ident_parameter_name, model_parameter_name)
+        original_data.append(temp_list)
+        # decide which experiments to perform for each parameter based on above calculations
+        #data_list = get_useful_data_info(ident_details["boolean"],
+        #                                 experiment_details,
+        #                                 perturbation_details,
+        #                                 max_data["id"],
+        #                                 ident_parameter_name, model_parameter_name)
+        # choose additional data sets and consequently, experiments (if possible) to identify other parameters not
+        # identified by chosen data set(s)
+        new_combos = calculate_experiment_combos(ident_details,
+                                                 experiment_details,
+                                                 perturbation_details,
+                                                 temp_list,
+                                                 ident_parameter_name, model_parameter_name)
+        combination_data.append(new_combos)
 
     # most easily identifieable parameter - based on frequency of identification
     identifying_data = [] # np.zeros((number_parameter, 1))
