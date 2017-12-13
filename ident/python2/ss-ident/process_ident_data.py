@@ -235,10 +235,10 @@ def process_info(ident_details, experiment_details, perturbation_details,
     # print total individual data sets required and combinations found
     number_original_data = 0
     number_combination_data = 0
-    for list_pos, i_data in enumerate(original_data)):
+    for list_pos, i_data in enumerate(original_data):
         # original data sets
-        print('Original Data sets that can detect {} parameters: {}'.format(data_usefulness["parameters_ided"],
-                                                                            len(i_data)))
+        print('Original Data sets that can detect {} parameters: {}'.
+              format(data_usefulness["number_parameters_ided"][list_pos], len(i_data)))
         number_original_data += len(i_data)
         # combination data sets
         print('Combination Data sets for more parameters: {}'.format(len(combination_data[list_pos])))
