@@ -10,11 +10,13 @@ from process_ident_data import process_info
 from kotte_model import write_results_2_file
 from plot_ident_results import flux_parameter_plot_data
 
+
+
+
+
 # generate noisy experimental data for testing identifiability
 y0 = np.array([5, 1, 1])
-all_options_exp_1 = []
-all_options_exp_2 = []
-all_options_exp_3 = []
+
 # default parameter values
 cvode_options = ('Newton', 'Adams', 1e-10, 1e-10, 200)
 ode_parameter_values = np.array([.1, .1, 4e6, .1, .3, 1.1, .45, 2, .25, .2, 1, 1, 1, .1])
@@ -65,14 +67,14 @@ data_list, original_data_ident, combo_data_ident, max_parameter = \
 file_destination = 'C:\Users\shyam\Documents\Courses\CHE1125Project\Results\ident\python2\\figure_1'
 flux_parameter_plot_data(original_data_ident)
 # save plot
-if file_destination:
-    # save figure to file as png and eps
-    plt.savefig(file_destination + '.eps', format='png', dpi=2000)
-    plt.savefig(file_destination + '.png', format='eps', dpi=2000)
+#if file_destination:
+#    # save figure to file as png and eps
+#    plt.savefig(file_destination + '.eps', format='png', dpi=2000)
+#    plt.savefig(file_destination + '.png', format='eps', dpi=2000)
 # plot_identifiable_parameter(max_parameter)
 
 # create data for write_2_file and write to file
-write_results_2_file(ident_details, 3, fp_list, data_list)
+# write_results_2_file(ident_details, 3, fp_list, data_list)
 
 
 # clear workspace (removes all module names and objects)
