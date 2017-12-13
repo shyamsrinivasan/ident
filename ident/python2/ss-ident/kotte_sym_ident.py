@@ -8,6 +8,7 @@ from kotte_model import kotte_parameter_name
 from process_ident_data import process_info
 from kotte_model import write_results_2_file
 from plot_ident_results import plot_identifiable_parameter
+from plot_ident_results import get_flux_parameter_plot_data
 
 # generate noisy experimental data for testing identifiability
 y0 = np.array([5, 1, 1])
@@ -58,11 +59,11 @@ data_list, original_data_ident, combo_data_ident, max_parameter = \
     process_info(ident_details,
                  experimental_datasets,
                  perturbation_details,
-                 3,
                  ident_parameter_name, kotte_parameter_name)
 
 # plot results
-plot_identifiable_parameter(max_parameter)
+get_flux_parameter_plot_data(original_data_ident)
+# plot_identifiable_parameter(max_parameter)
 
 # create data for write_2_file and write to file
 write_results_2_file(ident_details, 3, fp_list, data_list)
