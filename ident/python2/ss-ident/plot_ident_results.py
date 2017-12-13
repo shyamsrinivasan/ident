@@ -65,10 +65,6 @@ def flux_parameter_plot_data(original_data, file_destination=()):
     return None
 
 
-def plot_efficient_data():
-    return None
-
-
 def plot_useful_experiments(ident_details, data_list):
     """get most and least useful experiments based on identifiable and non-identifiable datasets"""
     return None

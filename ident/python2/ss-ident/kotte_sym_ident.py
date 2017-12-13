@@ -39,7 +39,8 @@ flux_parameter_plot_data(original_data_ident)
 #    # save figure to file as png and eps
 #    plt.savefig(file_destination + '.eps', format='png', dpi=2000)
 #    plt.savefig(file_destination + '.png', format='eps', dpi=2000)
-# plot_identifiable_parameter(max_parameter)
+
+
 
 # create data for write_2_file and write to file
 # write_results_2_file(ident_details, 3, fp_list, data_list)
