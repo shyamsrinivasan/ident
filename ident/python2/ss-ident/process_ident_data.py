@@ -206,8 +206,7 @@ def data_usefulness_percentage(ident_details):
     return data_usefulness
 
 
-def process_info(ident_details, experiment_details, perturbation_details,
-                 ident_parameter_name, model_parameter_name):
+def process_info(ident_details, experiment_details, perturbation_details):
     number_data, p = ident_details["boolean"].shape
 
     # get data identification percentages to classify utility of data sets
