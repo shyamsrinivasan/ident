@@ -4,7 +4,7 @@ from kotte_model import ident_parameter_name
 from kotte_model import flux_based_id
 
 
-def get_flux_parameter_plot_data(original_data, file_destination=()):
+def flux_parameter_plot_data(original_data, file_destination=()):
     """calculate and plot the number of data identifying each parameter in each flux"""
     # get parameters identified by each original data set and each combination
     all_boolean_p_id = []

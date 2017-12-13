@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 from generate_noisy_data import generate_noisy_data
 from generate_noisy_data import run_noisy_parameter_perturbation
 from kotte_model import establish_kotte_flux_identifiability
@@ -7,8 +8,7 @@ from kotte_model import ident_parameter_name
 from kotte_model import kotte_parameter_name
 from process_ident_data import process_info
 from kotte_model import write_results_2_file
-from plot_ident_results import plot_identifiable_parameter
-from plot_ident_results import get_flux_parameter_plot_data
+from plot_ident_results import flux_parameter_plot_data
 
 # generate noisy experimental data for testing identifiability
 y0 = np.array([5, 1, 1])
@@ -62,7 +62,13 @@ data_list, original_data_ident, combo_data_ident, max_parameter = \
                  ident_parameter_name, kotte_parameter_name)
 
 # plot results
-get_flux_parameter_plot_data(original_data_ident)
+file_destination = 'C:\Users\shyam\Documents\Courses\CHE1125Project\Results\ident\python2\\figure_1'
+flux_parameter_plot_data(original_data_ident)
+# save plot
+if file_destination:
+    # save figure to file as png and eps
+    plt.savefig(file_destination + '.eps', format='png', dpi=2000)
+    plt.savefig(file_destination + '.png', format='eps', dpi=2000)
 # plot_identifiable_parameter(max_parameter)
 
 # create data for write_2_file and write to file
