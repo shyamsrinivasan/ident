@@ -4,7 +4,7 @@ from kotte_model import ident_parameter_name
 from kotte_model import flux_based_id
 
 
-def get_flux_parameter_plot_data(original_data):
+def get_flux_parameter_plot_data(original_data, file_destination=()):
     """calculate and plot the number of data identifying each parameter in each flux"""
     # get parameters identified by each original data set and each combination
     all_boolean_p_id = []
@@ -54,11 +54,14 @@ def get_flux_parameter_plot_data(original_data):
         axis_obj.invert_yaxis()
         # axis_obj.set_xlabel('Number of Identifying Data Sets')
         axis_obj.set_title(unique_flux_names[iplot])
-        plt.show()
         total_plots += 1
     axarr[-1].set_xlabel('Number of data sets')
     plt.setp([a.get_xticklabels() for a in axarr[0:-2]], visible=False)
     plt.show()
+    if file_destination:
+        # save figure to file as png and eps
+        plt.savefig(file_destination+'.eps', format='png', dpi=2000)
+        plt.savefig(file_destination+'.png', format='eps', dpi=2000)
     return None
 
 
