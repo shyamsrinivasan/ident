@@ -786,7 +786,7 @@ def ident_parameter_name(parameter_id, flux_name=()):
     return parameter_name
 
 
-def return_flux_based_id(parameter_id):
+def flux_based_id(parameter_id):
     parameter_list = ['V1max', 'K1ac_no_enzyme', 'k1cat', 'K1ac_enzyme',
                       'V2max', 'K2pep',
                       'V3max_option1', 'K3fdp_option1', 'K3pep_option1',
@@ -796,13 +796,14 @@ def return_flux_based_id(parameter_id):
                            "flux3": ['V3max_option1', 'K3fdp_option1', 'K3pep_option1',
                                      'V3max_option2', 'K3fdp_option2', 'K3pep_option2']}
     try:
-        parameter_name = [parameter_list[id] for id in parameter_id]
+        parameter_name = [(id, parameter_list[id]) for id in parameter_id]
     except TypeError:
-        parameter_name = parameter_list[parameter_id]
+        parameter_name = (parameter_id, parameter_list[parameter_id])
     chosen_flux_name = []
     chosen_flux_parameter_id = []
+    chosen_flux_orig_id = []
     if isinstance(parameter_name, list):
-        for j_parameter in parameter_name:
+        for orig_id, j_parameter in parameter_name:
             p_boolean = []
             for flux_name in flux_parameter_list:
                 boolean_existence = [True if j_parameter==parameter_k_flux else False
@@ -811,14 +812,16 @@ def return_flux_based_id(parameter_id):
                 if any(boolean_existence):
                     chosen_flux_name.append(flux_name)
                     chosen_flux_parameter_id.append([i for i, val in enumerate(boolean_existence) if val][0])
+                    chosen_flux_orig_id.append(orig_id)
     else:
         for flux_name in flux_parameter_list:
-            boolean_existence = [True if parameter_name == parameter_k_flux else False
+            boolean_existence = [True if parameter_name[1] == parameter_k_flux else False
                                  for parameter_k_flux in flux_parameter_list[flux_name]]
             if any(boolean_existence):
                 chosen_flux_name.append(flux_name)
                 chosen_flux_parameter_id.append([i for i, val in enumerate(boolean_existence) if val])
-    return chosen_flux_name, chosen_flux_parameter_id
+                chosen_flux_orig_id.append(parameter_name[0])
+    return chosen_flux_name, chosen_flux_parameter_id, chosen_flux_orig_id
 
 
 def kotte_parameter_name(parameter_id):
