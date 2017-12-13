@@ -49,3 +49,30 @@ def generate_expdata(y0, cvode_options, ode_parameter_values):
         noisy_exp_ssid.append(ss_values["ssid"])
 
     return noisy_exp_xss, noisy_exp_fss, noisy_exp_ssid, perturbation_details
+
+
+if __name__ == "__main__":
+    import numpy as np
+
+    y0 = np.array([5, 1, 1])
+    # default parameter values
+    cvode_options = ('Newton', 'Adams', 1e-10, 1e-10, 200)
+    ode_parameter_values = np.array([.1, .1, 4e6, .1, .3, 1.1, .45, 2, .25, .2, 1, 1, 1, .1])
+
+    # get initial noisy system steady state
+    initial_ss = initialize_to_ss(y0, cvode_options, ode_parameter_values)
+
+    # all parameter perturbations
+    parameter_perturbation = [(14, 0), (14, 4), (14, 9),
+                              (11, .1), (11, .5), (11, 1), (11, -.1), (11, -.5),
+                              (12, .1), (12, .5), (12, 1), (12, -.1), (12, -.5),
+                              (13, .1), (13, .5), (13, 1), (13, -.1), (13, -.5)]
+    noisy_ss, perturbation_details = perturb_parameters(initial_ss, parameter_perturbation, cvode_options,
+                                                        ode_parameter_values)
+    noisy_exp_xss = []
+    noisy_exp_fss = []
+    noisy_exp_ssid = []
+    for ss_values in noisy_ss:
+        noisy_exp_xss.append(ss_values["y"])
+        noisy_exp_fss.append(ss_values["flux"])
+        noisy_exp_ssid.append(ss_values["ssid"])
