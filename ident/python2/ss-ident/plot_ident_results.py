@@ -38,14 +38,7 @@ def useful_experiments(original_data):
 def flux_parameter_plot_data(original_data, file_destination=()):
     """calculate and plot the number of data identifying each parameter in each flux"""
     # get parameters identified by each original data set and each combination
-    all_boolean_p_id = []
-    for len_pos, i_list in enumerate(original_data):
-        for i_data in i_list:
-            boolean_p_id = [True if j_p in i_data["parameter_ids"] else False for j_p in range(0, 12)]
-            all_boolean_p_id.append(boolean_p_id)
-    all_boolean_p_id = list(np.transpose(np.array(all_boolean_p_id)))
-    # get total data identifying each parameter
-    all_boolean_p_id = [sum(j_list) for j_list in all_boolean_p_id]
+    all_boolean_p_id = data_for_plots(original_data, 1)
     # get flux and parameter name for k_p
     flux_name, pid, _ = flux_based_id(range(0, 12))
     parameter_name = ident_parameter_name(pid, flux_name)
