@@ -4,6 +4,37 @@ from kotte_model import ident_parameter_name
 from kotte_model import flux_based_id
 
 
+def data_for_plots(original_data, case=1):
+    if case==1:
+        all_boolean_p_id = []
+        for len_pos, i_list in enumerate(original_data):
+            for i_data in i_list:
+                boolean_p_id = [True if j_p in i_data["parameter_ids"] else False for j_p in range(0, 12)]
+                all_boolean_p_id.append(boolean_p_id)
+        all_boolean_p_id = list(np.transpose(np.array(all_boolean_p_id)))
+        # get total data identifying each parameter
+        all_boolean_p_id = [sum(j_list) for j_list in all_boolean_p_id]
+        return all_boolean_p_id
+    elif case==2:
+        all_boolean_e_id = []
+        for len_pos, i_list in enumerate(original_data):
+            for i_data in i_list:
+                boolean_e_id = [True if j_p in i_data["experiment_id"] else False for j_p in range(0, 18)]
+                all_boolean_e_id.append(boolean_e_id)
+        all_boolean_e_id = list(np.transpose(np.array(all_boolean_e_id)))
+        # get total for each experiment in each identifying data set
+        all_boolean_e_id = [sum(k_list) for k_list in all_boolean_e_id]
+        return all_boolean_e_id
+    else:
+        return []
+
+
+def useful_experiments(original_data):
+    """get most and least useful experiments based on identifiable and non-identifiable datasets"""
+    all_boolean_e_id = data_for_plots(original_data, 2)
+    return None
+
+
 def flux_parameter_plot_data(original_data, file_destination=()):
     """calculate and plot the number of data identifying each parameter in each flux"""
     # get parameters identified by each original data set and each combination
@@ -62,11 +93,6 @@ def flux_parameter_plot_data(original_data, file_destination=()):
         # save figure to file as png and eps
         plt.savefig(file_destination+'.eps', format='png', dpi=2000)
         plt.savefig(file_destination+'.png', format='eps', dpi=2000)
-    return None
-
-
-def plot_useful_experiments(ident_details, data_list):
-    """get most and least useful experiments based on identifiable and non-identifiable datasets"""
     return None
 
 
