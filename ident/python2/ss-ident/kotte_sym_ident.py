@@ -3,8 +3,9 @@ from generate_expdata import generate_expdata
 from kotte_model import establish_kotte_flux_identifiability
 from kotte_model import arrange_experimental_data
 from process_ident_data import process_info
-from kotte_model import write_results_2_file
-from plot_ident_results import flux_parameter_plot_data
+# from kotte_model import write_results_2_file
+# from plot_ident_results import flux_parameter_plot_data
+from plot_ident_results import useful_experiments
 
 
 # generate noisy experimental data for testing identifiability
@@ -33,7 +34,11 @@ data_list, original_data_ident, combo_data_ident, max_parameter = process_info(i
 
 # plot results
 file_destination = 'C:\Users\shyam\Documents\Courses\CHE1125Project\Results\ident\python2\\figure_1'
-flux_parameter_plot_data(original_data_ident)
+# plot parameters for each flux and the number of data sets that enable their identification
+# flux_parameter_plot_data(original_data_ident)
+# plot details on experiments in identifiable data sets
+useful_experiments(original_data_ident)
+
 # save plot
 #if file_destination:
 #    # save figure to file as png and eps
