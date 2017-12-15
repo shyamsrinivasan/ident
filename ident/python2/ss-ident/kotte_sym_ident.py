@@ -5,7 +5,7 @@ from kotte_model import arrange_experimental_data
 from process_ident_data import process_info
 # from kotte_model import write_results_2_file
 # from plot_ident_results import flux_parameter_plot_data
-from plot_ident_results import useful_experiments
+from process_ident_data import useful_experiments
 
 
 # generate noisy experimental data for testing identifiability
@@ -37,7 +37,7 @@ file_destination = 'C:\Users\shyam\Documents\Courses\CHE1125Project\Results\iden
 # plot parameters for each flux and the number of data sets that enable their identification
 # flux_parameter_plot_data(original_data_ident)
 # plot details on experiments in identifiable data sets
-useful_experiments(original_data_ident)
+all_parameter_exp_id = useful_experiments(original_data_ident)
 
 # save plot
 #if file_destination:
