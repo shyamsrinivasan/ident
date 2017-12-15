@@ -206,6 +206,121 @@ def data_usefulness_percentage(ident_details):
     return data_usefulness
 
 
+def data_for_plots(original_data, case=1):
+    if case==1:
+        all_boolean_p_id = []
+        for len_pos, i_list in enumerate(original_data):
+            for i_data in i_list:
+                boolean_p_id = [True if j_p in i_data["parameter_ids"] else False for j_p in range(0, 12)]
+                all_boolean_p_id.append(boolean_p_id)
+        all_boolean_p_id = [list(j_p) for j_p in np.transpose(np.array(all_boolean_p_id))]
+        # get total data identifying each parameter
+        all_boolean_p_id = [sum(j_list) for j_list in all_boolean_p_id]
+        return all_boolean_p_id
+    elif case==2:
+        all_boolean_p_id = []
+        all_boolean_e_id = []
+        all_boolean_e_pos_id = []
+        for len_pos, i_list in enumerate(original_data):
+            for i_data in i_list:
+                # parameters identified
+                boolean_p_id = [True if j_p in i_data["parameter_ids"] else False for j_p in range(0, 12)]
+                all_boolean_p_id.append(boolean_p_id)
+                # experiments done
+                boolean_e_id = [True if j_p in i_data["experiment_id"] else False for j_p in range(0, 18)]
+                all_boolean_e_id.append(boolean_e_id)
+                # experiments done based on position in data set
+                boolean_e_pos_id = [[True if j_p == i_data["experiment_id"][j_pos] else False
+                                     for j_p in range(0, 18)]
+                                    for j_pos in range(0, 3)]
+                all_boolean_e_pos_id.append(boolean_e_pos_id)
+
+        # get each part in a 3 part experiment separately
+        all_seg_data = []
+        for iseg in range(0, 3):
+            iseg_data = []
+            for idata in all_boolean_e_pos_id:
+                iseg_data.append(idata[iseg])
+            all_seg_data.append(iseg_data)
+
+        all_segment_experiment_data = []
+        for jseg in range(0, len(all_seg_data)):
+            exp_seg_id = []
+            data_seg_id = []
+            exp_seg_p_id = []
+            for data_set_index, value in enumerate(all_seg_data[jseg]):
+                exp_seg_id.append([j_exp for j_exp, bool_value in enumerate(value) if bool_value][0])
+                data_seg_id.append(data_set_index)
+                exp_seg_p_id.append([k_p for k_p, bool_val in enumerate(all_boolean_p_id[data_set_index]) if bool_val])
+            complete_info = {'experiment_id':exp_seg_id,
+                             'data_id':data_seg_id,
+                             'parameter_id':exp_seg_p_id}
+            all_segment_experiment_data.append(complete_info)
+
+
+
+        all_boolean_p_id = [list(k_p) for k_p in np.transpose(np.array(all_boolean_p_id))]
+
+        # get experiment-parameter relationship
+        boolean_p_id_array = np.array(all_boolean_p_id)
+        boolean_e_id_array = np.array(all_boolean_e_id)
+        all_data_set_for_exp = []
+        # get data sets for each experiment
+        for i_exp in range(0, 18):
+            data_set_for_exp = [i for i, val in enumerate(list(boolean_e_id_array[:, i_exp])) if val]
+            # parameters identified by each data set in data_set_exp
+            parameter_data_exp = [j for j, val in enumerate(list(boolean_p_id_array[:, data_set_for_exp]))]
+
+
+
+        # all_boolean_e_id = [list(j_p) for j_p in np.transpose(np.array(all_boolean_e_id))]
+        # get total for each experiment in each identifying data set
+        # all_boolean_e_id = [sum(k_list) for k_list in all_boolean_e_id]
+        return all_boolean_p_id, all_boolean_e_id
+    else:
+        return []
+
+
+def useful_experiments(original_data):
+    """get most and least useful experiments based on identifiable and non-identifiable datasets"""
+    all_boolean_p_id, all_boolean_e_id = data_for_plots(original_data, 2)
+    all_parameter_exp_id = []
+    for j_p in all_boolean_p_id:
+        # get data set for each parameter
+        data_id = [i for i, val in enumerate(j_p) if val]
+        # get experiments for data in data_id
+        exp_id = [[j for j, val in enumerate(all_boolean_e_id[i]) if val] for i in data_id]
+        exp_id = np.array(exp_id)
+        exp_lst = []
+        try:
+            for j_exp in range(0, exp_id.shape[1]):
+                exp_lst.append(list(np.unique(exp_id[:, j_exp])))
+        except IndexError:
+            for _ in range(0, 3):
+                exp_lst.append([])
+        all_exp_total_per_pos = []
+        for i_pos, k_exp_pos in enumerate(exp_lst):
+            total_each_exp_per_pos = []
+            for exp_number in k_exp_pos:
+                y = sum([[True if exp_number == i else False for i in j][i_pos] for j in exp_id])
+                total_each_exp_per_pos.append(y)
+            all_exp_total_per_pos.append(total_each_exp_per_pos)
+        all_parameter_exp_id.append({'unique': exp_lst,
+                                     'occurrence': all_exp_total_per_pos})
+
+    # classify data based on experiments - get parameters identified by each experiment
+    number_experiment_required = 3
+    exp_used_pos = [[] for _ in xrange(number_experiment_required)]
+    for len_pos, i_list in enumerate(original_data):
+        for i_data in i_list:
+            parameter_ided = i_data["parameter_ids"]
+            experiments_used = i_data["experiment_id"]
+
+            p_ided = i_data["parameter_ids"]
+
+    return all_parameter_exp_id
+
+
 def process_info(ident_details, experiment_details, perturbation_details):
     number_data, p = ident_details["boolean"].shape
 
