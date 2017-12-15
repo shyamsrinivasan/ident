@@ -834,6 +834,18 @@ def kotte_parameter_name(parameter_id):
         return parameter_list[parameter_id]
 
 
+def experiment_name(experiment_id, experiment_details):
+    try:
+        parameter_changed = kotte_parameter_name([int(experiment_details["indices"][i, 0]) for i in experiment_id])
+        parameter_value = [experiment_details["indices"][i, 1] for i in experiment_id]
+    except TypeError:
+        parameter_changed = kotte_parameter_name(int(experiment_details["indices"][experiment_id, 0]))
+        parameter_value = experiment_details["indices"][experiment_id, 1]
+    experiment_name_list = ['{} changes {}'.format(j_p_change, j_p_value)
+                            for j_p_change, j_p_value in zip(parameter_changed, parameter_value)]
+    return experiment_name_list
+
+
 def process_ident_data(ident_values, number_data):
     # create signed boolean array for identifiability
     signed_ident_values = np.sign(ident_values)
