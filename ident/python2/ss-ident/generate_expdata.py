@@ -1,13 +1,20 @@
+from generate_noisy_data import generate_no_noise_data
 from generate_noisy_data import generate_noisy_data
 from generate_noisy_data import run_noisy_parameter_perturbation
 
 
-def initialize_to_ss(y0, cvode_options, ode_parameter_values):
+def initialize_to_ss(y0, cvode_options, ode_parameter_values, noise=1):
     """initialize system to ss from any y0 with given options and system parameters"""
-    # get initial noisy system steady state
-    initial_options = (cvode_options, ode_parameter_values)
-    noisy_initial_ss, _, _, _ = generate_noisy_data(y0, initial_options, 1)
-    return noisy_initial_ss
+    if noise:
+        # get initial noisy system steady state
+        initial_options = (cvode_options, ode_parameter_values)
+        noisy_initial_ss, _, _, _ = generate_noisy_data(y0, initial_options, 1)
+        return noisy_initial_ss
+    else:
+        # get initial noisy system steady state
+        initial_options = (cvode_options, ode_parameter_values)
+        initial_ss, _, _, _ = generate_no_noise_data(y0, initial_options, 1)
+        return initial_ss
 
 
 def perturb_parameters(initial_ss, parameter_perturbations, cvode_options, ode_parameter_values):
@@ -18,14 +25,17 @@ def perturb_parameters(initial_ss, parameter_perturbations, cvode_options, ode_p
     return noisy_ss, perturbation_details
 
 
-def generate_expdata(y0, cvode_options, ode_parameter_values):
+def generate_expdata(y0, cvode_options, ode_parameter_values, noise=1):
     """generate noisy experimental data for kotte network to test identifiability"""
     # default parameter values
     # cvode_options = ('Newton', 'Adams', 1e-10, 1e-10, 200)
     # ode_parameter_values = np.array([.1, .1, 4e6, .1, .3, 1.1, .45, 2, .25, .2, 1, 1, 1, .1])
 
-    # get initial noisy system steady state
-    initial_ss = initialize_to_ss(y0, cvode_options, ode_parameter_values)
+    if noise:
+        # get initial noisy system steady state
+        initial_ss = initialize_to_ss(y0, cvode_options, ode_parameter_values, 1)
+    else:
+        initial_ss = initialize_to_ss(y0, cvode_options, ode_parameter_values, 0)
 
     # plot all dynamic courses
     # plot_multiple_dynamics(noisy_dynamic)
