@@ -46,7 +46,6 @@ all_parameter_exp_id = useful_experiments(original_data_ident)
 #    plt.savefig(file_destination + '.png', format='eps', dpi=2000)
 
 
-
 # create data for write_2_file and write to file
 # write_results_2_file(ident_details, 3, fp_list, data_list)
 
