@@ -322,6 +322,7 @@ def useful_experiments(original_data):
 
 
 def process_info(ident_details, experiment_details, perturbation_details):
+    print("Process information From Identifiability Analysis.....\n")
     number_data, p = ident_details["boolean"].shape
 
     # get data identification percentages to classify utility of data sets
@@ -380,5 +381,6 @@ def process_info(ident_details, experiment_details, perturbation_details):
                      "data": identifying_data}
 
     # ident_parameter_names = ident_parameter_name(range(0, 12))
+    print("Information Processing Complete\n")
 
     return data_usefulness, original_data, combination_data, max_parameter
