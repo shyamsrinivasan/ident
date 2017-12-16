@@ -64,6 +64,25 @@ def run_parameter_perturbation(parameter_perturbation, y0, other_options):
     return ss_data, dynamic_data, tuple(perturbed_parameter)
 
 
+def generate_no_noise_data(y0, all_options, kinetics):
+    steady_state_info, dynamic_info = generate_data(y0, all_options, kinetics)
+    # dynamic data
+    concentration_dynamic = dynamic_info["y"]
+    flux_dynamic = dynamic_info["flux"]
+    # info on bistability
+    if concentration_dynamic[-1, 0] > concentration_dynamic[-1, 1]:
+        bistable = 1
+    elif concentration_dynamic[-1, 0] < concentration_dynamic[-1, 1]:
+        bistable = 2
+    else:
+        bistable = 0
+    dynamic_info = {"y": concentration_dynamic, "flux": flux_dynamic,
+                          "time": dynamic_info["time"], "ssid": bistable}
+    steady_state_info = {"y": concentration_dynamic[-1, :],
+                               "flux": flux_dynamic[-1, :], "ssid": bistable}
+    return steady_state_info, dynamic_info
+
+
 def generate_noisy_data(y0, all_options, kinetics):
     steady_state_info, dynamic_info = generate_data(y0, all_options, kinetics)
     # dynamic data
