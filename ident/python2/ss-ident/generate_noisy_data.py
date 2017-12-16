@@ -114,8 +114,6 @@ def run_no_noise_parameter_perturbation(parameter_perturbation, y0, other_option
 
     ode_parameters = tuple(other_options['ode_parameters'])
     cvode_options = other_options['cvode_options']
-    no_noise_ss = []
-    no_noise_dynamic = []
     ss_info = []
     dynamic_info = []
     experiment_info_boolean = []
@@ -139,7 +137,7 @@ def run_no_noise_parameter_perturbation(parameter_perturbation, y0, other_option
         elif y0[0] < y0[1]:
             perturbation_ssid[index, 0] = 2
         # final ss info
-        perturbation_ssid[index, 1] = noisy_ss_iter["ssid"]
+        perturbation_ssid[index, 1] = ss_iter["ssid"]
 
         perturbed_parameter[index, :] = changed_ode_parameter[:]
         perturbation_indices[index, :] = parameter_id - 1, parameter_change
@@ -149,7 +147,7 @@ def run_no_noise_parameter_perturbation(parameter_perturbation, y0, other_option
 
     # plot all dynamic courses
     if plot_arg:
-        plot_multiple_dynamics(noisy_dynamic)
+        plot_multiple_dynamics(dynamic_info)
         plt.close("all")
         plot_multiple_dynamics(dynamic_info)
         plt.close("all")
