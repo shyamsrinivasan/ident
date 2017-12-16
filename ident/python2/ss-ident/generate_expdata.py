@@ -1,5 +1,6 @@
 from generate_noisy_data import generate_no_noise_data
 from generate_noisy_data import generate_noisy_data
+from generate_noisy_data import run_no_noise_parameter_perturbation
 from generate_noisy_data import run_noisy_parameter_perturbation
 
 
@@ -13,7 +14,7 @@ def initialize_to_ss(y0, cvode_options, ode_parameter_values, noise=1):
     else:
         # get initial noisy system steady state
         initial_options = (cvode_options, ode_parameter_values)
-        initial_ss, _, _, _ = generate_no_noise_data(y0, initial_options, 1)
+        initial_ss, _, = generate_no_noise_data(y0, initial_options, 1)
         return initial_ss
 
 
@@ -28,7 +29,7 @@ def perturb_parameters(initial_ss, parameter_perturbations, cvode_options, ode_p
     else:
         perturbation_options = {'ode_parameters': ode_parameter_values, 'cvode_options': cvode_options}
         no_noise_ss, no_noise_dynamic, perturbation_details = \
-            run_noisy_parameter_perturbation(parameter_perturbations, initial_ss["y"], perturbation_options)
+            run_no_noise_parameter_perturbation(parameter_perturbations, initial_ss["y"], perturbation_options)
         return no_noise_ss, perturbation_details
 
 
