@@ -206,7 +206,7 @@ def data_usefulness_percentage(ident_details):
     return data_usefulness
 
 
-def get_flux_plots_data(original_data, case=1):
+def flux_parameter_plot_data(original_data, case=1):
     all_boolean_p_id = []
     for len_pos, i_list in enumerate(original_data):
         for i_data in i_list:
@@ -232,6 +232,10 @@ def get_flux_plots_data(original_data, case=1):
         return all_boolean_p_id, all_boolean_e_id
     else:
         return []
+
+
+def dataset_with_experiment(data_exp_boolean, exp_id):
+    return None
 
 
 def data_for_plots(original_data, case=1):
