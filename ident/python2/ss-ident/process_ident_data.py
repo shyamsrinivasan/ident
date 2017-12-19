@@ -235,7 +235,14 @@ def flux_parameter_plot_data(original_data, case=1):
 
 
 def dataset_with_experiment(data_exp_boolean, exp_id):
-    return None
+    # covert boolean array to list
+    lst_parameter = [list(j_p) for j_p in list(np.transpose(data_exp_boolean))]
+    data_id = [[id for id, val in enumerate(lst_parameter[j_p]) if val] for j_p in range(0, 12)]
+    try:
+        data_with_exp = [[k_p_set for k_p_id, k_p_set in enumerate(data_id) if k_p_id == j_exp_id] for j_exp_id in exp_id]
+    except TypeError:
+        data_with_exp = [k_p_set for k_p_id, k_p_set in enumerate(data_id) if k_p_id == exp_id]
+    return data_with_exp
 
 
 def data_for_plots(original_data, case=1):
