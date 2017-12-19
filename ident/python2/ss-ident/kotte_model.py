@@ -910,9 +910,12 @@ def write_results_2_file(ident_details, number_fluxes, fp_list, data_list):
     # new_combos = calculate_experiment_combos(ident_details, experiment_details, perturbation_details, data_list)
 
 
-def establish_kotte_flux_identifiability(all_data, choose):
+def establish_kotte_flux_identifiability(all_data, choose=()):
     """call all identifiability evaluation funcs above and print numerical results"""
-    chosen_values = list(all_data["values"][0:choose, :])
+    if choose:
+        chosen_values = list(all_data["values"][:choose, :])
+    else:
+        chosen_values = list(all_data["values"][:, :])
     # chosen_details = all_data["details"][0:choose, :]
 
     ident_fun_list = (flux_1_ident_expression, flux_2_ident_expression, flux_3_ident_expression)
@@ -957,7 +960,8 @@ def loop_through_experiments(experiments_per_dataset, total_experiments):
 
 
 def arrange_experimental_data(xss, fss,
-                              perturbation_details, experiments_per_set, flux_id=np.array([0, 1, 2, 3, 4, 5])):
+                              perturbation_details,
+                              experiments_per_set, flux_id=np.array([0, 1, 2, 3, 4, 5]), choose=()):
     """get combinations of datasets using xss, fss and parameters for kotte model.
     see identifiability functions above for order of values in datasets"""
     parameters = perturbation_details["values"]
@@ -970,6 +974,10 @@ def arrange_experimental_data(xss, fss,
     data_combinations = []
     for item in it.permutations(range(0, number_of_experiments), experiments_per_set):
         data_combinations.append(item)
+
+    # choose only choose values of experimental data set combinations
+    if choose:
+        data_combinations = data_combinations[:choose]
 
     data_combination_boolean = [[True if experiment_id in list_1 else False
                                  for experiment_id in range(0, number_of_experiments)]
