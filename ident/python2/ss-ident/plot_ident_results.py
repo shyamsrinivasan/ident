@@ -12,10 +12,12 @@ def data_for_plots(original_data, case=1):
             for i_data in i_list:
                 boolean_p_id = [True if j_p in i_data["parameter_ids"] else False for j_p in range(0, 12)]
                 all_boolean_p_id.append(boolean_p_id)
+        number_data, number_p = np.array(all_boolean_p_id).shape
         all_boolean_p_id = [list(j_p) for j_p in np.transpose(np.array(all_boolean_p_id))]
         # get total data identifying each parameter
-        all_boolean_p_id = [sum(j_list) for j_list in all_boolean_p_id]
-        return all_boolean_p_id
+        all_boolean_p_id_sum = [sum(j_list) for j_list in all_boolean_p_id]
+        all_boolean_p_id_fraction = [float(sum(j_list))/number_data for j_list in all_boolean_p_id]
+        return all_boolean_p_id_sum, all_boolean_p_id_fraction
     elif case==2:
         all_boolean_p_id = []
         all_boolean_e_id = []
@@ -62,21 +64,17 @@ def useful_experiments(original_data):
             all_exp_total_per_pos.append(total_each_exp_per_pos)
         all_parameter_exp_id.append({'unique':exp_lst,
                                      'occurrence':all_exp_total_per_pos})
-
     # get experiment name
     experiment_names = experiment_name(range(0, 18), experiment_details)
     # collect data on the basis of experiments
     lst_data = {'names':experiment_names,
                 'data':all_boolean_e_id}
     # f, axob = plt.
-
     return None
 
 
-def flux_parameter_plot_data(original_data, file_destination=()):
+def flux_parameter_plot(total_ident_data, file_destination=()):
     """calculate and plot the number of data identifying each parameter in each flux"""
-    # get parameters identified by each original data set and each combination
-    all_boolean_p_id = data_for_plots(original_data, 1)
     # get flux and parameter name for k_p
     flux_name, pid, _ = flux_based_id(range(0, 12))
     parameter_name = ident_parameter_name(pid, flux_name)
@@ -92,7 +90,7 @@ def flux_parameter_plot_data(original_data, file_destination=()):
         # get parameter names for each parameter for each flux in boolean_id (same flux)
         # collect data on the basis of unique fluxes
         lst_data[pos] = {'names':[parameter_name[id] for id in boolean_id],
-                         'data':[all_boolean_p_id[id] for id in boolean_id]}
+                         'data':[total_ident_data[id] for id in boolean_id]}
 
     # plot data for each flux in a separate subplot i.e. number_of_subplots = number_of_fluxes
     nrows = 3
