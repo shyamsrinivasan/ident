@@ -340,7 +340,7 @@ def experiment_position_based_info(experiments_identifying_each_parameter, numbe
         all_parameter_position_based_info.append({"id": all_pos_ids,
                                                   "occurrence": all_pos_occurrence,
                                                   "occurrence percentage": all_pos_occurrence_percentage,
-                                                  "occurence total": all_pos_total_occurrence,
+                                                  "occurrence total": all_pos_total_occurrence,
                                                   "occurrence total percentage": all_pos_total_occurrence_percentage})
 
     return all_parameter_position_based_info
