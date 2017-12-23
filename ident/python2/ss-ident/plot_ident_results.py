@@ -73,6 +73,34 @@ def useful_experiments(original_data):
     return None
 
 
+def experiment_type_plot(position_based_info, x_label):
+    """plot figure for each parameter with info for one parameter provided in input"""
+    # figure for parameter i
+    f, ax = plt.subplots(1, 3, sharey='row')
+    for i_position, axis_obj in enumerate(ax):
+        x_data = np.array(position_based_info[i_position])
+        y_data = np.arange(x_data.shape[0])
+        y_tick_names = ['experiment type {}'.format(itype+1) for itype in range(0, x_data.shape[0])]
+        axis_obj.barh(y_data, x_data, align='center', color='blue', ecolor='black')
+        axis_obj.set_yticks(y_data)
+        axis_obj.set_yticklabels(y_tick_names)
+        axis_obj.set_title('position {}'.format(i_position))
+    ax[-1].invert_yaxis()
+    ax[-2].set_xlabel(x_label)
+    plt.show()
+    return None
+
+
+def parameter_experiment_type_plot(parameter_position_based_info):
+    """call experiment_type_plot for each parameter information present in parameter_position_based_info"""
+    for i_parameter_info in parameter_position_based_info:
+        experiment_type_plot(i_parameter_info["occurrence total"], x_label='Occurrence in Identifying Data set')
+        experiment_type_plot(i_parameter_info["occurrence total percentage"],
+                             x_label='Occurrence Percentage in Identifying Data set')
+
+    return None
+
+
 def flux_parameter_plot(total_ident_data, file_destination=()):
     """calculate and plot the number of data identifying each parameter in each flux"""
     # get flux and parameter name for k_p
