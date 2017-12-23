@@ -4,6 +4,7 @@ from kotte_model import establish_kotte_flux_identifiability
 from kotte_model import arrange_experimental_data
 from process_ident_data import process_info
 from process_ident_data import flux_parameter_plot_data
+
 from plot_ident_results import flux_parameter_plot
 
 # generate noisy experimental data for testing identifiability
@@ -44,9 +45,18 @@ flux_parameter_plot(fraction_ident_data)
 # get different classes of datasets (containing different experiments)
 from process_ident_data import experiments_in_ident_data
 experiment_sets = [[0], [1, 2], [3, 4, 5, 6, 7], [8, 9, 10, 11, 12], [13, 14, 15, 16, 17]]
-data_with_exp = experiments_in_ident_data(all_boolean_p_id,
+exp_data_parameter_info = experiments_in_ident_data(all_boolean_p_id,
                                           experimental_datasets,
                                           experiment_sets, [])
+
+from process_ident_data import experiment_position_based_info
+all_parameter_position_based_info = experiment_position_based_info(exp_data_parameter_info)
+
+from plot_ident_results import parameter_experiment_type_plot
+parameter_experiment_type_plot(all_parameter_position_based_info)
+
+# all_parameter_type_based_info = experiment_type_based_info(exp_data_parameter_info)
+
 
 
 
