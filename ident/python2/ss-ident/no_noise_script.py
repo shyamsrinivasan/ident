@@ -20,12 +20,12 @@ exp_xss, exp_fss, exp_ssid, perturbation_details = \
 # arrange experimental data to form multiple data sets
 exp_flux_index = np.array([0, 3, 2, 4])
 # choose numbr of experimental datasets for which identifiability is to be calculated
-choose = range(25, 50)
+choose = range(121, 200)
 # get combinations of experimental datasets
 experimental_datasets = arrange_experimental_data(exp_xss, exp_fss, perturbation_details, 3, exp_flux_index, choose)
 
 # identifiability for all kotte fluxes
-ident_details = establish_kotte_flux_identifiability(experimental_datasets, choose=len(choose))
+ident_details = establish_kotte_flux_identifiability(experimental_datasets, choose=choose)
 print('Perturbation analysis for identifiability complete.\n')
 
 # data processing
@@ -46,8 +46,8 @@ flux_parameter_plot(fraction_ident_data)
 from process_ident_data import experiments_in_ident_data
 experiment_sets = [[0], [1, 2], [3, 4, 5, 6, 7], [8, 9, 10, 11, 12], [13, 14, 15, 16, 17]]
 exp_data_parameter_info = experiments_in_ident_data(all_boolean_p_id,
-                                          experimental_datasets,
-                                          experiment_sets, [])
+                                                    experimental_datasets,
+                                                    experiment_sets, [])
 
 from process_ident_data import experiment_position_based_info
 all_parameter_position_based_info = experiment_position_based_info(exp_data_parameter_info)
