@@ -746,12 +746,14 @@ def run_flux_ident(ident_function_list, data):
     return ident_value_array, number_of_parameters_per_flux, ncolumns
 
 
-def get_ident_value(ident_function_list, experimental_data_list):
+def get_ident_value(ident_function_list, experimental_data_list, original_data_set_id):
     all_data_ident_lists = []
     number_of_parameters_per_flux = [0]*len(ident_function_list)
     number_of_expressions_per_parameter = 0
     for index, data_set in enumerate(experimental_data_list):
-        print('Identifiability for Dataset {} of {}\n'.format(index + 1, len(experimental_data_list)))
+        print('Identifiability for Dataset {} of {}: Original ID: {}\n'.format(index + 1,
+                                                                               len(experimental_data_list),
+                                                                               original_data_set_id[index]))
         identifiability_values, number_of_parameters_per_flux, number_of_expressions_per_parameter = \
             run_flux_ident(ident_function_list, data_set)
         all_data_ident_lists.append(identifiability_values)
@@ -917,7 +919,7 @@ def establish_kotte_flux_identifiability(all_data, choose=()):
             chosen_values = list(all_data["values"][:choose, :])
         except TypeError:
             iter_chosen_value = []
-            for indexes in choose:
+            for indexes in range(0, len(choose)):
                 iter_chosen_value.append(list(all_data["values"][indexes, :]))
             chosen_values = iter_chosen_value[:]
     else:
@@ -927,7 +929,7 @@ def establish_kotte_flux_identifiability(all_data, choose=()):
     ident_fun_list = (flux_1_ident_expression, flux_2_ident_expression, flux_3_ident_expression)
     # number_fluxes = len(ident_fun_list)
     number_data = len(chosen_values)
-    ident_values, parameters_per_flux = get_ident_value(ident_fun_list, chosen_values)
+    ident_values, parameters_per_flux = get_ident_value(ident_fun_list, chosen_values, choose)
 
     # process identifiability data
     _, plist_boolean = process_ident_data(ident_values, number_data)
