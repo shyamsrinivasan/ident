@@ -977,7 +977,13 @@ def arrange_experimental_data(xss, fss,
 
     # choose only choose values of experimental data set combinations
     if choose:
-        data_combinations = data_combinations[:choose]
+        try:
+            data_combinations = data_combinations[:choose]
+        except TypeError:
+            new_data_combinations = []
+            for indexes in choose:
+                new_data_combinations.append(data_combinations[indexes])
+            data_combinations = new_data_combinations[:]
 
     data_combination_boolean = [[True if experiment_id in list_1 else False
                                  for experiment_id in range(0, number_of_experiments)]
