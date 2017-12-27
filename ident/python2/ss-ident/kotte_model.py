@@ -913,7 +913,13 @@ def write_results_2_file(ident_details, number_fluxes, fp_list, data_list):
 def establish_kotte_flux_identifiability(all_data, choose=()):
     """call all identifiability evaluation funcs above and print numerical results"""
     if choose:
-        chosen_values = list(all_data["values"][:choose, :])
+        try:
+            chosen_values = list(all_data["values"][:choose, :])
+        except TypeError:
+            iter_chosen_value = []
+            for indexes in choose:
+                iter_chosen_value.append(list(all_data["values"][indexes, :]))
+            chosen_values = iter_chosen_value[:]
     else:
         chosen_values = list(all_data["values"][:, :])
     # chosen_details = all_data["details"][0:choose, :]
