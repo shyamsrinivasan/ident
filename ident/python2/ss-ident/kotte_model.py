@@ -985,6 +985,7 @@ def arrange_experimental_data(xss, fss,
     if choose:
         try:
             data_combinations = data_combinations[:choose]
+            choose = range(0, choose)
         except TypeError:
             new_data_combinations = []
             for indexes in choose:
@@ -1008,15 +1009,15 @@ def arrange_experimental_data(xss, fss,
     all_parameter_values = []
     all_parameter_changes = []
     all_ssid = []
-    for data_index, experiment_index in enumerate(data_combinations):
+    for choice_index, data_index in zip(choose, enumerate(data_combinations)):
         data = []
         parameter_id = []
         changes = []
-        experiment_index_iter.append(experiment_index)
+        experiment_index_iter.append(data_index[1])
         parameter_value = []
         parameter_change = []
         ssid_changes = []
-        for iter, index in enumerate(experiment_index):
+        for iter, index in enumerate(data_index[1]):
             data.append(np.hstack((parameters[index][-1],
                                    xss[index],
                                    fss[index][flux_id])))
@@ -1029,16 +1030,17 @@ def arrange_experimental_data(xss, fss,
             parameter_change.append(changes[iter][0, 3])
             ssid_changes.append(list(ssid[index, :]))
 
-        dataset_value_array[data_index, :] = np.hstack(data[:])
-        all_parameter_change[data_index, :] = np.hstack(changes[:])
+        dataset_value_array[data_index[0], :] = np.hstack(data[:])
+        all_parameter_change[data_index[0], :] = np.hstack(changes[:])
         all_parameter_ids.append(parameter_id)
         all_parameter_values.append(parameter_value)
         all_parameter_changes.append(parameter_change)
         all_ssid.append(np.array(ssid_changes))
 
     dataset_keys = ['values', 'details', 'boolean', 'parameter_ids',
-                    'parameter_values', 'parameter_changes', 'ssid', 'experiment_id']
+                    'parameter_values', 'parameter_changes', 'ssid', 'experiment_id',
+                    'dataset_id']
     experimental_data = dict(zip(dataset_keys, [dataset_value_array, all_parameter_change, data_combination_boolean,
                                                 all_parameter_ids, all_parameter_values, all_parameter_changes,
-                                                all_ssid, experiment_index_iter]))
+                                                all_ssid, experiment_index_iter, choose]))
     return experimental_data
