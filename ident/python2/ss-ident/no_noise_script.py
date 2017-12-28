@@ -20,7 +20,7 @@ exp_xss, exp_fss, exp_ssid, perturbation_details = \
 # arrange experimental data to form multiple data sets
 exp_flux_index = np.array([0, 3, 2, 4])
 # choose numbr of experimental datasets for which identifiability is to be calculated
-choose = range(121, 200)
+choose = range(138, 200)
 # get combinations of experimental datasets
 experimental_datasets = arrange_experimental_data(exp_xss, exp_fss, perturbation_details, 3, exp_flux_index, choose)
 
