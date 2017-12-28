@@ -50,8 +50,12 @@ def generate_expdata(y0, cvode_options, ode_parameter_values, noise=1):
                               (11, .1), (11, .5), (11, 1), (11, -.1), (11, -.5),
                               (12, .1), (12, .5), (12, 1), (12, -.1), (12, -.5),
                               (13, .1), (13, .5), (13, 1), (13, -.1), (13, -.5)]
-    perturbed_ss, perturbation_details = perturb_parameters(initial_ss, parameter_perturbation,
-                                                        cvode_options, ode_parameter_values, noise)
+    try:
+        perturbed_ss, perturbation_details = perturb_parameters(initial_ss[0], parameter_perturbation,
+                                                            cvode_options, ode_parameter_values, noise)
+    except KeyError:
+        perturbed_ss, perturbation_details = perturb_parameters(initial_ss, parameter_perturbation,
+                                                                cvode_options, ode_parameter_values, noise)
 
     exp_xss = []
     exp_fss = []
