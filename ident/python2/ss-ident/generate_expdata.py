@@ -61,15 +61,27 @@ def generate_expdata(y0, cvode_options, ode_parameter_values, number_of_samples=
                                                                 cvode_options, ode_parameter_values,
                                                                 number_of_samples, noise)
 
-    exp_xss = []
-    exp_fss = []
-    exp_ssid = []
-    for ss_values in perturbed_ss:
-        exp_xss.append(ss_values["y"])
-        exp_fss.append(ss_values["flux"])
-        exp_ssid.append(ss_values["ssid"])
+    all_sample_exp_xss = []
+    all_sample_exp_fss = []
+    all_sample_exp_ssid = []
+    for i_sample in range(0, number_of_samples):
+        exp_xss = []
+        exp_fss = []
+        exp_ssid = []
+        for ss_values in perturbed_ss:
+            try:
+                exp_xss.append(ss_values["y"][:, i_sample])
+                exp_fss.append(ss_values["flux"][:, i_sample])
+                exp_ssid.append(ss_values["ssid"][i_sample])
+            except IndexError:
+                exp_xss.append(ss_values["y"][:, ])
+                exp_fss.append(ss_values["flux"][:, ])
+                exp_ssid.append(ss_values["ssid"])
+        all_sample_exp_xss.append(exp_xss)
+        all_sample_exp_fss.append(exp_fss)
+        all_sample_exp_ssid.append(exp_ssid)
 
-    return exp_xss, exp_fss, exp_ssid, perturbation_details
+    return all_sample_exp_xss, all_sample_exp_fss, all_sample_exp_ssid, perturbation_details
 
 
 if __name__ == "__main__":
