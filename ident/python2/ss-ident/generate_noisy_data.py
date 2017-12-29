@@ -104,10 +104,10 @@ def generate_noisy_data(y0, all_options, kinetics, number_of_samples=1):
             bistable = 2
         else:
             bistable = 0
-        noisy_dynamic_info = {"y":noisy_concentration_dynamic, "flux":noisy_flux_dynamic,
+        noisy_dynamic_info = {"y":noisy_concentration_dynamic[:, :, i_sample], "flux":noisy_flux_dynamic[:, :, i_sample],
                               "time":dynamic_info["time"], "ssid":bistable}
-        noisy_steady_state_info = {"y":noisy_concentration_dynamic[-1, :],
-                                   "flux":noisy_flux_dynamic[-1, :], "ssid":bistable}
+        noisy_steady_state_info = {"y":noisy_concentration_dynamic[-1, :, i_sample],
+                                   "flux":noisy_flux_dynamic[-1, :, i_sample], "ssid":bistable}
         all_sample_noisy_dynamic_info.append(noisy_dynamic_info)
         all_sample_noisy_steady_state_info.append(noisy_steady_state_info)
 
@@ -168,7 +168,7 @@ def run_no_noise_parameter_perturbation(parameter_perturbation, y0, other_option
     return ss_info, dynamic_info, perturbation_details
 
 
-def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options, plot_arg=0):
+def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options, number_of_samples=1, plot_arg=0):
     """run parameter perturbations based on tuple input parameter perturbation
     with first position of tuple being parameter id and second index being
     parameter value"""
@@ -191,7 +191,9 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options, 
         changed_ode_parameter[parameter_id-1] = changed_ode_parameter[parameter_id-1]*(1 + parameter_change)
         all_options = (cvode_options, changed_ode_parameter)
         # generate data using MWC Kinetics
-        noisy_ss_iter, noisy_dynamic_iter, ss_iter, dynamic_iter = generate_noisy_data(y0, all_options, 1)
+        noisy_ss_iter, noisy_dynamic_iter, ss_iter, dynamic_iter = \
+            generate_noisy_data(y0, all_options, 1, number_of_samples)
+
         noisy_ss.append(noisy_ss_iter)
         noisy_dynamic.append(noisy_dynamic_iter)
         ss_info.append(ss_iter)
@@ -202,7 +204,7 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options, 
         elif y0[0] < y0[1]:
             perturbation_ssid[index, 0] = 2
         # final ss info
-        perturbation_ssid[index, 1] = noisy_ss_iter["ssid"]
+        perturbation_ssid[index, 1] = noisy_ss_iter[0]["ssid"]
 
         perturbed_parameter[index, :] = changed_ode_parameter[:]
         perturbation_indices[index, :] = parameter_id-1, parameter_change

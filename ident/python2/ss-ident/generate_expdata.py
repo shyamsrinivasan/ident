@@ -18,13 +18,15 @@ def initialize_to_ss(y0, cvode_options, ode_parameter_values, noise=1):
         return initial_ss
 
 
-def perturb_parameters(initial_ss, parameter_perturbations, cvode_options, ode_parameter_values, noise=1):
+def perturb_parameters(initial_ss, parameter_perturbations, cvode_options, ode_parameter_values,
+                       number_of_samples=1, noise=1):
     """perform parameter perturbations from given initial ss"""
 
     if noise:
         perturbation_options = {'ode_parameters': ode_parameter_values, 'cvode_options': cvode_options}
         noisy_ss, noisy_dynamic, perturbation_details, _, dynamic_info = \
-            run_noisy_parameter_perturbation(parameter_perturbations, initial_ss["y"], perturbation_options)
+            run_noisy_parameter_perturbation(parameter_perturbations, initial_ss["y"], perturbation_options,
+                                             number_of_samples)
         return noisy_ss, perturbation_details
     else:
         perturbation_options = {'ode_parameters': ode_parameter_values, 'cvode_options': cvode_options}
@@ -33,7 +35,7 @@ def perturb_parameters(initial_ss, parameter_perturbations, cvode_options, ode_p
         return no_noise_ss, perturbation_details
 
 
-def generate_expdata(y0, cvode_options, ode_parameter_values, noise=1):
+def generate_expdata(y0, cvode_options, ode_parameter_values, number_of_samples=1, noise=1):
     """generate noisy experimental data for kotte network to test identifiability"""
 
     # get initial noisy system steady state
@@ -52,10 +54,12 @@ def generate_expdata(y0, cvode_options, ode_parameter_values, noise=1):
                               (13, .1), (13, .5), (13, 1), (13, -.1), (13, -.5)]
     try:
         perturbed_ss, perturbation_details = perturb_parameters(initial_ss[0], parameter_perturbation,
-                                                            cvode_options, ode_parameter_values, noise)
+                                                                cvode_options, ode_parameter_values,
+                                                                number_of_samples, noise)
     except KeyError:
         perturbed_ss, perturbation_details = perturb_parameters(initial_ss, parameter_perturbation,
-                                                                cvode_options, ode_parameter_values, noise)
+                                                                cvode_options, ode_parameter_values,
+                                                                number_of_samples, noise)
 
     exp_xss = []
     exp_fss = []
