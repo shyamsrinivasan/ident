@@ -94,8 +94,9 @@ def generate_noisy_data(y0, all_options, kinetics, number_of_samples=1):
         add_noise_dynamic(concentration_dynamic, flux_dynamic, number_of_samples)
 
     # get information for each sample separately
-    all_sample_noisy_dynamic_info = []
-    all_sample_noisy_steady_state_info = []
+    # all_sample_noisy_dynamic_info = []
+    # all_sample_noisy_steady_state_info = []
+    all_sample_noisy_bistable = []
     for i_sample in range(0, number_of_samples):
         # info on bistability
         if noisy_concentration_dynamic[-1, 0, i_sample] > noisy_concentration_dynamic[-1, 1, i_sample]:
@@ -104,14 +105,15 @@ def generate_noisy_data(y0, all_options, kinetics, number_of_samples=1):
             bistable = 2
         else:
             bistable = 0
-        noisy_dynamic_info = {"y":noisy_concentration_dynamic[:, :, i_sample], "flux":noisy_flux_dynamic[:, :, i_sample],
-                              "time":dynamic_info["time"], "ssid":bistable}
-        noisy_steady_state_info = {"y":noisy_concentration_dynamic[-1, :, i_sample],
-                                   "flux":noisy_flux_dynamic[-1, :, i_sample], "ssid":bistable}
-        all_sample_noisy_dynamic_info.append(noisy_dynamic_info)
-        all_sample_noisy_steady_state_info.append(noisy_steady_state_info)
+        all_sample_noisy_bistable.append(bistable)
+    noisy_dynamic_info = {"y": noisy_concentration_dynamic, "flux": noisy_flux_dynamic,
+                          "time": dynamic_info["time"], "ssid": all_sample_noisy_bistable}
+    noisy_steady_state_info = {"y": noisy_concentration_dynamic[-1, :, :],
+                               "flux": noisy_flux_dynamic[-1, :, :], "ssid": all_sample_noisy_bistable}
+        # all_sample_noisy_dynamic_info.append(noisy_dynamic_info)
+        # all_sample_noisy_steady_state_info.append(noisy_steady_state_info)
 
-    return all_sample_noisy_steady_state_info, all_sample_noisy_dynamic_info, \
+    return noisy_steady_state_info, noisy_dynamic_info, \
            steady_state_info, dynamic_info
 
 
@@ -204,7 +206,7 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options, 
         elif y0[0] < y0[1]:
             perturbation_ssid[index, 0] = 2
         # final ss info
-        perturbation_ssid[index, 1] = noisy_ss_iter[0]["ssid"]
+        perturbation_ssid[index, 1] = noisy_ss_iter["ssid"][0]
 
         perturbed_parameter[index, :] = changed_ode_parameter[:]
         perturbation_indices[index, :] = parameter_id-1, parameter_change
