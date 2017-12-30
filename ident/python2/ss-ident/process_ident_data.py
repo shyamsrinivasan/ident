@@ -322,8 +322,18 @@ def experiments_in_ident_data(data_p_boolean, data_exp, exp_types, data_id):
             counter_exp_type += 1
             exp_type_all_pos_info.append(all_exp_types_info)
         exp_data_parameter_info.append(exp_type_all_pos_info)
-
     return exp_data_parameter_info
+
+
+def experiments_per_sample_for_ident(all_sample_p_boolean, data_exp, exp_types, data_id):
+    """cycle through each sample of data sets to identify different experiments in
+    each data set identifying each experiment"""
+    number_of_samples = len(all_sample_p_boolean)
+    all_sample_exp_parameter_info = []
+    for j_sample, j_sample_boolean in enumerate(all_sample_p_boolean):
+        exp_data_parameter_info = experiments_in_ident_data(j_sample_boolean, data_exp[j_sample], exp_types, data_id)
+        all_sample_exp_parameter_info.append(exp_data_parameter_info)
+    return all_sample_exp_parameter_info
 
 
 def experiment_position_based_info(experiments_identifying_each_parameter, number_of_experiments_per_data=3):
@@ -367,6 +377,15 @@ def experiment_position_based_info(experiments_identifying_each_parameter, numbe
                                                   "occurrence total percentage": all_pos_total_occurrence_percentage})
 
     return all_parameter_position_based_info
+
+
+def experiment_position_based_info_per_sample(experiments_identifying_each_parameter, number_of_experiments_per_data=3):
+    number_of_samples = len(experiments_identifying_each_parameter)
+    for j_sample_exp in experiments_identifying_each_parameter:
+        all_parameter_position_based_info = \
+            experiment_position_based_info(j_sample_exp, number_of_experiments_per_data)
+        pass
+    return None
 
 
 def experiment_type_based_info(experiments_identifying_each_parameter):
