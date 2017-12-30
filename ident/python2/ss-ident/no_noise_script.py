@@ -4,7 +4,11 @@ from simulate_data import arrange_experimental_data
 from kotte_model import establish_kotte_flux_identifiability
 from process_ident_data import process_info_sample
 from process_ident_data import parameter_plot_data_per_sample
+from process_ident_data import experiments_per_sample_for_ident
+from process_ident_data import experiment_position_based_info_per_sample
 from plot_ident_results import flux_parameter_plot
+from plot_ident_results import parameter_experiment_type_plot
+
 
 # generate noisy experimental data for testing identifiability
 y0 = np.array([5, 1, 1])
@@ -42,16 +46,12 @@ flux_parameter_plot(total_ident_data)
 flux_parameter_plot(fraction_ident_data)
 
 # get different classes of datasets (containing different experiments)
-from process_ident_data import experiments_in_ident_data
 experiment_sets = [[0], [1, 2], [3, 4, 5, 6, 7], [8, 9, 10, 11, 12], [13, 14, 15, 16, 17]]
-exp_data_parameter_info = experiments_in_ident_data(all_boolean_p_id,
-                                                    experimental_datasets,
-                                                    experiment_sets, [])
-
-from process_ident_data import experiment_position_based_info
-all_parameter_position_based_info = experiment_position_based_info(exp_data_parameter_info)
-
-from plot_ident_results import parameter_experiment_type_plot
+exp_data_parameter_info = experiments_per_sample_for_ident(all_boolean_p_id,
+                                                           experimental_datasets,
+                                                           experiment_sets, [])
+all_parameter_position_based_info = experiment_position_based_info_per_sample(exp_data_parameter_info)
+# plot different experiment types identifying each parameter
 parameter_experiment_type_plot(all_parameter_position_based_info)
 
 # all_parameter_type_based_info = experiment_type_based_info(exp_data_parameter_info)
