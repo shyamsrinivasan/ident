@@ -117,8 +117,9 @@ def flux_parameter_plot(total_ident_data, file_destination=()):
                                                  for j_flux in flux_name]) if val]
         # get parameter names for each parameter for each flux in boolean_id (same flux)
         # collect data on the basis of unique fluxes
-        lst_data[pos] = {'names':[parameter_name[id] for id in boolean_id],
-                         'data':[total_ident_data[id] for id in boolean_id]}
+        lst_data[pos] = {'names': [parameter_name[ind] for ind in boolean_id],
+                         'mean': [total_ident_data["means"][ind] for ind in boolean_id],
+                         'std': [total_ident_data["std"][ind] for ind in boolean_id]}
 
     # plot data for each flux in a separate subplot i.e. number_of_subplots = number_of_fluxes
     nrows = 3
@@ -134,7 +135,8 @@ def flux_parameter_plot(total_ident_data, file_destination=()):
     total_plots = 0
     for iplot, axis_obj in enumerate(axarr):
         relevant_dict = lst_data[iplot]
-        x_data = np.array(relevant_dict["data"])
+        x_data = np.array(relevant_dict["mean"])
+        x_error = np.array(relevant_dict["std"])
         y_data = np.arange(len(relevant_dict["names"]))
         axis_obj.barh(y_data, x_data, align='center', color='green', ecolor='black')
         axis_obj.set_yticks(y_data)
