@@ -710,31 +710,37 @@ def write_results_2_file(ident_details, number_fluxes, fp_list, data_list):
 
 def establish_kotte_flux_identifiability(all_data, choose=()):
     """call all identifiability evaluation funcs above and print numerical results"""
-    if choose:
-        try:
-            chosen_values = list(all_data["values"][:choose, :])
-        except TypeError:
-            iter_chosen_value = []
-            for indexes in range(0, len(choose)):
-                iter_chosen_value.append(list(all_data["values"][indexes, :]))
-            chosen_values = iter_chosen_value[:]
-    else:
-        chosen_values = list(all_data["values"][:, :])
-    # chosen_details = all_data["details"][0:choose, :]
 
+    # identifiability function list
     ident_fun_list = (flux_1_ident_expression, flux_2_ident_expression, flux_3_ident_expression)
-    # number_fluxes = len(ident_fun_list)
-    number_data = len(chosen_values)
-    ident_values, parameters_per_flux = get_ident_value(ident_fun_list, chosen_values, choose)
 
-    # process identifiability data
-    _, plist_boolean = process_ident_data(ident_values, number_data)
-    ident_details = {"boolean":plist_boolean, "values":ident_values, "parameters":parameters_per_flux}
+    all_sample_ident_details = []
+    for i_sample, sample_data in enumerate(all_data):
+        if choose:
+            try:
+                chosen_values = list(sample_data["values"][:choose, :])
+            except TypeError:
+                iter_chosen_value = []
+                for indexes in range(0, len(choose)):
+                    iter_chosen_value.append(list(sample_data["values"][indexes, :]))
+                chosen_values = iter_chosen_value[:]
+        else:
+            chosen_values = list(sample_data["values"][:, :])
+        # chosen_details = all_data["details"][0:choose, :]
 
-    # flux_name, parameter_id = return_flux_based_id([5])
-    # parameter_name = ident_parameter_name(parameter_id, flux_name)
+        # number_fluxes = len(ident_fun_list)
+        number_data = len(chosen_values)
+        ident_values, parameters_per_flux = get_ident_value(ident_fun_list, chosen_values, choose)
 
-    return ident_details
+        # process identifiability data
+        _, plist_boolean = process_ident_data(ident_values, number_data)
+        ident_details = {"boolean": plist_boolean, "values": ident_values, "parameters": parameters_per_flux}
+
+        # flux_name, parameter_id = return_flux_based_id([5])
+        # parameter_name = ident_parameter_name(parameter_id, flux_name)
+        all_sample_ident_details.append(ident_details)
+
+    return all_sample_ident_details
 
 
 def parameter_change(new_value, old_value):
