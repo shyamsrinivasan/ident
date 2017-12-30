@@ -214,12 +214,12 @@ def flux_parameter_plot_data(original_data, case=1):
             all_boolean_p_id.append(boolean_p_id)
     number_data, number_p = np.array(all_boolean_p_id).shape
     all_boolean_p_id = [list(j_p) for j_p in np.transpose(np.array(all_boolean_p_id))]
-    if case==1:
+    if case == 1:
         # get total data identifying each parameter
         all_boolean_p_id_sum = [sum(j_list) for j_list in all_boolean_p_id]
-        all_boolean_p_id_fraction = [float(sum(j_list))/number_data for j_list in all_boolean_p_id]
+        all_boolean_p_id_fraction = [float(sum(j_list))*100/number_data for j_list in all_boolean_p_id]
         return all_boolean_p_id_sum, all_boolean_p_id_fraction, all_boolean_p_id
-    elif case==2:
+    elif case == 2:
         all_boolean_e_id = []
         for len_pos, i_list in enumerate(original_data):
             for i_data in i_list:
@@ -232,6 +232,29 @@ def flux_parameter_plot_data(original_data, case=1):
         return all_boolean_p_id, all_boolean_e_id
     else:
         return []
+
+
+def parameter_plot_data_per_sample(original_data, case=1):
+    number_of_samples = len(original_data)
+    all_sample_total_p = []
+    all_sample_fraction_p = []
+    all_sample_all_p_boolean = []
+    for i_sample_ident_data in original_data:
+        total_p, fraction_p, all_p_boolean = flux_parameter_plot_data(i_sample_ident_data, case)
+        all_sample_total_p.append(total_p)
+        all_sample_fraction_p.append(fraction_p)
+        all_sample_all_p_boolean.append(all_p_boolean)
+
+    # collect data from all samples and calculate means and standard deviations for each parameter
+    all_sample_total_means = list(np.mean(np.array(all_sample_total_p), axis=0))
+    all_sample_total_std = list(np.std(np.array(all_sample_total_p), axis=0))
+    all_sample_fraction_means = list(np.mean(np.array(all_sample_fraction_p), axis=0))
+    all_sample_fraction_std = list(np.std(np.array(all_sample_fraction_p), axis=0))
+    all_sample_totals = {'means': all_sample_total_means, 'std': all_sample_total_std}
+    all_sample_fractions = {'means': all_sample_fraction_means, 'std': all_sample_fraction_std}
+    for j_sample in range(0, number_of_samples):
+        pass
+    return all_sample_totals, all_sample_fractions, all_sample_all_p_boolean
 
 
 def dataset_with_experiment(data_exp, exp_id):
