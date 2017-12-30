@@ -3,7 +3,8 @@ from generate_expdata import generate_expdata
 from kotte_model import establish_kotte_flux_identifiability
 from simulate_data import arrange_experimental_data
 # from kotte_model import arrange_experimental_data
-from process_ident_data import process_info
+from process_ident_data import process_info_sample
+# from process_ident_data import process_info
 from process_ident_data import flux_parameter_plot_data
 
 from plot_ident_results import flux_parameter_plot
@@ -30,9 +31,9 @@ ident_details = establish_kotte_flux_identifiability(experimental_datasets, choo
 print('Perturbation analysis for identifiability complete.\n')
 
 # data processing
-data_list, original_data_ident, combo_data_ident, max_parameter = process_info(ident_details,
-                                                                               experimental_datasets,
-                                                                               perturbation_details)
+data_list, original_data_ident, combo_data_ident, max_parameter = process_info_sample(ident_details,
+                                                                                      experimental_datasets,
+                                                                                      perturbation_details)
 
 # plot results
 # file_destination = 'C:\Users\shyam\Documents\Courses\CHE1125Project\Results\ident\python2\\figure_1'
