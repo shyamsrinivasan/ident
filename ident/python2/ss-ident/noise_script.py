@@ -2,10 +2,8 @@ import numpy as np
 from generate_expdata import generate_expdata
 from simulate_data import arrange_experimental_data
 from kotte_model import establish_kotte_flux_identifiability
-# from kotte_model import arrange_experimental_data
-from process_ident_data import process_info
-from process_ident_data import flux_parameter_plot_data
-
+from process_ident_data import process_info_sample
+from process_ident_data import parameter_plot_data_per_sample
 from plot_ident_results import flux_parameter_plot
 
 # generate noisy experimental data for testing identifiability
@@ -24,3 +22,17 @@ exp_flux_index = np.array([0, 3, 2, 4])
 choose = range(138, 200)
 # get combinations of experimental datasets
 experimental_datasets = arrange_experimental_data(exp_xss, exp_fss, perturbation_details, 3, exp_flux_index, choose)
+
+# identifiability for all kotte fluxes
+ident_details = establish_kotte_flux_identifiability(experimental_datasets, choose=choose)
+print('Perturbation analysis for identifiability complete.\n')
+
+# data processing
+data_list, original_data_ident, combo_data_ident, max_parameter = process_info_sample(ident_details,
+                                                                                      experimental_datasets,
+                                                                                      perturbation_details)
+# get data for plots
+total_ident_data, fraction_ident_data, all_boolean_p_id = parameter_plot_data_per_sample(original_data_ident, 1)
+# plot
+flux_parameter_plot(total_ident_data)
+flux_parameter_plot(fraction_ident_data)
