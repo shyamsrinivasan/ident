@@ -138,7 +138,7 @@ def flux_parameter_plot(total_ident_data, file_destination=()):
         x_data = np.array(relevant_dict["mean"])
         x_error = np.array(relevant_dict["std"])
         y_data = np.arange(len(relevant_dict["names"]))
-        axis_obj.barh(y_data, x_data, align='center', color='green', ecolor='black')
+        axis_obj.barh(y_data, x_data, xerr=x_error, align='center', color='green', ecolor='black')
         axis_obj.set_yticks(y_data)
         axis_obj.set_yticklabels(relevant_dict["names"])
         axis_obj.invert_yaxis()
