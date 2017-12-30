@@ -1,7 +1,8 @@
 import numpy as np
 from generate_expdata import generate_expdata
 from kotte_model import establish_kotte_flux_identifiability
-from kotte_model import arrange_experimental_data
+from simulate_data import arrange_experimental_data
+# from kotte_model import arrange_experimental_data
 from process_ident_data import process_info
 from process_ident_data import flux_parameter_plot_data
 
