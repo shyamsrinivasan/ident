@@ -566,14 +566,14 @@ def get_ident_value(ident_function_list, experimental_data_list, original_data_s
 
 
 def ident_parameter_name(parameter_id, flux_name=()):
-    parameter_list = ['V1max', 'K1ac_no_enzyme', 'k1cat', 'K1ac_enzyme',
+    parameter_list = ['V1max', 'K1ac_no_enz', 'k1cat', 'K1ac_enz',
                       'V2max', 'K2pep',
-                      'V3max_option1', 'K3fdp_option1', 'K3pep_option1',
-                      'V3max_option2', 'K3fdp_option2', 'K3pep_option2']
-    flux_parameter_list = {"flux1":['V1max', 'K1ac_no_enzyme', 'k1cat', 'K1ac_enzyme'],
+                      'V3max_1', 'K3fdp_1', 'K3pep_1',
+                      'V3max_2', 'K3fdp_2', 'K3pep_2']
+    flux_parameter_list = {"flux1":['V1max', 'K1ac_no_enz', 'k1cat', 'K1ac_enz'],
                            "flux2":['V2max', 'K2pep'],
-                           "flux3":['V3max_option1', 'K3fdp_option1', 'K3pep_option1',
-                                    'V3max_option2', 'K3fdp_option2', 'K3pep_option2']}
+                           "flux3":['V3max_1', 'K3fdp_1', 'K3pep_1',
+                                    'V3max_2', 'K3fdp_2', 'K3pep_2']}
     if flux_name:
         parameter_name = [flux_parameter_list[name][id] for name, id in zip(flux_name, parameter_id)]
     else:
