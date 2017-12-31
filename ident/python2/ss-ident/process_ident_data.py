@@ -530,7 +530,7 @@ def useful_experiments(original_data):
     return all_parameter_exp_id
 
 
-def process_info(ident_details, experiment_details, perturbation_details):
+def process_info(ident_details, experiment_details, perturbation_details, do_combos=0):
     print("Process information From Identifiability Analysis.....\n")
     number_data, p = ident_details["boolean"].shape
 
@@ -550,11 +550,12 @@ def process_info(ident_details, experiment_details, perturbation_details):
 
         # choose additional data sets and consequently, experiments (if possible) to identify other parameters not
         # identified by chosen data set(s)
-        new_combos = calculate_experiment_combos(ident_details,
-                                                 experiment_details,
-                                                 perturbation_details,
-                                                 temp_list)
-        combination_data.append(new_combos)
+        if do_combos:
+            new_combos = calculate_experiment_combos(ident_details,
+                                                     experiment_details,
+                                                     perturbation_details,
+                                                     temp_list)
+            combination_data.append(new_combos)
 
     # print total individual data sets required and combinations found
     number_original_data = 0
@@ -565,8 +566,9 @@ def process_info(ident_details, experiment_details, perturbation_details):
               format(data_usefulness["number_parameters_ided"][list_pos], len(i_data)))
         number_original_data += len(i_data)
         # combination data sets
-        print('Combination Data sets for more parameters: {}'.format(len(combination_data[list_pos])))
-        number_combination_data += len(combination_data[list_pos])
+        if combination_data:
+            print('Combination Data sets for more parameters: {}'.format(len(combination_data[list_pos])))
+            number_combination_data += len(combination_data[list_pos])
 
     # decide which experiments to perform for each parameter based on above calculations
 
@@ -593,7 +595,7 @@ def process_info(ident_details, experiment_details, perturbation_details):
     return data_usefulness, original_data, combination_data, max_parameter
 
 
-def process_info_sample(ident_details, experiment_details, perturbation_details):
+def process_info_sample(ident_details, experiment_details, perturbation_details, do_combos=0):
     number_of_samples = len(ident_details)
     all_sample_data_list = []
     all_sample_original_data = []
@@ -602,7 +604,7 @@ def process_info_sample(ident_details, experiment_details, perturbation_details)
     for j_sample, j_sample_ident_details in enumerate(ident_details):
         print("Processing identifiability data for sample {}".format(j_sample))
         data_list, original_ident_data, combo_ident_data, max_parameter = \
-            process_info(j_sample_ident_details, experiment_details[j_sample], perturbation_details)
+            process_info(j_sample_ident_details, experiment_details[j_sample], perturbation_details, do_combos)
         all_sample_data_list.append(data_list)
         all_sample_original_data.append(original_ident_data)
         all_sample_combo_data.append(combo_ident_data)
