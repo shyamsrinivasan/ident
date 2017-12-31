@@ -131,7 +131,10 @@ def flux_parameter_plot(total_ident_data, file_destination=()):
         ncolumns = (number_of_fluxes + 1) / 3
     else:
         ncolumns = 2
-    f, axarr = plt.subplots(nrows, ncolumns, sharex='col')
+    # set figure size and quality
+    # f = plt.figure(figsize=(18, 16), dpi=300, facecolor='w', edgecolor='k')
+    f, axarr = plt.subplots(nrows, ncolumns, sharex='col',
+                            figsize=(8, 6), dpi=200, facecolor='w', edgecolor='k')
     total_plots = 0
     for iplot, axis_obj in enumerate(axarr):
         relevant_dict = lst_data[iplot]
