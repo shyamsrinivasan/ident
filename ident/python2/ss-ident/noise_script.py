@@ -14,12 +14,12 @@ ode_parameter_values = np.array([.1, .1, 4e6, .1, .3, 1.1, .45, 2, .25, .2, 1, 1
 
 # get experimental system steady state data without noise
 exp_xss, exp_fss, exp_ssid, perturbation_details = \
-    generate_expdata(y0, cvode_options, ode_parameter_values, noise=1, number_of_samples=2)
+    generate_expdata(y0, cvode_options, ode_parameter_values, noise=1, number_of_samples=25)
 
 # arrange experimental data to form multiple data sets
 exp_flux_index = np.array([0, 3, 2, 4])
 # choose numbr of experimental datasets for which identifiability is to be calculated
-choose = range(138, 200)
+choose = range(0, 4896)
 # get combinations of experimental datasets
 experimental_datasets = arrange_experimental_data(exp_xss, exp_fss, perturbation_details, 3, exp_flux_index, choose)
 
@@ -36,3 +36,6 @@ total_ident_data, fraction_ident_data, all_boolean_p_id = parameter_plot_data_pe
 # plot
 flux_parameter_plot(total_ident_data)
 flux_parameter_plot(fraction_ident_data)
+
+# get different classes of datasets (containing different experiments)
+experiment_sets = [[0], [1, 2], [3, 4, 5, 6, 7], [8, 9, 10, 11, 12], [13, 14, 15, 16, 17]]
