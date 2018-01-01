@@ -34,8 +34,8 @@ data_list, original_data_ident, combo_data_ident, max_parameter = process_info_s
 # get data for plots
 total_ident_data, fraction_ident_data, all_boolean_p_id = parameter_plot_data_per_sample(original_data_ident, 1)
 # plot
-flux_parameter_plot(total_ident_data)
-flux_parameter_plot(fraction_ident_data)
+flux_parameter_plot(total_ident_data, fraction_ident_data)
+# flux_parameter_plot(fraction_ident_data)
 
 # get different classes of datasets (containing different experiments)
 experiment_sets = [[0], [1, 2], [3, 4, 5, 6, 7], [8, 9, 10, 11, 12], [13, 14, 15, 16, 17]]
