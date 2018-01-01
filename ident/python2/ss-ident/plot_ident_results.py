@@ -101,7 +101,7 @@ def parameter_experiment_type_plot(parameter_position_based_info):
     return None
 
 
-def flux_parameter_plot(total_ident_data, file_destination=()):
+def flux_parameter_plot(total_ident_data, fraction_data={}, file_destination=()):
     """calculate and plot the number of data identifying each parameter in each flux"""
     # get flux and parameter name for k_p
     flux_name, pid, _ = flux_based_id(range(0, 12))
@@ -117,9 +117,16 @@ def flux_parameter_plot(total_ident_data, file_destination=()):
                                                  for j_flux in flux_name]) if val]
         # get parameter names for each parameter for each flux in boolean_id (same flux)
         # collect data on the basis of unique fluxes
-        lst_data[pos] = {'names': [parameter_name[ind] for ind in boolean_id],
-                         'mean': [total_ident_data["means"][ind] for ind in boolean_id],
-                         'std': [total_ident_data["std"][ind] for ind in boolean_id]}
+        if fraction_data:
+            lst_data[pos] = {'names': [parameter_name[ind] for ind in boolean_id],
+                             'mean': [total_ident_data["means"][ind] for ind in boolean_id],
+                             'std': [total_ident_data["std"][ind] for ind in boolean_id],
+                             'fraction mean': [fraction_data["means"][ind] for ind in boolean_id],
+                             'fraction std': [fraction_data["std"][ind] for ind in boolean_id]}
+        else:
+            lst_data[pos] = {'names': [parameter_name[ind] for ind in boolean_id],
+                             'mean': [total_ident_data["means"][ind] for ind in boolean_id],
+                             'std': [total_ident_data["std"][ind] for ind in boolean_id]}
 
     # plot data for each flux in a separate subplot i.e. number_of_subplots = number_of_fluxes
     nrows = 3
@@ -131,6 +138,10 @@ def flux_parameter_plot(total_ident_data, file_destination=()):
         ncolumns = (number_of_fluxes + 1) / 3
     else:
         ncolumns = 2
+    # allow pyplot to use tex for text rendering
+    plt.rc('text', usetex=True)
+    plt.rc('font', **{'family': 'sans-serif', 'sans-serif': ['Helvetica']})
+
     # set figure size and quality
     # f = plt.figure(figsize=(18, 16), dpi=300, facecolor='w', edgecolor='k')
     f, axarr = plt.subplots(nrows, ncolumns, sharex='col',
@@ -141,7 +152,20 @@ def flux_parameter_plot(total_ident_data, file_destination=()):
         x_data = np.array(relevant_dict["mean"])
         x_error = np.array(relevant_dict["std"])
         y_data = np.arange(len(relevant_dict["names"]))
+        x_percentage_annotation = relevant_dict["fraction mean"]
+        x_error_annotation = relevant_dict["fraction std"]
+        # create annotations for each bar in each plot
+        x_annotation = []
+        for i_plot_object in range(0, len(y_data)):
+            x_annotation.append("{:.2f} + {:.2f} /%".format(x_percentage_annotation[i_plot_object],
+                                                          x_error_annotation[i_plot_object]))
         axis_obj.barh(y_data, x_data, xerr=x_error, align='center', color='green', ecolor='black')
+        for j_bar in range(0, len(y_data)):
+            an1 = axis_obj.annotate("", xy=(x_data[j_bar], y_data[j_bar]), xycoords='data',
+                                    xytext=(x_data[j_bar], y_data[j_bar]), textcoords='data')
+            an2 = axis_obj.annotate(x_annotation[j_bar], xy=(5, .5), xycoords=an1,
+                                    xytext=(40, 0), textcoords="offset points",
+                                    size=20, va="center", ha="center")
         axis_obj.set_yticks(y_data)
         axis_obj.set_yticklabels(relevant_dict["names"])
         axis_obj.invert_yaxis()
