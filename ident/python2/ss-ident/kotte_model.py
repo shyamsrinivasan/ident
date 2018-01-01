@@ -566,14 +566,14 @@ def get_ident_value(ident_function_list, experimental_data_list, original_data_s
 
 
 def ident_parameter_name(parameter_id, flux_name=()):
-    parameter_list = ['V1max', 'K1ac_no_enz', 'k1cat', 'K1ac_enz',
+    parameter_list = ['V1max', 'K1ac (no enz)', 'k1cat', 'K1ac (enz)',
                       'V2max', 'K2pep',
-                      'V3max_1', 'K3fdp_1', 'K3pep_1',
-                      'V3max_2', 'K3fdp_2', 'K3pep_2']
-    flux_parameter_list = {"flux1":['V1max', 'K1ac_no_enz', 'k1cat', 'K1ac_enz'],
+                      'V3max (1)', 'K3fdp (1)', 'K3pep (1)',
+                      'V3max (2)', 'K3fdp (2)', 'K3pep (2)']
+    flux_parameter_list = {"flux1":['V1max', 'K1ac (no enz)', 'k1cat', 'K1ac (enz)'],
                            "flux2":['V2max', 'K2pep'],
-                           "flux3":['V3max_1', 'K3fdp_1', 'K3pep_1',
-                                    'V3max_2', 'K3fdp_2', 'K3pep_2']}
+                           "flux3":['V3max (1)', 'K3fdp (1)', 'K3pep (1)',
+                                    'V3max (2)', 'K3fdp (2)', 'K3pep (2)']}
     if flux_name:
         parameter_name = [flux_parameter_list[name][id] for name, id in zip(flux_name, parameter_id)]
     else:
@@ -585,14 +585,14 @@ def ident_parameter_name(parameter_id, flux_name=()):
 
 
 def flux_based_id(parameter_id):
-    parameter_list = ['V1max', 'K1ac_no_enz', 'k1cat', 'K1ac_enz',
+    parameter_list = ['V1max', 'K1ac (no enz)', 'k1cat', 'K1ac (enz)',
                       'V2max', 'K2pep',
-                      'V3max_1', 'K3fdp_1', 'K3pep_1',
-                      'V3max_2', 'K3fdp_2', 'K3pep_2']
-    flux_parameter_list = {"flux1": ['V1max', 'K1ac_no_enz', 'k1cat', 'K1ac_enz'],
+                      'V3max (1)', 'K3fdp (1)', 'K3pep (1)',
+                      'V3max (2)', 'K3fdp (2)', 'K3pep (2)']
+    flux_parameter_list = {"flux1": ['V1max', 'K1ac (no enz)', 'k1cat', 'K1ac (enz)'],
                            "flux2": ['V2max', 'K2pep'],
-                           "flux3": ['V3max_1', 'K3fdp_1', 'K3pep_1',
-                                     'V3max_2', 'K3fdp_2', 'K3pep_2']}
+                           "flux3": ['V3max (1)', 'K3fdp (1)', 'K3pep (1)',
+                                     'V3max (2)', 'K3fdp (2)', 'K3pep (2)']}
     try:
         parameter_name = [(id, parameter_list[id]) for id in parameter_id]
     except TypeError:
