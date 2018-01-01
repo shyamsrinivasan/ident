@@ -139,7 +139,7 @@ def flux_parameter_plot(total_ident_data, fraction_data={}, file_destination=())
     else:
         ncolumns = 2
     # allow pyplot to use tex for text rendering
-    plt.rc('text', usetex=True)
+    # plt.rc('text', usetex=True)
     plt.rc('font', **{'family': 'sans-serif', 'sans-serif': ['Helvetica']})
 
     # set figure size and quality
