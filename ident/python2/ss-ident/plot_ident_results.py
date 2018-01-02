@@ -92,10 +92,12 @@ def experiment_type_plot(position_based_info, x_label):
     return None
 
 
-def parameter_experiment_type_plot(total_exp_info, fraction_exp_info):
+def parameter_experiment_type_plot(total_exp_info, fraction_exp_info, parameter_choice=()):
     """call experiment_type_plot for each parameter information present in parameter_position_based_info"""
-    for i_parameter_info in total_exp_info:
-        experiment_type_plot(i_parameter_info, x_label='Occurrence in Identifying Data set')
+    if not parameter_choice:
+        parameter_choice = range(0, len(total_exp_info))
+    for i_parameter in parameter_choice:
+        experiment_type_plot(total_exp_info[i_parameter], x_label='Occurrence in Identifying Data set')
         # experiment_type_plot(i_parameter_info["occurrence total percentage"],
         #                      x_label='Occurrence Percentage in Identifying Data set')
     return None
