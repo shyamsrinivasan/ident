@@ -78,10 +78,11 @@ def experiment_type_plot(position_based_info, x_label):
     # figure for parameter i
     f, ax = plt.subplots(1, 3, sharey='row')
     for i_position, axis_obj in enumerate(ax):
-        x_data = np.array(position_based_info[i_position])
+        x_data = np.array(position_based_info["mean"][i_position])
+        x_error = np.array(position_based_info["std"][i_position])
         y_data = np.arange(x_data.shape[0])
         y_tick_names = ['experiment type {}'.format(itype+1) for itype in range(0, x_data.shape[0])]
-        axis_obj.barh(y_data, x_data, align='center', color='blue', ecolor='black')
+        axis_obj.barh(y_data, x_data, xerr=x_error, align='center', color='blue', ecolor='black')
         axis_obj.set_yticks(y_data)
         axis_obj.set_yticklabels(y_tick_names)
         axis_obj.set_title('position {}'.format(i_position))
@@ -91,13 +92,12 @@ def experiment_type_plot(position_based_info, x_label):
     return None
 
 
-def parameter_experiment_type_plot(parameter_position_based_info):
+def parameter_experiment_type_plot(total_exp_info, fraction_exp_info):
     """call experiment_type_plot for each parameter information present in parameter_position_based_info"""
-    for i_parameter_info in parameter_position_based_info:
-        experiment_type_plot(i_parameter_info["occurrence total"], x_label='Occurrence in Identifying Data set')
-        experiment_type_plot(i_parameter_info["occurrence total percentage"],
-                             x_label='Occurrence Percentage in Identifying Data set')
-
+    for i_parameter_info in total_exp_info:
+        experiment_type_plot(i_parameter_info, x_label='Occurrence in Identifying Data set')
+        # experiment_type_plot(i_parameter_info["occurrence total percentage"],
+        #                      x_label='Occurrence Percentage in Identifying Data set')
     return None
 
 
