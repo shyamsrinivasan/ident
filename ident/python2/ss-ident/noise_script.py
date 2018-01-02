@@ -31,7 +31,7 @@ print('Perturbation analysis for identifiability complete.\n')
 data_list, original_data_ident, combo_data_ident, max_parameter = process_info_sample(ident_details,
                                                                                       experimental_datasets,
                                                                                       perturbation_details)
-# get data for plots
+# get data for plots 
 total_ident_data, fraction_ident_data, all_boolean_p_id = parameter_plot_data_per_sample(original_data_ident, 1)
 # plot
 flux_parameter_plot(total_ident_data, fraction_ident_data)
