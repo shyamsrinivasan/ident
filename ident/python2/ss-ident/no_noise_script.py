@@ -23,7 +23,7 @@ exp_xss, exp_fss, exp_ssid, perturbation_details = \
 # arrange experimental data to form multiple data sets
 exp_flux_index = np.array([0, 3, 2, 4])
 # choose numbr of experimental datasets for which identifiability is to be calculated
-choose = range(0, 4896)
+choose = range(0, 200)
 # get combinations of experimental datasets
 experimental_datasets = arrange_experimental_data(exp_xss, exp_fss, perturbation_details, 3, exp_flux_index, choose)
 
@@ -43,16 +43,16 @@ data_list, original_data_ident, combo_data_ident, max_parameter = process_info_s
 total_ident_data, fraction_ident_data, all_boolean_p_id = parameter_plot_data_per_sample(original_data_ident, 1)
 # plot
 flux_parameter_plot(total_ident_data, fraction_ident_data)
-# flux_parameter_plot(fraction_ident_data)
 
 # get different classes of datasets (containing different experiments)
 experiment_sets = [[0], [1, 2], [3, 4, 5, 6, 7], [8, 9, 10, 11, 12], [13, 14, 15, 16, 17]]
 exp_data_parameter_info = experiments_per_sample_for_ident(all_boolean_p_id,
                                                            experimental_datasets,
                                                            experiment_sets, [])
-all_parameter_position_based_info = experiment_position_based_info_per_sample(exp_data_parameter_info)
+total_exp_info, fraction_exp_info = experiment_position_based_info_per_sample(exp_data_parameter_info)
 # plot different experiment types identifying each parameter
-parameter_experiment_type_plot(all_parameter_position_based_info)
+parameter_choice = [0, 4, 5, 6, 7, 8]
+parameter_experiment_type_plot(total_exp_info, fraction_exp_info, parameter_choice)
 
 # all_parameter_type_based_info = experiment_type_based_info(exp_data_parameter_info)
 
