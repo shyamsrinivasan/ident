@@ -73,10 +73,12 @@ def useful_experiments(original_data):
     return None
 
 
-def experiment_type_plot(position_based_info, x_label):
+def experiment_type_plot(position_based_info, x_label, fig_title=''):
     """plot figure for each parameter with info for one parameter provided in input"""
     # figure for parameter i
     f, ax = plt.subplots(1, 3, sharey='row')
+    if fig_title:
+        f.text(.5, .975, fig_title, horizontalalignment='center', verticalalignment='top')
     for i_position, axis_obj in enumerate(ax):
         x_data = np.array(position_based_info["mean"][i_position])
         x_error = np.array(position_based_info["std"][i_position])
@@ -97,7 +99,8 @@ def parameter_experiment_type_plot(total_exp_info, fraction_exp_info, parameter_
     if not parameter_choice:
         parameter_choice = range(0, len(total_exp_info))
     for i_parameter in parameter_choice:
-        experiment_type_plot(total_exp_info[i_parameter], x_label='Occurrence in Identifying Data set')
+        experiment_type_plot(total_exp_info[i_parameter], x_label='Occurrence in Identifying Data set',
+                             fig_title="Parameter {}".format(i_parameter+1))
         # experiment_type_plot(i_parameter_info["occurrence total percentage"],
         #                      x_label='Occurrence Percentage in Identifying Data set')
     return None
