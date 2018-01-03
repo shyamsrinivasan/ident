@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from kotte_model import ident_parameter_name
+# from kotte_model import kotte_parameter_name
 from kotte_model import experiment_name
 from kotte_model import flux_based_id
 
@@ -73,7 +74,7 @@ def useful_experiments(original_data):
     return None
 
 
-def experiment_type_plot(position_based_info, x_label, fig_title=''):
+def experiment_type_plot(position_based_info, fraction_info, x_label, fig_title=''):
     """plot figure for each parameter with info for one parameter provided in input"""
     # figure for parameter i
     f, ax = plt.subplots(1, 3, sharey='row')
@@ -84,7 +85,20 @@ def experiment_type_plot(position_based_info, x_label, fig_title=''):
         x_error = np.array(position_based_info["std"][i_position])
         y_data = np.arange(x_data.shape[0])
         y_tick_names = ['experiment type {}'.format(itype+1) for itype in range(0, x_data.shape[0])]
+        # prepare annotation
+        annotation_text = []
+        percent_mean = fraction_info["mean"][i_position]
+        percent_error = fraction_info["std"][i_position]
+        for j_plot_obj in range(0, len(y_data)):
+            annotation_text.append("{:.2%}+{:.2%}".format(percent_mean[j_plot_obj], percent_error[j_plot_obj]))
+            pass
         axis_obj.barh(y_data, x_data, xerr=x_error, align='center', color='blue', ecolor='black')
+        for j_bar in range(0, len(y_data)):
+            an1 = axis_obj.annotate("", xy=(x_data[j_bar]/2, y_data[j_bar]), xycoords='data',
+                                    xytext=(x_data[j_bar]/2, y_data[j_bar]), textcoords='data')
+            an2 = axis_obj.annotate(annotation_text[j_bar], xy=(5, .5), xycoords=an1,
+                                    xytext=(20, 0), textcoords="offset points",
+                                    size=20, va="center", ha="center")
         axis_obj.set_yticks(y_data)
         axis_obj.set_yticklabels(y_tick_names)
         axis_obj.set_title('position {}'.format(i_position))
@@ -99,8 +113,10 @@ def parameter_experiment_type_plot(total_exp_info, fraction_exp_info, parameter_
     if not parameter_choice:
         parameter_choice = range(0, len(total_exp_info))
     for i_parameter in parameter_choice:
-        experiment_type_plot(total_exp_info[i_parameter], x_label='Occurrence in Identifying Data set',
-                             fig_title="Parameter {}".format(i_parameter+1))
+        parameter_name = ident_parameter_name(i_parameter)
+        experiment_type_plot(total_exp_info[i_parameter], fraction_exp_info[i_parameter],
+                             x_label='Occurrence in Identifying Data set',
+                             fig_title=parameter_name)
         # experiment_type_plot(i_parameter_info["occurrence total percentage"],
         #                      x_label='Occurrence Percentage in Identifying Data set')
     return None
