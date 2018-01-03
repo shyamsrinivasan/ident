@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from kotte_model import ident_parameter_name
-# from kotte_model import kotte_parameter_name
+from kotte_model import kotte_experiment_type_name
 from kotte_model import experiment_name
 from kotte_model import flux_based_id
 
@@ -84,7 +84,7 @@ def experiment_type_plot(position_based_info, fraction_info, x_label, fig_title=
         x_data = np.array(position_based_info["mean"][i_position])
         x_error = np.array(position_based_info["std"][i_position])
         y_data = np.arange(x_data.shape[0])
-        y_tick_names = ['experiment type {}'.format(itype+1) for itype in range(0, x_data.shape[0])]
+        y_tick_names = kotte_experiment_type_name(y_data)
         # prepare annotation
         annotation_text = []
         percent_mean = fraction_info["mean"][i_position]
@@ -101,7 +101,7 @@ def experiment_type_plot(position_based_info, fraction_info, x_label, fig_title=
                                     size=20, va="center", ha="center")
         axis_obj.set_yticks(y_data)
         axis_obj.set_yticklabels(y_tick_names)
-        axis_obj.set_title('position {}'.format(i_position))
+        axis_obj.set_title('experiment {}'.format(i_position))
     ax[-1].invert_yaxis()
     ax[-2].set_xlabel(x_label)
     plt.show()
