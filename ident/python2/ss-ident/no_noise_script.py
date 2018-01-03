@@ -51,7 +51,7 @@ exp_data_parameter_info = experiments_per_sample_for_ident(all_boolean_p_id,
                                                            experiment_sets, [])
 total_exp_info, fraction_exp_info = experiment_position_based_info_per_sample(exp_data_parameter_info)
 # plot different experiment types identifying each parameter
-parameter_choice = [0, 4, 5, 6, 7, 8, 9, 10, 11]
+parameter_choice = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 parameter_experiment_type_plot(total_exp_info, fraction_exp_info, parameter_choice)
 
 # all_parameter_type_based_info = experiment_type_based_info(exp_data_parameter_info)
