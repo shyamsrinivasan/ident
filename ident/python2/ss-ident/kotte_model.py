@@ -632,6 +632,15 @@ def kotte_parameter_name(parameter_id):
         return parameter_list[parameter_id]
 
 
+def kotte_experiment_type_name(experiment_id):
+    experiment_type_name_list = ['wildtype acetate', 'acetate perturbation', 'k1cat perturbation',
+                                 'V3max perturbation', 'V2max perturbation']
+    try:
+        return [experiment_type_name_list[index] for index in experiment_id]
+    except TypeError:
+        return experiment_type_name_list[experiment_id]
+
+
 def experiment_name(experiment_id, experiment_details):
     try:
         parameter_changed = kotte_parameter_name([int(experiment_details["indices"][i, 0]) for i in experiment_id])
