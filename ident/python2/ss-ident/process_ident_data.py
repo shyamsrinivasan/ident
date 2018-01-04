@@ -559,7 +559,6 @@ def useful_experiments(original_data):
 
 
 def process_info(ident_details, experiment_details, perturbation_details, do_combos=0):
-    print("Process information From Identifiability Analysis.....\n")
     number_data, p = ident_details["boolean"].shape
 
     # get data identification percentages to classify utility of data sets
@@ -624,6 +623,7 @@ def process_info(ident_details, experiment_details, perturbation_details, do_com
 
 
 def process_info_sample(ident_details, experiment_details, perturbation_details, do_combos=0):
+    print("Process information From Identifiability Analysis.....\n")
     number_of_samples = len(ident_details)
     all_sample_data_list = []
     all_sample_original_data = []
