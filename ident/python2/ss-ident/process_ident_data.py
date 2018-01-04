@@ -638,3 +638,11 @@ def process_info_sample(ident_details, experiment_details, perturbation_details,
         all_sample_combo_data.append(combo_ident_data)
         all_sample_max_parameter.append(max_parameter)
     return all_sample_data_list, all_sample_original_data, all_sample_combo_data, all_sample_max_parameter
+
+
+def get_data_combinations(original_data, chosen_data_id):
+    """get new data combinations that result in additional parameters being identified
+    for a given data set until all parameters can be identified"""
+    # given - chosen_data_id - id of data sets already chosen
+    # return - additional data sets/experiments to enable identification of parameters not identified by chosen_data_id
+    return None
