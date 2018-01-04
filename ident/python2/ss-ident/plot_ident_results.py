@@ -200,3 +200,23 @@ def flux_parameter_plot(total_ident_data, fraction_data={}, file_destination=())
         plt.savefig(file_destination+'.eps', format='png', dpi=2000)
         plt.savefig(file_destination+'.png', format='eps', dpi=2000)
     return None
+
+
+def data_utility_plot(data_list):
+    # collect data for plotting
+    x_data = data_list["number_parameters_ided"]
+    y_data = [len(all_indices) for all_indices in data_list["index"]]
+    y_percentage = ["{:.2%}".format(percent_data/100) for percent_data in data_list["percentage"]]
+    figure, ax = plt.subplots()
+    width = 0.5  # bar width
+    ax.bar(x_data, y_data, width, color='blue', align='center', ecolor='black')
+    for j_bar in range(0, len(y_data)):
+        ax.annotate(y_percentage[j_bar], xy=(x_data[j_bar]-width/2, y_data[j_bar]+.5), xycoords='data',
+                    xytext=(x_data[j_bar]-width/2, y_data[j_bar]+.5), textcoords='data')
+    ax.set_ylabel('Number of data sets')
+    ax.set_xlabel('Number of identified parameters')
+    ax.set_xticks(x_data)
+    ax.set_title('No Title yet')
+    plt.show()
+
+    return None
