@@ -86,24 +86,23 @@ def experiment_type_plot(position_based_info, fraction_info, x_label, fig_title=
         y_data = np.arange(x_data.shape[0])
         y_tick_names = kotte_experiment_type_name(y_data)
         # prepare annotation
-        annotation_text = []
         percent_mean = fraction_info["mean"][i_position]
         percent_error = fraction_info["std"][i_position]
-        for j_plot_obj in range(0, len(y_data)):
-            annotation_text.append("{:.2%}+{:.2%}".format(percent_mean[j_plot_obj], percent_error[j_plot_obj]))
-            pass
+        annotation_text = ["{:.2%}+{:.2f}".format(percent_mean[j_plot_obj], percent_error[j_plot_obj]*100)
+                           for j_plot_obj in range(0, len(y_data))]
         axis_obj.barh(y_data, x_data, xerr=x_error, align='center', color='blue', ecolor='black')
         for j_bar in range(0, len(y_data)):
             an1 = axis_obj.annotate("", xy=(x_data[j_bar]/2, y_data[j_bar]), xycoords='data',
                                     xytext=(x_data[j_bar]/2, y_data[j_bar]), textcoords='data')
             an2 = axis_obj.annotate(annotation_text[j_bar], xy=(5, .5), xycoords=an1,
-                                    xytext=(20, 0), textcoords="offset points",
+                                    xytext=(12, 0), textcoords="offset points",
                                     size=20, va="center", ha="center")
         axis_obj.set_yticks(y_data)
         axis_obj.set_yticklabels(y_tick_names)
         axis_obj.set_title('experiment {}'.format(i_position))
     ax[-1].invert_yaxis()
     ax[-2].set_xlabel(x_label)
+    plt.tight_layout(pad=3.0)
     plt.show()
     return None
 
