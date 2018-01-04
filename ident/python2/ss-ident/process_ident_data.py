@@ -300,7 +300,7 @@ def experiments_in_ident_data(data_p_boolean, data_exp, exp_types, data_id):
         # get experiment type numbers and percentages within data set at each position
         total_identifying_experiments = chosen_data_experiments.shape[0]
         counter_exp_type = 0
-        print('Parameter {}'.format(j_p))
+        # print('Parameter {}'.format(j_p))
         exp_type_all_pos_info = []
         for j_exp_type, exp_id in zip(exp_types_classification, exp_types):
             all_exp_types_info = []
