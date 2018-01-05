@@ -1,6 +1,4 @@
 import numpy as np
-import sympy as sym
-import itertools as it
 import os.path
 import csv
 # import scipy.linalg
@@ -85,19 +83,6 @@ def truncate_values(f, n=3):
         return float('.'.join([i, (d+'0'*n)[:n]]))
     else:
         return f
-
-
-def define_sym_variables():
-    """define all required symbolic variables for sympy expressions"""
-    ac1, ac2, ac3, x11, x12, x13, x21, x22, x23, x31, x32, x33, \
-    v31, v32, v33, v11, v12, v13, v21, v22, v23, v41, v42, v43 = \
-        sym.symbols('ac1, ac2, ac3, x11, x12, x13, x21, x22, x23, x31, x32, x33,'
-                ' v31, v32, v33, v11, v12, v13, v21, v22, v23, v41, v42, v43', positive=True)
-    variables = [ac1, x11, x21, x31, v11, v21, v31, v41,
-                 ac2, x12, x22, x32, v12, v22, v32, v42,
-                 ac3, x13, x23, x33, v13, v23, v33, v43]
-    return variables, ac1, ac2, ac3, x11, x12, x13, x21, x22, x23, x31, x32, x33, \
-           v31, v32, v33, v11, v12, v13, v21, v22, v23, v41, v42, v43
 
 
 def flux_1_ident_expression(experimental_data):
