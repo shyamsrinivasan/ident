@@ -58,15 +58,50 @@
 \addbibresource{refs/ident_refs.bib}
 
 \begin{document}
-\section{Introduction:}	
-The dynamic response of any system can be modeled as a set of ordinary differential equations (ode) (Equation \ref{eq:output}a) in the state variables ($\mathbf{x}$). The changes in the state variables are expressed as a function of the state variables, the system parameters ($\theta$) and the inputs to the system ($u$).	
-\begin{subequations}\label{eq:output}
+\paragraph{Outline:}
+\begin{itemize}
+	\item Importance of parameter values for estimating in vivo response using kinetic models of metabolism and consequently for metabolic network design using kinetic models of metabolism
+	\item The need for parameter identifiability to determine unique and true parameter values from observed data
+	\item Types and purpose of identifiability for parameters
+	\item Methods for structural identifiability and existing methods for practical identifiability
+	\item Lack of methods for practical identifiability and consequently experimental design (not covered?)
+	\item work done in this paper for practical identifiability			
+	\item scalability of computer algebra-based methods for structural identifiability (using CRNT to reduce networks to make structural identifiability scalable) (move to discussion - may be in discussion)
+\end{itemize}	
+\section{Introduction:}
+Kinetic models of metabolism can be used to study the dynamic characteristics of metabolic networks. In these models, ordinary differential equations (ode) are used to express the rate of change of metabolite concentrations ($x$) as a function of the reaction fluxes ($v$) in the metabolic network (Equation \ref{eq:kinstoich}). The matrix $\mathbf{S}$ in Equation (\ref{eq:kinstoich}a) defines the stoichiometric relationship between the fluxes and the concentrations in the metabolic network.
+\begin{subequations}\label{eq:kinstoich}
 	\begin{align}
-	\dot{\mathbf{x}} = g(\mathbf{x}, \theta, u)\\
-	\mathbf{y} = h(\mathbf{x},\mu,u)
+	\dot{x} = \mathbf{S}v\\
+	v = g(x, \theta, u)
 	\end{align}
 \end{subequations}
-When all states are not observable, Equation (\ref{eq:output}a) is usually augmented with a system that defines the relationship between the observable output variables ($\mathbf{y}$) and the state variables ($\mathbf{x}$) as in Equation (\ref{eq:output}b). The parameters used to establish this relationship (Equation \ref{eq:output}b), $\mu$, may or may not include system parameters $\theta$ defined in Equation (\ref{eq:output}a).
+The expression for the nonlinear function ($g$) used to describe each reaction flux $v_i$ in a kinetic model (Equation \ref{eq:kinstoich}b) is dependent on the enzyme kinetic mechanism that is used to model the reaction. Accordingly, the reaction fluxes are expressed as a nonlinear function ($g$) of the metabolite concentrations, enzyme kinetic parameters ($\theta$) and other input concentrations ($u$). 
+
+The ability to predict the steady state and dynamic responses of the metabolic network, under in vivo conditions, to different perturbations is dependent on the numerical values of the enzyme kinetic parameter values ($\theta$) in Equation (\ref{eq:kinstoich}). The use of in vitro, or unreliable in vivo parameter estimates, reduces the confidence in the model predicted behaviour. The reduction in confidence not only hampers the use of these models to gain insight into the functioning of the metabolic network, but also is an obstacle for using the predicted responses as a basis for designing metabolic networks.  
+
+If all intracellular metabolite concentrations can be measured over a time course, and the corresponding data is available, a nonlinear programming problem can be formulated to estimate the enzyme kinetic parameters ($\theta$) in Equation (\ref{eq:kinstoich}). The minimization of least square error between the measured ($x^*$) and modeled ($x$) concentrations can be used as an objective function (Equation \ref{eq:lsqopt}a) for the optimization problem (Equation \ref{eq:lsqopt}), with fixed upper ($\theta_u$) and lower ($\theta_l$) bounds for the parameter values (Equation \ref{eq:lsqopt}b).
+\begin{subequations}\label{eq:lsqopt}
+	\begin{align}
+	\underset{\theta}{\mathrm{min}} &\sum_{k=1}^{m}\sum_{l=1}^{d}\left(\frac{x_{kl}^*-x_{kl}}{\sigma_{kl}^*}\right)^2\\
+	&\theta_l \le \theta \le \theta_u
+	\end{align}
+\end{subequations}
+
+However, not all metabolite concentrations used in the model in Equation (\ref{eq:kinstoich}) can be measured. Additionally, measurable fluxes in the metabolic network also need to be included as part of the parameter estimation problem. In such scenarios, the parameter estimation problem is modified to suit a new system of equations shown below (Equation \ref{eq:output}). The new system of equations is obtained by augmenting the original system in Equation (\ref{eq:kinstoich}) with Equation (\ref{eq:output}c) that models the relationship between the measurable metabolite concentrations ($y$) and fluxes  and the unmeasurable concentrations ($x$) that are used in the original model in Equation (\ref{eq:kinstoich}) above. In Equation (\ref{eq:output}), the measurable concentrations 
+\begin{subequations}\label{eq:output}
+	\begin{align}
+	\dot{x} = \mathbf{S}v\\
+	v = g(x, \theta, u)\\
+	\dot{y} = h(x, \mu, u)
+	\end{align}
+\end{subequations}
+The metabolite concentrations ($x$) in the optimization problem (Equation \ref{eq:lsqopt}) are substituted with the measurable concentrations $y$ to estimate $\theta$. 
+
+\section{old Introduction:}	
+The dynamic response of any system can be modeled as a set of ordinary differential equations (ode) (Equation \ref{eq:output}a) in the state variables ($\mathbf{x}$). The changes in the state variables are expressed as a function of the state variables, the system parameters ($\theta$) and the inputs to the system ($u$).	
+
+When all states are not observable, Equation (\ref{eq:output}a) is usually augmented with a system that defines the relationship between the observable output variables ($\mathbf{y}$) and the state variables ($\mathbf{x}$) as in Equation (\ref{eq:output}b). The parameters used to establish this relationship (Equation \ref{eq:output}b), $\mu$, may or may not include system parameters $\theta$ defined in Equation (\ref{eq:output}a). 
 
 Typically, a nonlinear programming formulation with the objective of minimizing the least square error between the measured ($y_{kl}^*$) and modeled ($y_{kl}$) outputs over the time course ($l = {1, ..., d}$) for which experimental data is collected (Equation \ref{eq:minnlp}) (Raue et al., and other parameter estimation/identifiability papers), is used to estimate parameters $\theta$ and $\mu$ in Equation \ref{eq:output}.
 \begin{align}\label{eq:minnlp}
@@ -123,7 +158,7 @@ Each equation in (\ref{eq:nonlineq}), indicated by the index $k$, corresponds to
 The identifiability of parameter $\theta_k$ for flux $v_i$ can be established by determining the value of $D_k(\mathbf{v}_i, \mathbf{x}, \mathbf{u})$ (Figure \ref{fig:ident-flowchart}c): any parameter $\theta_k$ is said to practically identifiable (practically non-identifiable) if $D_k(\mathbf{v}_i, \mathbf{x}, \mathbf{u})\neq0$ ($D_k(\mathbf{v}_i, \mathbf{x}, \mathbf{u}) = 0$). 
 
 \begin{figure}[!tbhp]
-	\centering{\includegraphics[width=.8\textwidth,height=.8\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/ident/figures/ident_flow_chart}}
+	\centering{\includegraphics[width=.6\textwidth,height=.6\textheight,keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/ident/figure3/ident_analysis}}
 	\caption{A flow diagram showing the methodology developed to establish practical identifiability of parameters in kinetic models of metabolism. a) The steps for the construction of a kinetic model of a metabolic network are shown. The choice of rate law formulations to describe metabolic fluxes influences the identification methodology. The identifiability of parameters for each flux can be establish independently. b) in silico data generation to test the identifiability of a given parameter is an important step that is also required for experimental design using the proposed methodology. c) The steps for identifiability analysis for a parameters of a single flux are shown. d) If any of the proposed in silico experiments results in non-identifiability of any parameter, then the number and nature of experiments to be performed to establish identifiability of the corresponding parameter can be determined by following the steps shown.}\label{fig:ident-flowchart}
 \end{figure}	
 
