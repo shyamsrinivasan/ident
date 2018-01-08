@@ -645,4 +645,12 @@ def get_data_combinations(original_data, chosen_data_id):
     for a given data set until all parameters can be identified"""
     # given - chosen_data_id - id of data sets already chosen
     # return - additional data sets/experiments to enable identification of parameters not identified by chosen_data_id
+    temp_list = get_useful_data_info(ident_details["boolean"],
+                                     experiment_details,
+                                     perturbation_details,
+                                     data_usefulness["index"][i_data])
+    new_combos = calculate_experiment_combos(ident_details,
+                                             experiment_details,
+                                             perturbation_details,
+                                             temp_list)
     return None
