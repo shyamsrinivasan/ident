@@ -219,11 +219,17 @@ In the small model that we use to elucidate our methodology, we find that only
 	\centering{\includegraphics[width=1.0\textwidth,height=0.3\textheight]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/ident/figure1/noise_no_noise_kotte_ident_jan01}}
 	\caption{The number of data sets, made from a combination of 18 different in silico experiments that can practically identify each parameter in fluxes a) $v_1$, b) $v_2$ and c) $v_3$ when there is no noise in the input experimental data. In the presence of additive noise in the flux and concentration data used for identifiability, the number of data sets practically identifying parameters in fluxes d) $v_1$, e) $v_2$ and f) $v_3$ are shown. 25 samples of additive noise $\epsilon ~ N(0, 0.05)$ were used to generate noisy data for figures in the right hand side panel.}\label{fig:figure1}
 \end{figure}
+\begin{figure}[!tbhp]
+	\centering{\includegraphics[width=1.0\textwidth,height=0.3\textheight]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/ident/figure2/k1cat_no_noise_experiments_jan03}}
+	\caption{The contribution of different experiments types used in combinations that can practically identify parameter $k_1^{cat}$ in $v_1$. Panels a) and b) represent the position of the experiment in $k = \{1, 2\}$}\label{fig:figure2}
+\end{figure}
 
 \subsection{Utility of data for identifiability purposes:}
 
 \subsection{Experiments that can establish identifiability for each flux in Kotte model:}	
 As indicated previously in Section, we performed different experiments by perturbing the parameters for fluxes $v_1$, $v_2$ and $v_3$ in the model. We also perturbed the input substrate concentration to collect data on the concentrations and fluxes within the network. We describe the results of using this data to establish the identifiability of various parameters in the kinetic model of the small metabolic network.
+
+
 
 \subsection{Experimental design for parameter estimation in kinetic models of metabolism:}
 The identifiability of each parameter based on each experiment indexed as $j = \{1, ..., n\}$ is established based on the methodology described previously in Section \ref{sec:ident} and demonstrated in Section \ref{sec:example}. Subsequently, for any flux $v_i$, if for any $p$ combinations of indices $j$, the experimental concentrations ($\mathbf{x}_j$) and fluxes ($\mathbf{v}_j$) do not satisfy the condition for identifiability for any parameter in $\theta\in\mathbb{R}^p$, i.e., $D_k(\mathbf{v}_i, \mathbf{x}, \mathbf{u}) = 0$ for any $k$, then at least one of the $p$ experiments needs to be changed to make a parameter $\theta_k$ identifiable. Consequently, the corresponding experiment cannot be used for parameter estimation and needs to be discarded from the set of all necessary experiments. Furthermore, another experiment from $j = \{1, ..., n\}$ needs to be selected such that parameter $\theta_k$ is identifiable. This process has to be repeated until all parameters in $\theta\in\mathbb{R}^p$ are identifiable for flux $v_i$. In doing so, we can arrive at a set of $p$ experiments that will always result in practically identifiable parameters for flux $v_i$. This analysis can be performed for each flux in a metabolic network independent of all the other fluxes. Hence, our method is theoretically scalable even to genome-scale models. We show the application of this design methodology for flux $v_2$ in the gluconeogenic model in Section.
