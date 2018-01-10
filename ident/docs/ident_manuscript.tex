@@ -108,33 +108,9 @@ Experimental data from many physical systems is usually noisy, and when paramete
 
 Thus, on the one hand, establishing the structural identifiability of parameters enables one to propose models that are not only appropriate representations of physical processes, but also are parameterized in such a way that the value of these parameters can be estimated from measurable data. On the other hand, establishing practical identifiability of parameters in any model helps design experiments that are minimal, informative and useful for parameter estimation.
 
-Algorithms for structural identification of parameters have 
-Algorithms have been extensively developed for establishing structural identifiability of dynamic models of biological systems \parencite{Audoly2001}(IEEE Trans paper from 2007). Most of these algorithms use methods based on differential algebra \parencite{Ljung1994}. The underlying motivation for these methods is the need to change the non-convex parameter estimation problem (Equation \ref{eq:lsqopt}) to a convex problem due to inherent difficulties in obtaining global optimal solutions for non-convex problems \parencite{Bellu2007}. However, due to the use of computer algebra systems to solve the identifiability problem, these methods are not scalable to large systems like a kinetic model of a large metabolic network .
+Methods and tools for structural identification of parameters based on differential algebra \parencite{Ljung1994, Audoly2001, Bellu2007} and profile likelihood \parencite{Raue2009a} are available. However, only the profile likelihood-based methods enable experimental design by facilitating practical identification of parameters. Nonetheless, these methods still depend on solving a non-convex nonlinear least squares problem (Equation \ref{eq:lsqopt}) to get likelihood estimates of parameters, and hence still suffer from all the inherent difficulties associated with obtaining global optimal solutions for non-convex optimization problems. This also makes them un-scalable for experimental design and practical identifiability of parameters in kinetic models of large metabolic networks.
 
-Recently proposed methods address the issue of scalability by using a profile-likelihood-based approach to establish structural identifiability \parencite{Raue2009a}. Profile likelihood-based methods offer an advantage over the differential algebra methods due to their ability to not only structurally identify parameters, but also help with experimental design through practical identifiability of parameters.
-
-In contrast to differential algebra-based methods, these methods still depend on solving a non-convex nonlinear least squares problem (Equation \ref{eq:lsqopt}) to get likelihood estimates of parameters. Hence, these methods can still be considered to be un-scalable for structurally identifying parameters in large metabolic networks. Nonetheless, 
-
-
-
-Apart from issues with their scalability, profile likelihood-based methods also depend on the availability of actual measured or simulated dynamic data to establish structural identifiability.
-
-
-Although, improvements in measurement technologies can enable one to obtain high frequency dynamic data to address the need for time course data required by these methods, 
-
-
-The profile likelihood-based methods and the differential algebra-based methods are heavily dependent on the availability of 
-
- for all the output variables of the system and scale poorly with increase in size of the modeled system. 
-
-
-However, computational burden due to poor scalability can be partly addressed with the current increases in computational power. 
-
-
-
-, no scalable methodologies exist to utilize the abundantly available steady state data for parameter estimation and identifiability for large metabolic networks. 
-
-In this paper, we propose a methodology to establish practical identifiability for parameters in kinetic models of metabolism. We present a computer algebra-based method that can facilitate practical identifiability as well as experimental design for estimating parameters separately for each individual reaction within a metabolic network based on available steady state experimental data. This enables us to address the twin issues of scalability and data availability. We illustrate the utility of this method by applying it for a small network of gluconeogenesis in \textit{E. coli} and demonstrating our ability to propose experiments that will facilitate parameter estimation for a kinetic model of this network. We also demonstrate the scalability of the proposed methodology to facilitate experimental design by applying it to a relatively larger metabolic network of the human red blood cell hepatocyte. 	
+In this paper, we propose a scalable methodology to establish practical identifiability for parameters in kinetic models of metabolism using abundantly available steady state concentration and flux data. We present a computer algebra-based method that can facilitate practical identifiability as well as experimental design for estimating parameters separately for each individual reaction within a metabolic network based on available steady state experimental data. We illustrate the utility of this method by applying it for a small network of gluconeogenesis in \textit{E. coli} and demonstrating our ability to propose experiments that will facilitate parameter estimation for a kinetic model of this network. We also demonstrate the scalability of the proposed methodology to facilitate experimental design by applying it to a relatively larger metabolic network of the human red blood cell hepatocyte. 	
 
 \section{Methods:}	
 \begin{figure}[!tbhp]
