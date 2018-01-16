@@ -226,15 +226,29 @@ Also notable is the difference in the degree of identifiability between the maxi
 \subsection{Experiments required for identifying parameters depends on the position of the flux in the metabolic network:}
 Only about 20\% of the 4896 different data combinations can identify either the maximum reaction rate ($V_1^{max}$) or the enzyme turnover rate ($k_1^{cat}$) in $v_1$ (Figure \ref{fig:figure1}a and d), in contrast to the high number of data combinations capable of identifying $V_2^{max}$ (89.5\%) (Figure \ref{fig:figure1}b and e), $V_3^{max} (1)$ or $V_3^{max} (2)$ ($>$75\%) (Figure \ref{fig:figure1}c and f). 
 
-This informs us that the degree of identifiability and consequently, the type of experiments needed to identify different parameters varies widely depending the position of the flux in the metabolic network with respect to the inputs and the outputs of the network. The dependency can be further elucidated using the closed form solutions obtained for parameters of $v_1$ in Section \ref{sec:example}. The identifiability expressions for both parameters in $v_1$ ($V_1^{max}$ and $K_1^{ac}$ in Equation \ref{eq:v1_par}) are dependent on changes in the both the uptake flux $v_1$ as well as the acetate concentration $ac$ in both the experiments used for identification. If either of these values cannot be distinguished between the two experiments whose data is used for identification, then the corresponding combination of experiments can be guaranteed to result in practical non-identifiability of the parameters in $v_1$. As the uptake flux for the metabolic network that is modeled to be dependent on the substrate concentration, the only way meaningful changes in $v_1$ can be observed are through experiments involving changes either in the substrate concentration or changes in the enzyme concentration for $v_1$.
-In contrast, any experiment that can distinguish between different values of $pep$ and $v_2$ can be used to identify $V_2^{max}$. 
+This informs us that the degree of identifiability and consequently, the type of experiments needed to identify different parameters varies widely depending the position of the flux in the metabolic network with respect to the inputs and the outputs of the network. The dependency can be further elucidated using the closed form solutions obtained for parameters of $v_1$ in Section \ref{sec:example}. The identifiability expressions for both parameters in $v_1$ ($V_1^{max}$ and $K_1^{ac}$ in Equation \ref{eq:v1_par}) are dependent on changes in the both the uptake flux $v_1$ as well as the acetate concentration $ac$ in both the experiments used for identification. If either of these values cannot be distinguished between the two experiments whose data is used for identification, then the corresponding combination of experiments can be guaranteed to result in practical non-identifiability of the parameters in $v_1$. Furthermore, the distinct values should satisfy the requirements for practical identifiability mentioned earlier for each parameter (Figure \ref{fig:ident-flowchart}b). 
+
+As the uptake flux for the metabolic network that is modeled to be dependent on the substrate concentration, the only way meaningful changes in $v_1$ can be observed are through experiments involving changes either in the substrate concentration or changes in the enzyme concentration for $v_1$. As the change in $v_1$ is directly proportional to changes in acetate concentrations, one can except the conditions for practical identifiability of parameters of $v_1$ (Equation \ref{eq:v1_par}) to be satisfied with relative certainty when experimental data gathered under different acetate concentrations is used for identification. This is further illustrated in Figure \ref{fig:figure2} where the different experiments in each combination identifying both $V_1^{max}$ and $k_1^{cat}$ are shown. 
+
+
+However, in certain cases unlike $v_1$, satisfaction of this conditions may not be as easy as one might except due to the nonlinearity in the relationship between different parts of the network.
+
+
+
+We see that experiments involving changes to the substrate concentration figure prominently in the data combinations (as experiment 1) used to identify $V_1^{max}$ or $k_1^{cat}$, and the corresponding enzyme binding constant $K_1^{ac}$ (see Supplementary Figure S1). Experiments involving perturbations to other parameters appear in higher percentages as experiment 2 in the combination identifying these parameters. This can be attributed to the level of change in both $v_1$ as well a
 
 \begin{figure}[!tbhp]
 	\centering{\includegraphics[width=1.0\textwidth,height=0.3\textheight, keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/ident/figure2/v1max_k1cat_all_experiments_jan01}}
 	\caption{The contribution of different experiments types used in a combination of two experiments ($k = \{1, 2\}$) that can practically identify parameter $V_1^{max}$ a) experiment 1 ($k=1$), and b) experiment 2 ($k=2$) in combination. Different experiments that contribute towards identifiability of $k_1^{cat}$ c) experiment 1 ($k=1$) and d) experiment 2 ($k=2$) in combination.}\label{fig:figure2}
 \end{figure}
 
- This is further illustrated in Figure \ref{fig:figure2} where the different experiments in each combination identifying both $V_1^{max}$ and $k_1^{cat}$ are shown.
+In contrast, any experiment that can distinguish between different values of $pep$ and $v_2$ can be used to identify $V_2^{max}$. 
+
+\begin{figure}[!tbhp]
+	\centering{\includegraphics[width=1.0\textwidth,height=0.3\textheight, keepaspectratio]{C:/Users/shyam/Documents/Courses/CHE1125Project/Results/ident/figure2/v2max_k2pep_no_noise_experiments_jan03_ab}}
+	\caption{The contribution of different experiments types used in a combination of two experiments ($k = \{1, 2\}$) that can practically identify parameter $V_2^{max}$ a) experiment 1 ($k=1$), and b) experiment 2 ($k=2$) in combination. Different experiments that contribute towards identifiability of $K_2^{pep}$ c) experiment 1 ($k=1$) and d) experiment 2 ($k=2$) in combination.}\label{fig:figure3}
+\end{figure}
+
 
 
 
