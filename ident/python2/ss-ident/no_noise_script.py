@@ -40,19 +40,22 @@ experimental_datasets_3_expts = \
 ident_details_3 = flux_ident_3_data_combination(experimental_datasets_3_expts, choose=choose_3)
 
 # identifiability for all kotte fluxes
-ident_details = establish_kotte_flux_identifiability(experimental_datasets, choose=choose)
+# ident_details = establish_kotte_flux_identifiability(experimental_datasets, choose=choose)
 print('Perturbation analysis for identifiability complete.\n')
 
 # data processing
-data_list, original_data_ident, combo_data_ident, max_parameter = process_info_sample(ident_details,
-                                                                                      experimental_datasets,
+data_list, original_data_ident, combo_data_ident, max_parameter = process_info_sample(ident_details_2,
+                                                                                      experimental_datasets_2_expts,
                                                                                       perturbation_details)
 
+number_of_parameters_per_flux_2 = [4, 2]
+number_of_parameters_per_flux_3 = [6]
 # plot results
 # file_destination = 'C:\Users\shyam\Documents\Courses\CHE1125Project\Results\ident\python2\\figure_1'
 # plot parameters for each flux and the number of data sets that enable their identification
 # get data for plots
-total_ident_data, fraction_ident_data, all_boolean_p_id = parameter_plot_data_per_sample(original_data_ident, 1)
+total_ident_data, fraction_ident_data, all_boolean_p_id = \
+    parameter_plot_data_per_sample(original_data_ident, number_of_parameters_per_flux_2, 1)
 # plot
 # flux_parameter_plot(total_ident_data, fraction_ident_data)
 
