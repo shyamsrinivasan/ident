@@ -89,8 +89,7 @@ def flux_1_ident_expression(experimental_data):
     """symbolic and lambdify expression for flux 1 denominator from mathematica"""
     # get variable values (w/o sympy directly from experimental data)
     ac1, x11, x21, x31, v11, v21, v31, v41, \
-    ac2, x12, x22, x32, v12, v22, v32, v42, \
-    ac3, x13, x23, x33, v13, v23, v33, v43 = list(experimental_data)
+    ac2, x12, x22, x32, v12, v22, v32, v42 = list(experimental_data)
 
     # flux numerator and denominator w/o sympy
     # symbolic expression for flux v1 w/o enzyme concentration data
@@ -119,9 +118,8 @@ def flux_1_ident_expression(experimental_data):
 def flux_2_ident_expression(experimental_data):
     """symbolic and lambdify expression for flux 2 denominator from mathematica"""
     # get variable values (w/o sympy directly from experimental data)
-    ac1, x11, x21, x31, v11, v21, v31, v41, \
-    ac2, x12, x22, x32, v12, v22, v32, v42, \
-    ac3, x13, x23, x33, v13, v23, v33, v43 = list(experimental_data)
+    _, x21, _, x31, v11, v21, v31, v41, \
+    _, x22, _, x32, v12, v22, v32, v42 = list(experimental_data)
 
     # symbolic expression for v2
     # V2max
