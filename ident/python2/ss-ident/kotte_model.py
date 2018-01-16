@@ -91,13 +91,6 @@ def flux_1_ident_expression(experimental_data):
     ac1, x11, x21, x31, v11, v21, v31, v41, \
     ac2, x12, x22, x32, v12, v22, v32, v42, \
     ac3, x13, x23, x33, v13, v23, v33, v43 = list(experimental_data)
-    # ac = experimental_data[range(0, 24, 8)]
-    # x_ranges = [range(i, 24, 8) for i in range(1, 4)]
-    # all_x_ranges = [list(np.array(x_ranges)[:, i]) for i in range(0, 3)]
-    # x = [experimental_data[all_x_ranges[i]] for i in range(0, 3)]
-    # v_ranges = [range(i, 24, 8) for i in range(4, 8)]
-    # all_v_ranges = [list(np.array(v_ranges)[:, j]) for j in range(0, 3)]
-    # v = [experimental_data[all_v_ranges[j]] for j in range(0, 3)]
 
     # flux numerator and denominator w/o sympy
     # symbolic expression for flux v1 w/o enzyme concentration data
@@ -129,13 +122,6 @@ def flux_2_ident_expression(experimental_data):
     ac1, x11, x21, x31, v11, v21, v31, v41, \
     ac2, x12, x22, x32, v12, v22, v32, v42, \
     ac3, x13, x23, x33, v13, v23, v33, v43 = list(experimental_data)
-    # ac = experimental_data[range(0, 24, 8)]
-    # x_ranges = [range(i, 24, 8) for i in range(1, 4)]
-    # all_x_ranges = [list(np.array(x_ranges)[:, i]) for i in range(0, 3)]
-    # x = [experimental_data[all_x_ranges[i]] for i in range(0, 3)]
-    # v_ranges = [range(i, 24, 8) for i in range(4, 8)]
-    # all_v_ranges = [list(np.array(v_ranges)[:, j]) for j in range(0, 3)]
-    # v = [experimental_data[all_v_ranges[j]] for j in range(0, 3)]
 
     # symbolic expression for v2
     # V2max
