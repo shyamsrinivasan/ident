@@ -206,11 +206,11 @@ def data_usefulness_percentage(ident_details):
     return data_usefulness
 
 
-def flux_parameter_plot_data(original_data, case=1):
+def flux_parameter_plot_data(original_data, number_of_parameters, case=1):
     all_boolean_p_id = []
     for len_pos, i_list in enumerate(original_data):
         for i_data in i_list:
-            boolean_p_id = [True if j_p in i_data["parameter_ids"] else False for j_p in range(0, 12)]
+            boolean_p_id = [True if j_p in i_data["parameter_ids"] else False for j_p in range(0, number_of_parameters)]
             all_boolean_p_id.append(boolean_p_id)
     number_data, number_p = np.array(all_boolean_p_id).shape
     all_boolean_p_id = [list(j_p) for j_p in np.transpose(np.array(all_boolean_p_id))]
@@ -234,13 +234,26 @@ def flux_parameter_plot_data(original_data, case=1):
         return []
 
 
-def parameter_plot_data_per_sample(original_data, case=1):
+def single_flux_parameter_data(ident_data, number_of_parameters_per_flux, case):
+    number_of_fluxes = len(ident_data)
+    # all_flux_total_p = []
+    all_flux_info = []
+    for iflux, iflux_data in enumerate(ident_data):
+        total_p, fraction_p, all_p_boolean = flux_parameter_plot_data(iflux_data,
+                                                                      number_of_parameters_per_flux[iflux],
+                                                                      case)
+        all_flux_info.append({"total": total_p, "fraction": fraction_p, "boolean": all_p_boolean})
+    return all_flux_info
+
+
+def parameter_plot_data_per_sample(original_data, number_of_parameters_per_flux, case=1):
     number_of_samples = len(original_data)
     all_sample_total_p = []
     all_sample_fraction_p = []
     all_sample_all_p_boolean = []
     for i_sample_ident_data in original_data:
-        total_p, fraction_p, all_p_boolean = flux_parameter_plot_data(i_sample_ident_data, case)
+        all_flux_info = single_flux_parameter_data(i_sample_ident_data, number_of_parameters_per_flux, case)
+        # total_p, fraction_p, all_p_boolean = flux_parameter_plot_data(i_sample_ident_data, case)
         all_sample_total_p.append(total_p)
         all_sample_fraction_p.append(fraction_p)
         all_sample_all_p_boolean.append(all_p_boolean)
@@ -622,6 +635,22 @@ def process_info(ident_details, experiment_details, perturbation_details, do_com
     return data_usefulness, original_data, combination_data, max_parameter
 
 
+def flux_based_ident_info(ident_details, experiment_details, perturbation_details):
+    number_of_fluxes = len(ident_details)
+    all_flux_data_list = []
+    all_flux_org_list = []
+    all_flux_combo_data = []
+    all_flux_max_parameter = []
+    for iflux_detail in ident_details:
+        data_list, original_ident_data, combo_data, max_parameter = \
+            process_info(iflux_detail, experiment_details, perturbation_details)
+        all_flux_data_list.append(data_list)
+        all_flux_org_list.append(original_ident_data)
+        all_flux_combo_data.append(combo_data)
+        all_flux_max_parameter.append(max_parameter)
+    return all_flux_data_list, all_flux_org_list, all_flux_combo_data, all_flux_max_parameter
+
+
 def process_info_sample(ident_details, experiment_details, perturbation_details, do_combos=0):
     print("Process information From Identifiability Analysis.....\n")
     number_of_samples = len(ident_details)
@@ -632,7 +661,9 @@ def process_info_sample(ident_details, experiment_details, perturbation_details,
     for j_sample, j_sample_ident_details in enumerate(ident_details):
         print("Processing identifiability data for sample {}".format(j_sample))
         data_list, original_ident_data, combo_ident_data, max_parameter = \
-            process_info(j_sample_ident_details, experiment_details[j_sample], perturbation_details, do_combos)
+            flux_based_ident_info(j_sample_ident_details, experiment_details[j_sample], perturbation_details)
+        # data_list, original_ident_data, combo_ident_data, max_parameter = \
+        #     process_info(j_sample_ident_details, experiment_details[j_sample], perturbation_details, do_combos)
         all_sample_data_list.append(data_list)
         all_sample_original_data.append(original_ident_data)
         all_sample_combo_data.append(combo_ident_data)

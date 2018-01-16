@@ -2,6 +2,8 @@ import numpy as np
 from generate_expdata import generate_expdata
 from simulate_data import arrange_experimental_data
 from kotte_model import establish_kotte_flux_identifiability
+from kotte_model import flux_ident_2_data_combination
+from kotte_model import flux_ident_3_data_combination
 from process_ident_data import process_info_sample
 from process_ident_data import parameter_plot_data_per_sample
 from process_ident_data import experiments_per_sample_for_ident
@@ -23,25 +25,37 @@ exp_xss, exp_fss, exp_ssid, perturbation_details = \
 
 # arrange experimental data to form multiple data sets
 exp_flux_index = np.array([0, 3, 2, 4])
+
+# get combination of 2 experiments and perform identifiability on all fluxes that require 2 data sets
+choose_2 = range(0, 306)
+experimental_datasets_2_expts = \
+    arrange_experimental_data(exp_xss, exp_fss, perturbation_details, 2, exp_flux_index, choose_2)
+ident_details_2 = flux_ident_2_data_combination(experimental_datasets_2_expts, choose=choose_2)
+
 # choose numbr of experimental datasets for which identifiability is to be calculated
-choose = range(0, 4896)
+choose_3 = range(0, 4896)
 # get combinations of experimental datasets
-experimental_datasets = arrange_experimental_data(exp_xss, exp_fss, perturbation_details, 3, exp_flux_index, choose)
+experimental_datasets_3_expts = \
+    arrange_experimental_data(exp_xss, exp_fss, perturbation_details, 3, exp_flux_index, choose=choose_3)
+ident_details_3 = flux_ident_3_data_combination(experimental_datasets_3_expts, choose=choose_3)
 
 # identifiability for all kotte fluxes
-ident_details = establish_kotte_flux_identifiability(experimental_datasets, choose=choose)
+# ident_details = establish_kotte_flux_identifiability(experimental_datasets, choose=choose)
 print('Perturbation analysis for identifiability complete.\n')
 
 # data processing
-data_list, original_data_ident, combo_data_ident, max_parameter = process_info_sample(ident_details,
-                                                                                      experimental_datasets,
+data_list, original_data_ident, combo_data_ident, max_parameter = process_info_sample(ident_details_2,
+                                                                                      experimental_datasets_2_expts,
                                                                                       perturbation_details)
 
+number_of_parameters_per_flux_2 = [4, 2]
+number_of_parameters_per_flux_3 = [6]
 # plot results
 # file_destination = 'C:\Users\shyam\Documents\Courses\CHE1125Project\Results\ident\python2\\figure_1'
 # plot parameters for each flux and the number of data sets that enable their identification
 # get data for plots
-total_ident_data, fraction_ident_data, all_boolean_p_id = parameter_plot_data_per_sample(original_data_ident, 1)
+total_ident_data, fraction_ident_data, all_boolean_p_id = \
+    parameter_plot_data_per_sample(original_data_ident, number_of_parameters_per_flux_2, 1)
 # plot
 # flux_parameter_plot(total_ident_data, fraction_ident_data)
 

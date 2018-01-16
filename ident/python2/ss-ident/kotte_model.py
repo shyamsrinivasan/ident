@@ -89,15 +89,7 @@ def flux_1_ident_expression(experimental_data):
     """symbolic and lambdify expression for flux 1 denominator from mathematica"""
     # get variable values (w/o sympy directly from experimental data)
     ac1, x11, x21, x31, v11, v21, v31, v41, \
-    ac2, x12, x22, x32, v12, v22, v32, v42, \
-    ac3, x13, x23, x33, v13, v23, v33, v43 = list(experimental_data)
-    # ac = experimental_data[range(0, 24, 8)]
-    # x_ranges = [range(i, 24, 8) for i in range(1, 4)]
-    # all_x_ranges = [list(np.array(x_ranges)[:, i]) for i in range(0, 3)]
-    # x = [experimental_data[all_x_ranges[i]] for i in range(0, 3)]
-    # v_ranges = [range(i, 24, 8) for i in range(4, 8)]
-    # all_v_ranges = [list(np.array(v_ranges)[:, j]) for j in range(0, 3)]
-    # v = [experimental_data[all_v_ranges[j]] for j in range(0, 3)]
+    ac2, x12, x22, x32, v12, v22, v32, v42 = list(experimental_data)
 
     # flux numerator and denominator w/o sympy
     # symbolic expression for flux v1 w/o enzyme concentration data
@@ -126,16 +118,8 @@ def flux_1_ident_expression(experimental_data):
 def flux_2_ident_expression(experimental_data):
     """symbolic and lambdify expression for flux 2 denominator from mathematica"""
     # get variable values (w/o sympy directly from experimental data)
-    ac1, x11, x21, x31, v11, v21, v31, v41, \
-    ac2, x12, x22, x32, v12, v22, v32, v42, \
-    ac3, x13, x23, x33, v13, v23, v33, v43 = list(experimental_data)
-    # ac = experimental_data[range(0, 24, 8)]
-    # x_ranges = [range(i, 24, 8) for i in range(1, 4)]
-    # all_x_ranges = [list(np.array(x_ranges)[:, i]) for i in range(0, 3)]
-    # x = [experimental_data[all_x_ranges[i]] for i in range(0, 3)]
-    # v_ranges = [range(i, 24, 8) for i in range(4, 8)]
-    # all_v_ranges = [list(np.array(v_ranges)[:, j]) for j in range(0, 3)]
-    # v = [experimental_data[all_v_ranges[j]] for j in range(0, 3)]
+    _, x21, _, x31, v11, v21, v31, v41, \
+    _, x22, _, x32, v12, v22, v32, v42 = list(experimental_data)
 
     # symbolic expression for v2
     # V2max
@@ -506,40 +490,89 @@ def call_truncate_method(ident_value_list, parameter_count, expression_count=3):
 
 def run_flux_ident(ident_function_list, data):
     number_of_parameters = 0
-    number_of_parameters_per_flux = [None] * len(ident_function_list)
+    try:
+        number_of_parameters_per_flux = [None] * len(ident_function_list)
+    except TypeError:
+        number_of_parameters_per_flux = [None]
     ident_value_list = []
     iterator = 0
-    for func in ident_function_list:
-        ident_value = func(data)
+    try:
+        for func in ident_function_list:
+            ident_value = func(data)
+            ident_value_list.append(ident_value)
+            number_of_expressions = len(ident_value[0])
+            number_of_parameters_per_flux[iterator] = len(ident_value)
+            iterator += 1
+            number_of_parameters += len(ident_value)
+    except TypeError:
+        ident_value = ident_function_list(data)
         ident_value_list.append(ident_value)
         number_of_expressions = len(ident_value[0])
         number_of_parameters_per_flux[iterator] = len(ident_value)
-        iterator += 1
         number_of_parameters += len(ident_value)
 
     ident_value_array = np.zeros((number_of_parameters, number_of_expressions))
     irow = 0
+    all_flux_ident = []
     for iflux in ident_value_list:
         truncated_ident_value = call_truncate_method(iflux, len(iflux))
+        all_flux_ident.append(truncated_ident_value)
         nrows, ncolumns = np.shape(truncated_ident_value)
         ident_value_array[irow:(irow + nrows), :] = truncated_ident_value
         irow += nrows
-    return ident_value_array, number_of_parameters_per_flux, ncolumns
+    return ident_value_array, number_of_parameters_per_flux, ncolumns, all_flux_ident
 
 
 def get_ident_value(ident_function_list, experimental_data_list, original_data_set_id):
     all_data_ident_lists = []
-    number_of_parameters_per_flux = [0]*len(ident_function_list)
+    all_data_all_fun_ident_value = []
+    try:
+        number_of_parameters_per_flux = [0]*len(ident_function_list)
+    except TypeError:
+        number_of_parameters_per_flux = [0]
     number_of_expressions_per_parameter = 0
     for index, data_set in enumerate(experimental_data_list):
         print('Identifiability for Dataset {} of {}: Original ID: {}\n'.format(index + 1,
                                                                                len(experimental_data_list),
                                                                                original_data_set_id[index]))
-        identifiability_values, number_of_parameters_per_flux, number_of_expressions_per_parameter = \
-            run_flux_ident(ident_function_list, data_set)
+        identifiability_values, number_of_parameters_per_flux, \
+        number_of_expressions_per_parameter, all_fun_ident_values = run_flux_ident(ident_function_list, data_set)
         all_data_ident_lists.append(identifiability_values)
+        all_data_all_fun_ident_value.append(all_fun_ident_values)
 
+    # classify ident data based on number of ident functions instead of by data sets
+    # convert to multi dimensional list = data set size x number of parameters per flux x number of fluxes/functions
     number_of_data_sets = len(experimental_data_list)
+    # all_fun_ident_list = []
+    all_fun_array_list = []
+    try:
+        for ifun in range(0, len(ident_function_list)):
+            all_ident_data_in_fun = []
+            for idata in all_data_all_fun_ident_value:
+                all_ident_data_in_fun.append(idata[ifun])
+            # all_fun_ident_list.append(all_ident_data_in_fun)
+            # array - number of data sets x number of parameters per identifiability function/flux
+            ident_fun_array = np.zeros((number_of_data_sets, number_of_parameters_per_flux[ifun], 3))
+            for idata_id, idata_set_value in enumerate(all_ident_data_in_fun):
+                ident_fun_array[idata_id, :, 0] = idata_set_value[:, 0]
+                ident_fun_array[idata_id, :, 1] = idata_set_value[:, 1]
+                ident_fun_array[idata_id, :, 2] = idata_set_value[:, 2]
+            all_fun_array_list.append(ident_fun_array)
+    except TypeError:
+        ifun = 0
+        all_ident_data_in_fun = []
+        for idata in all_data_all_fun_ident_value:
+            all_ident_data_in_fun.append(idata[ifun])
+        # all_fun_ident_list.append(all_ident_data_in_fun)
+        # array - number of data sets x number of parameters per identifiability function/flux
+        ident_fun_array = np.zeros((number_of_data_sets, number_of_parameters_per_flux[ifun], 3))
+        for idata_id, idata_set_value in enumerate(all_ident_data_in_fun):
+            ident_fun_array[idata_id, :, 0] = idata_set_value[:, 0]
+            ident_fun_array[idata_id, :, 1] = idata_set_value[:, 1]
+            ident_fun_array[idata_id, :, 2] = idata_set_value[:, 2]
+        all_fun_array_list.append(ident_fun_array)
+
+
     total_parameters_identified = sum(number_of_parameters_per_flux)
     all_identifiability_values = \
         np.zeros((number_of_data_sets * total_parameters_identified, number_of_expressions_per_parameter))
@@ -547,7 +580,7 @@ def get_ident_value(ident_function_list, experimental_data_list, original_data_s
     for idata in all_data_ident_lists:
         all_identifiability_values[array_index:(array_index + total_parameters_identified), :] = idata
         array_index += total_parameters_identified
-    return all_identifiability_values, number_of_parameters_per_flux
+    return all_identifiability_values, number_of_parameters_per_flux, all_fun_array_list
 
 
 def ident_parameter_name(parameter_id, flux_name=()):
@@ -649,6 +682,14 @@ def process_ident_data(ident_values, number_data):
     return p_list, np.array(p_list_boolean)
 
 
+def boolean_ident_info(ident_values, number_of_parameters):
+    signed_ident_values = np.sign(ident_values)
+    p_list = [[p_id for p_id, val in enumerate(data_set) if val > 0] for data_set in signed_ident_values]
+    p_list_boolean = [[True if parameter_id in list_1 else False for parameter_id in range(0, number_of_parameters)]
+                      for list_1 in p_list]
+    return p_list, np.array(p_list_boolean)
+
+
 def create_data_for_file(ident_details, number_fluxes, fp_list, data_list):
     """create data for write/append all data to file"""
     number_data, p = ident_details["boolean"].shape
@@ -702,9 +743,56 @@ def write_results_2_file(ident_details, number_fluxes, fp_list, data_list):
     # new_combos = calculate_experiment_combos(ident_details, experiment_details, perturbation_details, data_list)
 
 
+def one_sample_ident_fun(ident_fun_list, sample_data, choose):
+    if choose:
+        try:
+            chosen_values = list(sample_data["values"][:choose, :])
+        except TypeError:
+            iter_chosen_value = []
+            for indexes in range(0, len(choose)):
+                iter_chosen_value.append(list(sample_data["values"][indexes, :]))
+            chosen_values = iter_chosen_value[:]
+    else:
+        chosen_values = list(sample_data["values"][:, :])
+    # run identification function through every chosen data combination supplied as input
+    _, parameters_per_flux, all_fun_array_list = get_ident_value(ident_fun_list, chosen_values, choose)
+    return parameters_per_flux, all_fun_array_list
+
+
+def multi_sample_ident_fun(ident_fun_list, all_data, choose):
+    all_sample_ident_details = []
+    for i_sample, sample_data in enumerate(all_data):
+        parameters_per_flux, one_sample_all_fun_array_list = one_sample_ident_fun(ident_fun_list, sample_data, choose)
+        # process info from each sample (number of samples > 1 when noisy data is used) of experimental data sets
+        all_fun_ident_details = []
+        for ifun, ifun_data in enumerate(one_sample_all_fun_array_list):
+            number_of_data_sets, number_of_parameters, _ = ifun_data.shape
+            # process denominator info only
+            _, plist_boolean = boolean_ident_info(ifun_data[:, :, -1], number_of_parameters)
+            ident_details = {"boolean": plist_boolean, "values": ifun_data, "parameters": number_of_parameters}
+            all_fun_ident_details.append(ident_details)
+        all_sample_ident_details.append(all_fun_ident_details)
+    return all_sample_ident_details
+
+
+def flux_ident_2_data_combination(all_data, choose=()):
+    """perform identifiability separately for each set of functions and generate separate identifiability info"""
+    # 2 data combination ident list
+    ident_fun_2_data = (flux_1_ident_expression, flux_2_ident_expression)
+    all_sample_all_fun_ident_info = multi_sample_ident_fun(ident_fun_2_data, all_data, choose)
+    return all_sample_all_fun_ident_info
+
+
+def flux_ident_3_data_combination(all_data, choose=()):
+    """perform identifiability separately for each set of functions and generate separate identifiability info"""
+    # 3 data combination ident list
+    ident_fun_3_data = (flux_3_ident_expression)
+    all_sample_all_fun_ident_info = multi_sample_ident_fun(ident_fun_3_data, all_data, choose)
+    return all_sample_all_fun_ident_info
+
+
 def establish_kotte_flux_identifiability(all_data, choose=()):
     """call all identifiability evaluation funcs above and print numerical results"""
-
     # identifiability function list
     ident_fun_list = (flux_1_ident_expression, flux_2_ident_expression, flux_3_ident_expression)
 
@@ -724,7 +812,7 @@ def establish_kotte_flux_identifiability(all_data, choose=()):
 
         # number_fluxes = len(ident_fun_list)
         number_data = len(chosen_values)
-        ident_values, parameters_per_flux = get_ident_value(ident_fun_list, chosen_values, choose)
+        ident_values, parameters_per_flux, all_fun_array_list = get_ident_value(ident_fun_list, chosen_values, choose)
 
         # process identifiability data
         _, plist_boolean = process_ident_data(ident_values, number_data)
