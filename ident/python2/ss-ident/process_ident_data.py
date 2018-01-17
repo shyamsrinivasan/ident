@@ -606,7 +606,7 @@ def process_info(ident_details, experiment_details, perturbation_details, do_com
     # get info all the aforementioned data sets
     original_data = []
     combination_data = []
-    for i_data in range(0, len(data_usefulness["number_parameters_ided"])):
+    for i_data in range(0, len(data_usefulness["number"])):
         # get all info on all data sets present in useful data from above
         temp_list = get_useful_data_info(ident_details["boolean"],
                                          experiment_details,
@@ -629,7 +629,7 @@ def process_info(ident_details, experiment_details, perturbation_details, do_com
     for list_pos, i_data in enumerate(original_data):
         # original data sets
         print('Original Data sets that can detect {} parameters: {}'.
-              format(data_usefulness["number_parameters_ided"][list_pos], len(i_data)))
+              format(data_usefulness["number"][list_pos], len(i_data)))
         number_original_data += len(i_data)
         # combination data sets
         if combination_data:
@@ -639,13 +639,16 @@ def process_info(ident_details, experiment_details, perturbation_details, do_com
     # decide which experiments to perform for each parameter based on above calculations
 
     # most easily identifieable parameter - based on frequency of identification
-    identifying_data = [] # np.zeros((number_parameter, 1))
+    identifying_data = []
+    identifying_data_percentage = []
     for iparameter in range(0, p):
         idata = [data_id for data_id in it.compress(range(0, number_data), ident_details["boolean"][:, iparameter])]
         identifying_data.append(len(idata))
+        identifying_data_percentage.append(float(len(idata))/number_data*100)
 
     # get parameters identified by most data sets (most identifiable parameter)
     max_identified = max(identifying_data)
+    max_identified_percent = max(identifying_data_percentage)
     max_parameter_id = [identifying_data.index(max(identifying_data))]
     for iparameter, number_identifying_data in enumerate(identifying_data):
         if number_identifying_data == max_identified and iparameter not in max_parameter_id:
@@ -654,27 +657,30 @@ def process_info(ident_details, experiment_details, perturbation_details, do_com
             max_identified = number_identifying_data
             max_parameter_id = [iparameter]
     max_parameter = {"maximum": max_identified,
+                     "maximum percentage": max_identified_percent,
                      "id": max_parameter_id,
-                     "data": identifying_data}
+                     "info": identifying_data,
+                     "percentage": identifying_data_percentage}
     # ident_parameter_names = ident_parameter_name(range(0, 12))
     print("Information Processing Complete\n")
     return data_usefulness, original_data, combination_data, max_parameter
 
 
-def flux_based_ident_info(ident_details, experiment_details, perturbation_details):
-    number_of_fluxes = len(ident_details)
-    all_flux_data_list = []
-    all_flux_org_list = []
-    all_flux_combo_data = []
-    all_flux_max_parameter = []
-    for iflux_detail in ident_details:
-        data_list, original_ident_data, combo_data, max_parameter = \
-            process_info(iflux_detail, experiment_details, perturbation_details)
-        all_flux_data_list.append(data_list)
-        all_flux_org_list.append(original_ident_data)
-        all_flux_combo_data.append(combo_data)
-        all_flux_max_parameter.append(max_parameter)
-    return all_flux_data_list, all_flux_org_list, all_flux_combo_data, all_flux_max_parameter
+def flux_based_ident_info(ident_detail, experiment_details, perturbation_details):
+    data_list, original_ident_data, combo_data, max_parameter = \
+        process_info(ident_detail, experiment_details, perturbation_details)
+    # number_of_fluxes = len(ident_details)
+    # all_flux_data_list = []
+    # all_flux_org_list = []
+    # all_flux_combo_data = []
+    # all_flux_max_parameter = []
+    # for iflux_detail in ident_details:
+    #
+    #     all_flux_data_list.append(data_list)
+    #     all_flux_org_list.append(original_ident_data)
+    #     all_flux_combo_data.append(combo_data)
+    #     all_flux_max_parameter.append(max_parameter)
+    return data_list, original_ident_data, combo_data, max_parameter
 
 
 def process_info_sample(ident_details, experiment_details, perturbation_details, do_combos=0):
@@ -685,9 +691,14 @@ def process_info_sample(ident_details, experiment_details, perturbation_details,
     all_sample_combo_data = []
     all_sample_max_parameter = []
     for j_sample, j_sample_ident_details in enumerate(ident_details):
-        print("Processing identifiability data for sample {}".format(j_sample))
-        data_list, original_ident_data, combo_ident_data, max_parameter = \
-            flux_based_ident_info(j_sample_ident_details, experiment_details[j_sample], perturbation_details)
+        print("Processing identifiability data for sample {} of {}".format(j_sample+1, number_of_samples))
+        number_of_fluxes = len(j_sample_ident_details)
+        for j_flux, j_flux_info in enumerate(j_sample_ident_details):
+            print("Processing identifiability for flux {} of {}".format(j_flux+1, number_of_fluxes))
+            data_list, original_ident_data, \
+            combo_ident_data, max_parameter = flux_based_ident_info(j_flux_info,
+                                                                    experiment_details[j_sample],
+                                                                    perturbation_details)
         # data_list, original_ident_data, combo_ident_data, max_parameter = \
         #     process_info(j_sample_ident_details, experiment_details[j_sample], perturbation_details, do_combos)
         all_sample_data_list.append(data_list)
