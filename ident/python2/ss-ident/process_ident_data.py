@@ -626,7 +626,7 @@ def parameter_identifiability(ident_details):
     return max_parameter
 
 
-def process_info(ident_details, experiment_details, perturbation_details, do_combos=0):
+def process_info(ident_details, experiment_details, perturbation_details):
     number_data, p = ident_details["boolean"].shape
 
     # get information on data sets used to identify parameters in each flux
@@ -634,24 +634,12 @@ def process_info(ident_details, experiment_details, perturbation_details, do_com
                                                   experiment_details,
                                                   perturbation_details)
 
-    # get combination of combinations to identify all parameters - to be made workable by moving to different fun
-    combination_data = []
-    for i_data in range(0, len(data_list["number"])):
-        # choose additional data sets and consequently, experiments (if possible) to identify other parameters not
-        # identified by chosen data set(s)
-        if do_combos:
-            new_combos = calculate_experiment_combos(ident_details,
-                                                     experiment_details,
-                                                     perturbation_details,
-                                                     original_ident_data[i_data])
-            combination_data.append(new_combos)
-
     # decide which experiments to perform for each parameter based on above calculations
 
     # most easily identifiable parameter - based on frequency of identification
     max_parameter = parameter_identifiability(ident_details)
 
-    return data_list, original_ident_data, combination_data, max_parameter
+    return data_list, original_ident_data, max_parameter
 
 
 def flux_based_ident_info(sample_ident_detail, experiment_details, perturbation_details):
@@ -663,7 +651,7 @@ def flux_based_ident_info(sample_ident_detail, experiment_details, perturbation_
     all_flux_max_parameter = []
     for j_flux, j_flux_info in enumerate(sample_ident_detail):
         print("Processing identifiability for flux {} of {}".format(j_flux + 1, number_of_fluxes))
-        data_list, original_ident_data, combo_data, max_parameter = \
+        data_list, original_ident_data, max_parameter = \
             process_info(j_flux_info, experiment_details, perturbation_details)
         all_flux_data_list.append(data_list)
         all_flux_original_ident_data.append(original_ident_data)
