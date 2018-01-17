@@ -597,6 +597,35 @@ def data_utility(ident_details, experiment_details, perturbation_details):
     return data_usefulness, original_data
 
 
+def parameter_identifiability(ident_details):
+    """get information on how identifiable each parameter within a flux is based on
+    number of data combinatons that identify the parameter - degree of identifiability of each parameter"""
+    number_data, p = ident_details["boolean"].shape
+    identifying_data = []
+    identifying_data_percentage = []
+    for iparameter in range(0, p):
+        idata = [data_id for data_id in it.compress(range(0, number_data), ident_details["boolean"][:, iparameter])]
+        identifying_data.append(len(idata))
+        identifying_data_percentage.append(float(len(idata)) / number_data * 100)
+
+    # get parameters identified by most data sets (most identifiable parameter)
+    max_identified = max(identifying_data)
+    max_identifying_data_percentage = max(identifying_data_percentage)
+    max_parameter_id = [identifying_data.index(max(identifying_data))]
+    for iparameter, number_identifying_data in enumerate(identifying_data):
+        if number_identifying_data == max_identified and iparameter not in max_parameter_id:
+            max_parameter_id.append(iparameter)
+        elif number_identifying_data > max_identified:
+            max_identified = number_identifying_data
+            max_parameter_id = [iparameter]
+    max_parameter = {"maximum number": max_identified,
+                     "maximum percentage": max_identifying_data_percentage,
+                     "maximum id": max_parameter_id,
+                     "info": identifying_data,
+                     "percentage": identifying_data_percentage}
+    return max_parameter
+
+
 def process_info(ident_details, experiment_details, perturbation_details, do_combos=0):
     number_data, p = ident_details["boolean"].shape
 
