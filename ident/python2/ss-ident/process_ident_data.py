@@ -630,7 +630,7 @@ def process_info(ident_details, experiment_details, perturbation_details, do_com
     number_data, p = ident_details["boolean"].shape
 
     # get information on data sets used to identify parameters in each flux
-    data_list, original_data_ident = data_utility(ident_details,
+    data_list, original_ident_data = data_utility(ident_details,
                                                   experiment_details,
                                                   perturbation_details)
 
@@ -643,37 +643,15 @@ def process_info(ident_details, experiment_details, perturbation_details, do_com
             new_combos = calculate_experiment_combos(ident_details,
                                                      experiment_details,
                                                      perturbation_details,
-                                                     original_data_ident[i_data])
+                                                     original_ident_data[i_data])
             combination_data.append(new_combos)
 
     # decide which experiments to perform for each parameter based on above calculations
 
-    # most easily identifieable parameter - based on frequency of identification
-    identifying_data = []
-    identifying_data_percentage = []
-    for iparameter in range(0, p):
-        idata = [data_id for data_id in it.compress(range(0, number_data), ident_details["boolean"][:, iparameter])]
-        identifying_data.append(len(idata))
-        identifying_data_percentage.append(float(len(idata))/number_data*100)
+    # most easily identifiable parameter - based on frequency of identification
+    max_parameter = parameter_identifiability(ident_details)
 
-    # get parameters identified by most data sets (most identifiable parameter)
-    max_identified = max(identifying_data)
-    max_identified_percent = max(identifying_data_percentage)
-    max_parameter_id = [identifying_data.index(max(identifying_data))]
-    for iparameter, number_identifying_data in enumerate(identifying_data):
-        if number_identifying_data == max_identified and iparameter not in max_parameter_id:
-            max_parameter_id.append(iparameter)
-        elif number_identifying_data > max_identified:
-            max_identified = number_identifying_data
-            max_parameter_id = [iparameter]
-    max_parameter = {"maximum": max_identified,
-                     "maximum percentage": max_identified_percent,
-                     "id": max_parameter_id,
-                     "info": identifying_data,
-                     "percentage": identifying_data_percentage}
-    # ident_parameter_names = ident_parameter_name(range(0, 12))
-    print("Information Processing Complete\n")
-    return data_usefulness, original_data, combination_data, max_parameter
+    return data_list, original_ident_data, combination_data, max_parameter
 
 
 def flux_based_ident_info(ident_detail, experiment_details, perturbation_details):
