@@ -676,7 +676,33 @@ def flux_based_ident_info(sample_ident_detail):
         all_flux_data_list.append(data_list)
         all_flux_max_parameter.append(max_parameter)
         print("Information Processing Complete for flux {} \n".format(j_flux + 1))
-    return all_flux_data_list, all_flux_original_ident_data, all_flux_max_parameter
+    return all_flux_data_list, all_flux_max_parameter
+
+
+def collate_flux_based_data(sample_ident_detail):
+    """get processed data for inidividual flux within each individual sample as input args
+    and collate them for all parameters in all fluxes within the sample"""
+    number_of_fluxes = len(sample_ident_detail)
+    for i_flux, i_flux_detail in enumerate(sample_ident_detail):
+        # boolean stack
+        try:
+            all_flux_boolean = np.hstack((all_flux_boolean, i_flux_detail["boolean"]))
+        except NameError:
+            all_flux_boolean = i_flux_detail["boolean"]
+        # nr, dr and final value (identifiability) stack
+        try:
+            all_flux_values = np.hstack((all_flux_values, i_flux_detail["values"]))
+        except NameError:
+            all_flux_values = i_flux_detail["values"]
+        # number of parameters stack
+        try:
+            all_flux_parameters = np.hstack((all_flux_parameters, i_flux_detail["parameters"]))
+        except NameError:
+            all_flux_parameters = i_flux_detail["parameters"]
+    combined_flux_ident_data = {"boolean": all_flux_boolean,
+                                "values": all_flux_values,
+                                "parameters": all_flux_parameters}
+    return combined_flux_ident_data
 
 
 def process_info_sample(ident_details, experiment_details, perturbation_details, do_combos=0):
@@ -685,6 +711,8 @@ def process_info_sample(ident_details, experiment_details, perturbation_details,
     all_sample_data_list = []
     all_sample_combo_data = []
     all_sample_max_parameter = []
+    all_sample_combined_flux_data_list = []
+    all_sample_combined_flux_max_parameter = []
     for j_sample, j_sample_ident_detail in enumerate(ident_details):
         print("Processing identifiability data for sample {} of {}".format(j_sample+1, number_of_samples))
         # collect flux based identifiability information/data
@@ -692,12 +720,15 @@ def process_info_sample(ident_details, experiment_details, perturbation_details,
         all_sample_data_list.append(all_flux_data_list)
         all_sample_max_parameter.append(all_flux_max_parameter)
 
-        # get info on every data set given in data_list
-
         # collate data for all fluxes using the same combination of experimental data
         combined_flux_ident_data = collate_flux_based_data(j_sample_ident_detail)
         # process/collect corresponding data for all fluxes using the same combination of experimental data
-    return all_sample_data_list, all_sample_combo_data, all_sample_max_parameter
+        combined_flux_data_list, combined_flux_max_parameter = process_info(combined_flux_ident_data)
+        all_sample_combined_flux_data_list.append(combined_flux_data_list)
+        all_sample_combined_flux_max_parameter.append(combined_flux_max_parameter)
+
+    return all_sample_data_list, all_sample_max_parameter, \
+           all_sample_combined_flux_data_list, all_sample_combined_flux_max_parameter
 
 
 def get_data_combinations(original_data, chosen_data_id):
