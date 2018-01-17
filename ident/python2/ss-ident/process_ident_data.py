@@ -85,18 +85,18 @@ def experiments_in_combination(data_id, experiment_details):
 def get_useful_data_info(ident_boolean_array, experiment_details, perturbation_details, data_needed):
     """get info all data sets that identify maximum number of parameters"""
     _, p = ident_boolean_array.shape
-    # data_needed = max_data["id"]
     parameters_identified_by_max_data_id = []
     # get parameters identified by data_needed
+    all_ided_parameters = parameters_ided_by_combination(ident_boolean_array, data_needed)
+    # get experiment ids used in/that form data combination
+    all_experiment_ids = experiments_in_combination(data_needed, experiment_details)
+
     data_needed_id = 0
-    for data_id in data_needed:
-        # data_set_name = 'option {}'.format(data_needed_id + 1)
-        # data_set_ident = [ident_parameter_name(i)
-        #                   for i in it.compress(range(0, p), list(ident_boolean_array[data_id, :]))]
-        data_set_ident_id = [i for i in it.compress(range(0, p), list(ident_boolean_array[data_id, :]))]
+    for j_id, data_id in enumerate(data_needed):
+        data_set_ident_id = all_ided_parameters[j_id]
         # identify all experiments for given data set
         #perturbation_id = [int(i) for i in experiment_details["details"][data_id, range(0, 12, 4)].tolist()]
-        perturbation_id = experiment_details["experiment_id"][data_id]
+        perturbation_id = all_experiment_ids[j_id]
         # identify parameters perturbed by said experiment
         # perturbed_parameters = perturbation_details["indices"][perturbation_id, :]
         # perturbed_parameters = experiment_details["parameter_ids"][data_id]
