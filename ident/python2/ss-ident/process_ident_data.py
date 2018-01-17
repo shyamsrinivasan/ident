@@ -600,12 +600,14 @@ def data_utility(ident_details, experiment_details, perturbation_details):
     # get info all the aforementioned data sets
     original_data = []
     for i_data in range(0, len(data_usefulness["number"])):
-        # get all info on all data sets present in useful data from above
-        temp_list = get_useful_data_info(ident_details["boolean"],
-                                         experiment_details,
-                                         perturbation_details,
-                                         data_usefulness["index"][i_data])
-        original_data.append(temp_list)
+        # get parameters identified by given data ids in i_data
+        all_ided_parameters = parameters_ided_by_combination(ident_details["boolean"],
+                                                             data_usefulness["index"][i_data])
+        # get experiment ids used in/that form data combination
+        all_experiment_ids = experiments_in_combination(data_usefulness["index"][i_data], experiment_details)
+        all_data_info = {"parameters": all_ided_parameters,
+                         "experiments": all_experiment_ids}
+        original_data.append(all_data_info)
 
     # print total individual data sets required and combinations found
     number_original_data = 0
