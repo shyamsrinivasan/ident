@@ -709,7 +709,6 @@ def process_info_sample(ident_details, experiment_details, perturbation_details,
     print("Process information From Identifiability Analysis.....\n")
     number_of_samples = len(ident_details)
     all_sample_data_list = []
-    all_sample_combo_data = []
     all_sample_max_parameter = []
     all_sample_combined_flux_data_list = []
     all_sample_combined_flux_max_parameter = []
