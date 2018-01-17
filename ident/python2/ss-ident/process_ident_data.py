@@ -571,6 +571,32 @@ def useful_experiments(original_data):
     return all_parameter_exp_id
 
 
+def data_utility(ident_details, experiment_details, perturbation_details):
+    """get information on how useful each data combination is based on the number of parameters in each flux that each
+    data combination can identify"""
+    # get data identification percentages to classify utility of data sets
+    data_usefulness = data_usefulness_percentage(ident_details)
+
+    # get info all the aforementioned data sets
+    original_data = []
+    for i_data in range(0, len(data_usefulness["number"])):
+        # get all info on all data sets present in useful data from above
+        temp_list = get_useful_data_info(ident_details["boolean"],
+                                         experiment_details,
+                                         perturbation_details,
+                                         data_usefulness["index"][i_data])
+        original_data.append(temp_list)
+
+    # print total individual data sets required and combinations found
+    number_original_data = 0
+    for list_pos, i_data in enumerate(original_data):
+        # original data sets
+        print('Original Data sets that can detect {} parameters: {}'.
+            format(data_usefulness["number"][list_pos], len(i_data)))
+        number_original_data += len(i_data)
+    return data_usefulness, original_data
+
+
 def process_info(ident_details, experiment_details, perturbation_details, do_combos=0):
     number_data, p = ident_details["boolean"].shape
 
