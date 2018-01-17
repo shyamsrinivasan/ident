@@ -62,6 +62,26 @@ def get_most_useful_dataset(ident_boolean_array):
     return max_data
 
 
+def parameters_ided_by_combination(ident_boolean, data_id):
+    """get ids of all parameters ided by given list of data ids based on
+    boolean identifiability matrix passed as input args"""
+    _, p = ident_boolean.shape
+    all_ided_parameters = []
+    for j_data_id in data_id:
+        ided_parameter_id = [i for i in it.compress(range(0, p), list(ident_boolean[j_data_id, :]))]
+        all_ided_parameters.append(ided_parameter_id)
+    return all_ided_parameters
+
+
+def experiments_in_combination(data_id, experiment_details):
+    """get experiment ids that are part of any input data combination"""
+    all_experiment_ids = []
+    for j_data_id in data_id:
+        experiment_ids = experiment_details["experiment_id"][j_data_id]
+        all_experiment_ids.append(experiment_ids)
+    return all_experiment_ids
+
+
 def get_useful_data_info(ident_boolean_array, experiment_details, perturbation_details, data_needed):
     """get info all data sets that identify maximum number of parameters"""
     _, p = ident_boolean_array.shape
