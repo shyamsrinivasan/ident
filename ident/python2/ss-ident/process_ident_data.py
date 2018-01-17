@@ -591,23 +591,27 @@ def useful_experiments(original_data):
     return all_parameter_exp_id
 
 
-def data_utility(ident_details, experiment_details, perturbation_details):
-    """get information on how useful each data combination is based on the number of parameters in each flux that each
-    data combination can identify"""
-    # get data identification percentages to classify utility of data sets
-    data_usefulness = data_usefulness_percentage(ident_details)
-
-    # get info all the aforementioned data sets
+def get_data_info(data_list, ident_details, experiment_details):
+    """get information on every single data set obtained from data_usefulness_percentage"""
     original_data = []
-    for i_data in range(0, len(data_usefulness["number"])):
+    for i_data in range(0, len(data_list["number"])):
         # get parameters identified by given data ids in i_data
         all_ided_parameters = parameters_ided_by_combination(ident_details["boolean"],
-                                                             data_usefulness["index"][i_data])
+                                                             data_list["index"][i_data])
         # get experiment ids used in/that form data combination
-        all_experiment_ids = experiments_in_combination(data_usefulness["index"][i_data], experiment_details)
+        all_experiment_ids = experiments_in_combination(data_list["index"][i_data], experiment_details)
         all_data_info = {"parameters": all_ided_parameters,
                          "experiments": all_experiment_ids}
         original_data.append(all_data_info)
+    return original_data
+
+
+def data_utility(ident_details):
+    """get information on how useful each data combination is based on the number of parameters in each flux that each
+    data combination can identify"""
+
+    # get data identification percentages to classify utility of data sets
+    data_usefulness = data_usefulness_percentage(ident_details)
 
     # print total individual data sets required and combinations found
     number_original_data = 0
@@ -616,7 +620,7 @@ def data_utility(ident_details, experiment_details, perturbation_details):
         print('Original Data sets that can detect {} parameters: {}'.
             format(data_usefulness["number"][list_pos], len(i_data)))
         number_original_data += len(i_data)
-    return data_usefulness, original_data
+    return data_usefulness
 
 
 def parameter_identifiability(ident_details):
@@ -648,32 +652,28 @@ def parameter_identifiability(ident_details):
     return max_parameter
 
 
-def process_info(ident_details, experiment_details, perturbation_details):
+def process_info(ident_details):
     """get data utility and parameter identifiability and other data for
     parameters of each flux passed as input"""
 
-    # get information on data sets used to identify parameters in each flux
-    data_list, original_ident_data = data_utility(ident_details,
-                                                  experiment_details,
-                                                  perturbation_details)
+    # get data identification percentages to classify utility of data sets
+    data_list = data_utility(ident_details)
     # most easily identifiable parameter - based on frequency of identification
     max_parameter = parameter_identifiability(ident_details)
 
-    return data_list, original_ident_data, max_parameter
+    return data_list, max_parameter
 
 
-def flux_based_ident_info(sample_ident_detail, experiment_details, perturbation_details):
+def flux_based_ident_info(sample_ident_detail):
     """parse information by looping though each flux present within each sample that is passed an input argument"""
     number_of_fluxes = len(sample_ident_detail)
     all_flux_data_list = []
-    all_flux_original_ident_data = []
     all_flux_max_parameter = []
     for j_flux, j_flux_info in enumerate(sample_ident_detail):
         print("Processing identifiability for flux {} of {}".format(j_flux + 1, number_of_fluxes))
-        data_list, original_ident_data, max_parameter = \
-            process_info(j_flux_info, experiment_details, perturbation_details)
+        data_list, max_parameter = \
+            process_info(j_flux_info)
         all_flux_data_list.append(data_list)
-        all_flux_original_ident_data.append(original_ident_data)
         all_flux_max_parameter.append(max_parameter)
         print("Information Processing Complete for flux {} \n".format(j_flux + 1))
     return all_flux_data_list, all_flux_original_ident_data, all_flux_max_parameter
@@ -683,20 +683,21 @@ def process_info_sample(ident_details, experiment_details, perturbation_details,
     print("Process information From Identifiability Analysis.....\n")
     number_of_samples = len(ident_details)
     all_sample_data_list = []
-    all_sample_original_data = []
     all_sample_combo_data = []
     all_sample_max_parameter = []
-    for j_sample, j_sample_ident_details in enumerate(ident_details):
+    for j_sample, j_sample_ident_detail in enumerate(ident_details):
         print("Processing identifiability data for sample {} of {}".format(j_sample+1, number_of_samples))
-        all_flux_data_list, \
-        all_flux_original_ident_data, \
-        all_flux_max_parameter = flux_based_ident_info(j_sample_ident_details,
-                                                       experiment_details[j_sample],
-                                                       perturbation_details)
+        # collect flux based identifiability information/data
+        all_flux_data_list, all_flux_max_parameter = flux_based_ident_info(j_sample_ident_detail)
         all_sample_data_list.append(all_flux_data_list)
-        all_sample_original_data.append(all_flux_original_ident_data)
         all_sample_max_parameter.append(all_flux_max_parameter)
-    return all_sample_data_list, all_sample_original_data, all_sample_combo_data, all_sample_max_parameter
+
+        # get info on every data set given in data_list
+
+        # collate data for all fluxes using the same combination of experimental data
+        combined_flux_ident_data = collate_flux_based_data(j_sample_ident_detail)
+        # process/collect corresponding data for all fluxes using the same combination of experimental data
+    return all_sample_data_list, all_sample_combo_data, all_sample_max_parameter
 
 
 def get_data_combinations(original_data, chosen_data_id):
