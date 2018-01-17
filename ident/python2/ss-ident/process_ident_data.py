@@ -589,7 +589,7 @@ def data_utility(ident_details, experiment_details, perturbation_details):
 
     # print total individual data sets required and combinations found
     number_original_data = 0
-    for list_pos, i_data in enumerate(original_data):
+    for list_pos, i_data in enumerate(data_usefulness["index"]):
         # original data sets
         print('Original Data sets that can detect {} parameters: {}'.
             format(data_usefulness["number"][list_pos], len(i_data)))
@@ -600,27 +600,21 @@ def data_utility(ident_details, experiment_details, perturbation_details):
 def process_info(ident_details, experiment_details, perturbation_details, do_combos=0):
     number_data, p = ident_details["boolean"].shape
 
-    # get data identification percentages to classify utility of data sets
-    data_usefulness = data_usefulness_percentage(ident_details)
+    # get information on data sets used to identify parameters in each flux
+    data_list, original_data_ident = data_utility(ident_details,
+                                                  experiment_details,
+                                                  perturbation_details)
 
-    # get info all the aforementioned data sets
-    original_data = []
+    # get combination of combinations to identify all parameters - to be made workable by moving to different fun
     combination_data = []
-    for i_data in range(0, len(data_usefulness["number"])):
-        # get all info on all data sets present in useful data from above
-        temp_list = get_useful_data_info(ident_details["boolean"],
-                                         experiment_details,
-                                         perturbation_details,
-                                         data_usefulness["index"][i_data])
-        original_data.append(temp_list)
-
+    for i_data in range(0, len(data_list["number"])):
         # choose additional data sets and consequently, experiments (if possible) to identify other parameters not
         # identified by chosen data set(s)
         if do_combos:
             new_combos = calculate_experiment_combos(ident_details,
                                                      experiment_details,
                                                      perturbation_details,
-                                                     temp_list)
+                                                     original_data_ident[i_data])
             combination_data.append(new_combos)
 
     # print total individual data sets required and combinations found
