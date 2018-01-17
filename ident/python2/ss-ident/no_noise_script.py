@@ -42,11 +42,10 @@ ident_details_3 = flux_ident_3_data_combination(experimental_datasets_3_expts, c
 # identifiability for all kotte fluxes
 # ident_details = establish_kotte_flux_identifiability(experimental_datasets, choose=choose)
 print('Perturbation analysis for identifiability complete.\n')
-
 # data processing
-data_list, original_data_ident, combo_data_ident, max_parameter = process_info_sample(ident_details_2,
-                                                                                      experimental_datasets_2_expts,
-                                                                                      perturbation_details)
+data_list, combo_data_ident, max_parameter = process_info_sample(ident_details_2,
+                                                                 experimental_datasets_2_expts,
+                                                                 perturbation_details)
 
 number_of_parameters_per_flux_2 = [4, 2]
 number_of_parameters_per_flux_3 = [6]
