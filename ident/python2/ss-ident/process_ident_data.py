@@ -654,21 +654,23 @@ def process_info(ident_details, experiment_details, perturbation_details, do_com
     return data_list, original_ident_data, combination_data, max_parameter
 
 
-def flux_based_ident_info(ident_detail, experiment_details, perturbation_details):
-    data_list, original_ident_data, combo_data, max_parameter = \
-        process_info(ident_detail, experiment_details, perturbation_details)
-    # number_of_fluxes = len(ident_details)
-    # all_flux_data_list = []
-    # all_flux_org_list = []
-    # all_flux_combo_data = []
-    # all_flux_max_parameter = []
-    # for iflux_detail in ident_details:
-    #
-    #     all_flux_data_list.append(data_list)
-    #     all_flux_org_list.append(original_ident_data)
-    #     all_flux_combo_data.append(combo_data)
-    #     all_flux_max_parameter.append(max_parameter)
-    return data_list, original_ident_data, combo_data, max_parameter
+def flux_based_ident_info(sample_ident_detail, experiment_details, perturbation_details):
+    """parse information by looping though each flux present within each sample that is passed an input argument"""
+    number_of_fluxes = len(sample_ident_detail)
+    all_flux_data_list = []
+    all_flux_original_ident_data = []
+    all_flux_combo_data = []
+    all_flux_max_parameter = []
+    for j_flux, j_flux_info in enumerate(sample_ident_detail):
+        print("Processing identifiability for flux {} of {}".format(j_flux + 1, number_of_fluxes))
+        data_list, original_ident_data, combo_data, max_parameter = \
+            process_info(j_flux_info, experiment_details, perturbation_details)
+        all_flux_data_list.append(data_list)
+        all_flux_original_ident_data.append(original_ident_data)
+        all_flux_combo_data.append(combo_data)
+        all_flux_max_parameter.append(max_parameter)
+        print("Information Processing Complete for flux {} \n".format(j_flux + 1))
+    return all_flux_data_list, all_flux_original_ident_data, all_flux_combo_data, all_flux_max_parameter
 
 
 def process_info_sample(ident_details, experiment_details, perturbation_details, do_combos=0):
