@@ -668,19 +668,14 @@ def process_info_sample(ident_details, experiment_details, perturbation_details,
     all_sample_max_parameter = []
     for j_sample, j_sample_ident_details in enumerate(ident_details):
         print("Processing identifiability data for sample {} of {}".format(j_sample+1, number_of_samples))
-        number_of_fluxes = len(j_sample_ident_details)
-        for j_flux, j_flux_info in enumerate(j_sample_ident_details):
-            print("Processing identifiability for flux {} of {}".format(j_flux+1, number_of_fluxes))
-            data_list, original_ident_data, \
-            combo_ident_data, max_parameter = flux_based_ident_info(j_flux_info,
-                                                                    experiment_details[j_sample],
-                                                                    perturbation_details)
-        # data_list, original_ident_data, combo_ident_data, max_parameter = \
-        #     process_info(j_sample_ident_details, experiment_details[j_sample], perturbation_details, do_combos)
-        all_sample_data_list.append(data_list)
-        all_sample_original_data.append(original_ident_data)
-        all_sample_combo_data.append(combo_ident_data)
-        all_sample_max_parameter.append(max_parameter)
+        all_flux_data_list, \
+        all_flux_original_ident_data, \
+        all_flux_max_parameter = flux_based_ident_info(j_sample_ident_details,
+                                                       experiment_details[j_sample],
+                                                       perturbation_details)
+        all_sample_data_list.append(all_flux_data_list)
+        all_sample_original_data.append(all_flux_original_ident_data)
+        all_sample_max_parameter.append(all_flux_max_parameter)
     return all_sample_data_list, all_sample_original_data, all_sample_combo_data, all_sample_max_parameter
 
 
