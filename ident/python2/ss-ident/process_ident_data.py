@@ -627,15 +627,13 @@ def parameter_identifiability(ident_details):
 
 
 def process_info(ident_details, experiment_details, perturbation_details):
-    number_data, p = ident_details["boolean"].shape
+    """get data utility and parameter identifiability and other data for
+    parameters of each flux passed as input"""
 
     # get information on data sets used to identify parameters in each flux
     data_list, original_ident_data = data_utility(ident_details,
                                                   experiment_details,
                                                   perturbation_details)
-
-    # decide which experiments to perform for each parameter based on above calculations
-
     # most easily identifiable parameter - based on frequency of identification
     max_parameter = parameter_identifiability(ident_details)
 
