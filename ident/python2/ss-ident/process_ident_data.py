@@ -200,9 +200,9 @@ def data_usefulness_percentage(ident_details):
     for i, j_parameter_identified in enumerate(number_parameters_identified):
         number_data_identifying_j = len(data_id[i])
         percentage_of_total.append(float(number_data_identifying_j) / float(number_data) * 100)
-    data_usefulness = {'number_parameters_ided': number_parameters_identified,
-                       'index': data_id,
-                       'percentage': percentage_of_total}
+    data_usefulness = {'number': number_parameters_identified,  # number of parameters ided
+                       'index': data_id,                        # index of data combinations that id x parameters
+                       'percentage': percentage_of_total}       # percentage of data combinations that id x parameters
     return data_usefulness
 
 
