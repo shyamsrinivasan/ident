@@ -716,22 +716,29 @@ def process_info_sample(ident_details, experiment_details, perturbation_details,
     all_sample_max_parameter = []
     all_sample_combined_flux_data_list = []
     all_sample_combined_flux_max_parameter = []
+    number_of_fluxes_per_sample = []
     for j_sample, j_sample_ident_detail in enumerate(ident_details):
         print("Processing identifiability data for sample {} of {}".format(j_sample+1, number_of_samples))
         # collect flux based identifiability information/data
         all_flux_data_list, all_flux_max_parameter = flux_based_ident_info(j_sample_ident_detail)
         all_sample_data_list.append(all_flux_data_list)
         all_sample_max_parameter.append(all_flux_max_parameter)
+        number_of_fluxes_per_sample.append(len(all_flux_data_list))
 
         # collate data for all fluxes using the same combination of experimental data
-        combined_flux_ident_data = collate_flux_based_data(j_sample_ident_detail)
-        # process/collect corresponding data for all fluxes using the same combination of experimental data
-        combined_flux_data_list, combined_flux_max_parameter = process_info(combined_flux_ident_data)
-        all_sample_combined_flux_data_list.append(combined_flux_data_list)
-        all_sample_combined_flux_max_parameter.append(combined_flux_max_parameter)
+        if combine_fluxes:
+            # collate all identifiability information
+            combined_flux_ident_data = collate_flux_based_data(j_sample_ident_detail)
+            # process/collect corresponding data for all fluxes using the same combination of experimental data
+            combined_flux_data_list, combined_flux_max_parameter = process_info(combined_flux_ident_data)
+            all_sample_combined_flux_data_list.append(combined_flux_data_list)
+            all_sample_combined_flux_max_parameter.append(combined_flux_max_parameter)
 
-    return all_sample_data_list, all_sample_max_parameter, \
-           all_sample_combined_flux_data_list, all_sample_combined_flux_max_parameter
+    if combine_fluxes:
+        return all_sample_data_list, all_sample_max_parameter, \
+               all_sample_combined_flux_data_list, all_sample_combined_flux_max_parameter
+    else:
+        return all_sample_data_list, all_sample_max_parameter
 
 
 def get_data_combinations(original_data, chosen_data_id):
