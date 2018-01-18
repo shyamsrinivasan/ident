@@ -216,13 +216,17 @@ def data_usefulness_percentage(ident_details):
     number_parameters_identified, data_id = get_top_useful_data(max_data)
 
     # percentage of datasets identifying x number of parameters
+    total_number_of_data = []
     percentage_of_total = []
     for i, j_parameter_identified in enumerate(number_parameters_identified):
         number_data_identifying_j = len(data_id[i])
+        total_number_of_data.append(number_data_identifying_j)
         percentage_of_total.append(float(number_data_identifying_j) / float(number_data) * 100)
     data_usefulness = {'number': number_parameters_identified,  # number of parameters ided
                        'index': data_id,                        # index of data combinations that id x parameters
-                       'percentage': percentage_of_total}       # percentage of data combinations that id x parameters
+                       'total': total_number_of_data,           # number of data combinations that id x parameters
+                       'percentage': percentage_of_total,       # percentage of data combinations that id x parameters
+                       'number of data combinations': number_data}       # total number of data combinations used
     return data_usefulness
 
 
