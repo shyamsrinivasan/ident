@@ -27,25 +27,37 @@ exp_xss, exp_fss, exp_ssid, perturbation_details = \
 exp_flux_index = np.array([0, 3, 2, 4])
 
 # get combination of 2 experiments and perform identifiability on all fluxes that require 2 data sets
-choose_2 = range(0, 306)
+print('Practical Identifiability Analysis of fluxes with 2 parameters \n')
+choose_2 = range(0, 306) # choose numbr of experimental datasets to use of analysis
+# get combinations of experimental datasets
 experimental_datasets_2_expts = \
     arrange_experimental_data(exp_xss, exp_fss, perturbation_details, 2, exp_flux_index, choose_2)
 ident_details_2 = flux_ident_2_data_combination(experimental_datasets_2_expts, choose=choose_2)
+print('Identifiability analysis for fluxes with 2 parameters complete.\n')
+# data processing
+data_list_2, max_parameter_2, \
+combined_data_list_2, combined_max_parameter_2 = process_info_sample(ident_details_2,
+                                                                     experimental_datasets_2_expts,
+                                                                     perturbation_details, combine_fluxes=1)
 
-# choose numbr of experimental datasets for which identifiability is to be calculated
-choose_3 = range(0, 4896)
+# get combination of 3 experiments and perform identifiability on all fluxes that require 3 data sets
+print('Practical Identifiability Analysis of fluxes with 3 parameters \n')
+choose_3 = range(0, 4896) # choose numbr of experimental datasets to use of analysis
 # get combinations of experimental datasets
 experimental_datasets_3_expts = \
     arrange_experimental_data(exp_xss, exp_fss, perturbation_details, 3, exp_flux_index, choose=choose_3)
 ident_details_3 = flux_ident_3_data_combination(experimental_datasets_3_expts, choose=choose_3)
+print('Identifiability analysis for fluxes with 2 parameters complete.\n')
+# data processing
+data_list_3, max_parameter_3 = process_info_sample(ident_details_3,
+                                                   experimental_datasets_3_expts,
+                                                   perturbation_details)
+
 
 # identifiability for all kotte fluxes
 # ident_details = establish_kotte_flux_identifiability(experimental_datasets, choose=choose)
-print('Perturbation analysis for identifiability complete.\n')
-# data processing
-data_list, combo_data_ident, max_parameter = process_info_sample(ident_details_2,
-                                                                 experimental_datasets_2_expts,
-                                                                 perturbation_details)
+
+
 
 number_of_parameters_per_flux_2 = [4, 2]
 number_of_parameters_per_flux_3 = [6]
