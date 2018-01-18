@@ -709,7 +709,102 @@ def collate_flux_based_data(sample_ident_detail):
     return combined_flux_ident_data
 
 
-def process_info_sample(ident_details, experiment_details, perturbation_details, do_combos=0):
+def collate_sample_based_data_utility(number_of_fluxes_per_sample, all_sample_data_list):
+    """collate data utility information based on each flux from multiple samples and generate
+    averages and standard deviations for each flux"""
+    all_flux_data_list = []
+    for j_flux in range(0, number_of_fluxes_per_sample[0]):
+        j_flux_data_number = []
+        j_flux_data_total = []
+        j_flux_data_percentage = []
+        j_flux_data_indices = []
+        j_flux_data_combination_total = []
+        for j_sample_id, j_sample_data in enumerate(all_sample_data_list):
+            j_flux_info = j_sample_data[j_flux]
+            j_flux_data_number.append(j_flux_info["number"])
+            j_flux_data_total.append(j_flux_info["total"])
+            j_flux_data_percentage.append(j_flux_info["percentage"])
+            j_flux_data_combination_total.append(j_flux_info["number of data combinations"])
+            j_flux_data_indices.append(j_flux_info["index"])
+        j_flux_total_mean = list(np.mean(np.array(j_flux_data_total), axis=0))
+        j_flux_total_std = list(np.std(np.array(j_flux_data_total), axis=0))
+        j_flux_percent_mean = list(np.mean(np.array(j_flux_data_percentage), axis=0))
+        j_flux_percent_std = list(np.std(np.array(j_flux_data_percentage), axis=0))
+        j_flux_number_mean = list(np.mean(np.array(j_flux_data_number), axis=0))
+        j_flux_processed_total = {"mean": j_flux_total_mean,
+                                  "std": j_flux_total_std,
+                                  "number": j_flux_number_mean}
+        j_flux_processed_percent = {"mean": j_flux_percent_mean,
+                                    "std": j_flux_percent_std,
+                                    "number": j_flux_number_mean}
+        all_flux_data_list.append({"total": j_flux_processed_total,
+                                   "percentage": j_flux_processed_percent})
+    return all_flux_data_list
+
+
+def collate_sample_based_identifibaility(number_of_fluxes_per_sample, all_sample_max_parameter):
+    """collect parameter identifiability information for each flux from multiple samples and generate
+    averages and standard deviations for each parameter for each flux"""
+    all_flux_max_parameter = []
+    for j_flux in range(0, number_of_fluxes_per_sample[0]):
+        j_flux_data_info = []
+        j_flux_data_percent = []
+        j_flux_data_maximum_number = []
+        j_flux_data_maximum_percent = []
+        j_flux_data_maximum_id = []
+        for j_sample_id, j_sample_data in enumerate(all_sample_max_parameter):
+            j_flux_content = j_sample_data[j_flux]
+            j_flux_data_info.append(j_flux_content["info"])
+            j_flux_data_percent.append(j_flux_content["percentage"])
+            j_flux_data_maximum_number.append(j_flux_content["maximum number"])
+            j_flux_data_maximum_percent.append(j_flux_content["maximum percentage"])
+            j_flux_data_maximum_id.append(j_flux_content["maximum id"])
+        j_flux_info_mean = list(np.mean(np.array(j_flux_data_info), axis=0))
+        j_flux_info_std = list(np.std(np.array(j_flux_data_info), axis=0))
+        j_flux_percent_mean = list(np.mean(np.array(j_flux_data_percent), axis=0))
+        j_flux_percent_std = list(np.mean(np.array(j_flux_data_percent), axis=0))
+        j_flux_processed_total = {"mean": j_flux_info_mean,
+                                  "std": j_flux_info_std}
+        j_flux_processed_percent = {"mean": j_flux_percent_mean,
+                                    "std": j_flux_percent_std}
+        all_flux_max_parameter.append({"total": j_flux_processed_total,
+                                       "percentage": j_flux_processed_percent})
+    return all_flux_max_parameter
+
+
+def sample_based_averages(number_of_fluxes_per_sample, all_sample_data_list, all_sample_max_parameter):
+    """call sample based collate functions and generate averages and standard deviations for
+    both data utility and parameter identifiability for each flux"""
+    all_flux_data_utility = collate_sample_based_data_utility(number_of_fluxes_per_sample, all_sample_data_list)
+    all_flux_max_parameter = collate_sample_based_identifibaility(number_of_fluxes_per_sample, all_sample_max_parameter)
+    return all_flux_data_utility, all_flux_max_parameter
+
+
+def combined_sample_based_averages(all_sample_combined_flux_data_list):
+    j_sample_total = []
+    j_sample_percent = []
+    j_sample_number = []
+    for j_sample_id, j_sample_data in enumerate(all_sample_combined_flux_data_list):
+        j_sample_total.append(j_sample_data["total"])
+        j_sample_percent.append(j_sample_data["percentage"])
+        j_sample_number.append(j_sample_data["number"])
+    sample_total_mean = list(np.mean(np.array(j_sample_total), axis=0))
+    sample_total_std = list(np.std(np.array(j_sample_total), axis=0))
+    sample_percent_mean = list(np.mean(np.array(j_sample_percent), axis=0))
+    sample_percent_std = list(np.std(np.array(j_sample_percent), axis=0))
+    sample_number_mean = list(np.mean(np.array(j_sample_number), axis=0))
+    all_processed_total = {"mean": sample_total_mean,
+                           "std": sample_total_std,
+                           "number": sample_number_mean,
+                           "total data": all_sample_combined_flux_data_list[0]["number of data combinations"]}
+    all_processed_percent = {"mean": sample_percent_mean,
+                             "std": sample_percent_std,
+                             "number": sample_number_mean,
+                             "total data": all_sample_combined_flux_data_list[0]["number of data combinations"]}
+    return {"total": all_processed_total, "percent": all_processed_percent}
+
+
+def process_info_sample(ident_details, experiment_details, perturbation_details, combine_fluxes=0):
     print("Process information From Identifiability Analysis.....\n")
     number_of_samples = len(ident_details)
     all_sample_data_list = []
