@@ -317,9 +317,11 @@ def experiments_in_ident_data(boolean_ident_data, experiment_data, experiment_ty
     """get all data combinations identifying a given parameter within a given flux (passed as input)
     and identify experiments used within the identifying data combination"""
     number_of_data, number_of_parameter = boolean_ident_data.shape
+    number_of_experiment_types = len(experiment_type_index)
     boolean_ident_data = boolean_ident_data.transpose()
     all_parameter_experiment_type_info = []
     for j_parameter, j_parameter_info in enumerate(boolean_ident_data):
+        print("Experiment types for parameter {} of {}".format(j_parameter + 1, number_of_parameter))
         # get data combinations identifying parameter j
         data_identifying_parameter_j = [j_data for j_data, bool_value in enumerate(j_parameter_info) if bool_value]
 
@@ -332,6 +334,8 @@ def experiments_in_ident_data(boolean_ident_data, experiment_data, experiment_ty
         experiments_in_identifying_data = np.array(experiments_in_identifying_data)
         all_position_experiment_info = []
         for j_position_in_combination in range(0, number_of_experiments_in_combination):
+            print("Experiment type frequencies in position {} of {}:".format(j_position_in_combination + 1,
+                                                                             number_of_experiments_in_combination))
             experiment_type_boolean = [[True if exp_id in i_experiment_type else False
                                         for exp_id in experiments_in_identifying_data[:, j_position_in_combination]]
                                        for i_experiment_type in experiment_type_index]
@@ -348,12 +352,18 @@ def experiments_in_ident_data(boolean_ident_data, experiment_data, experiment_ty
                                         for id, val in enumerate(i_experiment_type_boolean) if val]
                                        for i_experiment_type_boolean in experiment_type_boolean]
 
+            for i_experiment_type in range(0, number_of_experiment_types):
+                print("Frequency for type {} of {}: {} of {} data combinations".
+                      format(i_experiment_type, number_of_experiment_types,
+                             experiment_type_frequency[i_experiment_type], total_identifying_data))
+
             all_position_experiment_info.append({"boolean": experiment_type_boolean,
                                                  "frequency": experiment_type_frequency,
                                                  "percentage": experiment_type_percentage,
                                                  "data id": experiment_type_data_id,
                                                  "position": j_position_in_combination})
         all_parameter_experiment_type_info.append(all_position_experiment_info)
+        print("Experiment type analysis for parameter {} complete \n".format(j_parameter + 1))
 
     return all_parameter_experiment_type_info
 
