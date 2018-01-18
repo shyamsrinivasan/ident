@@ -11,7 +11,7 @@ from process_ident_data import experiment_position_based_info_per_sample
 from plot_ident_results import flux_parameter_plot
 from plot_ident_results import parameter_experiment_type_plot
 from plot_ident_results import data_utility_plot
-
+from plot_ident_results import parameter_identifibaility_plot
 
 # generate noisy experimental data for testing identifiability
 y0 = np.array([5, 1, 1])
@@ -39,6 +39,10 @@ data_list_2, max_parameter_2, \
 combined_data_list_2, combined_max_parameter_2 = process_info_sample(ident_details_2,
                                                                      experimental_datasets_2_expts,
                                                                      perturbation_details, combine_fluxes=1)
+
+# plot parameter identifibaility for all fluxes using 2 data combinations
+parameter_identifibaility_plot(max_parameter_2)
+
 
 # get combination of 3 experiments and perform identifiability on all fluxes that require 3 data sets
 print('Practical Identifiability Analysis of fluxes with 3 parameters \n')
