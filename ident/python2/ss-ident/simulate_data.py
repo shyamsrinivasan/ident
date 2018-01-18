@@ -94,7 +94,7 @@ def data_for_each_sample(perturbation_details, experiments_per_set,
 
     dataset_keys = ['values', 'details', 'parameter_ids',
                     'parameter_values', 'parameter_changes', 'ssid',
-                    'experiment_id', 'dataset_id']
+                    'experiments', 'dataset_id']
     experimental_data = dict(zip(dataset_keys, [dataset_value_array, all_parameter_change, all_parameter_ids,
                                                 all_parameter_values, all_parameter_changes, all_ssid,
                                                 experiment_index_iter, choose]))
