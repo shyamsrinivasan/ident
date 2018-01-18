@@ -202,6 +202,27 @@ def flux_parameter_plot(total_ident_data, fraction_data={}, file_destination=())
     return None
 
 
+def plot_on_axis_object(axis_obj, x_data, y_data, x_error, x_percent_mean, x_percent_std):
+    """given axis object plot given data on axis object along with all given annotations"""
+    # plot bar graphs for x_data vs y_data with x_error error bars
+    axis_obj.barh(y_data, x_data, xerr=x_error, align='center', color='blue', ecolor='black')
+
+    # annotate percentages onto each bar in the graph
+    for j_bar in range(0, len(y_data)):
+        x_annotation = "{:.2f} + {:.2f} %".format(x_percent_mean[j_bar],
+                                                  x_percent_std[j_bar])
+        an1 = axis_obj.annotate("", xy=(x_data[j_bar], y_data[j_bar]), xycoords='data',
+                                xytext=(x_data[j_bar], y_data[j_bar]), textcoords='data')
+        an2 = axis_obj.annotate(x_annotation, xy=(5, .5), xycoords=an1,
+                                xytext=(40, 0), textcoords="offset points", size=16, va="center", ha="center")
+    # set y axis ticks
+    axis_obj.set_yticks(y_data)
+    # set y axis tick labels (parameter names)
+    # invert y-axis
+    axis_obj.invert_yaxis()
+    return None
+
+
 def parameter_identifibaility_plot(flux_based_parameter_ident):
     """plot parameter identifibaility (number of data combinations identifying
     each parameter in each flux. Paramerers for each flux are plotted in separate subplots"""
