@@ -57,6 +57,9 @@ data_list_3, max_parameter_3 = process_info_sample(ident_details_3,
                                                    experimental_datasets_3_expts,
                                                    perturbation_details)
 
+# plot parameter identifibaility for all fluxes using 3 data combinations
+parameter_identifibaility_plot(max_parameter_3)
+
 
 # identifiability for all kotte fluxes
 # ident_details = establish_kotte_flux_identifiability(experimental_datasets, choose=choose)
