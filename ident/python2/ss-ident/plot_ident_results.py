@@ -202,6 +202,50 @@ def flux_parameter_plot(total_ident_data, fraction_data={}, file_destination=())
     return None
 
 
+def parameter_identifibaility_plot(flux_based_parameter_ident):
+    """plot parameter identifibaility (number of data combinations identifying
+    each parameter in each flux. Paramerers for each flux are plotted in separate subplots"""
+    all_sample_all_flux_processed_info = flux_based_parameter_ident["processed"]
+    number_of_fluxes = len(all_sample_all_flux_processed_info)
+    number_of_subplots = number_of_fluxes
+    number_of_columns = 1
+
+    # get figure subplots
+    f, axarr = plt.subplots(number_of_subplots, number_of_columns, sharex='col',
+                            figsize=(8, 6), dpi=100, facecolor='w', edgecolor='k')
+    for i_flux, i_axis_obj in enumerate(axarr):
+        i_flux_info = all_sample_all_flux_processed_info[i_flux]
+        x_data = i_flux_info["total"]["mean"]
+        x_error = i_flux_info["total"]["std"]
+        y_data = np.arange(0, len(x_data))
+        x_percent_mean = i_flux_info["percentage"]["mean"]
+        x_percent_std = i_flux_info["percentage"]["std"]
+        # get parameter id/name for y-axis labels
+
+        # plot bar graphs for x_data vs y_data with x_error error bars
+        i_axis_obj.barh(y_data, x_data, xerr=x_error, align='center', color='blue', ecolor='black')
+
+        # annotate percentages onto each bar in the graph
+        for j_bar in range(0, len(y_data)):
+            x_annotation = "{:.2f} + {:.2f} %".format(x_percent_mean[j_bar],
+                                                      x_percent_std[j_bar])
+            an1 = i_axis_obj.annotate("", xy=(x_data[j_bar], y_data[j_bar]), xycoords='data',
+                                      xytext=(x_data[j_bar], y_data[j_bar]), textcoords='data')
+            an2 = i_axis_obj.annotate(x_annotation, xy=(5, .5), xycoords=an1,
+                                      xytext=(40, 0), textcoords="offset points", size=16, va="center", ha="center")
+        # set y axis ticks
+        i_axis_obj.set_yticks(y_data)
+        # set y axis tick labels (parameter names)
+        # invert y-axis
+        i_axis_obj.invert_yaxis()
+    # set x-axis label
+    axarr[-1].set_xlabel('Number of data combinations used for identification')
+    # hide x axis tick labels for all but the last subplot sharing x-axes
+    plt.setp([a.get_xticklabels() for a in axarr[0:-2]], visible=False)
+    plt.show()
+    return None
+
+
 def data_utility_plot(data_list):
     # collect data for plotting
     x_data = data_list["number_parameters_ided"]
