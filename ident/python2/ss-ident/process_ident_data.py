@@ -836,10 +836,10 @@ def sample_based_averages(number_of_fluxes_per_sample, all_sample_data_list, all
                                                                   all_sample_max_parameter)
     all_flux_experiment_info = collate_sample_based_experiment_info(number_of_fluxes_per_sample,
                                                                     all_sample_experiment_list)
-    return all_flux_data_utility, all_flux_max_parameter
+    return all_flux_data_utility, all_flux_max_parameter, all_flux_experiment_info
 
 
-def combined_sample_based_averages(all_sample_combined_flux_data_list):
+def combined_sample_based_averages_data_utility(all_sample_combined_flux_data_list):
     j_sample_total = []
     j_sample_percent = []
     j_sample_number = []
@@ -863,13 +863,15 @@ def combined_sample_based_averages(all_sample_combined_flux_data_list):
     return {"total": all_processed_total, "percent": all_processed_percent}
 
 
-def process_info_sample(ident_details, experiment_details, perturbation_details, combine_fluxes=0):
+def process_info_sample(ident_details, experiment_details, experiment_type_indices, perturbation_details, combine_fluxes=0):
     print("Process information From Identifiability Analysis.....\n")
     number_of_samples = len(ident_details)
     all_sample_data_list = []
     all_sample_max_parameter = []
+    all_sample_experiment_list = []
     all_sample_combined_flux_data_list = []
     all_sample_combined_flux_max_parameter = []
+    all_sample_combined_flux_experiment_info = []
     number_of_fluxes_per_sample = []
     for j_sample, j_sample_ident_detail in enumerate(ident_details):
         print("Processing identifiability data for sample {} of {}".format(j_sample+1, number_of_samples))
@@ -878,6 +880,12 @@ def process_info_sample(ident_details, experiment_details, perturbation_details,
         all_sample_data_list.append(all_flux_data_list)
         all_sample_max_parameter.append(all_flux_max_parameter)
         number_of_fluxes_per_sample.append(len(all_flux_data_list))
+
+        # collect flux based information on experiments contributing to identifiability
+        all_flux_experiment_list = flux_based_experiment_info(j_sample_ident_detail,
+                                                              experiment_details[j_sample],
+                                                              experiment_type_indices)
+        all_sample_experiment_list.append(all_flux_experiment_list)
 
         # collate data for all fluxes using the same combination of experimental data
         if combine_fluxes:
@@ -888,28 +896,37 @@ def process_info_sample(ident_details, experiment_details, perturbation_details,
             combined_flux_data_list, combined_flux_max_parameter = process_info(combined_flux_ident_data)
             all_sample_combined_flux_data_list.append(combined_flux_data_list)
             all_sample_combined_flux_max_parameter.append(combined_flux_max_parameter)
+            # collect experiment information for all fluxes using the same combination of experimental data
+            combined_flux_experiment_info = experiments_in_ident_data(combined_flux_ident_data["boolean"],
+                                                                      experiment_details[j_sample],
+                                                                      experiment_type_indices)
+            all_sample_combined_flux_experiment_info.append(combined_flux_experiment_info)
             print("Combined flux identifiability analysis complete \n")
 
     # generate averages and standard deviations for multi sample data combinations for individual fluxes
     processed_all_flux_data_list, \
-    processed_all_flux_max_parameter = sample_based_averages(number_of_fluxes_per_sample,
-                                                             all_sample_data_list,
-                                                             all_sample_max_parameter)
+    processed_all_flux_max_parameter,\
+    processed_all_flux_experiment_info = sample_based_averages(number_of_fluxes_per_sample,
+                                                               all_sample_data_list,
+                                                               all_sample_max_parameter,
+                                                               all_sample_experiment_list)
     all_sample_data_utility = {"raw": all_sample_data_list,
                                "processed": processed_all_flux_data_list}
     all_sample_parameter_identifiability = {"raw": all_sample_max_parameter,
                                             "processed": processed_all_flux_max_parameter}
+    all_sample_experiment_info = {"raw": all_sample_experiment_list,
+                                  "processed": processed_all_flux_experiment_info}
     if combine_fluxes:
         processed_all_sample_combined_flux_data_list = \
-            combined_sample_based_averages(all_sample_combined_flux_data_list)
+            combined_sample_based_averages_data_utility(all_sample_combined_flux_data_list)
         all_sample_combined_data_utility = {"raw": all_sample_combined_flux_data_list,
                                             "processed": processed_all_sample_combined_flux_data_list}
         all_sample_combined_parameter_identifibaility = {"raw": all_sample_combined_flux_max_parameter,
                                                          "processed": []}
-        return all_sample_data_utility, all_sample_parameter_identifiability, \
+        return all_sample_data_utility, all_sample_parameter_identifiability, all_sample_experiment_info, \
                all_sample_combined_data_utility, all_sample_combined_parameter_identifibaility
     else:
-        return all_sample_data_utility, all_sample_parameter_identifiability
+        return all_sample_data_utility, all_sample_parameter_identifiability, all_sample_experiment_info
 
 
 def get_data_combinations(original_data, chosen_data_id):
