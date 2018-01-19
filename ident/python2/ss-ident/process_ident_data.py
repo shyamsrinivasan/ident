@@ -772,7 +772,7 @@ def collate_sample_based_identifibaility(number_of_fluxes_per_sample, all_sample
         j_flux_info_mean = list(np.mean(np.array(j_flux_data_info), axis=0))
         j_flux_info_std = list(np.std(np.array(j_flux_data_info), axis=0))
         j_flux_percent_mean = list(np.mean(np.array(j_flux_data_percent), axis=0))
-        j_flux_percent_std = list(np.mean(np.array(j_flux_data_percent), axis=0))
+        j_flux_percent_std = list(np.std(np.array(j_flux_data_percent), axis=0))
         j_flux_processed_total = {"mean": j_flux_info_mean,
                                   "std": j_flux_info_std}
         j_flux_processed_percent = {"mean": j_flux_percent_mean,
