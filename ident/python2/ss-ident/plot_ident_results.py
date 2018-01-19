@@ -266,6 +266,44 @@ def parameter_identifibaility_plot(flux_based_parameter_ident):
     return None
 
 
+def parameter_experiment_info_plot(flux_based_experiment_info):
+    """plot position based contribution from each experiment towards
+    identifiable data combinations for each parameter for each flux"""
+    all_sample_all_flux_processed_info = flux_based_experiment_info["processed"]
+    number_of_fluxes = len(all_sample_all_flux_processed_info)
+    for j_flux, j_flux_data in enumerate(all_sample_all_flux_processed_info):
+        number_of_parameters_in_flux = len(j_flux_data)
+        for k_parameter, k_parameter_data in enumerate(j_flux_data):
+            number_of_experiment_positions = len(k_parameter_data)
+            number_of_subplots = number_of_experiment_positions
+            number_of_rows = 1
+            f, axarr = plt.subplots(number_of_rows, number_of_subplots, sharey='row')
+            try:
+                for i_position, i_axis_obj in enumerate(axarr):
+                    x_data = k_parameter_data[i_position]["total"]["mean"]
+                    y_data = np.arange(0, len(x_data))
+                    x_error = k_parameter_data[i_position]["total"]["std"]
+                    x_percent_mean = k_parameter_data[i_position]["percentage"]["mean"]
+                    x_percent_error = k_parameter_data[i_position]["percentage"]["std"]
+                    # plot and annotate using plotting function defined above
+                    plot_on_axis_object(i_axis_obj, x_data, y_data, x_error, x_percent_mean, x_percent_error)
+                # set x-axis label
+                axarr[-1].set_xlabel('Frequency of Experiment Appearance')
+            except TypeError:
+                for i_position in range(0, number_of_experiment_positions):
+                    x_data = k_parameter_data[i_position]["total"]["mean"]
+                    y_data = np.arange(0, len(x_data))
+                    x_error = k_parameter_data[i_position]["total"]["std"]
+                    x_percent_mean = k_parameter_data[i_position]["percentage"]["mean"]
+                    x_percent_error = k_parameter_data[i_position]["percentage"]["std"]
+                    # plot and annotate using plotting function defined above
+                    plot_on_axis_object(axarr, x_data, y_data, x_error, x_percent_mean, x_percent_error)
+                # set x-axis label
+                axarr.set_xlabel('Number of data combinations used for identification')
+    plt.show()
+    return None
+
+
 def data_utility_plot(data_list):
     # collect data for plotting
     x_data = data_list["number_parameters_ided"]
