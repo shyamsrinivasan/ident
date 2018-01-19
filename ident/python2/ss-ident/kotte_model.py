@@ -593,7 +593,10 @@ def ident_parameter_name(parameter_id, flux_name=()):
                            "flux3":['V3max (1)', 'K3fdp (1)', 'K3pep (1)',
                                     'V3max (2)', 'K3fdp (2)', 'K3pep (2)']}
     if flux_name:
-        parameter_name = [flux_parameter_list[name][id] for name, id in zip(flux_name, parameter_id)]
+        try:
+            parameter_name = [flux_parameter_list[name][id] for name, id in zip(flux_name, parameter_id)]
+        except TypeError:
+            parameter_name = flux_parameter_list[flux_name][parameter_id]
     else:
         try:
             parameter_name = [parameter_list[id] for id in parameter_id]
