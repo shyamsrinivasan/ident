@@ -827,7 +827,8 @@ def collate_sample_based_experiment_info(number_of_fluxes_per_sample, all_sample
     return all_flux_experiment_info
 
 
-def sample_based_averages(number_of_fluxes_per_sample, all_sample_data_list, all_sample_max_parameter, all_sample_experiment_list):
+def sample_based_averages(number_of_fluxes_per_sample,
+                          all_sample_data_list, all_sample_max_parameter, all_sample_experiment_list):
     """call sample based collate functions and generate averages and standard deviations for
     both data utility and parameter identifiability for each flux"""
     all_flux_data_utility = collate_sample_based_data_utility(number_of_fluxes_per_sample,
@@ -861,6 +862,39 @@ def combined_sample_based_averages_data_utility(all_sample_combined_flux_data_li
                              "number": sample_number_mean,
                              "total data": all_sample_combined_flux_data_list[0]["number of data combinations"]}
     return {"total": all_processed_total, "percent": all_processed_percent}
+
+
+def combined_sample_based_averages_experiment_info(all_sample_combined_flux_experiment_info):
+    """process experiment info for multiple samples when
+    all fluxes using the same combination of n experimental data"""
+    number_of_parameters = len(all_sample_combined_flux_experiment_info[0])
+    # loop through parameters
+    all_parameter_all_position_info = []
+    for j_parameter in range(0, number_of_parameters):
+        number_of_experiments_per_parameter = len(all_sample_combined_flux_experiment_info[0][j_parameter])
+        # loop through position in data combination (experiment position)
+        all_position_info = []
+        for i_position in range(0, number_of_experiments_per_parameter):
+            i_position_frequency = []
+            i_position_percent = []
+            for j_sample_id, j_sample_data in enumerate(all_sample_combined_flux_experiment_info):
+                i_position_frequency.append(j_sample_data[j_parameter][i_position]["frequency"])
+                i_position_percent.append(j_sample_data[j_parameter][i_position]["percentage"])
+            i_position_frequency_mean = list(np.mean(np.array(i_position_frequency), axis=0))
+            i_position_frequency_std = list(np.std(np.array(i_position_frequency), axis=0))
+            i_position_percent_mean = list(np.mean(np.array(i_position_percent), axis=0))
+            i_position_percent_std = list(np.std(np.array(i_position_percent), axis=0))
+            i_position_frequency_info = {"mean": i_position_frequency_mean,
+                                         "std": i_position_frequency_std}
+            i_position_percent_info = {"mean": i_position_percent_mean,
+                                       "std": i_position_percent_std}
+            # collect data on each position
+            all_position_info.append({"frequency": i_position_frequency_info,
+                                      "percentage": i_position_percent_info})
+        # collect data on each parameter
+        all_parameter_all_position_info.append(all_position_info)
+
+    return all_parameter_all_position_info
 
 
 def process_info_sample(ident_details, experiment_details, experiment_type_indices, perturbation_details, combine_fluxes=0):
@@ -923,6 +957,8 @@ def process_info_sample(ident_details, experiment_details, experiment_type_indic
                                             "processed": processed_all_sample_combined_flux_data_list}
         all_sample_combined_parameter_identifibaility = {"raw": all_sample_combined_flux_max_parameter,
                                                          "processed": []}
+        processed_all_sample_combined_flux_experiment_info = \
+            combined_sample_based_averages_experiment_info(all_sample_combined_flux_experiment_info)
         return all_sample_data_utility, all_sample_parameter_identifiability, all_sample_experiment_info, \
                all_sample_combined_data_utility, all_sample_combined_parameter_identifibaility
     else:
