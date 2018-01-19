@@ -5,8 +5,6 @@ from kotte_model import establish_kotte_flux_identifiability
 from kotte_model import flux_ident_2_data_combination
 from kotte_model import flux_ident_3_data_combination
 from process_ident_data import process_info_sample
-from process_ident_data import parameter_plot_data_per_sample
-from process_ident_data import experiment_position_based_info_per_sample
 from plot_ident_results import flux_parameter_plot
 from plot_ident_results import parameter_experiment_type_plot
 from plot_ident_results import data_utility_plot
@@ -68,25 +66,7 @@ parameter_experiment_info_plot(experiment_info_3)
 # identifiability for all kotte fluxes
 # ident_details = establish_kotte_flux_identifiability(experimental_datasets, choose=choose)
 
-
-
-number_of_parameters_per_flux_2 = [4, 2]
-number_of_parameters_per_flux_3 = [6]
 # plot results
-# file_destination = 'C:\Users\shyam\Documents\Courses\CHE1125Project\Results\ident\python2\\figure_1'
-# plot parameters for each flux and the number of data sets that enable their identification
-# get data for plots
-total_ident_data, fraction_ident_data, all_boolean_p_id = \
-    parameter_plot_data_per_sample(original_data_ident, number_of_parameters_per_flux_2, 1)
-# plot
-# flux_parameter_plot(total_ident_data, fraction_ident_data)
-
-# get different classes of datasets (containing different experiments)
-experiment_sets = [[0], [1, 2], [3, 4, 5, 6, 7], [8, 9, 10, 11, 12], [13, 14, 15, 16, 17]]
-# exp_data_parameter_info = experiments_per_sample_for_ident(all_boolean_p_id,
-#                                                            experimental_datasets,
-#                                                            experiment_sets)
-# total_exp_info, fraction_exp_info = experiment_position_based_info_per_sample(exp_data_parameter_info)
 # plot different experiment types identifying each parameter
 parameter_choice = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 # parameter_experiment_type_plot(total_exp_info, fraction_exp_info, parameter_choice)
