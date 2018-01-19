@@ -959,8 +959,11 @@ def process_info_sample(ident_details, experiment_details, experiment_type_indic
                                                          "processed": []}
         processed_all_sample_combined_flux_experiment_info = \
             combined_sample_based_averages_experiment_info(all_sample_combined_flux_experiment_info)
+        all_sample_combined_experiment_info = {"raw": all_sample_combined_flux_experiment_info,
+                                               "processed": processed_all_sample_combined_flux_experiment_info}
         return all_sample_data_utility, all_sample_parameter_identifiability, all_sample_experiment_info, \
-               all_sample_combined_data_utility, all_sample_combined_parameter_identifibaility
+               all_sample_combined_data_utility, all_sample_combined_parameter_identifibaility, \
+               all_sample_combined_experiment_info
     else:
         return all_sample_data_utility, all_sample_parameter_identifiability, all_sample_experiment_info
 

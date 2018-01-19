@@ -36,7 +36,7 @@ print('Identifiability analysis for fluxes with 2 parameters complete.\n')
 # data processing
 experiment_type_indices = [[0], [1, 2], [3, 4, 5, 6, 7], [8, 9, 10, 11, 12], [13, 14, 15, 16, 17]]
 data_list_2, max_parameter_2, experiment_info_2, \
-combined_data_list_2, combined_max_parameter_2 = process_info_sample(ident_details_2,
+combined_data_list_2, combined_max_parameter_2, combined_experiment_info_2 = process_info_sample(ident_details_2,
                                                                      experimental_datasets_2_expts,
                                                                      experiment_type_indices,
                                                                      perturbation_details, combine_fluxes=1)
