@@ -782,11 +782,60 @@ def collate_sample_based_identifibaility(number_of_fluxes_per_sample, all_sample
     return all_flux_max_parameter
 
 
-def sample_based_averages(number_of_fluxes_per_sample, all_sample_data_list, all_sample_max_parameter):
+def collate_sample_based_experiment_info(number_of_fluxes_per_sample, all_sample_experiment_list):
+    """collate information on experiments appearing at each position in
+    a data combination for each parameter for each flux from all samples"""
+    all_flux_experiment_info = []
+    # loop through flux
+    for j_flux in range(0, number_of_fluxes_per_sample[0]):
+        number_of_parameters_per_flux = len(all_sample_experiment_list[0][j_flux])
+        number_of_experiments_used_per_flux = len(all_sample_experiment_list[0][j_flux][0])
+        all_parameter_all_position_info = []
+        # loop through parameter of each flux
+        for k_parameter in range(0, number_of_parameters_per_flux):
+            all_position_info = []
+            # loop through each experiment position in each parameter in each flux
+            for i_position in range(0, number_of_experiments_used_per_flux):
+                i_position_frequency = []
+                i_position_percent = []
+                i_position_data_id = []
+                # loop through each sample of noisy data to collate data on each position
+                # for each parameter for each flux for all samples
+                for j_sample_id, j_sample_data in enumerate(all_sample_experiment_list):
+                    i_position_frequency.append(j_sample_data[j_flux][k_parameter][i_position]["frequency"])
+                    i_position_percent.append(j_sample_data[j_flux][k_parameter][i_position]["percentage"])
+                    i_position_data_id.append(j_sample_data[j_flux][k_parameter][i_position]["data id"])
+                # caluclate means and standard deviation of experiment frequency
+                # appearing at each position for each parameter for each flux
+                i_position_frequency_mean = list(np.mean(np.array(i_position_frequency), axis=0))
+                i_position_frequency_std = list(np.std(np.array(i_position_frequency), axis=0))
+                i_position_percent_mean = list(np.mean(np.array(i_position_percent), axis=0))
+                i_position_percent_std = list(np.std(np.array(i_position_percent), axis=0))
+                i_position_frequency_info = {"mean": i_position_frequency_mean,
+                                             "std": i_position_frequency_std, }
+                i_position_percent_info = {"mean": i_position_percent_mean,
+                                           "std": i_position_percent_std}
+                # collect data on each position
+                all_position_info.append({"total": i_position_frequency_info,
+                                          "percentage": i_position_percent_info,
+                                          "position": i_position})
+            # collect info on each parameter in all positions
+            all_parameter_all_position_info.append(all_position_info)
+        # collect data on all parameters for each flux
+        all_flux_experiment_info.append(all_parameter_all_position_info)
+
+    return all_flux_experiment_info
+
+
+def sample_based_averages(number_of_fluxes_per_sample, all_sample_data_list, all_sample_max_parameter, all_sample_experiment_list):
     """call sample based collate functions and generate averages and standard deviations for
     both data utility and parameter identifiability for each flux"""
-    all_flux_data_utility = collate_sample_based_data_utility(number_of_fluxes_per_sample, all_sample_data_list)
-    all_flux_max_parameter = collate_sample_based_identifibaility(number_of_fluxes_per_sample, all_sample_max_parameter)
+    all_flux_data_utility = collate_sample_based_data_utility(number_of_fluxes_per_sample,
+                                                              all_sample_data_list)
+    all_flux_max_parameter = collate_sample_based_identifibaility(number_of_fluxes_per_sample,
+                                                                  all_sample_max_parameter)
+    all_flux_experiment_info = collate_sample_based_experiment_info(number_of_fluxes_per_sample,
+                                                                    all_sample_experiment_list)
     return all_flux_data_utility, all_flux_max_parameter
 
 
