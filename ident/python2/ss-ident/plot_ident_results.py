@@ -218,8 +218,6 @@ def plot_on_axis_object(axis_obj, x_data, y_data, x_error, x_percent_mean, x_per
     # set y axis ticks
     axis_obj.set_yticks(y_data)
     # set y axis tick labels (parameter names)
-    # invert y-axis
-    axis_obj.invert_yaxis()
     return None
 
 
@@ -245,6 +243,8 @@ def parameter_identifibaility_plot(flux_based_parameter_ident):
             # get parameter id/name for y-axis labels
             # plot and annotate using plotting function defined above
             plot_on_axis_object(i_axis_obj, x_data, y_data, x_error, x_percent_mean, x_percent_std)
+            # invert y-axis
+            i_axis_obj.invert_yaxis()
         # set x-axis label
         axarr[-1].set_xlabel('Number of data combinations used for identification')
         # hide x axis tick labels for all but the last subplot sharing x-axes
@@ -260,6 +260,8 @@ def parameter_identifibaility_plot(flux_based_parameter_ident):
             # get parameter id/name for y-axis labels
             # plot and annotate using plotting function defined above
             plot_on_axis_object(axarr, x_data, y_data, x_error, x_percent_mean, x_percent_std)
+            # invert y-axis
+            axarr.invert_yaxis()
         # set x-axis label
         axarr.set_xlabel('Number of data combinations used for identification')
     plt.show()
@@ -289,6 +291,8 @@ def parameter_experiment_info_plot(flux_based_experiment_info):
                     plot_on_axis_object(i_axis_obj, x_data, y_data, x_error, x_percent_mean, x_percent_error)
                 # set x-axis label
                 axarr[-1].set_xlabel('Frequency of Experiment Appearance')
+                # invert y-axis
+                axarr[0].invert_yaxis()
             except TypeError:
                 for i_position in range(0, number_of_experiment_positions):
                     x_data = k_parameter_data[i_position]["total"]["mean"]
@@ -300,6 +304,8 @@ def parameter_experiment_info_plot(flux_based_experiment_info):
                     plot_on_axis_object(axarr, x_data, y_data, x_error, x_percent_mean, x_percent_error)
                 # set x-axis label
                 axarr.set_xlabel('Number of data combinations used for identification')
+                # invert y-axis
+                axarr.invert_yaxis()
     plt.show()
     return None
 
