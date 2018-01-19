@@ -37,15 +37,15 @@ print('Identifiability analysis for fluxes with 2 parameters complete.\n')
 # data processing
 experiment_type_indices = [[0], [1, 2], [3, 4, 5, 6, 7], [8, 9, 10, 11, 12], [13, 14, 15, 16, 17]]
 data_list_2, max_parameter_2, experiment_info_2, \
-combined_data_list_2, combined_max_parameter_2, combined_experiment_info_2 = process_info_sample(ident_details_2,
-                                                                     experimental_datasets_2_expts,
-                                                                     experiment_type_indices,
-                                                                     perturbation_details, combine_fluxes=1)
+combined_data_list_2, combined_max_parameter_2, \
+combined_experiment_info_2 = process_info_sample(ident_details_2,
+                                                 experimental_datasets_2_expts,
+                                                 experiment_type_indices,
+                                                 perturbation_details, combine_fluxes=1)
 
 # plot parameter identifibaility for all fluxes using 2 data combinations
 parameter_identifibaility_plot(max_parameter_2)
 parameter_experiment_info_plot(experiment_info_2)
-
 
 # get combination of 3 experiments and perform identifiability on all fluxes that require 3 data sets
 print('Practical Identifiability Analysis of fluxes with 3 parameters \n')
@@ -63,7 +63,7 @@ data_list_3, max_parameter_3, experiment_info_3 = process_info_sample(ident_deta
 
 # plot parameter identifibaility for all fluxes using 3 data combinations
 parameter_identifibaility_plot(max_parameter_3)
-
+parameter_experiment_info_plot(experiment_info_3)
 
 # identifiability for all kotte fluxes
 # ident_details = establish_kotte_flux_identifiability(experimental_datasets, choose=choose)
