@@ -11,6 +11,7 @@ from plot_ident_results import flux_parameter_plot
 from plot_ident_results import parameter_experiment_type_plot
 from plot_ident_results import data_utility_plot
 from plot_ident_results import parameter_identifibaility_plot
+from plot_ident_results import parameter_experiment_info_plot
 
 # generate noisy experimental data for testing identifiability
 y0 = np.array([5, 1, 1])
@@ -43,6 +44,7 @@ combined_data_list_2, combined_max_parameter_2, combined_experiment_info_2 = pro
 
 # plot parameter identifibaility for all fluxes using 2 data combinations
 parameter_identifibaility_plot(max_parameter_2)
+parameter_experiment_info_plot(experiment_info_2)
 
 
 # get combination of 3 experiments and perform identifiability on all fluxes that require 3 data sets
