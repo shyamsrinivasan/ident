@@ -368,15 +368,19 @@ def experiments_in_ident_data(boolean_ident_data, experiment_data, experiment_ty
     return all_parameter_experiment_type_info
 
 
-def experiments_per_sample_for_ident(all_sample_p_boolean, data_exp, exp_types, data_id):
-    """cycle through each sample of data sets to identify different experiments in
-    each data set identifying each experiment"""
-    number_of_samples = len(all_sample_p_boolean)
-    all_sample_exp_parameter_info = []
-    for j_sample, j_sample_boolean in enumerate(all_sample_p_boolean):
-        exp_data_parameter_info = experiments_in_ident_data(j_sample_boolean, data_exp[j_sample], exp_types, data_id)
-        all_sample_exp_parameter_info.append(exp_data_parameter_info)
-    return all_sample_exp_parameter_info
+def flux_based_experiment_info(sample_ident_info, experiment_details, experiment_type_indices):
+    """parse information by looping through each flux present within each sample (passed as input)
+    to get experiments identifying each para,eter within each flux"""
+    number_of_fluxes = len(sample_ident_info)
+    all_flux_experiment_type_info = []
+    for j_flux, j_flux_detail in enumerate(sample_ident_info):
+        print("Getting experiments identifying parameters in flux {} of {}".format(j_flux + 1, number_of_fluxes))
+        parameter_experiment_type_info = experiments_in_ident_data(j_flux_detail["boolean"],
+                                                                   experiment_details,
+                                                                   experiment_type_indices)
+        all_flux_experiment_type_info.append(parameter_experiment_type_info)
+        print("Identifying experiments for flux {} of {} complete \n".format(j_flux + 1, number_of_fluxes))
+    return all_flux_experiment_type_info
 
 
 def experiment_position_based_info(experiments_identifying_each_parameter, number_of_experiments_per_data=3):
