@@ -6,7 +6,6 @@ from kotte_model import flux_ident_2_data_combination
 from kotte_model import flux_ident_3_data_combination
 from process_ident_data import process_info_sample
 from process_ident_data import parameter_plot_data_per_sample
-from process_ident_data import experiments_per_sample_for_ident
 from process_ident_data import experiment_position_based_info_per_sample
 from plot_ident_results import flux_parameter_plot
 from plot_ident_results import parameter_experiment_type_plot
@@ -35,9 +34,11 @@ experimental_datasets_2_expts = \
 ident_details_2 = flux_ident_2_data_combination(experimental_datasets_2_expts, choose=choose_2)
 print('Identifiability analysis for fluxes with 2 parameters complete.\n')
 # data processing
-data_list_2, max_parameter_2, \
+experiment_type_indices = [[0], [1, 2], [3, 4, 5, 6, 7], [8, 9, 10, 11, 12], [13, 14, 15, 16, 17]]
+data_list_2, max_parameter_2, experiment_info_2, \
 combined_data_list_2, combined_max_parameter_2 = process_info_sample(ident_details_2,
                                                                      experimental_datasets_2_expts,
+                                                                     experiment_type_indices,
                                                                      perturbation_details, combine_fluxes=1)
 
 # plot parameter identifibaility for all fluxes using 2 data combinations
@@ -53,9 +54,10 @@ experimental_datasets_3_expts = \
 ident_details_3 = flux_ident_3_data_combination(experimental_datasets_3_expts, choose=choose_3)
 print('Identifiability analysis for fluxes with 2 parameters complete.\n')
 # data processing
-data_list_3, max_parameter_3 = process_info_sample(ident_details_3,
-                                                   experimental_datasets_3_expts,
-                                                   perturbation_details)
+data_list_3, max_parameter_3, experiment_info_3 = process_info_sample(ident_details_3,
+                                                                      experimental_datasets_3_expts,
+                                                                      experiment_type_indices,
+                                                                      perturbation_details)
 
 # plot parameter identifibaility for all fluxes using 3 data combinations
 parameter_identifibaility_plot(max_parameter_3)
@@ -79,10 +81,10 @@ total_ident_data, fraction_ident_data, all_boolean_p_id = \
 
 # get different classes of datasets (containing different experiments)
 experiment_sets = [[0], [1, 2], [3, 4, 5, 6, 7], [8, 9, 10, 11, 12], [13, 14, 15, 16, 17]]
-exp_data_parameter_info = experiments_per_sample_for_ident(all_boolean_p_id,
-                                                           experimental_datasets,
-                                                           experiment_sets, [])
-total_exp_info, fraction_exp_info = experiment_position_based_info_per_sample(exp_data_parameter_info)
+# exp_data_parameter_info = experiments_per_sample_for_ident(all_boolean_p_id,
+#                                                            experimental_datasets,
+#                                                            experiment_sets)
+# total_exp_info, fraction_exp_info = experiment_position_based_info_per_sample(exp_data_parameter_info)
 # plot different experiment types identifying each parameter
 parameter_choice = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 # parameter_experiment_type_plot(total_exp_info, fraction_exp_info, parameter_choice)
