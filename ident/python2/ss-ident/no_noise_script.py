@@ -42,6 +42,9 @@ combined_experiment_info_2 = process_info_sample(ident_details_2,
 parameter_identifibaility_plot(max_parameter_2)
 parameter_experiment_info_plot(experiment_info_2)
 
+# plot utility of data sets (number of data sets identifying n, n-1, n-2, ...., 1, 0 parameters
+data_utility_plot(data_list_2)
+
 # get combination of 3 experiments and perform identifiability on all fluxes that require 3 data sets
 print('Practical Identifiability Analysis of fluxes with 3 parameters \n')
 choose_3 = range(0, 4896) # choose numbr of experimental datasets to use of analysis
@@ -60,15 +63,15 @@ data_list_3, max_parameter_3, experiment_info_3 = process_info_sample(ident_deta
 parameter_identifibaility_plot(max_parameter_3)
 parameter_experiment_info_plot(experiment_info_3)
 
+
 # identifiability for all kotte fluxes
 # ident_details = establish_kotte_flux_identifiability(experimental_datasets, choose=choose)
 
 # plot results
 # plot different experiment types identifying each parameter
-parameter_choice = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+# parameter_choice = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 
-# plot utility of data sets (number of data sets identifying n, n-1, n-2, ...., 1, 0 parameters
-data_utility_plot(data_list[0])
+
 
 
 
