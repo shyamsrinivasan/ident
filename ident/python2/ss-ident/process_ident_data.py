@@ -231,34 +231,6 @@ def data_usefulness_percentage(ident_details):
     return data_usefulness
 
 
-def flux_parameter_plot_data(original_data, number_of_parameters, case=1):
-    all_boolean_p_id = []
-    for len_pos, i_list in enumerate(original_data):
-        for i_data in i_list:
-            boolean_p_id = [True if j_p in i_data["parameter_ids"] else False for j_p in range(0, number_of_parameters)]
-            all_boolean_p_id.append(boolean_p_id)
-    number_data, number_p = np.array(all_boolean_p_id).shape
-    all_boolean_p_id = [list(j_p) for j_p in np.transpose(np.array(all_boolean_p_id))]
-    if case == 1:
-        # get total data identifying each parameter
-        all_boolean_p_id_sum = [sum(j_list) for j_list in all_boolean_p_id]
-        all_boolean_p_id_fraction = [float(sum(j_list))*100/number_data for j_list in all_boolean_p_id]
-        return all_boolean_p_id_sum, all_boolean_p_id_fraction, all_boolean_p_id
-    elif case == 2:
-        all_boolean_e_id = []
-        for len_pos, i_list in enumerate(original_data):
-            for i_data in i_list:
-                # experiments done
-                boolean_e_id = [True if j_p in i_data["experiment_id"] else False for j_p in range(0, 18)]
-                all_boolean_e_id.append(boolean_e_id)
-        # all_boolean_e_id = [list(j_p) for j_p in np.transpose(np.array(all_boolean_e_id))]
-        # get total for each experiment in each identifying data set
-        # all_boolean_e_id = [sum(k_list) for k_list in all_boolean_e_id]
-        return all_boolean_p_id, all_boolean_e_id
-    else:
-        return []
-
-
 def experiments_in_ident_data(boolean_ident_data, experiment_data, experiment_type_index, flux_id):
     """get all data combinations identifying a given parameter within a given flux (passed as input)
     and identify experiments used within the identifying data combination"""
