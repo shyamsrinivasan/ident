@@ -1,7 +1,7 @@
 import numpy as np
 import os.path
 import csv
-# import scipy.linalg
+from identifiability_analysis import truncate_values
 
 # K1ac, K3fdp, L3fdp, K3pep, K2pep, vemax, Kefdp, ne, d, V4max, k1cat, V3max, V2max, ac
 def_par_val = np.array([.1, .1, 4e6, .1, .3, 1.1, .45, 2, .25, .2, 1, 1, 1, .1])
@@ -71,18 +71,6 @@ def kotte_ode(t, y, par_val):
     yd_e = flux[1] - flux[5]
 
     return np.hstack((yd_pep, yd_fdp, yd_e))
-
-
-def truncate_values(f, n=3):
-    """truncates floats to n specified values after the decimal"""
-    if not np.isnan(f):
-        s = '{}'.format(f)  # convert float to string
-        if 'e' in s or 'E' in s:
-            return float('{0:.{1}f}'.format(f, n))
-        i, p, d = s.partition('.')
-        return float('.'.join([i, (d+'0'*n)[:n]]))
-    else:
-        return f
 
 
 def flux_1_ident_expression(experimental_data):
