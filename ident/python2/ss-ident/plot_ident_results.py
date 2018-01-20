@@ -39,39 +39,6 @@ def data_for_plots(original_data, case=1):
         return []
 
 
-def experiment_type_plot(position_based_info, fraction_info, x_label, fig_title=''):
-    """plot figure for each parameter with info for one parameter provided in input"""
-    # figure for parameter i
-    f, ax = plt.subplots(1, 3, sharey='row')
-    if fig_title:
-        f.text(.5, .975, fig_title, horizontalalignment='center', verticalalignment='top')
-    for i_position, axis_obj in enumerate(ax):
-        x_data = np.array(position_based_info["mean"][i_position])
-        x_error = np.array(position_based_info["std"][i_position])
-        y_data = np.arange(x_data.shape[0])
-        y_tick_names = kotte_experiment_type_name(y_data)
-        # prepare annotation
-        percent_mean = fraction_info["mean"][i_position]
-        percent_error = fraction_info["std"][i_position]
-        annotation_text = ["{:.2%}+{:.2f}".format(percent_mean[j_plot_obj], percent_error[j_plot_obj]*100)
-                           for j_plot_obj in range(0, len(y_data))]
-        axis_obj.barh(y_data, x_data, xerr=x_error, align='center', color='blue', ecolor='black')
-        for j_bar in range(0, len(y_data)):
-            an1 = axis_obj.annotate("", xy=(x_data[j_bar]/2, y_data[j_bar]), xycoords='data',
-                                    xytext=(x_data[j_bar]/2, y_data[j_bar]), textcoords='data')
-            an2 = axis_obj.annotate(annotation_text[j_bar], xy=(5, .5), xycoords=an1,
-                                    xytext=(12, 0), textcoords="offset points",
-                                    size=20, va="center", ha="center")
-        axis_obj.set_yticks(y_data)
-        axis_obj.set_yticklabels(y_tick_names)
-        axis_obj.set_title('experiment {}'.format(i_position))
-    ax[-1].invert_yaxis()
-    ax[-2].set_xlabel(x_label)
-    plt.tight_layout(pad=3.0)
-    plt.show()
-    return None
-
-
 def plot_on_axis_object(axis_obj, x_data, y_data, x_error, x_percent_mean, x_percent_std):
     """given axis object plot given data on axis object along with all given annotations"""
     # plot bar graphs for x_data vs y_data with x_error error bars
