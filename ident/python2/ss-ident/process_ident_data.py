@@ -568,46 +568,6 @@ def data_for_plots(original_data, case=1):
         return []
 
 
-def useful_experiments(original_data):
-    """get most and least useful experiments based on identifiable and non-identifiable datasets"""
-    all_boolean_p_id, all_boolean_e_id = data_for_plots(original_data, 2)
-    all_parameter_exp_id = []
-    for j_p in all_boolean_p_id:
-        # get data set for each parameter
-        data_id = [i for i, val in enumerate(j_p) if val]
-        # get experiments for data in data_id
-        exp_id = [[j for j, val in enumerate(all_boolean_e_id[i]) if val] for i in data_id]
-        exp_id = np.array(exp_id)
-        exp_lst = []
-        try:
-            for j_exp in range(0, exp_id.shape[1]):
-                exp_lst.append(list(np.unique(exp_id[:, j_exp])))
-        except IndexError:
-            for _ in range(0, 3):
-                exp_lst.append([])
-        all_exp_total_per_pos = []
-        for i_pos, k_exp_pos in enumerate(exp_lst):
-            total_each_exp_per_pos = []
-            for exp_number in k_exp_pos:
-                y = sum([[True if exp_number == i else False for i in j][i_pos] for j in exp_id])
-                total_each_exp_per_pos.append(y)
-            all_exp_total_per_pos.append(total_each_exp_per_pos)
-        all_parameter_exp_id.append({'unique': exp_lst,
-                                     'occurrence': all_exp_total_per_pos})
-
-    # classify data based on experiments - get parameters identified by each experiment
-    number_experiment_required = 3
-    exp_used_pos = [[] for _ in xrange(number_experiment_required)]
-    for len_pos, i_list in enumerate(original_data):
-        for i_data in i_list:
-            parameter_ided = i_data["parameter_ids"]
-            experiments_used = i_data["experiment_id"]
-
-            p_ided = i_data["parameter_ids"]
-
-    return all_parameter_exp_id
-
-
 def get_data_info(data_list, ident_details, experiment_details):
     """get information on every single data set obtained from data_usefulness_percentage"""
     original_data = []
