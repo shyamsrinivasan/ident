@@ -2,7 +2,6 @@ import numpy as np
 import os.path
 import csv
 from identifiability_analysis import truncate_values
-from identifiability_analysis import call_truncate_method
 from identifiability_analysis import multi_sample_ident_fun
 from identifiability_analysis import get_ident_value
 
