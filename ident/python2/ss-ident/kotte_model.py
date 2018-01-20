@@ -3,6 +3,7 @@ import os.path
 import csv
 from identifiability_analysis import truncate_values
 from identifiability_analysis import call_truncate_method
+from identifiability_analysis import multi_sample_ident_fun
 
 # K1ac, K3fdp, L3fdp, K3pep, K2pep, vemax, Kefdp, ne, d, V4max, k1cat, V3max, V2max, ac
 def_par_val = np.array([.1, .1, 4e6, .1, .3, 1.1, .45, 2, .25, .2, 1, 1, 1, .1])
@@ -746,26 +747,6 @@ def one_sample_ident_fun(ident_fun_list, sample_data, choose, flux_ids):
     # run identification function through every chosen data combination supplied as input
     _, parameters_per_flux, all_fun_array_list = get_ident_value(ident_fun_list, chosen_values, choose, flux_ids)
     return parameters_per_flux, all_fun_array_list
-
-
-def multi_sample_ident_fun(ident_fun_list, all_data, choose, flux_ids):
-    all_sample_ident_details = []
-    for i_sample, sample_data in enumerate(all_data):
-        parameters_per_flux, one_sample_all_fun_array_list = one_sample_ident_fun(ident_fun_list, sample_data,
-                                                                                  choose, flux_ids)
-        # process info from each sample (number of samples > 1 when noisy data is used) of experimental data sets
-        all_fun_ident_details = []
-        for ifun, ifun_data in enumerate(one_sample_all_fun_array_list):
-            number_of_data_sets, number_of_parameters, _ = ifun_data.shape
-            # process denominator info only
-            _, plist_boolean = boolean_ident_info(ifun_data[:, :, -1], number_of_parameters)
-            ident_details = {"boolean": plist_boolean,
-                             "values": ifun_data,
-                             "parameters": number_of_parameters,
-                             "flux id": flux_ids[ifun]}
-            all_fun_ident_details.append(ident_details)
-        all_sample_ident_details.append(all_fun_ident_details)
-    return all_sample_ident_details
 
 
 def flux_ident_2_data_combination(all_data, flux_ids, choose=()):
