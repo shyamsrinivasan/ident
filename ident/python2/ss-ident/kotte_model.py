@@ -470,46 +470,6 @@ def flux_3_ident_expression(experimental_data):
            [k3pep_nr_2_value, k3pep_dr_2_value, k3pep_2_value]
 
 
-def run_flux_ident(ident_function_list, data, flux_id=()):
-    number_of_parameters = 0
-    try:
-        number_of_parameters_per_flux = [None] * len(ident_function_list)
-    except TypeError:
-        number_of_parameters_per_flux = [None]
-    ident_value_list = []
-    flux_id_list = []
-    iterator = 0
-    if not flux_id:
-        flux_id = range(1, len(ident_function_list)+1)
-    try:
-        for func, i_d in zip(ident_function_list, flux_id):
-            ident_value = func(data)
-            ident_value_list.append(ident_value)
-            flux_id_list.append(i_d)
-            number_of_expressions = len(ident_value[0])
-            number_of_parameters_per_flux[iterator] = len(ident_value)
-            iterator += 1
-            number_of_parameters += len(ident_value)
-    except TypeError:
-        ident_value = ident_function_list(data)
-        ident_value_list.append(ident_value)
-        flux_id_list.append(flux_id)
-        number_of_expressions = len(ident_value[0])
-        number_of_parameters_per_flux[iterator] = len(ident_value)
-        number_of_parameters += len(ident_value)
-
-    ident_value_array = np.zeros((number_of_parameters, number_of_expressions))
-    irow = 0
-    all_flux_ident = []
-    for iflux in ident_value_list:
-        truncated_ident_value = call_truncate_method(iflux, len(iflux))
-        all_flux_ident.append(truncated_ident_value)
-        nrows, ncolumns = np.shape(truncated_ident_value)
-        ident_value_array[irow:(irow + nrows), :] = truncated_ident_value
-        irow += nrows
-    return ident_value_array, number_of_parameters_per_flux, ncolumns, all_flux_ident, flux_id_list
-
-
 def ident_parameter_name(parameter_id, flux_name=()):
     parameter_list = ['V1max', 'K1ac (no enz)', 'k1cat', 'K1ac (enz)',
                       'V2max', 'K2pep',
