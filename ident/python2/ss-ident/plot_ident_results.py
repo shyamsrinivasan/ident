@@ -256,7 +256,8 @@ def parameter_experiment_info_plot(flux_based_experiment_info):
             number_of_experiment_positions = len(k_parameter_data)
             number_of_subplots = number_of_experiment_positions
             number_of_rows = 1
-            f, axarr = plt.subplots(number_of_rows, number_of_subplots, sharey='row')
+            f, axarr = plt.subplots(number_of_rows, number_of_subplots, sharey='row',
+                                    figsize=(8, 6), dpi=100, facecolor='w', edgecolor='k')
             # get parameter name for figure title
             parameter_name = ident_parameter_name(k_parameter,
                                                   flux_name="flux{}".format(k_parameter_data[0]["total"]["flux id"]))
