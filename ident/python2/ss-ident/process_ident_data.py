@@ -271,30 +271,6 @@ def single_flux_parameter_data(ident_data, number_of_parameters_per_flux, case):
     return all_flux_info
 
 
-def parameter_plot_data_per_sample(original_data, number_of_parameters_per_flux, case=1):
-    number_of_samples = len(original_data)
-    all_sample_total_p = []
-    all_sample_fraction_p = []
-    all_sample_all_p_boolean = []
-    for i_sample_ident_data in original_data:
-        all_flux_info = single_flux_parameter_data(i_sample_ident_data, number_of_parameters_per_flux, case)
-        # total_p, fraction_p, all_p_boolean = flux_parameter_plot_data(i_sample_ident_data, case)
-        all_sample_total_p.append(total_p)
-        all_sample_fraction_p.append(fraction_p)
-        all_sample_all_p_boolean.append(all_p_boolean)
-
-    # collect data from all samples and calculate means and standard deviations for each parameter
-    all_sample_total_means = list(np.mean(np.array(all_sample_total_p), axis=0))
-    all_sample_total_std = list(np.std(np.array(all_sample_total_p), axis=0))
-    all_sample_fraction_means = list(np.mean(np.array(all_sample_fraction_p), axis=0))
-    all_sample_fraction_std = list(np.std(np.array(all_sample_fraction_p), axis=0))
-    all_sample_totals = {'means': all_sample_total_means, 'std': all_sample_total_std}
-    all_sample_fractions = {'means': all_sample_fraction_means, 'std': all_sample_fraction_std}
-    for j_sample in range(0, number_of_samples):
-        pass
-    return all_sample_totals, all_sample_fractions, all_sample_all_p_boolean
-
-
 def experiments_in_ident_data(boolean_ident_data, experiment_data, experiment_type_index, flux_id):
     """get all data combinations identifying a given parameter within a given flux (passed as input)
     and identify experiments used within the identifying data combination"""
