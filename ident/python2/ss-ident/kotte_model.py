@@ -631,6 +631,7 @@ def write_results_2_file(ident_details, number_fluxes, fp_list, data_list):
     # identified by chosen data set(s)
     # new_combos = calculate_experiment_combos(ident_details, experiment_details, perturbation_details, data_list)
 
+
 def flux_ident_2_data_combination(all_data, flux_ids, choose=()):
     """perform identifiability separately for each set of functions and generate separate identifiability info"""
     # 2 data combination ident list
