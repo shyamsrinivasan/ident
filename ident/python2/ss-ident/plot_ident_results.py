@@ -2,8 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from kotte_model import ident_parameter_name
 from kotte_model import kotte_experiment_type_name
-from kotte_model import experiment_name
-from kotte_model import flux_based_id
 
 
 def plot_on_axis_object(axis_obj, x_data, y_data, x_error, x_percent_mean, x_percent_std):
