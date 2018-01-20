@@ -206,14 +206,14 @@ def parameter_identifibaility_plot(flux_based_parameter_ident):
             x_percent_mean = i_flux_info["percentage"]["mean"]
             x_percent_std = i_flux_info["percentage"]["std"]
             # get parameter id/name for y-axis labels
-            flux_name = ["flux{}".format(i_flux + 1)]*len(y_data)
+            flux_name = ["flux{}".format(i_flux_info["total"]["flux id"])]*len(y_data)
             parameter_name = ident_parameter_name(y_data, flux_name=flux_name)
             # plot and annotate using plotting function defined above
             plot_on_axis_object(i_axis_obj, x_data, y_data, x_error, x_percent_mean, x_percent_std)
             # set y-axis tick labels
             i_axis_obj.set_yticklabels(parameter_name)
             # set axis title
-            i_axis_obj.set_title('v{} parameters'.format(i_flux + 1))
+            i_axis_obj.set_title('v{} parameters'.format(i_flux_info["total"]["flux id"]))
             # invert y-axis
             i_axis_obj.invert_yaxis()
         # set x-axis label
@@ -229,14 +229,14 @@ def parameter_identifibaility_plot(flux_based_parameter_ident):
             x_percent_mean = i_flux_info["percentage"]["mean"]
             x_percent_std = i_flux_info["percentage"]["std"]
             # get parameter id/name for y-axis labels
-            flux_name = ["flux{}".format(i_flux + 1)] * len(y_data)
+            flux_name = ["flux{}".format(i_flux_info["total"]["flux id"])] * len(y_data)
             parameter_name = ident_parameter_name(y_data, flux_name=flux_name)
             # plot and annotate using plotting function defined above
             plot_on_axis_object(axarr, x_data, y_data, x_error, x_percent_mean, x_percent_std)
             # set y-axis tick labels
             axarr.set_yticklabels(parameter_name)
             # set axis title
-            axarr.set_title('v{} parameters'.format(i_flux + 1))
+            axarr.set_title('v{} parameters'.format(i_flux_info["total"]["flux id"]))
             # invert y-axis
             axarr.invert_yaxis()
         # set x-axis label
@@ -258,9 +258,10 @@ def parameter_experiment_info_plot(flux_based_experiment_info):
             number_of_rows = 1
             f, axarr = plt.subplots(number_of_rows, number_of_subplots, sharey='row')
             # get parameter name for figure title
-            parameter_name = ident_parameter_name(k_parameter, flux_name="flux{}".format(j_flux+1))
+            parameter_name = ident_parameter_name(k_parameter,
+                                                  flux_name="flux{}".format(k_parameter_data[0]["total"]["flux id"]))
             # set figure title to parameter name
-            figure_title = "flux {}".format(j_flux+1) + " " + parameter_name
+            figure_title = "flux {}".format(k_parameter_data[0]["total"]["flux id"]) + " " + parameter_name
             f.text(.5, .975, figure_title, horizontalalignment='center', verticalalignment='top')
             try:
                 for i_position, i_axis_obj in enumerate(axarr):
