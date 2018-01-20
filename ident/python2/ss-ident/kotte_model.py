@@ -488,18 +488,22 @@ def call_truncate_method(ident_value_list, parameter_count, expression_count=3):
     return flux_ident_value
 
 
-def run_flux_ident(ident_function_list, data):
+def run_flux_ident(ident_function_list, data, flux_id=()):
     number_of_parameters = 0
     try:
         number_of_parameters_per_flux = [None] * len(ident_function_list)
     except TypeError:
         number_of_parameters_per_flux = [None]
     ident_value_list = []
+    flux_id_list = []
     iterator = 0
+    if not flux_id:
+        flux_id = range(1, len(ident_function_list)+1)
     try:
-        for func in ident_function_list:
+        for func, i_d in zip(ident_function_list, flux_id):
             ident_value = func(data)
             ident_value_list.append(ident_value)
+            flux_id_list.append(i_d)
             number_of_expressions = len(ident_value[0])
             number_of_parameters_per_flux[iterator] = len(ident_value)
             iterator += 1
@@ -507,6 +511,7 @@ def run_flux_ident(ident_function_list, data):
     except TypeError:
         ident_value = ident_function_list(data)
         ident_value_list.append(ident_value)
+        flux_id_list.append(flux_id)
         number_of_expressions = len(ident_value[0])
         number_of_parameters_per_flux[iterator] = len(ident_value)
         number_of_parameters += len(ident_value)
@@ -520,10 +525,10 @@ def run_flux_ident(ident_function_list, data):
         nrows, ncolumns = np.shape(truncated_ident_value)
         ident_value_array[irow:(irow + nrows), :] = truncated_ident_value
         irow += nrows
-    return ident_value_array, number_of_parameters_per_flux, ncolumns, all_flux_ident
+    return ident_value_array, number_of_parameters_per_flux, ncolumns, all_flux_ident, flux_id_list
 
 
-def get_ident_value(ident_function_list, experimental_data_list, original_data_set_id):
+def get_ident_value(ident_function_list, experimental_data_list, original_data_set_id, flux_ids):
     all_data_ident_lists = []
     all_data_all_fun_ident_value = []
     try:
@@ -536,7 +541,8 @@ def get_ident_value(ident_function_list, experimental_data_list, original_data_s
                                                                                len(experimental_data_list),
                                                                                original_data_set_id[index]))
         identifiability_values, number_of_parameters_per_flux, \
-        number_of_expressions_per_parameter, all_fun_ident_values = run_flux_ident(ident_function_list, data_set)
+        number_of_expressions_per_parameter, all_fun_ident_values, flux_id_list = run_flux_ident(ident_function_list,
+                                                                                                 data_set, flux_ids)
         all_data_ident_lists.append(identifiability_values)
         all_data_all_fun_ident_value.append(all_fun_ident_values)
 
@@ -746,7 +752,7 @@ def write_results_2_file(ident_details, number_fluxes, fp_list, data_list):
     # new_combos = calculate_experiment_combos(ident_details, experiment_details, perturbation_details, data_list)
 
 
-def one_sample_ident_fun(ident_fun_list, sample_data, choose):
+def one_sample_ident_fun(ident_fun_list, sample_data, choose, flux_ids):
     if choose:
         try:
             chosen_values = list(sample_data["values"][:choose, :])
@@ -758,39 +764,43 @@ def one_sample_ident_fun(ident_fun_list, sample_data, choose):
     else:
         chosen_values = list(sample_data["values"][:, :])
     # run identification function through every chosen data combination supplied as input
-    _, parameters_per_flux, all_fun_array_list = get_ident_value(ident_fun_list, chosen_values, choose)
+    _, parameters_per_flux, all_fun_array_list = get_ident_value(ident_fun_list, chosen_values, choose, flux_ids)
     return parameters_per_flux, all_fun_array_list
 
 
-def multi_sample_ident_fun(ident_fun_list, all_data, choose):
+def multi_sample_ident_fun(ident_fun_list, all_data, choose, flux_ids):
     all_sample_ident_details = []
     for i_sample, sample_data in enumerate(all_data):
-        parameters_per_flux, one_sample_all_fun_array_list = one_sample_ident_fun(ident_fun_list, sample_data, choose)
+        parameters_per_flux, one_sample_all_fun_array_list = one_sample_ident_fun(ident_fun_list, sample_data,
+                                                                                  choose, flux_ids)
         # process info from each sample (number of samples > 1 when noisy data is used) of experimental data sets
         all_fun_ident_details = []
         for ifun, ifun_data in enumerate(one_sample_all_fun_array_list):
             number_of_data_sets, number_of_parameters, _ = ifun_data.shape
             # process denominator info only
             _, plist_boolean = boolean_ident_info(ifun_data[:, :, -1], number_of_parameters)
-            ident_details = {"boolean": plist_boolean, "values": ifun_data, "parameters": number_of_parameters}
+            ident_details = {"boolean": plist_boolean,
+                             "values": ifun_data,
+                             "parameters": number_of_parameters,
+                             "flux id": flux_ids[ifun]}
             all_fun_ident_details.append(ident_details)
         all_sample_ident_details.append(all_fun_ident_details)
     return all_sample_ident_details
 
 
-def flux_ident_2_data_combination(all_data, choose=()):
+def flux_ident_2_data_combination(all_data, flux_ids, choose=()):
     """perform identifiability separately for each set of functions and generate separate identifiability info"""
     # 2 data combination ident list
     ident_fun_2_data = (flux_1_ident_expression, flux_2_ident_expression)
-    all_sample_all_fun_ident_info = multi_sample_ident_fun(ident_fun_2_data, all_data, choose)
+    all_sample_all_fun_ident_info = multi_sample_ident_fun(ident_fun_2_data, all_data, choose, flux_ids)
     return all_sample_all_fun_ident_info
 
 
-def flux_ident_3_data_combination(all_data, choose=()):
+def flux_ident_3_data_combination(all_data, flux_ids, choose=()):
     """perform identifiability separately for each set of functions and generate separate identifiability info"""
     # 3 data combination ident list
     ident_fun_3_data = (flux_3_ident_expression)
-    all_sample_all_fun_ident_info = multi_sample_ident_fun(ident_fun_3_data, all_data, choose)
+    all_sample_all_fun_ident_info = multi_sample_ident_fun(ident_fun_3_data, all_data, choose, flux_ids)
     return all_sample_all_fun_ident_info
 
 
