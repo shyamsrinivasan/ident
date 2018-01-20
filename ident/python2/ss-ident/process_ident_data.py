@@ -295,25 +295,6 @@ def parameter_plot_data_per_sample(original_data, number_of_parameters_per_flux,
     return all_sample_totals, all_sample_fractions, all_sample_all_p_boolean
 
 
-def dataset_with_experiment(data_exp, exp_id):
-    # get datasets in which experiment exp_id is used
-    # number_data = len(data_exp)
-    try:
-        lst_data_id = [[j_data for j_data, j_expt_used in enumerate(data_exp) if k_exp_id in j_expt_used]
-                       for k_exp_id in exp_id]
-    except TypeError:
-        lst_data_id = [j_data for j_data, j_expt_used in enumerate(data_exp) if exp_id in j_expt_used]
-    # covert boolean array to list
-    # data_exp_boolean = data_exp["boolean"]
-    # lst_parameter = [list(j_p) for j_p in list(np.transpose(data_exp_boolean))]
-    # data_id = [[id for id, val in enumerate(lst_parameter[j_p]) if val] for j_p in range(0, 12)]
-    # try:
-    #     data_with_exp = [[k_p_set for k_p_id, k_p_set in enumerate(data_id) if k_p_id == j_exp_id] for j_exp_id in exp_id]
-    # except TypeError:
-    #     data_with_exp = [k_p_set for k_p_id, k_p_set in enumerate(data_id) if k_p_id == exp_id]
-    return lst_data_id
-
-
 def experiments_in_ident_data(boolean_ident_data, experiment_data, experiment_type_index, flux_id):
     """get all data combinations identifying a given parameter within a given flux (passed as input)
     and identify experiments used within the identifying data combination"""
