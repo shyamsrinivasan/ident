@@ -2,6 +2,7 @@ import numpy as np
 import os.path
 import csv
 from identifiability_analysis import truncate_values
+from identifiability_analysis import call_truncate_method
 
 # K1ac, K3fdp, L3fdp, K3pep, K2pep, vemax, Kefdp, ne, d, V4max, k1cat, V3max, V2max, ac
 def_par_val = np.array([.1, .1, 4e6, .1, .3, 1.1, .45, 2, .25, .2, 1, 1, 1, .1])
@@ -465,15 +466,6 @@ def flux_3_ident_expression(experimental_data):
            [v3max_nr_2_value, v3max_dr_2_value, v3max_2_value], \
            [k3fdp_nr_2_value, k3fdp_dr_2_value, k3fdp_2_value], \
            [k3pep_nr_2_value, k3pep_dr_2_value, k3pep_2_value]
-
-
-def call_truncate_method(ident_value_list, parameter_count, expression_count=3):
-    flux_ident_value = np.zeros((parameter_count, expression_count))
-    for i, j in enumerate(ident_value_list):
-        trunc_value = map(truncate_values, j)
-        # trunc_value = map(float, trunc_value)
-        flux_ident_value[i, :] = np.array(trunc_value)
-    return flux_ident_value
 
 
 def run_flux_ident(ident_function_list, data, flux_id=()):
