@@ -1,12 +1,9 @@
 import numpy as np
 from generate_expdata import generate_expdata
 from simulate_data import arrange_experimental_data
-from kotte_model import establish_kotte_flux_identifiability
 from kotte_model import flux_ident_2_data_combination
 from kotte_model import flux_ident_3_data_combination
 from process_ident_data import process_info_sample
-from plot_ident_results import flux_parameter_plot
-from plot_ident_results import parameter_experiment_type_plot
 from plot_ident_results import data_utility_plot
 from plot_ident_results import parameter_identifibaility_plot
 from plot_ident_results import parameter_experiment_info_plot
@@ -69,13 +66,13 @@ parameter_experiment_info_plot(experiment_info_3)
 # plot results
 # plot different experiment types identifying each parameter
 parameter_choice = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-# parameter_experiment_type_plot(total_exp_info, fraction_exp_info, parameter_choice)
 
 # plot utility of data sets (number of data sets identifying n, n-1, n-2, ...., 1, 0 parameters
 data_utility_plot(data_list[0])
 
 
-flux_parameter_plot(total_ident_data, fraction_ident_data)
+
+print("Run complete\n")
 
 
 
