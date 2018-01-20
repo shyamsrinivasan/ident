@@ -429,43 +429,6 @@ def experiment_position_based_info(experiments_identifying_each_parameter, numbe
     return all_parameter_position_based_info
 
 
-def experiment_position_based_info_per_sample(experiments_identifying_each_parameter, number_of_experiments_per_data=3):
-    number_of_samples = len(experiments_identifying_each_parameter)
-    all_sample_parameter_experiment_info = []
-    for j_sample_exp in experiments_identifying_each_parameter:
-        all_parameter_position_based_info = \
-            experiment_position_based_info(j_sample_exp, number_of_experiments_per_data)
-        all_sample_parameter_experiment_info.append(all_parameter_position_based_info)
-
-    # collect and collate data from all samples (calculate means and averages for each experiment type)
-    number_of_parameters = len(all_sample_parameter_experiment_info[0])
-    all_parameter_all_pos_info = []
-    all_parameter_all_pos_fraction_info = []
-    for j_p in range(0, number_of_parameters):
-        j_p_all_pos_mean = []
-        j_p_all_pos_std = []
-        j_p_all_pos_mean_percent = []
-        j_p_all_pos_std_percent = []
-        for i_position in range(0, number_of_experiments_per_data):
-            j_p_i_pos_occurrence_total = []
-            for j_sample, j_sample_data in enumerate(all_sample_parameter_experiment_info):
-                j_p_data = j_sample_data[j_p]
-                j_p_i_pos_occurrence_total.append(j_p_data["occurrence total"][i_position])
-            j_p_all_pos_mean.append(list(np.mean(np.array(j_p_i_pos_occurrence_total), axis=0)))
-            j_p_all_pos_std.append(list(np.std(np.array(j_p_i_pos_occurrence_total), axis=0)))
-            j_p_total_ident_data = np.sum(np.array(j_p_i_pos_occurrence_total), axis=1)
-            j_p_total_ident_data = np.transpose(np.tile(j_p_total_ident_data, (5, 1)))
-            j_p_i_pos_percentage = np.array(j_p_i_pos_occurrence_total).astype(float)/j_p_total_ident_data
-            # replace nan with 0
-            i_pos_mean_percent = [0.0 if np.isnan(val) else val for val in np.mean(j_p_i_pos_percentage, axis=0)]
-            i_pos_std_percent = [0.0 if np.isnan(val) else val for val in np.std(j_p_i_pos_percentage, axis=0)]
-            j_p_all_pos_mean_percent.append(i_pos_mean_percent)
-            j_p_all_pos_std_percent.append(i_pos_std_percent)
-        all_parameter_all_pos_info.append({"mean": j_p_all_pos_mean, "std": j_p_all_pos_std})
-        all_parameter_all_pos_fraction_info.append({"mean": j_p_all_pos_mean_percent, "std": j_p_all_pos_std_percent})
-    return all_parameter_all_pos_info, all_parameter_all_pos_fraction_info
-
-
 def get_data_info(data_list, ident_details, experiment_details):
     """get information on every single data set obtained from data_usefulness_percentage"""
     original_data = []
