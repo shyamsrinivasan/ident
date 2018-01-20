@@ -72,20 +72,6 @@ def experiment_type_plot(position_based_info, fraction_info, x_label, fig_title=
     return None
 
 
-def parameter_experiment_type_plot(total_exp_info, fraction_exp_info, parameter_choice=()):
-    """call experiment_type_plot for each parameter information present in parameter_position_based_info"""
-    if not parameter_choice:
-        parameter_choice = range(0, len(total_exp_info))
-    for i_parameter in parameter_choice:
-        parameter_name = ident_parameter_name(i_parameter)
-        experiment_type_plot(total_exp_info[i_parameter], fraction_exp_info[i_parameter],
-                             x_label='Occurrence in Identifying Data set',
-                             fig_title=parameter_name)
-        # experiment_type_plot(i_parameter_info["occurrence total percentage"],
-        #                      x_label='Occurrence Percentage in Identifying Data set')
-    return None
-
-
 def plot_on_axis_object(axis_obj, x_data, y_data, x_error, x_percent_mean, x_percent_std):
     """given axis object plot given data on axis object along with all given annotations"""
     # plot bar graphs for x_data vs y_data with x_error error bars
