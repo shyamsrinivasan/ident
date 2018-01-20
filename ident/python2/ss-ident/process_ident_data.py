@@ -259,18 +259,6 @@ def flux_parameter_plot_data(original_data, number_of_parameters, case=1):
         return []
 
 
-def single_flux_parameter_data(ident_data, number_of_parameters_per_flux, case):
-    number_of_fluxes = len(ident_data)
-    # all_flux_total_p = []
-    all_flux_info = []
-    for iflux, iflux_data in enumerate(ident_data):
-        total_p, fraction_p, all_p_boolean = flux_parameter_plot_data(iflux_data,
-                                                                      number_of_parameters_per_flux[iflux],
-                                                                      case)
-        all_flux_info.append({"total": total_p, "fraction": fraction_p, "boolean": all_p_boolean})
-    return all_flux_info
-
-
 def experiments_in_ident_data(boolean_ident_data, experiment_data, experiment_type_index, flux_id):
     """get all data combinations identifying a given parameter within a given flux (passed as input)
     and identify experiments used within the identifying data combination"""
