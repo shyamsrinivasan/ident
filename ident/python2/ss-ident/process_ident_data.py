@@ -25,17 +25,6 @@ def data_based_processing(ident_details):
     return data_list
 
 
-def process_ident_data(ident_values, number_data):
-    # create signed boolean array for identifiability
-    signed_ident_values = np.sign(ident_values)
-    ident_fun_val = []
-    for id in range(0, number_data):
-        ident_fun_val.append(signed_ident_values[id * 12:(id + 1) * 12, -1])
-    p_list = [[p_id for p_id, val in enumerate(data_set) if val > 0] for data_set in ident_fun_val]
-    p_list_boolean = [[True if parameter_id in list_1 else False for parameter_id in range(0, 12)] for list_1 in p_list]
-    return p_list, np.array(p_list_boolean)
-
-
 def get_all_indices(mother_list, value):
     current_value_id = []
     for i in it.compress(range(0, len(mother_list)),
