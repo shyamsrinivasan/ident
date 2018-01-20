@@ -466,33 +466,6 @@ def experiment_position_based_info_per_sample(experiments_identifying_each_param
     return all_parameter_all_pos_info, all_parameter_all_pos_fraction_info
 
 
-def experiment_type_based_info(experiments_identifying_each_parameter):
-    all_parameter_type_based_info = []
-    for p_parameter, p_info in enumerate(experiments_identifying_each_parameter):
-        all_exp_type = []
-        for i_exp_type, i_type_info in enumerate(p_info):
-            all_pos = []
-            for j_pos, j_pos_info in enumerate(i_type_info):
-                all_ids = [iter_j_pos_info["id"] for iter_j_pos_info in j_pos_info]
-                all_occurrence = [iter_j_pos_info["occurrence"] for iter_j_pos_info in j_pos_info]
-                all_occurrence_percentage = [iter_j_pos_info["occurrence percentage"] for iter_j_pos_info in j_pos_info]
-                all_type = [iter_j_pos_info["type"] for iter_j_pos_info in j_pos_info]
-                if all([True if type_iter == i_exp_type else False for type_iter in all_type]):
-                    all_type = i_exp_type
-                all_position = [iter_j_pos_info["position"] for iter_j_pos_info in j_pos_info]
-                if all([True if pos_iter == j_pos else False for pos_iter in all_position]):
-                    all_position = j_pos
-                all_pos.append({"id": all_ids, "occurrence": all_occurrence,
-                                "occurrence percentage": all_occurrence_percentage,
-                                "type": all_type,
-                                "position": all_position})
-                pass
-            all_exp_type.append(all_pos)
-        all_parameter_type_based_info.append(all_exp_type)
-
-    return all_parameter_type_based_info
-
-
 def get_data_info(data_list, ident_details, experiment_details):
     """get information on every single data set obtained from data_usefulness_percentage"""
     original_data = []
