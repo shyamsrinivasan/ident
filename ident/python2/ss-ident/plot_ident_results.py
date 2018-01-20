@@ -6,39 +6,6 @@ from kotte_model import experiment_name
 from kotte_model import flux_based_id
 
 
-def data_for_plots(original_data, case=1):
-    if case==1:
-        all_boolean_p_id = []
-        for len_pos, i_list in enumerate(original_data):
-            for i_data in i_list:
-                boolean_p_id = [True if j_p in i_data["parameter_ids"] else False for j_p in range(0, 12)]
-                all_boolean_p_id.append(boolean_p_id)
-        number_data, number_p = np.array(all_boolean_p_id).shape
-        all_boolean_p_id = [list(j_p) for j_p in np.transpose(np.array(all_boolean_p_id))]
-        # get total data identifying each parameter
-        all_boolean_p_id_sum = [sum(j_list) for j_list in all_boolean_p_id]
-        all_boolean_p_id_fraction = [float(sum(j_list))/number_data for j_list in all_boolean_p_id]
-        return all_boolean_p_id_sum, all_boolean_p_id_fraction
-    elif case==2:
-        all_boolean_p_id = []
-        all_boolean_e_id = []
-        for len_pos, i_list in enumerate(original_data):
-            for i_data in i_list:
-                # parameters identified
-                boolean_p_id = [True if j_p in i_data["parameter_ids"] else False for j_p in range(0, 12)]
-                all_boolean_p_id.append(boolean_p_id)
-                # experiments done
-                boolean_e_id = [True if j_p in i_data["experiment_id"] else False for j_p in range(0, 18)]
-                all_boolean_e_id.append(boolean_e_id)
-        all_boolean_p_id = [list(k_p) for k_p in np.transpose(np.array(all_boolean_p_id))]
-        # all_boolean_e_id = [list(j_p) for j_p in np.transpose(np.array(all_boolean_e_id))]
-        # get total for each experiment in each identifying data set
-        # all_boolean_e_id = [sum(k_list) for k_list in all_boolean_e_id]
-        return all_boolean_p_id, all_boolean_e_id
-    else:
-        return []
-
-
 def plot_on_axis_object(axis_obj, x_data, y_data, x_error, x_percent_mean, x_percent_std):
     """given axis object plot given data on axis object along with all given annotations"""
     # plot bar graphs for x_data vs y_data with x_error error bars
