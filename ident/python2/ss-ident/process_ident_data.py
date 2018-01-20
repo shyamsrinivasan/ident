@@ -386,49 +386,6 @@ def flux_based_experiment_info(sample_ident_info, experiment_details, experiment
     return all_flux_experiment_type_info
 
 
-def experiment_position_based_info(experiments_identifying_each_parameter, number_of_experiments_per_data=3):
-    all_parameter_position_based_info = []
-    for p_parameter, p_info in enumerate(experiments_identifying_each_parameter):
-        all_pos_ids = []
-        all_pos_occurrence = []
-        all_pos_total_occurrence = []
-        all_pos_occurrence_percentage = []
-        all_pos_total_occurrence_percentage = []
-        for j_pos in range(0, number_of_experiments_per_data):
-            j_pos_ids = []
-            j_pos_occurrence = []
-            j_pos_total_occurrence = []
-            j_pos_occurrence_percentage = []
-            j_pos_total_occurrence_percentage = []
-            for i_exp_type, i_type_info in enumerate(p_info):
-                try:
-                    type_based_info = i_type_info[j_pos]
-                except IndexError:
-                    type_based_info = i_type_info
-                j_pos_ids.append([j_type_info["id"]
-                                  for j_type_info in type_based_info])
-                j_pos_occurrence.append([j_type_info["occurrence"]
-                                         for j_type_info in type_based_info])
-                j_pos_total_occurrence.append(sum([j_type_info["occurrence"]
-                                                   for j_type_info in type_based_info]))
-                j_pos_occurrence_percentage.append([j_type_info["occurrence percentage"]
-                                                    for j_type_info in type_based_info])
-                j_pos_total_occurrence_percentage.append(sum([j_type_info["occurrence percentage"]
-                                                              for j_type_info in type_based_info]))
-            all_pos_ids.append(j_pos_ids)
-            all_pos_occurrence.append(j_pos_occurrence)
-            all_pos_total_occurrence.append(j_pos_total_occurrence)
-            all_pos_occurrence_percentage.append(j_pos_occurrence_percentage)
-            all_pos_total_occurrence_percentage.append(j_pos_total_occurrence_percentage)
-        all_parameter_position_based_info.append({"id": all_pos_ids,
-                                                  "occurrence": all_pos_occurrence,
-                                                  "occurrence percentage": all_pos_occurrence_percentage,
-                                                  "occurrence total": all_pos_total_occurrence,
-                                                  "occurrence total percentage": all_pos_total_occurrence_percentage})
-
-    return all_parameter_position_based_info
-
-
 def get_data_info(data_list, ident_details, experiment_details):
     """get information on every single data set obtained from data_usefulness_percentage"""
     original_data = []
