@@ -2,29 +2,6 @@ import numpy as np
 import itertools as it
 
 
-def parameter_based_processing(ident_details):
-    """parameter-based classification of experimental datasets"""
-    number_data, p = ident_details["boolean"].shape
-    # p = np.cumsum([0] + parameters_per_flux).tolist()
-    fp_list_keys = ['flux{}p{}'.format(f_index + 1, p_index + 1)
-                    for f_index, p_limit in enumerate(ident_details["parameters"])
-                    for p_index in range(0, p_limit)]
-    fp_list_values = [[data_id for data_id in it.compress(range(0, number_data), list(ident_details["boolean"][:, parameter_id]))]
-                      for parameter_id in range(0, p)]
-    fp_list = dict(zip(fp_list_keys, fp_list_values))
-    return fp_list
-
-
-def data_based_processing(ident_details):
-    """dataset dependent classification of parameters"""
-    number_data, p = ident_details["boolean"].shape
-    data_list_keys = ['dataset{}'.format(perturbation_id + 1) for perturbation_id in range(0, number_data)]
-    data_list_values = [[parameter_id for parameter_id in it.compress(range(0, p), list(ident_details["boolean"][data_id, :]))]
-                        for data_id in range(0, number_data)]
-    data_list = dict(zip(data_list_keys, data_list_values))
-    return data_list
-
-
 def get_all_indices(mother_list, value):
     current_value_id = []
     for i in it.compress(range(0, len(mother_list)),
