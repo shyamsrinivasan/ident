@@ -4,6 +4,7 @@ import csv
 from identifiability_analysis import truncate_values
 from identifiability_analysis import call_truncate_method
 from identifiability_analysis import multi_sample_ident_fun
+from identifiability_analysis import get_ident_value
 
 # K1ac, K3fdp, L3fdp, K3pep, K2pep, vemax, Kefdp, ne, d, V4max, k1cat, V3max, V2max, ac
 def_par_val = np.array([.1, .1, 4e6, .1, .3, 1.1, .45, 2, .25, .2, 1, 1, 1, .1])
@@ -509,67 +510,6 @@ def run_flux_ident(ident_function_list, data, flux_id=()):
     return ident_value_array, number_of_parameters_per_flux, ncolumns, all_flux_ident, flux_id_list
 
 
-def get_ident_value(ident_function_list, experimental_data_list, original_data_set_id, flux_ids):
-    all_data_ident_lists = []
-    all_data_all_fun_ident_value = []
-    try:
-        number_of_parameters_per_flux = [0]*len(ident_function_list)
-    except TypeError:
-        number_of_parameters_per_flux = [0]
-    number_of_expressions_per_parameter = 0
-    for index, data_set in enumerate(experimental_data_list):
-        print('Identifiability for Dataset {} of {}: Original ID: {}\n'.format(index + 1,
-                                                                               len(experimental_data_list),
-                                                                               original_data_set_id[index]))
-        identifiability_values, number_of_parameters_per_flux, \
-        number_of_expressions_per_parameter, all_fun_ident_values, flux_id_list = run_flux_ident(ident_function_list,
-                                                                                                 data_set, flux_ids)
-        all_data_ident_lists.append(identifiability_values)
-        all_data_all_fun_ident_value.append(all_fun_ident_values)
-
-    # classify ident data based on number of ident functions instead of by data sets
-    # convert to multi dimensional list = data set size x number of parameters per flux x number of fluxes/functions
-    number_of_data_sets = len(experimental_data_list)
-    # all_fun_ident_list = []
-    all_fun_array_list = []
-    try:
-        for ifun in range(0, len(ident_function_list)):
-            all_ident_data_in_fun = []
-            for idata in all_data_all_fun_ident_value:
-                all_ident_data_in_fun.append(idata[ifun])
-            # all_fun_ident_list.append(all_ident_data_in_fun)
-            # array - number of data sets x number of parameters per identifiability function/flux
-            ident_fun_array = np.zeros((number_of_data_sets, number_of_parameters_per_flux[ifun], 3))
-            for idata_id, idata_set_value in enumerate(all_ident_data_in_fun):
-                ident_fun_array[idata_id, :, 0] = idata_set_value[:, 0]
-                ident_fun_array[idata_id, :, 1] = idata_set_value[:, 1]
-                ident_fun_array[idata_id, :, 2] = idata_set_value[:, 2]
-            all_fun_array_list.append(ident_fun_array)
-    except TypeError:
-        ifun = 0
-        all_ident_data_in_fun = []
-        for idata in all_data_all_fun_ident_value:
-            all_ident_data_in_fun.append(idata[ifun])
-        # all_fun_ident_list.append(all_ident_data_in_fun)
-        # array - number of data sets x number of parameters per identifiability function/flux
-        ident_fun_array = np.zeros((number_of_data_sets, number_of_parameters_per_flux[ifun], 3))
-        for idata_id, idata_set_value in enumerate(all_ident_data_in_fun):
-            ident_fun_array[idata_id, :, 0] = idata_set_value[:, 0]
-            ident_fun_array[idata_id, :, 1] = idata_set_value[:, 1]
-            ident_fun_array[idata_id, :, 2] = idata_set_value[:, 2]
-        all_fun_array_list.append(ident_fun_array)
-
-
-    total_parameters_identified = sum(number_of_parameters_per_flux)
-    all_identifiability_values = \
-        np.zeros((number_of_data_sets * total_parameters_identified, number_of_expressions_per_parameter))
-    array_index = 0
-    for idata in all_data_ident_lists:
-        all_identifiability_values[array_index:(array_index + total_parameters_identified), :] = idata
-        array_index += total_parameters_identified
-    return all_identifiability_values, number_of_parameters_per_flux, all_fun_array_list
-
-
 def ident_parameter_name(parameter_id, flux_name=()):
     parameter_list = ['V1max', 'K1ac (no enz)', 'k1cat', 'K1ac (enz)',
                       'V2max', 'K2pep',
@@ -731,23 +671,6 @@ def write_results_2_file(ident_details, number_fluxes, fp_list, data_list):
     # choose additional data sets and consequently, experiments (if possible) to identify other parameters not
     # identified by chosen data set(s)
     # new_combos = calculate_experiment_combos(ident_details, experiment_details, perturbation_details, data_list)
-
-
-def one_sample_ident_fun(ident_fun_list, sample_data, choose, flux_ids):
-    if choose:
-        try:
-            chosen_values = list(sample_data["values"][:choose, :])
-        except TypeError:
-            iter_chosen_value = []
-            for indexes in range(0, len(choose)):
-                iter_chosen_value.append(list(sample_data["values"][indexes, :]))
-            chosen_values = iter_chosen_value[:]
-    else:
-        chosen_values = list(sample_data["values"][:, :])
-    # run identification function through every chosen data combination supplied as input
-    _, parameters_per_flux, all_fun_array_list = get_ident_value(ident_fun_list, chosen_values, choose, flux_ids)
-    return parameters_per_flux, all_fun_array_list
-
 
 def flux_ident_2_data_combination(all_data, flux_ids, choose=()):
     """perform identifiability separately for each set of functions and generate separate identifiability info"""
