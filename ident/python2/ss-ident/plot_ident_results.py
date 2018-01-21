@@ -23,6 +23,22 @@ def plot_on_axis_object(axis_obj, x_data, y_data, x_error, x_percent_mean, x_per
     return None
 
 
+def plot_on_axis_object_vertical(axis_obj, x_data, y_data, y_error, y_percent_mean, y_percent_std):
+    axis_obj.bar(x_data, y_data, yerr=y_error, align='center', color='blue', ecolor='black')
+
+    # annotate percentages onto each bar in the graph
+    for j_bar in range(0, len(x_data)):
+        y_annotation = "{:.2f} + {:.2f} %".format(y_percent_mean[j_bar],
+                                                  y_percent_std[j_bar])
+        an1 = axis_obj.annotate("", xy=(x_data[j_bar], y_data[j_bar]), xycoords='data',
+                                xytext=(x_data[j_bar], y_data[j_bar]), textcoords='data')
+        an2 = axis_obj.annotate(y_annotation, xy=(5, .5), xycoords=an1,
+                                xytext=(40, 0), textcoords="offset points", size=16, va="center", ha="center")
+    # set x-ticks
+    axis_obj.set_xticks(x_data)
+    return None
+
+
 def parameter_identifibaility_plot(flux_based_parameter_ident):
     """plot parameter identifibaility (number of data combinations identifying
     each parameter in each flux. Paramerers for each flux are plotted in separate subplots"""
@@ -142,20 +158,57 @@ def parameter_experiment_info_plot(flux_based_experiment_info):
 
 
 def data_utility_plot(data_list):
-    # collect data for plotting
-    x_data = data_list["number_parameters_ided"]
-    y_data = [len(all_indices) for all_indices in data_list["index"]]
-    y_percentage = ["{:.2%}".format(percent_data/100) for percent_data in data_list["percentage"]]
-    figure, ax = plt.subplots()
-    width = 0.5  # bar width
-    ax.bar(x_data, y_data, width, color='blue', align='center', ecolor='black')
-    for j_bar in range(0, len(y_data)):
-        ax.annotate(y_percentage[j_bar], xy=(x_data[j_bar]-width/2, y_data[j_bar]+.5), xycoords='data',
-                    xytext=(x_data[j_bar]-width/2, y_data[j_bar]+.5), textcoords='data')
-    ax.set_ylabel('Number of data sets')
-    ax.set_xlabel('Number of identified parameters')
-    ax.set_xticks(x_data)
-    ax.set_title('No Title yet')
+    """collect processed data from all samples for each individual flux and
+    plot the utility of the same data combination for all parameters of
+    different fluxes using the same data combination"""
+    # processed data from all samples
+    processed_data = data_list["processed"]
+    number_of_fluxes = len(processed_data)
+    number_of_subplots = number_of_fluxes
+    number_of_columns = 1
+    f, axarr = plt.subplots(number_of_subplots, number_of_columns, sharex='col',
+                            figsize=(8, 6), dpi=100, facecolor='w', edgecolor='k')
+    try:
+        max_x_data = []
+        # loop through each flux and plot
+        for i_flux, i_axis_obj in enumerate(axarr):
+            i_flux_info = processed_data[i_flux]
+            x_data = i_flux_info["total"]["number"]
+            y_data = i_flux_info["total"]["mean"]
+            y_error = i_flux_info["total"]["std"]
+            y_percent_mean = i_flux_info["percentage"]["mean"]
+            y_percent_std = i_flux_info["percentage"]["std"]
+            plot_on_axis_object_vertical(i_axis_obj, x_data, y_data, y_error, y_percent_mean, y_percent_std)
+            # set axis title
+            i_axis_obj.set_title('v{} parameters'.format(i_flux_info["total"]["flux id"]))
+            # set x-axis ticks
+            max_x_data = max(max_x_data, x_data)
+        # set x-axis and y-axis labels
+        axarr[-1].set_xlabel('Number of parameters identified')
+        axarr[-1].set_ylabel('Number of data combinations')
+        # set x-axis ticks
+        axarr[-1].set_xticks(max_x_data)
+        # set x-axis tick labels
+        axarr[-1].set_xticklabels(max_x_data)
+    except TypeError:
+        max_x_data = []
+        for i_flux in range(0, number_of_fluxes):
+            i_flux_info = processed_data[i_flux]
+            x_data = i_flux_info["total"]["number"]
+            y_data = i_flux_info["total"]["mean"]
+            y_error = i_flux_info["total"]["std"]
+            y_percent_mean = i_flux_info["percentage"]["mean"]
+            y_percent_std = i_flux_info["percentage"]["std"]
+            plot_on_axis_object_vertical(axarr, x_data, y_data, y_error, y_percent_mean, y_percent_std)
+            # set axis title
+            axarr.set_title('v{} parameters'.format(i_flux_info["total"]["flux id"]))
+            # set x-axis ticks
+            max_x_data = max(max_x_data, x_data)
+        axarr[-1].set_xlabel('Number of parameters identified')
+        axarr[-1].set_ylabel('Number of data combinations')
+        # set x-axis ticks
+        axarr[-1].set_xticks(max_x_data)
+        # set x-axis and y-axis labels
+        axarr[-1].set_xticklabels(max_x_data)
     plt.show()
-
     return None
