@@ -67,6 +67,9 @@ parameter_identifibaility_plot(max_parameter_3)
 # identifiable data combinations for each parameter
 parameter_experiment_info_plot(experiment_info_3)
 
+# plot utility of data sets (number of data sets identifying n, n-1, n-2, ...., 1, 0 parameters
+data_utility_plot(data_list_3)
+
 
 # identifiability for all kotte fluxes
 # ident_details = establish_kotte_flux_identifiability(experimental_datasets, choose=choose)
@@ -74,10 +77,6 @@ parameter_experiment_info_plot(experiment_info_3)
 # plot results
 # plot different experiment types identifying each parameter
 # parameter_choice = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-
-
-
-
 
 print("Run complete\n")
 
