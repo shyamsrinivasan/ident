@@ -40,6 +40,8 @@ combined_experiment_info_2 = process_info_sample(ident_details_2,
 
 # plot parameter identifibaility for all fluxes using 2 data combinations
 parameter_identifibaility_plot(max_parameter_2)
+# plot experiment type in each position based on all parameter
+# identifiable data combinations for each parameter
 parameter_experiment_info_plot(experiment_info_2)
 
 # plot utility of data sets (number of data sets identifying n, n-1, n-2, ...., 1, 0 parameters
@@ -61,6 +63,8 @@ data_list_3, max_parameter_3, experiment_info_3 = process_info_sample(ident_deta
 
 # plot parameter identifibaility for all fluxes using 3 data combinations
 parameter_identifibaility_plot(max_parameter_3)
+# plot experiment type in each position based on all parameter
+# identifiable data combinations for each parameter
 parameter_experiment_info_plot(experiment_info_3)
 
 
