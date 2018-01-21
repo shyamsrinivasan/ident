@@ -4,15 +4,22 @@ from kotte_model import ident_parameter_name
 from kotte_model import kotte_experiment_type_name
 
 
-def plot_on_axis_object(axis_obj, x_data, y_data, x_error, x_percent_mean, x_percent_std):
+def plot_on_axis_object(axis_obj, x_data, y_data, x_error, x_percent_mean, x_percent_std, noise=0):
     """given axis object plot given data on axis object along with all given annotations"""
     # plot bar graphs for x_data vs y_data with x_error error bars
-    axis_obj.barh(y_data, x_data, xerr=x_error, align='center', color='blue', ecolor='black')
+    if noise:
+        axis_obj.barh(y_data, x_data, xerr=x_error, align='center', color='blue', ecolor='black')
+    else:
+        # no error bars
+        axis_obj.barh(y_data, x_data, align='center', color='blue', ecolor='black')
 
     # annotate percentages onto each bar in the graph
     for j_bar in range(0, len(y_data)):
-        x_annotation = "{:.2f} + {:.2f} %".format(x_percent_mean[j_bar],
-                                                  x_percent_std[j_bar])
+        if noise:
+            x_annotation = "{:.2f} + {:.2f}%".format(x_percent_mean[j_bar],
+                                                      x_percent_std[j_bar])
+        else:
+            x_annotation = "{:.2f}%".format(x_percent_mean[j_bar])
         an1 = axis_obj.annotate("", xy=(x_data[j_bar], y_data[j_bar]), xycoords='data',
                                 xytext=(x_data[j_bar], y_data[j_bar]), textcoords='data')
         an2 = axis_obj.annotate(x_annotation, xy=(5, .5), xycoords=an1,
@@ -23,13 +30,20 @@ def plot_on_axis_object(axis_obj, x_data, y_data, x_error, x_percent_mean, x_per
     return None
 
 
-def plot_on_axis_object_vertical(axis_obj, x_data, y_data, y_error, y_percent_mean, y_percent_std):
-    axis_obj.bar(x_data, y_data, yerr=y_error, align='center', color='blue', ecolor='black')
+def plot_on_axis_object_vertical(axis_obj, x_data, y_data, y_error, y_percent_mean, y_percent_std, noise=0):
+    if noise:
+        axis_obj.bar(x_data, y_data, yerr=y_error, align='center', color='blue', ecolor='black')
+    else:
+        # no error bars
+        axis_obj.bar(x_data, y_data, align='center', color='blue', ecolor='black')
 
     # annotate percentages onto each bar in the graph
     for j_bar in range(0, len(x_data)):
-        y_annotation = "{:.2f} + {:.2f} %".format(y_percent_mean[j_bar],
-                                                  y_percent_std[j_bar])
+        if noise:
+            y_annotation = "{:.2f} + {:.2f}%".format(y_percent_mean[j_bar],
+                                                      y_percent_std[j_bar])
+        else:
+            y_annotation = "{:.2f}%".format(y_percent_mean[j_bar])
         an1 = axis_obj.annotate("", xy=(x_data[j_bar], y_data[j_bar]), xycoords='data',
                                 xytext=(x_data[j_bar], y_data[j_bar]), textcoords='data')
         an2 = axis_obj.annotate(y_annotation, xy=(5, .5), xycoords=an1,
@@ -39,7 +53,7 @@ def plot_on_axis_object_vertical(axis_obj, x_data, y_data, y_error, y_percent_me
     return None
 
 
-def parameter_identifibaility_plot(flux_based_parameter_ident):
+def parameter_identifibaility_plot(flux_based_parameter_ident, noise=0):
     """plot parameter identifibaility (number of data combinations identifying
     each parameter in each flux. Paramerers for each flux are plotted in separate subplots"""
     all_sample_all_flux_processed_info = flux_based_parameter_ident["processed"]
@@ -62,7 +76,7 @@ def parameter_identifibaility_plot(flux_based_parameter_ident):
             flux_name = ["flux{}".format(i_flux_info["total"]["flux id"])]*len(y_data)
             parameter_name = ident_parameter_name(y_data, flux_name=flux_name)
             # plot and annotate using plotting function defined above
-            plot_on_axis_object(i_axis_obj, x_data, y_data, x_error, x_percent_mean, x_percent_std)
+            plot_on_axis_object(i_axis_obj, x_data, y_data, x_error, x_percent_mean, x_percent_std, noise)
             # set y-axis tick labels
             i_axis_obj.set_yticklabels(parameter_name)
             # set axis title
@@ -85,7 +99,7 @@ def parameter_identifibaility_plot(flux_based_parameter_ident):
             flux_name = ["flux{}".format(i_flux_info["total"]["flux id"])] * len(y_data)
             parameter_name = ident_parameter_name(y_data, flux_name=flux_name)
             # plot and annotate using plotting function defined above
-            plot_on_axis_object(axarr, x_data, y_data, x_error, x_percent_mean, x_percent_std)
+            plot_on_axis_object(axarr, x_data, y_data, x_error, x_percent_mean, x_percent_std, noise)
             # set y-axis tick labels
             axarr.set_yticklabels(parameter_name)
             # set axis title
@@ -98,7 +112,7 @@ def parameter_identifibaility_plot(flux_based_parameter_ident):
     return None
 
 
-def parameter_experiment_info_plot(flux_based_experiment_info):
+def parameter_experiment_info_plot(flux_based_experiment_info, noise=0):
     """plot position based contribution from each experiment towards
     identifiable data combinations for each parameter for each flux"""
     all_sample_all_flux_processed_info = flux_based_experiment_info["processed"]
@@ -127,7 +141,7 @@ def parameter_experiment_info_plot(flux_based_experiment_info):
                     # get y-axis labels (experiment types)
                     y_tick_labels = kotte_experiment_type_name(y_data)
                     # plot and annotate using plotting function defined above
-                    plot_on_axis_object(i_axis_obj, x_data, y_data, x_error, x_percent_mean, x_percent_error)
+                    plot_on_axis_object(i_axis_obj, x_data, y_data, x_error, x_percent_mean, x_percent_error, noise)
                     # set axis title
                     i_axis_obj.set_title('experiment {}'.format(i_position + 1))
                 # set x-axis label
@@ -144,7 +158,7 @@ def parameter_experiment_info_plot(flux_based_experiment_info):
                     x_percent_mean = k_parameter_data[i_position]["percentage"]["mean"]
                     x_percent_error = k_parameter_data[i_position]["percentage"]["std"]
                     # plot and annotate using plotting function defined above
-                    plot_on_axis_object(axarr, x_data, y_data, x_error, x_percent_mean, x_percent_error)
+                    plot_on_axis_object(axarr, x_data, y_data, x_error, x_percent_mean, x_percent_error, noise)
                     # set axis title
                     axarr.set_title('experiment {}'.format(i_position + 1))
                 # set x-axis label
@@ -157,7 +171,7 @@ def parameter_experiment_info_plot(flux_based_experiment_info):
     return None
 
 
-def data_utility_plot(data_list):
+def data_utility_plot(data_list, noise=0):
     """collect processed data from all samples for each individual flux and
     plot the utility of the same data combination for all parameters of
     different fluxes using the same data combination"""
@@ -178,7 +192,7 @@ def data_utility_plot(data_list):
             y_error = i_flux_info["total"]["std"]
             y_percent_mean = i_flux_info["percentage"]["mean"]
             y_percent_std = i_flux_info["percentage"]["std"]
-            plot_on_axis_object_vertical(i_axis_obj, x_data, y_data, y_error, y_percent_mean, y_percent_std)
+            plot_on_axis_object_vertical(i_axis_obj, x_data, y_data, y_error, y_percent_mean, y_percent_std, noise)
             # set axis title
             i_axis_obj.set_title('v{} parameters'.format(i_flux_info["total"]["flux id"]))
             # set x-axis ticks
@@ -199,16 +213,16 @@ def data_utility_plot(data_list):
             y_error = i_flux_info["total"]["std"]
             y_percent_mean = i_flux_info["percentage"]["mean"]
             y_percent_std = i_flux_info["percentage"]["std"]
-            plot_on_axis_object_vertical(axarr, x_data, y_data, y_error, y_percent_mean, y_percent_std)
+            plot_on_axis_object_vertical(axarr, x_data, y_data, y_error, y_percent_mean, y_percent_std, noise)
             # set axis title
             axarr.set_title('v{} parameters'.format(i_flux_info["total"]["flux id"]))
             # set x-axis ticks
             max_x_data = max(max_x_data, x_data)
-        axarr[-1].set_xlabel('Number of parameters identified')
-        axarr[-1].set_ylabel('Number of data combinations')
+        axarr.set_xlabel('Number of parameters identified')
+        axarr.set_ylabel('Number of data combinations')
         # set x-axis ticks
-        axarr[-1].set_xticks(max_x_data)
+        axarr.set_xticks(max_x_data)
         # set x-axis and y-axis labels
-        axarr[-1].set_xticklabels(max_x_data)
+        axarr.set_xticklabels(max_x_data)
     plt.show()
     return None
