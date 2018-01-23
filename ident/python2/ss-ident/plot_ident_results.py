@@ -171,6 +171,13 @@ def parameter_experiment_info_plot(flux_based_experiment_info, noise=0):
     return None
 
 
+def parameter_experiment_info_spider(flux_based_experiment_info, noise=0):
+    """get spider plots for frequency of different types contributing towards
+    identification of different parameters of each flux"""
+
+    return None
+
+
 def data_utility_plot(data_list, noise=0):
     """collect processed data from all samples for each individual flux and
     plot the utility of the same data combination for all parameters of
