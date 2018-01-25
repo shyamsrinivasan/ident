@@ -53,7 +53,7 @@ def plot_on_axis_object_vertical(axis_obj, x_data, y_data, y_error, y_percent_me
     return None
 
 
-def plot_on_axis_object_polar(axis_obj, x_data, y_data, data_label):
+def plot_on_axis_object_polar(axis_obj, x_data, y_data, data_label, fill_color='b'):
     """plot on polar axis object. does not work on subplots due to the use of plt.methods toplace axis ticks"""
     number_of_experiment_types = len(x_data)
     # get angles for each plot
@@ -86,8 +86,8 @@ def plot_on_axis_object_polar(axis_obj, x_data, y_data, data_label):
     y_data += y_data[:1]
 
     # plot spider data
-    axis_obj.plot(angles, y_data, linewidth=1, linestyle='solid', label=data_label)
-    # axis_obj.fill(angles, y_data, 'b', alpha=0.1)
+    axis_obj.plot(angles, y_data, linewidth=1, linestyle='solid', label=data_label, color=fill_color)
+    axis_obj.fill(angles, y_data, fill_color, alpha=0.1)
     return None
 
 
@@ -228,13 +228,14 @@ def parameter_experiment_info_spider(flux_based_experiment_info, noise=0):
                                     figsize=(6, 4), dpi=100)
             f.text(.5, .975, figure_title, horizontalalignment='center', verticalalignment='top')
             number_of_experiment_positions = len(k_parameter_data)
+            all_fill_colors = ['b', 'g', 'y', 'r']
             # collect and plot data from all positions
             for i_position in range(0, number_of_experiment_positions):
                 y_data = k_parameter_data[i_position]["percentage"]["mean"]
                 x_data = range(0, len(y_data))
                 x_data_label = kotte_experiment_type_name(x_data)
                 data_label = "position {}".format(i_position)
-                plot_on_axis_object_polar(axarr, x_data_label, y_data, data_label)
+                plot_on_axis_object_polar(axarr, x_data_label, y_data, data_label, all_fill_colors[i_position])
                 # add legend
                 plt.legend(loc='upper right', bbox_to_anchor=(0.1, 0.1))
             plt.show()
