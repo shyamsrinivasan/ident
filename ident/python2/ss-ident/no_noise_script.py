@@ -7,6 +7,7 @@ from process_ident_data import process_info_sample
 from plot_ident_results import data_utility_plot
 from plot_ident_results import parameter_identifibaility_plot
 from plot_ident_results import parameter_experiment_info_plot
+from plot_ident_results import parameter_experiment_info_spider
 
 # generate noisy experimental data for testing identifiability
 y0 = np.array([5, 1, 1])
@@ -42,7 +43,8 @@ combined_experiment_info_2 = process_info_sample(ident_details_2,
 parameter_identifibaility_plot(max_parameter_2)
 # plot experiment type in each position based on all parameter
 # identifiable data combinations for each parameter
-parameter_experiment_info_plot(experiment_info_2)
+# parameter_experiment_info_plot(experiment_info_2)
+parameter_experiment_info_spider(experiment_info_2)
 
 # plot utility of data sets (number of data sets identifying n, n-1, n-2, ...., 1, 0 parameters
 data_utility_plot(data_list_2)
@@ -65,7 +67,8 @@ data_list_3, max_parameter_3, experiment_info_3 = process_info_sample(ident_deta
 parameter_identifibaility_plot(max_parameter_3)
 # plot experiment type in each position based on all parameter
 # identifiable data combinations for each parameter
-parameter_experiment_info_plot(experiment_info_3)
+# parameter_experiment_info_plot(experiment_info_3)
+parameter_experiment_info_spider(experiment_info_3)
 
 # plot utility of data sets (number of data sets identifying n, n-1, n-2, ...., 1, 0 parameters
 data_utility_plot(data_list_3)
