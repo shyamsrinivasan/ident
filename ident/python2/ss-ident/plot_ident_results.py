@@ -53,6 +53,35 @@ def plot_on_axis_object_vertical(axis_obj, x_data, y_data, y_error, y_percent_me
     return None
 
 
+def plot_on_axis_object_polar(axis_obj, x_data, y_data, data_label):
+    """plot on polar axis object. does not work on subplots due to the use of plt.methods toplace axis ticks"""
+    number_of_experiment_types = len(x_data)
+    # get angles for each plot
+    angles = [n / float(number_of_experiment_types) * 2 * np.pi for n in range(number_of_experiment_types)]
+    # close the circle by adding the first angle at the end
+    angles += angles[:1]
+
+    # If you want the first axis to be on top:
+    axis_obj.set_theta_offset(np.pi / 2)
+    axis_obj.set_theta_direction(-1)
+
+    # set x-ticks (experiment types)
+    plt.xticks(angles[:-1], x_data)
+
+    # Draw ylabels
+    axis_obj.set_rlabel_position(0)
+    plt.yticks([25, 50, 75], ["25", "50", "75"], color="grey", size=7)
+    plt.ylim(0, 100)
+
+    # set y_data to be similar to angles (close the circle)
+    y_data += y_data[:1]
+
+    # plot spider data
+    axis_obj.plot(angles, y_data, linewidth=1, linestyle='solid', label=data_label)
+    # axis_obj.fill(angles, y_data, 'b', alpha=0.1)
+    return None
+
+
 def parameter_identifibaility_plot(flux_based_parameter_ident, noise=0):
     """plot parameter identifibaility (number of data combinations identifying
     each parameter in each flux. Paramerers for each flux are plotted in separate subplots"""
@@ -174,7 +203,32 @@ def parameter_experiment_info_plot(flux_based_experiment_info, noise=0):
 def parameter_experiment_info_spider(flux_based_experiment_info, noise=0):
     """get spider plots for frequency of different types contributing towards
     identification of different parameters of each flux"""
-
+    all_sample_all_flux_processed_info = flux_based_experiment_info["processed"]
+    for j_flux, j_flux_data in enumerate(all_sample_all_flux_processed_info):
+        # number_of_subplots = number_of_parameters_in_flux
+        number_of_subplots = 1
+        number_of_rows = 1
+        for k_parameter, k_parameter_data in enumerate(j_flux_data):
+            # get parameter name for figure title
+            parameter_name = ident_parameter_name(k_parameter,
+                                                  flux_name="flux{}".format(k_parameter_data[0]["total"]["flux id"]))
+            # set figure title to parameter name
+            figure_title = "flux {}".format(k_parameter_data[0]["total"]["flux id"]) + " " + parameter_name
+            # separate plots for each parameter (no subplots)
+            f, axarr = plt.subplots(number_of_rows, number_of_subplots, subplot_kw=dict(projection='polar'),
+                                    figsize=(6, 4), dpi=100)
+            f.text(.5, .975, figure_title, horizontalalignment='center', verticalalignment='top')
+            number_of_experiment_positions = len(k_parameter_data)
+            # collect and plot data from all positions
+            for i_position in range(0, number_of_experiment_positions):
+                y_data = k_parameter_data[i_position]["percentage"]["mean"]
+                x_data = range(0, len(y_data))
+                x_data_label = kotte_experiment_type_name(x_data)
+                data_label = "position {}".format(i_position)
+                plot_on_axis_object_polar(axarr, x_data_label, y_data, data_label)
+                # add legend
+                plt.legend(loc='upper right', bbox_to_anchor=(0.1, 0.1))
+            plt.show()
     return None
 
 
