@@ -75,6 +75,39 @@ def kotte_ode(t, y, par_val):
     return np.hstack((yd_pep, yd_fdp, yd_e))
 
 
+def flux_1_Vmax_ident(experimental_data):
+    """v1 identifiability without enzyme"""
+    ac1, x11, x21, _, v11, _, _, _, \
+    ac2, x12, x22, _, v12, _, _, _ = list(experimental_data)
+
+    # flux numerator and denominator w/o sympy
+    # symbolic expression for flux v1 w/o enzyme concentration data
+    v1max_no_enzyme_numerator_value = ac1 * v11 * v12 - ac2 * v11 * v12
+    v1max_no_enzyme_denominator_value = -(ac2 * v11 - ac1 * v12)
+    k1ac_no_enzyme_numerator_value = ac1 * (ac2 * v11 - ac2 * v12)
+    k1ac_no_enzyme_denominator_value = -ac2 * v11 + ac1 * v12
+
+    v1max_no_enzyme_value = v1max_no_enzyme_numerator_value / v1max_no_enzyme_denominator_value
+    k1ac_no_enzyme_value = k1ac_no_enzyme_numerator_value / k1ac_no_enzyme_denominator_value
+    return [v1max_no_enzyme_numerator_value, v1max_no_enzyme_denominator_value, v1max_no_enzyme_value], \
+           [k1ac_no_enzyme_numerator_value, k1ac_no_enzyme_denominator_value, k1ac_no_enzyme_value]
+
+
+def flux_1_kcat_ident(experimental_data):
+    """v1 identifiability with enzyme concentration"""
+    ac1, x11, x21, x31, v11, _, _, _, \
+    ac2, x12, x22, x32, v12, _, _, _ = list(experimental_data)
+
+    k1cat_enzyme_numerator_value = - ac1 * v11 * v12 + ac2 * v11 * v12
+    k1cat_enzyme_denominator_value = -(ac1 * v12 * x31 - ac2 * v11 * x32)
+    k1cat_enzyme_value = k1cat_enzyme_numerator_value / k1cat_enzyme_denominator_value
+    k1ac_enzyme_numerator_value = ac1 * (-ac2 * v12 * x31 + ac2 * v11 * x32)
+    k1ac_enzyme_denominator_value = ac1 * v12 * x31 - ac2 * v11 * x32
+    k1ac_enzyme_value = k1ac_enzyme_numerator_value / k1ac_enzyme_denominator_value
+    return [k1cat_enzyme_numerator_value, k1cat_enzyme_denominator_value, k1cat_enzyme_value], \
+           [k1ac_enzyme_numerator_value, k1ac_enzyme_denominator_value, k1ac_enzyme_value]
+
+
 def flux_1_ident_expression(experimental_data):
     """symbolic and lambdify expression for flux 1 denominator from mathematica"""
     # get variable values (w/o sympy directly from experimental data)
@@ -632,10 +665,16 @@ def write_results_2_file(ident_details, number_fluxes, fp_list, data_list):
     # new_combos = calculate_experiment_combos(ident_details, experiment_details, perturbation_details, data_list)
 
 
-def flux_ident_2_data_combination(all_data, flux_ids, choose=()):
+def flux_ident_2_data_combination(all_data, flux_ids, choose=(), flux_1_choice=0):
     """perform identifiability separately for each set of functions and generate separate identifiability info"""
     # 2 data combination ident list
-    ident_fun_2_data = (flux_1_ident_expression, flux_2_ident_expression)
+    if flux_1_choice == 1:
+        flux_1 = flux_1_Vmax_ident
+    elif flux_1_choice == 2:
+        flux_1 = flux_1_kcat_ident
+    else:
+        flux_1 = flux_1_ident_expression
+    ident_fun_2_data = (flux_1, flux_2_ident_expression)
     all_sample_all_fun_ident_info = multi_sample_ident_fun(ident_fun_2_data, all_data, choose, flux_ids)
     return all_sample_all_fun_ident_info
 
