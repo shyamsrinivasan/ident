@@ -33,7 +33,7 @@ def boolean_ident_info(ident_values, number_of_parameters):
     return p_list, np.array(p_list_boolean)
 
 
-def run_flux_ident(ident_function_list, data, flux_id=()):
+def run_flux_ident(ident_function_list, data, flux_id=(), flux_choice=()):
     """test identifibaility using each function in function list for data set in set"""
     number_of_parameters = 0
     try:
@@ -42,14 +42,17 @@ def run_flux_ident(ident_function_list, data, flux_id=()):
         number_of_parameters_per_flux = [None]
     ident_value_list = []
     flux_id_list = []
+    flux_choice_list = []
     iterator = 0
     if not flux_id:
         flux_id = range(1, len(ident_function_list)+1)
+        flux_choice = [0] * len(ident_function_list)
     try:
         for func, i_d in zip(ident_function_list, flux_id):
             ident_value = func(data)
             ident_value_list.append(ident_value)
             flux_id_list.append(i_d)
+            flux_choice_list.append(flux_choice[iterator])
             number_of_expressions = len(ident_value[0])
             number_of_parameters_per_flux[iterator] = len(ident_value)
             iterator += 1
@@ -58,6 +61,7 @@ def run_flux_ident(ident_function_list, data, flux_id=()):
         ident_value = ident_function_list(data)
         ident_value_list.append(ident_value)
         flux_id_list.append(flux_id)
+        flux_choice_list.append(flux_choice)
         number_of_expressions = len(ident_value[0])
         number_of_parameters_per_flux[iterator] = len(ident_value)
         number_of_parameters += len(ident_value)
@@ -71,10 +75,11 @@ def run_flux_ident(ident_function_list, data, flux_id=()):
         nrows, ncolumns = np.shape(truncated_ident_value)
         ident_value_array[irow:(irow + nrows), :] = truncated_ident_value
         irow += nrows
-    return ident_value_array, number_of_parameters_per_flux, ncolumns, all_flux_ident, flux_id_list
+    return ident_value_array, number_of_parameters_per_flux, ncolumns, all_flux_ident, \
+           flux_id_list, flux_choice_list
 
 
-def get_ident_value(ident_function_list, experimental_data_list, original_data_set_id, flux_ids):
+def get_ident_value(ident_function_list, experimental_data_list, original_data_set_id, flux_ids, flux_choice):
     """perform idetifibaility for each data set by looping through data sets and
     using them to test each function in identifibaility list.
     Also process results into numpy arrays for future parsing, processing and analysis"""
@@ -90,8 +95,8 @@ def get_ident_value(ident_function_list, experimental_data_list, original_data_s
                                                                                len(experimental_data_list),
                                                                                original_data_set_id[index]))
         identifiability_values, number_of_parameters_per_flux, \
-        number_of_expressions_per_parameter, all_fun_ident_values, flux_id_list = run_flux_ident(ident_function_list,
-                                                                                                 data_set, flux_ids)
+        number_of_expressions_per_parameter, all_fun_ident_values, \
+        flux_id_list, flux_choice_list = run_flux_ident(ident_function_list, data_set, flux_ids, flux_choice)
         all_data_ident_lists.append(identifiability_values)
         all_data_all_fun_ident_value.append(all_fun_ident_values)
 
@@ -138,7 +143,7 @@ def get_ident_value(ident_function_list, experimental_data_list, original_data_s
     return all_identifiability_values, number_of_parameters_per_flux, all_fun_array_list
 
 
-def one_sample_ident_fun(ident_fun_list, sample_data, choose, flux_ids):
+def one_sample_ident_fun(ident_fun_list, sample_data, choose, flux_ids, flux_choice):
     """get identifibaility information for a single sample of experimental data
     using identifiablity function list passed as input args"""
     if choose:
@@ -152,17 +157,18 @@ def one_sample_ident_fun(ident_fun_list, sample_data, choose, flux_ids):
     else:
         chosen_values = list(sample_data["values"][:, :])
     # run identification function through every chosen data combination supplied as input
-    _, parameters_per_flux, all_fun_array_list = get_ident_value(ident_fun_list, chosen_values, choose, flux_ids)
+    _, parameters_per_flux, all_fun_array_list = get_ident_value(ident_fun_list, chosen_values, choose,
+                                                                 flux_ids, flux_choice)
     return parameters_per_flux, all_fun_array_list
 
 
-def multi_sample_ident_fun(ident_fun_list, all_data, choose, flux_ids):
+def multi_sample_ident_fun(ident_fun_list, all_data, choose, flux_ids, flux_choice):
     """perform identifibaility analysis for multiple samples by
     looping through each experimental data sample for a list of identifibaility functions"""
     all_sample_ident_details = []
     for i_sample, sample_data in enumerate(all_data):
         parameters_per_flux, one_sample_all_fun_array_list = one_sample_ident_fun(ident_fun_list, sample_data,
-                                                                                  choose, flux_ids)
+                                                                                  choose, flux_ids, flux_choice)
         # process info from each sample (number of samples > 1 when noisy data is used) of experimental data sets
         all_fun_ident_details = []
         for ifun, ifun_data in enumerate(one_sample_all_fun_array_list):
@@ -172,7 +178,8 @@ def multi_sample_ident_fun(ident_fun_list, all_data, choose, flux_ids):
             ident_details = {"boolean": plist_boolean,
                              "values": ifun_data,
                              "parameters": number_of_parameters,
-                             "flux id": flux_ids[ifun]}
+                             "flux id": flux_ids[ifun],
+                             "flux choice": flux_choice[ifun]}
             all_fun_ident_details.append(ident_details)
         all_sample_ident_details.append(all_fun_ident_details)
     return all_sample_ident_details
