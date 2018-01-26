@@ -49,6 +49,9 @@ parameter_experiment_info_spider(experiment_info_2)
 # plot utility of data sets (number of data sets identifying n, n-1, n-2, ...., 1, 0 parameters
 data_utility_plot(data_list_2)
 
+# plot combined data utility
+data_utility_plot(combined_data_list_2)
+
 # get combination of 3 experiments and perform identifiability on all fluxes that require 3 data sets
 print('Practical Identifiability Analysis of fluxes with 3 parameters \n')
 choose_3 = range(0, 4896) # choose numbr of experimental datasets to use of analysis
