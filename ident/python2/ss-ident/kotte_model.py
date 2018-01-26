@@ -1151,31 +1151,31 @@ def write_results_2_file(ident_details, number_fluxes, fp_list, data_list):
     # new_combos = calculate_experiment_combos(ident_details, experiment_details, perturbation_details, data_list)
 
 
-def flux_ident_2_data_combination(all_data, flux_ids, choose=(), flux_1_choice=0):
+def flux_ident_2_data_combination(all_data, flux_ids, choose=(), flux_choice=()):
     """perform identifiability separately for each set of functions and generate separate identifiability info"""
     # 2 data combination ident list
-    if flux_1_choice == 1:
+    if flux_choice[0] == 1:
         flux_1 = flux_1_Vmax_ident
-    elif flux_1_choice == 2:
+    elif flux_choice[0] == 2:
         flux_1 = flux_1_kcat_ident
     else:
         flux_1 = flux_1_ident_expression
     ident_fun_2_data = (flux_1, flux_2_ident_expression)
-    all_sample_all_fun_ident_info = multi_sample_ident_fun(ident_fun_2_data, all_data, choose, flux_ids)
+    all_sample_all_fun_ident_info = multi_sample_ident_fun(ident_fun_2_data, all_data, choose, flux_ids, flux_choice)
     return all_sample_all_fun_ident_info
 
 
-def flux_ident_3_data_combination(all_data, flux_ids, choose=(), flux_3_choice=0):
+def flux_ident_3_data_combination(all_data, flux_ids, choose=(), flux_choice=()):
     """perform identifiability separately for each set of functions and generate separate identifiability info"""
     # 3 data combination ident list
-    if flux_3_choice == 1:
+    if flux_choice[0] == 1:
         flux_3 = flux_3_value1_ident
-    elif flux_3_choice == 2:
+    elif flux_choice[0] == 2:
         flux_3 = flux_3_value2_ident
     else:
         flux_3 = flux_3_ident_expression
     ident_fun_3_data = (flux_3)
-    all_sample_all_fun_ident_info = multi_sample_ident_fun(ident_fun_3_data, all_data, choose, flux_ids)
+    all_sample_all_fun_ident_info = multi_sample_ident_fun(ident_fun_3_data, all_data, choose, flux_ids, flux_choice)
     return all_sample_all_fun_ident_info
 
 
