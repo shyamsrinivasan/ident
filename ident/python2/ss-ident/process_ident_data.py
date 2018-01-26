@@ -193,11 +193,12 @@ def data_usefulness_percentage(ident_details):
                        'total': total_number_of_data,           # number of data combinations that id x parameters
                        'percentage': percentage_of_total,       # percentage of data combinations that id x parameters
                        'number of data combinations': number_data,  # total number of data combinations used
-                       'flux id': ident_details["flux id"]}     # flux id of data being processed
+                       'flux id': ident_details["flux id"],         # flux id of data being processed
+                       'flux choice': ident_details["flux choice"]} # choice of flux version being identified
     return data_usefulness
 
 
-def experiments_in_ident_data(boolean_ident_data, experiment_data, experiment_type_index, flux_id):
+def experiments_in_ident_data(boolean_ident_data, experiment_data, experiment_type_index, flux_id, flux_choice):
     """get all data combinations identifying a given parameter within a given flux (passed as input)
     and identify experiments used within the identifying data combination"""
     number_of_data, number_of_parameter = boolean_ident_data.shape
@@ -246,7 +247,8 @@ def experiments_in_ident_data(boolean_ident_data, experiment_data, experiment_ty
                                                  "percentage": experiment_type_percentage,
                                                  "data id": experiment_type_data_id,
                                                  "position": j_position_in_combination,
-                                                 "flux id": flux_id})
+                                                 "flux id": flux_id,
+                                                 "flux choice": flux_choice})
         all_parameter_experiment_type_info.append(all_position_experiment_info)
         print("Experiment type analysis for parameter {} complete \n".format(j_parameter + 1))
 
@@ -263,7 +265,8 @@ def flux_based_experiment_info(sample_ident_info, experiment_details, experiment
         parameter_experiment_type_info = experiments_in_ident_data(j_flux_detail["boolean"],
                                                                    experiment_details,
                                                                    experiment_type_indices,
-                                                                   flux_id=j_flux_detail["flux id"])
+                                                                   flux_id=j_flux_detail["flux id"],
+                                                                   flux_choice=j_flux_detail["flux choice"])
         all_flux_experiment_type_info.append(parameter_experiment_type_info)
         print("Identifying experiments for flux {} of {} complete \n".format(j_flux + 1, number_of_fluxes))
     return all_flux_experiment_type_info
@@ -327,7 +330,8 @@ def parameter_identifiability(ident_details):
                      "maximum id": max_parameter_id,
                      "info": identifying_data,
                      "percentage": identifying_data_percentage,
-                     "flux id": ident_details["flux id"]}
+                     "flux id": ident_details["flux id"],
+                     "flux choice": ident_details["flux choice"]}
     return max_parameter
 
 
@@ -381,10 +385,15 @@ def collate_flux_based_data(sample_ident_detail):
             flux_id_list.append(i_flux_detail["flux id"])
         except NameError:
             flux_id_list = [i_flux_detail["flux id"]]
+        try:
+            flux_choice_list.append(i_flux_detail["flux choice"])
+        except NameError:
+            flux_choice_list = [i_flux_detail["flux choice"]]
     combined_flux_ident_data = {"boolean": all_flux_boolean,
                                 "values": all_flux_values,
                                 "parameters": all_flux_parameters,
-                                "flux id": flux_id_list}
+                                "flux id": flux_id_list,
+                                "flux choice": flux_choice_list}
     return combined_flux_ident_data
 
 
@@ -413,11 +422,13 @@ def collate_sample_based_data_utility(number_of_fluxes_per_sample, all_sample_da
         j_flux_processed_total = {"mean": j_flux_total_mean,
                                   "std": j_flux_total_std,
                                   "number": j_flux_number_mean,
-                                  "flux id": all_sample_data_list[0][j_flux]["flux id"]}
+                                  "flux id": all_sample_data_list[0][j_flux]["flux id"],
+                                  "flux choice": all_sample_data_list[0][j_flux]["flux choice"]}
         j_flux_processed_percent = {"mean": j_flux_percent_mean,
                                     "std": j_flux_percent_std,
                                     "number": j_flux_number_mean,
-                                    "flux id": all_sample_data_list[0][j_flux]["flux id"]}
+                                    "flux id": all_sample_data_list[0][j_flux]["flux id"],
+                                    "flux choice": all_sample_data_list[0][j_flux]["flux choice"]}
         all_flux_data_list.append({"total": j_flux_processed_total,
                                    "percentage": j_flux_processed_percent})
     return all_flux_data_list
@@ -446,10 +457,12 @@ def collate_sample_based_identifibaility(number_of_fluxes_per_sample, all_sample
         j_flux_percent_std = list(np.std(np.array(j_flux_data_percent), axis=0))
         j_flux_processed_total = {"mean": j_flux_info_mean,
                                   "std": j_flux_info_std,
-                                  "flux id": all_sample_max_parameter[0][j_flux]["flux id"]}
+                                  "flux id": all_sample_max_parameter[0][j_flux]["flux id"],
+                                  "flux choice": all_sample_max_parameter[0][j_flux]["flux choice"]}
         j_flux_processed_percent = {"mean": j_flux_percent_mean,
                                     "std": j_flux_percent_std,
-                                    "flux id": all_sample_max_parameter[0][j_flux]["flux id"]}
+                                    "flux id": all_sample_max_parameter[0][j_flux]["flux id"],
+                                    "flux choice": all_sample_max_parameter[0][j_flux]["flux choice"]}
         all_flux_max_parameter.append({"total": j_flux_processed_total,
                                        "percentage": j_flux_processed_percent})
     return all_flux_max_parameter
@@ -487,11 +500,15 @@ def collate_sample_based_experiment_info(number_of_fluxes_per_sample, all_sample
                 i_position_frequency_info = {"mean": i_position_frequency_mean,
                                              "std": i_position_frequency_std,
                                              "flux id": all_sample_experiment_list[0][j_flux]
-                                             [k_parameter][i_position]["flux id"]}
+                                             [k_parameter][i_position]["flux id"],
+                                             "flux choice": all_sample_experiment_list[0][j_flux]
+                                             [k_parameter][i_position]["flux choice"]}
                 i_position_percent_info = {"mean": i_position_percent_mean,
                                            "std": i_position_percent_std,
                                            "flux id": all_sample_experiment_list[0][j_flux]
-                                           [k_parameter][i_position]["flux id"]}
+                                           [k_parameter][i_position]["flux id"],
+                                           "flux choice": all_sample_experiment_list[0][j_flux]
+                                           [k_parameter][i_position]["flux choice"]}
                 # collect data on each position
                 all_position_info.append({"total": i_position_frequency_info,
                                           "percentage": i_position_percent_info,
@@ -536,12 +553,14 @@ def combined_sample_based_averages_data_utility(all_sample_combined_flux_data_li
                            "std": sample_total_std,
                            "number": sample_number_mean,
                            "total data": all_sample_combined_flux_data_list[0]["number of data combinations"],
-                           "flux id": all_sample_combined_flux_data_list[0]["flux id"]}
+                           "flux id": all_sample_combined_flux_data_list[0]["flux id"],
+                           "flux choice": all_sample_combined_flux_data_list[0]["flux choice"]}
     all_processed_percent = {"mean": sample_percent_mean,
                              "std": sample_percent_std,
                              "number": sample_number_mean,
                              "total data": all_sample_combined_flux_data_list[0]["number of data combinations"],
-                             "flux id": all_sample_combined_flux_data_list[0]["flux id"]}
+                             "flux id": all_sample_combined_flux_data_list[0]["flux id"],
+                             "flux choice": all_sample_combined_flux_data_list[0]["flux choice"]}
     return {"total": all_processed_total, "percent": all_processed_percent}
 
 
@@ -568,11 +587,15 @@ def combined_sample_based_averages_experiment_info(all_sample_combined_flux_expe
             i_position_frequency_info = {"mean": i_position_frequency_mean,
                                          "std": i_position_frequency_std,
                                          "flux id": all_sample_combined_flux_experiment_info[0]
-                                         [j_parameter][i_position]["flux id"]}
+                                         [j_parameter][i_position]["flux id"],
+                                         "flux choice": all_sample_combined_flux_experiment_info[0]
+                                         [j_parameter][i_position]["flux choice"]}
             i_position_percent_info = {"mean": i_position_percent_mean,
                                        "std": i_position_percent_std,
                                        "flux id": all_sample_combined_flux_experiment_info[0]
-                                       [j_parameter][i_position]["flux id"]}
+                                       [j_parameter][i_position]["flux id"],
+                                       "flux choice": all_sample_combined_flux_experiment_info[0]
+                                       [j_parameter][i_position]["flux choice"]}
             # collect data on each position
             all_position_info.append({"frequency": i_position_frequency_info,
                                       "percentage": i_position_percent_info,
@@ -620,7 +643,8 @@ def process_info_sample(ident_details, experiment_details, experiment_type_indic
             combined_flux_experiment_info = experiments_in_ident_data(combined_flux_ident_data["boolean"],
                                                                       experiment_details[j_sample],
                                                                       experiment_type_indices,
-                                                                      combined_flux_ident_data["flux id"])
+                                                                      combined_flux_ident_data["flux id"],
+                                                                      combined_flux_ident_data["flux choice"])
             all_sample_combined_flux_experiment_info.append(combined_flux_experiment_info)
             print("Combined flux identifiability analysis complete \n")
 
