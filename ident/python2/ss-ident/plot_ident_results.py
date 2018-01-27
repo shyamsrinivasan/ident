@@ -111,8 +111,10 @@ def parameter_identifibaility_plot(flux_based_parameter_ident, noise=0):
             x_percent_mean = i_flux_info["percentage"]["mean"]
             x_percent_std = i_flux_info["percentage"]["std"]
             # get parameter id/name for y-axis labels
-            flux_name = ["flux{}".format(i_flux_info["total"]["flux id"])]*len(y_data)
-            parameter_name = ident_parameter_name(y_data, flux_name=flux_name)
+            flux_name = ["flux{}".format(i_flux_info["total"]["flux id"])] * len(y_data)
+            flux_choice_id = [i_flux_info["total"]["flux choice"]] * len(y_data)
+            parameter_name = ident_parameter_name(y_data, flux_name=flux_name,
+                                                  flux_choice_id=flux_choice_id)
             # plot and annotate using plotting function defined above
             plot_on_axis_object(i_axis_obj, x_data, y_data, x_error, x_percent_mean, x_percent_std, noise)
             # set y-axis tick labels
@@ -135,7 +137,8 @@ def parameter_identifibaility_plot(flux_based_parameter_ident, noise=0):
             x_percent_std = i_flux_info["percentage"]["std"]
             # get parameter id/name for y-axis labels
             flux_name = ["flux{}".format(i_flux_info["total"]["flux id"])] * len(y_data)
-            parameter_name = ident_parameter_name(y_data, flux_name=flux_name)
+            flux_choice_id = [i_flux_info["total"]["flux choice"]] * len(y_data)
+            parameter_name = ident_parameter_name(y_data, flux_name=flux_name, flux_choice_id=flux_choice_id)
             # plot and annotate using plotting function defined above
             plot_on_axis_object(axarr, x_data, y_data, x_error, x_percent_mean, x_percent_std, noise)
             # set y-axis tick labels
@@ -165,7 +168,8 @@ def parameter_experiment_info_plot(flux_based_experiment_info, noise=0):
                                     figsize=(8, 6), dpi=100, facecolor='w', edgecolor='k')
             # get parameter name for figure title
             parameter_name = ident_parameter_name(k_parameter,
-                                                  flux_name="flux{}".format(k_parameter_data[0]["total"]["flux id"]))
+                                                  flux_name="flux{}".format(k_parameter_data[0]["total"]["flux id"]),
+                                                  flux_choice_id=k_parameter_data[0]["total"]["flux choice"])
             # set figure title to parameter name
             figure_title = "flux {}".format(k_parameter_data[0]["total"]["flux id"]) + " " + parameter_name
             f.text(.5, .975, figure_title, horizontalalignment='center', verticalalignment='top')
@@ -220,7 +224,8 @@ def parameter_experiment_info_spider(flux_based_experiment_info, noise=0):
         for k_parameter, k_parameter_data in enumerate(j_flux_data):
             # get parameter name for figure title
             parameter_name = ident_parameter_name(k_parameter,
-                                                  flux_name="flux{}".format(k_parameter_data[0]["total"]["flux id"]))
+                                                  flux_name="flux{}".format(k_parameter_data[0]["total"]["flux id"]),
+                                                  flux_choice_id=k_parameter_data[0]["total"]["flux choice"])
             # set figure title to parameter name
             figure_title = "flux {}".format(k_parameter_data[0]["total"]["flux id"]) + " " + parameter_name
             # separate plots for each parameter (no subplots)
@@ -265,7 +270,8 @@ def data_utility_plot(data_list, noise=0):
             y_percent_std = i_flux_info["percentage"]["std"]
             plot_on_axis_object_vertical(i_axis_obj, x_data, y_data, y_error, y_percent_mean, y_percent_std, noise)
             # set axis title
-            i_axis_obj.set_title('v{} parameters'.format(i_flux_info["total"]["flux id"]))
+            i_axis_obj.set_title('v{} parameters type {}'.format(i_flux_info["total"]["flux id"],
+                                                                 i_flux_info["total"]["flux choice"]))
             # set x-axis ticks
             max_x_data = max(max_x_data, x_data)
         # set x-axis and y-axis labels
@@ -286,7 +292,8 @@ def data_utility_plot(data_list, noise=0):
             y_percent_std = i_flux_info["percentage"]["std"]
             plot_on_axis_object_vertical(axarr, x_data, y_data, y_error, y_percent_mean, y_percent_std, noise)
             # set axis title
-            axarr.set_title('v{} parameters'.format(i_flux_info["total"]["flux id"]))
+            axarr.set_title('v{} parameters type {}'.format(i_flux_info["total"]["flux id"],
+                                                            i_flux_info["total"]["flux choice"]))
             # set x-axis ticks
             max_x_data = max(max_x_data, x_data)
         axarr.set_xlabel('Number of parameters identified')
