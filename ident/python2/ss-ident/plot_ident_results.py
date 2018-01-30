@@ -239,7 +239,7 @@ def parameter_experiment_info_spider(flux_based_experiment_info, noise=0):
                 y_data = k_parameter_data[i_position]["percentage"]["mean"]
                 x_data = range(0, len(y_data))
                 x_data_label = kotte_experiment_type_name(x_data)
-                data_label = "position {}".format(i_position)
+                data_label = "experiment {}".format(i_position)
                 plot_on_axis_object_polar(axarr, x_data_label, y_data, data_label, all_fill_colors[i_position])
                 # add legend
                 plt.legend(loc='upper right', bbox_to_anchor=(0.1, 0.1))
