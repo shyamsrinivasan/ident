@@ -28,7 +28,8 @@ choose_2 = range(0, 306) # choose numbr of experimental datasets to use of analy
 # get combinations of experimental datasets
 experimental_datasets_2_expts = \
     arrange_experimental_data(exp_xss, exp_fss, perturbation_details, 2, exp_flux_index, choose_2)
-ident_details_2 = flux_ident_2_data_combination(experimental_datasets_2_expts, choose=choose_2, flux_ids=[1, 2])
+ident_details_2 = flux_ident_2_data_combination(experimental_datasets_2_expts, choose=choose_2,
+                                                flux_ids=[1, 2], flux_choice=[1, 0])
 print('Identifiability analysis for fluxes with 2 parameters complete.\n')
 # data processing
 experiment_type_indices = [[0], [1, 2], [3, 4, 5, 6, 7], [8, 9, 10, 11, 12], [13, 14, 15, 16, 17]]
@@ -54,7 +55,8 @@ choose_3 = range(0, 4896) # choose numbr of experimental datasets to use of anal
 # get combinations of experimental datasets
 experimental_datasets_3_expts = \
     arrange_experimental_data(exp_xss, exp_fss, perturbation_details, 3, exp_flux_index, choose=choose_3)
-ident_details_3 = flux_ident_3_data_combination(experimental_datasets_3_expts, choose=choose_3, flux_ids=[3])
+ident_details_3 = flux_ident_3_data_combination(experimental_datasets_3_expts, choose=choose_3,
+                                                flux_ids=[3], flux_choice=[1])
 print('Identifiability analysis for fluxes with 2 parameters complete.\n')
 # data processing
 data_list_3, max_parameter_3, experiment_info_3 = process_info_sample(ident_details_3,
