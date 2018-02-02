@@ -2,20 +2,21 @@ from generate_noisy_data import generate_no_noise_data
 from generate_noisy_data import generate_noisy_data
 from generate_noisy_data import run_no_noise_parameter_perturbation
 from generate_noisy_data import run_noisy_parameter_perturbation
+from plot_ident_results import plot_dynamic_sim_concentrations
 
 
-def initialize_to_ss(y0, cvode_options, ode_parameter_values, noise=1):
+def initialize_to_ss(y0, cvode_options, ode_parameter_values, noise=1, kinetics=1):
     """initialize system to ss from any y0 with given options and system parameters"""
     if noise:
         # get initial noisy system steady state
         initial_options = (cvode_options, ode_parameter_values)
-        noisy_initial_ss, _, _, _ = generate_noisy_data(y0, initial_options, 1)
-        return noisy_initial_ss
+        noisy_initial_ss, noisy_initial_dyn, _, _ = generate_noisy_data(y0, initial_options, 1)
+        return noisy_initial_ss, noisy_initial_dyn
     else:
         # get initial noisy system steady state
         initial_options = (cvode_options, ode_parameter_values)
-        initial_ss, _, = generate_no_noise_data(y0, initial_options, 1)
-        return initial_ss
+        initial_ss, initial_dyn, = generate_no_noise_data(y0, initial_options, kinetics=kinetics)
+        return initial_ss, initial_dyn
 
 
 def perturb_parameters(initial_ss, parameter_perturbations, cvode_options, ode_parameter_values,
@@ -35,17 +36,15 @@ def perturb_parameters(initial_ss, parameter_perturbations, cvode_options, ode_p
         return no_noise_ss, perturbation_details
 
 
-def generate_expdata(y0, cvode_options, ode_parameter_values, number_of_samples=1, noise=1):
+def generate_expdata(y0, cvode_options, ode_parameter_values, number_of_samples=1, noise=1, kinetics=1, dynamic_plot=0):
     """generate noisy experimental data for kotte network to test identifiability"""
 
     # get initial noisy system steady state
-    initial_ss = initialize_to_ss(y0, cvode_options, ode_parameter_values, noise)
+    initial_ss, initial_dyn = initialize_to_ss(y0, cvode_options, ode_parameter_values, noise, kinetics=kinetics)
 
     # plot all dynamic courses
-    # plot_multiple_dynamics(noisy_dynamic)
-    # plt.close("all")
-    # plot_multiple_dynamics(dynamic_info)
-    # plt.close("all")
+    if dynamic_plot:
+        plot_dynamic_sim_concentrations(initial_dyn)
 
     # all parameter perturbations
     parameter_perturbation = [(14, 0), (14, 4), (14, 9),
