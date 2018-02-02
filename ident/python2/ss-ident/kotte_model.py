@@ -6,13 +6,32 @@ from identifiability_analysis import multi_sample_ident_fun
 from identifiability_analysis import get_ident_value
 
 # K1ac, K3fdp, L3fdp, K3pep, K2pep, vemax, Kefdp, ne, d, V4max, k1cat, V3max, V2max, ac
-def_par_val = np.array([.1, .1, 4e6, .1, .3, 1.1, .45, 2, .25, .2, 1, 1, 1, .1])
+# def_par_val = np.array([.1, .1, 4e6, .1, .3, 1.1, .45, 2, .25, .2, 1, 1, 1, .1])
+def_par_val = {"K1ac": np.array([.1]), "K3fdp": np.array([.1]), "L3fdp": np.array([4e6]), "K3pep": np.array([.1]),
+               "K2pep": np.array([.3]),
+               "vemax": np.array([1.1]), "Kefdp": np.array([.45]), "ne": np.array([2]), "d": np.array([.25]),
+               "V4max": np.array([.2]),
+               "k1cat": np.array([1]), "V3max": np.array([1]), "V2max": np.array([1]),
+               "ac": np.array([.1])}
 
 
 def kotte_ck_flux(y, p=def_par_val):
     """calculate flux using convenience kinetics"""
 
-    K1ac, K3fdp, L3fdp, K3pep, K2pep, vemax, Kefdp, ne, d, V4max, k1cat, V3max, V2max, ac = p
+    # K1ac, K3fdp, L3fdp, K3pep, K2pep, vemax, Kefdp, ne, d, V4max, k1cat, V3max, V2max, ac = p
+    K1ac = p["K1ac"]
+    K3fdp = p["K3fdp"]
+    K3pep = p["K3pep"]
+    K2pep = p["K2pep"]
+    vemax = p["vemax"]
+    Kefdp = p["Kefdp"]
+    ne = p["ne"]
+    d = p["d"]
+    V4max = p["V4max"]
+    k1cat = p["k1cat"]
+    V3max = p["V3max"]
+    V2max = p["V2max"]
+    ac = p["ac"]
 
     flux_1 = k1cat * y[2] * ac / (ac + K1ac)
     flux_2 = vemax * (1 - 1 / (1 + (Kefdp / y[1]) ** ne))
@@ -46,7 +65,21 @@ def kotte_ck_ode(t, y, par_val):
 def kotte_flux(y, p=def_par_val):
     """function doc_string"""
 
-    K1ac, K3fdp, L3fdp, K3pep, K2pep, vemax, Kefdp, ne, d, V4max, k1cat, V3max, V2max, ac = p
+    # K1ac, K3fdp, L3fdp, K3pep, K2pep, vemax, Kefdp, ne, d, V4max, k1cat, V3max, V2max, ac = p
+    K1ac = p["K1ac"]
+    K3fdp = p["K3fdp"]
+    L3fdp = p["L3fdp"]
+    K3pep = p["K3pep"]
+    K2pep = p["K2pep"]
+    vemax = p["vemax"]
+    Kefdp = p["Kefdp"]
+    ne = p["ne"]
+    d = p["d"]
+    V4max = p["V4max"]
+    k1cat = p["k1cat"]
+    V3max = p["V3max"]
+    V2max = p["V2max"]
+    ac = p["ac"]
 
     flux_1 = k1cat*y[2]*ac/(ac+K1ac)
     flux_2 = vemax*(1-1/(1+(Kefdp/y[1])**ne))
