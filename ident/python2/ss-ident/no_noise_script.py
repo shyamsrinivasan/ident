@@ -17,7 +17,7 @@ ode_parameter_values = np.array([.1, .1, 4e6, .1, .3, 1.1, .45, 2, .25, .2, 1, 1
 
 # get experimental system steady state data without noise
 exp_xss, exp_fss, exp_ssid, perturbation_details = \
-    generate_expdata(y0, cvode_options, ode_parameter_values, noise=0)
+    generate_expdata(y0, cvode_options, ode_parameter_values, noise=0, kinetics=1)
 
 # arrange experimental data to form multiple data sets
 exp_flux_index = np.array([0, 3, 2, 4])
