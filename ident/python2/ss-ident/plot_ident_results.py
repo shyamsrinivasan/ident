@@ -304,3 +304,19 @@ def data_utility_plot(data_list, noise=0):
         axarr.set_xticklabels(max_x_data)
     plt.show()
     return None
+
+
+def plot_dynamic_sim_concentrations(dynamic_data, multiple=0):
+    """plot dynamic time course profiles of all concentrations present in y vector"""
+    if multiple:
+        pass
+    else:
+        f, ax_obj = plt.subplots(1, 1, figsize=(8, 6), dpi=100, facecolor='w', edgecolor='k')
+        x_data = dynamic_data["time"]
+        y_data = dynamic_data["y"]
+        ax_obj.plot(x_data, y_data)
+        ax_obj.set_xlabel('Time (s)')
+        ax_obj.set_ylabel('Concentrations (a.u.)')
+        ax_obj.set_title('Dynamic Concentrations')
+    plt.show()
+    return None
