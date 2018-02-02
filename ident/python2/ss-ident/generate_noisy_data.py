@@ -65,7 +65,7 @@ def run_parameter_perturbation(parameter_perturbation, y0, other_options):
 
 
 def generate_no_noise_data(y0, all_options, kinetics):
-    steady_state_info, dynamic_info = generate_data(y0, all_options, kinetics)
+    steady_state_info, dynamic_info = generate_data(y0, all_options, kinetics=kinetics)
     # dynamic data
     concentration_dynamic = dynamic_info["y"]
     flux_dynamic = dynamic_info["flux"]
