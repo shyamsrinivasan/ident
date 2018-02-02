@@ -13,7 +13,21 @@ from plot_ident_results import parameter_experiment_info_spider
 y0 = np.array([5, 1, 1])
 # default parameter values
 cvode_options = ('Newton', 'Adams', 1e-10, 1e-10, 200)
-ode_parameter_values = np.array([.1, .1, 4e6, .1, .3, 1.1, .45, 2, .25, .2, 1, 1, 1, .1])
+# ode_parameter_values = np.array([.1, .1, 4e6, .1, .3, 1.1, .45, 2, .25, .2, 1, 1, 1, .1])
+ode_parameter_values = {"K1ac": np.array([.1]),
+                        "K3fdp": np.array([.1]),
+                        "L3fdp": np.array([4e6]),
+                        "K3pep": np.array([.1]),
+                        "K2pep": np.array([.3]),
+                        "vemax": np.array([1.1]),
+                        "Kefdp": np.array([.45]),
+                        "ne": np.array([2]),
+                        "d": np.array([.25]),
+                        "V4max": np.array([.2]),
+                        "k1cat": np.array([1]),
+                        "V3max": np.array([1]),
+                        "V2max": np.array([1]),
+                        "ac": np.array([.1])}
 
 # get experimental system steady state data without noise
 exp_xss, exp_fss, exp_ssid, perturbation_details = \
