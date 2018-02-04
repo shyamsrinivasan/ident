@@ -47,14 +47,14 @@ def generate_expdata(y0, cvode_options, ode_parameter_values, number_of_samples=
         plot_dynamic_sim_concentrations(initial_dyn)
 
     # all parameter perturbations
-    parameter_perturbation = [(14, 0), (14, 4), (14, 9),
-                              (11, .1), (11, .5), (11, 1), (11, -.1), (11, -.5),
-                              (12, .1), (12, .5), (12, 1), (12, -.1), (12, -.5),
-                              (13, .1), (13, .5), (13, 1), (13, -.1), (13, -.5)]
-    parameter_perturbations = [{"ac": 0}, {"ac": 4}, {"ac": 9},
-                               {"k1cat": .1}, {"k1cat": .5}, {"k1cat": 1}, {"k1cat": -.1}, {"k1cat": -.5},
-                               {"V3max": .1}, {"V3max": .5}, {"V3max": 1}, {"V3max": -.1}, {"V3max": -.5},
-                               {"V2max": .1}, {"V2max": .5}, {"V2max": 1}, {"V2max": -.1}, {"V2max": -.5}]
+    # parameter_perturbation = [(14, 0), (14, 4), (14, 9),
+    #                           (11, .1), (11, .5), (11, 1), (11, -.1), (11, -.5),
+    #                           (12, .1), (12, .5), (12, 1), (12, -.1), (12, -.5),
+    #                           (13, .1), (13, .5), (13, 1), (13, -.1), (13, -.5)]
+    parameter_perturbation = [{"ac": 0}, {"ac": 4}, {"ac": 9},
+                              {"k1cat": .1}, {"k1cat": .5}, {"k1cat": 1}, {"k1cat": -.1}, {"k1cat": -.5},
+                              {"V3max": .1}, {"V3max": .5}, {"V3max": 1}, {"V3max": -.1}, {"V3max": -.5},
+                              {"V2max": .1}, {"V2max": .5}, {"V2max": 1}, {"V2max": -.1}, {"V2max": -.5}]
     try:
         perturbed_ss, perturbation_details = perturb_parameters(initial_ss[0], parameter_perturbation,
                                                                 cvode_options, ode_parameter_values,
