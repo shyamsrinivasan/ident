@@ -4,7 +4,7 @@ from kotte_model import *
 from simulate_ode import run_ode_sims
 from add_noise import add_noise_dynamic
 from plot_profiles import plot_multiple_dynamics
-# from copy import deepcopy
+from copy import deepcopy
 
 
 def generate_data(y0, all_options, kinetics):
@@ -77,9 +77,9 @@ def generate_no_noise_data(y0, all_options, kinetics):
     else:
         bistable = 0
     dynamic_info = {"y": concentration_dynamic, "flux": flux_dynamic,
-                          "time": dynamic_info["time"], "ssid": bistable}
+                    "time": dynamic_info["time"], "ssid": bistable}
     steady_state_info = {"y": concentration_dynamic[-1, :],
-                               "flux": flux_dynamic[-1, :], "ssid": bistable}
+                         "flux": flux_dynamic[-1, :], "ssid": bistable}
     return steady_state_info, dynamic_info
 
 
@@ -117,28 +117,31 @@ def generate_noisy_data(y0, all_options, kinetics, number_of_samples=1):
            steady_state_info, dynamic_info
 
 
-def run_no_noise_parameter_perturbation(parameter_perturbation, y0, other_options, plot_arg=0):
+def run_no_noise_parameter_perturbation(parameter_perturbation, y0, other_options, plot_arg=0, kinetics=1):
     """run parameter perturbations based on tuple input parameter perturbation
         with first position of tuple being parameter id and second index being
         parameter value"""
 
-    ode_parameters = tuple(other_options['ode_parameters'])
+    ode_parameters = other_options['ode_parameters']
     cvode_options = other_options['cvode_options']
     ss_info = []
     dynamic_info = []
     experiment_info_boolean = []
-    perturbed_parameter = np.zeros((len(parameter_perturbation), len(ode_parameters)))
-    perturbation_indices = np.zeros((len(parameter_perturbation), 2))
+    # perturbed_parameter = np.zeros((len(parameter_perturbation), len(ode_parameters)))
+    perturbed_parameter = []
+    # perturbation_indices = np.zeros((len(parameter_perturbation), 2))
+    perturbation_indices = []
     perturbation_ssid = np.zeros((len(parameter_perturbation), 2))
 
-    for index, p_value in enumerate(parameter_perturbation):
+    for index, perturbation_value in enumerate(parameter_perturbation):
         print('Perturbation {}\n'.format(index + 1))
-        parameter_id, parameter_change = p_value
-        changed_ode_parameter = np.array(ode_parameters[:])
-        changed_ode_parameter[parameter_id - 1] = changed_ode_parameter[parameter_id - 1] * (1 + parameter_change)
+        parameter_name = perturbation_value.keys()[0]
+        parameter_change = np.array(perturbation_value.values()[0])
+        changed_ode_parameter = deepcopy(ode_parameters)
+        changed_ode_parameter[parameter_name] = changed_ode_parameter[parameter_name] * (1 + parameter_change)
         all_options = (cvode_options, changed_ode_parameter)
         # generate data using MWC Kinetics
-        ss_iter, dynamic_iter = generate_no_noise_data(y0, all_options, 1)
+        ss_iter, dynamic_iter = generate_no_noise_data(y0, all_options, kinetics=kinetics)
         ss_info.append(ss_iter)
         dynamic_info.append(dynamic_iter)
         # initial ss info
@@ -149,11 +152,13 @@ def run_no_noise_parameter_perturbation(parameter_perturbation, y0, other_option
         # final ss info
         perturbation_ssid[index, 1] = ss_iter["ssid"]
 
-        perturbed_parameter[index, :] = changed_ode_parameter[:]
-        perturbation_indices[index, :] = parameter_id - 1, parameter_change
-        boolean_info = [False] * len(ode_parameters)
-        boolean_info[parameter_id - 1] = True
-        experiment_info_boolean.append(boolean_info)
+        # perturbed_parameter[index, :] = changed_ode_parameter[:]
+        perturbed_parameter.append(changed_ode_parameter)
+        # perturbation_indices[index, :] = parameter_id - 1, parameter_change
+        perturbation_indices.append(perturbation_value)
+        # boolean_info = [False] * len(ode_parameters)
+        # boolean_info[parameter_id - 1] = True
+        # experiment_info_boolean.append(boolean_info)
 
     # plot all dynamic courses
     if plot_arg:
@@ -165,7 +170,7 @@ def run_no_noise_parameter_perturbation(parameter_perturbation, y0, other_option
     perturbation_field_names = ['values', 'indices', 'original', 'boolean', 'ssid']
     perturbation_details = dict(zip(perturbation_field_names,
                                     [perturbed_parameter, perturbation_indices,
-                                     np.array(ode_parameters[:]), np.array(experiment_info_boolean[:]),
+                                     ode_parameters, experiment_info_boolean,
                                      perturbation_ssid]))
     return ss_info, dynamic_info, perturbation_details
 
