@@ -3,7 +3,7 @@ import itertools as it
 
 
 def parameter_change(new_value, old_value):
-    return (new_value - old_value) / old_value
+    return (new_value - old_value) *100 / old_value
 
 
 def get_changed_parameters(original_parameters, changed_parameters, experiment_index, parameter_index):
