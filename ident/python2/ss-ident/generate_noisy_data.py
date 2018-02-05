@@ -140,7 +140,7 @@ def run_no_noise_parameter_perturbation(parameter_perturbation, y0, other_option
         changed_ode_parameter = deepcopy(ode_parameters)
         changed_ode_parameter[parameter_name] = changed_ode_parameter[parameter_name] * (1 + parameter_change)
         all_options = (cvode_options, changed_ode_parameter)
-        # generate data using MWC Kinetics
+        # generate data using MWC or Convinience Kinetics (choice specified using "kinetics" parameter
         ss_iter, dynamic_iter = generate_no_noise_data(y0, all_options, kinetics=kinetics)
         ss_info.append(ss_iter)
         dynamic_info.append(dynamic_iter)
@@ -163,8 +163,8 @@ def run_no_noise_parameter_perturbation(parameter_perturbation, y0, other_option
     # plot all dynamic courses
     if plot_arg:
         plot_multiple_dynamics(dynamic_info)
-        plt.close("all")
-        plot_multiple_dynamics(dynamic_info)
+        # plt.close("all")
+        # plot_multiple_dynamics(dynamic_info)
         plt.close("all")
 
     perturbation_field_names = ['values', 'indices', 'original', 'boolean', 'ssid']
