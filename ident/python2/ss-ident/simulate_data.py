@@ -92,23 +92,19 @@ def data_for_each_sample(perturbation_details, experiments_per_set,
                                                     experiment_index=index,
                                                     parameter_index=experiment_indices[index].keys()[0])
             try:
-                changes["parameter value"] = [changes["parameter value"],
-                                              parameter_list["parameter value"]]
+                changes["parameter value"] = np.append(changes["parameter value"], parameter_list["parameter value"])
             except KeyError:
                 changes["parameter value"] = parameter_list["parameter value"]
             try:
-                changes["parameter name"] = [changes["parameter name"],
-                                             parameter_list["parameter name"]]
+                changes["parameter name"].append(parameter_list["parameter name"])
             except KeyError:
-                changes["parameter name"] = parameter_list["parameter name"]
+                changes["parameter name"] = [parameter_list["parameter name"]]
             try:
-                changes["experiment index"] = [changes["experiment index"],
-                                               parameter_list["experiment index"]]
+                changes["experiment index"].append(parameter_list["experiment index"])
             except KeyError:
-                changes["experiment index"] = parameter_list["experiment index"]
+                changes["experiment index"] = [parameter_list["experiment index"]]
             try:
-                changes["parameter change"] = [changes["parameter change"],
-                                               parameter_list["parameter change"]]
+                changes["parameter change"] = np.append(changes["parameter change"], parameter_list["parameter change"])
             except KeyError:
                 changes["parameter change"] = parameter_list["parameter change"]
             # changes.append(get_changed_parameters(original_parameters=original,
