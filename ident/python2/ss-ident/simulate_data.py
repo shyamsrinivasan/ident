@@ -7,13 +7,23 @@ def parameter_change(new_value, old_value):
 
 
 def get_changed_parameters(original_parameters, changed_parameters, experiment_index, parameter_index):
-    parameter_array = np.zeros((1, 4))
-    parameter_array[0, 0] = experiment_index
-    parameter_array[0, 1] = parameter_index
-    parameter_array[0, 2] = changed_parameters[experiment_index, parameter_index]
-    parameter_array[0, 3] = parameter_change(changed_parameters[experiment_index, parameter_index],
-                                             original_parameters[parameter_index])
-    return parameter_array
+    # parameter_array = np.zeros((1, 4))
+    # parameter_array[0, 0] = experiment_index
+    # parameter_array[0, 1] = parameter_index
+    # parameter_array[0, 2] = changed_parameters[experiment_index][parameter_index]
+    # parameter_array[0, 3] = parameter_change(changed_parameters[experiment_index][parameter_index],
+    #                                          original_parameters[parameter_index])
+    # parameter_list = [experiment_index,
+    #                   parameter_index,
+    #                   changed_parameters[experiment_index][parameter_index],
+    #                   parameter_change(changed_parameters[experiment_index][parameter_index],
+    #                                    original_parameters[parameter_index])]
+    parameter_list = {"experiment index": experiment_index,
+                      "parameter name": parameter_index,
+                      "parameter value": changed_parameters[experiment_index][parameter_index],
+                      "parameter change": parameter_change(changed_parameters[experiment_index][parameter_index],
+                                                           original_parameters[parameter_index])}
+    return parameter_list
 
 
 def get_data_combinations(xss, experiments_per_set, choose):
@@ -56,7 +66,8 @@ def data_for_each_sample(perturbation_details, experiments_per_set,
     number_data_sets = len(data_combinations)
     size_of_data_set = 8
     dataset_value_array = np.zeros((number_data_sets, size_of_data_set * experiments_per_set))
-    all_parameter_change = np.zeros((number_data_sets, 4 * experiments_per_set))
+    # all_parameter_change = np.zeros((number_data_sets, 4 * experiments_per_set))
+    all_parameter_change = []
 
     # arrange and collect parameter/ss values
     experiment_index_iter = []
@@ -67,26 +78,51 @@ def data_for_each_sample(perturbation_details, experiments_per_set,
     for choice_index, data_index in zip(choose, enumerate(data_combinations)):
         data = []
         parameter_id = []
-        changes = []
+        changes = {}
         experiment_index_iter.append(data_index[1])
         parameter_value = []
         parameter_change = []
         ssid_changes = []
         for iter, index in enumerate(data_index[1]):
-            data.append(np.hstack((parameters[index][-1],
+            data.append(np.hstack((parameters[index]["ac"],
                                    xss[index],
                                    fss[index][flux_id])))
-            changes.append(get_changed_parameters(original_parameters=original,
-                                                  changed_parameters=parameters,
-                                                  experiment_index=index,
-                                                  parameter_index=int(experiment_indices[index, 0])))
-            parameter_id.append(int(experiment_indices[index, 0]))
-            parameter_value.append(parameters[index, parameter_id[iter]])
-            parameter_change.append(changes[iter][0, 3])
+            parameter_list = get_changed_parameters(original_parameters=original,
+                                                    changed_parameters=parameters,
+                                                    experiment_index=index,
+                                                    parameter_index=experiment_indices[index].keys()[0])
+            try:
+                changes["parameter value"] = [changes["parameter value"],
+                                              parameter_list["parameter value"]]
+            except KeyError:
+                changes["parameter value"] = parameter_list["parameter value"]
+            try:
+                changes["parameter name"] = [changes["parameter name"],
+                                             parameter_list["parameter name"]]
+            except KeyError:
+                changes["parameter name"] = parameter_list["parameter name"]
+            try:
+                changes["experiment index"] = [changes["experiment index"],
+                                               parameter_list["experiment index"]]
+            except KeyError:
+                changes["experiment index"] = parameter_list["experiment index"]
+            try:
+                changes["parameter change"] = [changes["parameter change"],
+                                               parameter_list["parameter change"]]
+            except KeyError:
+                changes["parameter change"] = parameter_list["parameter change"]
+            # changes.append(get_changed_parameters(original_parameters=original,
+            #                                       changed_parameters=parameters,
+            #                                       experiment_index=index,
+            #                                       parameter_index=experiment_indices[index].keys()[0]))
+            parameter_id.append(experiment_indices[index].keys()[0])
+            parameter_value.append(parameters[index][parameter_id[iter]])
+            parameter_change.append(changes["parameter change"][iter])
             ssid_changes.append(list(ssid[index, :]))
 
         dataset_value_array[data_index[0], :] = np.hstack(data[:])
-        all_parameter_change[data_index[0], :] = np.hstack(changes[:])
+        # all_parameter_change[data_index[0], :] = np.hstack(changes[:])
+        all_parameter_change.append(changes)
         all_parameter_ids.append(parameter_id)
         all_parameter_values.append(parameter_value)
         all_parameter_changes.append(parameter_change)
