@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 from kotte_model import *
 from simulate_ode import run_ode_sims
 from add_noise import add_noise_dynamic
-from plot_profiles import plot_multiple_dynamics
-from plot_ident_results import plot_dynamic_sim_concentrations
+# from plot_profiles import plot_multiple_dynamics
+from plot_ident_results import plot_dynamic_sims
 from copy import deepcopy
 
 
@@ -163,11 +163,8 @@ def run_no_noise_parameter_perturbation(parameter_perturbation, y0, other_option
 
     # plot all dynamic courses
     if plot_arg:
-        # plot_multiple_dynamics(dynamic_info)
-        plot_dynamic_sim_concentrations(dynamic_info, multiple=1)
+        plot_dynamic_sims(dynamic_info, multiple=1, concentrations=1, fluxes=1)
         # plt.close("all")
-        # plot_multiple_dynamics(dynamic_info)
-        plt.close("all")
 
     perturbation_field_names = ['values', 'indices', 'original', 'boolean', 'ssid']
     perturbation_details = dict(zip(perturbation_field_names,
@@ -223,9 +220,7 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options, 
 
     # plot all dynamic courses
     if plot_arg:
-        plot_multiple_dynamics(noisy_dynamic)
-        plt.close("all")
-        plot_multiple_dynamics(dynamic_info)
+        plot_dynamic_sims(noisy_dynamic, multiple=1, concentrations=1, fluxes=1)
         plt.close("all")
 
     perturbation_field_names = ['values', 'indices', 'original', 'boolean', 'ssid']
