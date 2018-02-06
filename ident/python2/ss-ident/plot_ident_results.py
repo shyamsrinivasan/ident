@@ -353,3 +353,51 @@ def plot_dynamic_sim_concentrations(dynamic_data, multiple=0):
         axis_obj.set_title('Dynamic Concentrations')
     plt.show()
     return None
+
+
+def plot_dynamic_sim_fluxes(dynamic_data, multiple=0):
+    """plot dynamic time course profiles of all fluxes present in y vector.
+        parameter multiple = 1 when multiple sets of plots are plotted in a subplot"""
+    if multiple:
+        number_of_plots = len(dynamic_data)
+        number_of_rows = 2
+        if number_of_plots % number_of_rows != 0:
+            number_of_columns = (number_of_plots + 1) / number_of_rows
+        else:
+            number_of_columns = number_of_plots / number_of_rows
+        f, axarr = plt.subplots(number_of_rows, number_of_columns, sharex='col', sharey='row',
+                                figsize=(8, 6), dpi=100, facecolor='w',
+                                edgecolor='k')
+        i_plot = 0
+        for i_row in range(0, number_of_rows):
+            for i_column in range(0, number_of_columns):
+                x_data = dynamic_data[i_plot]["time"]
+                y_data = dynamic_data[i_plot]["flux"]
+                line_plots_2d(axarr[i_row, i_column], x_data, y_data)
+                axarr[i_row, i_column].set_title('Data set {}'.format(i_plot + 1))
+                if i_row == 0:
+                    plt.setp(axarr[i_row, i_column].get_xticklabels(), visible=False)
+                if i_column > 0:
+                    plt.setp(axarr[i_row, i_column].get_yticklabels(), visible=False)
+                if i_row == number_of_rows - 1:
+                    axarr[i_row, i_column].set_xlabel('Time (s)')
+                if i_column == 0:
+                    axarr[i_row, i_column].set_ylabel('Fluxes (a.u.)')
+                i_plot += 1
+    else:
+        f, axis_obj = plt.subplots(1, 1, figsize=(6, 4), dpi=100, facecolor='w', edgecolor='k')
+        x_data = dynamic_data["time"]
+        y_data = dynamic_data["flux"]
+        line_plots_2d(axis_obj, x_data, y_data, x_label='Time (s)', y_label='Fluxes (a.u.)')
+        axis_obj.set_title('Dynamic Fluxes')
+    plt.show()
+    return None
+
+
+def plot_dynamic_sims(dynamic_data, multiple=0, concentrations=1, fluxes=0):
+    if concentrations:
+        plot_dynamic_sim_concentrations(dynamic_data, multiple=multiple)
+
+    if fluxes:
+        plot_dynamic_sim_fluxes(dynamic_data, multiple=multiple)
+    return None
