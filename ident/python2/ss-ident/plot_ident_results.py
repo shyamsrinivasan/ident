@@ -306,17 +306,39 @@ def data_utility_plot(data_list, noise=0):
     return None
 
 
+def line_plots_2d(axis_obj, x_data, y_data, x_label, y_label):
+    axis_obj.plot(x_data, y_data)
+    axis_obj.set_xlabel(x_label)
+    axis_obj.set_ylabel(y_label)
+    return None
+
+
 def plot_dynamic_sim_concentrations(dynamic_data, multiple=0):
     """plot dynamic time course profiles of all concentrations present in y vector"""
     if multiple:
-        pass
+        number_of_plots = len(dynamic_data)
+        number_of_rows = 2
+        if number_of_plots % number_of_rows != 0:
+            number_of_columns = (number_of_plots + 1) / number_of_rows
+        else:
+            number_of_columns = number_of_plots / number_of_rows
+        f, axarr = plt.subplots(number_of_rows, number_of_columns, figsize=(8, 6), dpi=100, facecolor='w',
+                                edgecolor='k')
+        for i_plot, axis_obj in enumerate(axarr):
+            x_data = dynamic_data[i_plot]["time"]
+            y_data = dynamic_data[i_plot]["y"]
+            line_plots_2d(axis_obj, x_data, y_data, x_label='Time (s)', y_label='Concentrations (a.u.)')
+            axis_obj.set_title('Data set {}'.format(i_plot+1))
     else:
         f, ax_obj = plt.subplots(1, 1, figsize=(8, 6), dpi=100, facecolor='w', edgecolor='k')
         x_data = dynamic_data["time"]
         y_data = dynamic_data["y"]
-        ax_obj.plot(x_data, y_data)
-        ax_obj.set_xlabel('Time (s)')
-        ax_obj.set_ylabel('Concentrations (a.u.)')
+        line_plots_2d(ax_obj, x_data, y_data, x_label='Time (s)', y_label='Concentrations (a.u.)')
         ax_obj.set_title('Dynamic Concentrations')
     plt.show()
+    return None
+
+
+def plot_multiple_sim_concentrations(dynamic_data):
+
     return None
