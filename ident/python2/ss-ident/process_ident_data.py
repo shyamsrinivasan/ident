@@ -341,6 +341,18 @@ def parameter_identifiability(ident_details):
     return max_parameter
 
 
+def true_parameter_value(ident_details):
+    number_data, number_parameters, _ = ident_details["values"].shape
+    all_parameter_true_values = []
+    for i_parameter in range(0, number_parameters):
+        true_values = ident_details["values"][:, i_parameter, 2]
+        parameter_true_values = {"parameter id": i_parameter,
+                                 "values": true_values}
+        all_parameter_true_values.append(parameter_true_values)
+
+    return all_parameter_true_values
+
+
 def process_info(ident_details):
     """get data utility and parameter identifiability and other data for
     parameters of each flux passed as input"""
@@ -348,8 +360,10 @@ def process_info(ident_details):
     data_list = data_utility(ident_details)
     # most easily identifiable parameter - based on frequency of identification
     max_parameter = parameter_identifiability(ident_details)
+    # get true parameter values (the value of g = Nr/Dr)
+    parameter_true_values = true_parameter_value(ident_details)
 
-    return data_list, max_parameter
+    return data_list, max_parameter, parameter_true_values
 
 
 def flux_based_ident_info(sample_ident_detail):
@@ -357,11 +371,13 @@ def flux_based_ident_info(sample_ident_detail):
     number_of_fluxes = len(sample_ident_detail)
     all_flux_data_list = []
     all_flux_max_parameter = []
+    all_flux_parameter_true_value = []
     for j_flux, j_flux_info in enumerate(sample_ident_detail):
         print("Processing identifiability for flux {} of {}".format(j_flux + 1, number_of_fluxes))
-        data_list, max_parameter = process_info(j_flux_info)
+        data_list, max_parameter, parameter_true_value = process_info(j_flux_info)
         all_flux_data_list.append(data_list)
         all_flux_max_parameter.append(max_parameter)
+        all_flux_parameter_true_value.append(parameter_true_value)
         print("Information Processing Complete for flux {} \n".format(j_flux + 1))
     return all_flux_data_list, all_flux_max_parameter
 
