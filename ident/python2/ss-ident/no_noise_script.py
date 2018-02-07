@@ -44,9 +44,9 @@ choose_2 = range(0, 306) # choose numbr of experimental datasets to use of analy
 experimental_datasets_2_expts, \
 experiment_choice, combination_choice = arrange_experimental_data(exp_xss, exp_fss, perturbation_details,
                                                                   experiments_per_set=2, flux_id=exp_flux_index,
-                                                                  experiment_choice=[3, 4, 5, 6, 7])
+                                                                  experiment_choice=[0, 1, 2, 3])
 ident_details_2 = flux_ident_2_data_combination(experimental_datasets_2_expts, choose=combination_choice,
-                                                flux_ids=[1, 2], flux_choice=[2, 0])
+                                                flux_ids=[1, 2], flux_choice=[2, 0], ident_fun_choice=[0])
 print('Identifiability analysis for fluxes with 2 parameters complete.\n')
 # data processing
 experiment_type_indices = [[0], [1, 2], [3, 4, 5, 6, 7], [8, 9, 10, 11, 12], [13, 14, 15, 16, 17]]
