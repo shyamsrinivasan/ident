@@ -26,31 +26,43 @@ def get_changed_parameters(original_parameters, changed_parameters, experiment_i
     return parameter_list
 
 
-def get_data_combinations(xss, experiments_per_set, choose):
+def get_data_combinations(xss, experiments_per_set, experiment_choice, combination_choice):
     """get combinations of data sets based on all perturbations performed on the model"""
-    # get all experiment combinations based on experiments_per_set
-    number_of_experiments = len(xss)
+
+    # select only experiment indices provided in experiment_choice
+    total_number_of_experiments = len(xss)
+    if experiment_choice:
+        chosen_xss = [xss[i_experiment] for i_experiment in experiment_choice]
+        number_of_experiments = len(chosen_xss)
+    else:
+        chosen_xss = xss
+        number_of_experiments = len(chosen_xss)
+        experiment_choice = range(0, number_of_experiments)
     data_combinations = []
-    for item in it.permutations(range(0, number_of_experiments), experiments_per_set):
+    # get all experiment combinations based on experiments_per_set
+    for item in it.permutations(experiment_choice, experiments_per_set):
         data_combinations.append(item)
 
-    # choose only choose values of experimental data set combinations
-    if choose:
+    # choose only combination_choice values of experimental data set combinations
+    if combination_choice:
         try:
-            data_combinations = data_combinations[:choose]
-            choose = range(0, choose)
+            data_combinations = data_combinations[:combination_choice]
+            combination_choice = range(0, combination_choice)
         except TypeError:
             new_data_combinations = []
-            for indexes in choose:
+            for indexes in combination_choice:
                 new_data_combinations.append(data_combinations[indexes])
             data_combinations = new_data_combinations[:]
+    else:
+        number_of_combinations = len(data_combinations)
+        combination_choice = range(0, number_of_combinations)
 
     # create boolean numpy array of perturbations in each data set
     data_combination_boolean = [[True if experiment_id in list_1 else False
-                                 for experiment_id in range(0, number_of_experiments)]
+                                 for experiment_id in range(0, total_number_of_experiments)]
                                 for list_1 in data_combinations]
     data_combination_boolean = np.array(data_combination_boolean)
-    return data_combinations, data_combination_boolean, choose
+    return data_combinations, data_combination_boolean, experiment_choice, combination_choice
 
 
 def data_for_each_sample(perturbation_details, experiments_per_set,
@@ -134,20 +146,26 @@ def data_for_each_sample(perturbation_details, experiments_per_set,
 
 
 def arrange_experimental_data(xss, fss, perturbation_details, experiments_per_set,
-                              flux_id=np.array([0, 1, 2, 3, 4, 5]), choose=()):
+                              flux_id=np.array([0, 1, 2, 3, 4, 5]), combination_choice=(), experiment_choice=()):
     """get several data set combinations and
-    get data for setting all experimental details for a given combination"""
+    get data for setting all experimental details for a given combination
+
+    parameters:
+    combination_choice - indices of combinations to choose from
+    experiment_choice - indices of experiments to choose from to form combinations"""
     number_of_samples = len(xss)
     # get combinations just based on number of experiments in each sample
-    data_combinations, data_combination_boolean, choose = get_data_combinations(xss[0], experiments_per_set, choose)
+    data_combinations, data_combination_boolean, \
+    experiment_choice, combination_choice = get_data_combinations(xss[0], experiments_per_set,
+                                                                  experiment_choice, combination_choice)
 
     # get values for each combination determined from above permutation
     all_sample_experimental_data = []
     for i_sample in range(0, number_of_samples):
         experimental_data = data_for_each_sample(perturbation_details, experiments_per_set,
-                             data_combinations, xss[i_sample], fss[i_sample], flux_id, choose)
+                             data_combinations, xss[i_sample], fss[i_sample], flux_id, combination_choice)
         experimental_data["boolean"] = data_combination_boolean
         all_sample_experimental_data.append(experimental_data)
 
-    return all_sample_experimental_data
+    return all_sample_experimental_data, experiment_choice, combination_choice
 
