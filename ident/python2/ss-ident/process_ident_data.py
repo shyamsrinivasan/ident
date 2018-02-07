@@ -221,16 +221,22 @@ def experiments_in_ident_data(boolean_ident_data, experiment_data, experiment_ty
         for j_position_in_combination in range(0, number_of_experiments_in_combination):
             print("Experiment type frequencies in position {} of {}:".format(j_position_in_combination + 1,
                                                                              number_of_experiments_in_combination))
-            experiment_type_boolean = [[True if exp_id in i_experiment_type else False
-                                        for exp_id in experiments_in_identifying_data[:, j_position_in_combination]]
-                                       for i_experiment_type in experiment_type_index]
+            if experiments_in_identifying_data.size:
+                experiment_type_boolean = [[True if exp_id in i_experiment_type else False
+                                            for exp_id in experiments_in_identifying_data[:, j_position_in_combination]]
+                                           for i_experiment_type in experiment_type_index]
+            else:
+                experiment_type_boolean = [list(j_parameter_info)] * len(experiment_type_index)
 
             # get experiment type frequency
             experiment_type_frequency = [sum(i_experiment_type_boolean)
                                          for i_experiment_type_boolean in experiment_type_boolean]
             total_identifying_data = sum(experiment_type_frequency)
-            experiment_type_percentage = [float(i_frequency)*100/total_identifying_data
-                                          for i_frequency in experiment_type_frequency]
+            if total_identifying_data:
+                experiment_type_percentage = [float(i_frequency)*100/total_identifying_data
+                                              for i_frequency in experiment_type_frequency]
+            else:
+                experiment_type_percentage = [0] * len(experiment_type_frequency)
 
             # get corresponding data combination ids
             experiment_type_data_id = [[data_identifying_parameter_j[id]
