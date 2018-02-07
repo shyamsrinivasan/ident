@@ -31,7 +31,7 @@ ode_parameter_values = {"K1ac": np.array([.1]),
 
 # get experimental system steady state data without noise
 exp_xss, exp_fss, exp_ssid, perturbation_details = \
-    generate_expdata(y0, cvode_options, ode_parameter_values, noise=0, kinetics=2, dynamic_plot=1,
+    generate_expdata(y0, cvode_options, ode_parameter_values, noise=0, kinetics=1, dynamic_plot=1,
                      perturbation_plot=1)
 
 # arrange experimental data to form multiple data sets
@@ -41,9 +41,11 @@ exp_flux_index = np.array([0, 3, 2, 4])
 print('Practical Identifiability Analysis of fluxes with 2 parameters \n')
 choose_2 = range(0, 306) # choose numbr of experimental datasets to use of analysis
 # get combinations of experimental datasets
-experimental_datasets_2_expts = \
-    arrange_experimental_data(exp_xss, exp_fss, perturbation_details, 2, exp_flux_index, choose_2)
-ident_details_2 = flux_ident_2_data_combination(experimental_datasets_2_expts, choose=choose_2,
+experimental_datasets_2_expts, \
+experiment_choice, combination_choice = arrange_experimental_data(exp_xss, exp_fss, perturbation_details,
+                                                                  experiments_per_set=2, flux_id=exp_flux_index,
+                                                                  experiment_choice=[3, 4, 5, 6, 7])
+ident_details_2 = flux_ident_2_data_combination(experimental_datasets_2_expts, choose=combination_choice,
                                                 flux_ids=[1, 2], flux_choice=[2, 0])
 print('Identifiability analysis for fluxes with 2 parameters complete.\n')
 # data processing
