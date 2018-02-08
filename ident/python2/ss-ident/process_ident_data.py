@@ -1,5 +1,7 @@
 import numpy as np
 import itertools as it
+from kotte_model import kotte_true_parameter_values
+from kotte_model import ident_parameter_name
 
 
 def get_all_indices(mother_list, value):
@@ -345,9 +347,18 @@ def true_parameter_value(ident_details):
     number_data, number_parameters, _ = ident_details["values"].shape
     all_parameter_true_values = []
     for i_parameter in range(0, number_parameters):
-        true_values = ident_details["values"][:, i_parameter, 2]
+        found_value = ident_details["values"][:, i_parameter, 2]
+        # get flux name
+        flux_name = 'flux{}'.format(ident_details["flux id"])
+        # get parameter name
+
+        # get true parameter values
+        true_value = kotte_true_parameter_values(flux_based=1, flux_name=flux_name,
+                                                 flux_choice_id=ident_details["flux choice"],
+                                                 parameter_id=i_parameter)
         parameter_true_values = {"parameter id": i_parameter,
-                                 "values": true_values}
+                                 "found values": found_value,
+                                 "true values": []}
         all_parameter_true_values.append(parameter_true_values)
 
     return all_parameter_true_values
