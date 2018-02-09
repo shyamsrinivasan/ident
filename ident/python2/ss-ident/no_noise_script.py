@@ -43,21 +43,21 @@ print('Practical Identifiability Analysis of fluxes with 2 parameters \n')
 ident_fun_choice = []
 # get combinations of experimental datasets
 experimental_datasets_2_expts, \
-experiment_choice, combination_choice = arrange_experimental_data(exp_xss, exp_fss, perturbation_details,
-                                                                  experiments_per_set=2, flux_id=exp_flux_index,
-                                                                  experiment_choice=[0, 1, 2, 3])
+    experiment_choice, combination_choice = arrange_experimental_data(exp_xss, exp_fss, perturbation_details,
+                                                                      experiments_per_set=2, flux_id=exp_flux_index,
+                                                                      experiment_choice=[0, 1, 2, 3])
 ident_details_2 = flux_ident_2_data_combination(experimental_datasets_2_expts, choose=combination_choice,
                                                 flux_ids=[1, 2], flux_choice=[2, 0], ident_fun_choice=ident_fun_choice)
 print('Identifiability analysis for fluxes with 2 parameters complete.\n')
 # data processing
 experiment_type_indices = [[0], [1, 2], [3, 4, 5, 6, 7], [8, 9, 10, 11, 12], [13, 14, 15, 16, 17]]
-data_list_2, max_parameter_2, experiment_info_2, \
-combined_data_list_2, combined_max_parameter_2, \
-combined_experiment_info_2 = process_info_sample(ident_details_2,
-                                                 experimental_datasets_2_expts,
-                                                 experiment_type_indices,
-                                                 combine_fluxes=1,
-                                                 ident_fun_choice=ident_fun_choice)
+data_list_2, max_parameter_2, true_value_2, experiment_info_2, \
+    combined_data_list_2, combined_max_parameter_2, combined_true_value_2, \
+    combined_experiment_info_2 = process_info_sample(ident_details_2,
+                                                     experimental_datasets_2_expts,
+                                                     experiment_type_indices,
+                                                     combine_fluxes=1,
+                                                     ident_fun_choice=ident_fun_choice)
 
 # plot parameter identifibaility for all fluxes using 2 data combinations
 parameter_identifibaility_plot(max_parameter_2)
