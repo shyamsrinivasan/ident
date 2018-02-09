@@ -345,7 +345,13 @@ def parameter_identifiability(ident_details):
 
 def true_parameter_value(ident_details):
     number_data, number_parameters, _ = ident_details["values"].shape
+    # number_parameters = ident_details["parameters"]
     all_parameter_true_values = []
+    # add loop for fluxes  - needed when using combined data from all fluxes
+    # try:
+    # for i_flux in range(0, len(number_parameters))
+    # except TypeError # when number_parameters is integer and not list
+    # eliminate flux-based loop
     for i_parameter in range(0, number_parameters):
         found_value = ident_details["values"][:, i_parameter, 2]
         # get flux name
