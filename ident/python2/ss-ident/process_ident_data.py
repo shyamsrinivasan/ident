@@ -450,15 +450,15 @@ def flux_based_ident_info(sample_ident_detail):
     number_of_fluxes = len(sample_ident_detail)
     all_flux_data_list = []
     all_flux_max_parameter = []
-    all_flux_parameter_true_value = []
+    all_flux_true_parameter = []
     for j_flux, j_flux_info in enumerate(sample_ident_detail):
         print("Processing identifiability for flux {} of {}".format(j_flux + 1, number_of_fluxes))
         data_list, max_parameter, parameter_true_value = process_info(j_flux_info)
         all_flux_data_list.append(data_list)
         all_flux_max_parameter.append(max_parameter)
-        all_flux_parameter_true_value.append(parameter_true_value)
+        all_flux_true_parameter.append(parameter_true_value)
         print("Information Processing Complete for flux {} \n".format(j_flux + 1))
-    return all_flux_data_list, all_flux_max_parameter
+    return all_flux_data_list, all_flux_max_parameter, all_flux_true_parameter
 
 
 def collate_flux_based_data(sample_ident_detail):
@@ -717,17 +717,21 @@ def process_info_sample(ident_details, experiment_details, experiment_type_indic
     number_of_samples = len(ident_details)
     all_sample_data_list = []
     all_sample_max_parameter = []
+    all_sample_true_parameter = []
     all_sample_experiment_list = []
     all_sample_combined_flux_data_list = []
     all_sample_combined_flux_max_parameter = []
+    all_sample_combined_flux_true_parameter = []
     all_sample_combined_flux_experiment_info = []
     number_of_fluxes_per_sample = []
     for j_sample, j_sample_ident_detail in enumerate(ident_details):
         print("Processing identifiability data for sample {} of {}".format(j_sample+1, number_of_samples))
         # collect flux based identifiability information/data
-        all_flux_data_list, all_flux_max_parameter = flux_based_ident_info(j_sample_ident_detail)
+        all_flux_data_list, all_flux_max_parameter, \
+            all_flux_true_parameter = flux_based_ident_info(j_sample_ident_detail)
         all_sample_data_list.append(all_flux_data_list)
         all_sample_max_parameter.append(all_flux_max_parameter)
+        all_sample_true_parameter.append(all_flux_true_parameter)
         number_of_fluxes_per_sample.append(len(all_flux_data_list))
 
         # collect flux based information on experiments contributing to identifiability
@@ -743,9 +747,10 @@ def process_info_sample(ident_details, experiment_details, experiment_type_indic
             combined_flux_ident_data = collate_flux_based_data(j_sample_ident_detail)
             # process/collect corresponding data for all fluxes using the same combination of experimental data
             combined_flux_data_list, combined_flux_max_parameter, \
-                combined_flux_true_parameter_value = process_info(combined_flux_ident_data)
+                combined_flux_true_parameter = process_info(combined_flux_ident_data)
             all_sample_combined_flux_data_list.append(combined_flux_data_list)
             all_sample_combined_flux_max_parameter.append(combined_flux_max_parameter)
+            all_sample_combined_flux_true_parameter.append(combined_flux_true_parameter)
             # collect experiment information for all fluxes using the same combination of experimental data
             combined_flux_experiment_info = experiments_in_ident_data(combined_flux_ident_data["boolean"],
                                                                       experiment_details[j_sample],
@@ -766,6 +771,8 @@ def process_info_sample(ident_details, experiment_details, experiment_type_indic
                                "processed": processed_all_flux_data_list}
     all_sample_parameter_identifiability = {"raw": all_sample_max_parameter,
                                             "processed": processed_all_flux_max_parameter}
+    all_sample_parameter_value = {"raw": all_sample_true_parameter,
+                                  "processed": []}
     all_sample_experiment_info = {"raw": all_sample_experiment_list,
                                   "processed": processed_all_flux_experiment_info}
     if combine_fluxes:
@@ -775,15 +782,18 @@ def process_info_sample(ident_details, experiment_details, experiment_type_indic
                                             "processed": processed_all_sample_combined_flux_data_list}
         all_sample_combined_parameter_identifibaility = {"raw": all_sample_combined_flux_max_parameter,
                                                          "processed": []}
+        all_sample_combined_parameter_value = {"raw": all_sample_combined_flux_true_parameter,
+                                               "processed": []}
         processed_all_sample_combined_flux_experiment_info = \
             combined_sample_based_averages_experiment_info(all_sample_combined_flux_experiment_info)
         all_sample_combined_experiment_info = {"raw": all_sample_combined_flux_experiment_info,
                                                "processed": processed_all_sample_combined_flux_experiment_info}
         return all_sample_data_utility, all_sample_parameter_identifiability, all_sample_experiment_info, \
                all_sample_combined_data_utility, all_sample_combined_parameter_identifibaility, \
-               all_sample_combined_experiment_info
+               all_sample_combined_parameter_value, all_sample_combined_experiment_info
     else:
-        return all_sample_data_utility, all_sample_parameter_identifiability, all_sample_experiment_info
+        return all_sample_data_utility, all_sample_parameter_identifiability, \
+               all_sample_parameter_value, all_sample_experiment_info
 
 
 def get_data_combinations(original_data, chosen_data_id):
