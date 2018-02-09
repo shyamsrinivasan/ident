@@ -349,16 +349,28 @@ def true_parameter_value(ident_details):
     for i_parameter in range(0, number_parameters):
         found_value = ident_details["values"][:, i_parameter, 2]
         # get flux name
-        flux_name = 'flux{}'.format(ident_details["flux id"])
+        try:
+            flux_name = ['flux{}'.format(i_flux_id) for i_flux_id in ident_details["flux id"]]
+        except TypeError:
+            flux_name = 'flux{}'.format(ident_details["flux id"])
+        try:
+            flux_choice_id = [i_flux_choice_id for i_flux_choice_id in ident_details["flux choice"]]
+        except TypeError:
+            flux_choice_id = ident_details["flux choice"]
         # get parameter name
-
+        parameter_name = ident_parameter_name(i_parameter, flux_name=flux_name,
+                                              flux_choice_id=flux_choice_id)
         # get true parameter values
         true_value = kotte_true_parameter_values(flux_based=1, flux_name=flux_name,
                                                  flux_choice_id=ident_details["flux choice"],
-                                                 parameter_id=i_parameter)
-        parameter_true_values = {"parameter id": i_parameter,
+                                                 parameter_id=parameter_name)
+        parameter_true_values = {"flux id": ident_details["flux id"],
+                                 "flux name": flux_name,
+                                 "flux choice": ident_details["flux choice"],
+                                 "parameter id": i_parameter,
+                                 "parameter name": parameter_name,
                                  "found values": found_value,
-                                 "true values": []}
+                                 "true values": true_value}
         all_parameter_true_values.append(parameter_true_values)
 
     return all_parameter_true_values
@@ -639,7 +651,12 @@ def combined_sample_based_averages_experiment_info(all_sample_combined_flux_expe
     return all_parameter_all_position_info
 
 
-def process_info_sample(ident_details, experiment_details, experiment_type_indices, perturbation_details, combine_fluxes=0):
+def process_info_sample(ident_details, experiment_details, experiment_type_indices,
+                        ident_fun_choice=(), combine_fluxes=0):
+    if ident_fun_choice:
+        if len(ident_fun_choice) <= 1:
+            combine_fluxes = 0
+
     print("Process information From Identifiability Analysis.....\n")
     number_of_samples = len(ident_details)
     all_sample_data_list = []
@@ -669,7 +686,8 @@ def process_info_sample(ident_details, experiment_details, experiment_type_indic
             # collate all identifiability information
             combined_flux_ident_data = collate_flux_based_data(j_sample_ident_detail)
             # process/collect corresponding data for all fluxes using the same combination of experimental data
-            combined_flux_data_list, combined_flux_max_parameter = process_info(combined_flux_ident_data)
+            combined_flux_data_list, combined_flux_max_parameter, \
+                combined_flux_true_parameter_value = process_info(combined_flux_ident_data)
             all_sample_combined_flux_data_list.append(combined_flux_data_list)
             all_sample_combined_flux_max_parameter.append(combined_flux_max_parameter)
             # collect experiment information for all fluxes using the same combination of experimental data
