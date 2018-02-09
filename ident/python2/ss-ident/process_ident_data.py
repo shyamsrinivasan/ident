@@ -622,8 +622,28 @@ def collate_sample_based_experiment_info(number_of_fluxes_per_sample, all_sample
     return all_flux_experiment_info
 
 
+def collate_sample_based_parameter_value(number_of_fluxes_per_sample, all_sample_parameter_value):
+    all_flux_parameter_value = []
+    for j_flux in range(0, number_of_fluxes_per_sample[0]):
+        number_of_parameters_per_flux = len(all_sample_parameter_value[0][j_flux])
+        for k_parameter in range(0, number_of_parameters_per_flux):
+            k_parameter_found_values = []
+            k_parameter_true_values = []
+            for j_sample_id, j_sample_data in enumerate(all_sample_parameter_value):
+                k_parameter_found_values.append(j_sample_data[j_flux][k_parameter]["found values"])
+                k_parameter_true_values.append(j_sample_data[j_flux][k_parameter]["true values"])
+            # calculate means and standard deviations for each parameter between samples and between data points
+            k_parameter_found_array = np.array(k_parameter_found_values)
+            k_parameter_true_array = np.array(k_parameter_true_values)
+            mean_across_samples
+            mean_across_data
+            pass
+    return None
+
+
 def sample_based_averages(number_of_fluxes_per_sample,
-                          all_sample_data_list, all_sample_max_parameter, all_sample_experiment_list):
+                          all_sample_data_list, all_sample_max_parameter,
+                          all_sample_experiment_list, all_sample_parameter_value):
     """call sample based collate functions and generate averages and standard deviations for
     both data utility and parameter identifiability for each flux"""
     all_flux_data_utility = collate_sample_based_data_utility(number_of_fluxes_per_sample,
@@ -632,6 +652,7 @@ def sample_based_averages(number_of_fluxes_per_sample,
                                                                   all_sample_max_parameter)
     all_flux_experiment_info = collate_sample_based_experiment_info(number_of_fluxes_per_sample,
                                                                     all_sample_experiment_list)
+    collate_sample_based_parameter_value(number_of_fluxes_per_sample, all_sample_parameter_value)
     return all_flux_data_utility, all_flux_max_parameter, all_flux_experiment_info
 
 
@@ -766,7 +787,8 @@ def process_info_sample(ident_details, experiment_details, experiment_type_indic
     processed_all_flux_experiment_info = sample_based_averages(number_of_fluxes_per_sample,
                                                                all_sample_data_list,
                                                                all_sample_max_parameter,
-                                                               all_sample_experiment_list)
+                                                               all_sample_experiment_list,
+                                                               all_sample_true_parameter)
     all_sample_data_utility = {"raw": all_sample_data_list,
                                "processed": processed_all_flux_data_list}
     all_sample_parameter_identifiability = {"raw": all_sample_max_parameter,
@@ -788,9 +810,10 @@ def process_info_sample(ident_details, experiment_details, experiment_type_indic
             combined_sample_based_averages_experiment_info(all_sample_combined_flux_experiment_info)
         all_sample_combined_experiment_info = {"raw": all_sample_combined_flux_experiment_info,
                                                "processed": processed_all_sample_combined_flux_experiment_info}
-        return all_sample_data_utility, all_sample_parameter_identifiability, all_sample_experiment_info, \
-               all_sample_combined_data_utility, all_sample_combined_parameter_identifibaility, \
-               all_sample_combined_parameter_value, all_sample_combined_experiment_info
+        return all_sample_data_utility, all_sample_parameter_identifiability, all_sample_parameter_value, \
+               all_sample_experiment_info, all_sample_combined_data_utility, \
+               all_sample_combined_parameter_identifibaility, all_sample_combined_parameter_value, \
+               all_sample_combined_experiment_info
     else:
         return all_sample_data_utility, all_sample_parameter_identifiability, \
                all_sample_parameter_value, all_sample_experiment_info
