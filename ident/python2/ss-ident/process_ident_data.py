@@ -352,6 +352,11 @@ def true_parameter_value(ident_details):
         total_parameters = 0
         for i_flux in range(0, len(number_parameters)):
             for i_parameter in range(0, number_parameters[i_flux]):
+                # get data combinations identifying parameter j
+                i_parameter_ident_data = ident_details["boolean"][:, total_parameters]
+                data_identifying_parameter_i = [j_data for j_data, bool_value in enumerate(i_parameter_ident_data)
+                                                if bool_value]
+                # get true values only for identifiable data
                 found_value = ident_details["values"][:, total_parameters, 2]
                 # get flux name
                 flux_name = 'flux{}'.format(ident_details["flux id"][i_flux])
@@ -375,7 +380,12 @@ def true_parameter_value(ident_details):
     except TypeError:  # when number_parameters is integer and not list
         # eliminate flux-based loop
         for i_parameter in range(0, number_parameters):
-            found_value = ident_details["values"][:, i_parameter, 2]
+            # get data combinations identifying parameter j
+            i_parameter_ident_data = ident_details["boolean"][:, i_parameter]
+            data_identifying_parameter_i = [j_data for j_data, bool_value in enumerate(i_parameter_ident_data)
+                                            if bool_value]
+            # get true values only for identifiable data
+            found_value = ident_details["values"][data_identifying_parameter_i, i_parameter, 2]
             # get flux name
             try:
                 flux_name = ['flux{}'.format(i_flux_id) for i_flux_id in ident_details["flux id"]]
@@ -397,6 +407,7 @@ def true_parameter_value(ident_details):
                                      "flux choice": flux_choice_id,
                                      "parameter id": i_parameter,
                                      "parameter name": parameter_name,
+                                     "data id": data_identifying_parameter_i,
                                      "found values": found_value,
                                      "true values": np.tile(true_value, found_value.shape)}
             all_parameter_true_values.append(parameter_true_values)
@@ -635,8 +646,8 @@ def collate_sample_based_parameter_value(number_of_fluxes_per_sample, all_sample
             # calculate means and standard deviations for each parameter between samples and between data points
             k_parameter_found_array = np.array(k_parameter_found_values)
             k_parameter_true_array = np.array(k_parameter_true_values)
-            mean_across_samples
-            mean_across_data
+            # mean_across_samples
+            # mean_across_data
             pass
     return None
 
