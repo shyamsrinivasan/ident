@@ -412,34 +412,6 @@ def true_parameter_value(ident_details):
                                      "true values": np.tile(true_value, found_value.shape)}
             all_parameter_true_values.append(parameter_true_values)
 
-    # eliminate flux-based loop
-    # for i_parameter in range(0, number_parameters):
-    #     found_value = ident_details["values"][:, i_parameter, 2]
-    #     # get flux name
-    #     try:
-    #         flux_name = ['flux{}'.format(i_flux_id) for i_flux_id in ident_details["flux id"]]
-    #     except TypeError:
-    #         flux_name = 'flux{}'.format(ident_details["flux id"])
-    #     try:
-    #         flux_choice_id = [i_flux_choice_id for i_flux_choice_id in ident_details["flux choice"]]
-    #     except TypeError:
-    #         flux_choice_id = ident_details["flux choice"]
-    #     # get parameter name
-    #     parameter_name = ident_parameter_name(i_parameter, flux_name=flux_name,
-    #                                           flux_choice_id=flux_choice_id)
-    #     # get true parameter values
-    #     true_value = kotte_true_parameter_values(flux_based=1, flux_name=flux_name,
-    #                                              flux_choice_id=ident_details["flux choice"],
-    #                                              parameter_id=parameter_name)
-    #     parameter_true_values = {"flux id": ident_details["flux id"],
-    #                              "flux name": flux_name,
-    #                              "flux choice": ident_details["flux choice"],
-    #                              "parameter id": i_parameter,
-    #                              "parameter name": parameter_name,
-    #                              "found values": found_value,
-    #                              "true values": true_value}
-    #     all_parameter_true_values.append(parameter_true_values)
-
     return all_parameter_true_values
 
 
