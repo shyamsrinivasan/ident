@@ -357,7 +357,7 @@ def true_parameter_value(ident_details):
                 data_identifying_parameter_i = [j_data for j_data, bool_value in enumerate(i_parameter_ident_data)
                                                 if bool_value]
                 # get true values only for identifiable data
-                found_value = ident_details["values"][:, total_parameters, 2]
+                found_value = ident_details["values"][data_identifying_parameter_i, total_parameters, 2]
                 # get flux name
                 flux_name = 'flux{}'.format(ident_details["flux id"][i_flux])
                 flux_choice_id = ident_details["flux choice"][i_flux]
