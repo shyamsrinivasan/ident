@@ -780,7 +780,7 @@ def combined_sampled_based_averages_parameter_value(all_sample_combined_flux_par
                             "true value": np.mean(np.mean(j_parameter_true_array, axis=1), axis=0)}
         all_parameter_info.append(k_parameter_info)
 
-    return None
+    return all_parameter_info
 
 
 def process_info_sample(ident_details, experiment_details, experiment_type_indices,
@@ -838,18 +838,18 @@ def process_info_sample(ident_details, experiment_details, experiment_type_indic
 
     # generate averages and standard deviations for multi sample data combinations for individual fluxes
     processed_all_flux_data_list, \
-    processed_all_flux_max_parameter,\
-    processed_all_flux_experiment_info = sample_based_averages(number_of_fluxes_per_sample,
-                                                               all_sample_data_list,
-                                                               all_sample_max_parameter,
-                                                               all_sample_experiment_list,
-                                                               all_sample_true_parameter)
+        processed_all_flux_max_parameter, \
+        processed_all_flux_experiment_info, \
+        processed_all_flux_parameter_values = sample_based_averages(number_of_fluxes_per_sample, all_sample_data_list,
+                                                                    all_sample_max_parameter,
+                                                                    all_sample_experiment_list,
+                                                                    all_sample_true_parameter)
     all_sample_data_utility = {"raw": all_sample_data_list,
                                "processed": processed_all_flux_data_list}
     all_sample_parameter_identifiability = {"raw": all_sample_max_parameter,
                                             "processed": processed_all_flux_max_parameter}
     all_sample_parameter_value = {"raw": all_sample_true_parameter,
-                                  "processed": []}
+                                  "processed": processed_all_flux_parameter_values}
     all_sample_experiment_info = {"raw": all_sample_experiment_list,
                                   "processed": processed_all_flux_experiment_info}
     if combine_fluxes:
@@ -859,12 +859,15 @@ def process_info_sample(ident_details, experiment_details, experiment_type_indic
                                             "processed": processed_all_sample_combined_flux_data_list}
         all_sample_combined_parameter_identifibaility = {"raw": all_sample_combined_flux_max_parameter,
                                                          "processed": []}
+        processed_all_sample_combined_parameter_value = \
+            combined_sampled_based_averages_parameter_value(all_sample_combined_flux_true_parameter)
         all_sample_combined_parameter_value = {"raw": all_sample_combined_flux_true_parameter,
-                                               "processed": []}
+                                               "processed": processed_all_sample_combined_parameter_value}
         processed_all_sample_combined_flux_experiment_info = \
             combined_sample_based_averages_experiment_info(all_sample_combined_flux_experiment_info)
         all_sample_combined_experiment_info = {"raw": all_sample_combined_flux_experiment_info,
                                                "processed": processed_all_sample_combined_flux_experiment_info}
+
         return all_sample_data_utility, all_sample_parameter_identifiability, all_sample_parameter_value, \
                all_sample_experiment_info, all_sample_combined_data_utility, \
                all_sample_combined_parameter_identifibaility, all_sample_combined_parameter_value, \
