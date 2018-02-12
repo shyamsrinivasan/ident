@@ -609,6 +609,7 @@ def collate_sample_based_parameter_value(number_of_fluxes_per_sample, all_sample
     all_flux_parameter_value = []
     for j_flux in range(0, number_of_fluxes_per_sample[0]):
         number_of_parameters_per_flux = len(all_sample_parameter_value[0][j_flux])
+        all_parameter_info = []
         for k_parameter in range(0, number_of_parameters_per_flux):
             k_parameter_found_values = []
             k_parameter_true_values = []
@@ -616,12 +617,36 @@ def collate_sample_based_parameter_value(number_of_fluxes_per_sample, all_sample
                 k_parameter_found_values.append(j_sample_data[j_flux][k_parameter]["found values"])
                 k_parameter_true_values.append(j_sample_data[j_flux][k_parameter]["true values"])
             # calculate means and standard deviations for each parameter between samples and between data points
-            k_parameter_found_array = np.array(k_parameter_found_values)
             k_parameter_true_array = np.array(k_parameter_true_values)
-            # mean_across_samples
-            # mean_across_data
-            pass
-    return None
+            # get mean across all samples for each data set identifying parameter k
+            mean_across_samples = np.mean(np.array(k_parameter_found_values), axis=0)
+            std_across_samples = np.std(np.array(k_parameter_found_values), axis=0)
+            # get mean across al data identifying parameter k for each sample
+            mean_across_data = np.mean(np.array(k_parameter_found_values), axis=1)
+            std_across_data = np.std(np.array(k_parameter_found_values), axis=1)
+            # get mean across all data points across all samples
+            mean_across_data_across_samples = np.mean(mean_across_data, axis=0)
+            std_across_data_across_samples = np.std(mean_across_data, axis=0)
+            # get mean across all samples across all data points
+            mean_across_samples_across_data = np.mean(mean_across_samples, axis=0)
+            std_across_samples_across_data = np.std(mean_across_samples, axis=0)
+            k_parameter_info = {"sample mean": mean_across_samples,
+                                "sample std": std_across_samples,
+                                "data mean": mean_across_data,
+                                "data std": std_across_data,
+                                "data sample mean": mean_across_data_across_samples,
+                                "data sample std": std_across_data_across_samples,
+                                "sample data mean": mean_across_samples_across_data,
+                                "sample data std": std_across_samples_across_data,
+                                "parameter id": all_sample_parameter_value[0][j_flux][k_parameter]["parameter id"],
+                                "parameter name": all_sample_parameter_value[0][j_flux][k_parameter]["parameter name"],
+                                "flux name": all_sample_parameter_value[0][j_flux][k_parameter]["flux name"],
+                                "flux id": all_sample_parameter_value[0][j_flux][k_parameter]["flux id"],
+                                "flux choice": all_sample_parameter_value[0][j_flux][k_parameter]["flux choice"],
+                                "true value": np.mean(np.mean(k_parameter_true_array, axis=1), axis=0)}
+            all_parameter_info.append(k_parameter_info)
+        all_flux_parameter_value.append(all_parameter_info)
+    return all_flux_parameter_value
 
 
 def sample_based_averages(number_of_fluxes_per_sample,
@@ -635,8 +660,9 @@ def sample_based_averages(number_of_fluxes_per_sample,
                                                                   all_sample_max_parameter)
     all_flux_experiment_info = collate_sample_based_experiment_info(number_of_fluxes_per_sample,
                                                                     all_sample_experiment_list)
-    collate_sample_based_parameter_value(number_of_fluxes_per_sample, all_sample_parameter_value)
-    return all_flux_data_utility, all_flux_max_parameter, all_flux_experiment_info
+    all_flux_parameter_value = collate_sample_based_parameter_value(number_of_fluxes_per_sample,
+                                                                    all_sample_parameter_value)
+    return all_flux_data_utility, all_flux_max_parameter, all_flux_experiment_info, all_flux_parameter_value
 
 
 def combined_sample_based_averages_data_utility(all_sample_combined_flux_data_list):
