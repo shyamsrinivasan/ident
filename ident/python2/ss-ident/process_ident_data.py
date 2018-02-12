@@ -344,7 +344,7 @@ def parameter_identifiability(ident_details):
 
 
 def true_parameter_value(ident_details):
-    number_data = ident_details["values"].shape[0]
+    # number_data = ident_details["values"].shape[0]
     number_parameters = ident_details["parameters"]
     all_parameter_true_values = []
     # add loop for fluxes  - needed when using combined data from all fluxes
