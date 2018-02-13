@@ -401,3 +401,40 @@ def plot_dynamic_sims(dynamic_data, multiple=0, concentrations=1, fluxes=0):
     if fluxes:
         plot_dynamic_sim_fluxes(dynamic_data, multiple=multiple)
     return None
+
+
+def plot_parameter_values(parameter_values):
+    """get box plot of parameter values (determined values vs true values used to create simulations)"""
+    number_of_fluxes = len(parameter_values["processed"])
+    number_of_plots = number_of_fluxes
+    number_of_rows = 2
+    if number_of_plots % number_of_rows != 0:
+        number_of_columns = (number_of_plots + 1) / number_of_rows
+    else:
+        number_of_columns = number_of_plots / number_of_rows
+    f, axarr = plt.subplots(number_of_rows, number_of_columns, figsize=(4, 4), dpi=100, facecolor='w', edgecolor='k')
+    for i_flux in range(0, number_of_fluxes):
+        all_parameter_info = []
+        all_parameter_names = []
+        all_parameter_true_value = []
+        number_parameters = len(parameter_values["processed"][i_flux])
+        for i_parameter_info in parameter_values["processed"][i_flux]:
+            all_parameter_info.append(i_parameter_info["sample mean"])
+            all_parameter_names.append(i_parameter_info["parameter name"])
+            all_parameter_true_value.append(i_parameter_info["true value"])
+        bp = axarr[i_flux].boxplot(all_parameter_info)
+        for whiskers in bp["whiskers"]:
+            whiskers.set(color='k', linewidth=2)
+        for flier in bp['fliers']:
+            flier.set(marker='o', color='r', alpha=0.5)
+
+        axarr[i_flux].scatter(range(1, number_parameters+1), all_parameter_true_value,
+                              color='r', marker='o')
+        axarr[i_flux].set_xticklabels(all_parameter_names)
+        # axis_obj.set_title()
+        # Remove top axes and right axes ticks
+        axarr[i_flux].get_xaxis().tick_bottom()
+        axarr[i_flux].get_yaxis().tick_left()
+    plt.show()
+
+    return None
