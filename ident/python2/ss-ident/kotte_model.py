@@ -1247,7 +1247,7 @@ def flux_ident_2_data_combination(all_data, flux_ids, choose=(), flux_choice=(),
     return all_sample_all_fun_ident_info
 
 
-def flux_ident_3_data_combination(all_data, flux_ids, choose=(), flux_choice=()):
+def flux_ident_3_data_combination(all_data, flux_ids, choose=(), flux_choice=(), ident_fun_choice=()):
     """perform identifiability separately for each set of functions and generate separate identifiability info"""
     # 3 data combination ident list
     if flux_choice[0] == 1:
@@ -1256,7 +1256,19 @@ def flux_ident_3_data_combination(all_data, flux_ids, choose=(), flux_choice=())
         flux_3 = flux_3_value2_ident
     else:
         flux_3 = flux_3_ident_expression
-    ident_fun_3_data = (flux_3)
+    all_ident_fun_3_data = [flux_3]
+
+    # choose flux functions to test identifiability for
+    if ident_fun_choice:
+        if len(ident_fun_choice) == len(all_ident_fun_3_data):
+            ident_fun_3_data = all_ident_fun_3_data
+        else:
+            try:
+                ident_fun_3_data = [all_ident_fun_3_data[j_ident_fun] for j_ident_fun in ident_fun_choice]
+            except TypeError:
+                ident_fun_3_data = all_ident_fun_3_data[ident_fun_choice]
+    else:
+        ident_fun_3_data = all_ident_fun_3_data
     all_sample_all_fun_ident_info = multi_sample_ident_fun(ident_fun_3_data, all_data, choose, flux_ids, flux_choice)
     return all_sample_all_fun_ident_info
 
