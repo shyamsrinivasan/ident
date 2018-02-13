@@ -154,7 +154,8 @@ def arrange_experimental_data(xss, fss, perturbation_details, experiments_per_se
     all_sample_experimental_data = []
     for i_sample in range(0, number_of_samples):
         experimental_data = data_for_each_sample(perturbation_details, experiments_per_set,
-                             data_combinations, xss[i_sample], fss[i_sample], flux_id, combination_choice)
+                                                 data_combinations, xss[i_sample], fss[i_sample],
+                                                 flux_id, combination_choice)
         experimental_data["boolean"] = data_combination_boolean
         all_sample_experimental_data.append(experimental_data)
 
