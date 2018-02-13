@@ -764,7 +764,8 @@ def combined_sampled_based_averages_parameter_value(all_sample_combined_flux_par
         # get mean across all samples across all data points
         mean_across_samples_across_data = np.mean(mean_across_samples, axis=0)
         std_across_samples_across_data = np.std(mean_across_samples, axis=0)
-        k_parameter_info = {"sample mean": mean_across_samples,
+        k_parameter_info = {"found values": np.array(j_parameter_found_values),
+                            "sample mean": mean_across_samples,
                             "sample std": std_across_samples,
                             "data mean": mean_across_data,
                             "data std": std_across_data,
@@ -874,7 +875,7 @@ def process_info_sample(ident_details, experiment_details, experiment_type_indic
                all_sample_combined_experiment_info
     else:
         return all_sample_data_utility, all_sample_parameter_identifiability, \
-               all_sample_parameter_value, all_sample_experiment_info
+               all_sample_parameter_value, all_sample_experiment_info, [], [], [], []
 
 
 def get_data_combinations(original_data, chosen_data_id):
