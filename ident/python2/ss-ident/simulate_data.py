@@ -7,17 +7,8 @@ def parameter_change(new_value, old_value):
 
 
 def get_changed_parameters(original_parameters, changed_parameters, experiment_index, parameter_index):
-    # parameter_array = np.zeros((1, 4))
-    # parameter_array[0, 0] = experiment_index
-    # parameter_array[0, 1] = parameter_index
-    # parameter_array[0, 2] = changed_parameters[experiment_index][parameter_index]
-    # parameter_array[0, 3] = parameter_change(changed_parameters[experiment_index][parameter_index],
-    #                                          original_parameters[parameter_index])
-    # parameter_list = [experiment_index,
-    #                   parameter_index,
-    #                   changed_parameters[experiment_index][parameter_index],
-    #                   parameter_change(changed_parameters[experiment_index][parameter_index],
-    #                                    original_parameters[parameter_index])]
+    """create dictionary of parameter values after perturbations -
+    determine parameter changes and percentage changes"""
     parameter_list = {"experiment index": experiment_index,
                       "parameter name": parameter_index,
                       "parameter value": changed_parameters[experiment_index][parameter_index],
