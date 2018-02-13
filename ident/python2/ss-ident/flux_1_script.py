@@ -73,3 +73,5 @@ plot_parameter_values(true_value_2)
 
 # plot utility of data sets (number of data sets identifying n, n-1, n-2, ...., 1, 0 parameters
 data_utility_plot(data_list_2)
+
+print("\n Run Complete \n")
