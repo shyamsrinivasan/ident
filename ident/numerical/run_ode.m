@@ -1,5 +1,8 @@
 % simulate ode using either SUNDIALS or ode45
-function solution = run_ode(odefun, solver_opts, fun_p)
+function solution = run_ode(odefun, solver_opts, fun_p, flux_fun)
+if nargin<4
+    flux_fun = [];
+end
 if nargin<3
     fun_p = [];
 end
@@ -34,7 +37,10 @@ options = odeset('RelTol',reltol,'AbsTol',abstol);
 
 solution.t = tout;
 solution.y = yout;
-solution.yss = yout(end,:);
-
+solution.yss = yout(end,:)';
+if ~isempty(flux_fun)
+    solution.flux = flux_fun(yout', fun_p);
+    solution.fss = solution.flux(end, :)';
+end
 return
 
