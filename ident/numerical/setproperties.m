@@ -1,4 +1,4 @@
-function setproperties(hsfig,axis_labels)
+function setproperties(haxis,axis_labels)
 
 % set axis properties
 if ~isempty(axis_labels)
@@ -16,4 +16,4 @@ axesP.LineWidth = 1.5;
 axesP.TickLength = [0.01 0.01];
 axesP.XColor = [.1 .1 .1];
 axesP.YColor = [.1 .1 .1];
-set(hsfig,axesP);
+set(haxis,axesP);
