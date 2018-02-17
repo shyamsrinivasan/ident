@@ -10,7 +10,7 @@ set(hfig,'CurrentAxes',haxis);
 set(haxis,'NextPlot','add');
 hline = line(xdata,ydata);
 
-setproperties(hfig,axis_labels);
+setproperties(haxis,axis_labels);
 
 
 
