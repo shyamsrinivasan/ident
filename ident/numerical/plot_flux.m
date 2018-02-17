@@ -4,5 +4,5 @@ for iplot = 1:nplots
     xdata = data(iplot).t;
     ydata = data(iplot).flux;
     axis_labels = {'Time (s)','Flux a.u.'};
-    plot2d(xdata,ydata,haxis(iplot),hfig,axis_labels)
+    plot2d(xdata,ydata,haxis(iplot),hfig,axis_labels);
 end
