@@ -5,24 +5,26 @@ end
 if nargin<2
     concentration=0;
 end
-hfig = figure;
 nplots = size(solution,2);
-ncolumns = 2;
 if nplots>1    
-    if rem(ndata,2)==0
-        nrows = ndata/2;
+    ncolumns = 2;
+    if rem(nplots,2)==0
+        nrows = nplots/2;
     else
-        nrows = (ndata+1)/2;
+        nrows = (nplots+1)/2;
     end    
 else
+    ncolumns = 1;
     nrows = 1;
 end
 haxis = zeros(nplots, 1);
 
 if concentration
+    hfig = figure;
     plot_concentration(solution,hfig,haxis,nplots,nrows,ncolumns);
 end
 if flux
+    hfig = figure;
     plot_flux(solution,hfig,haxis,nplots,nrows,ncolumns);
 end
 
