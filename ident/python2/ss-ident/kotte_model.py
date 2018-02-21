@@ -143,8 +143,8 @@ def kotte_ode(t, y, par_val):
 
 def flux_1_Vmax_ident(experimental_data):
     """v1 identifiability without enzyme"""
-    ac1, x11, x21, _, v11, _, _, _, \
-    ac2, x12, x22, _, v12, _, _, _ = list(experimental_data)
+    ac1, _, _, _, v11, _, _, _, \
+    ac2, _, _, _, v12, _, _, _ = list(experimental_data)
 
     # flux numerator and denominator w/o sympy
     # symbolic expression for flux v1 w/o enzyme concentration data
@@ -161,8 +161,8 @@ def flux_1_Vmax_ident(experimental_data):
 
 def flux_1_kcat_ident(experimental_data):
     """v1 identifiability with enzyme concentration"""
-    ac1, x11, x21, x31, v11, _, _, _, \
-    ac2, x12, x22, x32, v12, _, _, _ = list(experimental_data)
+    ac1, _, _, x31, v11, _, _, _, \
+    ac2, _, _, x32, v12, _, _, _ = list(experimental_data)
 
     k1cat_enzyme_numerator_value = - ac1 * v11 * v12 + ac2 * v11 * v12
     k1cat_enzyme_denominator_value = -(ac1 * v12 * x31 - ac2 * v11 * x32)
@@ -207,8 +207,8 @@ def flux_1_ident_expression(experimental_data):
 def flux_2_ident_expression(experimental_data):
     """symbolic and lambdify expression for flux 2 denominator from mathematica"""
     # get variable values (w/o sympy directly from experimental data)
-    _, x21, _, x31, v11, v21, v31, v41, \
-    _, x22, _, x32, v12, v22, v32, v42 = list(experimental_data)
+    _, x21, _, _, _, v21, _, _, \
+    _, x22, _, _, _, v22, _, _ = list(experimental_data)
 
     # symbolic expression for v2
     # V2max
@@ -470,9 +470,9 @@ def flux_3_value1_ident(experimental_data):
 def flux_3_value2_ident(experimental_data):
     """second set of expressions separated for v3"""
 
-    ac1, x11, x21, x31, v11, v21, v31, v41, \
-    ac2, x12, x22, x32, v12, v22, v32, v42, \
-    ac3, x13, x23, x33, v13, v23, v33, v43 = list(experimental_data)
+    _, x11, x21, _, _, _, v31, _, \
+    _, x12, x22, _, _, _, v32, _, \
+    _, x13, x23, _, _, _, v33, _ = list(experimental_data)
 
     # v3max = second solution
     sqrt_v3max_nr_2 = ((v31 * v33 * x11 * x12 * x21 * x22 - v32 * v33 * x11 * x12 * x21 * x22 -
