@@ -190,7 +190,8 @@ def data_usefulness_percentage(ident_details):
         number_data_identifying_j = len(data_id[i])
         total_number_of_data.append(number_data_identifying_j)
         percentage_of_total.append(float(number_data_identifying_j) / float(number_data) * 100)
-    data_usefulness = {'number': number_parameters_identified,  # number of parameters ided
+    data_usefulness = {'data set size': number_data,
+                       'number': number_parameters_identified,  # number of parameters ided
                        'index': data_id,                        # index of data combinations that id x parameters
                        'total': total_number_of_data,           # number of data combinations that id x parameters
                        'percentage': percentage_of_total,       # percentage of data combinations that id x parameters
@@ -339,7 +340,8 @@ def parameter_identifiability(ident_details):
                      "info": identifying_data,
                      "percentage": identifying_data_percentage,
                      "flux id": ident_details["flux id"],
-                     "flux choice": ident_details["flux choice"]}
+                     "flux choice": ident_details["flux choice"],
+                     "data set size": number_data}
     return max_parameter
 
 
@@ -507,12 +509,14 @@ def collate_sample_based_data_utility(number_of_fluxes_per_sample, all_sample_da
                                   "std": j_flux_total_std,
                                   "number": j_flux_number_mean,
                                   "flux id": all_sample_data_list[0][j_flux]["flux id"],
-                                  "flux choice": all_sample_data_list[0][j_flux]["flux choice"]}
+                                  "flux choice": all_sample_data_list[0][j_flux]["flux choice"],
+                                  "data set size": all_sample_data_list[0][j_flux]["data set size"]}
         j_flux_processed_percent = {"mean": j_flux_percent_mean,
                                     "std": j_flux_percent_std,
                                     "number": j_flux_number_mean,
                                     "flux id": all_sample_data_list[0][j_flux]["flux id"],
-                                    "flux choice": all_sample_data_list[0][j_flux]["flux choice"]}
+                                    "flux choice": all_sample_data_list[0][j_flux]["flux choice"],
+                                    "data set size": all_sample_data_list[0][j_flux]["data set size"]}
         all_flux_data_list.append({"total": j_flux_processed_total,
                                    "percentage": j_flux_processed_percent})
     return all_flux_data_list
@@ -542,11 +546,13 @@ def collate_sample_based_identifibaility(number_of_fluxes_per_sample, all_sample
         j_flux_processed_total = {"mean": j_flux_info_mean,
                                   "std": j_flux_info_std,
                                   "flux id": all_sample_max_parameter[0][j_flux]["flux id"],
-                                  "flux choice": all_sample_max_parameter[0][j_flux]["flux choice"]}
+                                  "flux choice": all_sample_max_parameter[0][j_flux]["flux choice"],
+                                  "data set size": all_sample_max_parameter[0][j_flux]["data set size"]}
         j_flux_processed_percent = {"mean": j_flux_percent_mean,
                                     "std": j_flux_percent_std,
                                     "flux id": all_sample_max_parameter[0][j_flux]["flux id"],
-                                    "flux choice": all_sample_max_parameter[0][j_flux]["flux choice"]}
+                                    "flux choice": all_sample_max_parameter[0][j_flux]["flux choice"],
+                                    "data set size": all_sample_max_parameter[0][j_flux]["data set size"]}
         all_flux_max_parameter.append({"total": j_flux_processed_total,
                                        "percentage": j_flux_processed_percent})
     return all_flux_max_parameter
