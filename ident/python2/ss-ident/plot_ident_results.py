@@ -118,6 +118,10 @@ def parameter_identifibaility_plot(flux_based_parameter_ident, noise=0):
                                                   flux_choice_id=flux_choice_id)
             # plot and annotate using plotting function defined above
             plot_on_axis_object(i_axis_obj, x_data, y_data, x_error, x_percent_mean, x_percent_std, noise)
+            # set x-axis limits to maximum number of available data sets
+            i_axis_obj.set_xlim(0, i_flux_info["percentage"]["data set size"])
+            # set custom tick positions
+            # i_axis_obj.xaxis.set_ticks(np.arange(0, i_flux_info["percentage"]["data set size"], 40))
             # set y-axis tick labels
             i_axis_obj.set_yticklabels(parameter_name)
             # set axis title
@@ -142,6 +146,10 @@ def parameter_identifibaility_plot(flux_based_parameter_ident, noise=0):
             parameter_name = ident_parameter_name(y_data, flux_name=flux_name, flux_choice_id=flux_choice_id)
             # plot and annotate using plotting function defined above
             plot_on_axis_object(axarr, x_data, y_data, x_error, x_percent_mean, x_percent_std, noise)
+            # set x-axis limits to maximum number of available data sets
+            axarr.set_xlim(0, i_flux_info["percentage"]["data set size"])
+            # set custom tick positions
+            # axarr.xaxis.set_ticks(np.arange(0, i_flux_info["percentage"]["data set size"], 40))
             # set y-axis tick labels
             axarr.set_yticklabels(parameter_name)
             # set axis title
