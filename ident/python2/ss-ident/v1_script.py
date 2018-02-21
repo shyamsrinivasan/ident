@@ -29,7 +29,7 @@ ode_parameter_values = {"K1ac": np.array([.1]),
                         "V2max": np.array([1]),
                         "ac": np.array([.1])}
 
-# get experimental system steady state data without noise
+# get experimental system steady state data without noise using MWC kinetics for v3 (kinetics = 1)
 exp_xss, exp_fss, exp_ssid, perturbation_details = \
     generate_expdata(y0, cvode_options, ode_parameter_values, noise=0, kinetics=1, dynamic_plot=0,
                      perturbation_plot=0)
@@ -45,15 +45,20 @@ ident_fun_choice = [0]
 experimental_datasets_2_expts, \
     experiment_choice, combination_choice = arrange_experimental_data(exp_xss, exp_fss, perturbation_details,
                                                                       experiments_per_set=2, flux_id=exp_flux_index,
-                                                                      experiment_choice=[0, 1, 2, 8,
-                                                                                         9, 10, 11, 12, 13, 14, 15,
-                                                                                         16, 17])
+                                                                      experiment_choice=[0, 1, 2, 3, 4, 5,
+                                                                                         11, 12, 13, 14, 15,
+                                                                                         16, 17, 18, 19, 20])
+
+# perform identifiability when v1 is written with k1cat*E in the numerator
 ident_details_2 = flux_ident_2_data_combination(experimental_datasets_2_expts, choose=combination_choice,
-                                                flux_ids=[1, 2], flux_choice=[2, 0], ident_fun_choice=ident_fun_choice)
+                                                flux_ids=[1], flux_choice=[2], ident_fun_choice=ident_fun_choice)
 print('Identifiability analysis for fluxes with 2 parameters complete.\n')
 
 # data processing - do not combine fluxes
-experiment_type_indices = [[0], [1, 2], [3, 4, 5, 6, 7], [8, 9, 10, 11, 12], [13, 14, 15, 16, 17]]
+experiment_type_indices = [[0], [1, 2, 3, 4, 5],
+                           [6, 7, 8, 9, 10],
+                           [11, 12, 13, 14, 15],
+                           [16, 17, 18, 19, 20]]
 data_list_2, max_parameter_2, true_value_2, experiment_info_2, \
     combined_data_list_2, combined_max_parameter_2, combined_true_value_2, \
     combined_experiment_info_2 = process_info_sample(ident_details_2,
