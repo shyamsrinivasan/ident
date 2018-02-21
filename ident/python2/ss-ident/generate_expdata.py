@@ -49,7 +49,7 @@ def generate_expdata(y0, cvode_options, ode_parameter_values, number_of_samples=
         plot_dynamic_sim_concentrations(initial_dyn)
 
     # all parameter perturbations
-    parameter_perturbation = [{"ac": 0}, {"ac": 4}, {"ac": 9},
+    parameter_perturbation = [{"ac": 0}, {"ac": .1}, {"ac": 4}, {"ac": 9}, {"ac": -.1}, {"ac": -.5},
                               {"k1cat": .1}, {"k1cat": .5}, {"k1cat": 1}, {"k1cat": -.1}, {"k1cat": -.5},
                               {"V3max": .1}, {"V3max": .5}, {"V3max": 1}, {"V3max": -.1}, {"V3max": -.5},
                               {"V2max": .1}, {"V2max": .5}, {"V2max": 1}, {"V2max": -.1}, {"V2max": -.5}]
