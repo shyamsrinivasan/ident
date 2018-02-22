@@ -38,9 +38,6 @@ exp_xss, exp_fss, exp_ssid, perturbation_details = \
 exp_flux_index = np.array([0, 3, 2, 4])
 
 # get combination of 2 experiments and perform identifiability on all fluxes that require 2 data sets
-print('Practical Identifiability Analysis of fluxes with 2 parameters \n')
-# choose which identifiability functions to test
-ident_fun_choice = [0]
 # get combinations of experimental datasets
 experimental_datasets_2_expts, \
     experiment_choice, combination_choice = arrange_experimental_data(exp_xss, exp_fss, perturbation_details,
@@ -48,36 +45,70 @@ experimental_datasets_2_expts, \
                                                                       experiment_choice=[0, 1, 2, 3, 4, 5,
                                                                                          11, 12, 13, 14, 15,
                                                                                          16, 17, 18, 19, 20])
-
-# perform identifiability when v1 is written with k1cat*E in the numerator
-ident_details_2 = flux_ident_2_data_combination(experimental_datasets_2_expts, choose=combination_choice,
-                                                flux_ids=[1], flux_choice=[2], ident_fun_choice=ident_fun_choice)
-print('Identifiability analysis for fluxes with 2 parameters complete.\n')
-
-# data processing - do not combine fluxes
+# different types of experiments 0 - wt, perturbations: 1 - acetate, 2 - k1cat, 3 - V3max, 4 - V2max
 experiment_type_indices = [[0],
                            [1, 2, 3, 4, 5],
                            [6, 7, 8, 9, 10],
                            [11, 12, 13, 14, 15],
                            [16, 17, 18, 19, 20]]
-data_list_2, max_parameter_2, true_value_2, experiment_info_2, \
-    combined_data_list_2, combined_max_parameter_2, combined_true_value_2, \
-    combined_experiment_info_2 = process_info_sample(ident_details_2,
-                                                     experimental_datasets_2_expts,
-                                                     experiment_type_indices,
-                                                     combine_fluxes=0,
-                                                     ident_fun_choice=ident_fun_choice)
+
+print('Practical Identifiability Analysis of v1 with 2 parameters: k1cat and K1ac\n')
+# choose which identifiability functions to test
+ident_fun_choice = [0]
+# perform identifiability when v1 is written with k1cat*E in the numerator
+ident_details_v1_k1cat = flux_ident_2_data_combination(experimental_datasets_2_expts, choose=combination_choice,
+                                                       flux_ids=[1], flux_choice=[2], ident_fun_choice=ident_fun_choice)
+print('Identifiability analysis of v1 with 2 parameters (k1cat and K1ac) complete.\n')
+
+# data processing - do not combine fluxes
+
+data_list_v1_k1cat, max_parameter_v1_k1cat, true_value_v1_k1cat, experiment_info_v1_k1cat,\
+combined_data_list_v1_k1cat, combined_max_parameter_v1_k1cat, combined_true_value_v1_k1cat, \
+combined_experiment_info_v1_k1cat = process_info_sample(ident_details_v1_k1cat,
+                                                        experimental_datasets_2_expts,
+                                                        experiment_type_indices,
+                                                        combine_fluxes=0,
+                                                        ident_fun_choice=ident_fun_choice)
 
 # plot parameter identifibaility for all fluxes using 2 data combinations
-parameter_identifibaility_plot(max_parameter_2)
+parameter_identifibaility_plot(max_parameter_v1_k1cat)
 # plot experiment type in each position based on all parameter
 # identifiable data combinations for each parameter
 # parameter_experiment_info_plot(experiment_info_2)
-parameter_experiment_info_spider(experiment_info_2)
+parameter_experiment_info_spider(experiment_info_v1_k1cat)
 # plot true parameter values and determined parameter values
-plot_parameter_values(true_value_2)
+plot_parameter_values(true_value_v1_k1cat)
 
 # plot utility of data sets (number of data sets identifying n, n-1, n-2, ...., 1, 0 parameters
-data_utility_plot(data_list_2)
+data_utility_plot(data_list_v1_k1cat)
+
+print('Practical Identifiability Analysis of v1 with 2 parameters: V1max and K1ac\n')
+# choose which identifiability functions to test
+ident_fun_choice = [0]
+# perform identifiability when v1 is written with V1max in the numerator
+ident_details_v1_V1max = flux_ident_2_data_combination(experimental_datasets_2_expts, choose=combination_choice,
+                                                       flux_ids=[1], flux_choice=[1], ident_fun_choice=ident_fun_choice)
+print('Identifiability analysis of v1 with 2 parameters (V1max and K1ac) complete.\n')
+
+# data processing - do not combine fluxes
+data_list_v1_V1max, max_parameter_v1_V1max, true_value_v1_V1max, experiment_info_v1_V1max, \
+combined_data_list_v1_V1max, combined_max_parameter_v1_V1max, combined_true_value_v1_V1max, \
+combined_experiment_info_v1_V1max = process_info_sample(ident_details_v1_V1max,
+                                                        experimental_datasets_2_expts,
+                                                        experiment_type_indices,
+                                                        combine_fluxes=0,
+                                                        ident_fun_choice=ident_fun_choice)
+
+# plot parameter identifibaility for all fluxes using 2 data combinations
+parameter_identifibaility_plot(max_parameter_v1_V1max)
+# plot experiment type in each position based on all parameter
+# identifiable data combinations for each parameter
+# parameter_experiment_info_plot(experiment_info_2)
+parameter_experiment_info_spider(experiment_info_v1_V1max)
+# plot true parameter values and determined parameter values
+plot_parameter_values(true_value_v1_V1max)
+
+# plot utility of data sets (number of data sets identifying n, n-1, n-2, ...., 1, 0 parameters
+data_utility_plot(data_list_v1_V1max)
 
 print("\n Run Complete \n")
