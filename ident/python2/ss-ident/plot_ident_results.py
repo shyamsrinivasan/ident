@@ -31,24 +31,35 @@ def plot_on_axis_object(axis_obj, x_data, y_data, x_error, x_percent_mean, x_per
     return None
 
 
-def plot_on_axis_object_vertical(axis_obj, x_data, y_data, y_error, y_percent_mean, y_percent_std, noise=0):
+def plot_on_axis_object_vertical(axis_obj, x_data, y_data, y_error, y_percent_mean, y_percent_std, y_max, noise=0):
     if noise:
-        axis_obj.bar(x_data, y_data, yerr=y_error, align='center', color='blue', ecolor='black')
+        axis_obj.bar(x_data, y_data, width=.5, yerr=y_error, align='center')
     else:
         # no error bars
-        axis_obj.bar(x_data, y_data, align='center', color='blue', ecolor='black')
+        axis_obj.bar(x_data, y_data, width=.5, align='center')
+    # set y-axis limits
+    axis_obj.set_ylim(0, y_max)
+    # recompute data limits
+    axis_obj.relim()
+    axis_obj.autoscale_view()
+    # set custom tick positions
+    # axis_obj.yaxis.set_ticks(np.arange(0, y_max, 40))
 
     # annotate percentages onto each bar in the graph
-    for j_bar in range(0, len(x_data)):
+    for j_bar, p in enumerate(axis_obj.patches):
+        p.set_facecolor('blue')
+        p.set_edgecolor('k')
+        # set hatch pattern
+        # p.set_hatch('/')
+
+        # annotate percentages onto bar graphs
         if noise:
             y_annotation = "{:.2f} + {:.2f}%".format(y_percent_mean[j_bar],
                                                       y_percent_std[j_bar])
         else:
             y_annotation = "{:.2f}%".format(y_percent_mean[j_bar])
-        an1 = axis_obj.annotate("", xy=(x_data[j_bar], y_data[j_bar]), xycoords='data',
-                                xytext=(x_data[j_bar], y_data[j_bar]), textcoords='data')
-        an2 = axis_obj.annotate(y_annotation, xy=(5, .5), xycoords=an1,
-                                xytext=(40, 0), textcoords="offset points", size=16, va="center", ha="center")
+        axis_obj.annotate(y_annotation, (p.get_x() + p.get_width()/2, p.get_height()*1.05),
+                          ha='center', va='center', textcoords='data')
     # set x-ticks
     axis_obj.set_xticks(x_data)
     return None
@@ -277,7 +288,9 @@ def data_utility_plot(data_list, noise=0):
             y_error = i_flux_info["total"]["std"]
             y_percent_mean = i_flux_info["percentage"]["mean"]
             y_percent_std = i_flux_info["percentage"]["std"]
-            plot_on_axis_object_vertical(i_axis_obj, x_data, y_data, y_error, y_percent_mean, y_percent_std, noise)
+            y_max = i_flux_info["percentage"]["data set size"]
+            plot_on_axis_object_vertical(i_axis_obj, x_data, y_data, y_error,
+                                         y_percent_mean, y_percent_std, y_max, noise)
             # set axis title
             i_axis_obj.set_title('v{} parameters type {}'.format(i_flux_info["total"]["flux id"],
                                                                  i_flux_info["total"]["flux choice"]))
@@ -299,7 +312,9 @@ def data_utility_plot(data_list, noise=0):
             y_error = i_flux_info["total"]["std"]
             y_percent_mean = i_flux_info["percentage"]["mean"]
             y_percent_std = i_flux_info["percentage"]["std"]
-            plot_on_axis_object_vertical(axarr, x_data, y_data, y_error, y_percent_mean, y_percent_std, noise)
+            y_max = i_flux_info["percentage"]["data set size"]
+            plot_on_axis_object_vertical(axarr, x_data, y_data, y_error,
+                                         y_percent_mean, y_percent_std, y_max, noise)
             # set axis title
             axarr.set_title('v{} parameters type {}'.format(i_flux_info["total"]["flux id"],
                                                             i_flux_info["total"]["flux choice"]))
