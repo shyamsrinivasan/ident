@@ -5,26 +5,37 @@ from kotte_model import kotte_experiment_type_name
 plt.ion()
 
 
-def plot_on_axis_object(axis_obj, x_data, y_data, x_error, x_percent_mean, x_percent_std, noise=0):
+def plot_on_axis_object(axis_obj, x_data, y_data, x_error, x_percent_mean, x_percent_std, x_max, noise=0):
     """given axis object plot given data on axis object along with all given annotations"""
     # plot bar graphs for x_data vs y_data with x_error error bars
     if noise:
-        axis_obj.barh(y_data, x_data, xerr=x_error, align='center', color='blue', ecolor='black')
+        axis_obj.barh(y_data, x_data, xerr=x_error, align='center')
     else:
         # no error bars
-        axis_obj.barh(y_data, x_data, align='center', color='blue', ecolor='black')
+        axis_obj.barh(y_data, x_data, align='center')
+    # set x-axis limits
+    axis_obj.set_xlim(0, x_max)
+    # recompute data limits
+    axis_obj.relim()
+    axis_obj.autoscale_view()
+    # set custom tick positions
+    # axis_obj.xaxis.set_ticks(np.arange(0, x_max, 40))
 
     # annotate percentages onto each bar in the graph
-    for j_bar in range(0, len(y_data)):
+    for j_bar, p in enumerate(axis_obj.patches):
+        p.set_facecolor('blue')
+        p.set_edgecolor('k')
+        # set hatch pattern
+        # p.set_hatch('/')
+
+        # annotate percentages onto bar graphs
         if noise:
-            x_annotation = "{:.2f} + {:.2f}%".format(x_percent_mean[j_bar],
-                                                      x_percent_std[j_bar])
+            y_annotation = "{:.2f} + {:.2f}%".format(x_percent_mean[j_bar],
+                                                     x_percent_std[j_bar])
         else:
-            x_annotation = "{:.2f}%".format(x_percent_mean[j_bar])
-        an1 = axis_obj.annotate("", xy=(x_data[j_bar], y_data[j_bar]), xycoords='data',
-                                xytext=(x_data[j_bar], y_data[j_bar]), textcoords='data')
-        an2 = axis_obj.annotate(x_annotation, xy=(5, .5), xycoords=an1,
-                                xytext=(40, 0), textcoords="offset points", size=16, va="center", ha="center")
+            y_annotation = "{:.2f}%".format(x_percent_mean[j_bar])
+        axis_obj.annotate(y_annotation, (p.get_width(), p.get_y() + p.get_height()/2),
+                          ha='center', va='center', xycoords='data')
     # set y axis ticks
     axis_obj.set_yticks(y_data)
     # set y axis tick labels (parameter names)
@@ -122,17 +133,14 @@ def parameter_identifibaility_plot(flux_based_parameter_ident, noise=0):
             y_data = np.arange(0, len(x_data))
             x_percent_mean = i_flux_info["percentage"]["mean"]
             x_percent_std = i_flux_info["percentage"]["std"]
+            x_max = i_flux_info["percentage"]["data set size"]
             # get parameter id/name for y-axis labels
             flux_name = ["flux{}".format(i_flux_info["total"]["flux id"])] * len(y_data)
             flux_choice_id = [i_flux_info["total"]["flux choice"]] * len(y_data)
             parameter_name = ident_parameter_name(y_data, flux_name=flux_name,
                                                   flux_choice_id=flux_choice_id)
             # plot and annotate using plotting function defined above
-            plot_on_axis_object(i_axis_obj, x_data, y_data, x_error, x_percent_mean, x_percent_std, noise)
-            # set x-axis limits to maximum number of available data sets
-            i_axis_obj.set_xlim(0, i_flux_info["percentage"]["data set size"])
-            # set custom tick positions
-            # i_axis_obj.xaxis.set_ticks(np.arange(0, i_flux_info["percentage"]["data set size"], 40))
+            plot_on_axis_object(i_axis_obj, x_data, y_data, x_error, x_percent_mean, x_percent_std, x_max, noise)
             # set y-axis tick labels
             i_axis_obj.set_yticklabels(parameter_name)
             # set axis title
@@ -151,16 +159,13 @@ def parameter_identifibaility_plot(flux_based_parameter_ident, noise=0):
             y_data = np.arange(0, len(x_data))
             x_percent_mean = i_flux_info["percentage"]["mean"]
             x_percent_std = i_flux_info["percentage"]["std"]
+            x_max = i_flux_info["percentage"]["data set size"]
             # get parameter id/name for y-axis labels
             flux_name = ["flux{}".format(i_flux_info["total"]["flux id"])] * len(y_data)
             flux_choice_id = [i_flux_info["total"]["flux choice"]] * len(y_data)
             parameter_name = ident_parameter_name(y_data, flux_name=flux_name, flux_choice_id=flux_choice_id)
             # plot and annotate using plotting function defined above
-            plot_on_axis_object(axarr, x_data, y_data, x_error, x_percent_mean, x_percent_std, noise)
-            # set x-axis limits to maximum number of available data sets
-            axarr.set_xlim(0, i_flux_info["percentage"]["data set size"])
-            # set custom tick positions
-            # axarr.xaxis.set_ticks(np.arange(0, i_flux_info["percentage"]["data set size"], 40))
+            plot_on_axis_object(axarr, x_data, y_data, x_error, x_percent_mean, x_percent_std, x_max, noise)
             # set y-axis tick labels
             axarr.set_yticklabels(parameter_name)
             # set axis title
