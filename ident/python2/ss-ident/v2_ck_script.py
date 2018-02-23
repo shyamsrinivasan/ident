@@ -52,13 +52,13 @@ experiment_type_indices = [[0],
                            [11, 12, 13, 14, 15],
                            [16, 17, 18, 19, 20]]
 
-print('Practical Identifiability Analysis of v1 with 2 parameters: k1cat and K1ac\n')
+print('Practical Identifiability Analysis of v2 with 2 parameters: V2max and K2pep\n')
 # choose which identifiability functions to test
 ident_fun_choice = [1]
 # perform identifiability when v1 is written with k1cat*E in the numerator
 ident_details_v2_V2max = flux_ident_2_data_combination(experimental_datasets_2_expts, choose=combination_choice,
                                                        flux_ids=[2], flux_choice=[0], ident_fun_choice=ident_fun_choice)
-print('Identifiability analysis of v1 with 2 parameters (k1cat and K1ac) complete.\n')
+print('Identifiability analysis of v2 with 2 parameters (V2max and K2pep) complete.\n')
 
 # data processing - do not combine fluxes
 
