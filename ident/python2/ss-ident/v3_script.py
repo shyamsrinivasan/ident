@@ -73,8 +73,31 @@ parameter_identifibaility_plot(max_parameter_v3_root1)
 parameter_experiment_info_spider(experiment_info_v3_root1)
 # plot true parameter values and determined parameter values
 plot_parameter_values(true_value_v3_root1)
-
 # plot utility of data sets (number of data sets identifying n, n-1, n-2, ...., 1, 0 parameters
 data_utility_plot(data_list_v3_root1)
+
+print('Practical Identifiability Analysis of v3 with 3 parameters: V3max, K3fdp and K3pep \n')
+# perform identifiability when v3 parameters are written for root (2)
+ident_details_v3_root2 = flux_ident_3_data_combination(experimental_datasets_3_expts, choose=combination_choice,
+                                                       flux_ids=[3], flux_choice=[1], ident_fun_choice=ident_fun_choice)
+print('Identifiability analysis for v3 with 3 parameters (V3max, K3fdp and K3pep) complete.\n')
+# data processing
+data_list_v3_root2, max_parameter_v3_root2, true_value_v3_root2, experiment_info_v3_root2, \
+    combined_data_list_v3_root2, combined_max_parameter_v3_root2, combined_true_value_v3_root2, \
+    combined_experiment_info_v3_root2 = process_info_sample(ident_details_v3_root2,
+                                                            experimental_datasets_3_expts,
+                                                            experiment_type_indices,
+                                                            ident_fun_choice=ident_fun_choice)
+
+# plot parameter identifibaility for all fluxes using 3 data combinations
+parameter_identifibaility_plot(max_parameter_v3_root2)
+# plot experiment type in each position based on all parameter
+# identifiable data combinations for each parameter
+parameter_experiment_info_spider(experiment_info_v3_root2)
+# plot true parameter values and determined parameter values
+plot_parameter_values(true_value_v3_root2)
+
+# plot utility of data sets (number of data sets identifying n, n-1, n-2, ...., 1, 0 parameters
+data_utility_plot(data_list_v3_root2)
 
 print("Run complete\n")
