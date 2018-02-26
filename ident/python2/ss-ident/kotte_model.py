@@ -224,9 +224,8 @@ def flux_2_ident_expression(experimental_data):
            [k2pep_numerator_value, k2pep_denominator_value, k2pep_value]
 
 
-def flux_3_value1_ident(experimental_data):
-    """only one set of expressions separated for flux 3"""
-
+def v3_Vmax_value1(experimental_data):
+    """V3max (root 1) identifiability expression for v3"""
     _, x11, x21, _, _, _, v31, _, \
     _, x12, x22, _, _, _, v32, _, \
     _, x13, x23, _, _, _, v33, _ = list(experimental_data)
@@ -335,141 +334,11 @@ def flux_3_value1_ident(experimental_data):
     v3max_dr_1_value = -v32 * v33 * x11 * x12 * x21 + v32 * v33 * x11 * x13 * x21 + v31 * v33 * x11 * x12 * x22 - \
                        v31 * v33 * x12 * x13 * x22 - v31 * v32 * x11 * x13 * x23 + v31 * v32 * x12 * x13 * x23
     v3max_1_value = v3max_nr_1_value / v3max_dr_1_value
-
-    # K3fdp
-    sq_nr_1_k3fdp = ((v31 * v33 * x11 * x12 * x21 * x22 - v32 * v33 * x11 * x12 * x21 * x22 -
-                      v32 * v33 * x11 * x13 * x21 * x22 + v31 * v33 * x12 * x13 * x21 * x22 +
-                      v32 * v33 * x11 * x12 * x21 * x23 - v31 * v32 * x11 * x13 * x21 * x23 +
-                      v32 * v33 * x11 * x13 * x21 * x23 - v31 * v32 * x12 * x13 * x21 * x23 -
-                      v31 * v33 * x11 * x12 * x22 * x23 + v31 * v32 * x11 * x13 * x22 * x23 +
-                      v31 * v32 * x12 * x13 * x22 * x23 - v31 * v33 * x12 * x13 * x22 * x23) ** 2 -
-                     4 * (-v32 * v33 * x11 * x21 * x22 + v31 * v33 * x12 * x21 * x22 + v32 * v33 * x11 * x21 * x23 -
-                          v31 * v32 * x13 * x21 * x23 - v31 * v33 * x12 * x22 * x23 + v31 * v32 * x13 * x22 * x23) *
-                     (v31 * v33 * x11 * x12 * x13 * x21 * x22 - v32 * v33 * x11 * x12 * x13 * x21 * x22 -
-                      v31 * v32 * x11 * x12 * x13 * x21 * x23 + v32 * v33 * x11 * x12 * x13 * x21 * x23 +
-                      v31 * v32 * x11 * x12 * x13 * x22 * x23 - v31 * v33 * x11 * x12 * x13 * x22 * x23))
-    sq_nr_1_k3fdp = truncate_values(sq_nr_1_k3fdp, 10)
-    k3fdp_nr_1_value = -v31 * v33 * x11 * x12 * x21 * x22 + v32 * v33 * x11 * x12 * x21 * x22 + \
-                       v31 * v32 * x11 * x13 * x21 * x23 - v32 * v33 * x11 * x13 * x21 * x23 - \
-                       v31 * v32 * x12 * x13 * x22 * x23 + v31 * v33 * x12 * x13 * x22 * x23 + \
-                       (v32 * v33 * x11 * x21 * x22 * (-v31 * v33 * x11 * x12 * x21 * x22 +
-                                                       v32 * v33 * x11 * x12 * x21 * x22 +
-                                                       v32 * v33 * x11 * x13 * x21 * x22 -
-                                                       v31 * v33 * x12 * x13 * x21 * x22 -
-                                                       v32 * v33 * x11 * x12 * x21 * x23 +
-                                                       v31 * v32 * x11 * x13 * x21 * x23 -
-                                                       v32 * v33 * x11 * x13 * x21 * x23 +
-                                                       v31 * v32 * x12 * x13 * x21 * x23 +
-                                                       v31 * v33 * x11 * x12 * x22 * x23 -
-                                                       v31 * v32 * x11 * x13 * x22 * x23 -
-                                                       v31 * v32 * x12 * x13 * x22 * x23 +
-                                                       v31 * v33 * x12 * x13 * x22 * x23 - np.sqrt(sq_nr_1_k3fdp))) / \
-                       (2 * (-v32 * v33 * x11 * x21 * x22 + v31 * v33 * x12 * x21 * x22 + v32 * v33 * x11 * x21 * x23 -
-                             v31 * v32 * x13 * x21 * x23 - v31 * v33 * x12 * x22 * x23 + v31 * v32 * x13 * x22 * x23)) - \
-                       (v31 * v33 * x12 * x21 * x22 * (-v31 * v33 * x11 * x12 * x21 * x22 +
-                                                       v32 * v33 * x11 * x12 * x21 * x22 +
-                                                       v32 * v33 * x11 * x13 * x21 * x22 -
-                                                       v31 * v33 * x12 * x13 * x21 * x22 -
-                                                       v32 * v33 * x11 * x12 * x21 * x23 +
-                                                       v31 * v32 * x11 * x13 * x21 * x23 -
-                                                       v32 * v33 * x11 * x13 * x21 * x23 +
-                                                       v31 * v32 * x12 * x13 * x21 * x23 +
-                                                       v31 * v33 * x11 * x12 * x22 * x23 -
-                                                       v31 * v32 * x11 * x13 * x22 * x23 -
-                                                       v31 * v32 * x12 * x13 * x22 * x23 +
-                                                       v31 * v33 * x12 * x13 * x22 * x23 - np.sqrt(sq_nr_1_k3fdp))) / \
-                       (2 * (-v32 * v33 * x11 * x21 * x22 + v31 * v33 * x12 * x21 * x22 + v32 * v33 * x11 * x21 * x23 -
-                             v31 * v32 * x13 * x21 * x23 - v31 * v33 * x12 * x22 * x23 + v31 * v32 * x13 * x22 * x23)) - \
-                       (v32 * v33 * x11 * x21 * x23 * (-v31 * v33 * x11 * x12 * x21 * x22 +
-                                                       v32 * v33 * x11 * x12 * x21 * x22 +
-                                                       v32 * v33 * x11 * x13 * x21 * x22 -
-                                                       v31 * v33 * x12 * x13 * x21 * x22 -
-                                                       v32 * v33 * x11 * x12 * x21 * x23 +
-                                                       v31 * v32 * x11 * x13 * x21 * x23 -
-                                                       v32 * v33 * x11 * x13 * x21 * x23 +
-                                                       v31 * v32 * x12 * x13 * x21 * x23 +
-                                                       v31 * v33 * x11 * x12 * x22 * x23 -
-                                                       v31 * v32 * x11 * x13 * x22 * x23 -
-                                                       v31 * v32 * x12 * x13 * x22 * x23 +
-                                                       v31 * v33 * x12 * x13 * x22 * x23 - np.sqrt(sq_nr_1_k3fdp))) / \
-                       (2 * (-v32 * v33 * x11 * x21 * x22 + v31 * v33 * x12 * x21 * x22 + v32 * v33 * x11 * x21 * x23 -
-                             v31 * v32 * x13 * x21 * x23 - v31 * v33 * x12 * x22 * x23 + v31 * v32 * x13 * x22 * x23)) + \
-                       (v31 * v32 * x13 * x21 * x23 * (-v31 * v33 * x11 * x12 * x21 * x22 +
-                                                       v32 * v33 * x11 * x12 * x21 * x22 +
-                                                       v32 * v33 * x11 * x13 * x21 * x22 -
-                                                       v31 * v33 * x12 * x13 * x21 * x22 -
-                                                       v32 * v33 * x11 * x12 * x21 * x23 +
-                                                       v31 * v32 * x11 * x13 * x21 * x23 -
-                                                       v32 * v33 * x11 * x13 * x21 * x23 +
-                                                       v31 * v32 * x12 * x13 * x21 * x23 +
-                                                       v31 * v33 * x11 * x12 * x22 * x23 -
-                                                       v31 * v32 * x11 * x13 * x22 * x23 -
-                                                       v31 * v32 * x12 * x13 * x22 * x23 +
-                                                       v31 * v33 * x12 * x13 * x22 * x23 - np.sqrt(sq_nr_1_k3fdp))) / \
-                       (2 * (-v32 * v33 * x11 * x21 * x22 + v31 * v33 * x12 * x21 * x22 + v32 * v33 * x11 * x21 * x23 -
-                             v31 * v32 * x13 * x21 * x23 - v31 * v33 * x12 * x22 * x23 + v31 * v32 * x13 * x22 * x23)) + \
-                       (v31 * v33 * x12 * x22 * x23 * (-v31 * v33 * x11 * x12 * x21 * x22 +
-                                                       v32 * v33 * x11 * x12 * x21 * x22 +
-                                                       v32 * v33 * x11 * x13 * x21 * x22 -
-                                                       v31 * v33 * x12 * x13 * x21 * x22 -
-                                                       v32 * v33 * x11 * x12 * x21 * x23 +
-                                                       v31 * v32 * x11 * x13 * x21 * x23 -
-                                                       v32 * v33 * x11 * x13 * x21 * x23 +
-                                                       v31 * v32 * x12 * x13 * x21 * x23 +
-                                                       v31 * v33 * x11 * x12 * x22 * x23 -
-                                                       v31 * v32 * x11 * x13 * x22 * x23 -
-                                                       v31 * v32 * x12 * x13 * x22 * x23 +
-                                                       v31 * v33 * x12 * x13 * x22 * x23 - np.sqrt(sq_nr_1_k3fdp))) / \
-                       (2 * (-v32 * v33 * x11 * x21 * x22 + v31 * v33 * x12 * x21 * x22 + v32 * v33 * x11 * x21 * x23 -
-                             v31 * v32 * x13 * x21 * x23 - v31 * v33 * x12 * x22 * x23 + v31 * v32 * x13 * x22 * x23)) - \
-                       (v31 * v32 * x13 * x22 * x23 * (-v31 * v33 * x11 * x12 * x21 * x22 +
-                                                       v32 * v33 * x11 * x12 * x21 * x22 +
-                                                       v32 * v33 * x11 * x13 * x21 * x22 -
-                                                       v31 * v33 * x12 * x13 * x21 * x22 -
-                                                       v32 * v33 * x11 * x12 * x21 * x23 +
-                                                       v31 * v32 * x11 * x13 * x21 * x23 -
-                                                       v32 * v33 * x11 * x13 * x21 * x23 +
-                                                       v31 * v32 * x12 * x13 * x21 * x23 +
-                                                       v31 * v33 * x11 * x12 * x22 * x23 -
-                                                       v31 * v32 * x11 * x13 * x22 * x23 -
-                                                       v31 * v32 * x12 * x13 * x22 * x23 +
-                                                       v31 * v33 * x12 * x13 * x22 * x23 - np.sqrt(sq_nr_1_k3fdp))) / \
-                       (2 * (-v32 * v33 * x11 * x21 * x22 + v31 * v33 * x12 * x21 * x22 + v32 * v33 * x11 * x21 * x23 -
-                             v31 * v32 * x13 * x21 * x23 - v31 * v33 * x12 * x22 * x23 + v31 * v32 * x13 * x22 * x23))
-    k3fdp_dr_1_value = -v32 * v33 * x11 * x12 * x21 + v32 * v33 * x11 * x13 * x21 + v31 * v33 * x11 * x12 * x22 - \
-                       v31 * v33 * x12 * x13 * x22 - v31 * v32 * x11 * x13 * x23 + v31 * v32 * x12 * x13 * x23
-    k3fdp_1_value = k3fdp_nr_1_value / k3fdp_dr_1_value
-
-    # K3pep
-    sq_k3pep_nr_1 = ((v31 * v33 * x11 * x12 * x21 * x22 - v32 * v33 * x11 * x12 * x21 * x22 -
-                      v32 * v33 * x11 * x13 * x21 * x22 + v31 * v33 * x12 * x13 * x21 * x22 +
-                      v32 * v33 * x11 * x12 * x21 * x23 - v31 * v32 * x11 * x13 * x21 * x23 +
-                      v32 * v33 * x11 * x13 * x21 * x23 - v31 * v32 * x12 * x13 * x21 * x23 -
-                      v31 * v33 * x11 * x12 * x22 * x23 + v31 * v32 * x11 * x13 * x22 * x23 +
-                      v31 * v32 * x12 * x13 * x22 * x23 - v31 * v33 * x12 * x13 * x22 * x23) ** 2 -
-                     4 * (-v32 * v33 * x11 * x21 * x22 + v31 * v33 * x12 * x21 * x22 + v32 * v33 * x11 * x21 * x23 -
-                          v31 * v32 * x13 * x21 * x23 - v31 * v33 * x12 * x22 * x23 + v31 * v32 * x13 * x22 * x23) *
-                     (v31 * v33 * x11 * x12 * x13 * x21 * x22 - v32 * v33 * x11 * x12 * x13 * x21 * x22 -
-                      v31 * v32 * x11 * x12 * x13 * x21 * x23 + v32 * v33 * x11 * x12 * x13 * x21 * x23 +
-                      v31 * v32 * x11 * x12 * x13 * x22 * x23 - v31 * v33 * x11 * x12 * x13 * x22 * x23))
-    sq_k3pep_nr_1 = truncate_values(sq_k3pep_nr_1, 10)
-    k3pep_nr_1_value = -v31 * v33 * x11 * x12 * x21 * x22 + v32 * v33 * x11 * x12 * x21 * x22 + \
-                       v32 * v33 * x11 * x13 * x21 * x22 - v31 * v33 * x12 * x13 * x21 * x22 - \
-                       v32 * v33 * x11 * x12 * x21 * x23 + v31 * v32 * x11 * x13 * x21 * x23 - \
-                       v32 * v33 * x11 * x13 * x21 * x23 + v31 * v32 * x12 * x13 * x21 * x23 + \
-                       v31 * v33 * x11 * x12 * x22 * x23 - v31 * v32 * x11 * x13 * x22 * x23 - \
-                       v31 * v32 * x12 * x13 * x22 * x23 + v31 * v33 * x12 * x13 * x22 * x23 - np.sqrt(sq_k3pep_nr_1)
-    k3pep_dr_1_value = 2 * (-v32 * v33 * x11 * x21 * x22 + v31 * v33 * x12 * x21 * x22 + v32 * v33 * x11 * x21 * x23 -
-                            v31 * v32 * x13 * x21 * x23 - v31 * v33 * x12 * x22 * x23 + v31 * v32 * x13 * x22 * x23)
-    k3pep_1_value = k3pep_nr_1_value / k3pep_dr_1_value
-    return [v3max_nr_1_value, v3max_dr_1_value, v3max_1_value], \
-           [k3fdp_nr_1_value, k3fdp_dr_1_value, k3fdp_1_value], \
-           [k3pep_nr_1_value, k3pep_dr_1_value, k3pep_1_value]
+    return [v3max_nr_1_value, v3max_dr_1_value, v3max_1_value]
 
 
-def flux_3_value2_ident(experimental_data):
-    """second set of expressions separated for v3"""
-
+def v3_Vmax_value2(experimental_data):
+    """V3max (root 2) identifiability expression for v3"""
     _, x11, x21, _, _, _, v31, _, \
     _, x12, x22, _, _, _, v32, _, \
     _, x13, x23, _, _, _, v33, _ = list(experimental_data)
@@ -578,6 +447,127 @@ def flux_3_value2_ident(experimental_data):
                        v31 * v33 * x12 * x13 * x22 - v31 * v32 * x11 * x13 * x23 + v31 * v32 * x12 * x13 * x23
     v3max_2_value = v3max_nr_2_value / v3max_dr_2_value
 
+    return [v3max_nr_2_value, v3max_dr_2_value, v3max_2_value]
+
+
+def v3_K3fdp_value1(experimental_data):
+    """K3fdp (root 1) identifiability expression for v3"""
+    _, x11, x21, _, _, _, v31, _, \
+    _, x12, x22, _, _, _, v32, _, \
+    _, x13, x23, _, _, _, v33, _ = list(experimental_data)
+
+    # K3fdp
+    sq_nr_1_k3fdp = ((v31 * v33 * x11 * x12 * x21 * x22 - v32 * v33 * x11 * x12 * x21 * x22 -
+                      v32 * v33 * x11 * x13 * x21 * x22 + v31 * v33 * x12 * x13 * x21 * x22 +
+                      v32 * v33 * x11 * x12 * x21 * x23 - v31 * v32 * x11 * x13 * x21 * x23 +
+                      v32 * v33 * x11 * x13 * x21 * x23 - v31 * v32 * x12 * x13 * x21 * x23 -
+                      v31 * v33 * x11 * x12 * x22 * x23 + v31 * v32 * x11 * x13 * x22 * x23 +
+                      v31 * v32 * x12 * x13 * x22 * x23 - v31 * v33 * x12 * x13 * x22 * x23) ** 2 -
+                     4 * (-v32 * v33 * x11 * x21 * x22 + v31 * v33 * x12 * x21 * x22 + v32 * v33 * x11 * x21 * x23 -
+                          v31 * v32 * x13 * x21 * x23 - v31 * v33 * x12 * x22 * x23 + v31 * v32 * x13 * x22 * x23) *
+                     (v31 * v33 * x11 * x12 * x13 * x21 * x22 - v32 * v33 * x11 * x12 * x13 * x21 * x22 -
+                      v31 * v32 * x11 * x12 * x13 * x21 * x23 + v32 * v33 * x11 * x12 * x13 * x21 * x23 +
+                      v31 * v32 * x11 * x12 * x13 * x22 * x23 - v31 * v33 * x11 * x12 * x13 * x22 * x23))
+    sq_nr_1_k3fdp = truncate_values(sq_nr_1_k3fdp, 10)
+    k3fdp_nr_1_value = -v31 * v33 * x11 * x12 * x21 * x22 + v32 * v33 * x11 * x12 * x21 * x22 + \
+                       v31 * v32 * x11 * x13 * x21 * x23 - v32 * v33 * x11 * x13 * x21 * x23 - \
+                       v31 * v32 * x12 * x13 * x22 * x23 + v31 * v33 * x12 * x13 * x22 * x23 + \
+                       (v32 * v33 * x11 * x21 * x22 * (-v31 * v33 * x11 * x12 * x21 * x22 +
+                                                       v32 * v33 * x11 * x12 * x21 * x22 +
+                                                       v32 * v33 * x11 * x13 * x21 * x22 -
+                                                       v31 * v33 * x12 * x13 * x21 * x22 -
+                                                       v32 * v33 * x11 * x12 * x21 * x23 +
+                                                       v31 * v32 * x11 * x13 * x21 * x23 -
+                                                       v32 * v33 * x11 * x13 * x21 * x23 +
+                                                       v31 * v32 * x12 * x13 * x21 * x23 +
+                                                       v31 * v33 * x11 * x12 * x22 * x23 -
+                                                       v31 * v32 * x11 * x13 * x22 * x23 -
+                                                       v31 * v32 * x12 * x13 * x22 * x23 +
+                                                       v31 * v33 * x12 * x13 * x22 * x23 - np.sqrt(sq_nr_1_k3fdp))) / \
+                       (2 * (-v32 * v33 * x11 * x21 * x22 + v31 * v33 * x12 * x21 * x22 + v32 * v33 * x11 * x21 * x23 -
+                             v31 * v32 * x13 * x21 * x23 - v31 * v33 * x12 * x22 * x23 + v31 * v32 * x13 * x22 * x23)) - \
+                       (v31 * v33 * x12 * x21 * x22 * (-v31 * v33 * x11 * x12 * x21 * x22 +
+                                                       v32 * v33 * x11 * x12 * x21 * x22 +
+                                                       v32 * v33 * x11 * x13 * x21 * x22 -
+                                                       v31 * v33 * x12 * x13 * x21 * x22 -
+                                                       v32 * v33 * x11 * x12 * x21 * x23 +
+                                                       v31 * v32 * x11 * x13 * x21 * x23 -
+                                                       v32 * v33 * x11 * x13 * x21 * x23 +
+                                                       v31 * v32 * x12 * x13 * x21 * x23 +
+                                                       v31 * v33 * x11 * x12 * x22 * x23 -
+                                                       v31 * v32 * x11 * x13 * x22 * x23 -
+                                                       v31 * v32 * x12 * x13 * x22 * x23 +
+                                                       v31 * v33 * x12 * x13 * x22 * x23 - np.sqrt(sq_nr_1_k3fdp))) / \
+                       (2 * (-v32 * v33 * x11 * x21 * x22 + v31 * v33 * x12 * x21 * x22 + v32 * v33 * x11 * x21 * x23 -
+                             v31 * v32 * x13 * x21 * x23 - v31 * v33 * x12 * x22 * x23 + v31 * v32 * x13 * x22 * x23)) - \
+                       (v32 * v33 * x11 * x21 * x23 * (-v31 * v33 * x11 * x12 * x21 * x22 +
+                                                       v32 * v33 * x11 * x12 * x21 * x22 +
+                                                       v32 * v33 * x11 * x13 * x21 * x22 -
+                                                       v31 * v33 * x12 * x13 * x21 * x22 -
+                                                       v32 * v33 * x11 * x12 * x21 * x23 +
+                                                       v31 * v32 * x11 * x13 * x21 * x23 -
+                                                       v32 * v33 * x11 * x13 * x21 * x23 +
+                                                       v31 * v32 * x12 * x13 * x21 * x23 +
+                                                       v31 * v33 * x11 * x12 * x22 * x23 -
+                                                       v31 * v32 * x11 * x13 * x22 * x23 -
+                                                       v31 * v32 * x12 * x13 * x22 * x23 +
+                                                       v31 * v33 * x12 * x13 * x22 * x23 - np.sqrt(sq_nr_1_k3fdp))) / \
+                       (2 * (-v32 * v33 * x11 * x21 * x22 + v31 * v33 * x12 * x21 * x22 + v32 * v33 * x11 * x21 * x23 -
+                             v31 * v32 * x13 * x21 * x23 - v31 * v33 * x12 * x22 * x23 + v31 * v32 * x13 * x22 * x23)) + \
+                       (v31 * v32 * x13 * x21 * x23 * (-v31 * v33 * x11 * x12 * x21 * x22 +
+                                                       v32 * v33 * x11 * x12 * x21 * x22 +
+                                                       v32 * v33 * x11 * x13 * x21 * x22 -
+                                                       v31 * v33 * x12 * x13 * x21 * x22 -
+                                                       v32 * v33 * x11 * x12 * x21 * x23 +
+                                                       v31 * v32 * x11 * x13 * x21 * x23 -
+                                                       v32 * v33 * x11 * x13 * x21 * x23 +
+                                                       v31 * v32 * x12 * x13 * x21 * x23 +
+                                                       v31 * v33 * x11 * x12 * x22 * x23 -
+                                                       v31 * v32 * x11 * x13 * x22 * x23 -
+                                                       v31 * v32 * x12 * x13 * x22 * x23 +
+                                                       v31 * v33 * x12 * x13 * x22 * x23 - np.sqrt(sq_nr_1_k3fdp))) / \
+                       (2 * (-v32 * v33 * x11 * x21 * x22 + v31 * v33 * x12 * x21 * x22 + v32 * v33 * x11 * x21 * x23 -
+                             v31 * v32 * x13 * x21 * x23 - v31 * v33 * x12 * x22 * x23 + v31 * v32 * x13 * x22 * x23)) + \
+                       (v31 * v33 * x12 * x22 * x23 * (-v31 * v33 * x11 * x12 * x21 * x22 +
+                                                       v32 * v33 * x11 * x12 * x21 * x22 +
+                                                       v32 * v33 * x11 * x13 * x21 * x22 -
+                                                       v31 * v33 * x12 * x13 * x21 * x22 -
+                                                       v32 * v33 * x11 * x12 * x21 * x23 +
+                                                       v31 * v32 * x11 * x13 * x21 * x23 -
+                                                       v32 * v33 * x11 * x13 * x21 * x23 +
+                                                       v31 * v32 * x12 * x13 * x21 * x23 +
+                                                       v31 * v33 * x11 * x12 * x22 * x23 -
+                                                       v31 * v32 * x11 * x13 * x22 * x23 -
+                                                       v31 * v32 * x12 * x13 * x22 * x23 +
+                                                       v31 * v33 * x12 * x13 * x22 * x23 - np.sqrt(sq_nr_1_k3fdp))) / \
+                       (2 * (-v32 * v33 * x11 * x21 * x22 + v31 * v33 * x12 * x21 * x22 + v32 * v33 * x11 * x21 * x23 -
+                             v31 * v32 * x13 * x21 * x23 - v31 * v33 * x12 * x22 * x23 + v31 * v32 * x13 * x22 * x23)) - \
+                       (v31 * v32 * x13 * x22 * x23 * (-v31 * v33 * x11 * x12 * x21 * x22 +
+                                                       v32 * v33 * x11 * x12 * x21 * x22 +
+                                                       v32 * v33 * x11 * x13 * x21 * x22 -
+                                                       v31 * v33 * x12 * x13 * x21 * x22 -
+                                                       v32 * v33 * x11 * x12 * x21 * x23 +
+                                                       v31 * v32 * x11 * x13 * x21 * x23 -
+                                                       v32 * v33 * x11 * x13 * x21 * x23 +
+                                                       v31 * v32 * x12 * x13 * x21 * x23 +
+                                                       v31 * v33 * x11 * x12 * x22 * x23 -
+                                                       v31 * v32 * x11 * x13 * x22 * x23 -
+                                                       v31 * v32 * x12 * x13 * x22 * x23 +
+                                                       v31 * v33 * x12 * x13 * x22 * x23 - np.sqrt(sq_nr_1_k3fdp))) / \
+                       (2 * (-v32 * v33 * x11 * x21 * x22 + v31 * v33 * x12 * x21 * x22 + v32 * v33 * x11 * x21 * x23 -
+                             v31 * v32 * x13 * x21 * x23 - v31 * v33 * x12 * x22 * x23 + v31 * v32 * x13 * x22 * x23))
+    k3fdp_dr_1_value = -v32 * v33 * x11 * x12 * x21 + v32 * v33 * x11 * x13 * x21 + v31 * v33 * x11 * x12 * x22 - \
+                       v31 * v33 * x12 * x13 * x22 - v31 * v32 * x11 * x13 * x23 + v31 * v32 * x12 * x13 * x23
+    k3fdp_1_value = k3fdp_nr_1_value / k3fdp_dr_1_value
+    return [k3fdp_nr_1_value, k3fdp_dr_1_value, k3fdp_1_value]
+
+
+def v3_K3fdp_value2(experimental_data):
+    """K3fdp (root 2) identifiability expression for v3"""
+    _, x11, x21, _, _, _, v31, _, \
+    _, x12, x22, _, _, _, v32, _, \
+    _, x13, x23, _, _, _, v33, _ = list(experimental_data)
+
     # K3fdp 2
     sq_k3fdp_nr_2 = ((v31 * v33 * x11 * x12 * x21 * x22 - v32 * v33 * x11 * x12 * x21 * x22 -
                       v32 * v33 * x11 * x13 * x21 * x22 + v31 * v33 * x12 * x13 * x21 * x22 +
@@ -681,6 +671,45 @@ def flux_3_value2_ident(experimental_data):
     k3fdp_dr_2_value = -v32 * v33 * x11 * x12 * x21 + v32 * v33 * x11 * x13 * x21 + v31 * v33 * x11 * x12 * x22 - \
                        v31 * v33 * x12 * x13 * x22 - v31 * v32 * x11 * x13 * x23 + v31 * v32 * x12 * x13 * x23
     k3fdp_2_value = k3fdp_nr_2_value / k3fdp_dr_2_value
+    return [k3fdp_nr_2_value, k3fdp_dr_2_value, k3fdp_2_value]
+
+
+def v3_K3pep_value1(experimental_data):
+    """K3pep (root 1) identifiability expression for v3"""
+    _, x11, x21, _, _, _, v31, _, \
+    _, x12, x22, _, _, _, v32, _, \
+    _, x13, x23, _, _, _, v33, _ = list(experimental_data)
+
+    # K3pep
+    sq_k3pep_nr_1 = ((v31 * v33 * x11 * x12 * x21 * x22 - v32 * v33 * x11 * x12 * x21 * x22 -
+                      v32 * v33 * x11 * x13 * x21 * x22 + v31 * v33 * x12 * x13 * x21 * x22 +
+                      v32 * v33 * x11 * x12 * x21 * x23 - v31 * v32 * x11 * x13 * x21 * x23 +
+                      v32 * v33 * x11 * x13 * x21 * x23 - v31 * v32 * x12 * x13 * x21 * x23 -
+                      v31 * v33 * x11 * x12 * x22 * x23 + v31 * v32 * x11 * x13 * x22 * x23 +
+                      v31 * v32 * x12 * x13 * x22 * x23 - v31 * v33 * x12 * x13 * x22 * x23) ** 2 -
+                     4 * (-v32 * v33 * x11 * x21 * x22 + v31 * v33 * x12 * x21 * x22 + v32 * v33 * x11 * x21 * x23 -
+                          v31 * v32 * x13 * x21 * x23 - v31 * v33 * x12 * x22 * x23 + v31 * v32 * x13 * x22 * x23) *
+                     (v31 * v33 * x11 * x12 * x13 * x21 * x22 - v32 * v33 * x11 * x12 * x13 * x21 * x22 -
+                      v31 * v32 * x11 * x12 * x13 * x21 * x23 + v32 * v33 * x11 * x12 * x13 * x21 * x23 +
+                      v31 * v32 * x11 * x12 * x13 * x22 * x23 - v31 * v33 * x11 * x12 * x13 * x22 * x23))
+    sq_k3pep_nr_1 = truncate_values(sq_k3pep_nr_1, 10)
+    k3pep_nr_1_value = -v31 * v33 * x11 * x12 * x21 * x22 + v32 * v33 * x11 * x12 * x21 * x22 + \
+                       v32 * v33 * x11 * x13 * x21 * x22 - v31 * v33 * x12 * x13 * x21 * x22 - \
+                       v32 * v33 * x11 * x12 * x21 * x23 + v31 * v32 * x11 * x13 * x21 * x23 - \
+                       v32 * v33 * x11 * x13 * x21 * x23 + v31 * v32 * x12 * x13 * x21 * x23 + \
+                       v31 * v33 * x11 * x12 * x22 * x23 - v31 * v32 * x11 * x13 * x22 * x23 - \
+                       v31 * v32 * x12 * x13 * x22 * x23 + v31 * v33 * x12 * x13 * x22 * x23 - np.sqrt(sq_k3pep_nr_1)
+    k3pep_dr_1_value = 2 * (-v32 * v33 * x11 * x21 * x22 + v31 * v33 * x12 * x21 * x22 + v32 * v33 * x11 * x21 * x23 -
+                            v31 * v32 * x13 * x21 * x23 - v31 * v33 * x12 * x22 * x23 + v31 * v32 * x13 * x22 * x23)
+    k3pep_1_value = k3pep_nr_1_value / k3pep_dr_1_value
+    return [k3pep_nr_1_value, k3pep_dr_1_value, k3pep_1_value]
+
+
+def v3_K3pep_value2(experimental_data):
+    """K3pep (root 2) identifiability expression for v3"""
+    _, x11, x21, _, _, _, v31, _, \
+    _, x12, x22, _, _, _, v32, _, \
+    _, x13, x23, _, _, _, v33, _ = list(experimental_data)
 
     # K3pep 2
     sq_k3pep_nr_2 = ((v31 * v33 * x11 * x12 * x21 * x22 - v32 * v33 * x11 * x12 * x21 * x22 -
@@ -704,6 +733,41 @@ def flux_3_value2_ident(experimental_data):
     k3pep_dr_2_value = 2 * (-v32 * v33 * x11 * x21 * x22 + v31 * v33 * x12 * x21 * x22 + v32 * v33 * x11 * x21 * x23 -
                             v31 * v32 * x13 * x21 * x23 - v31 * v33 * x12 * x22 * x23 + v31 * v32 * x13 * x22 * x23)
     k3pep_2_value = k3pep_nr_2_value / k3pep_dr_2_value
+    return [k3pep_nr_2_value, k3pep_dr_2_value, k3pep_2_value]
+
+
+def flux_3_value1_ident(experimental_data):
+    """only one set of expressions separated for flux 3"""
+
+    _, x11, x21, _, _, _, v31, _, \
+    _, x12, x22, _, _, _, v32, _, \
+    _, x13, x23, _, _, _, v33, _ = list(experimental_data)
+
+    # V3max
+    v3max_nr_1_value, v3max_dr_1_value, v3max_1_value = v3_Vmax_value1(experimental_data)
+
+    # K3fdp
+    k3fdp_nr_1_value, k3fdp_dr_1_value, k3fdp_1_value = v3_K3fdp_value1(experimental_data)
+
+    # K3pep
+    k3pep_nr_1_value, k3pep_dr_1_value, k3pep_1_value = v3_K3pep_value1(experimental_data)
+
+    return [v3max_nr_1_value, v3max_dr_1_value, v3max_1_value], \
+           [k3fdp_nr_1_value, k3fdp_dr_1_value, k3fdp_1_value], \
+           [k3pep_nr_1_value, k3pep_dr_1_value, k3pep_1_value]
+
+
+def flux_3_value2_ident(experimental_data):
+    """second set of expressions separated for v3"""
+
+    # v3max = second solution
+    v3max_nr_2_value, v3max_dr_2_value, v3max_2_value = v3_Vmax_value2(experimental_data)
+
+    # K3fdp 2
+    k3fdp_nr_2_value, k3fdp_dr_2_value, k3fdp_2_value = v3_K3fdp_value2(experimental_data)
+
+    # K3pep 2
+    k3pep_nr_2_value, k3pep_dr_2_value, k3pep_2_value = v3_K3pep_value2(experimental_data)
 
     return [v3max_nr_2_value, v3max_dr_2_value, v3max_2_value], \
            [k3fdp_nr_2_value, k3fdp_dr_2_value, k3fdp_2_value], \
