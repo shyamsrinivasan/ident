@@ -14,21 +14,29 @@ all_combos = combinator(nperts, nexpts, 'p');
 % select only combos w/ or w/o specific experiment ids
 if ~isempty(select_exp_id)
     chosen_combos = select_combos(all_combos, nexpts, select_exp_id);
+else
+    chosen_combos = all_combos;
 end
+
+% get data for chosen combos
+
 return
 
 
-function combos_w_exp_id = select_combos(all_combos, nexpts, select_exp_id)
+function selected_combos = select_combos(all_combos, nexpts, select_exp_id)
 % select only combos that have select_exp_id in them
 useful_combos = zeros(size(all_combos, 1), length(select_exp_id));
 for i_exp_id = 1:length(select_exp_id)
     combos_w_exp_id = [];
     for i_position = 1:nexpts
-        combos_w_exp_id = union(combos_w_exp_id,...
-                                find(all_combos(:, i_position)));
+        combos_w_exp_id =...
+            union(combos_w_exp_id,...
+                  find(all_combos(:, i_position)==select_exp_id(i_exp_id)));
     end
-    useful_combos(combos_w_exp_id, i_exp_id) = 1;    
+    useful_combos(combos_w_exp_id, i_exp_id) = 1;     
 end
+useful_combo_id = logical(sum(useful_combos, 2));
+selected_combos = all_combos(useful_combo_id, :);
 return
 
 
