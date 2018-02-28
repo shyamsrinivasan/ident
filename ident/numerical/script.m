@@ -16,7 +16,10 @@ perturbed_solution = perturb_parameters(@kotteode, solver_options,...
 plot2d_dynamic(perturbed_solution, 1, 1);
                                     
 % arrange simulated data for parameter estimation
-arrange_experimental_data(perturbed_solution, 3, 1:5);
+nexpts = 3;
+flux_id = [1, 4, 3, 5];
+experimental_data =...
+    arrange_experimental_data(perturbed_solution, nexpts, flux_id, 1:5);
  
 % use simulated data from 3 different perturbations to solve nlae for
 % parameters
