@@ -20,5 +20,5 @@ function flux = flux3_MWC(y, p)
 fdp_sat = 1 + y(3:8:end)./p(2);
 pep_sat = 1 + y(1:8:end)./p(3);
 flux = p(1).*(fdp_sat - 1).*(fdp_sat.^3)./...
-       (fdp_sat.^4+p(4).*(pep_sat.^(-4)));
+       (fdp_sat.^4 + 4e6.*(pep_sat.^(-4)));
 return
