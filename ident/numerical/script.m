@@ -17,7 +17,7 @@ perturbations = perturbations_info();
 solver_options.x0 = solution.yss;
 perturbed_solution = perturb_parameters(odefun, solver_options,...
                                         fun_p, perturbations, fluxfun);
-plot2d_dynamic(perturbed_solution, 1, 1);
+% plot2d_dynamic(perturbed_solution, 1, 1);
                                     
 % arrange simulated data for parameter estimation
 nexpts = 3;
@@ -36,6 +36,9 @@ ident.fun = @estimate_v3_parameter;
 ident.initial_value = [1;.1;.1];
 ident.typical_value = [1;1e-1;1e-1];
 solution = do_numerical_ident(experimental_data,ident);
+
+% process data
+
 
 % use simulated data from 3 different perturbations to solve nlae for
 % parameters
