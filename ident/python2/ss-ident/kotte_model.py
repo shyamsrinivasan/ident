@@ -143,8 +143,8 @@ def kotte_ode(t, y, par_val):
 
 def flux_1_Vmax_ident(experimental_data):
     """v1 identifiability without enzyme"""
-    ac1, _, _, _, v11, _, _, _, \
-    ac2, _, _, _, v12, _, _, _ = list(experimental_data)
+    ac1, _, _, _, v11, _, _, _, _, _, \
+    ac2, _, _, _, v12, _, _, _, _, _ = list(experimental_data)
 
     # flux numerator and denominator w/o sympy
     # symbolic expression for flux v1 w/o enzyme concentration data
@@ -161,8 +161,8 @@ def flux_1_Vmax_ident(experimental_data):
 
 def flux_1_kcat_ident(experimental_data):
     """v1 identifiability with enzyme concentration"""
-    ac1, _, _, x31, v11, _, _, _, \
-    ac2, _, _, x32, v12, _, _, _ = list(experimental_data)
+    ac1, _, _, x31, v11, _, _, _, _, _, \
+    ac2, _, _, x32, v12, _, _, _, _, _ = list(experimental_data)
 
     k1cat_enzyme_numerator_value = - ac1 * v11 * v12 + ac2 * v11 * v12
     k1cat_enzyme_denominator_value = -(ac1 * v12 * x31 - ac2 * v11 * x32)
@@ -177,8 +177,8 @@ def flux_1_kcat_ident(experimental_data):
 def flux_1_ident_expression(experimental_data):
     """symbolic and lambdify expression for flux 1 denominator from mathematica"""
     # get variable values (w/o sympy directly from experimental data)
-    ac1, x11, x21, x31, v11, v21, v31, v41, \
-    ac2, x12, x22, x32, v12, v22, v32, v42 = list(experimental_data)
+    ac1, x11, x21, x31, v11, v21, v31, v41, v51, v61, \
+    ac2, x12, x22, x32, v12, v22, v32, v42, v52, v62 = list(experimental_data)
 
     # flux numerator and denominator w/o sympy
     # symbolic expression for flux v1 w/o enzyme concentration data
@@ -207,8 +207,8 @@ def flux_1_ident_expression(experimental_data):
 def flux_2_ident_expression(experimental_data):
     """symbolic and lambdify expression for flux 2 denominator from mathematica"""
     # get variable values (w/o sympy directly from experimental data)
-    _, x21, _, _, _, v21, _, _, \
-    _, x22, _, _, _, v22, _, _ = list(experimental_data)
+    _, x21, _, _, _, v21, _, _, _, _, \
+    _, x22, _, _, _, v22, _, _, _, _ = list(experimental_data)
 
     # symbolic expression for v2
     # V2max
@@ -226,9 +226,9 @@ def flux_2_ident_expression(experimental_data):
 
 def v3_Vmax_value1(experimental_data):
     """V3max (root 1) identifiability expression for v3"""
-    _, x11, x21, _, _, _, v31, _, \
-    _, x12, x22, _, _, _, v32, _, \
-    _, x13, x23, _, _, _, v33, _ = list(experimental_data)
+    _, x11, x21, _, _, _, v31, _, _, _, \
+    _, x12, x22, _, _, _, v32, _, _, _, \
+    _, x13, x23, _, _, _, v33, _, _, _ = list(experimental_data)
 
     # V3max
     sqrt_v3max_nr_1 = ((v31 * v33 * x11 * x12 * x21 * x22 - v32 * v33 * x11 * x12 * x21 * x22 -
@@ -339,9 +339,9 @@ def v3_Vmax_value1(experimental_data):
 
 def v3_Vmax_value2(experimental_data):
     """V3max (root 2) identifiability expression for v3"""
-    _, x11, x21, _, _, _, v31, _, \
-    _, x12, x22, _, _, _, v32, _, \
-    _, x13, x23, _, _, _, v33, _ = list(experimental_data)
+    _, x11, x21, _, _, _, v31, _, _, _, \
+    _, x12, x22, _, _, _, v32, _, _, _, \
+    _, x13, x23, _, _, _, v33, _, _, _ = list(experimental_data)
 
     # v3max = second solution
     sqrt_v3max_nr_2 = ((v31 * v33 * x11 * x12 * x21 * x22 - v32 * v33 * x11 * x12 * x21 * x22 -
@@ -452,9 +452,9 @@ def v3_Vmax_value2(experimental_data):
 
 def v3_K3fdp_value1(experimental_data):
     """K3fdp (root 1) identifiability expression for v3"""
-    _, x11, x21, _, _, _, v31, _, \
-    _, x12, x22, _, _, _, v32, _, \
-    _, x13, x23, _, _, _, v33, _ = list(experimental_data)
+    _, x11, x21, _, _, _, v31, _, _, _, \
+    _, x12, x22, _, _, _, v32, _, _, _, \
+    _, x13, x23, _, _, _, v33, _, _, _ = list(experimental_data)
 
     # K3fdp
     sq_nr_1_k3fdp = ((v31 * v33 * x11 * x12 * x21 * x22 - v32 * v33 * x11 * x12 * x21 * x22 -
@@ -564,9 +564,9 @@ def v3_K3fdp_value1(experimental_data):
 
 def v3_K3fdp_value2(experimental_data):
     """K3fdp (root 2) identifiability expression for v3"""
-    _, x11, x21, _, _, _, v31, _, \
-    _, x12, x22, _, _, _, v32, _, \
-    _, x13, x23, _, _, _, v33, _ = list(experimental_data)
+    _, x11, x21, _, _, _, v31, _, _, _, \
+    _, x12, x22, _, _, _, v32, _, _, _, \
+    _, x13, x23, _, _, _, v33, _, _, _ = list(experimental_data)
 
     # K3fdp 2
     sq_k3fdp_nr_2 = ((v31 * v33 * x11 * x12 * x21 * x22 - v32 * v33 * x11 * x12 * x21 * x22 -
@@ -676,9 +676,9 @@ def v3_K3fdp_value2(experimental_data):
 
 def v3_K3pep_value1(experimental_data):
     """K3pep (root 1) identifiability expression for v3"""
-    _, x11, x21, _, _, _, v31, _, \
-    _, x12, x22, _, _, _, v32, _, \
-    _, x13, x23, _, _, _, v33, _ = list(experimental_data)
+    _, x11, x21, _, _, _, v31, _, _, _, \
+    _, x12, x22, _, _, _, v32, _, _, _, \
+    _, x13, x23, _, _, _, v33, _, _, _ = list(experimental_data)
 
     # K3pep
     sq_k3pep_nr_1 = ((v31 * v33 * x11 * x12 * x21 * x22 - v32 * v33 * x11 * x12 * x21 * x22 -
@@ -707,9 +707,9 @@ def v3_K3pep_value1(experimental_data):
 
 def v3_K3pep_value2(experimental_data):
     """K3pep (root 2) identifiability expression for v3"""
-    _, x11, x21, _, _, _, v31, _, \
-    _, x12, x22, _, _, _, v32, _, \
-    _, x13, x23, _, _, _, v33, _ = list(experimental_data)
+    _, x11, x21, _, _, _, v31, _, _, _, \
+    _, x12, x22, _, _, _, v32, _, _, _, \
+    _, x13, x23, _, _, _, v33, _, _, _ = list(experimental_data)
 
     # K3pep 2
     sq_k3pep_nr_2 = ((v31 * v33 * x11 * x12 * x21 * x22 - v32 * v33 * x11 * x12 * x21 * x22 -
@@ -738,10 +738,6 @@ def v3_K3pep_value2(experimental_data):
 
 def flux_3_value1_ident(experimental_data):
     """only one set of expressions separated for flux 3"""
-
-    _, x11, x21, _, _, _, v31, _, \
-    _, x12, x22, _, _, _, v32, _, \
-    _, x13, x23, _, _, _, v33, _ = list(experimental_data)
 
     # V3max
     v3max_nr_1_value, v3max_dr_1_value, v3max_1_value = v3_Vmax_value1(experimental_data)
@@ -781,9 +777,9 @@ def flux_3_ident_expression(experimental_data):
     experimental_data = map(truncate_values, list(experimental_data))
 
     # get variable values (w/o sympy directly from experimental data)
-    ac1, x11, x21, x31, v11, v21, v31, v41, \
-    ac2, x12, x22, x32, v12, v22, v32, v42, \
-    ac3, x13, x23, x33, v13, v23, v33, v43 = list(experimental_data)
+    ac1, x11, x21, x31, v11, v21, v31, v41, v51, v61, \
+    ac2, x12, x22, x32, v12, v22, v32, v42, v52, v62, \
+    ac3, x13, x23, x33, v13, v23, v33, v43, v53, v63 = list(experimental_data)
     # ac = experimental_data[range(0, 24, 8)]
     # x_ranges = [range(i, 24, 8) for i in range(1, 4)]
     # all_x_ranges = [list(np.array(x_ranges)[:, i]) for i in range(0, 3)]
@@ -1133,7 +1129,10 @@ def ident_parameter_name(parameter_id, flux_name=(), flux_choice_id=0):
                   "flux2": [['V2max', 'K2pep']],
                   "flux3": [['V3max (1)', 'K3fdp (1)', 'K3pep (1)', 'V3max (2)', 'K3fdp (2)', 'K3pep (2)'],
                             ['V3max (1)', 'K3fdp (1)', 'K3pep (1)'],
-                            ['V3max (2)', 'K3fdp (2)', 'K3pep (2)']]}
+                            ['V3max (2)', 'K3fdp (2)', 'K3pep (2)']],
+                  "flux4": [],
+                  "flux5": [],
+                  "flux6": []}
     if flux_name:
         try:
             parameter_name = [alter_list[name][choice_id][id]
@@ -1156,7 +1155,10 @@ def flux_based_id(parameter_id):
     flux_parameter_list = {"flux1": ['V1max', 'K1ac (no enz)', 'k1cat', 'K1ac (enz)'],
                            "flux2": ['V2max', 'K2pep'],
                            "flux3": ['V3max (1)', 'K3fdp (1)', 'K3pep (1)',
-                                     'V3max (2)', 'K3fdp (2)', 'K3pep (2)']}
+                                     'V3max (2)', 'K3fdp (2)', 'K3pep (2)'],
+                           "flux4": [],
+                           "flux5": [],
+                           "flux6": []}
     try:
         parameter_name = [(id, parameter_list[id]) for id in parameter_id]
     except TypeError:

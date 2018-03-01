@@ -37,7 +37,7 @@ exp_xss, exp_fss, exp_ssid, perturbation_details = \
                      perturbation_plot=0)
 
 # arrange experimental data to form multiple data sets
-exp_flux_index = np.array([0, 3, 2, 4])
+exp_flux_index = np.array([0, 3, 2, 4, 1, 5])
 
 # get combination of 2 experiments and perform identifiability on all fluxes that require 2 data sets
 print('Practical Identifiability Analysis of fluxes with 2 parameters \n')

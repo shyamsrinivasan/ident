@@ -67,7 +67,7 @@ def data_for_each_sample(perturbation_details, experiments_per_set,
 
     # initialize vectors/arrays and other lists for arrangement
     number_data_sets = len(data_combinations)
-    size_of_data_set = 8
+    size_of_data_set = 10
     dataset_value_array = np.zeros((number_data_sets, size_of_data_set * experiments_per_set))
     # all_parameter_change = np.zeros((number_data_sets, 4 * experiments_per_set))
     all_parameter_change = []
