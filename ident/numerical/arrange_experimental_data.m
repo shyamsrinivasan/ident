@@ -59,7 +59,7 @@ end
 return
 
 function dataset =...
-    select_experimental_data(perturbation_data, exp_id, flux_id)
+         select_experimental_data(perturbation_data, exp_id, flux_id)
 % get data for each experiment within each chosen combination passed as
 % input
 if nargin<3
