@@ -4,25 +4,33 @@ solver_options.x0 = [5;1;1];
 solver_options.reltol = 1e-6;
 solver_options.abstol = 1e-8;
 fun_p = [.1, .1, 4e6, .1, .3, 1.1, .45, 2, .25, .2, 1, 1, 1, .1];
-solution = run_ode(@kotteode, solver_options, fun_p, @kotteflux);
+solution = run_ode(@kotteCKode, solver_options, fun_p, @kotteCKflux);
 % plot results for verification
 plot2d_dynamic(solution, 1, 1);
 
 % parameter perturbations
 perturbations = perturbations_info();
 solver_options.x0 = solution.yss;
-perturbed_solution = perturb_parameters(@kotteode, solver_options,...
-                                        fun_p, perturbations, @kotteflux);
+perturbed_solution = perturb_parameters(@kotteCKode, solver_options,...
+                                        fun_p, perturbations, @kotteCKflux);
 plot2d_dynamic(perturbed_solution, 1, 1);
                                     
 % arrange simulated data for parameter estimation
 nexpts = 3;
 flux_id = [1, 4, 3, 5];
+% choose only experiments w/0 v3max perturbation
+selected_expts = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21];
 experimental_data =...
-    arrange_experimental_data(perturbed_solution, nexpts, flux_id, 1:5);
+    arrange_experimental_data(perturbed_solution,...
+                              nexpts,...
+                              flux_id,...
+                              selected_expts);
  
 % use simulated data from 3 different perturbations to solve nlae for
 % parameters
+initial_p_val = [1;.1;.1];
+typical_p_val = [1;1e-1;1e-1];
+nlae_solution(@estimate_v3_CK_parameter, experimental_data(1, :), initial_p_val, typical_p_val);
 
 
 
