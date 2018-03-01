@@ -18,13 +18,16 @@ for idata = 1:ndata
     solution(idata).p = [];
     solution(idata).res = [];
     solution(idata).flag = [];
+    solution(idata).message = [];
 end
-for idata = 1:ndata
+parfor idata = 1:ndata
     single_solution =...
     nlae_solution(ident_fun,exp_data(idata, :),initial_val, typical_val);
     solution(idata).p = single_solution.p;
     solution(idata).res = single_solution.res;
     solution(idata).flag = single_solution.flag;
+    solution(idata).message = single_solution.message;
+    fprintf('Completed identification for data %d of %d', idata, ndata);
 end
 
 return
