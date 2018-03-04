@@ -3,6 +3,11 @@
 function process_ident_info(ident_solution)
 % collect all solved combinations
 full_solved_combos = cat(1, ident_solution.flag)==1;
+p_val = cat(2, ident_solution(full_solved_combos).p);
+% get box plots
+figure
+boxplot(p_val')
+
 % collect all solved combinations: flag == 2 TolFun < specified TolFun
 solved_combos = cat(1, ident_solution.flag)==2;
 % collect all solved combinations: flag == 3 inaccurancy possible
