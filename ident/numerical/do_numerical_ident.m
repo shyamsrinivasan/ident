@@ -20,6 +20,7 @@ for idata = 1:ndata
     solution(idata).flag = [];
     solution(idata).message = [];
 end
+fprintf('Total number of data combinations: %d',ndata);
 parfor idata = 1:ndata
     single_solution =...
     nlae_solution(ident_fun,exp_data(idata, :),initial_val, typical_val);
