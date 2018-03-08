@@ -28,7 +28,9 @@ def kotte_true_parameter_values(flux_based=0, flux_name=(), flux_choice_id=0, pa
                                            {"K3fdp (1)": np.array([.1]), "K3pep (1)": np.array([.1]),
                                             "V3max (1)": np.array([1])},
                                            {"K3fdp (2)": np.array([.1]), "K3pep (2)": np.array([.1]),
-                                            "V3max (2)": np.array([1])}]}
+                                            "V3max (2)": np.array([1])}],
+                                 "flux5": [{"vemax (1)": np.array([1.1]), "Kefdp (1)": np.array([.45])},
+                                           {"vemax(1)": np.array([1.1]), "Kefdp (2)": np.array([.45])}]}
         try:
             parameter_value = [alter_parameter_value[name][choice_id][id]
                                for name, choice_id, id in zip(flux_name, flux_choice_id, parameter_id)]
@@ -1172,7 +1174,9 @@ def ident_parameter_name(parameter_id, flux_name=(), flux_choice_id=0):
     parameter_list = ['V1max', 'K1ac (no enz)', 'k1cat', 'K1ac (enz)',
                       'V2max', 'K2pep',
                       'V3max (1)', 'K3fdp (1)', 'K3pep (1)',
-                      'V3max (2)', 'K3fdp (2)', 'K3pep (2)']
+                      'V3max (2)', 'K3fdp (2)', 'K3pep (2)',
+                      'vemax (1)', 'Kefdp (1)',
+                      'vemax(1)', 'Kefdp (2)']
     # flux_parameter_list = {"flux1":['V1max', 'K1ac (no enz)', 'k1cat', 'K1ac (enz)'],
     #                        "flux2":['V2max', 'K2pep'],
     #                        "flux3":['V3max (1)', 'K3fdp (1)', 'K3pep (1)',
@@ -1185,7 +1189,8 @@ def ident_parameter_name(parameter_id, flux_name=(), flux_choice_id=0):
                             ['V3max (1)', 'K3fdp (1)', 'K3pep (1)'],
                             ['V3max (2)', 'K3fdp (2)', 'K3pep (2)']],
                   "flux4": [],
-                  "flux5": [],
+                  "flux5": [['vemax (1)', 'Kefdp (1)'],
+                            ['vemax(1)', 'Kefdp (2)']],
                   "flux6": []}
     if flux_name:
         try:
@@ -1205,13 +1210,15 @@ def flux_based_id(parameter_id):
     parameter_list = ['V1max', 'K1ac (no enz)', 'k1cat', 'K1ac (enz)',
                       'V2max', 'K2pep',
                       'V3max (1)', 'K3fdp (1)', 'K3pep (1)',
-                      'V3max (2)', 'K3fdp (2)', 'K3pep (2)']
+                      'V3max (2)', 'K3fdp (2)', 'K3pep (2)',
+                      'vemax (1)', 'Kefdp (1)',
+                      'vemax (1)', 'Kefdp (2)']
     flux_parameter_list = {"flux1": ['V1max', 'K1ac (no enz)', 'k1cat', 'K1ac (enz)'],
                            "flux2": ['V2max', 'K2pep'],
                            "flux3": ['V3max (1)', 'K3fdp (1)', 'K3pep (1)',
                                      'V3max (2)', 'K3fdp (2)', 'K3pep (2)'],
                            "flux4": [],
-                           "flux5": [],
+                           "flux5": ['vemax (1)', 'Kefdp (1)', 'vemax(1)', 'Kefdp (2)'],
                            "flux6": []}
     try:
         parameter_name = [(id, parameter_list[id]) for id in parameter_id]
