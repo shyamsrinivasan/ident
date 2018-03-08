@@ -23,20 +23,18 @@ end
 chosen_data = choose_experimental_data(chosen_combos,perturbation_data,nexpts,flux_id);
 return
 
-function selected_combos = select_combos(all_combos, nexpts, select_exp_id)
+function [select_combos, select_combo_id] =...
+         select_combos(all_combos, nexpts, select_exp_id)
 % select only combos that have select_exp_id in them
-useful_combos = zeros(size(all_combos, 1), length(select_exp_id));
-for i_exp_id = 1:length(select_exp_id)
-    combos_w_exp_id = [];
-    for i_position = 1:nexpts
-        combos_w_exp_id =...
-            union(combos_w_exp_id,...
-                  find(all_combos(:, i_position)==select_exp_id(i_exp_id)));
+combos_w_exp_id = zeros(size(all_combos,1), nexpts);    
+for i_position = 1:nexpts    
+    for i_exp_id = 1:length(select_exp_id)
+        combos_w_exp_id(all_combos(:, i_position)==...
+                        select_exp_id(i_exp_id), i_position) = 1;
     end
-    useful_combos(combos_w_exp_id, i_exp_id) = 1;     
 end
-useful_combo_id = logical(sum(useful_combos, 2));
-selected_combos = all_combos(useful_combo_id, :);
+select_combos = all_combos(sum(combos_w_exp_id,2)==nexpts, :);
+select_combo_id = find(sum(combos_w_exp_id,2)==nexpts);
 return
 
 function chosen_data = choose_experimental_data(chosen_combos,...

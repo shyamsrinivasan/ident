@@ -18,8 +18,12 @@ options = optimoptions('fsolve','MaxIter',500,...
 if ~isempty(typical_vals)
     options = optimoptions(options,'TypicalX',typical_vals,...
                                     'Display','iter',...
-                                    'MaxIter',15000,...
-                                    'MaxFunEvals',40000);
+                                    'MaxIter',500000,...
+                                    'MaxFunEvals',500000);
+else
+    options = optimoptions(options,'Display','iter',...
+                                   'MaxIter',500000,...
+                                   'MaxFunEvals',500000);
 end
 % use fsolve to solve NLAE equation for parameters for flux v3
 [x, fval, exitflag, output] = fsolve(nlaefun, initial_value, options);
@@ -31,7 +35,7 @@ if exitflag
 else
     solution.p = [];
     solution.res = [];
-    solution.message = [];
+    solution.message = output.message;
 end
 solution.flag = exitflag;
 

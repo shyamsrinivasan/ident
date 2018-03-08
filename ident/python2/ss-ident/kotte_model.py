@@ -1114,6 +1114,14 @@ def flux_3_ident_expression(experimental_data):
            [k3pep_nr_2_value, k3pep_dr_2_value, k3pep_2_value]
 
 
+def flux_5_ident_expression(experimental_data):
+    """identifiability expression for transcriptional regulatory reaction (v5) with Hill Kinetics"""
+    # get variable values (w/o sympy directly from experimental data)
+    _, _, x21, x31, _, _, _, _, v51, v61, \
+    _, _, x22, x32, _, _, _, _, v52, v62 = list(experimental_data)
+    return None
+
+
 def ident_parameter_name(parameter_id, flux_name=(), flux_choice_id=0):
     parameter_list = ['V1max', 'K1ac (no enz)', 'k1cat', 'K1ac (enz)',
                       'V2max', 'K2pep',

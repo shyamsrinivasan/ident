@@ -10,6 +10,8 @@ if isfield(ident_struct,'initial_value')
 end
 if isfield(ident_struct,'typical_value')
     typical_val = ident_struct.typical_value;
+else
+    typical_val = [];
 end
 
 solution = struct([]);

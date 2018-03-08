@@ -23,7 +23,7 @@ perturbed_solution = perturb_parameters(odefun, solver_options,...
 nexpts = 3;
 flux_id = [1, 4, 3, 5];
 % choose only experiments w/0 v3max perturbation
-selected_expts = [1, 2, 3]; % 4, 5, 6, 7, 8, 9, 10, 11, 17, 18, 19, 20, 21];
+selected_expts = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]; %, 17, 18, 19, 20, 21];
 experimental_data =...
     arrange_experimental_data(perturbed_solution,...
                               nexpts,...
@@ -33,12 +33,15 @@ experimental_data =...
 % run numerical parameter estimation (w/MWC model) on all combinations 
 % in experimental_data 
 ident.fun = @estimate_v3_parameter;
-ident.initial_value = [1;.1;.1];
-ident.typical_value = [1;1e-1;1e-1];
+ident.initial_value = [1.5;.1;.1];
+% ident.typical_value = [1;1e-1;1e-1];
 solution = do_numerical_ident(experimental_data,ident);
 
 % process data
-process_ident_info(solution);
+data = process_ident_info(solution);
+
+% get box plots for each parameters
+get_boxplots(data.full_solved);
 
 
 % use simulated data from 3 different perturbations to solve nlae for
