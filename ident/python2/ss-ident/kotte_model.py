@@ -1114,12 +1114,58 @@ def flux_3_ident_expression(experimental_data):
            [k3pep_nr_2_value, k3pep_dr_2_value, k3pep_2_value]
 
 
-def flux_5_ident_expression(experimental_data):
-    """identifiability expression for transcriptional regulatory reaction (v5) with Hill Kinetics"""
-    # get variable values (w/o sympy directly from experimental data)
+def v5_vemax_value1_ident(experimental_data):
+    """both value 1 and value 2 are the same for vemax"""
     _, _, x21, x31, _, _, _, _, v51, v61, \
     _, _, x22, x32, _, _, _, _, v52, v62 = list(experimental_data)
-    return None
+
+    vemax_nr = v51 * v52 * (x21**2 - x22**2)
+    vemax_dr = v51*x21**2 - v52*x22**2
+    vemax_value = vemax_nr/vemax_dr
+
+    return [vemax_nr, vemax_dr, vemax_value]
+
+
+def v5_Kefdp_value1_ident(experimental_data):
+    """Kefdp has 2 different values for v5 upon determination of
+    closed-form expressions due to the presence of a square root"""
+    _, _, x21, x31, _, _, _, _, v51, v61, \
+    _, _, x22, x32, _, _, _, _, v52, v62 = list(experimental_data)
+
+    kefdp_nr_value1 = - np.sqrt(-v51*x21**2 + v52*x22**2)
+    kefdp_dr_value1 = np.sqrt(v51 - v52)
+    kefdp_value1 = kefdp_nr_value1/kefdp_dr_value1
+
+    return [kefdp_nr_value1, kefdp_dr_value1, kefdp_value1]
+
+
+def v5_Kefdp_value2_ident(experimental_data):
+    _, _, x21, x31, _, _, _, _, v51, v61, \
+    _, _, x22, x32, _, _, _, _, v52, v62 = list(experimental_data)
+
+    kefdp_nr_value2 = np.sqrt(-v51 * x21 ** 2 + v52 * x22 ** 2)
+    kefdp_dr_value2 = np.sqrt(v51 - v52)
+    kefdp_value2 = kefdp_nr_value2 / kefdp_dr_value2
+
+    return [kefdp_nr_value2, kefdp_dr_value2, kefdp_value2]
+
+
+def flux_5_value1_ident(experimental_data):
+    """identifiability expression for transcriptional regulatory reaction (v5) with Hill Kinetics
+    Kefdp value 1"""
+    vemax_nr_1, vemax_dr_1, vemax_1_value = v5_vemax_value1_ident(experimental_data)
+    kefdp_nr_1, kefdp_dr_1, kefdp_1_value = v5_Kefdp_value1_ident(experimental_data)
+
+    return [vemax_nr_1, vemax_dr_1, vemax_1_value], [kefdp_nr_1, kefdp_dr_1, kefdp_1_value]
+
+
+def flux_5_value2_ident(experimental_data):
+    """identifiability expression for transcriptional regulatory reaction (v5) with Hill Kinetics
+    Kefdp value 2"""
+    vemax_nr_1, vemax_dr_1, vemax_1_value = v5_vemax_value1_ident(experimental_data)
+    kefdp_nr_2, kefdp_dr_2, kefdp_2_value = v5_Kefdp_value2_ident(experimental_data)
+
+    return [vemax_nr_1, vemax_dr_1, vemax_1_value], [kefdp_nr_2, kefdp_dr_2, kefdp_2_value]
 
 
 def ident_parameter_name(parameter_id, flux_name=(), flux_choice_id=0):
