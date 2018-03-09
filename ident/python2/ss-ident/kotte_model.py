@@ -29,8 +29,10 @@ def kotte_true_parameter_values(flux_based=0, flux_name=(), flux_choice_id=0, pa
                                             "V3max (1)": np.array([1])},
                                            {"K3fdp (2)": np.array([.1]), "K3pep (2)": np.array([.1]),
                                             "V3max (2)": np.array([1])}],
-                                 "flux5": [{"vemax (1)": np.array([1.1]), "Kefdp (1)": np.array([.45])},
-                                           {"vemax(1)": np.array([1.1]), "Kefdp (2)": np.array([.45])}]}
+                                 "flux5": [{"vemax (1)": np.array([1.1]), "Kefdp (1)": np.array([.45]),
+                                            "Kefdp (2)": np.array([.45])},
+                                           {"vemax (1)": np.array([1.1]), "Kefdp (1)": np.array([.45])},
+                                           {"vemax (1)": np.array([1.1]), "Kefdp (2)": np.array([.45])}]}
         try:
             parameter_value = [alter_parameter_value[name][choice_id][id]
                                for name, choice_id, id in zip(flux_name, flux_choice_id, parameter_id)]
@@ -1170,6 +1172,20 @@ def flux_5_value2_ident(experimental_data):
     return [vemax_nr_1, vemax_dr_1, vemax_1_value], [kefdp_nr_2, kefdp_dr_2, kefdp_2_value]
 
 
+def flux_5_ident_expression(experimental_data):
+    """flux 5 (v5) identifiability for both values simultaneously"""
+    # value 1
+    vemax_nr_1, vemax_dr_1, vemax_1_value = v5_vemax_value1_ident(experimental_data)
+    kefdp_nr_1, kefdp_dr_1, kefdp_1_value = v5_Kefdp_value1_ident(experimental_data)
+
+    # value 2
+    vemax_nr_2, vemax_dr_2, vemax_2_value = v5_vemax_value1_ident(experimental_data)
+    kefdp_nr_2, kefdp_dr_2, kefdp_2_value = v5_Kefdp_value2_ident(experimental_data)
+
+    return [vemax_nr_1, vemax_dr_1, vemax_1_value], [kefdp_nr_1, kefdp_dr_1, kefdp_1_value], \
+           [vemax_nr_2, vemax_dr_2, vemax_2_value], [kefdp_nr_2, kefdp_dr_2, kefdp_2_value]
+
+
 def ident_parameter_name(parameter_id, flux_name=(), flux_choice_id=0):
     parameter_list = ['V1max', 'K1ac (no enz)', 'k1cat', 'K1ac (enz)',
                       'V2max', 'K2pep',
@@ -1189,8 +1205,9 @@ def ident_parameter_name(parameter_id, flux_name=(), flux_choice_id=0):
                             ['V3max (1)', 'K3fdp (1)', 'K3pep (1)'],
                             ['V3max (2)', 'K3fdp (2)', 'K3pep (2)']],
                   "flux4": [],
-                  "flux5": [['vemax (1)', 'Kefdp (1)'],
-                            ['vemax(1)', 'Kefdp (2)']],
+                  "flux5": [['vemax (1)', 'Kefdp (1)', 'vemax (1)', 'Kefdp (2)'],
+                            ['vemax (1)', 'Kefdp (1)'],
+                            ['vemax (1)', 'Kefdp (2)']],
                   "flux6": []}
     if flux_name:
         try:
@@ -1357,11 +1374,15 @@ def flux_ident_2_data_combination(all_data, flux_ids, choose=(), flux_choice=(),
     # 2 data combination ident list
     if flux_choice[0] == 1:
         flux_1 = flux_1_Vmax_ident
+        flux_5 = flux_5_value1_ident
     elif flux_choice[0] == 2:
         flux_1 = flux_1_kcat_ident
+        flux_5 = flux_5_value2_ident
     else:
         flux_1 = flux_1_ident_expression
-    all_ident_fun_2_data = (flux_1, flux_2_ident_expression)
+        flux_5 = flux_5_ident_expression
+
+    all_ident_fun_2_data = (flux_1, flux_2_ident_expression, flux_5)
 
     # choose which flux functions to test identifiability for
     if ident_fun_choice:
