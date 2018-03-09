@@ -109,6 +109,7 @@ def plot_on_axis_object_polar(axis_obj, x_data, y_data, data_label, fill_color='
     y_data += y_data[:1]
 
     # plot spider data
+    # add exception here when all y_data = 0.0
     axis_obj.plot(angles, y_data, linewidth=1, linestyle='solid', label=data_label, color=fill_color)
     axis_obj.fill(angles, y_data, fill_color, alpha=0.1)
     return None
