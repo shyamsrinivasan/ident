@@ -404,6 +404,10 @@ def true_parameter_value(ident_details):
             true_value = kotte_true_parameter_values(flux_based=1, flux_name=flux_name,
                                                      flux_choice_id=flux_choice_id,
                                                      parameter_id=parameter_name)
+            if found_value.size != 0:
+                tiled_found_value = np.tile(true_value, found_value.shape)
+            else:
+                tiled_found_value = true_value
             parameter_true_values = {"flux id": ident_details["flux id"],
                                      "flux name": flux_name,
                                      "flux choice": flux_choice_id,
@@ -411,7 +415,7 @@ def true_parameter_value(ident_details):
                                      "parameter name": parameter_name,
                                      "data id": data_identifying_parameter_i,
                                      "found values": found_value,
-                                     "true values": np.tile(true_value, found_value.shape)}
+                                     "true values": tiled_found_value}
             all_parameter_true_values.append(parameter_true_values)
 
     return all_parameter_true_values
@@ -628,14 +632,22 @@ def collate_sample_based_parameter_value(number_of_fluxes_per_sample, all_sample
             mean_across_samples = np.mean(np.array(k_parameter_found_values), axis=0)
             std_across_samples = np.std(np.array(k_parameter_found_values), axis=0)
             # get mean across al data identifying parameter k for each sample
-            mean_across_data = np.mean(np.array(k_parameter_found_values), axis=1)
-            std_across_data = np.std(np.array(k_parameter_found_values), axis=1)
+            if np.array(k_parameter_found_values).size != 0:
+                mean_across_data = np.mean(np.array(k_parameter_found_values), axis=1)
+                std_across_data = np.std(np.array(k_parameter_found_values), axis=1)
+            else:
+                mean_across_data = np.array([0.0])
+                std_across_data = np.array([0.0])
             # get mean across all data points across all samples
             mean_across_data_across_samples = np.mean(mean_across_data, axis=0)
             std_across_data_across_samples = np.std(mean_across_data, axis=0)
             # get mean across all samples across all data points
-            mean_across_samples_across_data = np.mean(mean_across_samples, axis=0)
-            std_across_samples_across_data = np.std(mean_across_samples, axis=0)
+            if mean_across_samples.size != 0:
+                mean_across_samples_across_data = np.mean(mean_across_samples, axis=0)
+                std_across_samples_across_data = np.std(mean_across_samples, axis=0)
+            else:
+                mean_across_samples_across_data = np.array([0.0])
+                std_across_samples_across_data = np.array([0.0])
             k_parameter_info = {"sample mean": mean_across_samples,
                                 "sample std": std_across_samples,
                                 "data mean": mean_across_data,
