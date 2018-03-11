@@ -93,25 +93,29 @@ def plot_on_axis_object_polar(axis_obj, x_data, y_data, data_label, fill_color='
 
     # Draw ylabels
     axis_obj.set_rlabel_position(0)
-    max_y_data = max(y_data)
-    if max_y_data % 25 != 0:
-        if (max_y_data + max_y_data % 25) % 25 != 0:
-            max_y_data = (max_y_data - max_y_data % 25) + 25
-        else:
-            max_y_data = max_y_data + max_y_data % 25
+    y_data_bool = [True if iy <= 0.0 else False for iy in y_data]
+    # exception here when all y_data = 0.0
+    if not all(y_data_bool):
+        max_y_data = max(y_data)
+        if max_y_data % 25 != 0:
+            if (max_y_data + max_y_data % 25) % 25 != 0:
+                max_y_data = (max_y_data - max_y_data % 25) + 25
+            else:
+                max_y_data = max_y_data + max_y_data % 25
 
-    plt.ylim(0, max_y_data)
-    y_ticks = range(25, int(max_y_data)+25, 25)
-    y_tick_labels = [str(value) for value in y_ticks]
-    plt.yticks(y_ticks, y_tick_labels, color="grey", size=7)
+        plt.ylim(0, max_y_data)
+        y_ticks = range(25, int(max_y_data)+25, 25)
+        y_tick_labels = [str(value) for value in y_ticks]
+        plt.yticks(y_ticks, y_tick_labels, color="grey", size=7)
 
     # set y_data to be similar to angles (close the circle)
     y_data += y_data[:1]
 
     # plot spider data
-    # add exception here when all y_data = 0.0
-    axis_obj.plot(angles, y_data, linewidth=1, linestyle='solid', label=data_label, color=fill_color)
-    axis_obj.fill(angles, y_data, fill_color, alpha=0.1)
+    # exception here when all y_data = 0.0
+    if not all(y_data_bool):
+        axis_obj.plot(angles, y_data, linewidth=1, linestyle='solid', label=data_label, color=fill_color)
+        axis_obj.fill(angles, y_data, fill_color, alpha=0.1)
     return None
 
 
