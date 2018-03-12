@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[    185772,       4684]
-NotebookOptionsPosition[    183780,       4612]
-NotebookOutlinePosition[    184122,       4627]
-CellTagsIndexPosition[    184079,       4624]
+NotebookDataLength[    191074,       4841]
+NotebookOptionsPosition[    188962,       4765]
+NotebookOutlinePosition[    189304,       4780]
+CellTagsIndexPosition[    189261,       4777]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -4608,10 +4608,163 @@ Cell[BoxData[
       RowBox[{"v31", " ", "v32", " ", "x13", " ", "x22", " ", "x23"}]}], 
      ")"}]}], ")"}]}]], "Output",
  CellChangeTimes->{3.729774239494026*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", " ", 
+   RowBox[{"v3", " ", "using", " ", "MWC", " ", "kinetics"}], " ", "*)"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"met", " ", "=", " ", 
+     RowBox[{"{", 
+      RowBox[{
+      "x11", ",", "x12", ",", "x13", ",", "x14", ",", "x21", ",", "x22", ",", 
+       "x23", ",", "x24"}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"flux", "=", 
+     RowBox[{"{", 
+      RowBox[{"v31", ",", "v32", ",", " ", "v33", ",", "v34"}], "}"}]}], 
+    ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"parameters", "=", 
+     RowBox[{"{", 
+      RowBox[{"V3max", ",", "K3fdp", ",", "K3pep", ",", "L3fdp"}], "}"}]}], 
+    ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"reg1", "=", 
+     RowBox[{"1", "+", 
+      RowBox[{"x11", "/", "K3pep"}]}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"reg2", "=", 
+     RowBox[{"1", "+", 
+      RowBox[{"x12", "/", "K3pep"}]}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"reg3", "=", 
+     RowBox[{"1", "+", 
+      RowBox[{"x13", "/", "K3pep"}]}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"reg4", "=", 
+     RowBox[{"1", "+", 
+      RowBox[{"x14", "/", "K3pep"}]}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"fdpsat1", "=", 
+     RowBox[{"x21", "/", "K3fdp"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"fdpsat2", "=", 
+     RowBox[{"x22", "/", "K3fdp"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"fdpsat3", "=", 
+     RowBox[{"x23", "/", "K3fdp"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"fdpsat4", "=", 
+     RowBox[{"x24", "/", "K3fdp"}]}], ";"}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"flux31", ":=", 
+     RowBox[{
+      RowBox[{"v31", "-", 
+       RowBox[{"V3max", "*", "fdpsat1", "*", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"1", "+", "fdpsat1"}], ")"}], "^", "3"}], "/", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"(", 
+             RowBox[{"1", "+", "fdpsat1"}], ")"}], "^", "4"}], "+", 
+           RowBox[{"L3fdp", "*", 
+            RowBox[{
+             RowBox[{"(", "reg1", ")"}], "^", 
+             RowBox[{"(", 
+              RowBox[{"-", "4"}], ")"}]}]}]}], ")"}]}]}]}], "\[Equal]", 
+      "0"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"flux32", ":=", 
+     RowBox[{
+      RowBox[{"v32", "-", 
+       RowBox[{"V3max", "*", "fdpsat2", "*", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"1", "+", "fdpsat2"}], ")"}], "^", "3"}], "/", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"(", 
+             RowBox[{"1", "+", "fdpsat2"}], ")"}], "^", "4"}], "+", 
+           RowBox[{"L3fdp", "*", 
+            RowBox[{
+             RowBox[{"(", "reg2", ")"}], "^", 
+             RowBox[{"(", 
+              RowBox[{"-", "4"}], ")"}]}]}]}], ")"}]}]}]}], "\[Equal]", 
+      "0"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"flux33", ":=", 
+     RowBox[{
+      RowBox[{"v33", "-", 
+       RowBox[{"V3max", "*", "fdpsat3", "*", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"1", "+", "fdpsat3"}], ")"}], "^", "3"}], "/", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"(", 
+             RowBox[{"1", "+", "fdpsat3"}], ")"}], "^", "4"}], "+", 
+           RowBox[{"L3fdp", "*", 
+            RowBox[{
+             RowBox[{"(", "reg3", ")"}], "^", 
+             RowBox[{"(", 
+              RowBox[{"-", "4"}], ")"}]}]}]}], ")"}]}]}]}], "\[Equal]", 
+      "0"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"flux34", ":=", 
+     RowBox[{
+      RowBox[{"v34", "-", 
+       RowBox[{"V3max", "*", "fdpsat4", "*", 
+        RowBox[{
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"1", "+", "fdpsat4"}], ")"}], "^", "3"}], "/", 
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{
+            RowBox[{"(", 
+             RowBox[{"1", "+", "fdpsat4"}], ")"}], "^", "4"}], "+", 
+           RowBox[{"L3fdp", "*", 
+            RowBox[{
+             RowBox[{"(", "reg4", ")"}], "^", 
+             RowBox[{"(", 
+              RowBox[{"-", "4"}], ")"}]}]}]}], ")"}]}]}]}], "\[Equal]", 
+      "0"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"p", "=", 
+     RowBox[{"{", 
+      RowBox[{"V3max", ",", "K3fdp"}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{"sol", "=", 
+    RowBox[{"Solve", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{"flux31", ",", "flux32"}], "}"}], ",", "p", ",", 
+      RowBox[{"Cubics", "\[Rule]", "False"}], ",", 
+      RowBox[{"Quartics", "\[Rule]", "False"}]}], "]"}]}], 
+   "\[IndentingNewLine]", "\[IndentingNewLine]"}]}]], "Input",
+ CellChangeTimes->{{3.729815407046815*^9, 3.72981545157065*^9}, {
+  3.729815484542053*^9, 3.7298154901933765`*^9}, {3.729815524157319*^9, 
+  3.7298158842079124`*^9}, {3.7298164844492445`*^9, 3.7298164855603085`*^9}}],
+
+Cell[BoxData["$Aborted"], "Output",
+ CellChangeTimes->{3.729816479585966*^9, 3.7298301294356933`*^9}]
 }, Open  ]]
 },
 WindowSize->{1350, 522},
-WindowMargins->{{-5, Automatic}, {34, Automatic}},
+WindowMargins->{{-2, Automatic}, {34, Automatic}},
 FrontEndVersion->"10.0 for Microsoft Windows (64-bit) (July 1, 2014)",
 StyleDefinitions->"Default.nb"
 ]
@@ -4684,7 +4837,11 @@ Cell[144098, 3647, 34658, 832, 1509, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
 Cell[178793, 4484, 146, 3, 31, "Input"],
-Cell[178942, 4489, 4822, 120, 193, "Output"]
+Cell[178942, 4489, 4822, 120, 160, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[183801, 4614, 5041, 145, 432, "Input"],
+Cell[188845, 4761, 101, 1, 31, "Output"]
 }, Open  ]]
 }
 ]
