@@ -1119,14 +1119,16 @@ def flux_3_ident_expression(experimental_data):
 
 
 def v3_V3max_var1(experimental_data):
-    """v3max values when kepep is assumed as known"""
+    """v3max values when k3pep is assumed as known"""
     _, x11, x21, _, _, _, v31, _, _, _, \
     _, x12, x22, _, _, _, v32, _, _, _, \
     _, x13, x23, _, _, _, v33, _, _, _ = list(experimental_data)
+    K3pep = np.array([.1])
     v3max_nr_1 = -((-(K3pep * v32 + v32 * x12) * (K3pep * v31 * x21 + v31 * x11 * x21) + (K3pep * v31 + v31 * x11) * (
                 K3pep * v32 * x22 + v32 * x12 * x22)))
     v3max_dr_1 = (K3pep*v32*x11*x21 + v32*x11*x12*x21 - K3pep*v31*x12*x22 - v31*x11*x12*x22)
-    return None
+    v3max_1 = v3max_nr_1/v3max_dr_1
+    return [v3max_nr_1, v3max_dr_1, v3max_1]
 
 
 def v3_V3max_var2(experimental_data):
@@ -1134,9 +1136,11 @@ def v3_V3max_var2(experimental_data):
     _, x11, x21, _, _, _, v31, _, _, _, \
     _, x12, x22, _, _, _, v32, _, _, _, \
     _, x13, x23, _, _, _, v33, _, _, _ = list(experimental_data)
+    K3fdp = np.array([.1])
     v3max_nr_2 = -((-(K3fdp*v31*x11 + v31*x11*x21)*(K3fdp*v32 + v32*x22) + (K3fdp*v31 + v31*x21)*(K3fdp*v32*x12 + v32*x12*x22)))
     v3max_dr_2 = (K3fdp*v32*x11*x21 - K3fdp*v31*x12*x22 + v32*x11*x21*x22 - v31*x12*x21*x22)
-    return None
+    v3max_2 = v3max_nr_2/v3max_dr_2
+    return [v3max_nr_2, v3max_dr_2, v3max_2]
 
 
 def v3_K3fdp_var1(experimental_data):
@@ -1144,9 +1148,11 @@ def v3_K3fdp_var1(experimental_data):
     _, x11, x21, _, _, _, v31, _, _, _, \
     _, x12, x22, _, _, _, v32, _, _, _, \
     _, x13, x23, _, _, _, v33, _, _, _ = list(experimental_data)
+    K3pep = np.array([.1])
     k3fdp_nr = (x21*(-K3pep*v32*x11*x22 + K3pep*v31*x12*x22 + v31*x11*x12*x22 - v32*x11*x12*x22))
     k3fdp_dr = (K3pep*v32*x11*x21 + v32*x11*x12*x21 - K3pep*v31*x12*x22 - v31*x11*x12*x22)
-    return None
+    k3fdp = k3fdp_nr/k3fdp_dr
+    return [k3fdp_nr, k3fdp_dr, k3fdp]
 
 
 def v3_K3pep_var2(experimental_data):
@@ -1154,17 +1160,33 @@ def v3_K3pep_var2(experimental_data):
     _, x11, x21, _, _, _, v31, _, _, _, \
     _, x12, x22, _, _, _, v32, _, _, _, \
     _, x13, x23, _, _, _, v33, _, _, _ = list(experimental_data)
+    K3fdp = np.array([.1])
     k3pep_nr = (x11*(-K3fdp*v32*x12*x21 + K3fdp*v31*x12*x22 + v31*x12*x21*x22 - v32*x12*x21*x22))
     k3pep_dr = (K3fdp*v32*x11*x21 - K3fdp*v31*x12*x22 + v32*x11*x21*x22 - v31*x12*x21*x22)
-    return None
+    k3pep = k3pep_nr/k3pep_dr
+    return [k3pep_nr, k3pep_dr, k3pep]
 
 
 def flux_3_var1(experimental_data):
-    return None
+    v3max_nr_1, v3max_dr_1, v3max_1 = v3_V3max_var1(experimental_data)
+    k3fdp_nr, k3fdp_dr, k3fdp = v3_K3fdp_var1(experimental_data)
+    return [v3max_nr_1, v3max_dr_1, v3max_1], [k3fdp_nr, k3fdp_dr, k3fdp]
 
 
 def flux_3_var2(experimental_data):
-    return None
+    v3max_nr_2, v3max_dr_2, v3max_2 = v3_V3max_var2(experimental_data)
+    k3pep_nr, k3pep_dr, k3pep = v3_K3pep_var2(experimental_data)
+    return [v3max_nr_2, v3max_dr_2, v3max_2], [k3pep_nr, k3pep_dr, k3pep]
+
+
+def flux_3_var_1_and_2(experimental_data):
+    v3max_nr_1, v3max_dr_1, v3max_1 = v3_V3max_var1(experimental_data)
+    k3fdp_nr, k3fdp_dr, k3fdp = v3_K3fdp_var1(experimental_data)
+    v3max_nr_2, v3max_dr_2, v3max_2 = v3_V3max_var2(experimental_data)
+    k3pep_nr, k3pep_dr, k3pep = v3_K3pep_var2(experimental_data)
+
+    return [v3max_nr_1, v3max_dr_1, v3max_1], [k3fdp_nr, k3fdp_dr, k3fdp], \
+           [v3max_nr_2, v3max_dr_2, v3max_2], [k3pep_nr, k3pep_dr, k3pep]
 
 
 def v5_vemax_value1_ident(experimental_data):
@@ -1424,14 +1446,17 @@ def flux_ident_2_data_combination(all_data, flux_ids, choose=(), flux_choice=(),
     if flux_choice[0] == 1:
         flux_1 = flux_1_Vmax_ident
         flux_5 = flux_5_value1_ident
+        flux_6 = flux_3_var1
     elif flux_choice[0] == 2:
         flux_1 = flux_1_kcat_ident
         flux_5 = flux_5_value2_ident
+        flux_6 = flux_3_var2
     else:
         flux_1 = flux_1_ident_expression
         flux_5 = flux_5_ident_expression
+        flux_6 = flux_3_var_1_and_2
 
-    all_ident_fun_2_data = (flux_1, flux_2_ident_expression, flux_5)
+    all_ident_fun_2_data = (flux_1, flux_2_ident_expression, flux_5, flux_6)
 
     # choose which flux functions to test identifiability for
     if ident_fun_choice:
