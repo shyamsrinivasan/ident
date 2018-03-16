@@ -56,30 +56,30 @@ print('Practical Identifiability Analysis of v5 with 2 parameters: vemax and Kef
 # choose which identifiability functions to test
 ident_fun_choice = [2]
 # perform identifiability when v1 is written with k1cat*E in the numerator
-ident_details_v2_V2max = flux_ident_2_data_combination(experimental_datasets_2_expts, choose=combination_choice,
-                                                       flux_ids=[5], flux_choice=[2], ident_fun_choice=ident_fun_choice)
+ident_details_v5_root1 = flux_ident_2_data_combination(experimental_datasets_2_expts, choose=combination_choice,
+                                                       flux_ids=[5], flux_choice=[1], ident_fun_choice=ident_fun_choice)
 print('Identifiability analysis of v5 with 2 parameters (vemax and Kefdp) complete.\n')
 
 # data processing - do not combine fluxes
 
-data_list_v2_V2max, max_parameter_v2_V2max, true_value_v2_V2max, experiment_info_v2_V2max,\
-combined_data_list_v2_V2max, combined_max_parameter_v2_V2max, combined_true_value_v2_V2max, \
-combined_experiment_info_v2_V2max = process_info_sample(ident_details_v2_V2max,
+data_list_v5_root1, max_parameter_v5_root1, true_value_v5_root1, experiment_info_v5_root1,\
+combined_data_list_v5_root1, combined_max_parameter_v5_root1, combined_true_value_v5_root1, \
+combined_experiment_info_v5_root1 = process_info_sample(ident_details_v5_root1,
                                                         experimental_datasets_2_expts,
                                                         experiment_type_indices,
                                                         combine_fluxes=0,
                                                         ident_fun_choice=ident_fun_choice)
 
 # plot parameter identifibaility for all fluxes using 2 data combinations
-parameter_identifibaility_plot(max_parameter_v2_V2max)
+parameter_identifibaility_plot(max_parameter_v5_root1)
 # plot experiment type in each position based on all parameter
 # identifiable data combinations for each parameter
 # parameter_experiment_info_plot(experiment_info_2)
-parameter_experiment_info_spider(experiment_info_v2_V2max)
+parameter_experiment_info_spider(experiment_info_v5_root1)
 # plot true parameter values and determined parameter values
-plot_parameter_values(true_value_v2_V2max)
+plot_parameter_values(true_value_v5_root1)
 
 # plot utility of data sets (number of data sets identifying n, n-1, n-2, ...., 1, 0 parameters
-data_utility_plot(data_list_v2_V2max)
+data_utility_plot(data_list_v5_root1)
 
 print("\n Run Complete \n")
