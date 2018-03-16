@@ -12,8 +12,32 @@ def get_all_indices(mother_list, value):
     return current_value_id
 
 
+def dataset_usefulness(ident_boolean_array):
+    """get number and id of data combinations identifying n, n-1,..,0 parameters.
+    n - total number of parameters in ident_boolean"""
+    number_data, number_parameter = ident_boolean_array.shape
+    number_parameters_identified = []
+    for i_data in range(0, number_data):
+        number_parameters_identified.append(sum(ident_boolean_array[i_data, :]))
+
+    data_id = [[j_data_id for j_data_id, value in enumerate(number_parameters_identified) if value == i_parameter_number]
+               for i_parameter_number in range(0, number_parameter+1)]
+    data_length = [len(i_parameter_data) for i_parameter_data in data_id]
+    data_usefulness_tuple = zip(range(0, number_parameter+1), data_length, data_id)
+    data_usefulness_dict = {"number": range(0, number_parameter+1),
+                            "index": data_id,
+                            "total": data_length}
+
+
+    # for i_data in range(0, number_data):
+
+    return None
+
+
 def get_most_useful_dataset(ident_boolean_array):
     """get data identifying most parameters (most useful data set)"""
+    # test call
+    dataset_usefulness(ident_boolean_array)
     # most useful dataset - based on number of parameter identified
     number_data, number_parameter = ident_boolean_array.shape
     identified_parameters = []  # np.zeros((number_data, 1))
