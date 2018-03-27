@@ -3,6 +3,7 @@ from generate_expdata import generate_expdata
 from simulate_data import arrange_experimental_data
 from kotte_model import flux_ident_2_data_combination
 from process_ident_data import process_info_sample
+from kotte_model import flux_1_Vmax_gather_k1cat
 from plot_ident_results import data_utility_plot
 from plot_ident_results import plot_parameter_values
 from plot_ident_results import parameter_identifibaility_plot
@@ -98,6 +99,9 @@ combined_experiment_info_v1_V1max = process_info_sample(ident_details_v1_V1max,
                                                         experiment_type_indices,
                                                         combine_fluxes=0,
                                                         ident_fun_choice=ident_fun_choice)
+
+# get k1cat values from V1max and measured enzyme x3
+flux_1_Vmax_gather_k1cat(ident_details_v1_V1max, experimental_datasets_2_expts)
 
 # plot parameter identifibaility for all fluxes using 2 data combinations
 parameter_identifibaility_plot(max_parameter_v1_V1max)
