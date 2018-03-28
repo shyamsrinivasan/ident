@@ -161,7 +161,9 @@ def flux_1_Vmax_gather_k1cat(all_ident_info, all_experimental_data):
         vmax_value = all_ident_info[0][0]["values"][i_data, 0, -1]
         i_data_k1cat = get_v1_k1cat(vmax_value, enzyme_data)
         all_k1cat_values.append(i_data_k1cat)
-    return None
+    # get only data from identifiable data sets
+    all_k1cat_values = np.array(all_k1cat_values)[all_ident_info[0][0]["boolean"][:, 0], :]
+    return all_k1cat_values
 
 
 def flux_1_Vmax_ident(experimental_data):
