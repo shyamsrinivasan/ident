@@ -145,6 +145,25 @@ def kotte_ode(t, y, par_val):
     return np.hstack((yd_pep, yd_fdp, yd_e))
 
 
+def get_v1_k1cat(ident_info, enzyme_data):
+    k1cat_value = ident_info / enzyme_data
+    return k1cat_value
+
+
+def flux_1_Vmax_gather_k1cat(all_ident_info, all_experimental_data):
+    """loop through each identifiability data to get corresponding V1max and k1cat data
+    by dividing it by relevant enzyme concentration data"""
+    all_k1cat_values = []
+    number_data = len(all_experimental_data[0]["values"])
+    for i_data in range(0, number_data):
+        # len(enzyme_data) == number_of_experiments
+        enzyme_data = all_experimental_data[0]["values"][i_data][3::10]
+        vmax_value = all_ident_info[0][0]["values"][i_data, 0, -1]
+        i_data_k1cat = get_v1_k1cat(vmax_value, enzyme_data)
+        all_k1cat_values.append(i_data_k1cat)
+    return None
+
+
 def flux_1_Vmax_ident(experimental_data):
     """v1 identifiability without enzyme"""
     ac1, _, _, _, v11, _, _, _, _, _, \
