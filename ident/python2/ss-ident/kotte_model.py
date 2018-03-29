@@ -20,7 +20,9 @@ def kotte_true_parameter_values(flux_based=0, flux_name=(), flux_choice_id=0, pa
         alter_parameter_value = {"flux1": [{"K1ac (enz)": np.array([.1]), "k1cat": np.array([1]),
                                            "V1max": np.array([1]), "K1ac (no enz)": np.array([.1])},
                                            {"V1max": np.array([1]), "K1ac (no enz)": np.array([.1])},
-                                           {"K1ac (enz)": np.array([.1]), "k1cat": np.array([1])}],
+                                           {"K1ac (enz)": np.array([.1]), "k1cat": np.array([1])},
+                                           {"V1max": np.array([1]), "K1ac (no enz)": np.array([.1]),
+                                            "k1cat (exp 1)": np.array([1]), "k1cat (exp 2)": np.array([1])}],
                                  "flux2": [{"K2pep": np.array([.3]), "V2max": np.array([1])}],
                                  "flux3": [{"K3fdp (1)": np.array([.1]), "K3pep (1)": np.array([.1]),
                                             "V3max (1)": np.array([1]), "K3fdp (2)": np.array([.1]),
@@ -163,7 +165,31 @@ def flux_1_Vmax_gather_k1cat(all_ident_info, all_experimental_data):
         all_k1cat_values.append(i_data_k1cat)
     # get only data from identifiable data sets
     all_k1cat_values = np.array(all_k1cat_values)[all_ident_info[0][0]["boolean"][:, 0], :]
+
+    # calculate mean and std dev for obtained values of k1cat
+
     return all_k1cat_values
+
+
+def flux_1_Vmax_get_kcat_ident(experimental_data):
+    """v1 identifiability without enzyme - use enzyme data to get kcat from identified Vmax"""
+    ac1, _, _, x31, v11, _, _, _, _, _, \
+    ac2, _, _, x32, v12, _, _, _, _, _ = list(experimental_data)
+
+    # flux numerator and denominator w/o sympy
+    # symbolic expression for flux v1 w/o enzyme concentration data
+    v1max_no_enzyme_numerator_value = ac1 * v11 * v12 - ac2 * v11 * v12
+    v1max_no_enzyme_denominator_value = -(ac2 * v11 - ac1 * v12)
+    k1ac_no_enzyme_numerator_value = ac1 * (ac2 * v11 - ac2 * v12)
+    k1ac_no_enzyme_denominator_value = -ac2 * v11 + ac1 * v12
+
+    v1max_no_enzyme_value = v1max_no_enzyme_numerator_value / v1max_no_enzyme_denominator_value
+    k1ac_no_enzyme_value = k1ac_no_enzyme_numerator_value / k1ac_no_enzyme_denominator_value
+    k1cat_no_enzyme_value_1 = v1max_no_enzyme_value / x31
+    k1cat_no_enzyme_value_2 = v1max_no_enzyme_value / x32
+    return [v1max_no_enzyme_numerator_value, v1max_no_enzyme_denominator_value, v1max_no_enzyme_value], \
+           [k1ac_no_enzyme_numerator_value, k1ac_no_enzyme_denominator_value, k1ac_no_enzyme_value], \
+           [0.0, 0.0, k1cat_no_enzyme_value_1], [0.0, 0.0, k1cat_no_enzyme_value_2]
 
 
 def flux_1_Vmax_ident(experimental_data):
@@ -957,7 +983,8 @@ def ident_parameter_name(parameter_id, flux_name=(), flux_choice_id=0):
     #                                 'V3max (2)', 'K3fdp (2)', 'K3pep (2)']}
     alter_list = {"flux1": [['V1max', 'K1ac (no enz)', 'k1cat', 'K1ac (enz)'],
                             ['V1max', 'K1ac (no enz)'],
-                            ['k1cat', 'K1ac (enz)']],
+                            ['k1cat', 'K1ac (enz)'],
+                            ['V1max', 'K1ac (no enz)', 'k1cat (exp 1)', 'k1cat (exp 2)']],
                   "flux2": [['V2max', 'K2pep']],
                   "flux3": [['V3max (1)', 'K3fdp (1)', 'K3pep (1)', 'V3max (2)', 'K3fdp (2)', 'K3pep (2)'],
                             ['V3max (1)', 'K3fdp (1)', 'K3pep (1)'],
@@ -1138,6 +1165,10 @@ def flux_ident_2_data_combination(all_data, flux_ids, choose=(), flux_choice=(),
         flux_1 = flux_1_kcat_ident
         flux_5 = flux_5_value2_ident
         flux_6 = flux_3_var2
+    elif flux_choice[0] == 3:
+        flux_1 = flux_1_Vmax_get_kcat_ident
+        flux_5 = []
+        flux_6 = []
     else:
         flux_1 = flux_1_ident_expression
         flux_5 = flux_5_ident_expression
