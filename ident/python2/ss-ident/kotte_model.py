@@ -977,10 +977,6 @@ def ident_parameter_name(parameter_id, flux_name=(), flux_choice_id=0):
                       'V3max (2)', 'K3fdp (2)', 'K3pep (2)',
                       'vemax (1)', 'Kefdp (1)',
                       'vemax(1)', 'Kefdp (2)']
-    # flux_parameter_list = {"flux1":['V1max', 'K1ac (no enz)', 'k1cat', 'K1ac (enz)'],
-    #                        "flux2":['V2max', 'K2pep'],
-    #                        "flux3":['V3max (1)', 'K3fdp (1)', 'K3pep (1)',
-    #                                 'V3max (2)', 'K3fdp (2)', 'K3pep (2)']}
     alter_list = {"flux1": [['V1max', 'K1ac (no enz)', 'k1cat', 'K1ac (enz)'],
                             ['V1max', 'K1ac (no enz)'],
                             ['k1cat', 'K1ac (enz)'],
