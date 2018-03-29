@@ -83,36 +83,4 @@ plot_parameter_values(true_value_v1_k1cat)
 # plot utility of data sets (number of data sets identifying n, n-1, n-2, ...., 1, 0 parameters
 data_utility_plot(data_list_v1_k1cat)
 
-print('Practical Identifiability Analysis of v1 with 2 parameters: V1max and K1ac\n')
-# choose which identifiability functions to test
-ident_fun_choice = [0]
-# perform identifiability when v1 is written with V1max in the numerator
-ident_details_v1_V1max = flux_ident_2_data_combination(experimental_datasets_2_expts, choose=combination_choice,
-                                                       flux_ids=[1], flux_choice=[1], ident_fun_choice=ident_fun_choice)
-print('Identifiability analysis of v1 with 2 parameters (V1max and K1ac) complete.\n')
-
-# data processing - do not combine fluxes
-data_list_v1_V1max, max_parameter_v1_V1max, true_value_v1_V1max, experiment_info_v1_V1max, \
-combined_data_list_v1_V1max, combined_max_parameter_v1_V1max, combined_true_value_v1_V1max, \
-combined_experiment_info_v1_V1max = process_info_sample(ident_details_v1_V1max,
-                                                        experimental_datasets_2_expts,
-                                                        experiment_type_indices,
-                                                        combine_fluxes=0,
-                                                        ident_fun_choice=ident_fun_choice)
-
-# get k1cat values from V1max and measured enzyme x3
-flux_1_Vmax_gather_k1cat(ident_details_v1_V1max, experimental_datasets_2_expts)
-
-# plot parameter identifibaility for all fluxes using 2 data combinations
-parameter_identifibaility_plot(max_parameter_v1_V1max)
-# plot experiment type in each position based on all parameter
-# identifiable data combinations for each parameter
-# parameter_experiment_info_plot(experiment_info_2)
-parameter_experiment_info_spider(experiment_info_v1_V1max)
-# plot true parameter values and determined parameter values
-plot_parameter_values(true_value_v1_V1max)
-
-# plot utility of data sets (number of data sets identifying n, n-1, n-2, ...., 1, 0 parameters
-data_utility_plot(data_list_v1_V1max)
-
 print("\n Run Complete \n")
