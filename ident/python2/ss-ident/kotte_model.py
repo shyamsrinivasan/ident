@@ -838,8 +838,7 @@ def flux_3_ident_expression(experimental_data):
 def v3_V3max_var1(experimental_data):
     """v3max values when k3pep is assumed as known"""
     _, x11, x21, _, _, _, v31, _, _, _, \
-    _, x12, x22, _, _, _, v32, _, _, _, \
-    _, x13, x23, _, _, _, v33, _, _, _ = list(experimental_data)
+    _, x12, x22, _, _, _, v32, _, _, _ = list(experimental_data)
     K3pep = np.array([.1])
     v3max_nr_1 = -((-(K3pep * v32 + v32 * x12) * (K3pep * v31 * x21 + v31 * x11 * x21) + (K3pep * v31 + v31 * x11) * (
                 K3pep * v32 * x22 + v32 * x12 * x22)))
@@ -851,8 +850,7 @@ def v3_V3max_var1(experimental_data):
 def v3_V3max_var2(experimental_data):
     """v3max value when k3fdp value is assumed as known"""
     _, x11, x21, _, _, _, v31, _, _, _, \
-    _, x12, x22, _, _, _, v32, _, _, _, \
-    _, x13, x23, _, _, _, v33, _, _, _ = list(experimental_data)
+    _, x12, x22, _, _, _, v32, _, _, _ = list(experimental_data)
     K3fdp = np.array([.1])
     v3max_nr_2 = -((-(K3fdp*v31*x11 + v31*x11*x21)*(K3fdp*v32 + v32*x22) + (K3fdp*v31 + v31*x21)*(K3fdp*v32*x12 + v32*x12*x22)))
     v3max_dr_2 = (K3fdp*v32*x11*x21 - K3fdp*v31*x12*x22 + v32*x11*x21*x22 - v31*x12*x21*x22)
@@ -863,8 +861,7 @@ def v3_V3max_var2(experimental_data):
 def v3_K3fdp_var1(experimental_data):
     """k3fdp value when k3pep is assumed as known"""
     _, x11, x21, _, _, _, v31, _, _, _, \
-    _, x12, x22, _, _, _, v32, _, _, _, \
-    _, x13, x23, _, _, _, v33, _, _, _ = list(experimental_data)
+    _, x12, x22, _, _, _, v32, _, _, _ = list(experimental_data)
     K3pep = np.array([.1])
     k3fdp_nr = (x21*(-K3pep*v32*x11*x22 + K3pep*v31*x12*x22 + v31*x11*x12*x22 - v32*x11*x12*x22))
     k3fdp_dr = (K3pep*v32*x11*x21 + v32*x11*x12*x21 - K3pep*v31*x12*x22 - v31*x11*x12*x22)
@@ -875,8 +872,7 @@ def v3_K3fdp_var1(experimental_data):
 def v3_K3pep_var2(experimental_data):
     """k3pep value when k3fdp is assumed as known"""
     _, x11, x21, _, _, _, v31, _, _, _, \
-    _, x12, x22, _, _, _, v32, _, _, _, \
-    _, x13, x23, _, _, _, v33, _, _, _ = list(experimental_data)
+    _, x12, x22, _, _, _, v32, _, _, _ = list(experimental_data)
     K3fdp = np.array([.1])
     k3pep_nr = (x11*(-K3fdp*v32*x12*x21 + K3fdp*v31*x12*x22 + v31*x12*x21*x22 - v32*x12*x21*x22))
     k3pep_dr = (K3fdp*v32*x11*x21 - K3fdp*v31*x12*x22 + v32*x11*x21*x22 - v31*x12*x21*x22)
