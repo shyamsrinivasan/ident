@@ -989,7 +989,9 @@ def ident_parameter_name(parameter_id, flux_name=(), flux_choice_id=0):
                   "flux5": [['vemax (1)', 'Kefdp (1)', 'vemax (1)', 'Kefdp (2)'],
                             ['vemax (1)', 'Kefdp (1)'],
                             ['vemax (1)', 'Kefdp (2)']],
-                  "flux6": []}
+                  "flux6": [['V3max (1)', 'K3fdp', 'V3max (2)', 'K3pep'],
+                            ['V3max (1)', 'K3fdp'],
+                            ['V3max (2)', 'K3pep']]}
     if flux_name:
         try:
             parameter_name = [alter_list[name][choice_id][id]
