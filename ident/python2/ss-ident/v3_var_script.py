@@ -41,9 +41,9 @@ print('Practical Identifiability Analysis of v3 with 3 parameters: V3max, K3fdp 
 # choose identifiability functions to test
 ident_fun_choice = [3]
 # get combinations of experimental datasets
-experimental_datasets_3_expts, \
+experimental_datasets_2_expts, \
     experiment_choice, combination_choice = arrange_experimental_data(exp_xss, exp_fss, perturbation_details,
-                                                                      experiments_per_set=3, flux_id=exp_flux_index,
+                                                                      experiments_per_set=2, flux_id=exp_flux_index,
                                                                       experiment_choice=[0,
                                                                                          1, 2, 3, 4, 5,
                                                                                          6, 7, 8, 9, 10,
@@ -55,14 +55,14 @@ experiment_type_indices = [[0],
                            [11, 12, 13, 14, 15],
                            [16, 17, 18, 19, 20]]
 # perform identifiability when v3 parameters are written for root (1)
-ident_details_v3_root1 = flux_ident_2_data_combination(experimental_datasets_3_expts, choose=combination_choice,
-                                                       flux_ids=[3], flux_choice=[0], ident_fun_choice=ident_fun_choice)
+ident_details_v3_root1 = flux_ident_2_data_combination(experimental_datasets_2_expts, choose=combination_choice,
+                                                       flux_ids=[6], flux_choice=[2], ident_fun_choice=ident_fun_choice)
 print('Identifiability analysis for v3 with 3 parameters (V3max, K3fdp and K3pep) complete.\n')
 # data processing
 data_list_v3_root1, max_parameter_v3_root1, true_value_v3_root1, experiment_info_v3_root1, \
     combined_data_list_v3_root1, combined_max_parameter_v3_root1, combined_true_value_v3_root1, \
     combined_experiment_info_v3_root1 = process_info_sample(ident_details_v3_root1,
-                                                            experimental_datasets_3_expts,
+                                                            experimental_datasets_2_expts,
                                                             experiment_type_indices,
                                                             ident_fun_choice=ident_fun_choice)
 
