@@ -34,7 +34,11 @@ def kotte_true_parameter_values(flux_based=0, flux_name=(), flux_choice_id=0, pa
                                  "flux5": [{"vemax (1)": np.array([1.1]), "Kefdp (1)": np.array([.45]),
                                             "Kefdp (2)": np.array([.45])},
                                            {"vemax (1)": np.array([1.1]), "Kefdp (1)": np.array([.45])},
-                                           {"vemax (1)": np.array([1.1]), "Kefdp (2)": np.array([.45])}]}
+                                           {"vemax (1)": np.array([1.1]), "Kefdp (2)": np.array([.45])}],
+                                 "flux6": [{"V3max (1)": np.array([1]), "K3fdp": np.array([.1]),
+                                            "V3max (2)": np.array([1]), "K3pep": np.array([.1])},
+                                           {"V3max (1)": np.array([1]), "K3fdp": np.array([.1])},
+                                           {"V3max (2)": np.array([1]), "K3pep": np.array([.1])}]}
         try:
             parameter_value = [alter_parameter_value[name][choice_id][id]
                                for name, choice_id, id in zip(flux_name, flux_choice_id, parameter_id)]
