@@ -57,7 +57,7 @@ print('Practical Identifiability Analysis of v5 with 2 parameters: vemax and Kef
 ident_fun_choice = [2]
 # perform identifiability when v1 is written with k1cat*E in the numerator
 ident_details_v5_root1 = flux_ident_2_data_combination(experimental_datasets_2_expts, choose=combination_choice,
-                                                       flux_ids=[5], flux_choice=[1], ident_fun_choice=ident_fun_choice)
+                                                       flux_ids=[5], flux_choice=[2], ident_fun_choice=ident_fun_choice)
 print('Identifiability analysis of v5 with 2 parameters (vemax and Kefdp) complete.\n')
 
 # data processing - do not combine fluxes
