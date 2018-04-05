@@ -87,8 +87,38 @@
 	Kinetic models of metabolism can be used to study the dynamic characteristics of metabolic networks \parencite{Bordbar2015, Andreozzi2016}. In these models, ordinary differential equations (ode) are used to express the rate of change of metabolite concentrations ($x$) as a function of the reaction fluxes ($v$) in the metabolic network (Equation \ref{eq:kinstoich}). The matrix $\mathbf{S}$ in Equation (\ref{eq:kinstoich}a) defines the stoichiometric relationship between the fluxes and the concentrations of the metabolic network.
 
 	The expression for the nonlinear function ($f$) used to describe each reaction flux $v_i$ in a kinetic model (Equation \ref{eq:kinstoich}b) is dependent on the enzyme kinetic mechanism that is used to model the reaction \parencite{Link2014, Srinivasan2015}. Accordingly, $f$ is a nonlinear function of the metabolite concentrations, enzyme kinetic parameters ($\theta$) and other input concentrations ($u$). 
+
+	The use of metabolic engineering spans a wide variety of applications, ranging from the design of microorganisms for the biosynthesis of commodity and specialty chemicals \parencite{Andreozzi2016} to engineering mammalian cells as therapeutic targets for cures to various ailments that affect humans \parencite{Bordbar2015,DiFilippo2016,Apaolaza2017}. These applications require us to understand the numerous complex interaction, their roles in cell function, and sometimes even the mechanisms behind these interactions. Computational models offer an avenue to study and understand these interactions through simplified representations of these interactions. They are also used to predict changes in cell function based on changes in the type and nature of the modeled interactions, or finding therapeutic targets to cure various ailments \textcolor{red}{(cite from old draft)}.	
 	
-	Unlike CBMs, where the ability to predict the steady state responses of metabolic networks is dependent on the stoichiometry of the network, the prediction of dynamic responses of metabolic networks to different perturbations using kinetic models of metabolism is also dependent on the numerical values of the enzyme kinetic parameters ($\theta$ in Equation \ref{eq:kinstoich}) \parencite{Andreozzi2016a}. Analyzing the ability of a metabolic network to exhibit dynamic characteristics like multiple steady states and oscillations, irrespective of the structure of the network, is one example where parameter values might play a crucial role \parencite{Srinivasan2015, Vital-Lopez2006}. The use of in vitro, or unreliable in vivo parameter estimates reduces confidence in the model predicted behaviour \parencite{Andreozzi2016a}. Consequently, the reduction in confidence hampers the use of these models to gain insight into the functioning of metabolic networks \parencite{Chakrabarti2013a, Bordbar2015}. The corresponding increase in uncertainty in model predicted responses becomes an obstacle for using the predicted responses as a basis for designing the metabolic networks to achieve any of the aforementioned goals of metabolic engineering and design.  
+	Constraint-based models (CBMs) of metabolism are one such category of models that are used to improve our understanding of the flow of flux through metabolism by representing it as a stoichiometric network of reactions that operate under a pseudo-steady state assumption. The ability of CBMs to shine light on the nonintuitive interactions that govern cellular metabolism is leveraged to predict the effect of different metabolic engineering design decisions on the ability of a cell to grow, or produce a desired metabolite (Bordbar, Monk, et al. 2014; Maia, M. Rocha, and I. Rocha 2016). These advantages, combined with minimal number of parameters that are required to make CBMs functional, have made them useful to get an initial understanding of metabolism and its relationship to cellular function for various aforementioned applications \textcolor{red}{(CBM use references? cMCS, MCS may be?)}. 
+	
+	However, since metabolism is assumed to operate under a pseudo steady state, the metabolite concentrations within the metabolic network are assumed to be constant, and CBMs of metabolism do not model changes in metabolite concentrations. Furthermore, since CBMs represent metabolism using only the stoichiometry of its constituent reactions, they do not account for the various non-catalytic regulatory interactions that are also responsible of metabolic function. These shortcomings prevent CBMs from being used to fully understand the steady state as well as the dynamic characteristics of metabolic networks. 
+	
+	Recently, the focus has shifted towards understanding the importance of the dynamics of metabolism in determining cell function \textcolor{red}{(recent kinetic model review about their utility)}. Consequently, it has been shown that using kinetic models that can represent the dynamics of the network can not only help us learn about previously unknown characteristics of metabolism \textcolor{red}{(red blood cell-both old and new, Maranas bifurcation paper)}, but can also improve predictions about the impact of engineering design perturbations on metabolism \textcolor{red}{(ecoli k457, k-optForce, Maranas kinetic model paper)}. \parencite{Bordbar2015, Andreozzi2016}. These kinetic models of metabolism, in contrast to their constraint-based counterparts, account for the thermodynamic and regulatory interactions that underly metabolic networks in addition to its stoichiometry \parencite{Andreozzi2016a}. 
+	
+	Kinetic models differ from CBMs is their use of mechanistic and empirical enzyme kinetic rate laws to model enzyme catalyzed fluxes within a metabolic network. The other aspect is the fact that kinetic models are heavily parameterized. These parameters represent various aspects of the enzyme kinetic rate laws \textcolor{red}{(kinetic model reviews, our review and a more recent one)}. Hence, the use of kinetic models requires information on all the enzyme kinetic rate laws that will be used to model all the fluxes within a metabolic network, as well as numerical values for all the parameters used in these rate laws. These aspects not only differentiate kinetic models from CBMs of metabolism, but are also two of the major hurdles to their widespread use and adoption. 
+	
+	Firstly, the development of these enzyme kinetic rate laws is based on observations of enzyme activity that are made in vitro. Accordingly, several authors have questioned their relevance for gleaning information on the dynamics of metabolism under in vivo conditions, as opposed to in vitro conditions \textcolor{red}{(Heijnen and Klamt)}. This problem is further compounded by the fact that typical parameter values used in kinetic models of metabolism are estimated in vitro, and may not be applicable under in vivo conditions. Any available in vivo parameter estimates are associated with large uncertainties. Analyzing the ability of a metabolic network to exhibit dynamic characteristics like multiple steady states and oscillations, irrespective of the structure of the network, is one example where parameter values might play a crucial role \parencite{Srinivasan2015, Vital-Lopez2006,Srinivasan2017}. Hence, the ability to study the steady state and dynamic responses of metabolic networks, under in vivo conditions, to different perturbations is compromised. The use of in vitro, or unreliable in vivo parameter estimates reduces confidence in the model predicted behaviour \parencite{Andreozzi2016a}. Consequently, the reduction in confidence hampers the use of these models to gain insight into metabolic network function \parencite{Chakrabarti2013a, Bordbar2015}. The corresponding increase in uncertainty in model predicted responses becomes an obstacle for using the predicted responses as a basis for designing the metabolic networks to achieve any of the aforementioned goals of metabolic engineering and design.  
+	
+	Efforts to improve kinetic models have been dedicated to the development of newer enzyme kinetic models that have a higher correlation with what is observed in vivo. Authors have taken different approaches to address this problem. Some have focused on the development and improvement of parameter estimation methods based on optimization principles for obtaining true in vivo parameter values based on available in vivo experimental data without changing the underlying kinetic rate laws used in the model \textcolor{red}{Isabel Rocha papers on optimization methods, Japanese group that did parameter estimation using a HPC cluster}. Others have sought to completely abandon in vitro kinetic rate law descriptions in favour of approximate kinetic rate law models whose parameters are more informative and can be estimated in a relatively easier fashion \textcolor{red}{(Heijnen and other approximate kinetic modeling formats papers, Kotte 2010)}. 
+
+	
+	Despite these efforts, one of persistent problems is the lingering uncertainty in the parameter estimates and the subsequent predictions that are obtained from these methods. Some authors have proposed to alleviate this parameter uncertainty by using a Monte Carlo approach to obtaining kinetic models of metabolism \textcolor{red}{(ensemble modeling and ORACLE)}. Here, experimental steady state data is used as a reference point and kinetic models are built around this steady state value. Although a some have sought to quantify this uncertainty in parameter estimation through methods based on sensitivity analysis \textcolor{red}{(Nathan van Riel and Heijnen papers on uncertainty analysis)}, others have sought to approach parameter estimation from a Bayesian perspective \textcolor{red}{(Lars Nielsen papers)}.
+	
+	These new kinetic models are either formulated on the basis of approximate enzyme kinetic rate laws to alleviate 
+	
+	
+	
+	In the absence of any in vivo parameter estimates, the norm is to either use available in vitro enzyme kinetic parameters, or use different parameter estimation techniques to determine parameter values based on either in vitro or in vivo data. So, the ability of these enzyme rate laws, and kinetic models built with these rate laws to study, understand and predict in vivo metabolic network function is limited \textcolor{red}{Heijnen}.
+	
+	
+	
+	 but have also focused on methods to obtain parameter values that are applicable under in vivo conditions, as opposed to in vitro enzyme kinetic parameters. Research in the former area has resulted in the proposal of numerous approximate kinetic models of metabolism
+	
+	
+	the prediction of dynamic responses of metabolic networks to different perturbations using kinetic models of metabolism is dependent on numerous enzyme kinetic parameters.  that are used to represent the changes in both concentrations and fluxes 
+	
+	the numerical values of the enzyme kinetic parameters ($\theta$ in Equation \ref{eq:kinstoich}) \parencite{Andreozzi2016a}. Analyzing the ability of a metabolic network to exhibit dynamic characteristics like multiple steady states and oscillations, irrespective of the structure of the network, is one example where parameter values might play a crucial role \parencite{Srinivasan2015, Vital-Lopez2006}. 
 	
 	Parameter estimation methods based on optimization principles are typically used to determine true parameter values based on available experimental data. Under the assumption that all time dependent intracellular metabolite concentrations can be measured, a parameter estimation problem can be formulated as a nonlinear programming problem (Equation \ref{eq:kinstoich}) to estimate the values of enzyme kinetic parameters, $\theta$, based on the measured data. 	
 	The minimization of least square error between the measured ($x^*$) and modeled ($x$) concentrations, weighted by the variance in the experimental data $\sigma_{kl}^*$ for each concentration at each time point, is used as an objective function (Equation \ref{eq:lsqopt}a) for the optimization problem (Equation \ref{eq:lsqopt}). The parameter values are determined within fixed upper ($\theta_u$) and lower ($\theta_l$) bounds (Equation \ref{eq:lsqopt}b). 
@@ -114,13 +144,19 @@
 	In this paper, we propose a scalable methodology to establish practical identifiability for parameters in kinetic models of metabolism using steady state concentration and flux data. We present a computer algebra-based method that can facilitate experimental design through practical identification of parameters separately for each individual reaction within a metabolic network. For the purposes of this method we assume that all intracellular metabolite concentrations and fluxes can be measured. We identify and design experiments to estimate parameters in a small metabolic network model of glucoeneogenesis in \textit{Escherichia coli} \parencite{Kotte2014, Srinivasan2017} to illustrate the utility of our method.  %We also demonstrate the scalability of the proposed methodology to facilitate experimental design by applying it to a relatively larger metabolic network of the human red blood cell hepatocyte. 	
 	
 	\section{Methods}\label{sec:methods}
+<<<<<<< HEAD
 	
+=======
+	\subsection{Kinetic models of metabolic networks}\label{sec:kinetic_model}
+	In kinetic models of metabolism, ordinary differential equations (ode) are used to express the rate of change of metabolite concentrations ($x$) as a function of the reaction fluxes ($v$) in the metabolic network (Equation \ref{eq:kinstoich}). The matrix $\mathbf{S}$ in Equation (\ref{eq:kinstoich}a) defines the stoichiometric relationship between the fluxes and the concentrations of the metabolic network.
+>>>>>>> 716f16b43c50e6c1d8ea567b372bdd233ad0d691
 	\begin{subequations}\label{eq:kinstoich}
 		\begin{align}
 		\dot{x} = \mathbf{S}v\\
 		v = f(x, \theta, u)
 		\end{align}
 	\end{subequations}
+<<<<<<< HEAD
 
 	\begin{subequations}\label{eq:lsqopt}
 		\begin{align}
@@ -137,34 +173,41 @@
 		\end{align}
 	\end{subequations}
 
+=======
+	The expression for the nonlinear function ($f$) used to describe each reaction flux $v_i$ in $v$, $i={1, 2, ..., n_r}$, in a kinetic model (Equation \ref{eq:kinstoich}b) is dependent on the enzyme kinetic mechanism that is used to model the reaction \parencite{Link2014, Srinivasan2015}. Accordingly, $f$ is a nonlinear function of the metabolite concentrations ($x$), enzyme kinetic parameters ($\theta$) and other input concentrations ($u$). 
+	
+>>>>>>> 716f16b43c50e6c1d8ea567b372bdd233ad0d691
 	\subsection{A method to determine practical identifiability of kinetic models of metabolism}\label{sec:ident}
-	We provide the mathematical framework for practical identification of parameters in kinetic models of metabolism in this section. A summary of the methodology in the form of a flow diagram is shown in Figure \ref{fig:ident-flowchart}. In kinetic models of metabolic networks (Equation \ref{eq:kinstoich}), the fluxes are expressed as a function of the metabolite concentrations $x$ and the kinetic parameters $\theta$ (Figure \ref{fig:ident-flowchart}a). The value of every flux $v_i$ is expressed using one of the many available enzyme kinetic formulations (Equation \ref{eq:output}b). Without loss of generality, all of these kinetic formulations can be expressed as nonlinear algebraic equations (Figure \ref{fig:ident-flowchart}a). 
+	We provide the mathematical framework for practical identification of parameters in kinetic models of metabolism in this section. A summary of the methodology in the form of a flow diagram is shown in Figure \ref{fig:ident-flowchart}. As indicated in Figure \ref{fig:ident-flowchart}a, the first step involves the construction of the kinetic model (Equation \ref{eq:kinstoich}) of the metabolic network with $n_r$ reaction fluxes.
 	
-	\begin{figure}[!tbhp]
-		\centering{\includegraphics[width=.6\textwidth,height=.6\textheight,keepaspectratio]{figures/figure3/ident_analysis}}
-		\caption{A flow diagram showing the methodology developed to establish practical identifiability of parameters in kinetic models of metabolism. a) The steps for the construction of a kinetic model of a metabolic network. The choice of rate law formulations to describe metabolic fluxes influences the identification methodology. The identifiability of parameters for each flux can be established independently. b) The steps for practical identifiability analysis for parameters of a single flux.}\label{fig:ident-flowchart}
-	\end{figure}	
+	%In kinetic models of metabolic networks (Equation \ref{eq:kinstoich}), the fluxes are expressed as a function of the metabolite concentrations $x$ and the kinetic parameters $\theta$ (Figure \ref{fig:ident-flowchart}a). The value of every flux $v_i$, $i={1, 2, ..., n_r}$, is expressed using one of the many available enzyme kinetic formulations (Equation \ref{eq:output}b). Without loss of generality, all of these kinetic formulations can be expressed as nonlinear algebraic equations (Figure \ref{fig:ident-flowchart}a). 	
 	
-	Let $\theta \in \mathbb{R}^p$ in Equation (\ref{eq:output}b) for each flux $v_i$ in the network. As stated earlier, for each experiment $j = {1, 2, ..., n}$, we assume that all metabolite concentrations ($x$) and reaction fluxes ($v$) are measurable. The pertinent information for each experiment is available as a vector of concentrations and fluxes, $\mathbf{x}_j$ and $\mathbf{v}_j$, respectively (Figure \ref{fig:ident-flowchart}b). 
+	For each flux $v_i$, $i={1, 2, ..., n_r}$, in the kinetic model, let $\mathbf{\theta} \in \mathbb{R}^p$ in Equation (\ref{eq:kinstoich}b). If data from $n_E$ experiments is available for the chosen metabolic network, as stated earlier, for each experiment $j = {1, 2, ..., n_E}$, we assume that all metabolite concentrations ($x$) and reaction fluxes ($v$) are measurable. We discuss the implications of relaxing this assumption later. The pertinent information for each experiment $j$ is available as a vector of concentrations and fluxes, $\mathbf{x}_j$ and $\mathbf{v}_j$, respectively (Figure \ref{fig:ident-flowchart}b). 
 	
-	In order to establish the practical identifiability of kinetic parameters for each flux $v_i$, we describe a computer algebra-based method. The primary use of the computer algebra system is to obtain closed-form expressions for each parameter in $\theta$ for each flux $v_i$ (Figure \ref{fig:ident-flowchart}b). This is done by solving a system of nonlinear algebraic equations in $\mathbb{R}^p$ for each flux $v_i$, shown in Equation (\ref{eq:nonlineq}).
+	In order to establish the practical identifiability of kinetic parameters for each flux $v_i$, $i={1, 2, ..., n_r}$, we describe a computer algebra-based method. The primary use of the computer algebra system is to obtain closed-form expressions for each parameter in $\mathbf{\theta}$ for each flux $v_i$ (Figure \ref{fig:ident-flowchart}b). This is done by first selecting a combination of $p$ data sets from the $n_{E}$ available experimental data sets. The combination consisting of data from $p$ different experiments is then used to formulate a system of nonlinear algebraic equations in $\mathbb{R}^p$ for each flux $v_i$, shown in Equation (\ref{eq:nonlineq}). 
 	\begin{align}\label{eq:nonlineq}
-	v_{i, k} = f_k(\mathbf{x}_k,\theta, u_k) && \forall k=\{1, 2, ..., p\}\subset\{1, 2, ..., n\}
+	v_{i, j} = f_j(\mathbf{x}_j,\mathbf{\theta}, \mathbf{u}_j) && \forall j=\{1, 2, ..., p\}\subset\{1, 2, ..., n_E\}
 	\end{align}
-	Each equation in (\ref{eq:nonlineq}), indicated by the index $k$, corresponds to the kinetic rate law expression $f(x, \theta, u)$ for $v_i$, described earlier in Equation (\ref{eq:output}b), written for concentrations and fluxes obtained from experiment $k$. Solving the system in Equation (\ref{eq:nonlineq}) results in $\mathbb{R}^p$ nonlinear expressions for parameters in $\theta$ (Equation \ref{eq:theta-eq}), where $N(\mathbf{v}_i, \mathbf{x}, \mathbf{u})$ is the numerator of $g$, and $D(\mathbf{v}_i, \mathbf{x}, \mathbf{u})$ is the denominator of $g$ (Figure \ref{fig:ident-flowchart}b).
+	Here, $v_{i,j}$ refers to the value of the flux $v_i$ obtained from experiment $j$, $\mathbf{x}_j$ and $\mathbf{u}_j$ are the vector of metabolite and other input concentrations from each experiment $j$, and $\mathbf{\theta}$ is a vector in $\mathbb{R}^p$, whose elements are denoted by $\theta_k$.
+	
+	Each equation in (\ref{eq:nonlineq}), indicated by the index $j$, corresponds to the kinetic rate law expression $f(x, \theta, u)$ for each $v_i$, $i={1, 2, ..., n_r}$, described in Equation (\ref{eq:kinstoich}b), written for concentrations ($\mathbf{x}_j$, $\mathbf{u}_j$) and fluxes ($v_{i,j}$) obtained from experiment $j$. Solving the system in Equation (\ref{eq:nonlineq}) results in $\mathbb{R}^p$ nonlinear expressions for each parameter $\theta_k$ in $\theta \in \mathbb{R}^p$ (Equation \ref{eq:theta-eq}), where $N(\mathbf{v}_i, \mathbf{x}, \mathbf{u})$ is the numerator of $g$, and $D(\mathbf{v}_i, \mathbf{x}, \mathbf{u})$ is the denominator of $g$ (Figure \ref{fig:ident-flowchart}b). Note that $\mathbf{v}_i$, $\mathbf{x}$ and $\mathbf{u}$ are used to denote vector of vectors of fluxes for reaction $i$ ($\mathbf{v}_i$), metabolite ($\mathbf{x}$) and input ($\mathbf{u}$) concentrations, respectively, obtained from all chosen experiments $j = {1, 2, ..., p}$, in the selected combination.
 	\begin{align}\label{eq:theta-eq}
 	\theta_k = g_k(\mathbf{v}_i, \mathbf{x}, \mathbf{u}) = \frac{N_k(\mathbf{v}_i, \mathbf{x}, \mathbf{u})}{D_k(\mathbf{v}_i, \mathbf{x}, \mathbf{u})}
 	\end{align}
-	The identifiability of parameter $\theta_k$ for flux $v_i$ can be established by determining the value of $D_k(\mathbf{v}_i, \mathbf{x}, \mathbf{u})$ (Figure \ref{fig:ident-flowchart}b): any parameter $\theta_k$ is said to practically identifiable if $D_k(\mathbf{v}_i, \mathbf{x}, \mathbf{u})\neq0$ and practically non-identifiable if $D_k(\mathbf{v}_i, \mathbf{x}, \mathbf{u}) = 0$. Furthermore, the physical properties of the kinetic parameters can be used to distinguish between identifiable and non-identifiable parameter values by designating only parameters with a non-negative value of $g_k(\mathbf{v}_i, \mathbf{x}, \mathbf{u})$ as identifiable (Figure \ref{fig:ident-flowchart}b).
+	The identifiability of parameter $\theta_k$, $k = {1, 2, ..., p}$, for flux $v_i$ can be established by determining the value of $D_k(\mathbf{v}_i, \mathbf{x}, \mathbf{u})$ (Figure \ref{fig:ident-flowchart}b): any parameter $\theta_k$ is said to practically identifiable if $D_k(\mathbf{v}_i, \mathbf{x}, \mathbf{u})\neq0$, and practically non-identifiable if $D_k(\mathbf{v}_i, \mathbf{x}, \mathbf{u}) = 0$. Furthermore, the physical properties of the kinetic parameters can be used to distinguish between identifiable and non-identifiable parameter values by designating only parameters with a non-negative value of $g_k(\mathbf{v}_i, \mathbf{x}, \mathbf{u})$ as identifiable (Figure \ref{fig:ident-flowchart}b). The solution obtained for $g_k(\mathbf{v}_i, \mathbf{x}, \mathbf{u})$ in Equation (\ref{eq:theta-eq}) is unique for an identifiable $\theta_k$, and an infinite number of solutions are possible for a non-identifiable $\theta_k$. However, if there are multiple but finite solutions for $g_k(\mathbf{v}_i, \mathbf{x}, \mathbf{u})$, then the corresponding parameter $\theta_k$ is locally identifiable.
 	
-	In the following sections we provide a previously published kinetic model of a small gluconeogenic network (section \ref{sec:small-model}), followed by a demonstration of our methodology to establish practical identifiability for one of the fluxes in this network (section \ref{sec:example}).
+	%For completeness, in the following sections we provide a previously published kinetic model of a small gluconeogenic network (section \ref{sec:small-model}). 
+	
+	\subsection{Degree of identifiability: A quantitative measure of practical identifiability}\label{sec:degree_of_identifiability}
+	We express the practical identifiability of kinetic parameters using a simple quantitative term called the degree of identifiability. We describe the degree of identifiability of any single parameter as the percentage of all data combinations (used to test for practical identifiability) that can identify that parameter. 
+	
+	As an example, if 90\% of all the experimental data combinations used for testing can identify a parameter $\theta_i$, then the degree of identifiability of $\theta_i$ is said to be 0.9 or 90\%. On the other hand, if only 50\% of the combinations can identify another parameter $\theta_j$, then $\theta_j$ has a degree of identifiability of 0.5 or 50\%. Furthermore, we can create a hierarchy of practically identifiable parameters using their degrees of identifiability. In the above instance of the two parameters $\theta_i$ and $\theta_j$ that have degrees of identifiability of 90\% and 50\% respectively, $\theta_i$ is classified to be more identifiable than $\theta_j$ due to its relatively higher degree of identifiability. 
+	
+	Determining this hierarchy of identifiable parameters can help in distinguishing parameters that can be identified by any type and any combination of experiments from parameters that can be identified by only a select type and combination of experiments. Such a classification can subsequently be used to design minimal sets of experiments that can practically identify all kinetic parameters used to model a metabolic network, going from the least identifiable parameter to the most identifiable parameter.  
 	
 	\subsection{Kinetic model of gluconeogenesis in \textit{E. coli}}\label{sec:small-model}
 	A previously proposed kinetic model \parencite{Kotte2014, Srinivasan2017} for acetate consumption through gluconeogenesis (Figure \ref{fig:network}) is used as a case study to illustrate the utility of identifiability analysis for experimental design for parameter estimation in kinetic models of metabolism. The kinetic model is described below.
-	\begin{figure}[!tbhp]
-		\centering{\includegraphics[width=.3\textwidth,height=.6\textheight,keepaspectratio]{figures/figure5/Figure1_NetworkA}}
-		\caption{The small metabolic network for gluconeogenesis used to demonstrate our practical identifiability method for kinetic models of metabolism.}\label{fig:network}
-	\end{figure}	
+	
 	\begin{equation}\label{eq:ode1}
 	\frac{d}{dt}pep=v_1-v_2-v_4
 	\end{equation}
@@ -172,9 +215,9 @@
 	\frac{d}{dt}fdp=v_2-v_3
 	\end{equation}
 	\begin{equation}\label{eq:ode3}
-	\frac{d}{dt}E=v_{e,max}\left(\frac{1}{1+\left(\frac{fdp}{K_{e}^{fdp}}\right)^{n_e}}\right) - d E
+	\frac{d}{dt}E=v_5 - d E
 	\end{equation}
-	The kinetic expressions for fluxes $v_1$ through $v_4$ are given below. The consumption of acetate through $v_1$ and conversion of \textit{pep} through $v_2$ are expressed in Equations (\ref{eq:flux1}) and (\ref{eq:flux2}) respectively using Michaelis-Menten kinetics. The acetate flux through $v_1$ is also governed by the quantity of available enzyme E. 
+	The kinetic expressions for fluxes $v_1$ through $v_5$ are given below. The consumption of acetate through $v_1$ and conversion of \textit{pep} through $v_2$ are expressed in Equations (\ref{eq:flux1}) and (\ref{eq:flux2}) respectively using Michaelis-Menten kinetics. The acetate flux through $v_1$ is also governed by the quantity of available enzyme E. 
 	\begin{equation}\label{eq:flux1}
 	v_1 = k_{1}^{cat}E\frac{ac}{ac+K_{1}^{ac}}
 	\end{equation}	
@@ -184,39 +227,28 @@
 	\begin{equation}\label{eq:flux3}
 	v_3 = V_{3}^{max}\frac{\tilde{fdp}\left(1+\tilde{fdp}\right)^3}{\left(1+\tilde{fdp}\right)^4+L_3\left(1+\frac{pep}{K_{3}^{pep}}\right)^{-4}}
 	\end{equation}
-	The allosterically regulated flux $v_3$ for the consumption of \textit{fdp} is expressed in Equation (\ref{eq:flux3}) using the Monod-Wyman-Changeux (MWC) model for allosterically regulated enzymes, where $\tilde{fdp}$ refers to the ratio of \textit{fdp} with respect to its allosteric binding constant $K_{3}^{fdp}$. The flux $v_4$ for the export of \textit{pep} is expressed as a linear equation dependent on $pep$ in Equation (\ref{eq:flux4}).
+	The allosterically regulated flux $v_3$ for the consumption of \textit{fdp} is expressed in Equation (\ref{eq:flux3}) using the Monod-Wyman-Changeux (MWC) model for allosterically regulated enzymes, where $\tilde{fdp}$ refers to the ratio of \textit{fdp} with respect to its allosteric binding constant $K_{3}^{fdp}$. 
+	
+	The practically identifiability of parameters of a given flux are determined by solving a system of nonlinear algebraic equations using a computer algebra system (section \ref{sec:ident}). We find that the nonlinearity of the MWC kinetic rate law used to model the allosteric regulation of $v_3$ makes it computationally intractable for determining the closed form expressions of the three parameters $V_3^{max}$, $K_3^{fdp}$ and $K_3^{pep}$ using a computer algebra system (Mathematica or SymPy in Python). In order to overcome this computational obstacle, we model the reaction rate for $v_3$ using the convenience kinetic rate law formulation \parencite{Liebermeister2006}. The corresponding expression obtained for $v_3$ is given below (Equation \ref{eq:flux3_convkin}). 	
+	\begin{align}\label{eq:flux3_convkin}
+	v_3 = V_3^{max}\left(\frac{1}{1 + \frac{K_3^{pep}}{pep}}\right)\left(\frac{\frac{fdp}{K_3^{fdp}}}{1 + \frac{fdp}{K_3^{fdp}}}\right)
+	\end{align}	
+	
+	The flux $v_4$ for the export of \textit{pep} is expressed as a linear equation dependent on $pep$ in Equation (\ref{eq:flux4}).
 	\begin{equation}\label{eq:flux4}
 	v_4 = k_{4}^{cat}.pep
-	\end{equation}
-	
-	\subsection{Identifiability of parameters in a kinetic model of gluconeogenesis}\label{sec:example}
-	Here, we demonstrate the use of our computer algebra-based methodology to establish practical identifiability of parameters for flux $v_1$ in the small model of gluconeogenesis (Figure \ref{fig:network}) described in section \ref{sec:small-model}. 
-	
-	In flux $v_1$, the concentration of the enzyme E is used as a variable. Since we assume that steady state experimental information is only available for metabolite concentrations and fluxes, the expression previously given for $v_1$ (Equation \ref{eq:flux1}) cannot be used for identifying parameters $k_1^{cat}$ and $K_1^{ac}$. So, we modify the Michaelis-Menten kinetic rate law expression to eliminate the enzyme concentration E as a variable in Equation (\ref{eq:flux1a}). Consequently $k_1^{cat}$ is replaced by $V_1^{max}$ as a parameter to describe $v_1$. The corresponding enzyme binding constant is denoted as $K_1^{ac} (ne)$ to distinguish it from the enzyme binding constant calculated in the presence of measured enzyme concentration data.
-	\begin{align}\label{eq:flux1a}
-	v_1 = V_1^{max}\frac{ac}{ac+K_{1}^{ac}(ne)}
-	\end{align}		
-	We choose the expression for flux $v_1$ given in Equation (\ref{eq:flux1a}) to demonstrate our method for practical identifiability. 
-	
-	As mentioned in section \ref{sec:intro}, practical identifiability is a necessary condition to estimate true values of both $V_1^{max}$ and $K_1^{ac}$ from experimental data. Here, we assume that the concentrations and fluxes from at least two different experiments are available i.e., in Equation (\ref{eq:nonlineq}) $k = \{1, 2\}$ . We label the available concentrations and fluxes as ${ac}^{(k)}$ and ${v_1}^{(k)}$, respectively. Then, the nonlinear algebraic equations shown in Equation (\ref{eq:nonlineq}) can be formulated for $v_1$ as:
-	\begin{align}\label{eq:nonlin-flux2}
-	{v_1}^{(k)} = V_{1}^{max}\frac{ac^{(k)}}{ac^{(k)}+K_{1}^{ac}(ne)} &&  k=\{1, 2\}
+	\end{equation}		
+	The production of enzyme E is represented by flux $v_5$. This flux is inhibited by \textit{fdp} and modeled using Hill kinetics, where $K_e^{fdp}$ represents the Hill binding constant for the inhibiting metabolite \textit{fdp}, $n_e$ is the Hill exponent, and $V_e^{max}$ is the maximum reaction rate for $v_5$.
+	\begin{align}\label{eq:flux5}
+	v_5 = V_e^{max}\left(\frac{1}{1+\left(\frac{fdp}{K_{e}^{fdp}}\right)^{n_e}}\right)
 	\end{align}
-	
-	Solving this simultaneous system of $k$ equations using Mathematica (Wolfram Research, USA), a computer algebra system, we get $p=2$ nonlinear algebraic expressions for parameters $V_1^{max}$ (Equation \ref{eq:v1_par}a) and $K_1^{ac}(ne)$ (Equation \ref{eq:v1_par}b). These expressions have the form previously shown in Equation (\ref{eq:theta-eq}).
-	\begin{subequations}\label{eq:v1_par}
-		\begin{align}		
-		V_1^{max} = \frac{v_1^{(1)}v_1^{(2)}(ac^{(1)}-ac^{(2)})}{v_1^{(2)}ac^{(1)}-v_1^{(1)}ac^{(2)}}\\
-		K_1^{ac}(ne) = \frac{ac^{(1)}ac^{(2)}(v_1^{(1)}-v_1^{(2)})}{v_1^{(2)}ac^{(1)}-v_1^{(1)}ac^{(2)}}
-		\end{align}
-	\end{subequations}
-	In Equation (\ref{eq:v1_par}), the denominator of the right hand side expression is used to test the identifiability of parameters $V_1^{max}$ (Equation \ref{eq:v1_par}a) and $K_1^{ac}(ne)$ (Equation \ref{eq:v1_par}b) for different available experimental data combinations. Since the enzyme binding constant ($K_1^{ac}(ne)$) and the maximum reaction rate ($V_1^{max}$) cannot be negative, we can further constrain the criteria for identifiability for both these parameters by saying that the evaluated expressions in Equation (\ref{eq:v1_par}) should be non-negative (Figure \ref{fig:ident-flowchart}b). 	
 	
 	\subsection{Data for establishing parameter identifiability in kinetic model of gluconeogenesis}\label{sec:experiments}
 	Steady state information on the metabolome and the fluxome can be gathered under different physiological conditions. One way to alter the physiological conditions is to change the substrate concentration under which the cells grow. In the small metabolic network (Figure \ref{fig:network}), the acetate concentration plays the role of a substrate, and  determines the acetate uptake flux $v_1$. Thus, steady state metabolite concentrations and fluxes can be calculated under various acetate concentrations to form different experimental data combinations that measure cellular response to changes in the substrate concentration. 
 	
 	Physiological changes can also be brought about by perturbing the expression levels for different enzymes within a metabolic network. The model of gluconeogenesis (Figure \ref{fig:network}) described in section \ref{sec:small-model} has three different fluxes ($v_1$, $v_2$ and $v_3$) whose enzyme expression parameters ($k_1^{cat}$, $V_2^{max}$ and $V_3^{max}$) can be perturbed to simulate the repression and over expression of the corresponding enzymes. Accordingly, in addition to measuring network response to substrate perturbations, changes in steady state concentrations and fluxes can also be observed for enzyme expression perturbations.
 	
+<<<<<<< HEAD
 	In total, based on the above discussion, we can perturb four different model parameters ($acetate$, $k_1^{cat}$, $V_2^{max}$ and $V_3^{max}$) to obtain experimental data in silico. The 18 different parameter values used to generate experimental data are given in Table \ref{tab:pval}.	
 	\begin{table}[!thbp]
 		\caption{Table showing the perturbed values of all parameters used to generate experimental data in silico for testing practical identifiability of all fluxes in the small metabolic network.}
@@ -237,50 +269,71 @@
 		\end{center}	
 		\label{tab:pval}
 	\end{table}	
+=======
+	In total, based on the above discussion, we can perturb four different model parameters ($acetate$, $k_1^{cat}$, $V_2^{max}$ and $V_3^{max}$) to obtain experimental data in silico. The 21 different parameter values used to generate experimental data are given in Table \ref{tab:pval}.	
+>>>>>>> 716f16b43c50e6c1d8ea567b372bdd233ad0d691
 	
-	The minimum number of experiments from which data is required for identifying all the parameters of a given flux is determined by dimension $\mathbb{R}^p$ of the parameter space of a chosen flux $v_i$. For instance, as demonstrated above, data from two distinct experiments is required for identifying $v_1$, as $v_1$ has two parameters ($\mathbb{R}^2$). $v_2$ is also modeled by a parameter space with dimensions of $\mathbb{R}^2$. Hence, multiple combinations of data generated from any two different experiments are used to test the identifiability of $v_1$ and $v_2$. The total number of such possible combinations is 306 (18 x 17) from the 18 different experiments shown in Table \ref{tab:pval}. Similarly, for identifying $v_3$, that is described by three parameters ($\mathbb{R}^3$), we need data from a combination of three different experiments. Based on the 18 experiments in Table \ref{tab:pval}, we have 4896 distinct combinations (18 x 17 x 16) of three experiments. 
+	As described in section \ref{sec:ident} and Figure \ref{fig:ident-flowchart}b, the minimum number of experiments from which steady state data is required for identifying all the parameters of a given flux is determined by dimension $\mathbb{R}^p$ of the parameter space of a chosen flux $v_i$. For instance, the flux $v_2$ in the model described in section \ref{sec:small-model} has two parameters: $V_2^{max}$ and $K_2^{pep}$. Thus $\theta = \{V_2^{max}, K_2^{pep}\} \in \mathbb{R}^2$. So, steady state data from two distinct experiments is required for identifying $v_2$. Accordingly, multiple combinations of data generated from any two different experiments are used to test the identifiability of $v_2$. The total number of such possible combinations is 420 (21 x 20) from the 21 different experiments shown in Table \ref{tab:pval}. Assuming we also have data for the enzyme concentration $E$ in the expression for flux $v_1$ (Equation \ref{eq:flux1}), identifying the two parameters $k_1^{cat}$ and $K_1^{ac}$ ($\theta \in \mathbb{R}^2$) also requires steady state experimental data from two different experiments.
 	
-	\subsection{Degree of identifiability: A quantitative measure of practical identifiability}\label{sec:degree_of_identifiability}
-	We express the practical identifiability of kinetic parameters using a simple quantitative term called the degree of identifiability. We describe the degree of identifiability of any single parameter as the percentage of all data combinations (used to test for practical identifiability) that can identify that parameter. 
+	Similarly, for identifying $v_3$ that is described by three parameters ($\theta \in \mathbb{R}^3$), we need data from a combination of three different experiments. Based on the 21 experiments in Table \ref{tab:pval}, we have 7980 distinct combinations (21 x 20 x 19) of three experiments. However, it is important to note that not all of the either 420 combinations (for $v_1$ and $v_2$), or the 7980 combinations (for $v_3$), may be suitable for parameter estimation. Hence, the actual number of data combinations that can be used for practically identifying parameters in these fluxes would be smaller than the aforementioned numbers. Moreover, among these chosen smaller number of experimental data combinations, our methodology enables us to determine the number and nature of experimental data combinations, and consequently, the experiments that might allow for parameter identification, and subsequent parameter estimation. The following section describes a procedure that can be used to design experiments within this context.	
 	
-	As an example, if 90\% of all the experimental data combinations used for testing can identify a parameter $\theta_i$, then the degree of identifiability of $\theta_i$ is said to be 0.9 or 90\%. On the other hand, if only 50\% of the combinations can identify another parameter $\theta_j$, then $\theta_j$ has a degree of identifiability of 0.5 or 50\%. Furthermore, we can create a hierarchy of practically identifiable parameters using their degrees of identifiability. In the above instance of the two parameters $\theta_i$ and $\theta_j$ that have degrees of identifiability of 90\% and 50\% respectively, $\theta_i$ is classified to be more identifiable than $\theta_j$ due to its relatively higher degree of identifiability. Determining this hierarchy of identifiable parameters can help in distinguishing parameters that can be identified by any type and any combination of experiments from parameters that can be identified by only a select type and combination of experiments. Such a classification can subsequently be used to design minimal sets of experiments that can practically identify all kinetic parameters used to model a metabolic network, going from the least identifiable parameter to the most identifiable parameter.  
+	\subsection{Experimental design through practical parameter identification}\label{sec:experimental_design}	
+	Following the methodology described in section \ref{sec:ident}, and demonstrated in section \ref{sec:example} for a single flux using data from a combination of two different experiments, all distinct combinations found based on experiments described in section \ref{sec:experiments} can be tested for their ability to practically identify any of the three fluxes in the small metabolic network. This step would determine the degree of identifiability (defined in section \ref{sec:degree_of_identifiability}) of each parameter in each flux in the model, and help distinguish experiment combinations that contribute to identifiability from combinations that do not practically identify any parameter in the model (Figure \ref{fig:ident-flowchart}b). In doing so, it is possible to obtain a minimal and informative collection of experiments that can be performed to identify as many model parameters as possible (Figure \ref{fig:ident-design}). Consequently, the set of experiments can be used to estimate all the identifiable parameters in the model. This is formally explained below.
 	
-	\subsection{Experimental design through practical parameter identification}\label{sec:experimental_design}
-	\begin{figure}[!tbhp]
-		\centering{\includegraphics[width=.6\textwidth,height=.6\textheight,keepaspectratio]{figures/figure3/experimental_design}}
-		\caption{Flow diagram showing a method for experimental design that uses our methodology for practical identification of parameters to determine the number and type of experiments required to identify all fluxes within a given metabolic network.}\label{fig:ident-design}
-	\end{figure}
-	Following the methodology described in section \ref{sec:ident}, and demonstrated in section \ref{sec:example} for a single flux using data from a combination of two different experiments, all distinct combinations found based on experiments described in section \ref{sec:experiments} can be tested for their ability to practically identify any of the three fluxes in the small metabolic network. This step would determine the degree of identifiability (defined in section \ref{sec:degree_of_identifiability}) of each parameter in each flux in the model, and help distinguishing experiment combinations that contribute to identifiability from combinations that do not practically identify any parameter in the model (Figure \ref{fig:ident-flowchart}b). In doing so, it is possible to obtain a minimal and informative collection of experiments that can be performed to identify as many model parameters as possible (Figure \ref{fig:ident-design}). Consequently, the set of experiments can be used to estimate the identifiable parameters in the model. This is formally explained below.
-	
-	The identifiability of each parameter based on each experiment indexed as $j = \{1, ..., n\}$ is established based on the methodology described previously in section \ref{sec:ident} and demonstrated in Section \ref{sec:example} (Figure \ref{fig:ident-flowchart}b). Subsequently, for any flux $v_i$ and for any $p$ combinations of indices $j$, if the experimental concentrations ($\mathbf{x}_j$) and fluxes ($\mathbf{v}_j$) do not satisfy the condition for identifiability for any parameter $\theta_k$ in $\theta\in\mathbb{R}^p$, i.e., $D_k(\mathbf{v}_i, \mathbf{x}, \mathbf{u}) = 0$ for any $k$, then at least one of the $p$ experiments needs to be changed to make parameter $\theta_k$ identifiable. Consequently, the corresponding experiment cannot be used for parameter estimation and needs to be discarded from the set of all necessary experiments. Furthermore, another experiment from $j = \{1, ..., n\}$ needs to be selected such that parameter $\theta_k$ is identifiable. This process has to be repeated until all parameters in $\theta\in\mathbb{R}^p$ are identifiable for flux $v_i$. In doing so, we can arrive at a set of $p$ experiments that will always result in practically identifiable parameters for flux $v_i$. Note that if none of the $n$ pre-selected experiments satisfy the identifiability condition, then we can design an $(n+1)^{th}$ experiment that can replace one of the experiments that causes practical non-identifiability. This analysis can be performed for each flux in a metabolic network independent of all the other fluxes, making it theoretically scalable even to genome-scale models of metabolism. 	
+	The identifiability of each parameter based on each experiment indexed as $j = \{1, 2, ..., n_E\}$ is established based on the methodology described in section \ref{sec:ident} (Figure \ref{fig:ident-flowchart}b), and demonstrated in section \ref{sec:example}. Subsequently, for any flux $v_i$, and for any combination of $p$ experimental data sets, if the experimental concentrations and fluxes ($\mathbf{x}_j$ and $\mathbf{v}_j$, respectively, where $j = {1, 2,..., p}$) do not satisfy the condition for identifiability for any parameter $\theta_k$ in $\theta\in\mathbb{R}^p$, i.e., $D_k(\mathbf{v}_i, \mathbf{x}, \mathbf{u}) = 0$ for any $k$, then at least one of the $p$ experiments needs to be changed to make parameter $\theta_k$ identifiable. Consequently, the corresponding experiment cannot be used for estimating parameter $\theta_k$, and needs to be discarded from the set of all necessary experiments. Furthermore, another experiment from $j = \{1, ..., n_E\}$ needs to be selected to replace the discarded experiment such that parameter $\theta_k$ is identifiable. This process has to be repeated until all parameters in $\theta\in\mathbb{R}^p$ are identifiable for flux $v_i$. In doing so, we can arrive at a set of $p$ experiments that will always result in practically identifiable parameters for flux $v_i$. Note that if none of the $n_E$ pre-selected experiments satisfy the identifiability condition, then we can design an $(n_E+1)^{th}$ experiment that can replace one of the experiments that causes practical non-identifiability. This analysis can be performed for each flux in a metabolic network independent of all the other fluxes, making it theoretically scalable even to genome-scale models of metabolism. 	
 	
 	\section{Results:}
+	First, in section \ref{sec:example}, we demonstrate the use of the methodology that we described in section \ref{sec:ident} to practically identify parameters in flux $v_1$ of the small gluconeogenic network (Figure \ref{fig:network}) model given in section \ref{sec:small-model}.
+	
 	First in section \ref{sec:closedform}, we show that the ability to establish practical identifiability of kinetic parameters in metabolic network models using our methodology, described in section \ref{sec:ident}, relies upon the nonlinearity of the kinetic rate law formulations used to describe the fluxes. We use the gluconeogenic model (Figure \ref{fig:network}) described in section \ref{sec:example} as an example. 
+	
+	%In the following section we demonstrate our methodology to establish practical identifiability for one of the fluxes in this network (section \ref{sec:example}) (move to results).
+	
 	Then, in section \ref{sec:data_utility} we provide a motivation for the need for experimental design, especially to identify kinetic models of metabolic networks. We do this by looking at the number of combinations that can identify the maximum number of parameters. 
 	In section \ref{sec:trends} we show that the degree of identifiability of the maximum reaction rate parameter is always higher than the degree of identifiability of the corresponding enzyme binding parameter irrespective of enzyme kinetic rate law used to describe the flux. 
 	In section \ref{sec:experiment_type} we discuss the ability to determine the type of experiments for parameter identification for a given flux based on the informativeness of a given type of experiment. In this section we show how the informativeness of a given type of experiment to identify a specific flux can be deduced from its contribution towards the practical identification of the parameters for a given flux. Finally, we discuss some results arising out of the use of our methodology to determine the identifiability of parameters when data with additive noise is used in section \ref{sec:noise}.
 	
+	\subsection{Identifiability of parameters in a kinetic model of gluconeogenesis}\label{sec:example}	
+	The model for flux $v_1$ of the small network (Figure \ref{fig:network}), uses the concentration of the enzyme E as a variable (Equation \ref{eq:flux1}). Since we assume that steady state experimental information is only available for metabolite concentrations and fluxes, and not for enzymes (again the details on relaxing this assumption are discussed later), the expression previously given for $v_1$ (Equation \ref{eq:flux1}) cannot be used for identifying parameters $k_1^{cat}$ and $K_1^{ac}$. So, we modify the Michaelis-Menten kinetic rate law expression to eliminate the enzyme concentration E as a variable in Equation (\ref{eq:flux1a}). Consequently $k_1^{cat}$ is replaced by $V_1^{max}$ as a parameter to describe $v_1$. The corresponding enzyme binding constant is denoted as $K_1^{ac} (ne)$ to distinguish it from the enzyme binding constant calculated in the presence of measured enzyme concentration data.
+	\begin{align}\label{eq:flux1a}
+	v_1 = V_1^{max}\frac{ac}{ac+K_{1}^{ac}(ne)}
+	\end{align}		
+	We choose the expression for flux $v_1$ given in Equation (\ref{eq:flux1a}) to demonstrate our method for practical identifiability. 
+	
+	Since $\theta = \{V_1^{max}, K_1^{ac} (ne)\} \in \mathbb{R}^2$ still holds for $v_1$, as mentioned in section \ref{sec:experiments}, we need steady state concentration and flux measurements from at least two different experiments. So, from the $n_E = 21$ different experiments described in section \ref{sec:experiments} and Table \ref{tab:pval}, we can choose multiple combinations of $p = 2$ experiments to satisfy the data requirements for identifying $v_1$ i.e., in Equation (\ref{eq:nonlineq}) $j = \{1, 2\}$. We label the available concentrations and fluxes as ${ac}^{(j)}$ and ${v_1}^{(j)}$, respectively. Then, the nonlinear algebraic equations shown in Equation (\ref{eq:nonlineq}) can be formulated for $v_1$ as:
+	\begin{align*}%\label{eq:nonlin-flux2}
+	{v_1}^{(j)} = V_{1}^{max}\frac{ac^{(j)}}{ac^{(j)}+K_{1}^{ac}(ne)} &&  j=\{1, 2\}
+	\end{align*}
+	
+	Solving this simultaneous system of equations in $\mathbb{R}^2$ using Mathematica (Wolfram Research, USA), a computer algebra system, we get $p=2$ nonlinear algebraic expressions for parameters $V_1^{max}$ (Equation \ref{eq:v1_par}a) and $K_1^{ac}(ne)$ (Equation \ref{eq:v1_par}b). These expressions have the form shown in Equation (\ref{eq:theta-eq}).
+	\begin{subequations}\label{eq:v1_par}
+		\begin{align}		
+		\theta_1 &= V_1^{max} = \frac{v_1^{(1)}v_1^{(2)}(ac^{(1)}-ac^{(2)})}{v_1^{(2)}ac^{(1)}-v_1^{(1)}ac^{(2)}}\\
+		\theta_2 &= K_1^{ac}(ne) = \frac{ac^{(1)}ac^{(2)}(v_1^{(1)}-v_1^{(2)})}{v_1^{(2)}ac^{(1)}-v_1^{(1)}ac^{(2)}}
+		\end{align}
+	\end{subequations}
+	In Equation (\ref{eq:v1_par}), the denominator of the right hand side expression is used to test the identifiability of parameters $V_1^{max}$ (Equation \ref{eq:v1_par}a) and $K_1^{ac}(ne)$ (Equation \ref{eq:v1_par}b) for different available experimental data combinations. Since the enzyme binding constant ($K_1^{ac}(ne)$) and the maximum reaction rate ($V_1^{max}$) cannot be negative, we can further constrain the criteria for identifiability for both these parameters by saying that the evaluated expressions in Equation (\ref{eq:v1_par}) should be non-negative (Figure \ref{fig:ident-flowchart}b). 		
+	
+	%As mentioned in section \ref{sec:intro}, practical identifiability is a necessary condition to estimate true values of both $V_1^{max}$ and $K_1^{ac}$ from experimental data. 	
+	%Here, we demonstrate the use of our computer algebra-based methodology to establish practical identifiability of parameters for flux $v_1$ in the small model of gluconeogenesis (Figure \ref{fig:network}) described in section \ref{sec:small-model}. 
+	
 	\subsection{Nonlinearity of enzyme kinetic rate law expression affects identifiability analysis}\label{sec:closedform}
-	Practical identifiability of parameters in kinetic models of metabolism using the methodology described in section \ref{sec:methods} is governed by the nonlinear complexity of the enzyme kinetic rate law used to model a specific flux. We demonstrate one example of how the methodology works in section \ref{sec:example} for parameters of flux $v_1$. The expression in Equation (\ref{eq:v1_par}) is obtained by using a computer algebra system. To recall, in this specific case, a computer algebra system is used to solve for the parameters of a flux described using the Michaelis-Menten kinetic rate law when data from two different experiments is available. 
+	In the previous section, we have demonstrated our methodology to practically identify parameters for a flux that is modeled using the Michaelis-Menten (MM) kinetic rate law when steady state concentration and flux data from two different experiments are available. However, metabolic fluxes can be described by several different kinetic rate law expressions based on their representation of the physiological interactions that facilitate enzyme catalysis of each flux in a metabolic network. For instance, as described in section \ref{sec:small-model}, flux $v_3$, which is allosterically activated by \textit{pep}, is modeled using the MWC kinetics (Equation \ref{eq:flux3}). So, we comment on the capability of our methodology to practically identify parameters in cases where metabolic fluxes are modeled using rate laws that are different from the MM model, and consequently differ in terms of their nonlinear complexity.
 	
-	However, we find that the nonlinearity of the MWC kinetic rate law used to model the allosteric regulation of $v_3$ makes it computationally intractable for determining the closed form expressions of the three parameters $V_3^{max}$, $K_3^{fdp}$ and $K_3^{pep}$ using a computer algebra system (Mathematica and SymPy in Python). In order to overcome this computational obstacle, we model the reaction rate for $v_3$ using the convenience kinetic rate law formulation \parencite{Liebermeister2006}. The corresponding expression obtained for $v_3$ is given below (Equation \ref{eq:flux3_convkin}). 
+	In using the convenience kinetic rate law model for $v_3$ (Equation \ref{eq:flux3_convkin}) for identifying the parameters $V_3^{max}$, $K_3^{fdp}$ and $K_3^{pep}$, we found that each of the three parameters have two different closed-form expressions owing to the presence of a square root term in their solutions. Thus, as per the stated definition in section \ref{sec:ident}, the parameters for $v_3$, described using the convenience kinetics rate laws, are only locally identifiable due to the non-unique but finite number of possible solutions for the three parameters. The two possible solutions for $V_3^{max}$, $K_3^{fdp}$ and $K_3^{pep}$ are denoted by (1) and (2) following the respective parameter names throughout the rest of the document: $V_3^{max}(1)$, $K_3^{fdp}(1)$, and $K_3^{pep}(1)$ refer to the first set of solutions, and $V_3^{max}(2)$, $K_3^{fdp}(2)$, $K_3^{pep}(2)$ refer to the other set of solutions. 
 	
-	\begin{align}\label{eq:flux3_convkin}
-	v_3 = V_3^{max}\left(\frac{1}{1 + \frac{K_3^{pep}}{pep}}\right)\left(\frac{\frac{fdp}{K_3^{fdp}}}{1 + \frac{fdp}{K_3^{fdp}}}\right)
-	\end{align}
+	However, we found that the local identifiability of the parameters could be resolved to obtain globally identifiable parameters if either the Michaelis binding constant for \textit{fdp}, $K_3^{fdp}$, or the allosteric binding constant for \textit{pep}, $K_3^{pep}$, is known. Thus, fixing one of the two parameters as a known quantity results in unique expressions for both $V_3^{max}$ and the other parameter. Although one could argue that a similar approach could be used to identify parameters of $v_3$ written using the MWC model, we found that it was not possible to obtain identifiability expressions for any of the parameters in the MWC model, except for $V_3^{max}$ when all other parameters are assumed to be known.	
 	
-	Using this expression for analysis, we find that each of the parameters $V_3^{max}$, $K_3^{fdp}$ and $K_3^{pep}$ have two different closed-form expressions owing to the presence of a square root term in their solutions. These distinct expressions are denoted by (1) and (2) following the respective parameter names throughout the rest of the document: $V_3^{max}(1)$, $K_3^{fdp}(1)$, $K_3^{pep}(1)$, and $V_3^{max}(2)$, $K_3^{fdp}(2)$, $K_3^{pep}(2)$. 
+	Similarly, not all parameters in the Hill equation, used to model the inhibition of \textit{fdp} on the production of the enzyme E through flux $v_5$ (Equation \ref{eq:flux5}), can be identified using our methodology. We found that the Hill exponent ($n_e$) needs to be fixed to be able to identify the other two parameters, $V_e^{max}$ and $K_e^{fdp}$, in the model. Thus, the dimension of the parameter space for $v_5$ has to be reduced from $\mathbb{R}^3$ to $\mathbb{R}^2$ to enable the application of the procedure that we have developed in this paper. However, on applying the primary test for identifiability ($D_k(\mathbf{v}_i, \mathbf{x}, \mathbf{u})\neq0$, see section \ref{sec:ident} and Figure \ref{fig:ident-flowchart}b), we found only $V_e^{max}$ to globally identifiable. We found $K_e^{fdp}$ to be locally identifiable to the possibility of having two different roots. As in the case of parameters for $v_3$ when using the convenience kinetics formulation, the presence of a square root term was the reason for the existence of two roots for $K_e^{fdp}$. However, on applying the secondary criteria for identifiability ($g_k(\mathbf{v}_i, \mathbf{x}, \mathbf{u})$, see section \ref{sec:ident} and Figure \ref{fig:ident-flowchart}b), we were able to eliminate the existence of the second root as it is always negative, and therefore not physically relevant. Thus, we were able to determine that both parameters modeling $v_5$ ($V_e^{max}$ and $K_e^{fdp}$) are globally practically identifiable under certain conditions.
 	
-	The impact of nonlinearity of a kinetic rate law expression affecting the practical identifiability of parameters in the expression may not be an unique problem isolated to the system that we are investigating. Complicated expressions for describing fluxes have been extensively used to model observed experimental data for different fluxes in a variety of organisms \parencite{Chassagnole2002a, Peskov2012, VanHeerden2014}. However, the identifiability of the parameters used in these models has never been truly examined. Unlike the case of the MWC model, if determining closed-form expressions for the parameters of these models are tractable, we believe our methodology can help in elucidating the identifiability of these parameters. If not, metabolic network fluxes can be expressed using alternative kinetic rate law models whose parameters can be tested for identifiability, and subsequently experiments can be designed for their estimation and model validation.
+	The impact of nonlinearity of a kinetic rate law expression affecting the practical identifiability of parameters in the expression may not be an unique problem isolated to the system that we are investigating. Complicated expressions for describing fluxes have been extensively used to model observed experimental data for different fluxes in a variety of organisms \parencite{Chassagnole2002a, Peskov2012, VanHeerden2014}. However, the identifiability of the parameters used in these models has never been truly examined. \textcolor{red}{mentione Heijnen papers on resolving identifiability using approximate models here}.
 	
-	Next, we look at some of the results we obtained for the practical identification of different parameters for all three fluxes $v_1$, $v_2$ and $v_3$ in the small gluconeogenic network model described in section \ref{sec:small-model}, with the flux for $v_3$ described by Equation (\ref{eq:flux3_convkin}). We start by looking at one of motivations for the need for designing experiments to collect data for parameter estimation.
+	Unlike the case of the MWC model, if determining closed-form expressions for the parameters of these models are tractable, we believe our methodology can help in elucidating the identifiability of these parameters. If not, metabolic network fluxes can be expressed using alternative kinetic rate law models whose parameters can be tested for identifiability, and subsequently experiments can be designed for their estimation and model validation.
 	
-	\begin{figure}[!tbhp]
-		\centering{\includegraphics[width=1.0\textwidth,height=0.3\textheight]{figures/figure4/v1_V1max_v2_v3_value1_data_utility}}
-		\caption{Utility of experimental data combinations on the basis of their ability to identify the most number of parameters. Information is shown for parameters modeling fluxes a) $v_1$, b) $v_2$ and c) $v_3$. The total possible number of parameters that can be identified by data from combinations of a) two, b) two, and c) three experiments is shown on the horizontal axis. The vertical axis represents the total number of combinations that can identify the corresponding number of parameters. The percentages shown in the plots represent the fraction of the total combinations used to test identifiability of parameters for a given flux. A total of 306 data combinations are used for identifiability analysis for a) $v_1$ and b) $v_2$, and 4896 combinations are used to practical identifiability of c) $v_3$. Section \ref{sec:experiments} provides more details on how the combinations of experimental data are generated.}\label{fig:figure4}
-	\end{figure}	
+	Next, we look at some of the results we obtained for the practical identification of different parameters for all three fluxes $v_1$, $v_2$ and $v_3$ in the small gluconeogenic network model described in section \ref{sec:small-model}, with the flux for $v_3$ described by Equation (\ref{eq:flux3_convkin}). 	
+	
 	\subsection{Utility of experimental data for practical parameter identification}\label{sec:data_utility}
-	Although the need for better parameter estimation methods is well researched, within the kinetic modeling community, the need for experimental design methods to satisfy the data needs for parameter estimation are not considered seriously. Hence, we find the need to stress the necessity for experimental design methodologies, in this case, tailored specifically for metabolic network models. 	
+	Although the need for better parameter estimation methods is well researched, within the kinetic modeling community (\textcolor{red}{include references related to Rudiyanto Gunawan, Lennart Ljung and Heijnen papers here}), the need for experimental design methods to satisfy the data needs for parameter estimation has not been well studied (\textcolor{red}{include Rudiyanto Gunawan papers here}). Hence, we find the need to stress the necessity for experimental design methodologies, in this case, tailored specifically for metabolic network models. 	
 	
 	We do this by showing how useful the multiple combinations of experimental data are towards identifying parameters for each given flux (Figure \ref{fig:figure4}). We express the usefulness of any given data combination on the basis of the number of parameters that the combination can identify. The higher the number of parameters a data combination can identify, the greater is the usefulness of that combination of experiments. 
 	
@@ -289,33 +342,24 @@
 	
 	Thus, Figure \ref{fig:figure4} gives credence to the idea that careful experimental design is necessary to minimize usage of resources devoted to performing experiments for parameter estimation. For instance, choosing any of the experiment combinations from the 78\% percent that does not identify any parameter in $v_1$, or the 13\% that does not identify any parameter in $v_3$ can lead to experiments that are not informative. This can lead to potential waste of resources used to perform these experiments.	 
 	
-	In addition to providing information on the fraction of experiments that are informative and those that are not informative, Figure \ref{fig:figure4} also informs on the ease of identifying parameters for a single flux. For the small network (Figure \ref{fig:network}), we find that more than 90\% of all the data combinations tested for their ability to identify $v_2$ are actually capable of identifying $V_2^{max}$ and $K_2^{pep}$ (Figure \ref{fig:figure4}b). In contrast, less than 20\% of the combinations can identify both parameters in $v_1$. Since minimization of resource utilization requires us to use the least number of experiments to identify both $v_1$ as well as $v_2$, this indicates the need to carefully choose combinations of experiments that can identify $v_1$. A careful consideration of experiments for identifying $v_2$ is however not a major concern since there is a very high probability that experiments chosen to identify $v_1$ will also identify $v_2$. 	
+	In addition to providing information on the fraction of experiments that are informative and those that are not informative, Figure \ref{fig:figure4} also informs the ease of identifying parameters for a single flux. For the small network (Figure \ref{fig:network}), we find that more than 90\% of all the data combinations tested for their ability to identify $v_2$ are actually capable of identifying $V_2^{max}$ and $K_2^{pep}$ (Figure \ref{fig:figure4}b). In contrast, less than 20\% of the combinations can identify both parameters in $v_1$. Since minimization of resource utilization requires us to use the least number of experiments to identify both $v_1$ as well as $v_2$, this indicates the need to carefully choose combinations of experiments that can identify $v_1$. A careful consideration of experiments for identifying $v_2$ is however not a major concern since there is a very high probability that experiments chosen to identify $v_1$ will also identify $v_2$. 	
 	
 	Although the calculation of the utility of experiment combinations in terms of their ability to identify the maximum number of parameters gives an idea on the informativeness of experiments used to gather the data, further analysis from the perspective of identifiability of the parameters of different fluxes is required to be able to design experiments based on this information. Hence, we look at the degree of identifiability (see section \ref{sec:degree_of_identifiability}) of each parameter of each flux in the following section to be able to classify parameters, and consequently fluxes, from most identifiable to least identifiable.
 	
-	\subsection{Maximum reaction rates are more identifiable than enzyme binding constants}\label{sec:trends}
-	\begin{figure}[!tbhp]
-		\centering{\includegraphics[width=1.0\textwidth,height=0.3\textheight]{figures/figure1/v1_V1max_v2_v3_identifiability}}
-		\caption{The number of data combination from 18 different in silico experiments that can practically identify each parameter in fluxes a) $v_1$, b) $v_2$ and c) $v_3$ when there is no noise in the input experimental data. The percentage of total experimental data combinations that can identify each parameter is specified either in, or right next to the bar showing the total number of combinations identifying a given parameter. Since the total number of experiments used to identify parameters in $v_1$ and $v_2$ is two, the total number of data combinations used to identify parameters in fluxes $v_1$ and $v_2$ is lower (at 306) that the total number of combinations used to test identifiability of parameters for $v_3$ (at 4896), which is modeled with three parameters and requires data from at least three different experiments.}\label{fig:figure1}
-	\end{figure}
+	\subsection{Maximum reaction rates are more identifiable than enzyme binding constants}\label{sec:trends}	
 	In Figure \ref{fig:figure1} we show the number and percentage of combinations that are capable of identifying each parameter in each flux. Based on the definition given in section \ref{sec:degree_of_identifiability}, the percentages refer to the degree of identifiability of each parameter. The three panels in Figure \ref{fig:figure1} represent the degree of identifiability for parameters modeling the three different fluxes of the small network individually. 
 	
 	In regards to the identifiability of $v_1$ (Figure \ref{fig:figure1}a), $v_2$ (Figure \ref{fig:figure1}b) and $v_3$ (Figure \ref{fig:figure1}c), the degree of identifiability of the maximum reaction rates ($V_i^{max}$) in each of the three fluxes is higher than the degree of identifiability of the corresponding enzyme binding ($K_i$) constants and the allosteric activation constant ($K_3^{pep}$). We observe this trend irrespective of the fact that only  $v_1$ and $v_2$ are represented by the same enzyme kinetic rate law (Michaelis-Menten), while the convenience kinetic rate law is used to model $v_3$. These observations lead us to conclude that the maximum reaction rate parameters are always more identifiable (as indicated by their higher degree of identifiability) than their enzyme binding constant counterparts, irrespective of the enzyme kinetic rate law used to model the corresponding flux.
 	
-	From Figure \ref{fig:figure1} we see that the variation in the degree of identifiability is not only dependent on the type of parameter being identified, but is also associated with the flux that these parameters model.	In systems identification terminology, this can be tied to selecting experiments that are persistently excitable for the flux being identified. In systems identification, any input signal should be rich or informative enough to guarantee full excitement of the dynamics of the system \parencite{Ljung1994}. Only information obtained from such changes in the input can be used to completely identify the system over its entire dynamic range. Input signals that guarantee to fully excite the dynamics of the system are termed as persistently excitable signals. In linear systems, persistence of excitation of any input signal can be theoretically guaranteed. However, for nonlinear systems, like the metabolic network we deal with in this paper, persistence of excitation of input signals cannot be theoretically guaranteed, and should be assessed on a case by case basis. The lack of persistence of excitation requires the design of experiments to satisfy the data needs for complete system identification. 
+	From Figure \ref{fig:figure1} we see that the variation in the degree of identifiability is not only dependent on the type of parameter being identified, but is also associated with the flux that these parameters model.	In systems identification terminology, this can be tied to selecting experiments that are persistently excitable for the flux being identified. In systems identification, any input signal should be rich or informative enough to guarantee full excitement of the dynamics of the system \parencite{Ljung1994}. Only information obtained from such changes in the input can be used to completely identify the system over its entire dynamic range. %Input signals that guarantee to fully excite the dynamics of the system are termed as persistently excitable signals. In linear systems, persistence of excitation of any input signal can be theoretically guaranteed. However, for nonlinear systems, like the metabolic network we deal with in this paper, persistence of excitation of input signals cannot be theoretically guaranteed, and should be assessed on a case by case basis. The lack of persistence of excitation requires the design of experiments to satisfy the data needs for complete system identification. 
 	
 	In the case of identifying fluxes within a metabolic network individually, each flux is not independent from the other fluxes that form the metabolic network. Each flux is connected to one or more fluxes through the metabolites that not only act as substrates and products, but also as allosteric activators and inhibitors (e.g., effect of \textit{pep} on $v_3$ in Figure \ref{fig:network}). Hence, careful consideration of experiments is a necessity so that the data acquired can satisfy conditions for practical identifiability for all parameters modeling a flux, and subsequently, all fluxes within a network. In the next section we discuss the dependence of the variation in the degree of identifiability for parameters of different fluxes from the point of view of the informativeness of experiments from which data is collected for identification.
 	
-	\subsection{Experiment requirements for identifying parameters depend on the position of the flux in the metabolic network}\label{sec:experiment_type}	
+	\subsection{Experimental requirements for identifying parameters depend on the position of the flux in the metabolic network}\label{sec:experiment_type}	
 	In this section, we demonstrate a specific case of lack of persistence of excitation and the subsequent experimental design required to overcome this hurdle for parameter identifiability for a small nonlinear metabolic network model. Earlier, we mentioned that the informativeness of experiments for identifying parameters in a given flux depends on its ability to satisfy the conditions determined for practical identifiability of that parameter. For example, we demonstrated in section \ref{sec:example} that for a combination of any two experiments to be capable of identifying $V_1^{max}$ and $K_1^{ac}$ in $v_1$, the experiments must have distinct acetate concentrations as well as a different uptake flux $v_1$ between them (Equation \ref{eq:v1_par}). Thus, in this instance, the informativeness of the experiments (changes in the input acetate concentration and $v_1$) for identifying parameters of $v_1$ is determined by the ability of the input change to effect a change in the measured value of $v_1$. Similarly, the identification of parameters for $v_2$ requires the experiments to distinguish between values of both $v_2$ as well as \textit{pep}. %, given both these variables are outputs of the model describing $v_2$. 
 	
 	As such, as per Figure \ref{fig:figure1}a only 20\% of all data combinations can satisfy these requirements, and can consequently identify $v_1$. Whereas, more than 90\% of the available data combinations satisfy the requirements for identifying $v_2$ (Figure \ref{fig:figure1}b). Thus, identifiability analysis is crucial to determine the minimum number of experiments, as well as the nature of experiments that can help identify parameters for both $v_1$ and $v_2$. Recall that we use experimental data from five different types of experiments to test the practical identifiability of parameters in the model (Section \ref{sec:experiments}).
-	In order to determine the type of experiments that help satisfy identifiability conditions for both parameters of $v_1$, we look at the distribution of the five different types in all data combinations that can identify these 2 parameters (Figure \ref{fig:figure2}a and b).
-	
-	\begin{figure}[!tbhp]
-		\centering{\includegraphics[width=1.0\textwidth,height=0.6\textheight, keepaspectratio]{figures/figure2/v1_V1max_only_v2_spider}}
-		\caption{The contribution of different experiments types used in a combination of two experiments ($k = \{1, 2\}$) that can practically identify parameter a) $V_1^{max}$, b) $K_1^{ac}$, c) $V_2^{max}$ and d) $K_2^{pep}$. The percentages reflect the fractional contribution of each experiment type towards all identifiable data combinations.}\label{fig:figure2}
-	\end{figure} 
+	In order to determine the type of experiments that help satisfy identifiability conditions for both parameters of $v_1$, we look at the distribution of the five different types in all data combinations that can identify these 2 parameters (Figure \ref{fig:figure2}a and b).	
 	
 	The contribution of experiments that involve changes in the acetate concentrations, which consequently bring about changes in the value of $v_1$, contribute to a significant part (> 50\%) of the identifiable experimental data combinations in comparison to the other types of experiments. This matches with requirements for identifiability on the basis of the informativeness of experiments that was laid out earlier i.e., experiments must be able distinguish between different values of $v_1$ and acetate. Accordingly, only about 20\% of the 306 different experiment combinations used to test identifiability are informative enough to discriminate both acetate as well as $v_1$, and can identify $V_1^{max}$ and $K_1^{ac}(ne)$ (Figure \ref{fig:figure1}a). 	
 	
@@ -356,4 +400,110 @@
 	%Apart from determining experiments that are informative enough to identify parameters for each flux in a kinetic model, experimental design can also be used to design and develop a minimal set of experiments that informative enough to estimate all parameters in a metabolic network model. However, there is not only a scarcity of experimental design methods in literature devoted to the purpose of designing experiments for parameter identifiability in kinetic models of metabolism, the motivation to develop such methods is not well understood. 	
 	
 	\printbibliography
+	
+	\clearpage
+	\section{Tables, Figures and Figure Captions:}
+	\begin{table}[!thbp]
+		\caption{Table showing the perturbed values of all parameters used to generate experimental data in silico for testing practical identifiability of all fluxes in the small metabolic network.}
+		\begin{center}				
+			\begin{tabular}{lp{3.5cm}cccccp{2cm}}
+				\hline
+				Experiment Type & Perturbed Parameter (wild type value a.u.)& \multicolumn{5}{c}{Perturbed Values a.u.} & Number of Experiments\\
+				\hline
+				wild type &  &\multicolumn{5}{l}{} & 1\\
+				acetate perturbation & $acetate$ (0.1) & 0.05 & 0.09 & 0.2 & 0.5 & 1.0 & 5\\
+				$v_1$ perturbation & $k_1^{cat}$ (1) & 0.5 & 0.9 & 1.1 & 1.5 & 2.0 & 5\\				
+				$v_2$ perturbation & $V_2^{max}$ (1) & 0.5 & 0.9 & 1.1 & 1.5 & 2.0 & 5\\								
+				$v_3$ perturbation & $V_3^{max}$ (1) & 0.5 & 0.9 & 1.1 & 1.5 & 2.0 & 5\\
+				\hline
+				\multicolumn{7}{l}{Total number of experimental data sets used for practical parameter identification:} & 21\\
+				\hline
+			\end{tabular}
+		\end{center}	
+		\label{tab:pval}
+	\end{table}	
+
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=.9\textwidth,height=.6\textheight,keepaspectratio]{figures/figure3/ident_analysis}}
+		\caption{A flow diagram showing the methodology developed to establish practical identifiability of parameters in kinetic models of metabolism. a) The steps for the construction of a kinetic model of a metabolic network. The choice of rate law formulations to describe metabolic fluxes influences the identification methodology. The identifiability of parameters for each flux can be established independently. b) The steps for practical identifiability analysis for parameters of a single flux.}\label{fig:ident-flowchart}
+	\end{figure}
+
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=.3\textwidth,height=.6\textheight,keepaspectratio]{figures/figure5/Figure1_NetworkA}}
+		\caption{The small metabolic network for gluconeogenesis used to demonstrate our practical identifiability method for kinetic models of metabolism.}\label{fig:network}
+	\end{figure}		
+	
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=1.0\textwidth,height=1.0\textheight,keepaspectratio]{figures/figure3/experimental_design}}
+		\caption{Flow diagram showing a method for experimental design that uses our methodology for practical identification of parameters to determine the number and type of experiments required to identify all fluxes within a given metabolic network.}\label{fig:ident-design}
+	\end{figure}
+
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=1.0\textwidth,height=1.0\textheight,keepaspectratio]{figures/figure4/v1_v1max_v2_v3_1_data_utility}}
+		\caption{Utility of experimental data combinations on the basis of their ability to identify the most number of parameters. Information is shown for parameters modeling fluxes a) $v_1$, b) $v_2$ and c) $v_3$. The total number of combinations of experimental data is shown in the vertical axis and the horizontal axis shows the total possible number of parameters that can be identified by data from combinations of a) two, b) two, and c) three experiments. The percentages shown in the plots represent the fraction of the total combinations used to test identifiability of parameters for a given flux. A total of 240 data combinations are used for identifiability analysis for a) $v_1$ and b) $v_2$, and 3360 combinations are used to practically identify c) $v_3$. Section \ref{sec:experiments} provides more details on how the combinations of experimental data are generated.}\label{fig:data_utility}
+	\end{figure}
+	
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=1.0\textwidth,height=1.0\textheight,keepaspectratio]{figures/figure1/v1_k1cat_v1max_v2_v3_1_2_ident}}
+		\caption{The number of data combination from 18 different in silico experiments that can practically identify each parameter in fluxes a) $v_1$, b) $v_2$ and c) $v_3$ when there is no noise in the input experimental data. The percentage of total experimental data combinations that can identify each parameter is specified either in, or right next to the bar showing the total number of combinations identifying a given parameter. Since the total number of experiments used to identify parameters in $v_1$ and $v_2$ is two, the total number of data combinations used to identify parameters in fluxes $v_1$ and $v_2$ is lower (at 306) that the total number of combinations used to test identifiability of parameters for $v_3$ (at 4896), which is modeled with three parameters and requires data from at least three different experiments.}\label{fig:ident}
+	\end{figure}
+
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=1.0\textwidth,height=0.6\textheight, keepaspectratio]{figures/figure2/v1_v1max_v2_exp_info}}
+		\caption{The contribution of different experiments types used in a combination of two experiments ($k = \{1, 2\}$) that can practically identify parameter a) $V_1^{max}$, b) $K_1^{ac}$, c) $V_2^{max}$ and d) $K_2^{pep}$. The percentages reflect the fractional contribution of each experiment type towards all identifiable data combinations.}\label{fig:exp_info}
+	\end{figure} 
+	
+	\clearpage
+
+	\section{Potential Supplementary Information Figures}
+	
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=1.0\textwidth,height=0.3\textheight, keepaspectratio]{figures/figure1/v5_1_2_ident}}
+		\caption{identifiability for flux v5 with 2 roots for Kefdp}
+	\end{figure}
+	
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=1.0\textwidth,height=0.3\textheight, keepaspectratio]{figures/figure4/v5_1_2_data_utility}}
+		\caption{data utility for flux v5 with 2 roots for Kefdp}
+	\end{figure}
+
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=1.0\textwidth,height=0.3\textheight, keepaspectratio]{figures/figure2/v5_1_2_exp_info}}
+		\caption{experiment information for flux v5 with 2 roots for Kefdp}
+	\end{figure}
+	
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=1.0\textwidth,height=0.3\textheight, keepaspectratio]{figures/figure4/v1_k1cat_v3_2_data_utility}}
+		\caption{Same as other data utility figure for v1 with k1cat as parameter (with enzyme data) and second roots of v3. Utility of experimental data combinations on the basis of their ability to identify the most number of parameters. Information is shown for parameters modeling fluxes a) $v_1$, b) $v_3$.}\label{fig:figure4s}
+	\end{figure}	
+
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=1.0\textwidth,height=0.6\textheight, keepaspectratio]{figures/figure2/v1_k1cat_exp_info}}
+		\caption{missing caption}%\label{fig:figure2}
+	\end{figure} 
+
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=1.0\textwidth,height=1.0\textheight, keepaspectratio]{figures/figure2/v3_1_2_exp_info}}
+		\caption{missing caption}%\label{fig:figure2}
+	\end{figure} 
+
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=1.0\textwidth,height=0.3\textheight, keepaspectratio]{figures/figure1/v3_1_2_ident}}
+		\caption{missing caption}%\label{fig:figure2}
+	\end{figure} 
+
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=1.0\textwidth,height=0.3\textheight, keepaspectratio]{figures/figure4/v3_1_2_data_utility}}
+		\caption{missing caption}%\label{fig:figure2}
+	\end{figure}
+
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=1.0\textwidth,height=0.6\textheight, keepaspectratio]{figures/figure2/v3_var_1_2_exp_info}}
+		\caption{missing caption}%\label{fig:figure2}
+	\end{figure}
+	
+	\clearpage
+
+	\section{Old Figures and Figure Captions}	
+	
 \end{document}

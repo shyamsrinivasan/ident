@@ -20,7 +20,9 @@ def kotte_true_parameter_values(flux_based=0, flux_name=(), flux_choice_id=0, pa
         alter_parameter_value = {"flux1": [{"K1ac (enz)": np.array([.1]), "k1cat": np.array([1]),
                                            "V1max": np.array([1]), "K1ac (no enz)": np.array([.1])},
                                            {"V1max": np.array([1]), "K1ac (no enz)": np.array([.1])},
-                                           {"K1ac (enz)": np.array([.1]), "k1cat": np.array([1])}],
+                                           {"K1ac (enz)": np.array([.1]), "k1cat": np.array([1])},
+                                           {"V1max": np.array([1]), "K1ac (no enz)": np.array([.1]),
+                                            "k1cat (exp 1)": np.array([1]), "k1cat (exp 2)": np.array([1])}],
                                  "flux2": [{"K2pep": np.array([.3]), "V2max": np.array([1])}],
                                  "flux3": [{"K3fdp (1)": np.array([.1]), "K3pep (1)": np.array([.1]),
                                             "V3max (1)": np.array([1]), "K3fdp (2)": np.array([.1]),
@@ -32,7 +34,11 @@ def kotte_true_parameter_values(flux_based=0, flux_name=(), flux_choice_id=0, pa
                                  "flux5": [{"vemax (1)": np.array([1.1]), "Kefdp (1)": np.array([.45]),
                                             "Kefdp (2)": np.array([.45])},
                                            {"vemax (1)": np.array([1.1]), "Kefdp (1)": np.array([.45])},
-                                           {"vemax (1)": np.array([1.1]), "Kefdp (2)": np.array([.45])}]}
+                                           {"vemax (1)": np.array([1.1]), "Kefdp (2)": np.array([.45])}],
+                                 "flux6": [{"V3max (1)": np.array([1]), "K3fdp": np.array([.1]),
+                                            "V3max (2)": np.array([1]), "K3pep": np.array([.1])},
+                                           {"V3max (1)": np.array([1]), "K3fdp": np.array([.1])},
+                                           {"V3max (2)": np.array([1]), "K3pep": np.array([.1])}]}
         try:
             parameter_value = [alter_parameter_value[name][choice_id][id]
                                for name, choice_id, id in zip(flux_name, flux_choice_id, parameter_id)]
@@ -161,7 +167,33 @@ def flux_1_Vmax_gather_k1cat(all_ident_info, all_experimental_data):
         vmax_value = all_ident_info[0][0]["values"][i_data, 0, -1]
         i_data_k1cat = get_v1_k1cat(vmax_value, enzyme_data)
         all_k1cat_values.append(i_data_k1cat)
-    return None
+    # get only data from identifiable data sets
+    all_k1cat_values = np.array(all_k1cat_values)[all_ident_info[0][0]["boolean"][:, 0], :]
+
+    # calculate mean and std dev for obtained values of k1cat
+
+    return all_k1cat_values
+
+
+def flux_1_Vmax_get_kcat_ident(experimental_data):
+    """v1 identifiability without enzyme - use enzyme data to get kcat from identified Vmax"""
+    ac1, _, _, x31, v11, _, _, _, _, _, \
+    ac2, _, _, x32, v12, _, _, _, _, _ = list(experimental_data)
+
+    # flux numerator and denominator w/o sympy
+    # symbolic expression for flux v1 w/o enzyme concentration data
+    v1max_no_enzyme_numerator_value = ac1 * v11 * v12 - ac2 * v11 * v12
+    v1max_no_enzyme_denominator_value = -(ac2 * v11 - ac1 * v12)
+    k1ac_no_enzyme_numerator_value = ac1 * (ac2 * v11 - ac2 * v12)
+    k1ac_no_enzyme_denominator_value = -ac2 * v11 + ac1 * v12
+
+    v1max_no_enzyme_value = v1max_no_enzyme_numerator_value / v1max_no_enzyme_denominator_value
+    k1ac_no_enzyme_value = k1ac_no_enzyme_numerator_value / k1ac_no_enzyme_denominator_value
+    k1cat_no_enzyme_value_1 = v1max_no_enzyme_value / x31
+    k1cat_no_enzyme_value_2 = v1max_no_enzyme_value / x32
+    return [v1max_no_enzyme_numerator_value, v1max_no_enzyme_denominator_value, v1max_no_enzyme_value], \
+           [k1ac_no_enzyme_numerator_value, k1ac_no_enzyme_denominator_value, k1ac_no_enzyme_value], \
+           [0.0, 0.0, k1cat_no_enzyme_value_1], [0.0, 0.0, k1cat_no_enzyme_value_2]
 
 
 def flux_1_Vmax_ident(experimental_data):
@@ -806,8 +838,7 @@ def flux_3_ident_expression(experimental_data):
 def v3_V3max_var1(experimental_data):
     """v3max values when k3pep is assumed as known"""
     _, x11, x21, _, _, _, v31, _, _, _, \
-    _, x12, x22, _, _, _, v32, _, _, _, \
-    _, x13, x23, _, _, _, v33, _, _, _ = list(experimental_data)
+    _, x12, x22, _, _, _, v32, _, _, _ = list(experimental_data)
     K3pep = np.array([.1])
     v3max_nr_1 = -((-(K3pep * v32 + v32 * x12) * (K3pep * v31 * x21 + v31 * x11 * x21) + (K3pep * v31 + v31 * x11) * (
                 K3pep * v32 * x22 + v32 * x12 * x22)))
@@ -819,8 +850,7 @@ def v3_V3max_var1(experimental_data):
 def v3_V3max_var2(experimental_data):
     """v3max value when k3fdp value is assumed as known"""
     _, x11, x21, _, _, _, v31, _, _, _, \
-    _, x12, x22, _, _, _, v32, _, _, _, \
-    _, x13, x23, _, _, _, v33, _, _, _ = list(experimental_data)
+    _, x12, x22, _, _, _, v32, _, _, _ = list(experimental_data)
     K3fdp = np.array([.1])
     v3max_nr_2 = -((-(K3fdp*v31*x11 + v31*x11*x21)*(K3fdp*v32 + v32*x22) + (K3fdp*v31 + v31*x21)*(K3fdp*v32*x12 + v32*x12*x22)))
     v3max_dr_2 = (K3fdp*v32*x11*x21 - K3fdp*v31*x12*x22 + v32*x11*x21*x22 - v31*x12*x21*x22)
@@ -831,8 +861,7 @@ def v3_V3max_var2(experimental_data):
 def v3_K3fdp_var1(experimental_data):
     """k3fdp value when k3pep is assumed as known"""
     _, x11, x21, _, _, _, v31, _, _, _, \
-    _, x12, x22, _, _, _, v32, _, _, _, \
-    _, x13, x23, _, _, _, v33, _, _, _ = list(experimental_data)
+    _, x12, x22, _, _, _, v32, _, _, _ = list(experimental_data)
     K3pep = np.array([.1])
     k3fdp_nr = (x21*(-K3pep*v32*x11*x22 + K3pep*v31*x12*x22 + v31*x11*x12*x22 - v32*x11*x12*x22))
     k3fdp_dr = (K3pep*v32*x11*x21 + v32*x11*x12*x21 - K3pep*v31*x12*x22 - v31*x11*x12*x22)
@@ -843,8 +872,7 @@ def v3_K3fdp_var1(experimental_data):
 def v3_K3pep_var2(experimental_data):
     """k3pep value when k3fdp is assumed as known"""
     _, x11, x21, _, _, _, v31, _, _, _, \
-    _, x12, x22, _, _, _, v32, _, _, _, \
-    _, x13, x23, _, _, _, v33, _, _, _ = list(experimental_data)
+    _, x12, x22, _, _, _, v32, _, _, _ = list(experimental_data)
     K3fdp = np.array([.1])
     k3pep_nr = (x11*(-K3fdp*v32*x12*x21 + K3fdp*v31*x12*x22 + v31*x12*x21*x22 - v32*x12*x21*x22))
     k3pep_dr = (K3fdp*v32*x11*x21 - K3fdp*v31*x12*x22 + v32*x11*x21*x22 - v31*x12*x21*x22)
@@ -949,13 +977,10 @@ def ident_parameter_name(parameter_id, flux_name=(), flux_choice_id=0):
                       'V3max (2)', 'K3fdp (2)', 'K3pep (2)',
                       'vemax (1)', 'Kefdp (1)',
                       'vemax(1)', 'Kefdp (2)']
-    # flux_parameter_list = {"flux1":['V1max', 'K1ac (no enz)', 'k1cat', 'K1ac (enz)'],
-    #                        "flux2":['V2max', 'K2pep'],
-    #                        "flux3":['V3max (1)', 'K3fdp (1)', 'K3pep (1)',
-    #                                 'V3max (2)', 'K3fdp (2)', 'K3pep (2)']}
     alter_list = {"flux1": [['V1max', 'K1ac (no enz)', 'k1cat', 'K1ac (enz)'],
                             ['V1max', 'K1ac (no enz)'],
-                            ['k1cat', 'K1ac (enz)']],
+                            ['k1cat', 'K1ac (enz)'],
+                            ['V1max', 'K1ac (no enz)', 'k1cat (exp 1)', 'k1cat (exp 2)']],
                   "flux2": [['V2max', 'K2pep']],
                   "flux3": [['V3max (1)', 'K3fdp (1)', 'K3pep (1)', 'V3max (2)', 'K3fdp (2)', 'K3pep (2)'],
                             ['V3max (1)', 'K3fdp (1)', 'K3pep (1)'],
@@ -964,7 +989,9 @@ def ident_parameter_name(parameter_id, flux_name=(), flux_choice_id=0):
                   "flux5": [['vemax (1)', 'Kefdp (1)', 'vemax (1)', 'Kefdp (2)'],
                             ['vemax (1)', 'Kefdp (1)'],
                             ['vemax (1)', 'Kefdp (2)']],
-                  "flux6": []}
+                  "flux6": [['V3max (1)', 'K3fdp', 'V3max (2)', 'K3pep'],
+                            ['V3max (1)', 'K3fdp'],
+                            ['V3max (2)', 'K3pep']]}
     if flux_name:
         try:
             parameter_name = [alter_list[name][choice_id][id]
@@ -1053,6 +1080,24 @@ def experiment_name(experiment_id, experiment_details):
     return experiment_name_list
 
 
+def kotte_variable_name(var_type, var_id):
+    met_list = ['pep', 'fdp', 'E']
+    flux_list = ['v1', 'v2', 'v3', 'v4', 'v5', 'v6']
+    if var_type == 'metabolite':
+        try:
+            var_names = [met_list[j_var_id] for j_var_id in var_id]
+        except TypeError:
+            var_names = met_list[var_id]
+    elif var_type == 'flux':
+        try:
+            var_names = [flux_list[j_var_id] for j_var_id in var_id]
+        except TypeError:
+            var_names = flux_list[var_id]
+    else:
+        var_names = []
+    return var_names
+
+
 def process_ident_data(ident_values, number_data):
     # create signed boolean array for identifiability
     signed_ident_values = np.sign(ident_values)
@@ -1136,6 +1181,10 @@ def flux_ident_2_data_combination(all_data, flux_ids, choose=(), flux_choice=(),
         flux_1 = flux_1_kcat_ident
         flux_5 = flux_5_value2_ident
         flux_6 = flux_3_var2
+    elif flux_choice[0] == 3:
+        flux_1 = flux_1_Vmax_get_kcat_ident
+        flux_5 = []
+        flux_6 = []
     else:
         flux_1 = flux_1_ident_expression
         flux_5 = flux_5_ident_expression

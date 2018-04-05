@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from kotte_model import ident_parameter_name
 from kotte_model import kotte_experiment_type_name
+from kotte_model import kotte_variable_name
 plt.ion()
 
 
@@ -482,6 +483,59 @@ def plot_parameter_values(parameter_values):
             axarr.get_xaxis().tick_bottom()
             axarr.get_yaxis().tick_left()
         # axis_obj.set_title()
+    plt.show()
+
+    return None
+
+
+def plot_experiment_data_dist(exp_xss, exp_fss, experiment_choice=()):
+    exp_xss = np.array(exp_xss[0])
+    number_experiments, number_mets = exp_xss.shape
+    exp_fss = np.array(exp_fss[0])
+    _, number_fluxes = exp_fss.shape
+    # take only data from chosen experiment id
+    if experiment_choice:
+        chosen_exp_xss = exp_xss[experiment_choice, :]
+        chosen_exp_fss = exp_fss[experiment_choice, :]
+    else:
+        chosen_exp_xss = exp_xss
+        chosen_exp_fss = exp_fss
+    # collate data for each metabolite
+    all_metabolite_info = []
+    for i_met in range(0, number_mets):
+        all_metabolite_info.append(chosen_exp_xss[:, i_met])
+    # collect data for each flux
+    all_flux_info = []
+    for i_flux in range(0, number_fluxes):
+        all_flux_info.append(chosen_exp_fss[:, i_flux])
+
+    # plot concentration and flux distributions
+    f, axarr = plt.subplots(2, 1, figsize=(6, 4), dpi=100, facecolor='w', edgecolor='k')
+    # plot concentration distributions
+    bp = axarr[0].boxplot(all_metabolite_info)
+    for whiskers in bp["whiskers"]:
+        whiskers.set(color='k', linewidth=2)
+    for flier in bp['fliers']:
+        flier.set(marker='o', color='r', alpha=0.5)
+    # set axis labels
+    metabolite_names = kotte_variable_name('metabolite', range(0, number_mets))
+    axarr[0].set_xticklabels(metabolite_names)
+    # Remove top axes and right axes ticks
+    axarr[0].get_xaxis().tick_bottom()
+    axarr[0].get_yaxis().tick_left()
+
+    # plot flux distribution
+    bp = axarr[1].boxplot(all_flux_info)
+    for whiskers in bp["whiskers"]:
+        whiskers.set(color='k', linewidth=2)
+    for flier in bp['fliers']:
+        flier.set(marker='o', color='r', alpha=0.5)
+    # set axis labels
+    flux_names = kotte_variable_name('flux', range(0, number_fluxes))
+    axarr[1].set_xticklabels(flux_names)
+    # Remove top axes and right axes ticks
+    axarr[1].get_xaxis().tick_bottom()
+    axarr[1].get_yaxis().tick_left()
     plt.show()
 
     return None
