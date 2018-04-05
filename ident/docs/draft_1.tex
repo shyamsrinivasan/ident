@@ -76,34 +76,26 @@
 	{*} Corresponding author
 	\section*{Abstract}
 	\section{Introduction:}
+	\textbf{Outline:}
+	\begin{itemize}
+		\item Need for models in studying biology. State various applications e.g., for bio-based production, for medicine (gut microbiome interactions, stem cell engineering, studying various diseases like cancer)
+		\item Constraint-based models as a way to peek into the black box of biology without too many parameters. They however do not account for a lot of factors
+		\item Kinetics models as an improvement over constraint-based models
+		\item Advances in kinetic modeling of metabolism (Reviews?)
+		\item Parameter estimation in kinetic models as part of these advances
+	\end{itemize}
 	Kinetic models of metabolism can be used to study the dynamic characteristics of metabolic networks \parencite{Bordbar2015, Andreozzi2016}. In these models, ordinary differential equations (ode) are used to express the rate of change of metabolite concentrations ($x$) as a function of the reaction fluxes ($v$) in the metabolic network (Equation \ref{eq:kinstoich}). The matrix $\mathbf{S}$ in Equation (\ref{eq:kinstoich}a) defines the stoichiometric relationship between the fluxes and the concentrations of the metabolic network.
-	\begin{subequations}\label{eq:kinstoich}
-		\begin{align}
-		\dot{x} = \mathbf{S}v\\
-		v = f(x, \theta, u)
-		\end{align}
-	\end{subequations}
+
 	The expression for the nonlinear function ($f$) used to describe each reaction flux $v_i$ in a kinetic model (Equation \ref{eq:kinstoich}b) is dependent on the enzyme kinetic mechanism that is used to model the reaction \parencite{Link2014, Srinivasan2015}. Accordingly, $f$ is a nonlinear function of the metabolite concentrations, enzyme kinetic parameters ($\theta$) and other input concentrations ($u$). 
 	
 	Unlike CBMs, where the ability to predict the steady state responses of metabolic networks is dependent on the stoichiometry of the network, the prediction of dynamic responses of metabolic networks to different perturbations using kinetic models of metabolism is also dependent on the numerical values of the enzyme kinetic parameters ($\theta$ in Equation \ref{eq:kinstoich}) \parencite{Andreozzi2016a}. Analyzing the ability of a metabolic network to exhibit dynamic characteristics like multiple steady states and oscillations, irrespective of the structure of the network, is one example where parameter values might play a crucial role \parencite{Srinivasan2015, Vital-Lopez2006}. The use of in vitro, or unreliable in vivo parameter estimates reduces confidence in the model predicted behaviour \parencite{Andreozzi2016a}. Consequently, the reduction in confidence hampers the use of these models to gain insight into the functioning of metabolic networks \parencite{Chakrabarti2013a, Bordbar2015}. The corresponding increase in uncertainty in model predicted responses becomes an obstacle for using the predicted responses as a basis for designing the metabolic networks to achieve any of the aforementioned goals of metabolic engineering and design.  
 	
 	Parameter estimation methods based on optimization principles are typically used to determine true parameter values based on available experimental data. Under the assumption that all time dependent intracellular metabolite concentrations can be measured, a parameter estimation problem can be formulated as a nonlinear programming problem (Equation \ref{eq:kinstoich}) to estimate the values of enzyme kinetic parameters, $\theta$, based on the measured data. 	
 	The minimization of least square error between the measured ($x^*$) and modeled ($x$) concentrations, weighted by the variance in the experimental data $\sigma_{kl}^*$ for each concentration at each time point, is used as an objective function (Equation \ref{eq:lsqopt}a) for the optimization problem (Equation \ref{eq:lsqopt}). The parameter values are determined within fixed upper ($\theta_u$) and lower ($\theta_l$) bounds (Equation \ref{eq:lsqopt}b). 
-	\begin{subequations}\label{eq:lsqopt}
-		\begin{align}
-		\underset{\theta}{\mathrm{min}} &\sum_{k=1}^{m}\sum_{l=1}^{d}\left(\frac{x_{kl}^*-x_{kl}}{\sigma_{kl}^*}\right)^2\\
-		&\theta_l \le \theta \le \theta_u
-		\end{align}
-	\end{subequations}
+	
 	
 	However, not all metabolite concentrations used in the model (Equation \ref{eq:kinstoich}) can be measured. Additionally, measurable fluxes in the metabolic network also need to be included as part of the parameter estimation problem. In such scenarios, the parameter estimation problem is modified to suit a new system of equations shown below (Equation \ref{eq:output}). The new system of equations is obtained by augmenting the original system (Equation \ref{eq:kinstoich}) with Equation (\ref{eq:output}c) that models the relationship between the measurable metabolite concentrations and fluxes ($y$) and the unmeasured concentrations ($x$) that are used in the original model (Equation \ref{eq:kinstoich}) above. The parameter vector ($\theta$) is augmented with additional parameters that define this relationship. These additional parameters also need to be estimated.
-	\begin{subequations}\label{eq:output}
-		\begin{align}
-		\dot{x} = \mathbf{S}v\\
-		v = f(x, y, \theta, u)\\
-		\dot{y} = h(x, y, \theta, u)
-		\end{align}
-	\end{subequations}
+	
 	In systems identification, the measured concentrations and fluxes ($y$) are called output or observed variables, and the unmeasured concentrations ($x$) are called the state variables. For estimating $\theta$, the metabolite concentrations $x$ in the optimization problem (Equation \ref{eq:lsqopt}) are substituted with the output variables $y$. 
 	
 	The ability to determine unique solutions to parameters $\theta$ is governed by the identifiability of these parameters in the model \parencite{McLean2012, Raue2009a}. The identifiability of parameters in nonlinear models can be classified into two categories: structural (or a priori) and practical (or posterior) identifiability. 	
@@ -122,6 +114,29 @@
 	In this paper, we propose a scalable methodology to establish practical identifiability for parameters in kinetic models of metabolism using steady state concentration and flux data. We present a computer algebra-based method that can facilitate experimental design through practical identification of parameters separately for each individual reaction within a metabolic network. For the purposes of this method we assume that all intracellular metabolite concentrations and fluxes can be measured. We identify and design experiments to estimate parameters in a small metabolic network model of glucoeneogenesis in \textit{Escherichia coli} \parencite{Kotte2014, Srinivasan2017} to illustrate the utility of our method.  %We also demonstrate the scalability of the proposed methodology to facilitate experimental design by applying it to a relatively larger metabolic network of the human red blood cell hepatocyte. 	
 	
 	\section{Methods}\label{sec:methods}
+	
+	\begin{subequations}\label{eq:kinstoich}
+		\begin{align}
+		\dot{x} = \mathbf{S}v\\
+		v = f(x, \theta, u)
+		\end{align}
+	\end{subequations}
+
+	\begin{subequations}\label{eq:lsqopt}
+		\begin{align}
+		\underset{\theta}{\mathrm{min}} &\sum_{k=1}^{m}\sum_{l=1}^{d}\left(\frac{x_{kl}^*-x_{kl}}{\sigma_{kl}^*}\right)^2\\
+		&\theta_l \le \theta \le \theta_u
+		\end{align}
+	\end{subequations}
+
+	\begin{subequations}\label{eq:output}
+		\begin{align}
+		\dot{x} = \mathbf{S}v\\
+		v = f(x, y, \theta, u)\\
+		\dot{y} = h(x, y, \theta, u)
+		\end{align}
+	\end{subequations}
+
 	\subsection{A method to determine practical identifiability of kinetic models of metabolism}\label{sec:ident}
 	We provide the mathematical framework for practical identification of parameters in kinetic models of metabolism in this section. A summary of the methodology in the form of a flow diagram is shown in Figure \ref{fig:ident-flowchart}. In kinetic models of metabolic networks (Equation \ref{eq:kinstoich}), the fluxes are expressed as a function of the metabolite concentrations $x$ and the kinetic parameters $\theta$ (Figure \ref{fig:ident-flowchart}a). The value of every flux $v_i$ is expressed using one of the many available enzyme kinetic formulations (Equation \ref{eq:output}b). Without loss of generality, all of these kinetic formulations can be expressed as nonlinear algebraic equations (Figure \ref{fig:ident-flowchart}a). 
 	
@@ -208,7 +223,7 @@
 		\begin{center}				
 			\begin{tabular}{lp{3.5cm}cccccp{2cm}}
 				\hline
-				Experiment Type & Perturbed Parameter (wild type value a.u.)& \multicolumn{5}{c}{Perturbed Values} & Number of Experiments\\
+				Experiment Type & Perturbed Parameter (wild type value a.u.)& \multicolumn{5}{c}{Perturbed Values a.u.} & Number of Experiments\\
 				\hline
 				wild type &  &\multicolumn{5}{l}{} & 1\\
 				acetate perturbation & $acetate$ (0.1) & 0.05 & 0.09 & 0.2 & 0.5 & 1.0 & 5\\
