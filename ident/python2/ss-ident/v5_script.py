@@ -44,7 +44,8 @@ experimental_datasets_2_expts, \
                                                                       experiments_per_set=2, flux_id=exp_flux_index,
                                                                       experiment_choice=[0, 1, 2, 3, 4, 5,
                                                                                          6, 7, 8, 9, 10,
-                                                                                         11, 12, 13, 14, 15])
+                                                                                         11, 12, 13, 14, 15,
+                                                                                         16, 17, 18, 19, 20])
 # different types of experiments 0 - wt, perturbations: 1 - acetate, 2 - k1cat, 3 - V3max, 4 - V2max
 experiment_type_indices = [[0],
                            [1, 2, 3, 4, 5],
