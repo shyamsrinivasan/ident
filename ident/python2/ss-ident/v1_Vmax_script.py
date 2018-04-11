@@ -3,7 +3,6 @@ from generate_expdata import generate_expdata
 from simulate_data import arrange_experimental_data
 from kotte_model import flux_ident_2_data_combination
 from process_ident_data import process_info_sample
-from kotte_model import flux_1_Vmax_gather_k1cat
 from plot_ident_results import data_utility_plot
 from plot_ident_results import plot_parameter_values
 from plot_ident_results import parameter_identifibaility_plot
