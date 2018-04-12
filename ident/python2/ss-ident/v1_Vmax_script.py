@@ -58,7 +58,7 @@ print('Practical Identifiability Analysis of v1 with 2 parameters: k1cat and K1a
 ident_fun_choice = [0]
 # perform identifiability when v1 is written with k1cat*E in the numerator
 ident_details_v1_k1cat = flux_ident_2_data_combination(experimental_datasets_2_expts, choose=combination_choice,
-                                                       flux_ids=[1], flux_choice=[3], ident_fun_choice=ident_fun_choice)
+                                                       flux_ids=[1], flux_choice=[1], ident_fun_choice=ident_fun_choice)
 print('Identifiability analysis of v1 with 2 parameters (k1cat and K1ac) complete.\n')
 
 # data processing - do not combine fluxes
@@ -81,7 +81,9 @@ parameter_experiment_info_spider(experiment_info_v1_k1cat)
 plot_parameter_values(true_value_v1_k1cat)
 
 # plot distribution of experimental data (concentration and fluxes)
-plot_experiment_data_dist(exp_xss, exp_fss, experiment_choice=[0, 1, 2, 3, 4, 5,
+plot_experiment_data_dist(exp_xss, exp_fss, experiment_choice=[0,
+                                                               1, 2, 3, 4, 5,
+                                                               6, 7, 8, 9, 10,
                                                                11, 12, 13, 14, 15,
                                                                16, 17, 18, 19, 20])
 
