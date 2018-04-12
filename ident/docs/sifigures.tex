@@ -127,6 +127,16 @@
 	\caption{Distribution of predicted parameter values when performing practical identifiability analysis using closed-form solutions for each parameter in flux $v_3$ when the a) and b) Monod-Wyman-Changeaux model for allosteric regulation for $v_3$ is used to generate data, c) and d) experimental data is generated using the Convenience Kinetic rate law model with activation for $v_3$. The left column shows the globally identifiable roots of $V_3^{max}$ and $K_3^{fdp}$ when $K_3^{pep}$ is held constant, and the right column shows the globally identifiable root of $V_3^{max}$ and $K_3^{pep}$ when $K_3^{fdp}$ is held constant.}\label{fig:parameter_value_v3_var}
 \end{figure}	
 
+\begin{figure}[!tbhp]
+	\centering{\includegraphics[width=1.0\textwidth,height=0.5\textheight, keepaspectratio]{figures/figure1/v1_k1cat_v3_2_v5_1_ident}}
+	\caption{The number of data combination from 21 different in silico experiments that can practically identify each parameter in fluxes a) and d) $v_1$, b) and e) $v_3$, and c) and f) $v_5$ when there is no noise in the input experimental data. The percentage of total combinations of experimental data used for analysis (240 for $v_1$ and $v_2$, 3360 for $v_3$ and 421 for $v_5$) that can identify each parameter is also specified. $v_1$, $v_2$ and $v_5$ require data from two experiments for analysis, and $v_3$ requires data from three experiments. Results for only one of the two possible roots are shown for $v_3$ and $K_e^{fdp}$ in $v_5$. The results obtained using data from the MWC model for $v_3$ are presented in the panels on the left hand side column and the panels on the right hand column show results obtained using data derived from the Convenience kinetics model for $v_3$.}\label{fig:ident_root2}
+\end{figure}
+
+\begin{figure}[!tbhp]
+	\centering{\includegraphics[width=1.0\textwidth,height=0.3\textheight, keepaspectratio]{figures/figure1/v3_1_2_mwc_ck_ident}}
+	\caption{The number of data combination from 21 different in silico experiments that can practically identify each parameter in the convenience kinetic rate law model of flux $v_3$ when a) and c) $K_3^{pep}$ is held constant, and b) and d) $K_3^{fdp}$ is held constant. Results obtained using data from the MWC model for $v_3$ are presented in the panels on the left column and the panels on the right column show results obtained using data derived from the Convenience kinetics model for $v_3$. Note that all the identifiable parameters in the four panels are globally identifiable. The degree of identifiability of $V_3^{max}$ and $K_3^{pep}$ are higher when $K_3^{fdp}$ is held constant, than the degree of identifiability of $V_3^{max}$ and $K_3^{fdp}$ when $K_3^{pep}$ is held constant.}\label{fig:ident_v3_var}
+\end{figure} 
+
 \clearpage
 
 \section{Supplementary Methods}
@@ -164,7 +174,7 @@ v_3 = V_{3}^{max}\frac{\tilde{fdp}\left(1+\tilde{fdp}\right)^3}{\left(1+\tilde{f
 \end{equation}
 The allosterically regulated flux $v_3$ for the consumption of \textit{fdp} is expressed in Equation (\ref{eq:flux3}) using the Monod-Wyman-Changeux (MWC) model for allosterically regulated enzymes, where $\tilde{fdp}$ refers to the ratio of \textit{fdp} with respect to its allosteric binding constant $K_{3}^{fdp}$. 
 
-The practically identifiability of parameters of a given flux are determined by solving a system of nonlinear algebraic equations using a computer algebra system (section \ref{sec:ident}). We find that the nonlinearity of the MWC kinetic rate law used to model the allosteric regulation of $v_3$ makes it computationally intractable for determining the closed form expressions of the three parameters $V_3^{max}$, $K_3^{fdp}$ and $K_3^{pep}$ using a computer algebra system (Mathematica or SymPy in Python). In order to overcome this computational obstacle, we model the reaction rate for $v_3$ using the convenience kinetic rate law formulation \parencite{Liebermeister2006}. The corresponding expression obtained for $v_3$ is given below (Equation \ref{eq:flux3_convkin}). 	
+The practically identifiability of parameters of a given flux are determined by solving a system of nonlinear algebraic equations using a computer algebra system (Section \ref{sec:ident}). We find that the nonlinearity of the MWC kinetic rate law used to model the allosteric regulation of $v_3$ makes it computationally intractable for determining the closed form expressions of the three parameters $V_3^{max}$, $K_3^{fdp}$ and $K_3^{pep}$ using a computer algebra system (Mathematica or SymPy in Python). In order to overcome this computational obstacle, we model the reaction rate for $v_3$ using the convenience kinetic rate law formulation \parencite{Liebermeister2006}. The corresponding expression obtained for $v_3$ is given below (Equation \ref{eq:flux3_convkin}). 	
 \begin{align}\label{eq:flux3_convkin}
 v_3 = V_3^{max}\left(\frac{1}{1 + \frac{K_3^{pep}}{pep}}\right)\left(\frac{\frac{fdp}{K_3^{fdp}}}{1 + \frac{fdp}{K_3^{fdp}}}\right)
 \end{align}	
