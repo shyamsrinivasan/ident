@@ -27,8 +27,8 @@ def perturb_parameters(initial_ss, parameter_perturbations, cvode_options, ode_p
     if noise:
         perturbation_options = {'ode_parameters': ode_parameter_values, 'cvode_options': cvode_options}
         noisy_ss, noisy_dynamic, perturbation_details, _, dynamic_info = \
-            run_noisy_parameter_perturbation(parameter_perturbations, initial_ss["y"], perturbation_options,
-                                             number_of_samples)
+            run_noisy_parameter_perturbation(parameter_perturbations, initial_ss["y"][0], perturbation_options,
+                                             kinetics=kinetics, number_of_samples=number_of_samples)
         return noisy_ss, perturbation_details
     else:
         perturbation_options = {'ode_parameters': ode_parameter_values, 'cvode_options': cvode_options}
@@ -65,25 +65,17 @@ def generate_expdata(y0, cvode_options, ode_parameter_values, number_of_samples=
                                                                 number_of_samples, noise=noise, kinetics=kinetics,
                                                                 dynamic_plot=perturbation_plot)
 
-    all_sample_exp_xss = []
-    all_sample_exp_fss = []
-    all_sample_exp_ssid = []
-    for i_sample in range(0, number_of_samples):
-        exp_xss = []
-        exp_fss = []
-        exp_ssid = []
-        for ss_values in perturbed_ss:
-            try:
-                exp_xss.append(ss_values["y"][:, i_sample])
-                exp_fss.append(ss_values["flux"][:, i_sample])
-                exp_ssid.append(ss_values["ssid"][i_sample])
-            except IndexError:
-                exp_xss.append(ss_values["y"][:, ])
-                exp_fss.append(ss_values["flux"][:, ])
-                exp_ssid.append(ss_values["ssid"])
-        all_sample_exp_xss.append(exp_xss)
-        all_sample_exp_fss.append(exp_fss)
-        all_sample_exp_ssid.append(exp_ssid)
+    if noise:
+        all_sample_exp_xss = [[i_perturbation_data["y"][i_sample] for i_perturbation_data in perturbed_ss]
+                              for i_sample in range(0, number_of_samples)]
+        all_sample_exp_fss = [[i_perturbation_data["flux"][i_sample] for i_perturbation_data in perturbed_ss]
+                              for i_sample in range(0, number_of_samples)]
+        all_sample_exp_ssid = [[i_perturbation_data["ssid"][i_sample] for i_perturbation_data in perturbed_ss]
+                               for i_sample in range(0, number_of_samples)]
+    else:
+        all_sample_exp_xss = [[i_perturbation_data["y"] for i_perturbation_data in perturbed_ss]]
+        all_sample_exp_fss = [[i_perturbation_data["flux"] for i_perturbation_data in perturbed_ss]]
+        all_sample_exp_ssid = [[i_perturbation_data["ssid"] for i_perturbation_data in perturbed_ss]]
 
     return all_sample_exp_xss, all_sample_exp_fss, all_sample_exp_ssid, perturbation_details
 
