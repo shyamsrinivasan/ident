@@ -10,6 +10,7 @@ def initialize_to_ss(y0, cvode_options, ode_parameter_values, noise=1, kinetics=
     if noise:
         # get initial noisy system steady state
         initial_options = (cvode_options, ode_parameter_values)
+        # use non-noisy initial ss (wt) data
         noisy_initial_ss, noisy_initial_dyn, _, _ = generate_noisy_data(y0, initial_options, kinetics=kinetics)
         return noisy_initial_ss, noisy_initial_dyn
     else:
@@ -46,7 +47,7 @@ def generate_expdata(y0, cvode_options, ode_parameter_values, number_of_samples=
 
     # plot all dynamic courses
     if dynamic_plot:
-        plot_dynamic_sim_concentrations(initial_dyn)
+        plot_dynamic_sim_concentrations(initial_dyn, noise=noise)
 
     # all parameter perturbations
     parameter_perturbation = [{"ac": 0}, {"ac": 1}, {"ac": 4}, {"ac": 9}, {"ac": -.1}, {"ac": -.5},
