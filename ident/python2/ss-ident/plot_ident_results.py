@@ -350,7 +350,7 @@ def line_plots_2d(axis_obj, x_data, y_data, x_label=(), y_label=()):
     return None
 
 
-def plot_dynamic_sim_concentrations(dynamic_data, multiple=0):
+def plot_dynamic_sim_concentrations(dynamic_data, multiple=0, noise=0):
     """plot dynamic time course profiles of all concentrations present in y vector.
     parameter multiple = 1 when multiple sets of plots are plotted in a subplot"""
     if multiple:
@@ -383,7 +383,11 @@ def plot_dynamic_sim_concentrations(dynamic_data, multiple=0):
         f, axis_obj = plt.subplots(1, 1, figsize=(6, 4), dpi=100, facecolor='w', edgecolor='k')
         x_data = dynamic_data["time"]
         y_data = dynamic_data["y"]
-        line_plots_2d(axis_obj, x_data, y_data, x_label='Time (s)', y_label='Concentrations (a.u.)')
+        if noise:
+            # plt only one of many noisy slutions (Figure out a way to plot all)
+            line_plots_2d(axis_obj, x_data, y_data[0], x_label='Time (s)', y_label='Concentrations (a.u.)')
+        else:
+            line_plots_2d(axis_obj, x_data, y_data, x_label='Time (s)', y_label='Concentrations (a.u.)')
         axis_obj.set_title('Dynamic Concentrations')
     plt.show()
     return None
