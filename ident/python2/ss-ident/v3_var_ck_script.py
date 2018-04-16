@@ -56,7 +56,7 @@ experiment_type_indices = [[0],
                            [16, 17, 18, 19, 20]]
 # perform identifiability when v3 parameters are written for root (1)
 ident_details_v3_root1 = flux_ident_2_data_combination(experimental_datasets_2_expts, choose=combination_choice,
-                                                       flux_ids=[6], flux_choice=[2], ident_fun_choice=ident_fun_choice)
+                                                       flux_ids=[6], flux_choice=[1], ident_fun_choice=ident_fun_choice)
 print('Identifiability analysis for v3 with 3 parameters (V3max, K3fdp and K3pep) complete.\n')
 # data processing
 data_list_v3_root1, max_parameter_v3_root1, true_value_v3_root1, experiment_info_v3_root1, \
