@@ -10,7 +10,7 @@ def initialize_to_ss(y0, cvode_options, ode_parameter_values, noise=1, kinetics=
     if noise:
         # get initial noisy system steady state
         initial_options = (cvode_options, ode_parameter_values)
-        noisy_initial_ss, noisy_initial_dyn, _, _ = generate_noisy_data(y0, initial_options, 1)
+        noisy_initial_ss, noisy_initial_dyn, _, _ = generate_noisy_data(y0, initial_options, kinetics=kinetics)
         return noisy_initial_ss, noisy_initial_dyn
     else:
         # get initial noisy system steady state
