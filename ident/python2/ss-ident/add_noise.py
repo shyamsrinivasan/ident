@@ -14,9 +14,10 @@ def add_noise(data, default_shape, number_of_samples=1):
         rows, columns = default_shape
     noise = prng_1.normal(0, .05, (rows, columns, number_of_samples))
     # concentration_noise = np.random.normal(0, .05, [rows, columns])
-    noisy_data = np.zeros((rows, columns, number_of_samples))
-    for i_sample in range(0, number_of_samples):
-        noisy_data[:, :, i_sample] = data * (1 + noise[:, :, i_sample])
+    # noisy_data = np.zeros((rows, columns, number_of_samples))
+    noisy_data = [data * (1 + noise[:, :, i_sample]) for i_sample in range(0, number_of_samples)]
+    # for i_sample in range(0, number_of_samples):
+    #     noisy_data[:, :, i_sample] = data * (1 + noise[:, :, i_sample])
     return noisy_data
 
 
