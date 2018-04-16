@@ -30,7 +30,7 @@ ode_parameter_values = {"K1ac": np.array([.1]),
 
 # get experimental system steady state data without noise
 exp_xss, exp_fss, exp_ssid, perturbation_details = \
-    generate_expdata(y0, cvode_options, ode_parameter_values, noise=1, number_of_samples=5, kinetics=1,
+    generate_expdata(y0, cvode_options, ode_parameter_values, noise=1, number_of_samples=100, kinetics=1,
                      dynamic_plot=1, perturbation_plot=0)
 
 # arrange experimental data to form multiple data sets
