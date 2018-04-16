@@ -100,17 +100,20 @@ def generate_noisy_data(y0, all_options, kinetics, number_of_samples=1):
     all_sample_noisy_bistable = []
     for i_sample in range(0, number_of_samples):
         # info on bistability
-        if noisy_concentration_dynamic[-1, 0, i_sample] > noisy_concentration_dynamic[-1, 1, i_sample]:
+        if noisy_concentration_dynamic[i_sample][-1, 0] > noisy_concentration_dynamic[i_sample][-1, 1]:
             bistable = 1
-        elif noisy_concentration_dynamic[-1, 0, i_sample] < noisy_concentration_dynamic[-1, 1, i_sample]:
+        elif noisy_concentration_dynamic[i_sample][-1, 0] < noisy_concentration_dynamic[i_sample][-1, 1]:
             bistable = 2
         else:
             bistable = 0
         all_sample_noisy_bistable.append(bistable)
     noisy_dynamic_info = {"y": noisy_concentration_dynamic, "flux": noisy_flux_dynamic,
                           "time": dynamic_info["time"], "ssid": all_sample_noisy_bistable}
-    noisy_steady_state_info = {"y": noisy_concentration_dynamic[-1, :, :],
-                               "flux": noisy_flux_dynamic[-1, :, :], "ssid": all_sample_noisy_bistable}
+    noisy_steady_state_info = {"y": [noisy_concentration_dynamic[i_sample][-1, :]
+                                     for i_sample in range(0, number_of_samples)],
+                               "flux": [noisy_flux_dynamic[i_sample][-1, :]
+                                        for i_sample in range(0, number_of_samples)],
+                               "ssid": all_sample_noisy_bistable}
         # all_sample_noisy_dynamic_info.append(noisy_dynamic_info)
         # all_sample_noisy_steady_state_info.append(noisy_steady_state_info)
 
