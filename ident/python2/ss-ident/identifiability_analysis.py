@@ -172,6 +172,7 @@ def multi_sample_ident_fun(ident_fun_list, all_data, choose, flux_ids, flux_choi
     looping through each experimental data sample for a list of identifibaility functions"""
     all_sample_ident_details = []
     for i_sample, sample_data in enumerate(all_data):
+        print('Identifiability analysis with Data Sample Number {}\n'.format(i_sample))
         parameters_per_flux, one_sample_all_fun_array_list = one_sample_ident_fun(ident_fun_list, sample_data,
                                                                                   choose, flux_ids, flux_choice)
         # process info from each sample (number of samples > 1 when noisy data is used) of experimental data sets
