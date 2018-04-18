@@ -370,7 +370,7 @@ def parameter_identifiability(ident_details):
 
 
 def true_parameter_value(ident_details):
-    # number_data = ident_details["values"].shape[0]
+    number_data, _ = ident_details["boolean"].shape
     number_parameters = ident_details["parameters"]
     all_parameter_true_values = []
     # add loop for fluxes  - needed when using combined data from all fluxes
@@ -400,7 +400,8 @@ def true_parameter_value(ident_details):
                                          "parameter id": i_parameter,
                                          "parameter name": parameter_name,
                                          "found values": found_value,
-                                         "true values": np.tile(true_value, found_value.shape)}
+                                         "true values": np.tile(true_value, found_value.shape),
+                                         "data set size": number_data}
                 all_parameter_true_values.append(parameter_true_values)
                 total_parameters += 1
     except TypeError:  # when number_parameters is integer and not list
@@ -439,7 +440,8 @@ def true_parameter_value(ident_details):
                                      "parameter name": parameter_name,
                                      "data id": data_identifying_parameter_i,
                                      "found values": found_value,
-                                     "true values": tiled_found_value}
+                                     "true values": tiled_found_value,
+                                     "data set size": number_data}
             all_parameter_true_values.append(parameter_true_values)
 
     return all_parameter_true_values
@@ -640,54 +642,75 @@ def collate_sample_based_experiment_info(number_of_fluxes_per_sample, all_sample
 
 
 def collate_sample_based_parameter_value(number_of_fluxes_per_sample, all_sample_parameter_value):
-    all_flux_parameter_value = []
-    for j_flux in range(0, number_of_fluxes_per_sample[0]):
-        number_of_parameters_per_flux = len(all_sample_parameter_value[0][j_flux])
-        all_parameter_info = []
-        for k_parameter in range(0, number_of_parameters_per_flux):
-            k_parameter_found_values = []
-            k_parameter_true_values = []
-            for j_sample_id, j_sample_data in enumerate(all_sample_parameter_value):
-                k_parameter_found_values.append(j_sample_data[j_flux][k_parameter]["found values"])
-                k_parameter_true_values.append(j_sample_data[j_flux][k_parameter]["true values"])
-            # calculate means and standard deviations for each parameter between samples and between data points
-            k_parameter_true_array = np.array(k_parameter_true_values)
-            # get mean across all samples for each data set identifying parameter k
-            mean_across_samples = np.mean(np.array(k_parameter_found_values), axis=0)
-            std_across_samples = np.std(np.array(k_parameter_found_values), axis=0)
-            # get mean across al data identifying parameter k for each sample
-            if np.array(k_parameter_found_values).size != 0:
-                mean_across_data = np.mean(np.array(k_parameter_found_values), axis=1)
-                std_across_data = np.std(np.array(k_parameter_found_values), axis=1)
-            else:
-                mean_across_data = np.array([0.0])
-                std_across_data = np.array([0.0])
-            # get mean across all data points across all samples
-            mean_across_data_across_samples = np.mean(mean_across_data, axis=0)
-            std_across_data_across_samples = np.std(mean_across_data, axis=0)
-            # get mean across all samples across all data points
-            if mean_across_samples.size != 0:
-                mean_across_samples_across_data = np.mean(mean_across_samples, axis=0)
-                std_across_samples_across_data = np.std(mean_across_samples, axis=0)
-            else:
-                mean_across_samples_across_data = np.array([0.0])
-                std_across_samples_across_data = np.array([0.0])
-            k_parameter_info = {"sample mean": mean_across_samples,
-                                "sample std": std_across_samples,
-                                "data mean": mean_across_data,
-                                "data std": std_across_data,
-                                "data sample mean": mean_across_data_across_samples,
-                                "data sample std": std_across_data_across_samples,
-                                "sample data mean": mean_across_samples_across_data,
-                                "sample data std": std_across_samples_across_data,
-                                "parameter id": all_sample_parameter_value[0][j_flux][k_parameter]["parameter id"],
-                                "parameter name": all_sample_parameter_value[0][j_flux][k_parameter]["parameter name"],
-                                "flux name": all_sample_parameter_value[0][j_flux][k_parameter]["flux name"],
-                                "flux id": all_sample_parameter_value[0][j_flux][k_parameter]["flux id"],
-                                "flux choice": all_sample_parameter_value[0][j_flux][k_parameter]["flux choice"],
-                                "true value": np.mean(np.mean(k_parameter_true_array, axis=1), axis=0)}
-            all_parameter_info.append(k_parameter_info)
-        all_flux_parameter_value.append(all_parameter_info)
+    if len(all_sample_parameter_value) > 1:
+        # if more than one sample calculate mean based on common ids that can
+        # identify each parameter between different samples
+        all_flux_parameter_value = []
+        # first collect all samples from each data id
+        all_flux_info = []
+        for j_flux in range(0, number_of_fluxes_per_sample[0]):
+            number_of_parameters_per_flux = len(all_sample_parameter_value[0][j_flux])
+            all_parameter_info = []
+            for k_parameter in range(0, number_of_parameters_per_flux):
+                data_set_size = all_sample_parameter_value[0][j_flux][k_parameter]["data set size"]
+                all_sample_data_ids = [j_sample_data[j_flux][k_parameter]["data id"] for j_sample_data in all_sample_parameter_value]
+                all_sample_boolean_id = []
+                for j_sample in all_sample_data_ids:
+                    boolean_data_id = np.full((data_set_size, 1), False)
+                    boolean_data_id[j_sample] = True
+                    all_sample_boolean_id.append(boolean_data_id)
+                all_parameter_info.append(all_sample_boolean_id)
+            all_flux_info.append(all_parameter_info)
+            pass
+    else:
+        all_flux_parameter_value = []
+        for j_flux in range(0, number_of_fluxes_per_sample[0]):
+            number_of_parameters_per_flux = len(all_sample_parameter_value[0][j_flux])
+            all_parameter_info = []
+            for k_parameter in range(0, number_of_parameters_per_flux):
+                k_parameter_found_values = []
+                k_parameter_true_values = []
+                for j_sample_id, j_sample_data in enumerate(all_sample_parameter_value):
+                    k_parameter_found_values.append(j_sample_data[j_flux][k_parameter]["found values"])
+                    k_parameter_true_values.append(j_sample_data[j_flux][k_parameter]["true values"])
+                # calculate means and standard deviations for each parameter between samples and between data points
+                k_parameter_true_array = np.array(k_parameter_true_values)
+                # get mean across all samples for each data set identifying parameter k
+                mean_across_samples = np.mean(np.array(k_parameter_found_values), axis=0)
+                std_across_samples = np.std(np.array(k_parameter_found_values), axis=0)
+                # get mean across al data identifying parameter k for each sample
+                if np.array(k_parameter_found_values).size != 0:
+                    mean_across_data = np.mean(np.array(k_parameter_found_values), axis=1)
+                    std_across_data = np.std(np.array(k_parameter_found_values), axis=1)
+                else:
+                    mean_across_data = np.array([0.0])
+                    std_across_data = np.array([0.0])
+                # get mean across all data points across all samples
+                mean_across_data_across_samples = np.mean(mean_across_data, axis=0)
+                std_across_data_across_samples = np.std(mean_across_data, axis=0)
+                # get mean across all samples across all data points
+                if mean_across_samples.size != 0:
+                    mean_across_samples_across_data = np.mean(mean_across_samples, axis=0)
+                    std_across_samples_across_data = np.std(mean_across_samples, axis=0)
+                else:
+                    mean_across_samples_across_data = np.array([0.0])
+                    std_across_samples_across_data = np.array([0.0])
+                k_parameter_info = {"sample mean": mean_across_samples,
+                                    "sample std": std_across_samples,
+                                    "data mean": mean_across_data,
+                                    "data std": std_across_data,
+                                    "data sample mean": mean_across_data_across_samples,
+                                    "data sample std": std_across_data_across_samples,
+                                    "sample data mean": mean_across_samples_across_data,
+                                    "sample data std": std_across_samples_across_data,
+                                    "parameter id": all_sample_parameter_value[0][j_flux][k_parameter]["parameter id"],
+                                    "parameter name": all_sample_parameter_value[0][j_flux][k_parameter]["parameter name"],
+                                    "flux name": all_sample_parameter_value[0][j_flux][k_parameter]["flux name"],
+                                    "flux id": all_sample_parameter_value[0][j_flux][k_parameter]["flux id"],
+                                    "flux choice": all_sample_parameter_value[0][j_flux][k_parameter]["flux choice"],
+                                    "true value": np.mean(np.mean(k_parameter_true_array, axis=1), axis=0)}
+                all_parameter_info.append(k_parameter_info)
+            all_flux_parameter_value.append(all_parameter_info)
     return all_flux_parameter_value
 
 
