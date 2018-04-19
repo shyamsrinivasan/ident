@@ -659,6 +659,9 @@ def collate_sample_based_parameter_value(number_of_fluxes_per_sample, all_sample
                                        for j_sample_data in all_sample_parameter_value]
                 all_sample_ident_value = [j_sample_ident[j_flux][k_parameter]["found values"]
                                           for j_sample_ident in all_sample_parameter_value]
+                k_parameter_true_values = [j_sample_ident[j_flux][k_parameter]["true values"]
+                                          for j_sample_ident in all_sample_parameter_value]
+                k_parameter_true_array = np.array(k_parameter_true_values)
                 all_sample_data_id_ident_value = [zip(j_sample_data_ids, j_sample_ident_value)
                                                   for j_sample_data_ids, j_sample_ident_value in
                                                   zip(all_sample_data_ids, all_sample_ident_value)]
@@ -674,6 +677,20 @@ def collate_sample_based_parameter_value(number_of_fluxes_per_sample, all_sample
                 std_across_samples = np.std(data_sample_ident, axis=0)
                 mean_across_data = np.mean(data_sample_ident, axis=1)
                 std_across_data = np.std(data_sample_ident, axis=1)
+                k_parameter_info = {"sample mean": mean_across_samples,
+                                    "sample std": std_across_samples,
+                                    "data mean": mean_across_data,
+                                    "data std": std_across_data,
+                                    "data sample mean": [],
+                                    "data sample std": [],
+                                    "sample data mean": [],
+                                    "sample data std": [],
+                                    "parameter id": all_sample_parameter_value[0][j_flux][k_parameter]["parameter id"],
+                                    "parameter name": all_sample_parameter_value[0][j_flux][k_parameter]["parameter name"],
+                                    "flux name": all_sample_parameter_value[0][j_flux][k_parameter]["flux name"],
+                                    "flux id": all_sample_parameter_value[0][j_flux][k_parameter]["flux id"],
+                                    "flux choice": all_sample_parameter_value[0][j_flux][k_parameter]["flux choice"],
+                                    "true value": np.mean(np.mean(k_parameter_true_array, axis=1), axis=0)}
                 all_parameter_info.append(data_sample_ident)
                 all_parameter_boolean_info.append(all_sample_boolean)
             all_flux_info.append(all_parameter_info)
