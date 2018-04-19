@@ -648,20 +648,36 @@ def collate_sample_based_parameter_value(number_of_fluxes_per_sample, all_sample
         all_flux_parameter_value = []
         # first collect all samples from each data id
         all_flux_info = []
+        all_flux_boolean_info = []
         for j_flux in range(0, number_of_fluxes_per_sample[0]):
             number_of_parameters_per_flux = len(all_sample_parameter_value[0][j_flux])
             all_parameter_info = []
+            all_parameter_boolean_info = []
             for k_parameter in range(0, number_of_parameters_per_flux):
                 data_set_size = all_sample_parameter_value[0][j_flux][k_parameter]["data set size"]
-                all_sample_data_ids = [j_sample_data[j_flux][k_parameter]["data id"] for j_sample_data in all_sample_parameter_value]
-                all_sample_boolean_id = []
-                for j_sample in all_sample_data_ids:
-                    boolean_data_id = np.full((data_set_size, 1), False)
-                    boolean_data_id[j_sample] = True
-                    all_sample_boolean_id.append(boolean_data_id)
-                all_parameter_info.append(all_sample_boolean_id)
+                all_sample_data_ids = [j_sample_data[j_flux][k_parameter]["data id"]
+                                       for j_sample_data in all_sample_parameter_value]
+                all_sample_ident_value = [j_sample_ident[j_flux][k_parameter]["found values"]
+                                          for j_sample_ident in all_sample_parameter_value]
+                all_sample_data_id_ident_value = [zip(j_sample_data_ids, j_sample_ident_value)
+                                                  for j_sample_data_ids, j_sample_ident_value in
+                                                  zip(all_sample_data_ids, all_sample_ident_value)]
+                all_sample_boolean = [[True if j_data_id in set(j_sample_data_id) else False
+                                       for j_data_id in range(0, data_set_size)]
+                                      for j_sample_data_id in all_sample_data_ids]
+                data_sample_ident = np.zeros((5, data_set_size))
+                for j_sample_id, j_sample_data in enumerate(all_sample_data_id_ident_value):
+                    for j_ident_data in j_sample_data:
+                        data_id, ident_data = j_ident_data
+                        data_sample_ident[j_sample_id, data_id] = ident_data
+                mean_across_samples = np.mean(data_sample_ident, axis=0)
+                std_across_samples = np.std(data_sample_ident, axis=0)
+                mean_across_data = np.mean(data_sample_ident, axis=1)
+                std_across_data = np.std(data_sample_ident, axis=1)
+                all_parameter_info.append(data_sample_ident)
+                all_parameter_boolean_info.append(all_sample_boolean)
             all_flux_info.append(all_parameter_info)
-            pass
+            all_flux_boolean_info.append(all_parameter_boolean_info)
     else:
         all_flux_parameter_value = []
         for j_flux in range(0, number_of_fluxes_per_sample[0]):
