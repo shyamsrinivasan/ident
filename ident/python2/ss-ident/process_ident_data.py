@@ -687,6 +687,8 @@ def collate_sample_based_parameter_value(number_of_fluxes_per_sample, all_sample
                                     "sample std": std_across_samples,
                                     "data mean": mean_across_data,
                                     "data std": std_across_data,
+                                    "raw sample ident data": data_sample_ident,
+                                    "raw sample boolean data": all_sample_boolean,
                                     "data sample mean": [],
                                     "data sample std": [],
                                     "sample data mean": [],
@@ -697,10 +699,8 @@ def collate_sample_based_parameter_value(number_of_fluxes_per_sample, all_sample
                                     "flux id": all_sample_parameter_value[0][j_flux][k_parameter]["flux id"],
                                     "flux choice": all_sample_parameter_value[0][j_flux][k_parameter]["flux choice"],
                                     "true value": np.mean(np.mean(k_parameter_true_array, axis=1), axis=0)}
-                all_parameter_info.append(data_sample_ident)
-                all_parameter_boolean_info.append(all_sample_boolean)
+                all_parameter_info.append(k_parameter_info)
             all_flux_info.append(all_parameter_info)
-            all_flux_boolean_info.append(all_parameter_boolean_info)
     else:
         all_flux_parameter_value = []
         for j_flux in range(0, number_of_fluxes_per_sample[0]):
