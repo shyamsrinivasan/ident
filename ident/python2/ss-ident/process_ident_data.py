@@ -646,21 +646,17 @@ def collate_sample_based_parameter_value(number_of_fluxes_per_sample, all_sample
         # if more than one sample calculate mean based on common ids that can
         # identify each parameter between different samples
         all_flux_parameter_value = []
-        # first collect all samples from each data id
-        all_flux_info = []
-        all_flux_boolean_info = []
         for j_flux in range(0, number_of_fluxes_per_sample[0]):
             number_of_parameters_per_flux = len(all_sample_parameter_value[0][j_flux])
             all_parameter_info = []
-            all_parameter_boolean_info = []
             for k_parameter in range(0, number_of_parameters_per_flux):
                 data_set_size = all_sample_parameter_value[0][j_flux][k_parameter]["data set size"]
                 all_sample_data_ids = [j_sample_data[j_flux][k_parameter]["data id"]
                                        for j_sample_data in all_sample_parameter_value]
                 all_sample_ident_value = [j_sample_ident[j_flux][k_parameter]["found values"]
                                           for j_sample_ident in all_sample_parameter_value]
-                k_parameter_true_values = [j_sample_ident[j_flux][k_parameter]["true values"]
-                                          for j_sample_ident in all_sample_parameter_value]
+                k_parameter_true_values = [np.mean(j_sample_ident[j_flux][k_parameter]["true values"])
+                                           for j_sample_ident in all_sample_parameter_value]
                 k_parameter_true_array = np.array(k_parameter_true_values)
                 all_sample_data_id_ident_value = [zip(j_sample_data_ids, j_sample_ident_value)
                                                   for j_sample_data_ids, j_sample_ident_value in
@@ -698,9 +694,9 @@ def collate_sample_based_parameter_value(number_of_fluxes_per_sample, all_sample
                                     "flux name": all_sample_parameter_value[0][j_flux][k_parameter]["flux name"],
                                     "flux id": all_sample_parameter_value[0][j_flux][k_parameter]["flux id"],
                                     "flux choice": all_sample_parameter_value[0][j_flux][k_parameter]["flux choice"],
-                                    "true value": np.mean(np.mean(k_parameter_true_array, axis=1), axis=0)}
+                                    "true value": np.mean(k_parameter_true_array, axis=0)}
                 all_parameter_info.append(k_parameter_info)
-            all_flux_info.append(all_parameter_info)
+            all_flux_parameter_value.append(all_parameter_info)
     else:
         all_flux_parameter_value = []
         for j_flux in range(0, number_of_fluxes_per_sample[0]):
