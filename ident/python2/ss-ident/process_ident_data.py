@@ -674,15 +674,15 @@ def collate_sample_based_parameter_value(number_of_fluxes_per_sample, all_sample
                         data_id, ident_data = j_ident_data
                         data_sample_ident[j_sample_id, data_id] = ident_data
                 # box plot of across sample variations for each data
-                # temp = sum(np.array(all_sample_boolean))
-                # bool_accept = [True if value == 5 else False for value in temp]
+                all_boolean_sum = sum(np.array(all_sample_boolean))
+                bool_accept = [True if value == 5 else False for value in all_boolean_sum]
                 # import matplotlib.pyplot as plt
                 # f, ax = plt.subplots(1, 1)
                 # ax.boxplot(data_sample_ident[:, bool_accept])
-                mean_across_samples = np.mean(data_sample_ident, axis=0)
-                std_across_samples = np.std(data_sample_ident, axis=0)
-                mean_across_data = np.mean(data_sample_ident, axis=1)
-                std_across_data = np.std(data_sample_ident, axis=1)
+                mean_across_samples = np.mean(data_sample_ident[:, bool_accept], axis=0)
+                std_across_samples = np.std(data_sample_ident[:, bool_accept], axis=0)
+                mean_across_data = np.mean(data_sample_ident[:, bool_accept], axis=1)
+                std_across_data = np.std(data_sample_ident[:, bool_accept], axis=1)
                 k_parameter_info = {"sample mean": mean_across_samples,
                                     "sample std": std_across_samples,
                                     "data mean": mean_across_data,
