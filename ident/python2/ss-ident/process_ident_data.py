@@ -685,6 +685,7 @@ def collate_sample_based_parameter_value(number_of_fluxes_per_sample, all_sample
                                     "data std": std_across_data,
                                     "raw sample ident data": data_sample_ident,
                                     "raw sample boolean data": all_sample_boolean,
+                                    "accepted sample ident data": data_sample_ident[:, bool_accept],
                                     "data sample mean": [],
                                     "data sample std": [],
                                     "sample data mean": [],
