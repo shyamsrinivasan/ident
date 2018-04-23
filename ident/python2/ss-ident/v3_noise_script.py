@@ -7,7 +7,6 @@ from plot_ident_results import parameter_identifibaility_plot
 from plot_ident_results import data_utility_plot
 from plot_ident_results import plot_parameter_values
 from plot_ident_results import parameter_experiment_info_spider
-from plot_ident_results import plot_experiment_data_dist
 
 
 # generate noisy experimental data for testing identifiability
@@ -75,7 +74,7 @@ parameter_identifibaility_plot(max_parameter_v3_root1, noise=1)
 # identifiable data combinations for each parameter
 parameter_experiment_info_spider(experiment_info_v3_root1, noise=1)
 # plot true parameter values and determined parameter values
-plot_parameter_values(true_value_v3_root1, noise=1)
+plot_parameter_values(true_value_v3_root1, noise=1, data_sets_to_plot=500)
 # plot utility of data sets (number of data sets identifying n, n-1, n-2, ...., 1, 0 parameters
 data_utility_plot(data_list_v3_root1, noise=1)
 
@@ -99,7 +98,7 @@ parameter_identifibaility_plot(max_parameter_v3_root2, noise=1)
 # identifiable data combinations for each parameter
 parameter_experiment_info_spider(experiment_info_v3_root2, noise=1)
 # plot true parameter values and determined parameter values
-plot_parameter_values(true_value_v3_root2)
+plot_parameter_values(true_value_v3_root2, noise=1, data_sets_to_plot=500)
 # plot utility of data sets (number of data sets identifying n, n-1, n-2, ...., 1, 0 parameters
 data_utility_plot(data_list_v3_root2, noise=1)
 
