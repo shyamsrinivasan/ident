@@ -459,7 +459,8 @@ def multi_box_plot(figure, axis_object, plot_data, noise=1):
     return axis_object
 
 
-def multi_parameter_box_plot(figure, outer_grid_object, number_parameters, parameter_value_info, data_set_size_to_plot=[]):
+def multi_parameter_box_plot(figure, outer_grid_object, number_parameters, parameter_value_info,
+                             data_set_size_to_plot=[]):
     """loop through multiple parameter data sets whose ident values are to be plotted as box plots"""
     inner_grid = gridspec.GridSpecFromSubplotSpec(number_parameters, 1,
                                                   subplot_spec=outer_grid_object, wspace=0.1, hspace=0.1)
@@ -475,7 +476,7 @@ def multi_parameter_box_plot(figure, outer_grid_object, number_parameters, param
     return None
 
 
-def plot_parameter_values(parameter_values, noise=0):
+def plot_parameter_values(parameter_values, noise=0, data_sets_to_plot=[]):
     """get box plot of parameter values (determined values vs true values used to create simulations)"""
     number_of_fluxes = len(parameter_values["processed"])
     number_of_plots = number_of_fluxes
@@ -489,7 +490,6 @@ def plot_parameter_values(parameter_values, noise=0):
         number_of_columns = number_of_plots / number_of_rows
     figure = plt.figure(figsize=(6, 4))
     outer_grid = gridspec.GridSpec(number_of_rows, number_of_columns, wspace=0.2, hspace=0.2)
-    f, axarr = plt.subplots(number_of_rows, number_of_columns, figsize=(6, 4), dpi=100, facecolor='w', edgecolor='k')
     for i_flux in range(0, number_of_fluxes):
         if noise:
             # plot distribution of parameter values for all each data set that can identify parameters.
@@ -497,10 +497,12 @@ def plot_parameter_values(parameter_values, noise=0):
             number_parameters = len(parameter_values["processed"][i_flux])
             try:
                 multi_parameter_box_plot(figure, outer_grid[i_flux],
-                                         number_parameters, parameter_values["processed"][i_flux])
+                                         number_parameters, parameter_values["processed"][i_flux],
+                                         data_set_size_to_plot=data_sets_to_plot)
             except TypeError:
                 multi_parameter_box_plot(figure, outer_grid,
-                                         number_parameters, parameter_values["processed"][i_flux])
+                                         number_parameters, parameter_values["processed"][i_flux],
+                                         data_set_size_to_plot=data_sets_to_plot)
         else:
             all_parameter_info = []
             all_parameter_names = []
