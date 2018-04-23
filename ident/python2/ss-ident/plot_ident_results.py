@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 from kotte_model import ident_parameter_name
 from kotte_model import kotte_experiment_type_name
 from kotte_model import kotte_variable_name
@@ -441,6 +442,39 @@ def plot_dynamic_sims(dynamic_data, multiple=0, concentrations=1, fluxes=0):
     return None
 
 
+def multi_box_plot(figure, axis_object, plot_data, noise=1):
+    """generate box plot of distribution of data in plot_data"""
+    if not noise:
+        axis_object = plt.Subplot(figure, axis_object)
+    bp = axis_object.boxplot(plot_data)
+    for whiskers in bp["whiskers"]:
+        whiskers.set(color='k', linewidth=2)
+    for flier in bp['fliers']:
+        flier.set(marker='o', color='r', alpha=0.5)
+    # Remove top axes and right axes ticks
+    axis_object.get_xaxis().tick_bottom()
+    axis_object.get_yaxis().tick_left()
+    figure.add_subplot(axis_object)
+    plt.show()
+    return axis_object
+
+
+def multi_parameter_box_plot(figure, outer_grid_object, number_parameters, parameter_value_info, data_set_size_to_plot=[]):
+    """loop through multiple parameter data sets whose ident values are to be plotted as box plots"""
+    inner_grid = gridspec.GridSpecFromSubplotSpec(number_parameters, 1,
+                                                  subplot_spec=outer_grid_object, wspace=0.1, hspace=0.1)
+    for i_parameter_number, i_parameter_info in enumerate(parameter_value_info):
+        ax = plt.Subplot(figure, inner_grid[i_parameter_number])
+        if data_set_size_to_plot:
+            if i_parameter_info["accepted sample ident data"].shape[1] >= data_set_size_to_plot:
+                multi_box_plot(figure, ax, i_parameter_info["accepted sample ident data"][:, 0:data_set_size_to_plot])
+            else:
+                multi_box_plot(figure, ax, i_parameter_info["accepted sample ident data"])
+        else:
+            multi_box_plot(figure, ax, i_parameter_info["accepted sample ident data"])
+    return None
+
+
 def plot_parameter_values(parameter_values, noise=0):
     """get box plot of parameter values (determined values vs true values used to create simulations)"""
     number_of_fluxes = len(parameter_values["processed"])
@@ -453,12 +487,20 @@ def plot_parameter_values(parameter_values, noise=0):
         number_of_columns = (number_of_plots + 1) / number_of_rows
     else:
         number_of_columns = number_of_plots / number_of_rows
+    figure = plt.figure(figsize=(6, 4))
+    outer_grid = gridspec.GridSpec(number_of_rows, number_of_columns, wspace=0.2, hspace=0.2)
     f, axarr = plt.subplots(number_of_rows, number_of_columns, figsize=(6, 4), dpi=100, facecolor='w', edgecolor='k')
     for i_flux in range(0, number_of_fluxes):
         if noise:
             # plot distribution of parameter values for all each data set that can identify parameters.
             # Distribution is plotted for all noise samples for each data sets used
-            pass
+            number_parameters = len(parameter_values["processed"][i_flux])
+            try:
+                multi_parameter_box_plot(figure, outer_grid[i_flux],
+                                         number_parameters, parameter_values["processed"][i_flux])
+            except TypeError:
+                multi_parameter_box_plot(figure, outer_grid,
+                                         number_parameters, parameter_values["processed"][i_flux])
         else:
             all_parameter_info = []
             all_parameter_names = []
@@ -469,29 +511,16 @@ def plot_parameter_values(parameter_values, noise=0):
                 all_parameter_names.append(i_parameter_info["parameter name"])
                 all_parameter_true_value.append(i_parameter_info["true value"])
             try:
-                bp = axarr[i_flux].boxplot(all_parameter_info)
+                axis_object = multi_box_plot(figure, outer_grid[i_flux], all_parameter_info, noise=0)
             except TypeError:
-                bp = axarr.boxplot(all_parameter_info)
-            for whiskers in bp["whiskers"]:
-                whiskers.set(color='k', linewidth=2)
-            for flier in bp['fliers']:
-                flier.set(marker='o', color='r', alpha=0.5)
-
-            try:
-                axarr[i_flux].scatter(range(1, number_parameters+1), all_parameter_true_value,
-                                      color='r', marker='o')
-                axarr[i_flux].set_xticklabels(all_parameter_names)
-                # Remove top axes and right axes ticks
-                axarr[i_flux].get_xaxis().tick_bottom()
-                axarr[i_flux].get_yaxis().tick_left()
-            except TypeError:
-                axarr.scatter(range(1, number_parameters + 1), all_parameter_true_value,
-                              color='r', marker='o')
-                axarr.set_xticklabels(all_parameter_names)
-                # Remove top axes and right axes ticks
-                axarr.get_xaxis().tick_bottom()
-                axarr.get_yaxis().tick_left()
-                # axis_obj.set_title()
+                axis_object = multi_box_plot(figure, outer_grid, all_parameter_info, noise=0)
+            axis_object.scatter(range(1, number_parameters + 1), all_parameter_true_value,
+                                  color='r', marker='o')
+            axis_object.set_xticklabels(all_parameter_names)
+            # Remove top axes and right axes ticks
+            axis_object.get_xaxis().tick_bottom()
+            axis_object.get_yaxis().tick_left()
+    figure.show()
     plt.show()
 
     return None
