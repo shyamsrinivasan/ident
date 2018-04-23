@@ -75,7 +75,7 @@ parameter_identifibaility_plot(max_parameter_v3_root1, noise=1)
 # identifiable data combinations for each parameter
 parameter_experiment_info_spider(experiment_info_v3_root1, noise=1)
 # plot true parameter values and determined parameter values
-plot_parameter_values(true_value_v3_root1)
+plot_parameter_values(true_value_v3_root1, noise=1)
 # plot utility of data sets (number of data sets identifying n, n-1, n-2, ...., 1, 0 parameters
 data_utility_plot(data_list_v3_root1, noise=1)
 
