@@ -185,54 +185,6 @@
 \clearpage
 
 \section{Supplementary Methods}
-\subsection{Kinetic model of gluconeogenesis in \textit{E. coli}}\label{sec:small-model}
-A previously proposed kinetic model \parencite{Kotte2014, Srinivasan2017} for acetate consumption through gluconeogenesis (Figure \ref{fig:network}) is used as a case study to illustrate identifiability analysis for experimental design for parameter estimation in kinetic models of metabolism. The kinetic model is described below.
-
-\begin{figure}[!tbhp]
-	\centering{\includegraphics[width=.3\textwidth,height=.6\textheight,keepaspectratio]{figures/figure5/Figure1_NetworkA}}
-	\caption{The previously published small metabolic network for gluconeogenesis used to demonstrate our practical identifiability method for kinetic models of metabolism.}\label{fig:network}
-\end{figure}		
-
-\begin{equation}\label{eq:ode1}
-\frac{d}{dt}pep=v_1-v_2-v_4
-\end{equation}
-\begin{equation}\label{eq:ode2}
-\frac{d}{dt}fdp=v_2-v_3
-\end{equation}
-\begin{equation}\label{eq:ode3}
-\frac{d}{dt}E=v_5 - d E
-\end{equation}
-The kinetic expressions for fluxes $v_1$ through $v_5$ are given below. The consumption of acetate through $v_1$ and conversion of \textit{pep} through $v_2$ are expressed in Equations (\ref{eq:flux1}) and (\ref{eq:flux2}) respectively using Michaelis-Menten kinetics. The acetate flux through $v_1$ is also governed by the quantity of available enzyme E. 
-\begin{equation}\label{eq:flux1}
-v_1 = k_{1}^{cat}E\frac{ac}{ac+K_{1}^{ac}}
-\end{equation}		
-The model for flux $v_1$ of the small network (Figure \ref{fig:network}), uses the concentration of the enzyme E as a variable (Equation \ref{eq:flux1}). Since we assume that steady state experimental information is only available for metabolite concentrations and fluxes, and not for enzymes (again the details on relaxing this assumption are discussed later), the expression in Equation (\ref{eq:flux1}) for $v_1$ cannot be used for identifying parameters $k_1^{cat}$ and $K_1^{ac}$. So, we modify the Michaelis-Menten kinetic rate law expression to eliminate the enzyme concentration E as a variable in Equation (\ref{eq:flux1a}). Consequently $k_1^{cat}$ is replaced by $V_1^{max}$ as a parameter to describe $v_1$. The corresponding enzyme binding constant is denoted as $K_1^{ac} (ne)$ to distinguish it from the enzyme binding constant calculated in the presence of measured enzyme concentration data.
-\begin{align}\label{eq:flux1a}
-v_1 = V_1^{max}\frac{ac}{ac+K_{1}^{ac}(ne)}
-\end{align}		
-We choose the expression for flux $v_1$ given in Equation (\ref{eq:flux1a}) to demonstrate our method for practical identifiability. 	
-\begin{equation}\label{eq:flux2}
-v_2 = V_{2}^{max}\frac{pep}{pep+K_{2}^{pep}}
-\end{equation}
-\begin{equation}\label{eq:flux3}
-v_3 = V_{3}^{max}\frac{\tilde{fdp}\left(1+\tilde{fdp}\right)^3}{\left(1+\tilde{fdp}\right)^4+L_3\left(1+\frac{pep}{K_{3}^{pep}}\right)^{-4}}
-\end{equation}
-The allosterically regulated flux $v_3$ for the consumption of \textit{fdp} is expressed in Equation (\ref{eq:flux3}) using the Monod-Wyman-Changeux (MWC) model for allosterically regulated enzymes, where $\tilde{fdp}$ refers to the ratio of \textit{fdp} with respect to its allosteric binding constant $K_{3}^{fdp}$. 
-
-The practically identifiability of parameters of a given flux are determined by solving a system of nonlinear algebraic equations using a computer algebra system (Section \ref{sec:ident}). We find that the nonlinearity of the MWC kinetic rate law used to model the allosteric regulation of $v_3$ makes it computationally intractable for determining the closed form expressions of the three parameters $V_3^{max}$, $K_3^{fdp}$ and $K_3^{pep}$ using a computer algebra system (Mathematica or SymPy in Python). In order to overcome this computational obstacle, we model the reaction rate for $v_3$ using the convenience kinetic rate law formulation \parencite{Liebermeister2006}. The corresponding expression obtained for $v_3$ is given below (Equation \ref{eq:flux3_convkin}). 	
-\begin{align}\label{eq:flux3_convkin}
-v_3 = V_3^{max}\left(\frac{1}{1 + \frac{K_3^{pep}}{pep}}\right)\left(\frac{\frac{fdp}{K_3^{fdp}}}{1 + \frac{fdp}{K_3^{fdp}}}\right)
-\end{align}	
-
-The flux $v_4$ for the export of \textit{pep} is expressed as a linear equation dependent on $pep$ in Equation (\ref{eq:flux4}).
-\begin{equation}\label{eq:flux4}
-v_4 = k_{4}^{cat}.pep
-\end{equation}		
-The production of enzyme E is represented by flux $v_5$. This flux is inhibited by \textit{fdp} and modeled using Hill kinetics, where $K_e^{fdp}$ represents the Hill binding constant for the inhibiting metabolite \textit{fdp}, $n_e$ is the Hill exponent, and $V_e^{max}$ is the maximum reaction rate for $v_5$.
-\begin{align}\label{eq:flux5}
-v_5 = V_e^{max}\left(\frac{1}{1+\left(\frac{fdp}{K_{e}^{fdp}}\right)^{n_e}}\right)
-\end{align}
-
 \subsection{Data for establishing parameter identifiability in kinetic model of gluconeogenesis}\label{sec:experiments}
 Steady state information on the metabolome and the fluxome can be gathered under different physiological conditions. One way to alter the physiological conditions is to change the substrate concentration under which the cells grow. In the small metabolic network (Figure \ref{fig:network}), the acetate concentration plays the role of a substrate, and  determines the acetate uptake flux $v_1$ (Equation \ref{eq:flux1}). Thus, steady state metabolite concentrations and fluxes can be calculated under various acetate concentrations to form different experimental data combinations that measure cellular response to changes in the substrate concentration. 
 
