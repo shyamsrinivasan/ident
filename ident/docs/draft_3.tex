@@ -302,14 +302,25 @@
 
 	So, the observation of practical non-identifiability for $v_3$ in the presence of local structural identifiability is in contrast to what we observed for $v_5$ earlier. However, we find that $v_3$ is practically identifiable when its parameters are also structurally identifiable (Figure \ref{fig:v3_var_ck_values}). Earlier in Section \ref{sec:proof} we had mentioned that $V_3^{max}$ and $K_3^{fdp}$ are structurally identifiable only when $K_3^{pep}$ is fixed, and $V_3^{max}$ and $K_3^{pep}$ are structurally identifiable when $K_3^{fdp}$ is fixed. Under these scenarios we find the structurally identifiable parameters to also be practically identifiable (Figure \ref{fig:v3_var_ck_values}).	
 	
-	Thus, in conjunction with the practical identifiability of $v_5$ established earlier, we see that it is possible to delineate between structural and practical identifiability of parameters in kinetic models of metabolism only under certain conditions, and not in others.
+	In conjunction with the practical identifiability of $v_5$ established earlier, we see that it is possible to delineate between structural and practical identifiability of parameters in kinetic models of metabolism only under certain conditions, and not in others.
 	
 	\subsection{A priori experimental design through practical parameter identification}\label{sec:design}	
+	The analysis of parameter practical identifiability can be used to gather information on the type of experiments that can provide useful data for parameter estimation. For instance, during practical identifiability analysis, if the denominator of the closed-form expression is zero, then the experimental data set concerned is said to be incapable of practically identifying the said parameter, and the data from that combination of experiments is considered non-informative. We can also determine whether a particular combination of experiments is informative or not based on the physiological feasibility of parameter values obtained from various combinations of experimental data for each closed-form expression (Figure \ref{fig:ident-flowchart}b). If parameter values are not physiologically feasible, then the experimental data set concerned is said to be incapable of practically identifying the said parameter, and the data from that combination of experiments is considered non-informative.
+	
+	Based on the aforementioned criteria, we can determine the number of different experimental data combinations that can practically identify each parameter in each flux. This is shown in Figure \ref{fig:ident}.
+	
+	\begin{figure}[!tbhp]
+		\centering{\includegraphics[width=1.0\textwidth,height=0.5\textheight,keepaspectratio]{figures/figure1/v1_k1cat_v2_v5_2_ck_ident_exp_info}}
+		\caption{The number of data combination from 21 different in silico experiments that can practically identify each parameter in fluxes a) $v_1$, b) $v_2$, c) $v_5$ when there is no noise in the input experimental data. The percentage of total combinations of experimental data used for analysis (240 for $v_1$ and $v_2$, and 421 for $v_5$) that can identify each parameter is also specified. $v_1$, $v_2$ and $v_5$ require data from two experiments for analysis. The contribution of different experiment type towards identifying each parameter is shown in the spider plots.}\label{fig:ident}
+	\end{figure}
+	
+
+	
 	Final section talking about distribution of experiments to obtain informative data.
 	
-	If the denominator of the closed-form expression is zero, then the experimental data set concerned is said to be incapable of practically identifying the said parameter, and the data from that combination of experiments is considered non-informative.
 	
-	In addition, we also reduce the possible space within which a parameter could be practically identifiable by checking for the physiological feasibility of the parameter values that are obtained through this analysis (Figure \ref{fig:ident-flowchart}b). If the resulting parameter values obtained from various combinations of experimental data for each closed-form expression are not physiologically feasible, then the experimental data set concerned is said to be incapable of practically identifying the said parameter, and the data from that combination of experiments is considered non-informative.
+	
+	
 	
 	
 	\subsection{Parameter non-identifiability due to uncertainty in Experimental Data}\label{sec:uncertainty}
@@ -349,10 +360,7 @@
 		\caption{Flow diagram showing a method for experimental design that uses our methodology for practical identification of parameters to determine the number and type of experiments required to identify all fluxes within a given metabolic network.}\label{fig:ident-design}
 	\end{figure}
 
-	\begin{figure}[!tbhp]
-		\centering{\includegraphics[width=1.0\textwidth,height=0.7\textheight,keepaspectratio]{figures/figure1/v1_V1max_v2_v3_1_v5_mwc_ck_ident}}
-		\caption{The number of data combination from 21 different in silico experiments that can practically identify each parameter in fluxes a) and e) $v_1$, b)  and f) $v_2$, c) and g) $v_3$, and d) and h) $v_5$ when there is no noise in the input experimental data. The percentage of total combinations of experimental data used for analysis (240 for $v_1$ and $v_2$, 3360 for $v_3$ and 421 for $v_5$) that can identify each parameter is also specified. $v_1$, $v_2$ and $v_5$ require data from two experiments for analysis, and $v_3$ requires data from three experiments. Results for only one of the two possible roots are shown for $v_3$ and $K_e^{fdp}$ in $v_5$. The results obtained using data from the MWC model for $v_3$ are presented in the panels on the left hand side column and the panels on the right hand column show results obtained using data derived from the Convenience kinetics model for $v_3$.}\label{fig:ident}
-	\end{figure}
+	
 
 	\begin{figure}[!tbhp]
 		\centering{\includegraphics[width=1.0\textwidth,height=0.5\textheight,keepaspectratio]{figures/figure4/v1_V1max_v2_v3_1_v5_2_mwc_ck_data_utility}}
