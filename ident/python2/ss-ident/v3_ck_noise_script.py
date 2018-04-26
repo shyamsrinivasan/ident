@@ -30,7 +30,7 @@ ode_parameter_values = {"K1ac": np.array([.1]),
 
 # get experimental system steady state data without noise
 exp_xss, exp_fss, exp_ssid, perturbation_details = \
-    generate_expdata(y0, cvode_options, ode_parameter_values, noise=1, number_of_samples=100, kinetics=2,
+    generate_expdata(y0, cvode_options, ode_parameter_values, noise=1, number_of_samples=50, kinetics=2,
                      dynamic_plot=1, perturbation_plot=0)
 
 # arrange experimental data to form multiple data sets
@@ -74,7 +74,7 @@ parameter_identifibaility_plot(max_parameter_v3_root1, noise=1)
 # identifiable data combinations for each parameter
 parameter_experiment_info_spider(experiment_info_v3_root1, noise=1)
 # plot true parameter values and determined parameter values
-plot_parameter_values(true_value_v3_root1, noise=1, data_sets_to_plot=1000)
+plot_parameter_values(true_value_v3_root1, noise=1, data_sets_to_plot=5000)
 # plot utility of data sets (number of data sets identifying n, n-1, n-2, ...., 1, 0 parameters
 data_utility_plot(data_list_v3_root1, noise=1)
 
