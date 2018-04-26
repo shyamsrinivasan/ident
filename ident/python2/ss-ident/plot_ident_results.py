@@ -459,20 +459,33 @@ def multi_box_plot(figure, axis_object, plot_data, noise=1):
     return axis_object
 
 
+def get_true_boolean_data(raw_ident_data, raw_ident_boolean_data):
+    """get identifying samples for each data set and collate in list of size = number_data_sets"""
+    number_samples, number_data_sets = raw_ident_data.shape
+    # go through each data set and pick only values from samples that have true values
+    true_ident_data = []
+    for i_data in range(0, number_data_sets):
+        true_ident_data.append(raw_ident_data[raw_ident_boolean_data[:, i_data], i_data])
+    return true_ident_data
+
+
 def multi_parameter_box_plot(figure, outer_grid_object, number_parameters, parameter_value_info,
-                             data_set_size_to_plot=[]):
+                             data_set_indices_to_plot=[]):
     """loop through multiple parameter data sets whose ident values are to be plotted as box plots"""
     inner_grid = gridspec.GridSpecFromSubplotSpec(number_parameters, 1,
                                                   subplot_spec=outer_grid_object, wspace=0.1, hspace=0.1)
     for i_parameter_number, i_parameter_info in enumerate(parameter_value_info):
         ax = plt.Subplot(figure, inner_grid[i_parameter_number])
-        if data_set_size_to_plot:
-            if i_parameter_info["accepted sample ident data"].shape[1] >= data_set_size_to_plot:
-                multi_box_plot(figure, ax, i_parameter_info["accepted sample ident data"][:, 0:data_set_size_to_plot])
+        # get only identifying samples for each data set
+        plot_data = get_true_boolean_data(i_parameter_info["raw sample ident data"],
+                                          np.array(i_parameter_info["raw sample boolean data"]))
+        if data_set_indices_to_plot:
+            if len(plot_data) >= len(data_set_indices_to_plot):
+                multi_box_plot(figure, ax, [plot_data[j_index_to_plot] for j_index_to_plot in data_set_indices_to_plot])
             else:
-                multi_box_plot(figure, ax, i_parameter_info["accepted sample ident data"])
+                multi_box_plot(figure, ax, plot_data)
         else:
-            multi_box_plot(figure, ax, i_parameter_info["accepted sample ident data"])
+            multi_box_plot(figure, ax, plot_data)
     return None
 
 
@@ -498,11 +511,11 @@ def plot_parameter_values(parameter_values, noise=0, data_sets_to_plot=[]):
             try:
                 multi_parameter_box_plot(figure, outer_grid[i_flux],
                                          number_parameters, parameter_values["processed"][i_flux],
-                                         data_set_size_to_plot=data_sets_to_plot)
+                                         data_set_indices_to_plot=data_sets_to_plot)
             except TypeError:
                 multi_parameter_box_plot(figure, outer_grid,
                                          number_parameters, parameter_values["processed"][i_flux],
-                                         data_set_size_to_plot=data_sets_to_plot)
+                                         data_set_indices_to_plot=data_sets_to_plot)
         else:
             all_parameter_info = []
             all_parameter_names = []

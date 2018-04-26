@@ -84,7 +84,7 @@ def generate_no_noise_data(y0, all_options, kinetics):
     return steady_state_info, dynamic_info
 
 
-def generate_noisy_data(y0, all_options, kinetics, number_of_samples=1):
+def generate_noisy_data(y0, all_options, kinetics, number_of_samples=1, noise_std=0.05):
     steady_state_info, dynamic_info = generate_data(y0, all_options, kinetics)
     # dynamic data
     concentration_dynamic = dynamic_info["y"]
@@ -92,7 +92,7 @@ def generate_noisy_data(y0, all_options, kinetics, number_of_samples=1):
 
     # add noise to dynamic data
     noisy_concentration_dynamic, noisy_flux_dynamic = \
-        add_noise_dynamic(concentration_dynamic, flux_dynamic, number_of_samples)
+        add_noise_dynamic(concentration_dynamic, flux_dynamic, number_of_samples, noise_std=noise_std)
 
     # get information for each sample separately
     # all_sample_noisy_dynamic_info = []
@@ -178,7 +178,7 @@ def run_no_noise_parameter_perturbation(parameter_perturbation, y0, other_option
 
 
 def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options, kinetics=1,
-                                     number_of_samples=1, plot_arg=0):
+                                     number_of_samples=1, plot_arg=0, noise_std=0.05):
     """run parameter perturbations based on tuple input parameter perturbation
     with first position of tuple being parameter id and second index being
     parameter value"""
@@ -203,7 +203,8 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options, 
         all_options = (cvode_options, changed_ode_parameter)
         # generate data using MWC Kinetics
         noisy_ss_iter, noisy_dynamic_iter, ss_iter, dynamic_iter = \
-            generate_noisy_data(y0, all_options, kinetics=kinetics, number_of_samples=number_of_samples)
+            generate_noisy_data(y0, all_options, kinetics=kinetics,
+                                number_of_samples=number_of_samples, noise_std=noise_std)
 
         noisy_ss.append(noisy_ss_iter)
         noisy_dynamic.append(noisy_dynamic_iter)
