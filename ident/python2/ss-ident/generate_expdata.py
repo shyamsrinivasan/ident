@@ -5,13 +5,14 @@ from generate_noisy_data import run_noisy_parameter_perturbation
 from plot_ident_results import plot_dynamic_sim_concentrations
 
 
-def initialize_to_ss(y0, cvode_options, ode_parameter_values, noise=1, kinetics=1):
+def initialize_to_ss(y0, cvode_options, ode_parameter_values, noise=1, kinetics=1, noise_std=0.05):
     """initialize system to ss from any y0 with given options and system parameters"""
     if noise:
         # get initial noisy system steady state
         initial_options = (cvode_options, ode_parameter_values)
         # use non-noisy initial ss (wt) data
-        noisy_initial_ss, noisy_initial_dyn, _, _ = generate_noisy_data(y0, initial_options, kinetics=kinetics)
+        noisy_initial_ss, noisy_initial_dyn, _, _ = generate_noisy_data(y0, initial_options, kinetics=kinetics,
+                                                                        noise_std=noise_std)
         return noisy_initial_ss, noisy_initial_dyn
     else:
         # get initial noisy system steady state
@@ -21,14 +22,15 @@ def initialize_to_ss(y0, cvode_options, ode_parameter_values, noise=1, kinetics=
 
 
 def perturb_parameters(initial_ss, parameter_perturbations, cvode_options, ode_parameter_values,
-                       number_of_samples=1, noise=1, kinetics=1, dynamic_plot=0):
+                       number_of_samples=1, noise=1, kinetics=1, dynamic_plot=0, noise_std=0.05):
     """perform parameter perturbations from given initial ss"""
 
     if noise:
         perturbation_options = {'ode_parameters': ode_parameter_values, 'cvode_options': cvode_options}
         noisy_ss, noisy_dynamic, perturbation_details, _, dynamic_info = \
             run_noisy_parameter_perturbation(parameter_perturbations, initial_ss["y"][0], perturbation_options,
-                                             kinetics=kinetics, number_of_samples=number_of_samples)
+                                             kinetics=kinetics, number_of_samples=number_of_samples,
+                                             noise_std=noise_std)
         return noisy_ss, perturbation_details
     else:
         perturbation_options = {'ode_parameters': ode_parameter_values, 'cvode_options': cvode_options}
@@ -39,11 +41,12 @@ def perturb_parameters(initial_ss, parameter_perturbations, cvode_options, ode_p
 
 
 def generate_expdata(y0, cvode_options, ode_parameter_values, number_of_samples=1, noise=1, kinetics=1,
-                     dynamic_plot=0, perturbation_plot=0):
+                     dynamic_plot=0, perturbation_plot=0, noise_std=0.05):
     """generate noisy experimental data for kotte network to test identifiability"""
 
     # get initial noisy system steady state
-    initial_ss, initial_dyn = initialize_to_ss(y0, cvode_options, ode_parameter_values, noise, kinetics=kinetics)
+    initial_ss, initial_dyn = initialize_to_ss(y0, cvode_options, ode_parameter_values, noise,
+                                               kinetics=kinetics, noise_std=noise_std)
 
     # plot all dynamic courses
     if dynamic_plot:
@@ -58,12 +61,12 @@ def generate_expdata(y0, cvode_options, ode_parameter_values, number_of_samples=
         perturbed_ss, perturbation_details = perturb_parameters(initial_ss[0], parameter_perturbation,
                                                                 cvode_options, ode_parameter_values,
                                                                 number_of_samples, noise=noise, kinetics=kinetics,
-                                                                dynamic_plot=perturbation_plot)
+                                                                dynamic_plot=perturbation_plot, noise_std=noise_std)
     except KeyError:
         perturbed_ss, perturbation_details = perturb_parameters(initial_ss, parameter_perturbation,
                                                                 cvode_options, ode_parameter_values,
                                                                 number_of_samples, noise=noise, kinetics=kinetics,
-                                                                dynamic_plot=perturbation_plot)
+                                                                dynamic_plot=perturbation_plot, noise_std=noise_std)
 
     if noise:
         all_sample_exp_xss = [[i_perturbation_data["y"][i_sample] for i_perturbation_data in perturbed_ss]
