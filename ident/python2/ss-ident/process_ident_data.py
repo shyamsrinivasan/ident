@@ -642,7 +642,8 @@ def collate_sample_based_experiment_info(number_of_fluxes_per_sample, all_sample
 
 
 def collate_sample_based_parameter_value(number_of_fluxes_per_sample, all_sample_parameter_value):
-    if len(all_sample_parameter_value) > 1:
+    number_samples = len(all_sample_parameter_value)
+    if number_samples > 1:
         # if more than one sample calculate mean based on common ids that can
         # identify each parameter between different samples
         all_flux_parameter_value = []
@@ -664,14 +665,14 @@ def collate_sample_based_parameter_value(number_of_fluxes_per_sample, all_sample
                 all_sample_boolean = [[True if j_data_id in set(j_sample_data_id) else False
                                        for j_data_id in range(0, data_set_size)]
                                       for j_sample_data_id in all_sample_data_ids]
-                data_sample_ident = np.zeros((5, data_set_size))
+                data_sample_ident = np.zeros((number_samples, data_set_size))
                 for j_sample_id, j_sample_data in enumerate(all_sample_data_id_ident_value):
                     for j_ident_data in j_sample_data:
                         data_id, ident_data = j_ident_data
                         data_sample_ident[j_sample_id, data_id] = ident_data
                 # box plot of across sample variations for each data
                 all_boolean_sum = sum(np.array(all_sample_boolean))
-                bool_accept = [True if value == 5 else False for value in all_boolean_sum]
+                bool_accept = [True if value == number_samples else False for value in all_boolean_sum]
                 # import matplotlib.pyplot as plt
                 # f, ax = plt.subplots(1, 1)
                 # ax.boxplot(data_sample_ident[:, bool_accept])
