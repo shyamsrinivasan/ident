@@ -442,11 +442,14 @@ def plot_dynamic_sims(dynamic_data, multiple=0, concentrations=1, fluxes=0):
     return None
 
 
-def multi_box_plot(figure, axis_object, plot_data, noise=1):
+def multi_box_plot(figure, axis_object, plot_data, noise=1, plot_positions=[]):
     """generate box plot of distribution of data in plot_data"""
     if not noise:
         axis_object = plt.Subplot(figure, axis_object)
-    bp = axis_object.boxplot(plot_data)
+    if plot_positions:
+        bp = axis_object.boxplot(plot_data, positions=plot_positions, whis='range')
+    else:
+        bp = axis_object.boxplot(plot_data)
     for whiskers in bp["whiskers"]:
         whiskers.set(color='k', linewidth=2)
     for flier in bp['fliers']:
@@ -459,14 +462,17 @@ def multi_box_plot(figure, axis_object, plot_data, noise=1):
     return axis_object
 
 
-def get_true_boolean_data(raw_ident_data, raw_ident_boolean_data):
+def get_true_boolean_data(raw_ident_data, raw_ident_boolean_data, data_set_indices_to_plot):
     """get identifying samples for each data set and collate in list of size = number_data_sets"""
-    number_samples, number_data_sets = raw_ident_data.shape
+    # number_samples, number_data_sets = raw_ident_data.shape
     # go through each data set and pick only values from samples that have true values
-    true_ident_data = []
-    for i_data in range(0, number_data_sets):
-        true_ident_data.append(raw_ident_data[raw_ident_boolean_data[:, i_data], i_data])
-    return true_ident_data
+    true_ident_data = []  # range(0, number_data_sets)
+    selected_data_id = []
+    for i_data in data_set_indices_to_plot:
+        if i_data < raw_ident_boolean_data.shape[1]:
+            true_ident_data.append(raw_ident_data[raw_ident_boolean_data[:, i_data], i_data])
+            selected_data_id.append(i_data)
+    return true_ident_data, selected_data_id
 
 
 def multi_parameter_box_plot(figure, outer_grid_object, number_parameters, parameter_value_info,
@@ -477,15 +483,10 @@ def multi_parameter_box_plot(figure, outer_grid_object, number_parameters, param
     for i_parameter_number, i_parameter_info in enumerate(parameter_value_info):
         ax = plt.Subplot(figure, inner_grid[i_parameter_number])
         # get only identifying samples for each data set
-        plot_data = get_true_boolean_data(i_parameter_info["raw sample ident data"],
-                                          np.array(i_parameter_info["raw sample boolean data"]))
-        if data_set_indices_to_plot:
-            if len(plot_data) >= len(data_set_indices_to_plot):
-                multi_box_plot(figure, ax, [plot_data[j_index_to_plot] for j_index_to_plot in data_set_indices_to_plot])
-            else:
-                multi_box_plot(figure, ax, plot_data)
-        else:
-            multi_box_plot(figure, ax, plot_data)
+        plot_data, selected_data_id  = get_true_boolean_data(i_parameter_info["raw sample ident data"],
+                                          np.array(i_parameter_info["raw sample boolean data"]),
+                                          data_set_indices_to_plot)
+        multi_box_plot(figure, ax, plot_data, selected_data_id)
     return None
 
 
