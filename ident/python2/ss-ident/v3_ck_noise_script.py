@@ -74,7 +74,14 @@ parameter_identifibaility_plot(max_parameter_v3_root1, noise=1)
 # identifiable data combinations for each parameter
 parameter_experiment_info_spider(experiment_info_v3_root1, noise=1)
 # plot true parameter values and determined parameter values
-plot_parameter_values(true_value_v3_root1, noise=1, data_sets_to_plot=range(0, 2000))
+plot_parameter_values(true_value_v3_root1, noise=1, data_sets_to_plot=range(0, 300))
+plot_parameter_values(true_value_v3_root1, noise=1, data_sets_to_plot=range(300, 600))
+plot_parameter_values(true_value_v3_root1, noise=1, data_sets_to_plot=range(600, 1000))
+plot_parameter_values(true_value_v3_root1, noise=1, data_sets_to_plot=range(1000, 1300))
+plot_parameter_values(true_value_v3_root1, noise=1, data_sets_to_plot=range(1300, 1600))
+plot_parameter_values(true_value_v3_root1, noise=1, data_sets_to_plot=range(1600, 2000))
+plot_parameter_values(true_value_v3_root1, noise=1, data_sets_to_plot=range(2000, 2300))
+plot_parameter_values(true_value_v3_root1, noise=1, data_sets_to_plot=range(2300, 2500))
 # plot utility of data sets (number of data sets identifying n, n-1, n-2, ...., 1, 0 parameters
 data_utility_plot(data_list_v3_root1, noise=1)
 
