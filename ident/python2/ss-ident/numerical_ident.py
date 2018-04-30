@@ -1,5 +1,7 @@
 import casadi as casadi
 import numpy as np
+from kotte_model import ident_parameter_name
+from kotte_model import kotte_true_parameter_values
 
 
 def v3_ck_numerical_problem(chosen_data):
@@ -128,6 +130,22 @@ def parse_opt_result(opt_sol):
     return new_opt_sol
 
 
+def opt_result_for_plots(all_data_set_opt_sol):
+    """parse optimization results from all data sets to generate data for box or other(?) plot"""
+    # number_data = len(all_data_set_opt_sol)
+
+    all_obj_fun = [i_data_sol["f"] for i_data_sol in all_data_set_opt_sol]
+    all_xopt = [i_data_sol["xopt"] for i_data_sol in all_data_set_opt_sol]
+    all_lam_x = [i_data_sol["lam_x"] for i_data_sol in all_data_set_opt_sol]
+    all_lam_g = [i_data_sol["lam_g"] for i_data_sol in all_data_set_opt_sol]
+
+    all_solution_details = {"f": all_obj_fun,
+                            "x": all_xopt,
+                            "lam_x": all_lam_x,
+                            "lam_g": all_lam_g}
+    return all_solution_details
+
+
 def identify_all_data_sets(experimental_data, chosen_fun, x0, optim_options={}):
     if chosen_fun == 0:
         ident_fun = v3_ck_numerical_problem
@@ -160,4 +178,32 @@ def identify_all_data_sets(experimental_data, chosen_fun, x0, optim_options={}):
             sol = parse_opt_result(sol)
         all_data_solutions.append(sol)
         print("Identifiability analysis on data set {} of {} complete".format(i_data_id+1, number_data_sets))
-    return all_data_solutions
+
+    opt_solution = opt_result_for_plots(all_data_solutions)
+    return opt_solution
+
+
+def process_opt_solution(opt_solution, number_of_parameters, flux_id, flux_choice):
+    """parse optimization solution based on each parameter from each data set"""
+    # optimal values
+    x_opt = opt_solution["x"]
+    # obj fun value
+    obj_f = opt_solution["f"]
+
+    flux_name = ['flux{}'.format(flux_id)] * number_of_parameters
+    flux_choice = flux_choice * 3
+    all_parameter_name = ident_parameter_name(parameter_id=range(0, number_of_parameters),
+                                              flux_name=flux_name, flux_choice_id=flux_choice)
+    all_parameter_true_value = kotte_true_parameter_values(flux_based=1, flux_name=flux_name,
+                                                           flux_choice_id=flux_choice, parameter_id=all_parameter_name)
+
+    all_parameter_values = []
+    for i_parameter in range(number_of_parameters):
+        i_parameter_sol = [i_data_set_sol[i_parameter] for i_data_set_sol in x_opt]
+        all_parameter_values.append(np.array(i_parameter_sol).flatten())
+    all_parameter_info = {"values": all_parameter_values,
+                          "names": all_parameter_name,
+                          "flux": flux_name,
+                          "flux choice": flux_choice,
+                          "true value": all_parameter_true_value}
+    return all_parameter_info
