@@ -85,28 +85,10 @@ def v3_numerical_problem(chosen_data):
     return nlp
 
 
-def solve_numerical_nlp(chosen_fun, chosen_data):
+def solve_numerical_nlp(chosen_fun, chosen_data, opt_problem_details):
     """solve nlp for determining parameter values numerically"""
     # formulate nlp
-    arg = {}
-    if chosen_fun == 0:
-        nlp = v3_ck_numerical_problem(chosen_data)
-        # Initial condition
-        arg["x0"] = [.1, .1, .1, 0, 0, 0]
-        # Bounds on x
-        ubx = [2, 1, 1, .1, .1, .1]
-        # Bounds on the constraints
-        arg["lbg"] = 3 * [0]
-        arg["ubg"] = 3 * [0]
-    elif chosen_fun == 1:
-        nlp = v3_numerical_problem(chosen_data)
-        # Initial condition
-        arg["x0"] = [.1, .1, .1, 1, 0, 0, 0, 0]
-        # Bounds on x
-        ubx = [2, 1, 1, 5, .1, .1, .1, .1]
-        # Bounds on the constraints
-        arg["lbg"] = 4 * [0]
-        arg["ubg"] = 4 * [0]
+    nlp = chosen_fun(chosen_data)
 
     # NLP solver options
     opts = {"ipopt.tol": 1e-12}
@@ -116,14 +98,8 @@ def solve_numerical_nlp(chosen_fun, chosen_data):
     solver = casadi.nlpsol("solver", "ipopt", nlp, opts)
     # solver = casadi.nlpsol("solver", "sqpmethod", nlp, opts)
 
-    # Bounds on x
-    lbx = nlp["x"].nnz() * [0]
-
-    arg["lbx"] = lbx
-    arg["ubx"] = ubx
-
     # Solve the problem
-    res = solver(**arg)
+    res = solver(**opt_problem_details)
 
     # Print the optimal cost
     print("optimal cost: ", float(res["f"]))
@@ -134,4 +110,29 @@ def solve_numerical_nlp(chosen_fun, chosen_data):
     print("dual solution (x) = ", res["lam_x"])
     print("dual solution (g) = ", res["lam_g"])
 
+    return None
+
+
+def identify_all_data_sets(experimental_data, chosen_fun):
+    if chosen_fun == 0:
+        ident_fun = v3_ck_numerical_problem
+        # Initial condition
+        arg = {"x0": [.1, .1, .1, 0, 0, 0],
+               "lbx": 6 * [0],
+               "ubx": [2, 1, 1, .1, .1, .1],
+               "lbg": 3 * [0],
+               "ubg": 3 * [0]}
+    elif chosen_fun == 1:
+        ident_fun = v3_numerical_problem
+        arg = {"x0": [.1, .1, .1, 1, 0, 0, 0, 0],
+               "lbx": 8 * [0],
+               "ubx": [2, 1, 1, 5, .1, .1, .1, .1],
+               "lbg": 4 * [0],
+               "ubg": 4 * [0]}
+
+    number_data_sets = len(experimental_data)
+    for i_data_id, i_data in enumerate(experimental_data):
+        print("Performing Identifiability Analysis on Data set {} of {}".format(i_data_id, number_data_sets))
+        solve_numerical_nlp(chosen_fun=ident_fun, chosen_data=i_data, opt_problem_details=arg)
+        print("Identifiability analysis on data set {} complete".format(i_data_id))
     return None
