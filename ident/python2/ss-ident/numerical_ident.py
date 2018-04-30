@@ -1,4 +1,5 @@
 import casadi as casadi
+import numpy as np
 
 
 def v3_ck_numerical_problem(chosen_data):
@@ -108,16 +109,23 @@ def solve_numerical_nlp(chosen_fun, chosen_data, opt_problem_details, optim_opti
     # Solve the problem
     res = solver(**opt_problem_details)
 
+    return res
+
+
+def parse_opt_result(opt_sol):
+    """convert all optimization results from casadi.DM to numpy arrays"""
+    new_opt_sol = {"f": opt_sol["f"].full(),
+                   "xopt": opt_sol["x"].full(),
+                   "lam_x": opt_sol["lam_x"].full(),
+                   "lam_g": opt_sol["lam_g"].full()}
     # Print the optimal cost
-    print("optimal cost: ", float(res["f"]))
+    print("optimal cost: ", float(new_opt_sol["f"]))
 
     # Print the optimal solution
-    xopt = res["x"]
-    print("optimal solution: ", xopt)
-    print("dual solution (x) = ", res["lam_x"])
-    print("dual solution (g) = ", res["lam_g"])
-
-    return res
+    print("optimal solution: ", new_opt_sol["xopt"])
+    print("dual solution (x) = ", new_opt_sol["lam_x"])
+    print("dual solution (g) = ", new_opt_sol["lam_g"])
+    return new_opt_sol
 
 
 def identify_all_data_sets(experimental_data, chosen_fun, x0, optim_options={}):
@@ -148,6 +156,8 @@ def identify_all_data_sets(experimental_data, chosen_fun, x0, optim_options={}):
                                       optim_options=optim_options)
         else:
             sol = []
+        if sol:
+            sol = parse_opt_result(sol)
         all_data_solutions.append(sol)
         print("Identifiability analysis on data set {} of {} complete".format(i_data_id+1, number_data_sets))
     return all_data_solutions
