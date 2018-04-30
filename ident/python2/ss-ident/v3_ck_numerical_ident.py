@@ -49,12 +49,14 @@ experimental_datasets_3_expts, \
 # choose one combination of experimental data and solve nlp for that combination
 
 # NLP solver options
-# optim_options = {"solver": "ipopt",
-#                  "opts": {"ipopt.tol": 1e-12}}
-optim_options = {"solver": "sqpmethod",
-                 "opts": {"qpsol": "qpoases"}}
-initial_value = [.1, .1, .1, 0, 0, 0]
-opt_solution = identify_all_data_sets(experimental_data=experimental_datasets_3_expts[0]["values"][0:3], chosen_fun=0,
+optim_options = {"solver": "ipopt",
+                 "opts": {"ipopt.tol": 1e-12}}
+# optim_options = {"solver": "sqpmethod",
+#                  "opts": {"qpsol": "qpoases"}}
+initial_value = [50, 10, 10, 0, 0, 0]
+opt_solution = identify_all_data_sets(experimental_data=experimental_datasets_3_expts[0]["values"], chosen_fun=0,
                                       optim_options=optim_options, x0=initial_value)
 v3_parameter_info = process_opt_solution(opt_solution, number_of_parameters=3, flux_id=3, flux_choice=[3])
 plot_numerical_parameter_estimates(v3_parameter_info)
+
+print("Run complete\n")
