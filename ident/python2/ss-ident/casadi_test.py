@@ -45,8 +45,8 @@ experimental_datasets_3_expts, \
                                                                                                    6, 7, 8, 9, 10,
                                                                                                    16, 17, 18, 19, 20])
 # choose one combination of experimental data and solve nlp for that combination
-from numerical_ident import solve_numerical_nlp
-solve_numerical_nlp(chosen_data=experimental_datasets_3_expts[0]["values"][0], chosen_fun=0)
+from numerical_ident import identify_all_data_sets
+identify_all_data_sets(experimental_data=experimental_datasets_3_expts[0]["values"][0:3], chosen_fun=0)
 
 # get combinations of experimental datasets
 experimental_datasets_4_expts, \
@@ -58,4 +58,4 @@ experimental_datasets_4_expts, \
                                                                                                    6, 7, 8, 9, 10,
                                                                                                    16, 17, 18, 19, 20],
                                                                                 combination_choice=10)
-solve_numerical_nlp(chosen_data=experimental_datasets_4_expts[0]["values"][0], chosen_fun=1)
+# solve_numerical_nlp(chosen_data=experimental_datasets_4_expts[0]["values"][0], chosen_fun=1)
