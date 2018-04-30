@@ -2,6 +2,7 @@ import casadi as casadi
 import numpy as np
 from generate_expdata import generate_expdata
 from simulate_data import arrange_experimental_data_numerical
+from numerical_ident import identify_all_data_sets
 
 
 # generate noisy experimental data for testing identifiability
@@ -45,8 +46,14 @@ experimental_datasets_3_expts, \
                                                                                                    6, 7, 8, 9, 10,
                                                                                                    16, 17, 18, 19, 20])
 # choose one combination of experimental data and solve nlp for that combination
-from numerical_ident import identify_all_data_sets
-identify_all_data_sets(experimental_data=experimental_datasets_3_expts[0]["values"][0:3], chosen_fun=0)
+
+# NLP solver options
+optim_options = {"solver": "ipopt",
+                 "opts": {"ipopt.tol": 1e-12}}
+# optim_options = {"solver": "sqpmethod",
+#                  "opts": {"qpsol": "qpoases"}}
+identify_all_data_sets(experimental_data=experimental_datasets_3_expts[0]["values"][0:3], chosen_fun=0,
+                       optim_options=optim_options)
 
 # get combinations of experimental datasets
 experimental_datasets_4_expts, \
