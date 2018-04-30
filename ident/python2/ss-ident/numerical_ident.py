@@ -85,18 +85,23 @@ def v3_numerical_problem(chosen_data):
     return nlp
 
 
-def solve_numerical_nlp(chosen_fun, chosen_data, opt_problem_details):
+def solve_numerical_nlp(chosen_fun, chosen_data, opt_problem_details, optim_options={}):
     """solve nlp for determining parameter values numerically"""
     # formulate nlp
     nlp = chosen_fun(chosen_data)
 
     # NLP solver options
-    opts = {"ipopt.tol": 1e-12}
-    # opts = {"qpsol": "qpoases"}
+    if optim_options:
+        solver = optim_options["solver"]
+        opts = optim_options["opts"]
+    else:
+        solver = "ipopt"
+        opts = {"ipopt.tol": 1e-12}
+        # solver = "sqpmethod"
+        # opts = {"qpsol": "qpoases"}
 
     # Allocate an NLP solver and buffer
-    solver = casadi.nlpsol("solver", "ipopt", nlp, opts)
-    # solver = casadi.nlpsol("solver", "sqpmethod", nlp, opts)
+    solver = casadi.nlpsol("solver", solver, nlp, opts)
 
     # Solve the problem
     res = solver(**opt_problem_details)
@@ -113,7 +118,7 @@ def solve_numerical_nlp(chosen_fun, chosen_data, opt_problem_details):
     return None
 
 
-def identify_all_data_sets(experimental_data, chosen_fun):
+def identify_all_data_sets(experimental_data, chosen_fun, optim_options={}):
     if chosen_fun == 0:
         ident_fun = v3_ck_numerical_problem
         # Initial condition
@@ -133,6 +138,7 @@ def identify_all_data_sets(experimental_data, chosen_fun):
     number_data_sets = len(experimental_data)
     for i_data_id, i_data in enumerate(experimental_data):
         print("Performing Identifiability Analysis on Data set {} of {}".format(i_data_id, number_data_sets))
-        solve_numerical_nlp(chosen_fun=ident_fun, chosen_data=i_data, opt_problem_details=arg)
+        solve_numerical_nlp(chosen_fun=ident_fun, chosen_data=i_data, opt_problem_details=arg,
+                            optim_options=optim_options)
         print("Identifiability analysis on data set {} complete".format(i_data_id))
     return None
