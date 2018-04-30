@@ -36,16 +36,14 @@ print('Practical Identifiability Analysis of v3 with 3 parameters: V3max, K3fdp 
 # choose identifiability functions to test
 ident_fun_choice = [0]
 # get combinations of experimental datasets
-# get combinations of experimental datasets
-experimental_datasets_4_expts, \
+experimental_datasets_3_expts, \
     experiment_choice, combination_choice = arrange_experimental_data_numerical(exp_xss, exp_fss, perturbation_details,
-                                                                                experiments_per_set=4,
+                                                                                experiments_per_set=3,
                                                                                 flux_id=exp_flux_index,
                                                                                 experiment_choice=[0,
                                                                                                    1, 2, 3, 4, 5,
                                                                                                    6, 7, 8, 9, 10,
-                                                                                                   16, 17, 18, 19, 20],
-                                                                                combination_choice=10)
+                                                                                                   16, 17, 18, 19, 20])
 # choose one combination of experimental data and solve nlp for that combination
 
 # NLP solver options
@@ -53,4 +51,5 @@ optim_options = {"solver": "ipopt",
                  "opts": {"ipopt.tol": 1e-12}}
 # optim_options = {"solver": "sqpmethod",
 #                  "opts": {"qpsol": "qpoases"}}
-solve_numerical_nlp(chosen_data=experimental_datasets_4_expts[0]["values"][0], chosen_fun=1)
+identify_all_data_sets(experimental_data=experimental_datasets_3_expts[0]["values"][0:3], chosen_fun=0,
+                       optim_options=optim_options)
