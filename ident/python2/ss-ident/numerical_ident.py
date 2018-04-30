@@ -120,29 +120,34 @@ def solve_numerical_nlp(chosen_fun, chosen_data, opt_problem_details, optim_opti
     return res
 
 
-def identify_all_data_sets(experimental_data, chosen_fun, optim_options={}):
+def identify_all_data_sets(experimental_data, chosen_fun, x0, optim_options={}):
     if chosen_fun == 0:
         ident_fun = v3_ck_numerical_problem
         # Initial condition
-        arg = {"x0": [.1, .1, .1, 0, 0, 0],
-               "lbx": 6 * [0],
+        arg = {"lbx": 6 * [0],
                "ubx": [2, 1, 1, .1, .1, .1],
                "lbg": 3 * [0],
                "ubg": 3 * [0]}
     elif chosen_fun == 1:
         ident_fun = v3_numerical_problem
-        arg = {"x0": [.1, .1, .1, 1, 0, 0, 0, 0],
-               "lbx": 8 * [0],
+        arg = {"lbx": 8 * [0],
                "ubx": [2, 1, 1, 5, .1, .1, .1, .1],
                "lbg": 4 * [0],
                "ubg": 4 * [0]}
+    else:
+        ident_fun = []
+        arg = {}
+    arg["x0"] = x0
 
     number_data_sets = len(experimental_data)
     all_data_solutions = []
     for i_data_id, i_data in enumerate(experimental_data):
         print("Performing Identifiability Analysis on Data set {} of {}".format(i_data_id+1, number_data_sets))
-        sol = solve_numerical_nlp(chosen_fun=ident_fun, chosen_data=i_data, opt_problem_details=arg,
-                                  optim_options=optim_options)
+        if ident_fun:
+            sol = solve_numerical_nlp(chosen_fun=ident_fun, chosen_data=i_data, opt_problem_details=arg,
+                                      optim_options=optim_options)
+        else:
+            sol = []
         all_data_solutions.append(sol)
         print("Identifiability analysis on data set {} of {} complete".format(i_data_id+1, number_data_sets))
     return all_data_solutions

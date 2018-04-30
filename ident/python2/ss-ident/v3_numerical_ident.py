@@ -23,9 +23,9 @@ ode_parameter_values = {"K1ac": np.array([.1]),
                         "V2max": np.array([1]),
                         "ac": np.array([.1])}
 
-# get experimental system steady state data without noise using Convenience Kinetics for v3 (kinetics = 2)
+# get experimental system steady state data without noise using MWC for v3 (kinetics = 2)
 exp_xss, exp_fss, exp_ssid, perturbation_details = \
-    generate_expdata(y0, cvode_options, ode_parameter_values, noise=0, kinetics=2, dynamic_plot=0,
+    generate_expdata(y0, cvode_options, ode_parameter_values, noise=0, kinetics=1, dynamic_plot=0,
                      perturbation_plot=0)
 
 # arrange experimental data to form multiple data sets
@@ -36,21 +36,23 @@ print('Practical Identifiability Analysis of v3 with 3 parameters: V3max, K3fdp 
 # choose identifiability functions to test
 ident_fun_choice = [0]
 # get combinations of experimental datasets
-experimental_datasets_3_expts, \
+# get combinations of experimental datasets
+experimental_datasets_4_expts, \
     experiment_choice, combination_choice = arrange_experimental_data_numerical(exp_xss, exp_fss, perturbation_details,
-                                                                                experiments_per_set=3,
+                                                                                experiments_per_set=4,
                                                                                 flux_id=exp_flux_index,
                                                                                 experiment_choice=[0,
                                                                                                    1, 2, 3, 4, 5,
                                                                                                    6, 7, 8, 9, 10,
-                                                                                                   16, 17, 18, 19, 20])
+                                                                                                   16, 17, 18, 19, 20],
+                                                                                combination_choice=10)
 # choose one combination of experimental data and solve nlp for that combination
 
 # NLP solver options
-# optim_options = {"solver": "ipopt",
-#                  "opts": {"ipopt.tol": 1e-12}}
-optim_options = {"solver": "sqpmethod",
-                 "opts": {"qpsol": "qpoases"}}
-initial_value = [.1, .1, .1, 0, 0, 0]
-identify_all_data_sets(experimental_data=experimental_datasets_3_expts[0]["values"][0:3], chosen_fun=0,
+optim_options = {"solver": "ipopt",
+                 "opts": {"ipopt.tol": 1e-12}}
+# optim_options = {"solver": "sqpmethod",
+#                  "opts": {"qpsol": "qpoases"}}
+initial_value = [.1, .1, .1, 1, 0, 0, 0, 0]
+identify_all_data_sets(experimental_data=experimental_datasets_4_expts[0]["values"][0], chosen_fun=1,
                        optim_options=optim_options, x0=initial_value)
