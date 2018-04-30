@@ -1,4 +1,3 @@
-import casadi as casadi
 import numpy as np
 from generate_expdata import generate_expdata
 from simulate_data import arrange_experimental_data_numerical
