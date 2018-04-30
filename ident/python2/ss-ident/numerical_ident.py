@@ -5,15 +5,16 @@ def v3_ck_numerical_problem(chosen_data):
     """fun to calculate objectives and constraints for numerical identification of v3
     using convenience kinetics"""
 
+    number_data = len(chosen_data)
     # symbolic variables for use with casadi
     v3max = casadi.SX.sym("v3max")
     k3fdp = casadi.SX.sym("k3fdp")
     k3pep = casadi.SX.sym("k3pep")
-    error = casadi.SX.sym("error", 3)
+    error = casadi.SX.sym("error", number_data)
 
     all_constraints = []
-    for i_data in range(0, 3):
-        _, pep, fdp, _, _, _, v3, _, _, _ = list(chosen_data[i_data])
+    for i_data_id, i_data in enumerate(chosen_data):
+        _, pep, fdp, _, _, _, v3, _, _, _ = list(i_data)
 
         # flux equation for each experiment i_data in chosen_data
         fdp_sat = fdp / k3fdp
@@ -23,14 +24,14 @@ def v3_ck_numerical_problem(chosen_data):
         regulation_activate = 1 / (1 + 1 / pep_sat)
         flux_3 = regulation_activate * nr_3 / dr_3
         # formulate constraint for each experimental data set
-        all_constraints.append(flux_3 - v3 - error[i_data])
+        all_constraints.append(flux_3 - v3 - error[i_data_id])
 
     # create casadi array of constraints
     constraints = casadi.vertcat(*all_constraints)
 
     # create complete casadi objective fun
     objective = error[0]**2
-    for i_error_id in range(1, 3):
+    for i_error_id in range(1, number_data):
         objective += error[i_error_id]**2
 
     # get complete set of all optimization variables vertcat([parameters, error])
@@ -45,20 +46,21 @@ def v3_numerical_problem(chosen_data):
     """fun to calculate objectives and constraints for numerical identification of v3
         using MWC kinetics"""
 
+    number_data = len(chosen_data)
     # symbolic variables for use with casadi
     v3max = casadi.SX.sym("v3max")
     k3fdp = casadi.SX.sym("k3fdp")
     k3pep = casadi.SX.sym("k3pep")
     l3fdp = casadi.SX.sym("l3fdp")
-    error = casadi.SX.sym("error", 4)
+    error = casadi.SX.sym("error", number_data)
 
     # fdp_sat = 1 + y[1] / K3fdp
     # pep_sat = 1 + y[0] / K3pep
     # flux_3 = V3max * (fdp_sat - 1) * (fdp_sat ** 3) / (fdp_sat ** 4 + L3fdp * (pep_sat ** (-4)))
 
     all_constraints = []
-    for i_data in range(0, 4):
-        _, pep, fdp, _, _, _, v3, _, _, _ = list(chosen_data[i_data])
+    for i_data_id, i_data in enumerate(chosen_data):
+        _, pep, fdp, _, _, _, v3, _, _, _ = list(i_data)
 
         # flux equation for each experiment i_data in chosen_data
         fdp_sat = 1 + fdp / k3fdp
@@ -67,14 +69,14 @@ def v3_numerical_problem(chosen_data):
         dr_3 = (fdp_sat ** 4 + l3fdp * 1e6 * pep_sat ** (-4))
         flux_3 = nr_3 / dr_3
         # formulate constraint for each experimental data set
-        all_constraints.append(flux_3 - v3 - error[i_data])
+        all_constraints.append(flux_3 - v3 - error[i_data_id])
 
     # create casadi array of constraints
     constraints = casadi.vertcat(*all_constraints)
 
     # create complete casadi objective fun
     objective = error[0] ** 2
-    for i_error_id in range(1, 4):
+    for i_error_id in range(1, number_data):
         objective += error[i_error_id] ** 2
 
     # get complete set of all optimization variables vertcat([parameters, error])
