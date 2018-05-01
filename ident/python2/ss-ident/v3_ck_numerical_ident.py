@@ -1,8 +1,8 @@
 import numpy as np
 from generate_expdata import generate_expdata
 from simulate_data import arrange_experimental_data_numerical
-from numerical_ident import identify_all_data_sets
-from numerical_ident import process_opt_solution
+from numerical_ident import generate_random_initial_conditions
+from numerical_ident import solve_multiple_initial_conditions
 from plot_ident_results import plot_numerical_parameter_estimates
 
 
@@ -54,15 +54,10 @@ optim_options = {"solver": "ipopt",
 # optim_options = {"solver": "sqpmethod",\
 #                  "opts": {"qpsol": "qpoases"}}
 initial_value = [200, 100, 100, 0, 0, 0]
-from numerical_ident import solve_multiple_initial_conditions
-v3_all_x0_parameter_info = solve_multiple_initial_conditions(all_initial_conditions=[initial_value],
+# randomized_initial_values = generate_random_initial_conditions(initial_value, 10, negative=1)
+v3_all_x0_parameter_info = solve_multiple_initial_conditions(all_initial_conditions=[initial_value, [10, 1, 1, 0, 0, 0]],
                                                              experimental_data=experimental_datasets_3_expts[0]["values"],
                                                              chosen_fun=0, optim_options=optim_options,
                                                              number_of_parameters=3, flux_id=3, flux_choice=[3])
-v3_parameter_info = process_opt_solution(opt_solution, number_of_parameters=3, flux_id=3, flux_choice=[3])
-plot_numerical_parameter_estimates(v3_parameter_info)
-
-from numerical_ident import generate_random_initial_conditions
-generate_random_initial_conditions(initial_value, 10, negative=1)
-
+plot_numerical_parameter_estimates(v3_all_x0_parameter_info)
 print("Run complete\n")
