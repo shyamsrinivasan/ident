@@ -1,5 +1,6 @@
 import casadi as casadi
 import numpy as np
+from numpy.random import RandomState
 from kotte_model import ident_parameter_name
 from kotte_model import kotte_true_parameter_values
 
@@ -207,3 +208,31 @@ def process_opt_solution(opt_solution, number_of_parameters, flux_id, flux_choic
                           "flux choice": flux_choice,
                           "true value": all_parameter_true_value}
     return all_parameter_info
+
+
+def solve_multiple_initial_conditions(all_initial_conditions):
+    """solve numerical nlp ident for multiple parameter initial conditions"""
+    number_initial_conditions = len(all_initial_conditions)
+    for j_id, j_initial_condition in enumerate(all_initial_conditions):
+        print("Working on Initial Conditions {} of {}".format(j_id+1, number_initial_conditions))
+        # code to run opt for each initial value in each element of list
+    return None
+
+
+def generate_random_initial_conditions(given_initial_condition, number_random_conditions, negative=0):
+    """generate random initial conditions based around given initial conidtion"""
+    number_variables = len(given_initial_condition)
+    # set random number generator seed
+    rnd_num = RandomState(12345678)
+    if negative:
+        pos_rnd_value_changes = rnd_num.uniform(0, 1, (number_variables, number_random_conditions/2))
+        neg_rnd_value_changes = - rnd_num.uniform(0, 1, (number_variables, number_random_conditions / 2))
+        rnd_value_changes = np.hstack((pos_rnd_value_changes, neg_rnd_value_changes))
+    else:
+        rnd_value_changes = rnd_num.uniform(0, 1, (number_variables, number_random_conditions))
+
+    given_initial_condition = np.reshape(given_initial_condition, (6, 1))
+    new_initial_conditions = np.repeat(given_initial_condition, 10, axis=1) * (1 + rnd_value_changes)
+
+    new_initial_conditions = list(np.transpose(new_initial_conditions))
+    return new_initial_conditions
