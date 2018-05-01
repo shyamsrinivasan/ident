@@ -615,3 +615,11 @@ def plot_numerical_parameter_estimates(all_parameter_info, noise=0):
         axis_object.set_xticklabels(all_parameter_info["names"])
     plt.show()
     return None
+
+
+def plot_all_initial_value_parameter_estimates():
+    """plot distribution from multiple initial values"""
+    return None
+
+
+
