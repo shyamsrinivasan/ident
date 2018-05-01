@@ -53,9 +53,12 @@ optim_options = {"solver": "ipopt",
                  "opts": {"ipopt.tol": 1e-12}}
 # optim_options = {"solver": "sqpmethod",\
 #                  "opts": {"qpsol": "qpoases"}}
-initial_value = [1000, 100, 100, 0, 0, 0]
-opt_solution = identify_all_data_sets(experimental_data=experimental_datasets_3_expts[0]["values"], chosen_fun=0,
-                                      optim_options=optim_options, x0=initial_value)
+initial_value = [200, 100, 100, 0, 0, 0]
+from numerical_ident import solve_multiple_initial_conditions
+v3_all_x0_parameter_info = solve_multiple_initial_conditions(all_initial_conditions=[initial_value],
+                                                             experimental_data=experimental_datasets_3_expts[0]["values"],
+                                                             chosen_fun=0, optim_options=optim_options,
+                                                             number_of_parameters=3, flux_id=3, flux_choice=[3])
 v3_parameter_info = process_opt_solution(opt_solution, number_of_parameters=3, flux_id=3, flux_choice=[3])
 plot_numerical_parameter_estimates(v3_parameter_info)
 

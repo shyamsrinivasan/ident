@@ -148,6 +148,8 @@ def opt_result_for_plots(all_data_set_opt_sol):
 
 
 def identify_all_data_sets(experimental_data, chosen_fun, x0, optim_options={}):
+    """run numerical identifying algorithm for chosen flux (choose constraints, objective and bounds)
+    for a given set of experimental data and initial condition"""
     if chosen_fun == 0:
         ident_fun = v3_ck_numerical_problem
         # Initial condition
@@ -210,13 +212,22 @@ def process_opt_solution(opt_solution, number_of_parameters, flux_id, flux_choic
     return all_parameter_info
 
 
-def solve_multiple_initial_conditions(all_initial_conditions):
+def solve_multiple_initial_conditions(all_initial_conditions, experimental_data, chosen_fun, optim_options,
+                                      number_of_parameters, flux_id, flux_choice):
     """solve numerical nlp ident for multiple parameter initial conditions"""
     number_initial_conditions = len(all_initial_conditions)
+    all_x0_all_parameter_opt_info = []
     for j_id, j_initial_condition in enumerate(all_initial_conditions):
-        print("Working on Initial Conditions {} of {}".format(j_id+1, number_initial_conditions))
+        print("Working on Initial Conditions {} of {}....".format(j_id+1, number_initial_conditions))
         # code to run opt for each initial value in each element of list
-    return None
+        opt_solution = identify_all_data_sets(experimental_data, chosen_fun=chosen_fun,
+                                              x0=j_initial_condition, optim_options=optim_options)
+        # process opt solution for ach initial condition for all experimental data sets
+        all_parameter_info = process_opt_solution(opt_solution, number_of_parameters=number_of_parameters,
+                                                  flux_id=flux_id, flux_choice=flux_choice)
+        all_x0_all_parameter_opt_info.append(all_parameter_info)
+        print("Analysis with Initial Condition {} of {} Complete".format(j_id+1, number_initial_conditions))
+    return all_x0_all_parameter_opt_info
 
 
 def generate_random_initial_conditions(given_initial_condition, number_random_conditions, negative=0):
