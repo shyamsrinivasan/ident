@@ -601,19 +601,20 @@ def plot_numerical_parameter_estimates(all_parameter_info, noise=0):
         pass
     else:
         number_parameters = len(all_parameter_info["values"])
-        figure = plt.figure(figsize=(6, 4))
+        fig = plt.figure(figsize=(6, 4))
         outer_grid = gridspec.GridSpec(1, 1, wspace=0.2, hspace=0.2)
         try:
-            axis_object = multi_box_plot(figure, outer_grid[0], all_parameter_info["values"], noise=0)
+            axis_object = multi_box_plot(fig, outer_grid[0], all_parameter_info["values"], noise=0)
             axis_object.scatter(range(1, number_parameters + 1), all_parameter_info["true value"],
                                 color='r', marker='o')
         except TypeError:
-            axis_object = multi_box_plot(figure, outer_grid, all_parameter_info["values"], noise=0)
+            axis_object = multi_box_plot(fig, outer_grid, all_parameter_info["values"], noise=0)
             axis_object.scatter(range(1, number_parameters + 1), all_parameter_info["true value"],
                                 color='r', marker='o')
 
         axis_object.set_xticklabels(all_parameter_info["names"])
     plt.show()
+    fig.show()
     return None
 
 
