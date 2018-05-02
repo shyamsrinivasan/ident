@@ -617,6 +617,40 @@ def plot_numerical_parameter_estimates(all_parameter_info, noise=0):
     return None
 
 
+def plot_parameter_value_hist(parameter_value, noise=0):
+    """plot distribution of identified parameter values as a histogram"""
+    number_of_fluxes = len(parameter_value["processed"])
+    number_of_plots = number_of_fluxes
+    if number_of_fluxes >= 2:
+        number_of_rows = 2
+    else:
+        number_of_rows = 1
+    if number_of_plots % number_of_rows != 0:
+        number_of_columns = (number_of_plots + 1) / number_of_rows
+    else:
+        number_of_columns = number_of_plots / number_of_rows
+    figure = plt.figure(figsize=(6, 4))
+    outer_grid = gridspec.GridSpec(number_of_rows, number_of_columns, wspace=0.2, hspace=0.2)
+    if noise:
+        # this section is not complete - may not work May 1 2018
+        for i_flux in range(0, number_of_fluxes):
+            number_parameters = parameter_value["processed"][i_flux]
+            inner_grid = gridspec.GridSpecFromSubplotSpec(1, number_parameters,
+                                                          subplot_spec=outer_grid[i_flux], wspace=0.1, hspace=0.1)
+            for i_parameter_number, i_parameter_info in enumerate(parameter_value["processed"][i_flux]):
+                ax = plt.Subplot(figure, inner_grid[i_parameter_number])
+                ax.hist(i_parameter_info["sample mean"])
+    else:
+        for i_flux in range(0, number_of_fluxes):
+            number_parameters = len(parameter_value["raw"][i_flux][0])
+            inner_grid = gridspec.GridSpecFromSubplotSpec(1, number_parameters,
+                                                          subplot_spec=outer_grid[i_flux], wspace=0.1, hspace=0.1)
+            for i_parameter_number, i_parameter_info in enumerate(parameter_value["raw"][i_flux][0]):
+                ax = plt.Subplot(figure, inner_grid[0, i_parameter_number])
+                ax.hist(i_parameter_info["found values"])
+    return None
+
+
 def plot_all_initial_value_parameter_estimates():
     """plot distribution from multiple initial values"""
     return None
