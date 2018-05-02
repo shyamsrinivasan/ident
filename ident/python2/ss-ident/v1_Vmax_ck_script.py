@@ -78,6 +78,8 @@ parameter_identifibaility_plot(max_parameter_v1_V1max)
 parameter_experiment_info_spider(experiment_info_v1_V1max)
 # plot true parameter values and determined parameter values
 plot_parameter_values(true_value_v1_V1max)
+from plot_ident_results import plot_parameter_value_hist
+plot_parameter_value_hist(true_value_v1_V1max)
 
 # plot distribution of experimental data (concentration and fluxes)
 plot_experiment_data_dist(exp_xss, exp_fss, experiment_choice=[0,
