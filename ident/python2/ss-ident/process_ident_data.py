@@ -572,22 +572,37 @@ def collate_sample_based_parameter_value(number_of_fluxes_per_sample, all_sample
             number_of_parameters_per_flux = len(all_sample_parameter_value[0][j_flux])
             all_parameter_info = []
             for k_parameter in range(0, number_of_parameters_per_flux):
-                k_parameter_found_values = [j_sample_data[j_flux][k_parameter]["found values"]
-                                            for j_sample_data in all_sample_parameter_value]
+                data_set_size = all_sample_parameter_value[0][j_flux][k_parameter]["data set size"]
+                all_sample_data_ids = [j_sample_data[j_flux][k_parameter]["data id"]
+                                       for j_sample_data in all_sample_parameter_value]
+                all_sample_ident_value = [j_sample_ident[j_flux][k_parameter]["found values"]
+                                          for j_sample_ident in all_sample_parameter_value]
+                all_sample_data_id_ident_value = [zip(j_sample_data_ids, j_sample_ident_value)
+                                                  for j_sample_data_ids, j_sample_ident_value in
+                                                  zip(all_sample_data_ids, all_sample_ident_value)]
+                all_sample_boolean = [[True if j_data_id in set(j_sample_data_id) else False
+                                       for j_data_id in range(0, data_set_size)]
+                                      for j_sample_data_id in all_sample_data_ids]
+                data_sample_ident = np.zeros((number_samples, data_set_size))
+                for j_sample_id, j_sample_data in enumerate(all_sample_data_id_ident_value):
+                    for j_ident_data in j_sample_data:
+                        data_id, ident_data = j_ident_data
+                        data_sample_ident[j_sample_id, data_id] = ident_data
+                # box plot of across sample variations for each data
+                all_boolean_sum = sum(np.array(all_sample_boolean))
+                bool_accept = [True if value == number_samples else False for value in all_boolean_sum]
+                # get mean across all samples for each data set identifying parameter k
+                mean_across_samples = np.mean(data_sample_ident[:, bool_accept], axis=0)
+                std_across_samples = np.std(data_sample_ident[:, bool_accept], axis=0)
+                mean_across_data = np.mean(data_sample_ident[:, bool_accept], axis=1)
+                std_across_data = np.std(data_sample_ident[:, bool_accept], axis=1)
+                if data_sample_ident[:, bool_accept].size == 0:
+                    mean_across_data = np.array([0.0])
+                    std_across_data = np.array([0.0])
                 k_parameter_true_values = [j_sample_data[j_flux][k_parameter]["true values"]
                                            for j_sample_data in all_sample_parameter_value]
                 # calculate means and standard deviations for each parameter between samples and between data points
                 k_parameter_true_array = np.array(k_parameter_true_values)
-                # get mean across all samples for each data set identifying parameter k
-                mean_across_samples = np.mean(np.array(k_parameter_found_values), axis=0)
-                std_across_samples = np.std(np.array(k_parameter_found_values), axis=0)
-                # get mean across al data identifying parameter k for each sample
-                if np.array(k_parameter_found_values).size != 0:
-                    mean_across_data = np.mean(np.array(k_parameter_found_values), axis=1)
-                    std_across_data = np.std(np.array(k_parameter_found_values), axis=1)
-                else:
-                    mean_across_data = np.array([0.0])
-                    std_across_data = np.array([0.0])
                 # get mean across all data points across all samples
                 # mean_across_data_across_samples = np.mean(mean_across_data, axis=0)
                 # std_across_data_across_samples = np.std(mean_across_data, axis=0)
@@ -602,6 +617,8 @@ def collate_sample_based_parameter_value(number_of_fluxes_per_sample, all_sample
                                     "sample std": std_across_samples,
                                     "data mean": mean_across_data,
                                     "data std": std_across_data,
+                                    "raw sample ident data": data_sample_ident,
+                                    "raw sample boolean data": all_sample_boolean,
                                     "data sample mean": [],  # mean_across_data_across_samples,
                                     "data sample std": [],  # std_across_data_across_samples,
                                     "sample data mean": [],  # mean_across_samples_across_data,
