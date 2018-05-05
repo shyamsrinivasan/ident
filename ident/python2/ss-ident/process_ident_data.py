@@ -871,8 +871,11 @@ def extract_parameter_values(parameter_value):
         for i_flux, i_flux_info in enumerate(processed_info):
             print('\nExtracting parameters for flux {} of {}'.format(i_flux + 1, number_flux))
             number_samples, number_data = i_flux_info[0]["raw sample ident data"].shape
+            # collect parameter names
+            all_parameter_name = [i_parameter_info["parameter name"] for i_parameter_info in i_flux_info]
             # collect boolean info for all parameters
-            all_parameter_boolean_info = [i_parameter_info["raw sample boolean data"] for i_parameter_info in i_flux_info]
+            all_parameter_boolean_info = [i_parameter_info["raw sample boolean data"]
+                                          for i_parameter_info in i_flux_info]
             # collect parameter value info for all parameters
             all_parameter_ident_info = [i_parameter_info["raw sample ident data"] for i_parameter_info in i_flux_info]
             # collect parameter values from each sample
@@ -891,9 +894,12 @@ def extract_parameter_values(parameter_value):
             all_sample_ident_info = []
             for k_sample, (k_sample_boolean, k_sample_info) in enumerate(zip(all_sample_boolean, all_sample_info)):
                 boolean_sum = [all(j_data_boolean) for j_data_boolean in k_sample_boolean]
-                all_true_ident = [(j_data_id, j_data_info) for j_data_id, j_data_info in enumerate(k_sample_info) if boolean_sum[j_data_id]]
+                all_true_ident = [(j_data_id, j_data_info)
+                                  for j_data_id, j_data_info in enumerate(k_sample_info) if boolean_sum[j_data_id]]
                 k_sample_parameter_value_info = {"data_id": [data_id_value[0] for data_id_value in all_true_ident],
-                                                 "parameter_value": [data_id_value[1] for data_id_value in all_true_ident]}
+                                                 "parameter_value": [data_id_value[1]
+                                                                     for data_id_value in all_true_ident],
+                                                 "parameter name": all_parameter_name}
                 all_sample_ident_info.append(k_sample_parameter_value_info)
     except TypeError:
         all_sample_ident_info = []
