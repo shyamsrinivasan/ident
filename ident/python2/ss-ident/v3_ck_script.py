@@ -78,7 +78,7 @@ plot_parameter_value_hist(true_value_v3_root1)
 # plot utility of data sets (number of data sets identifying n, n-1, n-2, ...., 1, 0 parameters
 data_utility_plot(data_list_v3_root1)
 from process_ident_data import extract_parameter_values
-extract_parameter_values(true_value_v3_root1)
+parameter_value_info = extract_parameter_values(true_value_v3_root1)
 
 print('Practical Identifiability Analysis of v3 with 3 parameters: V3max, K3fdp and K3pep \n')
 # perform identifiability when v3 parameters are written for root (2)
