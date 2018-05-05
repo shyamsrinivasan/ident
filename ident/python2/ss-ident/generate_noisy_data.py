@@ -121,7 +121,7 @@ def generate_noisy_data(y0, all_options, kinetics, number_of_samples=1, noise_st
            steady_state_info, dynamic_info
 
 
-def run_no_noise_parameter_perturbation(parameter_perturbation, y0, other_options, plot_arg=0, kinetics=1):
+def run_no_noise_parameter_perturbation(parameter_perturbation, y0, other_options, plot_arg=0, kinetics=2):
     """run parameter perturbations based on tuple input parameter perturbation
         with first position of tuple being parameter id and second index being
         parameter value"""
@@ -177,7 +177,7 @@ def run_no_noise_parameter_perturbation(parameter_perturbation, y0, other_option
     return ss_info, dynamic_info, perturbation_details
 
 
-def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options, kinetics=1,
+def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options, kinetics=2,
                                      number_of_samples=1, plot_arg=0, noise_std=0.05):
     """run parameter perturbations based on tuple input parameter perturbation
     with first position of tuple being parameter id and second index being
