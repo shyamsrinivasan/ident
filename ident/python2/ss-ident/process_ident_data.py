@@ -882,7 +882,7 @@ def extract_parameter_values(parameter_value):
             all_sample_info = []
             all_sample_boolean = []
             for j_sample in range(0, number_samples):
-                j_sample_info = [tuple([i_parameter_ident[j_sample, i_data]
+                j_sample_info = [tuple([np.array(i_parameter_ident[j_sample, i_data])
                                         for i_parameter_ident in all_parameter_ident_info])
                                  for i_data in range(0, number_data)]
                 j_sample_boolean = [tuple([i_parameter_ident[j_sample][i_data]
@@ -897,7 +897,7 @@ def extract_parameter_values(parameter_value):
                 all_true_ident = [(j_data_id, j_data_info)
                                   for j_data_id, j_data_info in enumerate(k_sample_info) if boolean_sum[j_data_id]]
                 k_sample_parameter_value_info = {"data_id": [data_id_value[0] for data_id_value in all_true_ident],
-                                                 "parameter_value": [data_id_value[1]
+                                                 "parameter_value": [dict(zip(all_parameter_name, data_id_value[1]))
                                                                      for data_id_value in all_true_ident],
                                                  "parameter name": all_parameter_name}
                 all_sample_ident_info.append(k_sample_parameter_value_info)
