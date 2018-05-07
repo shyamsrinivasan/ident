@@ -1,6 +1,6 @@
 from generate_expdata import initialize_to_ss
 import copy
-import numpy as np
+import matplotlib.pyplot as plt
 
 
 def run_simulation(y0, cvode_options, estimated_parameter, noise=0, kinetics=2, noise_std=0.05):
@@ -89,13 +89,19 @@ def validate_model(y0, cvode_options, original_parameter, extracted_parameter, s
     if ss:
         # collect all ss values
         all_ss = collate_ss_values(all_sample_ss)
+        all_sample_original_x_ss = []
+        all_sample_original_flux_ss = []
         for i_sample_ss in all_ss:
             original_y_ss = [original_ss["y"]] * len(i_sample_ss["y"])
             original_flux_ss = [original_ss["flux"]] * len(i_sample_ss["flux"])
-            i_sample_ss["original_y_ss"] = original_y_ss
-            i_sample_ss["original_flux_ss"] = original_flux_ss
-        # comparison plots
-        pass
+            all_sample_original_x_ss.append(original_y_ss)
+            all_sample_original_flux_ss.append(original_flux_ss)
+        f, ax = plt.subplots(1, 1)
+        original_pep = [i_x_ss[0] for i_x_ss in all_sample_original_x_ss[0]]
+        estimated_pep = [j_x_ss[0] for j_x_ss in all_ss[0]["y"]]
+        ax.scatter(original_pep, estimated_pep)
+
+
 
     # compare new dynamic values with original experimental dynamic values
     if dyn:
