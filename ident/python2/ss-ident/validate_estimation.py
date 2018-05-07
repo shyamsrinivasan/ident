@@ -1,5 +1,6 @@
 from generate_expdata import initialize_to_ss
 import copy
+import numpy as np
 
 
 def run_simulation(y0, cvode_options, estimated_parameter, noise=0, kinetics=2, noise_std=0.05):
@@ -62,6 +63,18 @@ def run_all_parameters(y0, cvode_options, original_parameter, extracted_paramete
     return original_ss, all_sample_ss, original_dyn, all_sample_dyn
 
 
+def collate_ss_values(ss_values):
+    """collect and collate ss values from different data sets/perturbations or models/parameter sets"""
+    number_samples = len(ss_values)
+    all_sample_info = []
+    for i_sample_info in ss_values:
+        all_xss = [j_ss_values["y"] for j_ss_values in i_sample_info]
+        all_fss = [j_ss_values["flux"] for j_ss_values in i_sample_info]
+        all_sample_info.append({'y': all_xss,
+                                'flux': all_fss})
+    return all_sample_info
+
+
 def validate_model(y0, cvode_options, original_parameter, extracted_parameter, ss=1, dyn=0,
                    noise=0, kinetics=2, noise_std=0.05):
     """vcalculate initial steady state for estimate parameter value"""
@@ -74,10 +87,19 @@ def validate_model(y0, cvode_options, original_parameter, extracted_parameter, s
                                                                                   noise_std=noise_std)
     # compare new steady state with original experimental steady state
     if ss:
+        # collect all ss values
+        all_ss = collate_ss_values(all_sample_ss)
+        for i_sample_ss in all_ss:
+            original_y_ss = [original_ss["y"]] * len(i_sample_ss["y"])
+            original_flux_ss = [original_ss["flux"]] * len(i_sample_ss["flux"])
+            i_sample_ss["original_y_ss"] = original_y_ss
+            i_sample_ss["original_flux_ss"] = original_flux_ss
+        # comparison plots
         pass
 
     # compare new dynamic values with original experimental dynamic values
     if dyn:
+        # collate all dyn values
         pass
 
     return None
