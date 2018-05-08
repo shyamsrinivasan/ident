@@ -1,4 +1,5 @@
 from generate_expdata import initialize_to_ss
+from generate_expdata import generate_expdata
 import copy
 import matplotlib.pyplot as plt
 
@@ -93,8 +94,18 @@ def run_all_parameters(y0, cvode_options, original_parameter, extracted_paramete
     return original_ss, all_sample_ss, original_dyn, all_sample_dyn
 
 
-def run_all_parameter_perturbation():
-    """run perturbation analysis for all estimated parameter data sets"""
+def run_all_parameter_perturbation(y0, cvode_options, original_parameter, extracted_parameter,
+                       noise=0, kinetics=2, noise_std=0.05, target_data=[]):
+    """run perturbation analysis for all estimated parameter data sets based on
+    initial and perturbed steady states"""
+    # get all parameter sets in extracted parameter and form parameter dictionaries suitable for simulation
+    all_sample_ode_parameters = form_parameter_dict(original_parameter, extracted_parameter, target_data=target_data)
+
+    # get initial noisy system steady state
+    initial_ss, initial_dyn = initialize_to_ss(y0, cvode_options, ode_parameter_values, noise,
+                                               kinetics=kinetics, noise_std=noise_std)
+
+    generate_expdata(y0, cvode_options, ode_parameter_values, number_of_samples, noise=noise, kinetics=kinetics, noise_std=noise_std)
 
     return None
 
