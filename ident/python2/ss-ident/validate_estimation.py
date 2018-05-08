@@ -1,10 +1,10 @@
 from generate_expdata import initialize_to_ss
-from generate_expdata import generate_expdata
+from generate_expdata import perturb_parameters
 import copy
 import matplotlib.pyplot as plt
 
 
-def run_simulation(y0, cvode_options, estimated_parameter, noise=0, kinetics=2, noise_std=0.05):
+def run_initial_ss_simulation(y0, cvode_options, estimated_parameter, noise=0, kinetics=2, noise_std=0.05):
     """run ode simulations for original and all estimate parameter sets - may take a while"""
     # get initial steady state information for all estimated parameter sets
     all_ss_estimate = []
@@ -17,6 +17,20 @@ def run_simulation(y0, cvode_options, estimated_parameter, noise=0, kinetics=2, 
         all_ss_estimate.append(estimated_ss)
         all_dyn_estimate.append(estimated_dyn)
     return all_ss_estimate, all_dyn_estimate
+
+
+def run_perturbation_ss_simulation():
+    """run ode simulations for all estimated parameter sets - may take a while 21 * number_estimated_parameters"""
+    ll_ss_estimate = []
+    all_dyn_estimate = []
+    number_of_estimates = len(estimated_parameter)
+    for j_parameter_id, j_parameter_estimate in enumerate(estimated_parameter):
+        print("\nSimulation for parameter set {} of {}....\n".format(j_parameter_id + 1, number_of_estimates))
+        perturb_parameters(initial_ss, parameter_perturbation, cvode_options, ode_parameter_values, number_of_samples,
+                           noise=noise, kinetics=kinetics, dynamic_plot=0, noise_std=noise_std)
+        all_ss_estimate.append(estimated_ss)
+        all_dyn_estimate.append(estimated_dyn)
+    return None
 
 
 def form_dict_one_data_set(original_parameter, data_set_info):
@@ -87,7 +101,7 @@ def run_all_parameters(y0, cvode_options, original_parameter, extracted_paramete
     all_sample_dyn = []
     for j_sample, j_sample_parameter in enumerate(all_sample_ode_parameters):
         print("Parameters for sample {} of {}:\n".format(j_sample+1, number_of_samples))
-        estimate_ss, estimate_dyn = run_simulation(y0, cvode_options, j_sample_parameter,
+        estimate_ss, estimate_dyn = run_initial_ss_simulation(y0, cvode_options, j_sample_parameter,
                                                    noise=noise, kinetics=kinetics, noise_std=noise_std)
         all_sample_ss.append(estimate_ss)
         all_sample_dyn.append(estimate_dyn)
@@ -101,9 +115,29 @@ def run_all_parameter_perturbation(y0, cvode_options, original_parameter, extrac
     # get all parameter sets in extracted parameter and form parameter dictionaries suitable for simulation
     all_sample_ode_parameters = form_parameter_dict(original_parameter, extracted_parameter, target_data=target_data)
 
-    # get initial noisy system steady state
-    initial_ss, initial_dyn = initialize_to_ss(y0, cvode_options, ode_parameter_values, noise,
-                                               kinetics=kinetics, noise_std=noise_std)
+    # all parameter perturbations
+    parameter_perturbation = [{"ac": 0}, {"ac": 1}, {"ac": 4}, {"ac": 9}, {"ac": -.1}, {"ac": -.5},
+                              {"k1cat": .1}, {"k1cat": .5}, {"k1cat": 1}, {"k1cat": -.1}, {"k1cat": -.5},
+                              {"V3max": .1}, {"V3max": .5}, {"V3max": 1}, {"V3max": -.1}, {"V3max": -.5},
+                              {"V2max": .1}, {"V2max": .5}, {"V2max": 1}, {"V2max": -.1}, {"V2max": -.5}]
+
+    # simulate system with each estimated set of parameter values
+    number_of_samples = len(all_sample_ode_parameters)
+    all_sample_ss = []
+    all_sample_dyn = []
+    for j_sample, j_sample_parameter in enumerate(all_sample_ode_parameters):
+        print("Parameters for sample {} of {}:\n".format(j_sample + 1, number_of_samples))
+        # get initial system steady state for all estimated parameter values
+        estimate_ss, estimate_dyn = run_simulation(y0, cvode_options, j_sample_parameter,
+                                                   noise=noise, kinetics=kinetics, noise_std=noise_std)
+        all_sample_ss.append(estimate_ss)
+        all_sample_dyn.append(estimate_dyn)
+
+        # run all perturbations for each estimated parameter value
+
+
+
+    # run all perturbations for each estimated parameter value
 
     generate_expdata(y0, cvode_options, ode_parameter_values, number_of_samples, noise=noise, kinetics=kinetics, noise_std=noise_std)
 
