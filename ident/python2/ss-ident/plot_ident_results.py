@@ -601,18 +601,108 @@ def plot_numerical_parameter_estimates(all_parameter_info, noise=0):
         pass
     else:
         number_parameters = len(all_parameter_info["values"])
-        figure = plt.figure(figsize=(6, 4))
+        fig = plt.figure(figsize=(6, 4))
         outer_grid = gridspec.GridSpec(1, 1, wspace=0.2, hspace=0.2)
         try:
-            axis_object = multi_box_plot(figure, outer_grid[0], all_parameter_info["values"], noise=0)
+            axis_object = multi_box_plot(fig, outer_grid[0], all_parameter_info["values"], noise=0)
             axis_object.scatter(range(1, number_parameters + 1), all_parameter_info["true value"],
                                 color='r', marker='o')
         except TypeError:
-            axis_object = multi_box_plot(figure, outer_grid, all_parameter_info["values"], noise=0)
+            axis_object = multi_box_plot(fig, outer_grid, all_parameter_info["values"], noise=0)
             axis_object.scatter(range(1, number_parameters + 1), all_parameter_info["true value"],
                                 color='r', marker='o')
 
         axis_object.set_xticklabels(all_parameter_info["names"])
+    plt.show()
+    fig.show()
+    return None
+
+
+def plot_hist(fig_object, grid_object, distribution_data, mark_value=[], parameter_name=[],
+              sharex_axis_object=[], sharey_axis_object=[]):
+    """create subplot with grid object and plot histogram"""
+    axis_object = plt.Subplot(fig_object, grid_object)
+    hist_object = axis_object.hist(distribution_data)
+    if parameter_name:
+        axis_object.set_title(parameter_name, fontsize=18)
+    if mark_value:
+        mark_y_value = np.arange(0, np.max(hist_object[0]) + 2)
+        mark_x_value = np.repeat(mark_value, len(mark_y_value))
+        axis_object.plot(mark_x_value, mark_y_value, color='black', linestyle='dashed', linewidth=2)
+    if sharex_axis_object and sharey_axis_object:
+        fig_object.add_subplot(axis_object, sharex=sharex_axis_object, sharey=sharey_axis_object)
+        plt.setp(axis_object.get_xticklabels(), visible=False)
+        plt.setp(axis_object.get_yticklabels(), visible=False)
+    elif sharex_axis_object:
+        fig_object.add_subplot(axis_object, sharex=sharex_axis_object)
+        plt.setp(axis_object.get_xticklabels(), visible=False)
+        plt.ylabel('Frequency', fontsize=18)
+    elif sharey_axis_object:
+        fig_object.add_subplot(axis_object, sharey=sharey_axis_object)
+        plt.setp(axis_object.get_yticklabels(), visible=False)
+    else:
+        plt.ylabel('Frequency', fontsize=18)
+        fig_object.add_subplot(axis_object)
+    return axis_object
+
+
+def plot_box(fig_object, grid_object, distribution_data, sharex_axis_object=[], sharey_axis_object=[]):
+    """create subplot with grid object and get box plot of distributions"""
+    axis_object = plt.Subplot(fig_object, grid_object)
+    bp_object = axis_object.boxplot(distribution_data, vert=False)
+    for whiskers in bp_object["whiskers"]:
+        whiskers.set(color='k', linewidth=2)
+    for flier in bp_object['fliers']:
+        flier.set(marker='o', color='r', alpha=0.5)
+    # Remove top axes and right axes ticks
+    axis_object.get_xaxis().tick_bottom()
+    axis_object.get_yaxis().tick_left()
+    if sharex_axis_object and sharey_axis_object:
+        fig_object.add_subplot(axis_object, sharex=sharex_axis_object, sharey=sharey_axis_object)
+        plt.setp(axis_object.get_xticklabels(), visible=False)
+        plt.setp(axis_object.get_yticklabels(), visible=False)
+    elif sharex_axis_object:
+        fig_object.add_subplot(axis_object, sharex=sharex_axis_object)
+        plt.setp(axis_object.get_xticklabels(), visible=False)
+    elif sharey_axis_object:
+        fig_object.add_subplot(axis_object, sharey=sharey_axis_object)
+        plt.setp(axis_object.get_yticklabels(), visible=False)
+    else:
+        fig_object.add_subplot(axis_object)
+    return axis_object
+
+
+def set_hist_box_axis_limits(hist_axis, box_axis):
+    """set axis limits for hist and box plot of parameter values obtained from identifiability analysis"""
+    box_x_lim = []
+    hist_y_lim = []
+    for i_box_axis, i_hist_axis in zip(box_axis, hist_axis):
+        # get box axis x-limit
+        box_x_lim.append(i_box_axis.get_xlim())
+        # get hist y-limit
+        hist_y_lim.append(i_hist_axis.get_ylim())
+
+    # get maximimum of the histogram limits
+    max_hist_lim = []
+    min_hist_lim = []
+    for i_hist in hist_y_lim:
+        max_hist_lim.append(max(i_hist))
+        min_hist_lim.append(min(i_hist))
+    max_hist_lim = max(max_hist_lim)
+    # min_hist_lim = min(min_hist_lim)
+
+    # get maximums of box plot limits
+    max_box_lim = []
+    min_box_lim = []
+    for i_box in box_x_lim:
+        max_box_lim.append(max(i_box))
+        min_box_lim.append(min(i_box))
+
+    # set x-axis, y-axis limits
+    for i_plot, (i_hist_axis, i_box_axis) in enumerate(zip(hist_axis, box_axis)):
+        i_box_axis.set_xlim([0, max_box_lim[i_plot]])
+        i_hist_axis.set_xlim([0, max_box_lim[i_plot]])
+        i_hist_axis.set_ylim([0, max_hist_lim])
     plt.show()
     return None
 
@@ -635,19 +725,34 @@ def plot_parameter_value_hist(parameter_value, noise=0):
         # this section is not complete - may not work May 1 2018
         for i_flux in range(0, number_of_fluxes):
             number_parameters = parameter_value["processed"][i_flux]
-            inner_grid = gridspec.GridSpecFromSubplotSpec(1, number_parameters,
-                                                          subplot_spec=outer_grid[i_flux], wspace=0.1, hspace=0.1)
+            inner_grid = gridspec.GridSpecFromSubplotSpec(2, number_parameters,
+                                                          subplot_spec=outer_grid[i_flux], wspace=0.05, hspace=0.2)
+            hist_axis_object = []
             for i_parameter_number, i_parameter_info in enumerate(parameter_value["processed"][i_flux]):
-                ax = plt.Subplot(figure, inner_grid[i_parameter_number])
-                ax.hist(i_parameter_info["sample mean"])
+                hist_axis_object = plot_hist(figure, inner_grid[0, i_parameter_number], i_parameter_info["sample mean"],
+                                             sharey_axis_object=hist_axis_object)
     else:
         for i_flux in range(0, number_of_fluxes):
             number_parameters = len(parameter_value["raw"][i_flux][0])
-            inner_grid = gridspec.GridSpecFromSubplotSpec(1, number_parameters,
-                                                          subplot_spec=outer_grid[i_flux], wspace=0.1, hspace=0.1)
+            inner_grid = gridspec.GridSpecFromSubplotSpec(2, number_parameters,
+                                                          subplot_spec=outer_grid[i_flux], wspace=0.1, hspace=0.2)
+            box_axis = []
+            all_box_axis = []
+            hist_axis = []
+            all_hist_axis = []
             for i_parameter_number, i_parameter_info in enumerate(parameter_value["raw"][i_flux][0]):
-                ax = plt.Subplot(figure, inner_grid[0, i_parameter_number])
-                ax.hist(i_parameter_info["found values"])
+                # box plot shares y-axis with other box plot(s)
+                box_axis = plot_box(figure, inner_grid[1, i_parameter_number], i_parameter_info["found values"],
+                                    sharey_axis_object=box_axis)
+                all_box_axis.append(box_axis)
+                # histogram shares y-axis with other histogram(s) and x-axis with box plot
+                hist_axis = plot_hist(figure, inner_grid[0, i_parameter_number], i_parameter_info["found values"],
+                                      parameter_name=i_parameter_info["parameter name"], mark_value=i_parameter_info["true values"][0],
+                                      sharey_axis_object=hist_axis, sharex_axis_object=box_axis)
+                all_hist_axis.append(hist_axis)
+
+            set_hist_box_axis_limits(all_hist_axis, all_box_axis)
+
     return None
 
 

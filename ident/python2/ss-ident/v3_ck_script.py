@@ -5,6 +5,7 @@ from kotte_model import flux_ident_3_data_combination
 from process_ident_data import process_info_sample
 from plot_ident_results import data_utility_plot
 from plot_ident_results import plot_parameter_values
+from plot_ident_results import plot_parameter_value_hist
 from plot_ident_results import parameter_identifibaility_plot
 from plot_ident_results import parameter_experiment_info_spider
 
@@ -73,8 +74,14 @@ parameter_identifibaility_plot(max_parameter_v3_root1)
 parameter_experiment_info_spider(experiment_info_v3_root1)
 # plot true parameter values and determined parameter values
 plot_parameter_values(true_value_v3_root1)
+plot_parameter_value_hist(true_value_v3_root1)
 # plot utility of data sets (number of data sets identifying n, n-1, n-2, ...., 1, 0 parameters
 data_utility_plot(data_list_v3_root1)
+from process_ident_data import extract_parameter_values
+parameter_value_info = extract_parameter_values(true_value_v3_root1)
+from validate_estimation import validate_model
+validate_model(y0, cvode_options, ode_parameter_values, parameter_value_info,
+               ss=1, dyn=0, noise=0, kinetics=2, target_data=range(0, 20))
 
 print('Practical Identifiability Analysis of v3 with 3 parameters: V3max, K3fdp and K3pep \n')
 # perform identifiability when v3 parameters are written for root (2)

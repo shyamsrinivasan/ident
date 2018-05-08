@@ -12,32 +12,8 @@ def get_all_indices(mother_list, value):
     return current_value_id
 
 
-def dataset_usefulness(ident_boolean_array):
-    """get number and id of data combinations identifying n, n-1,..,0 parameters.
-    n - total number of parameters in ident_boolean"""
-    number_data, number_parameter = ident_boolean_array.shape
-    number_parameters_identified = []
-    for i_data in range(0, number_data):
-        number_parameters_identified.append(sum(ident_boolean_array[i_data, :]))
-
-    data_id = [[j_data_id for j_data_id, value in enumerate(number_parameters_identified) if value == i_parameter_number]
-               for i_parameter_number in range(0, number_parameter+1)]
-    data_length = [len(i_parameter_data) for i_parameter_data in data_id]
-    data_usefulness_tuple = zip(range(0, number_parameter+1), data_length, data_id)
-    data_usefulness_dict = {"number": range(0, number_parameter+1),
-                            "index": data_id,
-                            "total": data_length}
-
-
-    # for i_data in range(0, number_data):
-
-    return None
-
-
 def get_most_useful_dataset(ident_boolean_array):
     """get data identifying most parameters (most useful data set)"""
-    # test call
-    dataset_usefulness(ident_boolean_array)
     # most useful dataset - based on number of parameter identified
     number_data, number_parameter = ident_boolean_array.shape
     identified_parameters = []  # np.zeros((number_data, 1))
@@ -72,115 +48,6 @@ def experiments_in_combination(data_id, experiment_details):
         experiment_ids = experiment_details["experiment_id"][j_data_id]
         all_experiment_ids.append(experiment_ids)
     return all_experiment_ids
-
-
-def get_useful_data_info(ident_boolean_array, experiment_details, perturbation_details, data_needed):
-    """get info all data sets that identify maximum number of parameters"""
-    _, p = ident_boolean_array.shape
-    parameters_identified_by_max_data_id = []
-    # get parameters identified by data_needed
-    all_ided_parameters = parameters_ided_by_combination(ident_boolean_array, data_needed)
-    # get experiment ids used in/that form data combination
-    all_experiment_ids = experiments_in_combination(data_needed, experiment_details)
-
-    data_needed_id = 0
-    for j_id, data_id in enumerate(data_needed):
-        data_set_ident_id = all_ided_parameters[j_id]
-        # identify all experiments for given data set
-        #perturbation_id = [int(i) for i in experiment_details["details"][data_id, range(0, 12, 4)].tolist()]
-        perturbation_id = all_experiment_ids[j_id]
-        # identify parameters perturbed by said experiment
-        # perturbed_parameters = perturbation_details["indices"][perturbation_id, :]
-        # perturbed_parameters = experiment_details["parameter_ids"][data_id]
-        # get parameter names from parameter indices
-        # perturbed_parameter_name = [(model_parameter_name(int(j[0])), j[1]) for j in perturbed_parameters.tolist()]
-        info = {'id': data_id, 'parameter_ids':data_set_ident_id,
-                'experiment_id':perturbation_id, 'ssid':experiment_details["ssid"][data_id]}
-        parameters_identified_by_max_data_id.append(info)
-        data_needed_id += 1
-    #data_list = dict(parameters_identified_by_max_data_id)
-    return parameters_identified_by_max_data_id
-
-
-def get_additional_data(ident_details, experiment_details, perturbation_details, unidentified_parameter_ids):
-    """find data sets that identify parameters in unidentified set"""
-    number_data, p = ident_details["boolean"].shape
-    # get boolean for unidentified parameters
-    unident_boolean = ident_details["boolean"][:, unidentified_parameter_ids]
-    # work on this later
-    # max_data = get_most_useful_dataset(unident_boolean)
-    # if max_data["maximum"] > 1:
-    #    selected_data_id = max_data["id"]
-    #else:
-
-    # get every single data set that identifies unidentified parameters
-    data_ident = [[k for k in it.compress(range(0, number_data), list(unident_boolean[:, unid_p]))]
-                  for unid_p in range(0, len(unidentified_parameter_ids))]
-    # get other info for data sets in this list
-    extra_data_details = []
-    for list_elements in data_ident:
-        if list_elements:
-            data_list = get_useful_data_info(ident_details["boolean"],
-                                             experiment_details,
-                                             perturbation_details,
-                                             list_elements)
-            for dictionary in data_list:
-                extra_data_details.append(dictionary)
-        else:
-            extra_data_details.append({})
-
-
-
-    # collect common data ids in data_ident
-    #for j_data_ident in data_ident:
-    #for i_data in range(0, number_data):
-    #   unidentifiable_parameters = [k for k in it.compress(range(0, p), list(np.logical_not(ident_details["boolean"][i_data, :])))]
-
-    #    identified_parameters = [i for i in it.compress(range(0, p), list(ident_details["boolean"][i_data, :]))]
-    #    identifiable_parameter_boolean = [True if un_id in identified_parameters
-    #                                      else False
-    #                                      for un_id in unidentified_parameter_ids]
-    #    if any(identifiable_parameter_boolean):
-    #        identifiable_parameter = [j
-    #                                  for j in it.compress(unidentified_parameter_ids, identifiable_parameter_boolean)]
-    #        extra_data_details.append({'data':i_data, 'parameter':identifiable_parameter})
-    return extra_data_details
-
-
-def calculate_experiment_combos(ident_details, experiment_details, perturbation_details, data_list):
-    """choose additional data sets and consequently, experiments (if possible) to identify other parameters not
-    identified by chosen data set(s)"""
-    # get parameters identified by chosen data set
-    number_data, p = ident_details["boolean"].shape
-    new_combos = []
-    new_combo_number = 0
-    for chosen_data in data_list:
-        # chosen_data = data_list[option_id]
-        data_set_id = chosen_data["id"]
-        # get parameters identified
-        identified_parameters = [i for i in it.compress(range(0, p), list(ident_details["boolean"][data_set_id, :]))]
-        # get unidentified parameters
-        nonidentified_parameters = list(set(range(0, p)) - set(identified_parameters))
-
-        # go through all data sets to identify indexes that identify unidentified parameters
-        extra_data = get_additional_data(ident_details,
-                                         experiment_details,
-                                         perturbation_details,
-                                         nonidentified_parameters)
-        for extra_id, dict_id in enumerate(extra_data):
-            if dict_id:
-                new_option_name = 'combination {}'.format(new_combo_number + 1)
-                new_option_composition = [chosen_data["id"], dict_id["id"]]
-                new_option_experiment_id = [chosen_data["experiment_id"], dict_id["experiment_id"]]
-                new_option_ssid = [chosen_data["ssid"], dict_id["ssid"]]
-                new_options_parameter_ids = \
-                    list(set(chosen_data["parameter_ids"]) | set(dict_id["parameter_ids"]))
-                combo_info = {'id': new_option_composition, 'parameter_ids': new_options_parameter_ids,
-                              'experiment_ids': new_option_experiment_id,
-                              'ssid': new_option_ssid}
-                new_combos.append(combo_info)
-                new_combo_number += 1
-    return new_combos
 
 
 def get_top_useful_data(max_data):
@@ -705,41 +572,57 @@ def collate_sample_based_parameter_value(number_of_fluxes_per_sample, all_sample
             number_of_parameters_per_flux = len(all_sample_parameter_value[0][j_flux])
             all_parameter_info = []
             for k_parameter in range(0, number_of_parameters_per_flux):
-                k_parameter_found_values = []
-                k_parameter_true_values = []
-                for j_sample_id, j_sample_data in enumerate(all_sample_parameter_value):
-                    k_parameter_found_values.append(j_sample_data[j_flux][k_parameter]["found values"])
-                    k_parameter_true_values.append(j_sample_data[j_flux][k_parameter]["true values"])
-                # calculate means and standard deviations for each parameter between samples and between data points
-                k_parameter_true_array = np.array(k_parameter_true_values)
+                data_set_size = all_sample_parameter_value[0][j_flux][k_parameter]["data set size"]
+                all_sample_data_ids = [j_sample_data[j_flux][k_parameter]["data id"]
+                                       for j_sample_data in all_sample_parameter_value]
+                all_sample_ident_value = [j_sample_ident[j_flux][k_parameter]["found values"]
+                                          for j_sample_ident in all_sample_parameter_value]
+                all_sample_data_id_ident_value = [zip(j_sample_data_ids, j_sample_ident_value)
+                                                  for j_sample_data_ids, j_sample_ident_value in
+                                                  zip(all_sample_data_ids, all_sample_ident_value)]
+                all_sample_boolean = [[True if j_data_id in set(j_sample_data_id) else False
+                                       for j_data_id in range(0, data_set_size)]
+                                      for j_sample_data_id in all_sample_data_ids]
+                data_sample_ident = np.zeros((number_samples, data_set_size))
+                for j_sample_id, j_sample_data in enumerate(all_sample_data_id_ident_value):
+                    for j_ident_data in j_sample_data:
+                        data_id, ident_data = j_ident_data
+                        data_sample_ident[j_sample_id, data_id] = ident_data
+                # box plot of across sample variations for each data
+                all_boolean_sum = sum(np.array(all_sample_boolean))
+                bool_accept = [True if value == number_samples else False for value in all_boolean_sum]
                 # get mean across all samples for each data set identifying parameter k
-                mean_across_samples = np.mean(np.array(k_parameter_found_values), axis=0)
-                std_across_samples = np.std(np.array(k_parameter_found_values), axis=0)
-                # get mean across al data identifying parameter k for each sample
-                if np.array(k_parameter_found_values).size != 0:
-                    mean_across_data = np.mean(np.array(k_parameter_found_values), axis=1)
-                    std_across_data = np.std(np.array(k_parameter_found_values), axis=1)
-                else:
+                mean_across_samples = np.mean(data_sample_ident[:, bool_accept], axis=0)
+                std_across_samples = np.std(data_sample_ident[:, bool_accept], axis=0)
+                mean_across_data = np.mean(data_sample_ident[:, bool_accept], axis=1)
+                std_across_data = np.std(data_sample_ident[:, bool_accept], axis=1)
+                if data_sample_ident[:, bool_accept].size == 0:
                     mean_across_data = np.array([0.0])
                     std_across_data = np.array([0.0])
+                k_parameter_true_values = [j_sample_data[j_flux][k_parameter]["true values"]
+                                           for j_sample_data in all_sample_parameter_value]
+                # calculate means and standard deviations for each parameter between samples and between data points
+                k_parameter_true_array = np.array(k_parameter_true_values)
                 # get mean across all data points across all samples
-                mean_across_data_across_samples = np.mean(mean_across_data, axis=0)
-                std_across_data_across_samples = np.std(mean_across_data, axis=0)
-                # get mean across all samples across all data points
-                if mean_across_samples.size != 0:
-                    mean_across_samples_across_data = np.mean(mean_across_samples, axis=0)
-                    std_across_samples_across_data = np.std(mean_across_samples, axis=0)
-                else:
-                    mean_across_samples_across_data = np.array([0.0])
-                    std_across_samples_across_data = np.array([0.0])
+                # mean_across_data_across_samples = np.mean(mean_across_data, axis=0)
+                # std_across_data_across_samples = np.std(mean_across_data, axis=0)
+                # # get mean across all samples across all data points
+                # if mean_across_samples.size != 0:
+                #     mean_across_samples_across_data = np.mean(mean_across_samples, axis=0)
+                #     std_across_samples_across_data = np.std(mean_across_samples, axis=0)
+                # else:
+                #     mean_across_samples_across_data = np.array([0.0])
+                #     std_across_samples_across_data = np.array([0.0])
                 k_parameter_info = {"sample mean": mean_across_samples,
                                     "sample std": std_across_samples,
                                     "data mean": mean_across_data,
                                     "data std": std_across_data,
-                                    "data sample mean": mean_across_data_across_samples,
-                                    "data sample std": std_across_data_across_samples,
-                                    "sample data mean": mean_across_samples_across_data,
-                                    "sample data std": std_across_samples_across_data,
+                                    "raw sample ident data": data_sample_ident,
+                                    "raw sample boolean data": all_sample_boolean,
+                                    "data sample mean": [],  # mean_across_data_across_samples,
+                                    "data sample std": [],  # std_across_data_across_samples,
+                                    "sample data mean": [],  # mean_across_samples_across_data,
+                                    "sample data std": [],  # std_across_samples_across_data,
                                     "parameter id": all_sample_parameter_value[0][j_flux][k_parameter]["parameter id"],
                                     "parameter name": all_sample_parameter_value[0][j_flux][k_parameter]["parameter name"],
                                     "flux name": all_sample_parameter_value[0][j_flux][k_parameter]["flux name"],
@@ -980,17 +863,44 @@ def process_info_sample(ident_details, experiment_details, experiment_type_indic
                all_sample_parameter_value, all_sample_experiment_info, [], [], [], []
 
 
-def get_data_combinations(original_data, chosen_data_id):
-    """get new data combinations that result in additional parameters being identified
-    for a given data set until all parameters can be identified"""
-    # given - chosen_data_id - id of data sets already chosen
-    # return - additional data sets/experiments to enable identification of parameters not identified by chosen_data_id
-    temp_list = get_useful_data_info(ident_details["boolean"],
-                                     experiment_details,
-                                     perturbation_details,
-                                     data_usefulness["index"][i_data])
-    new_combos = calculate_experiment_combos(ident_details,
-                                             experiment_details,
-                                             perturbation_details,
-                                             temp_list)
-    return None
+def extract_parameter_values(parameter_value):
+    """extract all parameter values in a given flux to re-simulate model with newly determined parameters"""
+    processed_info = parameter_value["processed"]
+    number_flux = len(processed_info)
+    try:
+        for i_flux, i_flux_info in enumerate(processed_info):
+            print('\nExtracting parameters for flux {} of {}'.format(i_flux + 1, number_flux))
+            number_samples, number_data = i_flux_info[0]["raw sample ident data"].shape
+            # collect parameter names
+            all_parameter_name = [i_parameter_info["parameter name"] for i_parameter_info in i_flux_info]
+            # collect boolean info for all parameters
+            all_parameter_boolean_info = [i_parameter_info["raw sample boolean data"]
+                                          for i_parameter_info in i_flux_info]
+            # collect parameter value info for all parameters
+            all_parameter_ident_info = [i_parameter_info["raw sample ident data"] for i_parameter_info in i_flux_info]
+            # collect parameter values from each sample
+            all_sample_info = []
+            all_sample_boolean = []
+            for j_sample in range(0, number_samples):
+                j_sample_info = [tuple([np.array(i_parameter_ident[j_sample, i_data])
+                                        for i_parameter_ident in all_parameter_ident_info])
+                                 for i_data in range(0, number_data)]
+                j_sample_boolean = [tuple([i_parameter_ident[j_sample][i_data]
+                                           for i_parameter_ident in all_parameter_boolean_info])
+                                    for i_data in range(0, number_data)]
+                all_sample_info.append(j_sample_info)
+                all_sample_boolean.append(j_sample_boolean)
+            # get parameters values only when all parameters are identified
+            all_sample_ident_info = []
+            for k_sample, (k_sample_boolean, k_sample_info) in enumerate(zip(all_sample_boolean, all_sample_info)):
+                boolean_sum = [all(j_data_boolean) for j_data_boolean in k_sample_boolean]
+                all_true_ident = [(j_data_id, j_data_info)
+                                  for j_data_id, j_data_info in enumerate(k_sample_info) if boolean_sum[j_data_id]]
+                k_sample_parameter_value_info = {"data_id": [data_id_value[0] for data_id_value in all_true_ident],
+                                                 "parameter_value": [dict(zip(all_parameter_name, data_id_value[1]))
+                                                                     for data_id_value in all_true_ident],
+                                                 "parameter name": all_parameter_name}
+                all_sample_ident_info.append(k_sample_parameter_value_info)
+    except TypeError:
+        all_sample_ident_info = []
+    return all_sample_ident_info

@@ -5,7 +5,7 @@ from generate_noisy_data import run_noisy_parameter_perturbation
 from plot_ident_results import plot_dynamic_sim_concentrations
 
 
-def initialize_to_ss(y0, cvode_options, ode_parameter_values, noise=1, kinetics=1, noise_std=0.05):
+def initialize_to_ss(y0, cvode_options, ode_parameter_values, noise=0, kinetics=2, noise_std=0.05):
     """initialize system to ss from any y0 with given options and system parameters"""
     if noise:
         # get initial noisy system steady state
@@ -22,7 +22,7 @@ def initialize_to_ss(y0, cvode_options, ode_parameter_values, noise=1, kinetics=
 
 
 def perturb_parameters(initial_ss, parameter_perturbations, cvode_options, ode_parameter_values,
-                       number_of_samples=1, noise=1, kinetics=1, dynamic_plot=0, noise_std=0.05):
+                       number_of_samples=1, noise=0, kinetics=2, dynamic_plot=0, noise_std=0.05):
     """perform parameter perturbations from given initial ss"""
 
     if noise:
@@ -40,7 +40,7 @@ def perturb_parameters(initial_ss, parameter_perturbations, cvode_options, ode_p
         return no_noise_ss, perturbation_details
 
 
-def generate_expdata(y0, cvode_options, ode_parameter_values, number_of_samples=1, noise=1, kinetics=1,
+def generate_expdata(y0, cvode_options, ode_parameter_values, number_of_samples=1, noise=0, kinetics=2,
                      dynamic_plot=0, perturbation_plot=0, noise_std=0.05):
     """generate noisy experimental data for kotte network to test identifiability"""
 

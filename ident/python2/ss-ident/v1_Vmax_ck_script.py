@@ -4,7 +4,7 @@ from simulate_data import arrange_experimental_data
 from kotte_model import flux_ident_2_data_combination
 from process_ident_data import process_info_sample
 from plot_ident_results import data_utility_plot
-from plot_ident_results import plot_parameter_values
+from plot_ident_results import plot_parameter_value_hist
 from plot_ident_results import parameter_identifibaility_plot
 # from plot_ident_results import parameter_experiment_info_plot
 from plot_ident_results import parameter_experiment_info_spider
@@ -77,8 +77,6 @@ parameter_identifibaility_plot(max_parameter_v1_V1max)
 # parameter_experiment_info_plot(experiment_info_2)
 parameter_experiment_info_spider(experiment_info_v1_V1max)
 # plot true parameter values and determined parameter values
-plot_parameter_values(true_value_v1_V1max)
-from plot_ident_results import plot_parameter_value_hist
 plot_parameter_value_hist(true_value_v1_V1max)
 
 # plot distribution of experimental data (concentration and fluxes)
