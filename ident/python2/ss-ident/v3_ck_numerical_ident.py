@@ -26,9 +26,8 @@ ode_parameter_values = {"K1ac": np.array([.1]),
                         "ac": np.array([.1])}
 
 # get experimental system steady state data without noise using Convenience Kinetics for v3 (kinetics = 2)
-exp_xss, exp_fss, exp_ssid, perturbation_details = \
-    generate_expdata(y0, cvode_options, ode_parameter_values, noise=0, kinetics=2, dynamic_plot=0,
-                     perturbation_plot=0)
+exp_info, perturbation_details = generate_expdata(y0, cvode_options, ode_parameter_values,
+                                                  noise=0, kinetics=2, dynamic_plot=0, perturbation_plot=0)
 
 # arrange experimental data to form multiple data sets
 exp_flux_index = np.array([0, 3, 2, 4, 1, 5])
@@ -39,7 +38,8 @@ print('Practical Identifiability Analysis of v3 with 3 parameters: V3max, K3fdp 
 ident_fun_choice = [0]
 # get combinations of experimental datasets
 experimental_datasets_3_expts, \
-    experiment_choice, combination_choice = arrange_experimental_data_numerical(exp_xss, exp_fss, perturbation_details,
+    experiment_choice, combination_choice = arrange_experimental_data_numerical(exp_info["y"], exp_info["flux"],
+                                                                                perturbation_details,
                                                                                 experiments_per_set=3,
                                                                                 flux_id=exp_flux_index,
                                                                                 experiment_choice=[0,
@@ -60,4 +60,6 @@ v3_all_x0_parameter_info = solve_multiple_initial_conditions(all_initial_conditi
                                                              chosen_fun=0, optim_options=optim_options,
                                                              number_of_parameters=3, flux_id=3, flux_choice=[3])
 plot_numerical_parameter_estimates(v3_all_x0_parameter_info[0])
+# extract all parameter values
+# validate all parameter values
 print("Run complete\n")
