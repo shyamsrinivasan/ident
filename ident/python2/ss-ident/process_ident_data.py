@@ -904,3 +904,9 @@ def extract_parameter_values(parameter_value):
     except TypeError:
         all_sample_ident_info = []
     return all_sample_ident_info
+
+
+def extract_parameter_values_numerical(all_parameter_info):
+    """extract parameter values from numerical identifiability method"""
+    number_parameters = len(all_parameter_info["values"])
+    return None
