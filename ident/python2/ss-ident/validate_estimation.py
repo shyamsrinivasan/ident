@@ -2,6 +2,7 @@ from generate_expdata import initialize_to_ss
 from generate_expdata import perturb_parameters
 import copy
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def run_initial_ss_simulation(y0, cvode_options, estimated_parameter, noise=0, kinetics=2, noise_std=0.05):
@@ -167,16 +168,16 @@ def run_all_parameter_perturbation(y0, cvode_options, original_parameter, extrac
                                   for i_estimate_perturbation_ss in j_sample_perturbation_ss]
 
         # get initial ss for each parameter estimate
-        all_initial_y_ss = [i_estimate_initial_ss["y"] for i_estimate_initial_ss in j_sample_initial_ss]
-        all_initial_f_ss = [i_estimate_initial_ss["flux"] for i_estimate_initial_ss in j_sample_initial_ss]
-        all_initial_ss_id = [i_estimate_initial_ss["ssid"] for i_estimate_initial_ss in j_sample_initial_ss]
+        # all_initial_y_ss = [i_estimate_initial_ss["y"] for i_estimate_initial_ss in j_sample_initial_ss]
+        # all_initial_f_ss = [i_estimate_initial_ss["flux"] for i_estimate_initial_ss in j_sample_initial_ss]
+        # all_initial_ss_id = [i_estimate_initial_ss["ssid"] for i_estimate_initial_ss in j_sample_initial_ss]
 
         # combine initial ss with perturbation ss
-        number_parameter_estimates = len(all_initial_y_ss)
-        for i_estimate in range(0, number_parameter_estimates):
-            all_perturbation_y_ss[i_estimate].insert(0, all_initial_y_ss[i_estimate])
-            all_perturbation_f_ss[i_estimate].insert(0, all_initial_f_ss[i_estimate])
-            all_perturbation_ss_id[i_estimate].insert(0, all_initial_ss_id[i_estimate])
+        # number_parameter_estimates = len(all_initial_y_ss)
+        # for i_estimate in range(0, number_parameter_estimates):
+        #     all_perturbation_y_ss[i_estimate].insert(0, all_initial_y_ss[i_estimate])
+        #     all_perturbation_f_ss[i_estimate].insert(0, all_initial_f_ss[i_estimate])
+        #     all_perturbation_ss_id[i_estimate].insert(0, all_initial_ss_id[i_estimate])
 
         all_sample_all_ss.append({"y": all_perturbation_y_ss,
                                   "flux": all_perturbation_f_ss,
@@ -190,15 +191,28 @@ def run_all_parameter_perturbation(y0, cvode_options, original_parameter, extrac
     return all_sample_all_ss, all_sample_all_dyn
 
 
-def collate_ss_values(ss_values):
+def collate_ss_values(ss_values, exp_ss_values):
     """collect and collate ss values from different data sets/perturbations or models/parameter sets"""
-    number_samples = len(ss_values)
-    all_sample_info = []
-    for i_sample_info in ss_values:
-        all_xss = [j_ss_values["y"] for j_ss_values in i_sample_info]
-        all_fss = [j_ss_values["flux"] for j_ss_values in i_sample_info]
-        all_sample_info.append({'y': all_xss,
-                                'flux': all_fss})
+    # number_samples = len(ss_values)
+    all_sample_y = []
+    all_sample_f = []
+    all_sample_exp_y = []
+    all_sample_exp_f = []
+    for i_sample, i_sample_info in enumerate(ss_values):
+        # number_parameter_estimates = len(i_sample_info["y"])
+        number_experiments = len(i_sample_info["y"][0])
+        all_perturbation_y_ss = [[i_estimate_info[i_perturbation] for i_estimate_info in i_sample_info["y"]]
+                                 for i_perturbation in range(0, number_experiments)]
+        all_perturbation_f_ss = [[i_estimate_info[i_perturbation] for i_estimate_info in i_sample_info["flux"]]
+                                 for i_perturbation in range(0, number_experiments)]
+        all_sample_y.append(all_perturbation_y_ss)
+        all_sample_f.append(all_perturbation_f_ss)
+        all_sample_exp_y.append(exp_ss_values["y"][i_sample])
+        all_sample_exp_f.append(exp_ss_values["flux"][i_sample])
+    all_sample_info = {'y': all_sample_y,
+                       'flux': all_sample_f,
+                       'exp_y': all_sample_exp_y,
+                       'exp_flux': all_sample_exp_f}
     return all_sample_info
 
 
@@ -212,18 +226,22 @@ def plot_ss_values(original_value, estimated_value, concentration=1, flux=0):
     if concentration:
         # create repetition of original values same as predicted value
         all_sample_original_x_ss = []
-        for i_sample_ss in estimated_value:
-            original_y_ss = [original_value["y"]] * len(i_sample_ss["y"])
+        for i_sample_ss, i_sample_exp_ss in zip(estimated_value, original_value):
+            original_y_ss = [[i_perturbation_info] * len(i_sample_ss[i_perturbation])
+                             for i_perturbation, i_perturbation_info in enumerate(i_sample_exp_ss)]
             all_sample_original_x_ss.append(original_y_ss)
 
         # plot details
-        number_concentrations = original_value["y"].shape[0]
+        number_experiments = len(original_value[0])
+        number_concentrations = original_value[0][0].shape[0]
         f, ax = plt.subplots(number_concentrations, 1, figsize=(8, 6), dpi=100, facecolor='w',
                              edgecolor='k')
         for i_concentration, i_axis_object in enumerate(ax):
-            x_data = [i_x_ss[i_concentration] for i_x_ss in all_sample_original_x_ss[0]]
-            y_data = [j_x_ss[i_concentration] for j_x_ss in estimated_value[0]["y"]]
+            x_data = [np.array(i_x_ss)[:, i_concentration] for i_x_ss in all_sample_original_x_ss[0]]
+            y_data = [np.array(j_x_ss)[:, i_concentration] for j_x_ss in estimated_value[0]]
             plot_scatter(x_data, y_data, i_axis_object)
+            x_data_diagonal = [i_x_data[0] for i_x_data in x_data]
+            i_axis_object.plot(x_data_diagonal, x_data_diagonal, color='k', linestyle='dashed')
 
     if flux:
         all_sample_original_flux_ss = []
@@ -239,11 +257,10 @@ def plot_ss_values(original_value, estimated_value, concentration=1, flux=0):
             x_data = [i_flux_ss[i_flux] for i_flux_ss in all_sample_original_flux_ss[0]]
             y_data = [j_flux_ss[i_flux] for j_flux_ss in estimated_value[0]["flux"]]
             plot_scatter(x_data, y_data, j_axis_object)
-
     return None
 
 
-def validate_model(y0, cvode_options, original_parameter, extracted_parameter, ss=1, dyn=0,
+def validate_model(y0, cvode_options, original_parameter, extracted_parameter, experimental_data, ss=1, dyn=0,
                    noise=0, kinetics=2, noise_std=0.05, target_data=[]):
     """vcalculate initial steady state for estimate parameter value"""
     # get initial and perturbation steady state information for original and all estimated parameter sets
@@ -257,8 +274,8 @@ def validate_model(y0, cvode_options, original_parameter, extracted_parameter, s
     # compare new steady state with original experimental steady state
     if ss:
         # collect all ss values
-        all_ss = collate_ss_values(all_sample_ss)
-        # plot_ss_values(original_ss, all_ss, concentration=1)
+        all_ss = collate_ss_values(all_sample_ss, experimental_data)
+        plot_ss_values(all_ss["exp_y"], all_ss["y"], concentration=1)
         # plot_ss_values(original_ss, all_ss, concentration=0, flux=1)
 
     # compare new dynamic values with original experimental dynamic values
