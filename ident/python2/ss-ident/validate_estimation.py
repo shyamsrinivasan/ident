@@ -1,5 +1,6 @@
 from generate_expdata import initialize_to_ss
 from generate_expdata import perturb_parameters
+from plot_ident_results import plot_all_ss_estimates
 import copy
 import matplotlib.pyplot as plt
 import numpy as np
@@ -216,50 +217,6 @@ def collate_ss_values(ss_values, exp_ss_values):
     return all_sample_info
 
 
-def plot_scatter(x_data, y_data, axis_object):
-    axis_object.scatter(x_data, y_data)
-    return None
-
-
-def plot_ss_values(original_value, estimated_value, concentration=1, flux=0):
-    """plot steady state values of all concentrations and fluxes"""
-    if concentration:
-        # create repetition of original values same as predicted value
-        all_sample_original_x_ss = []
-        for i_sample_ss, i_sample_exp_ss in zip(estimated_value, original_value):
-            original_y_ss = [[i_perturbation_info] * len(i_sample_ss[i_perturbation])
-                             for i_perturbation, i_perturbation_info in enumerate(i_sample_exp_ss)]
-            all_sample_original_x_ss.append(original_y_ss)
-
-        # plot details
-        number_experiments = len(original_value[0])
-        number_concentrations = original_value[0][0].shape[0]
-        f, ax = plt.subplots(number_concentrations, 1, figsize=(8, 6), dpi=100, facecolor='w',
-                             edgecolor='k')
-        for i_concentration, i_axis_object in enumerate(ax):
-            x_data = [np.array(i_x_ss)[:, i_concentration] for i_x_ss in all_sample_original_x_ss[0]]
-            y_data = [np.array(j_x_ss)[:, i_concentration] for j_x_ss in estimated_value[0]]
-            plot_scatter(x_data, y_data, i_axis_object)
-            x_data_diagonal = [i_x_data[0] for i_x_data in x_data]
-            i_axis_object.plot(x_data_diagonal, x_data_diagonal, color='k', linestyle='dashed')
-
-    if flux:
-        all_sample_original_flux_ss = []
-        for i_sample_ss in estimated_value:
-            original_flux_ss = [original_value["flux"]] * len(i_sample_ss["flux"])
-            all_sample_original_flux_ss.append(original_flux_ss)
-
-        # plot details
-        number_fluxes = original_value["flux"].shape[0]
-        f_1, ax_1 = plt.subplots(number_fluxes, 1, figsize=(8, 6), dpi=100, facecolor='w',
-                                 edgecolor='k')
-        for i_flux, j_axis_object in enumerate(ax_1):
-            x_data = [i_flux_ss[i_flux] for i_flux_ss in all_sample_original_flux_ss[0]]
-            y_data = [j_flux_ss[i_flux] for j_flux_ss in estimated_value[0]["flux"]]
-            plot_scatter(x_data, y_data, j_axis_object)
-    return None
-
-
 def validate_model(y0, cvode_options, original_parameter, extracted_parameter, experimental_data, ss=1, dyn=0,
                    noise=0, kinetics=2, noise_std=0.05, target_data=[]):
     """vcalculate initial steady state for estimate parameter value"""
@@ -275,7 +232,8 @@ def validate_model(y0, cvode_options, original_parameter, extracted_parameter, e
     if ss:
         # collect all ss values
         all_ss = collate_ss_values(all_sample_ss, experimental_data)
-        plot_ss_values(all_ss["exp_y"], all_ss["y"], concentration=1)
+        plot_all_ss_estimates(all_ss["exp_y"], all_ss["y"])
+        plot_all_ss_estimates(all_ss["exp_flux"], all_ss["flux"])
         # plot_ss_values(original_ss, all_ss, concentration=0, flux=1)
 
     # compare new dynamic values with original experimental dynamic values
