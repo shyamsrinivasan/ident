@@ -19,18 +19,25 @@ def run_initial_ss_simulation(y0, cvode_options, estimated_parameter, noise=0, k
     return all_ss_estimate, all_dyn_estimate
 
 
-def run_perturbation_ss_simulation():
+def run_perturbation_ss_simulation(estimate_initial_ss, cvode_options, estimated_parameter, parameter_perturbation,
+                                   number_of_samples=1, noise=0, kinetics=2, noise_std=0.05):
     """run ode simulations for all estimated parameter sets - may take a while 21 * number_estimated_parameters"""
-    ll_ss_estimate = []
+    all_ss_estimate = []
     all_dyn_estimate = []
     number_of_estimates = len(estimated_parameter)
-    for j_parameter_id, j_parameter_estimate in enumerate(estimated_parameter):
+    for j_parameter_id, (initial_ss, j_parameter_estimate) in enumerate(zip(estimate_initial_ss, estimated_parameter)):
         print("\nSimulation for parameter set {} of {}....\n".format(j_parameter_id + 1, number_of_estimates))
-        perturb_parameters(initial_ss, parameter_perturbation, cvode_options, ode_parameter_values, number_of_samples,
-                           noise=noise, kinetics=kinetics, dynamic_plot=0, noise_std=noise_std)
-        all_ss_estimate.append(estimated_ss)
-        all_dyn_estimate.append(estimated_dyn)
-    return None
+        estimate_perturbation_ss, _ = perturb_parameters(initial_ss, parameter_perturbation,
+                                                                            cvode_options,
+                                                                            j_parameter_estimate,
+                                                                            number_of_samples,
+                                                                            noise=noise,
+                                                                            kinetics=kinetics,
+                                                                            dynamic_plot=0,
+                                                                            noise_std=noise_std)
+        all_ss_estimate.append(estimate_perturbation_ss)
+        # all_dyn_estimate.append(estimated_dyn)
+    return all_ss_estimate, all_dyn_estimate
 
 
 def form_dict_one_data_set(original_parameter, data_set_info):
@@ -102,14 +109,14 @@ def run_all_parameters(y0, cvode_options, original_parameter, extracted_paramete
     for j_sample, j_sample_parameter in enumerate(all_sample_ode_parameters):
         print("Parameters for sample {} of {}:\n".format(j_sample+1, number_of_samples))
         estimate_ss, estimate_dyn = run_initial_ss_simulation(y0, cvode_options, j_sample_parameter,
-                                                   noise=noise, kinetics=kinetics, noise_std=noise_std)
+                                                              noise=noise, kinetics=kinetics, noise_std=noise_std)
         all_sample_ss.append(estimate_ss)
         all_sample_dyn.append(estimate_dyn)
     return original_ss, all_sample_ss, original_dyn, all_sample_dyn
 
 
 def run_all_parameter_perturbation(y0, cvode_options, original_parameter, extracted_parameter,
-                       noise=0, kinetics=2, noise_std=0.05, target_data=[]):
+                                   noise=0, kinetics=2, noise_std=0.05, target_data=[]):
     """run perturbation analysis for all estimated parameter data sets based on
     initial and perturbed steady states"""
     # get all parameter sets in extracted parameter and form parameter dictionaries suitable for simulation
@@ -124,24 +131,63 @@ def run_all_parameter_perturbation(y0, cvode_options, original_parameter, extrac
     # simulate system with each estimated set of parameter values
     number_of_samples = len(all_sample_ode_parameters)
     all_sample_ss = []
+    all_sample_perturbation_ss = []
     all_sample_dyn = []
+    all_sample_perturbation_dyn = []
     for j_sample, j_sample_parameter in enumerate(all_sample_ode_parameters):
         print("Parameters for sample {} of {}:\n".format(j_sample + 1, number_of_samples))
         # get initial system steady state for all estimated parameter values
-        estimate_ss, estimate_dyn = run_simulation(y0, cvode_options, j_sample_parameter,
-                                                   noise=noise, kinetics=kinetics, noise_std=noise_std)
+        estimate_ss, estimate_dyn = run_initial_ss_simulation(y0, cvode_options, j_sample_parameter,
+                                                              noise=noise, kinetics=kinetics, noise_std=noise_std)
         all_sample_ss.append(estimate_ss)
         all_sample_dyn.append(estimate_dyn)
 
         # run all perturbations for each estimated parameter value
+        estimate_perturbation_ss, estimate_perturbation_dyn = run_perturbation_ss_simulation(estimate_ss, cvode_options,
+                                                                                             j_sample_parameter,
+                                                                                             parameter_perturbation,
+                                                                                             number_of_samples=1,
+                                                                                             noise=noise,
+                                                                                             kinetics=kinetics,
+                                                                                             noise_std=noise_std)
+        all_sample_perturbation_ss.append(estimate_perturbation_ss)
+        all_sample_perturbation_dyn.append(estimate_perturbation_dyn)
 
+    # combine initial and perturbation ss for all samples
+    all_sample_all_ss = []
+    for j_sample_initial_ss, j_sample_perturbation_ss in zip(all_sample_ss, all_sample_perturbation_ss):
+        # get all perturbation concentrations for each parameter estimate
+        all_perturbation_y_ss = [[i_perturbation_info["y"] for i_perturbation_info in i_estimate_perturbation_ss]
+                                 for i_estimate_perturbation_ss in j_sample_perturbation_ss]
+        # get all perturbation fluxes for each parameter estimate
+        all_perturbation_f_ss = [[i_perturbation_info["flux"] for i_perturbation_info in i_estimate_perturbation_ss]
+                                 for i_estimate_perturbation_ss in j_sample_perturbation_ss]
+        # get all perturbation ss id for each parameter estimate
+        all_perturbation_ss_id = [[i_perturbation_info["ssid"] for i_perturbation_info in i_estimate_perturbation_ss]
+                                  for i_estimate_perturbation_ss in j_sample_perturbation_ss]
 
+        # get initial ss for each parameter estimate
+        all_initial_y_ss = [i_estimate_initial_ss["y"] for i_estimate_initial_ss in j_sample_initial_ss]
+        all_initial_f_ss = [i_estimate_initial_ss["flux"] for i_estimate_initial_ss in j_sample_initial_ss]
+        all_initial_ss_id = [i_estimate_initial_ss["ssid"] for i_estimate_initial_ss in j_sample_initial_ss]
 
-    # run all perturbations for each estimated parameter value
+        # combine initial ss with perturbation ss
+        number_parameter_estimates = len(all_initial_y_ss)
+        for i_estimate in range(0, number_parameter_estimates):
+            all_perturbation_y_ss[i_estimate].insert(0, all_initial_y_ss[i_estimate])
+            all_perturbation_f_ss[i_estimate].insert(0, all_initial_f_ss[i_estimate])
+            all_perturbation_ss_id[i_estimate].insert(0, all_initial_ss_id[i_estimate])
 
-    generate_expdata(y0, cvode_options, ode_parameter_values, number_of_samples, noise=noise, kinetics=kinetics, noise_std=noise_std)
+        all_sample_all_ss.append({"y": all_perturbation_y_ss,
+                                  "flux": all_perturbation_f_ss,
+                                  "ssid": all_perturbation_ss_id})
 
-    return None
+    # combine initial and perturbation dynamics for all samples
+    all_sample_all_dyn = []
+    # for j_sample_initial_dyn, j_sample_perturbation_dyn in zip(all_sample_dyn, all_sample_perturbation_dyn):
+    #     pass
+
+    return all_sample_all_ss, all_sample_all_dyn
 
 
 def collate_ss_values(ss_values):
@@ -200,23 +246,20 @@ def plot_ss_values(original_value, estimated_value, concentration=1, flux=0):
 def validate_model(y0, cvode_options, original_parameter, extracted_parameter, ss=1, dyn=0,
                    noise=0, kinetics=2, noise_std=0.05, target_data=[]):
     """vcalculate initial steady state for estimate parameter value"""
-    # get initial steady state information for original and all estimated parameter sets
-    original_ss, all_sample_ss, original_dyn, all_sample_dyn = run_all_parameters(y0, cvode_options,
-                                                                                  original_parameter,
-                                                                                  extracted_parameter,
-                                                                                  noise=noise,
-                                                                                  kinetics=kinetics,
-                                                                                  noise_std=noise_std,
-                                                                                  target_data=target_data)
-    # get perturbation steady state information for original and all estimated parameter sets
-
-
+    # get initial and perturbation steady state information for original and all estimated parameter sets
+    all_sample_ss, all_sample_dyn = run_all_parameter_perturbation(y0, cvode_options,
+                                                                   original_parameter,
+                                                                   extracted_parameter,
+                                                                   noise=noise,
+                                                                   kinetics=kinetics,
+                                                                   noise_std=noise_std,
+                                                                   target_data=target_data)
     # compare new steady state with original experimental steady state
     if ss:
         # collect all ss values
         all_ss = collate_ss_values(all_sample_ss)
-        plot_ss_values(original_ss, all_ss, concentration=1)
-        plot_ss_values(original_ss, all_ss, concentration=0, flux=1)
+        # plot_ss_values(original_ss, all_ss, concentration=1)
+        # plot_ss_values(original_ss, all_ss, concentration=0, flux=1)
 
     # compare new dynamic values with original experimental dynamic values
     if dyn:
