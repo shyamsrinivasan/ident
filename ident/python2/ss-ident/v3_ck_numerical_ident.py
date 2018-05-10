@@ -64,4 +64,7 @@ plot_numerical_parameter_estimates(v3_all_x0_parameter_info[0])
 from process_ident_data import extract_parameter_values_numerical
 parameter_value_info = extract_parameter_values_numerical(v3_all_x0_parameter_info[0])
 # validate all parameter values
+from validate_estimation import validate_model
+validate_model(y0, cvode_options, ode_parameter_values, parameter_value_info, exp_info,
+               ss=1, dyn=0, noise=0, kinetics=2, target_data=range(0, 3300))
 print("Run complete\n")
