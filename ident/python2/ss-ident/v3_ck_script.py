@@ -30,9 +30,8 @@ ode_parameter_values = {"K1ac": np.array([.1]),
                         "ac": np.array([.1])}
 
 # get experimental system steady state data without noise using Convenience Kinetics for v3 (kinetics = 2)
-exp_xss, exp_fss, exp_ssid, perturbation_details = \
-    generate_expdata(y0, cvode_options, ode_parameter_values, noise=0, kinetics=2, dynamic_plot=0,
-                     perturbation_plot=0)
+exp_info, perturbation_details = generate_expdata(y0, cvode_options, ode_parameter_values,
+                                                  noise=0, kinetics=2, dynamic_plot=0, perturbation_plot=0)
 
 # arrange experimental data to form multiple data sets
 exp_flux_index = np.array([0, 3, 2, 4, 1, 5])
@@ -43,7 +42,8 @@ print('Practical Identifiability Analysis of v3 with 3 parameters: V3max, K3fdp 
 ident_fun_choice = [0]
 # get combinations of experimental datasets
 experimental_datasets_3_expts, \
-    experiment_choice, combination_choice = arrange_experimental_data(exp_xss, exp_fss, perturbation_details,
+    experiment_choice, combination_choice = arrange_experimental_data(exp_info["y"], exp_info["flux"],
+                                                                      perturbation_details,
                                                                       experiments_per_set=3, flux_id=exp_flux_index,
                                                                       experiment_choice=[0,
                                                                                          1, 2, 3, 4, 5,
@@ -80,8 +80,8 @@ data_utility_plot(data_list_v3_root1)
 from process_ident_data import extract_parameter_values
 parameter_value_info = extract_parameter_values(true_value_v3_root1)
 from validate_estimation import validate_model
-validate_model(y0, cvode_options, ode_parameter_values, parameter_value_info,
-               ss=1, dyn=0, noise=0, kinetics=2, target_data=range(0, 20))
+validate_model(y0, cvode_options, ode_parameter_values, parameter_value_info, exp_info,
+               ss=1, dyn=0, noise=0, kinetics=2, target_data=range(0, 10))
 
 print('Practical Identifiability Analysis of v3 with 3 parameters: V3max, K3fdp and K3pep \n')
 # perform identifiability when v3 parameters are written for root (2)

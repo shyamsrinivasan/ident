@@ -646,14 +646,41 @@ def plot_hist(fig_object, grid_object, distribution_data, mark_value=[], paramet
     return axis_object
 
 
-def plot_box(fig_object, grid_object, distribution_data, sharex_axis_object=[], sharey_axis_object=[]):
+def plot_box(fig_object, grid_object, distribution_data, sharex_axis_object=[], sharey_axis_object=[],
+             vert_option=False):
     """create subplot with grid object and get box plot of distributions"""
     axis_object = plt.Subplot(fig_object, grid_object)
-    bp_object = axis_object.boxplot(distribution_data, vert=False)
+    bp_object = axis_object.boxplot(distribution_data, vert=vert_option)
     for whiskers in bp_object["whiskers"]:
         whiskers.set(color='k', linewidth=2)
     for flier in bp_object['fliers']:
         flier.set(marker='o', color='r', alpha=0.5)
+    # Remove top axes and right axes ticks
+    axis_object.get_xaxis().tick_bottom()
+    axis_object.get_yaxis().tick_left()
+    if sharex_axis_object and sharey_axis_object:
+        fig_object.add_subplot(axis_object, sharex=sharex_axis_object, sharey=sharey_axis_object)
+        plt.setp(axis_object.get_xticklabels(), visible=False)
+        plt.setp(axis_object.get_yticklabels(), visible=False)
+    elif sharex_axis_object:
+        fig_object.add_subplot(axis_object, sharex=sharex_axis_object)
+        plt.setp(axis_object.get_xticklabels(), visible=False)
+    elif sharey_axis_object:
+        fig_object.add_subplot(axis_object, sharey=sharey_axis_object)
+        plt.setp(axis_object.get_yticklabels(), visible=False)
+    else:
+        fig_object.add_subplot(axis_object)
+    return axis_object
+
+
+def plot_violin(fig_object, grid_object, distribution_data, sharex_axis_object=[], sharey_axis_object=[]):
+    """create subplot with grid object and get violin plot of distributions"""
+    axis_object = plt.Subplot(fig_object, grid_object)
+    violin_object = axis_object.violinplot(distribution_data, showmeans=True, showmedians=True)
+    # for whiskers in bp_object["whiskers"]:
+    #     whiskers.set(color='k', linewidth=2)
+    # for flier in bp_object['fliers']:
+    #     flier.set(marker='o', color='r', alpha=0.5)
     # Remove top axes and right axes ticks
     axis_object.get_xaxis().tick_bottom()
     axis_object.get_yaxis().tick_left()
@@ -707,18 +734,24 @@ def set_hist_box_axis_limits(hist_axis, box_axis):
     return None
 
 
-def plot_parameter_value_hist(parameter_value, noise=0):
-    """plot distribution of identified parameter values as a histogram"""
-    number_of_fluxes = len(parameter_value["processed"])
-    number_of_plots = number_of_fluxes
-    if number_of_fluxes >= 2:
-        number_of_rows = 2
+def identify_column_row_numbers(number_of_plots):
+    """get number of rows and columns based on number of plots"""
+    if number_of_plots >= 3:
+        number_of_rows = 3
     else:
         number_of_rows = 1
     if number_of_plots % number_of_rows != 0:
         number_of_columns = (number_of_plots + 1) / number_of_rows
     else:
         number_of_columns = number_of_plots / number_of_rows
+    return number_of_rows, number_of_columns
+
+
+def plot_parameter_value_hist(parameter_value, noise=0):
+    """plot distribution of identified parameter values as a histogram"""
+    number_of_fluxes = len(parameter_value["processed"])
+    number_of_rows, number_of_columns = identify_column_row_numbers(number_of_fluxes)
+
     figure = plt.figure(figsize=(6, 4))
     outer_grid = gridspec.GridSpec(number_of_rows, number_of_columns, wspace=0.2, hspace=0.2)
     if noise:
@@ -752,13 +785,53 @@ def plot_parameter_value_hist(parameter_value, noise=0):
                 all_hist_axis.append(hist_axis)
 
             set_hist_box_axis_limits(all_hist_axis, all_box_axis)
-
     return None
 
 
-def plot_all_initial_value_parameter_estimates():
-    """plot distribution from multiple initial values"""
+def plot_scatter(x_data, y_data, fig_object, grid_object):
+    axis_object = plt.Subplot(fig_object, grid_object)
+    axis_object.plot(x_data, y_data, linestyle='None', marker='o', markersize=8)
+    fig_object.add_subplot(axis_object)
+    return axis_object
+
+
+def plot_line(x_data, y_data, fig_object, grid_object):
+    axis_object = plt.Subplot(fig_object, grid_object)
+    axis_object.plot(x_data, y_data, linestyle='--', color='black', linewidth=1.0)
+    fig_object.add_subplot(axis_object)
+    return axis_object
+
+
+def plot_all_ss_estimates(original_ss, estimated_ss):
+    """plot distribution of steady state concentrations/fluxes obtained from multiple parameter value estimates"""
+    # create repetition of original values same as predicted value
+    all_sample_original_ss = []
+    for i_sample_ss, i_sample_exp_ss in zip(estimated_ss, original_ss):
+        original_y_ss = [[i_perturbation_info] * len(i_sample_ss[i_perturbation])
+                         for i_perturbation, i_perturbation_info in enumerate(i_sample_exp_ss)]
+        all_sample_original_ss.append(original_y_ss)
+
+    # plot details
+    number_experiments = len(original_ss[0])
+    number_plots = original_ss[0][0].shape[0]
+    number_of_rows, number_of_columns = identify_column_row_numbers(number_plots)
+    figure = plt.figure(figsize=(8, 6))
+    outer_grid = gridspec.GridSpec(number_of_rows, number_of_columns, wspace=0.2, hspace=0.2)
+    violin_axis_object = []
+    box_axis_object = []
+    for i_plot in range(0, number_plots):
+        # generate x and y data
+        x_data = [np.array(i_x_ss)[:, i_plot] for i_x_ss in all_sample_original_ss[0]]
+        y_data = [np.array(j_x_ss)[:, i_plot] for j_x_ss in estimated_ss[0]]
+        inner_grid = gridspec.GridSpecFromSubplotSpec(1, 3, subplot_spec=outer_grid[i_plot], wspace=0.1, hspace=0.2)
+        # plot scatter on left side
+        scatter_axis_object = plot_scatter(x_data, y_data, figure, inner_grid[0])
+        x_data_diagonal = [i_experiment_data[i_plot] for i_experiment_data in original_ss[0]]
+        scatter_axis_object.plot(x_data_diagonal, x_data_diagonal, linestyle='--', color='black', linewidth=1.0)
+        # plot violin at second position
+        violin_axis_object = plot_violin(figure, inner_grid[1], y_data, sharex_axis_object=violin_axis_object)
+        # plot histogram on last position
+        box_axis_object = plot_box(figure, inner_grid[2], y_data, vert_option=True,
+                                   sharey_axis_object=violin_axis_object,
+                                   sharex_axis_object=box_axis_object)
     return None
-
-
-

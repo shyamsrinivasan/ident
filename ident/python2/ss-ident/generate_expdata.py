@@ -80,7 +80,9 @@ def generate_expdata(y0, cvode_options, ode_parameter_values, number_of_samples=
         all_sample_exp_fss = [[i_perturbation_data["flux"] for i_perturbation_data in perturbed_ss]]
         all_sample_exp_ssid = [[i_perturbation_data["ssid"] for i_perturbation_data in perturbed_ss]]
 
-    return all_sample_exp_xss, all_sample_exp_fss, all_sample_exp_ssid, perturbation_details
+    all_sample_ss_info = {"y": all_sample_exp_xss, "flux": all_sample_exp_fss, "ssid": all_sample_exp_ssid}
+
+    return all_sample_ss_info, perturbation_details
 
 
 if __name__ == "__main__":
