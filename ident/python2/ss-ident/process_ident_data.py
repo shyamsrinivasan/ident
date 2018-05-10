@@ -917,6 +917,9 @@ def extract_parameter_values_numerical(all_parameter_info):
     parameter_values = all_parameter_info["values"]
     all_parameter_estimates = [[np.array(i_parameter[j_parameter_estimate]) for i_parameter in parameter_values]
                                for j_parameter_estimate in range(0, number_estimates)]
-    extracted_parameters = [dict(zip(parameter_names, i_parameter_estimate))
-                            for i_parameter_estimate in all_parameter_estimates]
+    extracted_parameter_values = [dict(zip(parameter_names, i_parameter_estimate))
+                                  for i_parameter_estimate in all_parameter_estimates]
+    extracted_parameters = [{"parameter_name": parameter_names,
+                             "parameter_value": extracted_parameter_values,
+                             "data_id": all_parameter_info["data_id"]}]
     return extracted_parameters
