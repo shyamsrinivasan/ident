@@ -61,5 +61,7 @@ v3_all_x0_parameter_info = solve_multiple_initial_conditions(all_initial_conditi
                                                              number_of_parameters=3, flux_id=3, flux_choice=[3])
 plot_numerical_parameter_estimates(v3_all_x0_parameter_info[0])
 # extract all parameter values
+from process_ident_data import extract_parameter_values_numerical
+parameter_value_info = extract_parameter_values_numerical(v3_all_x0_parameter_info[0])
 # validate all parameter values
 print("Run complete\n")
