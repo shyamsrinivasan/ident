@@ -115,12 +115,13 @@ def solve_numerical_nlp(chosen_fun, chosen_data, opt_problem_details, optim_opti
     return res
 
 
-def parse_opt_result(opt_sol):
+def parse_opt_result(opt_sol, data_id):
     """convert all optimization results from casadi.DM to numpy arrays"""
     new_opt_sol = {"f": opt_sol["f"].full(),
                    "xopt": opt_sol["x"].full(),
                    "lam_x": opt_sol["lam_x"].full(),
-                   "lam_g": opt_sol["lam_g"].full()}
+                   "lam_g": opt_sol["lam_g"].full(),
+                   "data_id": data_id}
     # Print the optimal cost
     print("optimal cost: ", float(new_opt_sol["f"]))
 
@@ -139,11 +140,13 @@ def opt_result_for_plots(all_data_set_opt_sol):
     all_xopt = [i_data_sol["xopt"] for i_data_sol in all_data_set_opt_sol]
     all_lam_x = [i_data_sol["lam_x"] for i_data_sol in all_data_set_opt_sol]
     all_lam_g = [i_data_sol["lam_g"] for i_data_sol in all_data_set_opt_sol]
+    all_data_id = [i_data_sol["data_id"] for i_data_sol in all_data_set_opt_sol]
 
     all_solution_details = {"f": all_obj_fun,
                             "x": all_xopt,
                             "lam_x": all_lam_x,
-                            "lam_g": all_lam_g}
+                            "lam_g": all_lam_g,
+                            "data_id": all_data_id}
     return all_solution_details
 
 
@@ -178,7 +181,7 @@ def identify_all_data_sets(experimental_data, chosen_fun, x0, optim_options={}):
         else:
             sol = []
         if sol:
-            sol = parse_opt_result(sol)
+            sol = parse_opt_result(sol, i_data_id)
         all_data_solutions.append(sol)
         print("Identifiability analysis on data set {} of {} complete".format(i_data_id+1, number_data_sets))
 
@@ -208,7 +211,8 @@ def process_opt_solution(opt_solution, number_of_parameters, flux_id, flux_choic
                           "names": all_parameter_name,
                           "flux": flux_name,
                           "flux choice": flux_choice,
-                          "true value": all_parameter_true_value}
+                          "true value": all_parameter_true_value,
+                          "data_id": opt_solution["data_id"]}
     return all_parameter_info
 
 
