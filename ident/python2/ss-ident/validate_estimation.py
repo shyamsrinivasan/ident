@@ -232,7 +232,7 @@ def validate_model(y0, cvode_options, original_parameter, extracted_parameter, e
     if ss:
         # collect all ss values
         all_ss = collate_ss_values(all_sample_ss, experimental_data)
-        plot_all_ss_estimates(all_ss["exp_y"], all_ss["y"])
+        # plot_all_ss_estimates(all_ss["exp_y"], all_ss["y"])
         plot_all_ss_estimates(all_ss["exp_flux"], all_ss["flux"])
         # plot_ss_values(original_ss, all_ss, concentration=0, flux=1)
 
