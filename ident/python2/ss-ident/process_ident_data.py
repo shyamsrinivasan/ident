@@ -909,4 +909,14 @@ def extract_parameter_values(parameter_value):
 def extract_parameter_values_numerical(all_parameter_info):
     """extract parameter values from numerical identifiability method"""
     number_parameters = len(all_parameter_info["values"])
-    return None
+    if number_parameters > 0:
+        number_estimates = len(all_parameter_info["values"][0])
+    else:
+        number_estimates = 0
+    parameter_names = all_parameter_info["names"]
+    parameter_values = all_parameter_info["values"]
+    all_parameter_estimates = [[np.array(i_parameter[j_parameter_estimate]) for i_parameter in parameter_values]
+                               for j_parameter_estimate in range(0, number_estimates)]
+    extracted_parameters = [dict(zip(parameter_names, i_parameter_estimate))
+                            for i_parameter_estimate in all_parameter_estimates]
+    return extracted_parameters
