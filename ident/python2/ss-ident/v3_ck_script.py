@@ -81,7 +81,7 @@ from process_ident_data import extract_parameter_values
 parameter_value_info = extract_parameter_values(true_value_v3_root1)
 from validate_estimation import validate_model
 validate_model(y0, cvode_options, ode_parameter_values, parameter_value_info, exp_info,
-               ss=1, dyn=0, noise=0, kinetics=2, target_data=range(0, 1000))
+               ss=1, dyn=0, noise=0, kinetics=2, target_data=range(0, 10))
 
 print('Practical Identifiability Analysis of v3 with 3 parameters: V3max, K3fdp and K3pep \n')
 # perform identifiability when v3 parameters are written for root (2)
