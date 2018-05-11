@@ -134,11 +134,26 @@ def generate_expdata(y0, cvode_options, ode_parameter_values, number_of_samples=
                                                                cvode_options, ode_parameter_values,
                                                                number_of_samples, noise=noise, kinetics=kinetics,
                                                                dynamic_plot=perturbation_plot, noise_std=noise_std)
-    # convert info to data frame for storage and retrieval
-    all_ss_df = pd.DataFrame(perturbation_info, columns=info_dict_keys)
-    all_ss_df.set_index(['sample_name', all_ss_df.index], inplace=True, drop=False)
 
-    return [], all_ss_df, perturbation_details
+    # convert info to multi index data frame for storage and retrieval
+    df_index_tuples = [(i_value_sample, i_value_exp) for i_value_sample, i_value_exp in
+                       zip(perturbation_info["sample_name"], perturbation_info["experiment_id"])]
+    multi_index_labels = ['sample_name', 'experiment_id']
+    index = pd.MultiIndex.from_tuples(df_index_tuples, names=multi_index_labels)
+    del perturbation_info["sample_name"]
+    del perturbation_info["experiment_id"]
+
+    all_ss_df = pd.DataFrame(perturbation_info, index=index, columns=perturbation_info.keys())
+    # all_ss_df.set_index(['sample_name', all_ss_df.index], inplace=True, drop=False)
+    # save data frame to csv file
+    # all_ss_df.to_csv('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\ident\python2\ss-ident\example',
+    #                  index_label=['sample_name', 'experiment_id'])
+    # read dataframe from csv file
+    # new_df = pd.read_csv(
+    #     'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\ident\python2\ss-ident\example',
+    #     index_col=['sample_name', 'experiment_id'])
+
+    return all_ss_df, multi_index_labels
 
 
 if __name__ == "__main__":
