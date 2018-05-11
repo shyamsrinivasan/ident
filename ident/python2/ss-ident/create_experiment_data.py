@@ -41,16 +41,35 @@ def retrieve_experimental_data_from_file(file_name, multi_index_label):
     return experiment_df
 
 
-def get_concentrations(data_frame, concentration_label):
-    """retrieve all concentration from data frame"""
-    row_indices = data_frame.index
-    column_indices = data_frame.columns
-    return None
+def get_variables(data_frame, variable_label):
+    """retrieve all concentration/fluxes from data frame"""
+    sample_ids = list(data_frame.index.levels[0])
+    # experiment_ids = list(data_frame.index.levels[1])
+    # number_samples = len(sample_ids)
+    # number_experiments = len(experiment_ids)
+    all_variables = []
+    # sample loop
+    for i_sample in sample_ids:
+        df_slice = data_frame.loc[(i_sample, slice(None)), variable_label]
+        concentration_list = df_slice.values.tolist()
+        concentration_array = [np.array(i_concentration_list) for i_concentration_list in concentration_list]
+        all_variables.append(concentration_array)
+    # row_names = list(data_frame.index.names)
+    # column_indices = list(data_frame.columns.values)
+    # all_concentrations = []
+    # all_row_tuples = []
+    # for i_label in concentration_label:
+    #     try:
+    #         all_concentrations.append(data_frame[i_label].values.tolist())
+    #         all_row_tuples.append(list(data_frame["pep"].index.values))
+    #     except KeyError:
+    #         if i_label not in column_indices:
+    #             print('Concentration {} not in Data Frame'.format(i_label))
+    # # get only one set of row tuples separated into sample ids and experiment ids
+    # sample_ids = [i_sample_id for i_sample_id, _ in all_row_tuples[0]]
+    # experiment_ids = [i_experiment_id for _, i_experiment_id in all_row_tuples[0]]
 
-
-def get_fluxes(data_frame, flux_label):
-    """retrieve all fluxes from data frame"""
-    return None
+    return all_variables
 
 
 def retrieve_experimental_data(file_name, multi_index_lablel):
@@ -58,10 +77,13 @@ def retrieve_experimental_data(file_name, multi_index_lablel):
     other information from resulting data frame and pass as output arguments"""
     experimental_df = retrieve_experimental_data_from_file(file_name, multi_index_lablel)
     # get concentrations
-    get_concentrations(experimental_df, ['pep', 'fdp', 'E'])
+    all_concentrations = get_variables(experimental_df, ['pep', 'fdp', 'E'])
     # get fluxes
-    # get experimental info
-    return None
+    all_fluxes = get_variables(experimental_df, ['v1', 'v2', 'v3', 'v4', 'v5', 'v6'])
+    # collate all experimental info
+    exp_ss = {"y": all_concentrations, "flux": all_fluxes}
+
+    return exp_ss
 
 
 if __name__ == "__main__":
