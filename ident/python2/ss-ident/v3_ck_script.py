@@ -1,5 +1,5 @@
 import numpy as np
-from generate_expdata import generate_expdata
+from create_experiment_data import retrieve_experimental_data
 from simulate_data import arrange_experimental_data
 from kotte_model import flux_ident_3_data_combination
 from process_ident_data import process_info_sample
@@ -29,9 +29,9 @@ ode_parameter_values = {"K1ac": np.array([.1]),
                         "V2max": np.array([1]),
                         "ac": np.array([.1])}
 
-# get experimental system steady state data without noise using Convenience Kinetics for v3 (kinetics = 2)
-exp_info, perturbation_details = generate_expdata(y0, cvode_options, ode_parameter_values,
-                                                  noise=0, kinetics=2, dynamic_plot=0, perturbation_plot=0)
+multi_index_labels = ['sample_name', 'experiment_id']
+file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\ident\python2\ss-ident\experiments'
+exp_ss, perturbation_details = retrieve_experimental_data(file_name=file_name, multi_index_lablel=multi_index_labels)
 
 # arrange experimental data to form multiple data sets
 exp_flux_index = np.array([0, 3, 2, 4, 1, 5])
@@ -42,9 +42,9 @@ print('Practical Identifiability Analysis of v3 with 3 parameters: V3max, K3fdp 
 ident_fun_choice = [0]
 # get combinations of experimental datasets
 experimental_datasets_3_expts, \
-    experiment_choice, combination_choice = arrange_experimental_data(exp_info["y"], exp_info["flux"],
+    experiment_choice, combination_choice = arrange_experimental_data(exp_ss["y"], exp_ss["flux"],
                                                                       perturbation_details,
-                                                                      experiments_per_set=3, flux_id=exp_flux_index,
+                                                                      experiments_per_set=3,
                                                                       experiment_choice=[0,
                                                                                          1, 2, 3, 4, 5,
                                                                                          6, 7, 8, 9, 10,
