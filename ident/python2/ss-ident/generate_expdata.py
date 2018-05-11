@@ -143,15 +143,8 @@ def generate_expdata(y0, cvode_options, ode_parameter_values, number_of_samples=
     del perturbation_info["sample_name"]
     del perturbation_info["experiment_id"]
 
+    # create data frame
     all_ss_df = pd.DataFrame(perturbation_info, index=index, columns=perturbation_info.keys())
-    # all_ss_df.set_index(['sample_name', all_ss_df.index], inplace=True, drop=False)
-    # save data frame to csv file
-    # all_ss_df.to_csv('C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\ident\python2\ss-ident\example',
-    #                  index_label=['sample_name', 'experiment_id'])
-    # read dataframe from csv file
-    # new_df = pd.read_csv(
-    #     'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\ident\python2\ss-ident\example',
-    #     index_col=['sample_name', 'experiment_id'])
 
     return all_ss_df, multi_index_labels
 
