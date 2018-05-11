@@ -1,5 +1,5 @@
 import numpy as np
-from generate_expdata import generate_expdata
+from create_experiment_data import retrieve_experimental_data
 from simulate_data import arrange_experimental_data
 from kotte_model import flux_ident_3_data_combination
 from process_ident_data import process_info_sample
@@ -28,10 +28,10 @@ ode_parameter_values = {"K1ac": np.array([.1]),
                         "V2max": np.array([1]),
                         "ac": np.array([.1])}
 
-# get experimental system steady state data without noise
-exp_xss, exp_fss, exp_ssid, perturbation_details = \
-    generate_expdata(y0, cvode_options, ode_parameter_values, noise=1, number_of_samples=25, kinetics=2,
-                     dynamic_plot=1, perturbation_plot=0, noise_std=0.05)
+multi_index_labels = ['sample_name', 'experiment_id']
+file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\ident\python2\ss-ident\experiments_noise_5_samples'
+retrieve_experimental_data(file_name=file_name, multi_index_lablel=multi_index_labels)
+
 
 # arrange experimental data to form multiple data sets
 exp_flux_index = np.array([0, 3, 2, 4, 1, 5])
