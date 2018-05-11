@@ -3,6 +3,8 @@ from generate_noisy_data import generate_noisy_data
 from generate_noisy_data import run_no_noise_parameter_perturbation
 from generate_noisy_data import run_noisy_parameter_perturbation
 from plot_ident_results import plot_dynamic_sim_concentrations
+from kotte_model import kotte_variable_name
+import pandas as pd
 
 
 def initialize_to_ss(y0, cvode_options, ode_parameter_values, noise=0, kinetics=2, noise_std=0.05):
@@ -38,6 +40,30 @@ def perturb_parameters(initial_ss, parameter_perturbations, cvode_options, ode_p
             run_no_noise_parameter_perturbation(parameter_perturbations, initial_ss["y"], perturbation_options,
                                                 kinetics=kinetics, plot_arg=dynamic_plot)
         return no_noise_ss, perturbation_details
+
+
+def create_variable_dict(ss_info, variable_type):
+    """create dictionary of given variables for creating data frames for each experiment in each sample"""
+    number_variables = len(ss_info[0][0])
+    variable_name_info = [kotte_variable_name(variable_type, j_variable) for j_variable in range(0, number_variables)]
+
+    all_variable_info = []
+    for j_variable in range(0, number_variables):
+        j_variable_info = []
+        for i_sample_id, i_sample_info in enumerate(ss_info):
+            for i_experiment_info in i_sample_info:
+                j_variable_info.append(i_experiment_info[j_variable])
+        all_variable_info.append(j_variable_info)
+
+    sample_name_info = []
+    for i_sample_id, i_sample_info in enumerate(ss_info):
+        for _ in i_sample_info:
+            sample_name_info.append('sample_{}'.format(i_sample_id))
+
+    if variable_type == 'metabolite':
+        variable_name_info.append('sample_name')
+        all_variable_info.append(sample_name_info)
+    return variable_name_info, all_variable_info
 
 
 def generate_expdata(y0, cvode_options, ode_parameter_values, number_of_samples=1, noise=0, kinetics=2,
@@ -81,6 +107,19 @@ def generate_expdata(y0, cvode_options, ode_parameter_values, number_of_samples=
         all_sample_exp_ssid = [[i_perturbation_data["ssid"] for i_perturbation_data in perturbed_ss]]
 
     all_sample_ss_info = {"y": all_sample_exp_xss, "flux": all_sample_exp_fss, "ssid": all_sample_exp_ssid}
+
+    # convert data to pandas data frame for storage and retrieval later
+    concentration_name, concentration_data = create_variable_dict(all_sample_ss_info["y"], variable_type='metabolite')
+    flux_name, flux_data = create_variable_dict(all_sample_ss_info["flux"], variable_type='flux')
+
+    all_variable_name = concentration_name[:]
+    all_variable_info = concentration_data[:]
+    for i_flux, i_flux_info in zip(flux_name, flux_data):
+        all_variable_name.append(i_flux)
+        all_variable_info.append(i_flux_info)
+    all_ss_info = dict(zip(all_variable_name, all_variable_info))
+    all_ss_df = pd.DataFrame(all_ss_info, columns=all_variable_name)
+    all_ss_df.set_index(['sample_name', all_ss_df.index], inplace=True)
 
     return all_sample_ss_info, perturbation_details
 
