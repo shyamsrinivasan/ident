@@ -790,7 +790,7 @@ def plot_parameter_value_hist(parameter_value, noise=0):
 
 def plot_scatter(x_data, y_data, fig_object, grid_object):
     axis_object = plt.Subplot(fig_object, grid_object)
-    axis_object.plot(x_data, y_data, linestyle='None', marker='o', markersize=8)
+    axis_object.plot(x_data, y_data, linestyle='None', marker='o', markersize=2)
     fig_object.add_subplot(axis_object)
     return axis_object
 
