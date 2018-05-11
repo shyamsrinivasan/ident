@@ -72,6 +72,29 @@ def get_variables(data_frame, variable_label):
     return all_variables
 
 
+def get_other_details(data_frame, info_label):
+    """retrieve miscellaneous details about each data set in data frame (perturbation_details)"""
+    sample_ids = list(data_frame.index.levels[0])
+    all_info = []
+    # sample loop
+    # for i_sample in sample_ids:
+    df_slice = data_frame.loc[(sample_ids[0], slice(None)), info_label]
+    all_info = df_slice.values.tolist()
+    all_info_list = []
+    for j_info, _ in enumerate(info_label):
+        all_info_list.append([i_experiment_info[j_info] for i_experiment_info in all_info])
+
+    all_info_dict = dict(zip(info_label, all_info_list))
+    all_info_dict["final_ss"] = [int(j_experiment_info) for j_experiment_info in all_info_dict["final_ss"]]
+    all_info_dict["initial_ss"] = [int(j_experiment_info) for j_experiment_info in all_info_dict["initial_ss"]]
+    all_info_dict["parameter_change"] = [np.array(j_experiment_info)
+                                         for j_experiment_info in all_info_dict["parameter_change"]]
+    all_info_dict["parameter_change_percentage"] = [np.array(j_experiment_info) for j_experiment_info in
+                                                    all_info_dict["parameter_change_percentage"]]
+
+    return all_info_dict
+
+
 def retrieve_experimental_data(file_name, multi_index_lablel):
     """retrieve experimental data from csv file and collect concentrations, fluxes and
     other information from resulting data frame and pass as output arguments"""
@@ -80,10 +103,14 @@ def retrieve_experimental_data(file_name, multi_index_lablel):
     all_concentrations = get_variables(experimental_df, ['pep', 'fdp', 'E'])
     # get fluxes
     all_fluxes = get_variables(experimental_df, ['v1', 'v2', 'v3', 'v4', 'v5', 'v6'])
-    # collate all experimental info
+    # collate all experimental variable info
     exp_ss = {"y": all_concentrations, "flux": all_fluxes}
-
-    return exp_ss
+    # get perturbation details : chnged parameters, their values, etc
+    details_header = ['parameter_name', 'parameter_value', 'parameter_change', 'parameter_change_percentage',
+                      'initial_ss', 'final_ss']
+    parameter_info = get_other_details(experimental_df, details_header)
+    # exp_ss.update(dict(zip(details_header, parameter_info)))
+    return exp_ss, parameter_info
 
 
 if __name__ == "__main__":
