@@ -174,7 +174,22 @@ def run_no_noise_parameter_perturbation(parameter_perturbation, y0, other_option
                                     [perturbed_parameter, perturbation_indices,
                                      ode_parameters, experiment_info_boolean,
                                      perturbation_ssid]))
-    return ss_info, dynamic_info, perturbation_details
+
+    # convert perturbation details to dictionary suitable for data_frame creation
+    parameter_name = [i_perturbation_info.keys()[0] for i_perturbation_info in perturbation_details["indices"]]
+    parameter_change = [np.array(i_perturbation_info.values()[0])
+                        for i_perturbation_info in perturbation_details["indices"]]
+    parameter_value = [i_parameter_value_dict[i_parameter_name] for i_parameter_name, i_parameter_value_dict in
+                       zip(parameter_name, perturbation_details["values"])]
+    parameter_change_percentage = [i_parameter_change * 100 for i_parameter_change in parameter_change]
+    initial_value_ss_id = [int(i_perturbation_info[0]) for i_perturbation_info in perturbation_details["ssid"]]
+    final_value_ss_id = [int(i_perturbation_info[1]) for i_perturbation_info in perturbation_details["ssid"]]
+    dict_fields = ['parameter_name', 'parameter_change', 'parameter_change_percentage', 'parameter_value',
+                   'initial_ss', 'final_ss']
+    experiment_info = dict(zip(dict_fields,
+                               [parameter_name, parameter_change, parameter_change_percentage,
+                                parameter_value, initial_value_ss_id, final_value_ss_id]))
+    return ss_info, dynamic_info, experiment_info
 
 
 def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options, kinetics=2,
@@ -229,9 +244,32 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options, 
         plot_dynamic_sims(noisy_dynamic, multiple=1, concentrations=1, fluxes=1)
         plt.close("all")
 
+    # convert final_ss to desired format
+    all_sample_ss = []
+    for i_sample in range(0, number_of_samples):
+        all_experiment_concentration = [i_experiment_info["y"][i_sample] for i_experiment_info in noisy_ss]
+        all_experiment_flux = [i_experiment_info["flux"][i_sample] for i_experiment_info in noisy_ss]
+        all_sample_ss.append({"y": all_experiment_concentration,
+                              "flux": all_experiment_flux})
+
     perturbation_field_names = ['values', 'indices', 'original', 'boolean', 'ssid']
     perturbation_details = dict(zip(perturbation_field_names,
                                     [perturbed_parameter, perturbation_indices,
                                      ode_parameters, experiment_info_boolean,
                                      perturbation_ssid]))
-    return noisy_ss, noisy_dynamic, perturbation_details, ss_info, dynamic_info
+
+    # convert perturbation details to dictionary suitable for data_frame creation
+    parameter_name = [i_perturbation_info.keys()[0] for i_perturbation_info in perturbation_details["indices"]]
+    parameter_change = [np.array(i_perturbation_info.values()[0])
+                        for i_perturbation_info in perturbation_details["indices"]]
+    parameter_value = [i_parameter_value_dict[i_parameter_name] for i_parameter_name, i_parameter_value_dict in
+                       zip(parameter_name, perturbation_details["values"])]
+    parameter_change_percentage = [i_parameter_change * 100 for i_parameter_change in parameter_change]
+    initial_value_ss_id = [int(i_perturbation_info[0]) for i_perturbation_info in perturbation_details["ssid"]]
+    final_value_ss_id = [int(i_perturbation_info[1]) for i_perturbation_info in perturbation_details["ssid"]]
+    dict_fields = ['parameter_name', 'parameter_change', 'parameter_change_percentage', 'parameter_value',
+                   'initial_ss', 'final_ss']
+    experiment_info = dict(zip(dict_fields,
+                               [parameter_name, parameter_change, parameter_change_percentage,
+                                parameter_value, initial_value_ss_id, final_value_ss_id]))
+    return all_sample_ss, noisy_dynamic, experiment_info, ss_info, dynamic_info
