@@ -57,7 +57,7 @@ def get_data_combinations(xss, experiments_per_set, experiment_choice, combinati
 
 
 def data_for_each_sample(perturbation_details, experiments_per_set,
-                         data_combinations, xss, fss, flux_id, choose):
+                         data_combinations, xss, fss, choose):
     """get simulated experimental data for each noisy sample supplied as input argument"""
     # collect data for combinations in data_combinations for each sample in xss
     parameters = perturbation_details["values"]
@@ -89,7 +89,7 @@ def data_for_each_sample(perturbation_details, experiments_per_set,
         for iter, index in enumerate(data_index[1]):
             data.append(np.hstack((parameters[index]["ac"],
                                    xss[index],
-                                   fss[index][flux_id])))
+                                   fss[index])))
             parameter_list = get_changed_parameters(original_parameters=original,
                                                     changed_parameters=parameters,
                                                     experiment_index=index,
@@ -137,7 +137,7 @@ def data_for_each_sample(perturbation_details, experiments_per_set,
 
 
 def arrange_experimental_data(xss, fss, perturbation_details, experiments_per_set,
-                              flux_id=np.array([0, 1, 2, 3, 4, 5]), combination_choice=(), experiment_choice=()):
+                              combination_choice=(), experiment_choice=()):
     """get several data set combinations and
     get data for setting all experimental details for a given combination
 
@@ -155,7 +155,7 @@ def arrange_experimental_data(xss, fss, perturbation_details, experiments_per_se
     for i_sample in range(0, number_of_samples):
         experimental_data = data_for_each_sample(perturbation_details, experiments_per_set,
                                                  data_combinations, xss[i_sample], fss[i_sample],
-                                                 flux_id, combination_choice)
+                                                 combination_choice)
         experimental_data["boolean"] = data_combination_boolean
         all_sample_experimental_data.append(experimental_data)
 
