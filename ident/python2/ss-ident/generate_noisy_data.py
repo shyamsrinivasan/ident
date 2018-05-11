@@ -135,10 +135,12 @@ def run_no_noise_parameter_perturbation(parameter_perturbation, y0, other_option
     perturbed_parameter = []
     # perturbation_indices = np.zeros((len(parameter_perturbation), 2))
     perturbation_indices = []
+    perturbation_names = []
     perturbation_ssid = np.zeros((len(parameter_perturbation), 2))
 
     for index, perturbation_value in enumerate(parameter_perturbation):
         print('Perturbation {}\n'.format(index + 1))
+        perturbation_names.append('experiment_{}'.format(index))
         parameter_name = perturbation_value.keys()[0]
         parameter_change = np.array(perturbation_value.values()[0])
         changed_ode_parameter = deepcopy(ode_parameters)
@@ -169,26 +171,20 @@ def run_no_noise_parameter_perturbation(parameter_perturbation, y0, other_option
         plot_dynamic_sims(dynamic_info, multiple=1, concentrations=1, fluxes=1)
         # plt.close("all")
 
-    perturbation_field_names = ['values', 'indices', 'original', 'boolean', 'ssid']
-    perturbation_details = dict(zip(perturbation_field_names,
-                                    [perturbed_parameter, perturbation_indices,
-                                     ode_parameters, experiment_info_boolean,
-                                     perturbation_ssid]))
-
     # convert perturbation details to dictionary suitable for data_frame creation
-    parameter_name = [i_perturbation_info.keys()[0] for i_perturbation_info in perturbation_details["indices"]]
+    parameter_name = [i_perturbation_info.keys()[0] for i_perturbation_info in perturbation_indices]
     parameter_change = [np.array(i_perturbation_info.values()[0])
-                        for i_perturbation_info in perturbation_details["indices"]]
+                        for i_perturbation_info in perturbation_indices]
     parameter_value = [i_parameter_value_dict[i_parameter_name] for i_parameter_name, i_parameter_value_dict in
-                       zip(parameter_name, perturbation_details["values"])]
+                       zip(parameter_name, perturbed_parameter)]
     parameter_change_percentage = [i_parameter_change * 100 for i_parameter_change in parameter_change]
-    initial_value_ss_id = [int(i_perturbation_info[0]) for i_perturbation_info in perturbation_details["ssid"]]
-    final_value_ss_id = [int(i_perturbation_info[1]) for i_perturbation_info in perturbation_details["ssid"]]
+    initial_value_ss_id = [int(i_perturbation_info[0]) for i_perturbation_info in perturbation_ssid]
+    final_value_ss_id = [int(i_perturbation_info[1]) for i_perturbation_info in perturbation_ssid]
     dict_fields = ['parameter_name', 'parameter_change', 'parameter_change_percentage', 'parameter_value',
-                   'initial_ss', 'final_ss']
+                   'initial_ss', 'final_ss', 'experiment_id']
     experiment_info = dict(zip(dict_fields,
                                [parameter_name, parameter_change, parameter_change_percentage,
-                                parameter_value, initial_value_ss_id, final_value_ss_id]))
+                                parameter_value, initial_value_ss_id, final_value_ss_id, perturbation_names]))
     return ss_info, dynamic_info, experiment_info
 
 
@@ -207,10 +203,12 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options, 
     experiment_info_boolean = []
     perturbed_parameter = []
     perturbation_indices = []
+    perturbation_names = []
     perturbation_ssid = np.zeros((len(parameter_perturbation), 2))
 
     for index, perturbation_value in enumerate(parameter_perturbation):
         print('Perturbation {}\n'.format(index+1))
+        perturbation_names.append('experiment_{}'.format(index))
         parameter_name = perturbation_value.keys()[0]
         parameter_change = np.array(perturbation_value.values()[0])
         changed_ode_parameter = deepcopy(ode_parameters)
@@ -252,24 +250,19 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options, 
         all_sample_ss.append({"y": all_experiment_concentration,
                               "flux": all_experiment_flux})
 
-    perturbation_field_names = ['values', 'indices', 'original', 'boolean', 'ssid']
-    perturbation_details = dict(zip(perturbation_field_names,
-                                    [perturbed_parameter, perturbation_indices,
-                                     ode_parameters, experiment_info_boolean,
-                                     perturbation_ssid]))
-
     # convert perturbation details to dictionary suitable for data_frame creation
-    parameter_name = [i_perturbation_info.keys()[0] for i_perturbation_info in perturbation_details["indices"]]
+    parameter_name = [i_perturbation_info.keys()[0] for i_perturbation_info in perturbation_indices]
     parameter_change = [np.array(i_perturbation_info.values()[0])
-                        for i_perturbation_info in perturbation_details["indices"]]
+                        for i_perturbation_info in perturbation_indices]
     parameter_value = [i_parameter_value_dict[i_parameter_name] for i_parameter_name, i_parameter_value_dict in
-                       zip(parameter_name, perturbation_details["values"])]
+                       zip(parameter_name, perturbed_parameter)]
     parameter_change_percentage = [i_parameter_change * 100 for i_parameter_change in parameter_change]
-    initial_value_ss_id = [int(i_perturbation_info[0]) for i_perturbation_info in perturbation_details["ssid"]]
-    final_value_ss_id = [int(i_perturbation_info[1]) for i_perturbation_info in perturbation_details["ssid"]]
+    initial_value_ss_id = [int(i_perturbation_info[0]) for i_perturbation_info in perturbation_ssid]
+    final_value_ss_id = [int(i_perturbation_info[1]) for i_perturbation_info in perturbation_ssid]
+    # experiment_id = [i_perturbation_info for i_perturbation_info in perturbation_details["experiment_id"]]
     dict_fields = ['parameter_name', 'parameter_change', 'parameter_change_percentage', 'parameter_value',
-                   'initial_ss', 'final_ss']
+                   'initial_ss', 'final_ss', 'experiment_id']
     experiment_info = dict(zip(dict_fields,
                                [parameter_name, parameter_change, parameter_change_percentage,
-                                parameter_value, initial_value_ss_id, final_value_ss_id]))
+                                parameter_value, initial_value_ss_id, final_value_ss_id, perturbation_names]))
     return all_sample_ss, noisy_dynamic, experiment_info, ss_info, dynamic_info
