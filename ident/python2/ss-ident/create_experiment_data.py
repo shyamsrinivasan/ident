@@ -54,6 +54,23 @@ def get_variables(data_frame, variable_label):
         concentration_list = df_slice.values.tolist()
         concentration_array = [np.array(i_concentration_list) for i_concentration_list in concentration_list]
         all_variables.append(concentration_array)
+
+    if 'initial_ss' in variable_label or 'final_ss' in variable_label:
+        all_sample_initial_ss = []
+        all_sample_final_ss = []
+        for i_sample_info in all_variables:
+            if 'initial_ss' in variable_label:
+                all_initial_ss = [int(i_experiment_info[0]) for i_experiment_info in i_sample_info]
+            else:
+                all_initial_ss = []
+            if 'final_ss' in variable_label:
+                all_final_ss = [int(i_experiment_info[1]) for i_experiment_info in i_sample_info]
+            else:
+                all_final_ss = []
+            all_sample_initial_ss.append(all_initial_ss)
+            all_sample_final_ss.append(all_final_ss)
+        all_variables = {"initial_ss": all_sample_initial_ss, "final_ss": all_sample_final_ss}
+
     # row_names = list(data_frame.index.names)
     # column_indices = list(data_frame.columns.values)
     # all_concentrations = []
@@ -75,9 +92,6 @@ def get_variables(data_frame, variable_label):
 def get_other_details(data_frame, info_label):
     """retrieve miscellaneous details about each data set in data frame (perturbation_details)"""
     sample_ids = list(data_frame.index.levels[0])
-    all_info = []
-    # sample loop
-    # for i_sample in sample_ids:
     df_slice = data_frame.loc[(sample_ids[0], slice(None)), info_label]
     all_info = df_slice.values.tolist()
     all_info_list = []
@@ -85,8 +99,8 @@ def get_other_details(data_frame, info_label):
         all_info_list.append([i_experiment_info[j_info] for i_experiment_info in all_info])
 
     all_info_dict = dict(zip(info_label, all_info_list))
-    all_info_dict["final_ss"] = [int(j_experiment_info) for j_experiment_info in all_info_dict["final_ss"]]
-    all_info_dict["initial_ss"] = [int(j_experiment_info) for j_experiment_info in all_info_dict["initial_ss"]]
+    # all_info_dict["final_ss"] = [int(j_experiment_info) for j_experiment_info in all_info_dict["final_ss"]]
+    # all_info_dict["initial_ss"] = [int(j_experiment_info) for j_experiment_info in all_info_dict["initial_ss"]]
     all_info_dict["parameter_change"] = [np.array(j_experiment_info)
                                          for j_experiment_info in all_info_dict["parameter_change"]]
     all_info_dict["parameter_change_percentage"] = [np.array(j_experiment_info) for j_experiment_info in
@@ -106,9 +120,11 @@ def retrieve_experimental_data(file_name, multi_index_lablel):
     # collate all experimental variable info
     exp_ss = {"y": all_concentrations, "flux": all_fluxes}
     # get perturbation details : chnged parameters, their values, etc
-    details_header = ['parameter_name', 'parameter_value', 'parameter_change', 'parameter_change_percentage',
-                      'initial_ss', 'final_ss']
+    details_header = ['parameter_name', 'parameter_value', 'parameter_change', 'parameter_change_percentage']
     parameter_info = get_other_details(experimental_df, details_header)
+    ss_id_header = ['initial_ss', 'final_ss']
+    ss_id_info = get_variables(experimental_df, ss_id_header)
+    exp_ss.update(ss_id_info)
     # exp_ss.update(dict(zip(details_header, parameter_info)))
     return exp_ss, parameter_info
 
