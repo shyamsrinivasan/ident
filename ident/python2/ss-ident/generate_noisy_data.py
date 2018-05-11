@@ -175,8 +175,8 @@ def run_no_noise_parameter_perturbation(parameter_perturbation, y0, other_option
     parameter_name = [i_perturbation_info.keys()[0] for i_perturbation_info in perturbation_indices]
     parameter_change = [np.array(i_perturbation_info.values()[0])
                         for i_perturbation_info in perturbation_indices]
-    parameter_value = [i_parameter_value_dict[i_parameter_name] for i_parameter_name, i_parameter_value_dict in
-                       zip(parameter_name, perturbed_parameter)]
+    parameter_value = [np.array(i_parameter_value_dict[i_parameter_name][0])
+                       for i_parameter_name, i_parameter_value_dict in zip(parameter_name, perturbed_parameter)]
     parameter_change_percentage = [i_parameter_change * 100 for i_parameter_change in parameter_change]
     initial_value_ss_id = [int(i_perturbation_info[0]) for i_perturbation_info in perturbation_ssid]
     final_value_ss_id = [int(i_perturbation_info[1]) for i_perturbation_info in perturbation_ssid]
@@ -254,8 +254,8 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options, 
     parameter_name = [i_perturbation_info.keys()[0] for i_perturbation_info in perturbation_indices]
     parameter_change = [np.array(i_perturbation_info.values()[0])
                         for i_perturbation_info in perturbation_indices]
-    parameter_value = [i_parameter_value_dict[i_parameter_name] for i_parameter_name, i_parameter_value_dict in
-                       zip(parameter_name, perturbed_parameter)]
+    parameter_value = [np.array(i_parameter_value_dict[i_parameter_name][0])
+                       for i_parameter_name, i_parameter_value_dict in zip(parameter_name, perturbed_parameter)]
     parameter_change_percentage = [i_parameter_change * 100 for i_parameter_change in parameter_change]
     initial_value_ss_id = [int(i_perturbation_info[0]) for i_perturbation_info in perturbation_ssid]
     final_value_ss_id = [int(i_perturbation_info[1]) for i_perturbation_info in perturbation_ssid]
