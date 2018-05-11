@@ -30,8 +30,7 @@ ode_parameter_values = {"K1ac": np.array([.1]),
 
 multi_index_labels = ['sample_name', 'experiment_id']
 file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\ident\python2\ss-ident\experiments_noise_5_samples'
-retrieve_experimental_data(file_name=file_name, multi_index_lablel=multi_index_labels)
-
+exp_ss, perturbation_details = retrieve_experimental_data(file_name=file_name, multi_index_lablel=multi_index_labels)
 
 # arrange experimental data to form multiple data sets
 exp_flux_index = np.array([0, 3, 2, 4, 1, 5])
@@ -42,8 +41,8 @@ print('Practical Identifiability Analysis of v3 with 3 parameters: V3max, K3fdp 
 ident_fun_choice = [0]
 # get combinations of experimental datasets
 experimental_datasets_3_expts, \
-    experiment_choice, combination_choice = arrange_experimental_data(exp_xss, exp_fss, perturbation_details,
-                                                                      experiments_per_set=3, flux_id=exp_flux_index,
+    experiment_choice, combination_choice = arrange_experimental_data(exp_ss["y"], exp_ss["flux"], perturbation_details,
+                                                                      experiments_per_set=3,
                                                                       experiment_choice=[0,
                                                                                          1, 2, 3, 4, 5,
                                                                                          6, 7, 8, 9, 10,
