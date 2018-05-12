@@ -3,7 +3,7 @@ import pandas as pd
 from generate_expdata import generate_expdata
 
 
-def create_experiment_data(file_name, noise=0, kinetics=2, number_samples=1, noise_std=0.05):
+def create_experiment_data(save_file_name, noise=0, kinetics=2, number_samples=1, noise_std=0.05):
     """run generate_expdata and store resulting experimental data as csv file from data frame"""
     # generate no-noise experimental data for testing identifiability
     y0 = np.array([5, 1, 1])
@@ -30,14 +30,14 @@ def create_experiment_data(file_name, noise=0, kinetics=2, number_samples=1, noi
                                                          dynamic_plot=0, perturbation_plot=0,
                                                          number_of_samples=number_samples, noise_std=noise_std)
     # save data frame to csv file
-    experiment_df.to_csv(file_name, index_label=multi_index_labels)
+    experiment_df.to_csv(save_file_name, index_label=multi_index_labels)
     return experiment_df
 
 
-def retrieve_experimental_data_from_file(file_name, multi_index_label):
+def retrieve_experimental_data_from_file(data_file_name, multi_index_label):
     """retrieve experimental data from csv file"""
     # read dataframe from csv file
-    experiment_df = pd.read_csv(file_name, index_col=multi_index_label)
+    experiment_df = pd.read_csv(data_file_name, index_col=multi_index_label)
     return experiment_df
 
 
