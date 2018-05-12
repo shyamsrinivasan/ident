@@ -109,6 +109,32 @@ def get_other_details(data_frame, info_label):
     return all_info_dict
 
 
+def extract_info_from_df(data_frame, info_label, sample_name=[], experiment_id=[]):
+    """extract whatever info is required from data frame for given column for given experiment for given sample"""
+    sample_ids = list(data_frame.index.levels[0])
+    experiment_ids = list(data_frame.index.levels[1])
+
+    if sample_name and experiment_id:
+        df_slice = data_frame.loc[(sample_name, experiment_id), info_label]
+    elif sample_name:
+        df_slice = data_frame.loc[(sample_name, slice(None)), info_label]
+    elif experiment_id:
+        df_slice = data_frame.loc[(slice(None), experiment_id), info_label]
+    else:
+        df_slice = data_frame.loc[:, info_label]
+
+    # number_samples = len(sample_ids)
+    # number_experiments = len(experiment_ids)
+    # all_variables = []
+    # # sample loop
+    # for i_sample in sample_ids:
+    #     df_slice = data_frame.loc[(i_sample, slice(None)), variable_label]
+    #     concentration_list = df_slice.values.tolist()
+    #     concentration_array = [np.array(i_concentration_list) for i_concentration_list in concentration_list]
+    #     all_variables.append(concentration_array)
+    return df_slice
+
+
 def retrieve_experimental_data(file_name, multi_index_lablel):
     """retrieve experimental data from csv file and collect concentrations, fluxes and
     other information from resulting data frame and pass as output arguments"""
