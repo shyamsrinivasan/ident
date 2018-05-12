@@ -49,8 +49,7 @@ def get_data_combinations(experiment_id, experiments_per_set, experiment_choice,
     return data_combinations, data_combination_boolean, combination_choice
 
 
-def data_for_each_sample(exp_df, original_parameter_value, perturbation_details, experiments_per_set,
-                         data_combinations, xss, fss, choose):
+def data_for_each_sample(exp_df, experiments_per_set, data_combinations, choose):
     """get simulated experimental data for each noisy sample supplied as input argument"""
     new_column_ids = ['experiment_{}_id'.format(i_experiment) for i_experiment in range(0, experiments_per_set)]
     new_exp_df = exp_df.reset_index(level='experiment_id')
@@ -90,13 +89,12 @@ def data_for_each_sample(exp_df, original_parameter_value, perturbation_details,
     # del data_dict["experiment_1_id"]
     # del data_dict["experiment_2_id"]
 
-    df = pd.DataFrame(data_dict, index=index, columns=data_dict.keys())
+    # df = pd.DataFrame(data_dict, index=index, columns=data_dict.keys())
 
     return data_dict
 
 
-def arrange_experimental_data(exp_df, original_parameter_value, xss, fss, perturbation_details, experiments_per_set,
-                              combination_choice=(), experiment_choice=()):
+def arrange_experimental_data(exp_df, experiments_per_set, combination_choice=(), experiment_choice=()):
     """get several data set combinations and
     get data for setting all experimental details for a given combination
 
@@ -104,10 +102,7 @@ def arrange_experimental_data(exp_df, original_parameter_value, xss, fss, pertur
     combination_choice - indices of combinations to choose from
     experiment_choice - indices of experiments to choose from to form combinations"""
     sample_ids = list(exp_df.index.levels[0])
-    number_of_samples = len(sample_ids)
     experiment_ids = list(exp_df.index.levels[1])
-    # number_experiments = len(experiment_ids)
-    # number_of_samples = len(xss)
     # get combinations just based on number of experiments in each sample
     data_combinations, data_combination_boolean, combination_choice = \
         get_data_combinations(experiment_ids, experiments_per_set, experiment_choice, combination_choice)
@@ -117,9 +112,8 @@ def arrange_experimental_data(exp_df, original_parameter_value, xss, fss, pertur
     for i_sample_id, i_sample in enumerate(sample_ids):
         # extract data for each sample in sample_ids
         i_sample_df = exp_df.xs(i_sample, level=0)
-        # i_sample_df = exp_df.loc[(i_sample, slice(None)), :]
-        experimental_data = data_for_each_sample(i_sample_df, original_parameter_value, perturbation_details, experiments_per_set,
-                                                 data_combinations, xss[i_sample_id], fss[i_sample_id],
+        # return dictionary to be converted to dataframe for writing and storage and later use
+        experimental_data = data_for_each_sample(i_sample_df, experiments_per_set, data_combinations,
                                                  combination_choice)
         experimental_data["boolean"] = data_combination_boolean
         all_sample_experimental_data.append(experimental_data)
