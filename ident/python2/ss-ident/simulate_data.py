@@ -1,5 +1,6 @@
 import numpy as np
 import itertools as it
+import pandas as pd
 
 
 def parameter_change(new_value, old_value):
@@ -48,87 +49,53 @@ def get_data_combinations(experiment_id, experiments_per_set, experiment_choice,
     return data_combinations, data_combination_boolean, combination_choice
 
 
-def data_for_each_sample(perturbation_details, experiments_per_set,
+def data_for_each_sample(exp_df, original_parameter_value, perturbation_details, experiments_per_set,
                          data_combinations, xss, fss, choose):
     """get simulated experimental data for each noisy sample supplied as input argument"""
-    # collect data for combinations in data_combinations for each sample in xss
-    parameters = perturbation_details["values"]
-    experiment_indices = perturbation_details["indices"]
-    original = perturbation_details["original"]
-    ssid = perturbation_details["ssid"]
-
-    # initialize vectors/arrays and other lists for arrangement
-    number_data_sets = len(data_combinations)
-    size_of_data_set = 10
-    dataset_value_array = np.zeros((number_data_sets, size_of_data_set * experiments_per_set))
-    # all_parameter_change = np.zeros((number_data_sets, 4 * experiments_per_set))
-    all_parameter_change = []
-
-    # arrange and collect parameter/ss values
-    experiment_index_iter = []
-    all_parameter_ids = []
-    all_parameter_values = []
-    all_parameter_changes = []
-    all_ssid = []
+    new_column_ids = ['experiment_{}_id'.format(i_experiment) for i_experiment in range(0, experiments_per_set)]
+    new_exp_df = exp_df.reset_index(level='experiment_id')
+    all_column_names = list(new_exp_df.columns.values)
+    number_columns = len(all_column_names)
+    data_dict = dict(zip(all_column_names, [[] for _ in range(0, number_columns)]))
+    data_dict["data_set_id"] = []
+    for i_new_column in new_column_ids:
+        data_dict[i_new_column] = []
+    all_data_sets = []
     for choice_index, data_index in zip(choose, enumerate(data_combinations)):
-        data = []
-        parameter_id = []
-        changes = {}
-        experiment_index_iter.append(data_index[1])
-        parameter_value = []
-        parameter_change = []
-        ssid_changes = []
-        for iter, index in enumerate(data_index[1]):
-            data.append(np.hstack((parameters[index]["ac"],
-                                   xss[index],
-                                   fss[index])))
-            parameter_list = get_changed_parameters(original_parameters=original,
-                                                    changed_parameters=parameters,
-                                                    experiment_index=index,
-                                                    parameter_index=experiment_indices[index].keys()[0])
-            try:
-                changes["parameter value"] = np.append(changes["parameter value"], parameter_list["parameter value"])
-            except KeyError:
-                changes["parameter value"] = parameter_list["parameter value"]
-            try:
-                changes["parameter name"].append(parameter_list["parameter name"])
-            except KeyError:
-                changes["parameter name"] = [parameter_list["parameter name"]]
-            try:
-                changes["experiment index"].append(parameter_list["experiment index"])
-            except KeyError:
-                changes["experiment index"] = [parameter_list["experiment index"]]
-            try:
-                changes["parameter change"] = np.append(changes["parameter change"], parameter_list["parameter change"])
-            except KeyError:
-                changes["parameter change"] = parameter_list["parameter change"]
-            # changes.append(get_changed_parameters(original_parameters=original,
-            #                                       changed_parameters=parameters,
-            #                                       experiment_index=index,
-            #                                       parameter_index=experiment_indices[index].keys()[0]))
-            parameter_id.append(experiment_indices[index].keys()[0])
-            parameter_value.append(parameters[index][parameter_id[iter]])
-            parameter_change.append(changes["parameter change"][iter])
-            ssid_changes.append(list(ssid[index, :]))
-
-        dataset_value_array[data_index[0], :] = np.hstack(data[:])
-        # all_parameter_change[data_index[0], :] = np.hstack(changes[:])
-        all_parameter_change.append(changes)
-        all_parameter_ids.append(parameter_id)
-        all_parameter_values.append(parameter_value)
-        all_parameter_changes.append(parameter_change)
-        all_ssid.append(np.array(ssid_changes))
-
-    dataset_keys = ['values', 'details', 'parameter_ids',
-                    'parameter_values', 'parameter_changes', 'ssid',
-                    'experiments', 'dataset_id']
-    experimental_data = dict(zip(dataset_keys, [dataset_value_array, all_parameter_change, all_parameter_ids,
-                                                all_parameter_values, all_parameter_changes, all_ssid,
-                                                experiment_index_iter, choose]))
-    return experimental_data
+        data_set_name = 'data_set_{}'.format(data_index[0])
+        for i_experiment, i_experiment_index in enumerate(data_index[1]):
+            relevant_df = new_exp_df.loc[new_exp_df["experiment_id"] == i_experiment_index, :]
+            for i_column in all_column_names:
+                data_dict[i_column].append([i_value for i_value in relevant_df[i_column].values][0])
+            for j_new_column_id, j_new_column in enumerate(new_column_ids):
+                data_dict[j_new_column].append(data_index[1][j_new_column_id])
+            data_dict["data_set_id"].append(data_set_name)
+        # chosen_experiment_data = exp_df.loc[data_index[1], :]
+        # chosen_experiment_data["data_set_id"] = pd.Series([data_set_name] * len(chosen_experiment_data["pep"]),
+        #                                                   index=chosen_experiment_data.index)
+        # new_data_df = chosen_experiment_data.reset_index(level='experiment_id')
+        # experiment_id = list(data_index[1])
+        # experiment_id.insert(0, data_set_name)
+        # new_index_tuple.append(tuple(experiment_id))
+        # new_data_dict = new_data_df.to_dict('list')
 
 
-def arrange_experimental_data(exp_df, xss, fss, perturbation_details, experiments_per_set,
+    # new_index_tuple = [(i_data, i_exp_1, i_exp_2, i_exp_3) for i_data, i_exp_1, i_exp_2, i_exp_3 in
+    #                    zip(data_dict["data_set_id"], data_dict["experiment_0_id"], data_dict["experiment_1_id"],
+    #                    data_dict["experiment_2_id"])]
+    # index = pd.MultiIndex.from_tuples(new_index_tuple,
+    #                                   names=['data_set_id', 'experiment_0_id', 'experiment_1_id', 'experiment_2_id'])
+    # del data_dict["data_set_id"]
+    # del data_dict["experiment_0_id"]
+    # del data_dict["experiment_1_id"]
+    # del data_dict["experiment_2_id"]
+
+    df = pd.DataFrame(data_dict, index=index, columns=data_dict.keys())
+
+    return data_dict
+
+
+def arrange_experimental_data(exp_df, original_parameter_value, xss, fss, perturbation_details, experiments_per_set,
                               combination_choice=(), experiment_choice=()):
     """get several data set combinations and
     get data for setting all experimental details for a given combination
@@ -147,9 +114,12 @@ def arrange_experimental_data(exp_df, xss, fss, perturbation_details, experiment
 
     # get values for each combination determined from above permutation
     all_sample_experimental_data = []
-    for i_sample in range(0, number_of_samples):
-        experimental_data = data_for_each_sample(perturbation_details, experiments_per_set,
-                                                 data_combinations, xss[i_sample], fss[i_sample],
+    for i_sample_id, i_sample in enumerate(sample_ids):
+        # extract data for each sample in sample_ids
+        i_sample_df = exp_df.xs(i_sample, level=0)
+        # i_sample_df = exp_df.loc[(i_sample, slice(None)), :]
+        experimental_data = data_for_each_sample(i_sample_df, original_parameter_value, perturbation_details, experiments_per_set,
+                                                 data_combinations, xss[i_sample_id], fss[i_sample_id],
                                                  combination_choice)
         experimental_data["boolean"] = data_combination_boolean
         all_sample_experimental_data.append(experimental_data)
