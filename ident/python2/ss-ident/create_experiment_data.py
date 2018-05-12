@@ -155,6 +155,28 @@ def retrieve_experimental_data(file_name, multi_index_lablel):
     return exp_ss, parameter_info
 
 
+def create_data_for_analysis(flux_file_name, experiment_choice_index):
+    """arrange experimental data and create data frame and
+    store for future use for use with identifiability analysis"""
+    all_experiment_indices = ['experiment_0', 'experiment_1', 'experiment_2', 'experiment_3', 'experiment_4',
+                              'experiment_5', 'experiment_6', 'experiment_7', 'experiment_8', 'experiment_9',
+                              'experiment_10', 'experiment_11', 'experiment_12', 'experiment_13', 'experiment_14',
+                              'experiment_15', 'experiment_16', 'experiment_17', 'experiment_18', 'experiment_19',
+                              'experiment_20']
+    # experiment_choice_id = [0,
+    #                         1, 2, 3, 4, 5,
+    #                         6, 7, 8, 9, 10,
+    #                         16, 17, 18, 19, 20]
+    experiment_index_choice = [all_experiment_indices[j_choice] for j_choice in experiment_choice_index]
+    # get combinations of experimental datasets
+    experimental_datasets_3_expts, \
+    experiment_choice, combination_choice = arrange_experimental_data(experimental_df,
+                                                                      experiments_per_set=3,
+                                                                      experiment_choice=experiment_index_choice)
+
+    return None
+
+
 if __name__ == "__main__":
     file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\ident\python2\ss-ident\experiments'
     experiment_info_df = create_experiment_data(file_name, noise=0, kinetics=2)
