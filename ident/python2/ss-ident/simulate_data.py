@@ -1,6 +1,7 @@
 import numpy as np
 import itertools as it
 import pandas as pd
+from collections import defaultdict
 
 
 def parameter_change(new_value, old_value):
@@ -102,31 +103,41 @@ def arrange_experimental_data(exp_df, experiments_per_set, combination_choice=()
     combination_choice - indices of combinations to choose from
     experiment_choice - indices of experiments to choose from to form combinations"""
     sample_ids = list(exp_df.index.levels[0])
-    number_samples = len(sample_ids)
+    # number_samples = len(sample_ids)
     experiment_ids = list(exp_df.index.levels[1])
     # get combinations just based on number of experiments in each sample
     data_combinations, data_combination_boolean, combination_choice = \
         get_data_combinations(experiment_ids, experiments_per_set, experiment_choice, combination_choice)
 
     # get values for each combination determined from above permutation
-    all_dict_keys = ['experiment_0_id', 'parameter_value', 'experiment_id', 'fdp', 'parameter_change',
-                     'experiment_2_id', 'pep', 'acetate', 'parameter_name', 'v1', 'v2', 'v3', 'v4', 'v5', 'v6',
-                     'final_ss', 'data_set_id', 'E', 'experiment_1_id', 'parameter_change_percentage', 'initial_ss',
-                     'sample_id']
-    number_individual_data = len(data_combinations) * experiments_per_set
-    all_sample_experimental_data = dict(zip(all_dict_keys, [[] for _ in range(0, len(all_dict_keys))]))
+    all_data = defaultdict(list)
+    d3 = {}
 
     for i_sample_id, i_sample in enumerate(sample_ids):
-        # extract data for each sample in sample_ids
-        i_sample_df = exp_df.xs(i_sample, level=0)
-        # return dictionary to be converted to dataframe for writing and storage and later use
-        experimental_data = data_for_each_sample(i_sample_df, experiments_per_set, data_combinations,
-                                                 combination_choice)
-        # add sample id to experimental_data
-        experimental_data.update({"sample_id": [i_sample] * len(experimental_data["data_set_id"])})
-        for 
-        experimental_data["boolean"] = data_combination_boolean
-        all_sample_experimental_data.append(experimental_data)
+        for i_combination_number, i_combination in enumerate(data_combinations):
+            chosen_df = exp_df.loc(axis=0)[i_sample, i_combination]
+            chosen_df = chosen_df.reset_index(level='experiment_id')
+            # add new column for data set value
+            data_set_name = 'data_set_{}'.format(i_combination_number)
+            chosen_df['data_set_id'] = pd.Series([data_set_name] * len(chosen_df.index.values),
+                                                             index=chosen_df.index)
+            chosen_df = chosen_df.reset_index(level='sample_name')
+            temp_dict = chosen_df.to_dict('records')
+            for i_dict in temp_dict:
+                for k, v in it.chain(d3.items(), i_dict.items()):
+                    all_data[k].append(v)
+    # create multi index tuples
+    df_tuples = [(j_sample, j_data_set, j_experiment) for j_sample, j_data_set, j_experiment in
+                 zip(all_data["sample_name"], all_data["data_set_id"], all_data["experiment_id"])]
+    index_labels = ['sample_name', 'data_set_id', 'experiment_id']
+    # create multi index
+    index = pd.MultiIndex.from_tuples(df_tuples, names=index_labels)
+    # remove redundant columns
+    del all_data["sample_name"]
+    del all_data["data_set_id"]
+    del all_data["experiment_id"]
+    # create data frame
+    df = pd.DataFrame(all_data, index=index, columns=all_data.keys())
 
     return all_sample_experimental_data, experiment_choice, combination_choice
 
