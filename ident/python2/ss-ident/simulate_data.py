@@ -102,19 +102,29 @@ def arrange_experimental_data(exp_df, experiments_per_set, combination_choice=()
     combination_choice - indices of combinations to choose from
     experiment_choice - indices of experiments to choose from to form combinations"""
     sample_ids = list(exp_df.index.levels[0])
+    number_samples = len(sample_ids)
     experiment_ids = list(exp_df.index.levels[1])
     # get combinations just based on number of experiments in each sample
     data_combinations, data_combination_boolean, combination_choice = \
         get_data_combinations(experiment_ids, experiments_per_set, experiment_choice, combination_choice)
 
     # get values for each combination determined from above permutation
-    all_sample_experimental_data = []
+    all_dict_keys = ['experiment_0_id', 'parameter_value', 'experiment_id', 'fdp', 'parameter_change',
+                     'experiment_2_id', 'pep', 'acetate', 'parameter_name', 'v1', 'v2', 'v3', 'v4', 'v5', 'v6',
+                     'final_ss', 'data_set_id', 'E', 'experiment_1_id', 'parameter_change_percentage', 'initial_ss',
+                     'sample_id']
+    number_individual_data = len(data_combinations) * experiments_per_set
+    all_sample_experimental_data = dict(zip(all_dict_keys, [[] for _ in range(0, len(all_dict_keys))]))
+
     for i_sample_id, i_sample in enumerate(sample_ids):
         # extract data for each sample in sample_ids
         i_sample_df = exp_df.xs(i_sample, level=0)
         # return dictionary to be converted to dataframe for writing and storage and later use
         experimental_data = data_for_each_sample(i_sample_df, experiments_per_set, data_combinations,
                                                  combination_choice)
+        # add sample id to experimental_data
+        experimental_data.update({"sample_id": [i_sample] * len(experimental_data["data_set_id"])})
+        for 
         experimental_data["boolean"] = data_combination_boolean
         all_sample_experimental_data.append(experimental_data)
 
