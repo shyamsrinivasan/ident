@@ -17,18 +17,10 @@ def get_changed_parameters(original_parameters, changed_parameters, experiment_i
     return parameter_list
 
 
-def get_data_combinations(xss, experiments_per_set, experiment_choice, combination_choice):
+def get_data_combinations(experiment_id, experiments_per_set, experiment_choice, combination_choice):
     """get combinations of data sets based on all perturbations performed on the model"""
 
     # select only experiment indices provided in experiment_choice
-    total_number_of_experiments = len(xss)
-    if experiment_choice:
-        chosen_xss = [xss[i_experiment] for i_experiment in experiment_choice]
-        number_of_experiments = len(chosen_xss)
-    else:
-        chosen_xss = xss
-        number_of_experiments = len(chosen_xss)
-        experiment_choice = range(0, number_of_experiments)
     data_combinations = []
     # get all experiment combinations based on experiments_per_set
     for item in it.permutations(experiment_choice, experiments_per_set):
@@ -49,11 +41,11 @@ def get_data_combinations(xss, experiments_per_set, experiment_choice, combinati
         combination_choice = range(0, number_of_combinations)
 
     # create boolean numpy array of perturbations in each data set
-    data_combination_boolean = [[True if experiment_id in list_1 else False
-                                 for experiment_id in range(0, total_number_of_experiments)]
+    data_combination_boolean = [[True if j_experiment_id in list_1 else False
+                                 for j_experiment_id in experiment_id]
                                 for list_1 in data_combinations]
     data_combination_boolean = np.array(data_combination_boolean)
-    return data_combinations, data_combination_boolean, experiment_choice, combination_choice
+    return data_combinations, data_combination_boolean, combination_choice
 
 
 def data_for_each_sample(perturbation_details, experiments_per_set,
@@ -136,7 +128,7 @@ def data_for_each_sample(perturbation_details, experiments_per_set,
     return experimental_data
 
 
-def arrange_experimental_data(xss, fss, perturbation_details, experiments_per_set,
+def arrange_experimental_data(exp_df, xss, fss, perturbation_details, experiments_per_set,
                               combination_choice=(), experiment_choice=()):
     """get several data set combinations and
     get data for setting all experimental details for a given combination
@@ -144,11 +136,14 @@ def arrange_experimental_data(xss, fss, perturbation_details, experiments_per_se
     parameters:
     combination_choice - indices of combinations to choose from
     experiment_choice - indices of experiments to choose from to form combinations"""
-    number_of_samples = len(xss)
+    sample_ids = list(exp_df.index.levels[0])
+    number_of_samples = len(sample_ids)
+    experiment_ids = list(exp_df.index.levels[1])
+    # number_experiments = len(experiment_ids)
+    # number_of_samples = len(xss)
     # get combinations just based on number of experiments in each sample
-    data_combinations, data_combination_boolean, \
-    experiment_choice, combination_choice = get_data_combinations(xss[0], experiments_per_set,
-                                                                  experiment_choice, combination_choice)
+    data_combinations, data_combination_boolean, combination_choice = \
+        get_data_combinations(experiment_ids, experiments_per_set, experiment_choice, combination_choice)
 
     # get values for each combination determined from above permutation
     all_sample_experimental_data = []
