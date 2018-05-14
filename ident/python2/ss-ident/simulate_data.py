@@ -4,21 +4,6 @@ import pandas as pd
 from collections import defaultdict
 
 
-def parameter_change(new_value, old_value):
-    return (new_value - old_value) *100 / old_value
-
-
-def get_changed_parameters(original_parameters, changed_parameters, experiment_index, parameter_index):
-    """create dictionary of parameter values after perturbations -
-    determine parameter changes and percentage changes"""
-    parameter_list = {"experiment index": experiment_index,
-                      "parameter name": parameter_index,
-                      "parameter value": changed_parameters[experiment_index][parameter_index],
-                      "parameter change": parameter_change(changed_parameters[experiment_index][parameter_index],
-                                                           original_parameters[parameter_index])}
-    return parameter_list
-
-
 def get_data_combinations(experiment_id, experiments_per_set, experiment_choice, combination_choice):
     """get combinations of data sets based on all perturbations performed on the model"""
 
