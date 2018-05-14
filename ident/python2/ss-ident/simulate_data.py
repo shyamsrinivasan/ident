@@ -88,20 +88,10 @@ def arrange_experimental_data(exp_df, experiments_per_set, combination_choice=()
     for i_sample_id, i_sample in enumerate(sample_ids):
         all_data = data_for_each_sample(exp_df, i_sample, data_combinations, all_data, empty_dict)
 
-    # create multi index tuples
-    df_tuples = [(j_sample, j_data_set, j_experiment) for j_sample, j_data_set, j_experiment in
-                 zip(all_data["sample_name"], all_data["data_set_id"], all_data["experiment_id"])]
+    # labels for multi index tuples
     index_labels = ['sample_name', 'data_set_id', 'experiment_id']
-    # create multi index
-    index = pd.MultiIndex.from_tuples(df_tuples, names=index_labels)
-    # remove redundant columns
-    del all_data["sample_name"]
-    del all_data["data_set_id"]
-    del all_data["experiment_id"]
-    # create data frame
-    df = pd.DataFrame(all_data, index=index, columns=all_data.keys())
 
-    return all_sample_experimental_data, experiment_choice, combination_choice
+    return all_data, index_labels, experiment_choice
 
 
 def data_for_each_sample_numerical(perturbation_details, experiments_per_set,
