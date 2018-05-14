@@ -213,14 +213,18 @@ def create_data_for_flux(flux_id, noise, number_samples=1):
             if number_samples == 5:
                 file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
                             '\ident\python2\ss-ident\experiments_noise_5_samples'
+                new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModel' \
+                                     '\ident\python2\ss-ident\exp_v1_2_experiments_noise_5_samples'
             elif number_samples == 500:
                 file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
                             '\ident\python2\ss-ident\experiments_noise_500_samples'
+                new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModel' \
+                                     '\ident\python2\ss-ident\exp_v1_2_experiments_noise_500_samples'
         else:
             file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
                         '\ident\python2\ss-ident\experiments'
-        new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                             '\ident\python2\ss-ident\exp_v1_2_experiments'
+            new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModel' \
+                                 '\ident\python2\ss-ident\exp_v1_2_experiments'
         experiments_per_set = 2
     elif flux_id == 'v2':
         experiment_choice_id = [0,
@@ -232,14 +236,18 @@ def create_data_for_flux(flux_id, noise, number_samples=1):
             if number_samples == 5:
                 file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
                             '\ident\python2\ss-ident\experiments_noise_5_samples'
+                new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModel' \
+                                     '\ident\python2\ss-ident\exp_v2_2_experiments_noise_5_samples'
             elif number_samples == 500:
                 file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
                             '\ident\python2\ss-ident\experiments_noise_500_samples'
+                new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModel' \
+                                     '\ident\python2\ss-ident\exp_v2_2_experiments_noise_500_samples'
         else:
             file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
                         '\ident\python2\ss-ident\experiments'
-        new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                             '\ident\python2\ss-ident\exp_v1_2_experiments'
+            new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModel' \
+                                 '\ident\python2\ss-ident\exp_v2_2_experiments'
         experiments_per_set = 2
     elif flux_id == 'v3':
         experiment_choice_id = [0,
@@ -251,14 +259,18 @@ def create_data_for_flux(flux_id, noise, number_samples=1):
             if number_samples == 5:
                 file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
                             '\ident\python2\ss-ident\experiments_noise_5_samples'
+                new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels'\
+                                     '\ident\python2\ss-ident\exp_v3_3_experiments_noise_5_samples'
             elif number_samples == 500:
                 file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
                             '\ident\python2\ss-ident\experiments_noise_500_samples'
+                new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                                     '\ident\python2\ss-ident\exp_v3_3_experiments_noise_500_samples'
         else:
             file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
                         '\ident\python2\ss-ident\experiments'
-        new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                             '\ident\python2\ss-ident\exp_v3_3_experiments_noise_5_samples'
+            new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                                 '\ident\python2\ss-ident\exp_v3_3_experiments'
         experiments_per_set = 3
     elif flux_id == 'v5':
         experiment_choice_id = [0,
@@ -271,14 +283,18 @@ def create_data_for_flux(flux_id, noise, number_samples=1):
             if number_samples == 5:
                 file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
                             '\ident\python2\ss-ident\experiments_noise_5_samples'
+                new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModel' \
+                                     '\ident\python2\ss-ident\exp_v5_2_experiments_noise_5_samples'
             elif number_samples == 500:
                 file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
                             '\ident\python2\ss-ident\experiments_noise_500_samples'
+                new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModel' \
+                                     '\ident\python2\ss-ident\exp_v5_2_experiments_noise_500_samples'
         else:
             file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
                         '\ident\python2\ss-ident\experiments'
-        new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                             '\ident\python2\ss-ident\exp_v5_2_experiments'
+            new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModel' \
+                                 '\ident\python2\ss-ident\exp_v5_2_experiments'
         experiments_per_set = 2
 
     extract_and_create_data_for_analysis(file_name, multi_index_labels, new_data_file_name,
