@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from generate_expdata import generate_expdata
+from simulate_data import arrange_experimental_data
 
 
 def create_experiment_data(save_file_name, noise=0, kinetics=2, number_samples=1, noise_std=0.05):
@@ -155,7 +156,7 @@ def retrieve_experimental_data(file_name, multi_index_lablel):
     return exp_ss, parameter_info
 
 
-def create_data_for_analysis(flux_file_name, experiment_choice_index):
+def create_data_for_analysis(experimental_data_df, experiment_choice_index, experiments_per_set, data_file_name):
     """arrange experimental data and create data frame and
     store for future use for use with identifiability analysis"""
     all_experiment_indices = ['experiment_0', 'experiment_1', 'experiment_2', 'experiment_3', 'experiment_4',
@@ -163,17 +164,125 @@ def create_data_for_analysis(flux_file_name, experiment_choice_index):
                               'experiment_10', 'experiment_11', 'experiment_12', 'experiment_13', 'experiment_14',
                               'experiment_15', 'experiment_16', 'experiment_17', 'experiment_18', 'experiment_19',
                               'experiment_20']
-    # experiment_choice_id = [0,
-    #                         1, 2, 3, 4, 5,
-    #                         6, 7, 8, 9, 10,
-    #                         16, 17, 18, 19, 20]
-    experiment_index_choice = [all_experiment_indices[j_choice] for j_choice in experiment_choice_index]
-    # get combinations of experimental datasets
-    experimental_datasets_3_expts, \
-    experiment_choice, combination_choice = arrange_experimental_data(experimental_df,
-                                                                      experiments_per_set=3,
-                                                                      experiment_choice=experiment_index_choice)
 
+    experiment_index_choice = [all_experiment_indices[j_choice] for j_choice in experiment_choice_index]
+
+    # get combinations of experimental datasets
+    complete_data_dict, index_labels, experiment_choice = \
+        arrange_experimental_data(experimental_data_df, experiments_per_set=experiments_per_set,
+                                  experiment_choice=experiment_index_choice)
+    # create data frame from data
+    # same data frame to file
+    df_tuples = [(j_sample, j_data_set, j_experiment) for j_sample, j_data_set, j_experiment in
+                 zip(complete_data_dict["sample_name"], complete_data_dict["data_set_id"],
+                     complete_data_dict["experiment_id"])]
+
+    # create multi index
+    index = pd.MultiIndex.from_tuples(df_tuples, names=index_labels)
+    # remove redundant columns
+    del complete_data_dict["sample_name"]
+    del complete_data_dict["data_set_id"]
+    del complete_data_dict["experiment_id"]
+
+    # create data frame
+    data_df = pd.DataFrame(complete_data_dict, index=index, columns=complete_data_dict.keys())
+
+    # save data frame to csv file
+    data_df.to_csv(data_file_name, index_label=index_labels)
+    return data_df
+
+
+def extract_and_create_data_for_analysis(original_data_file_name, original_index_labels, new_data_file_name,
+                                         experiment_choice_index, experiments_per_set):
+    """extract existing information from given file and create new file for future analysis"""
+    experimental_df = retrieve_experimental_data_from_file(data_file_name=original_data_file_name,
+                                                           multi_index_label=original_index_labels)
+    create_data_for_analysis(experimental_df, experiment_choice_index, experiments_per_set, new_data_file_name)
+
+    return None
+
+def create_data_for_flux(flux_id, noise, number_samples=1):
+    """create and store data sets for each flux separately"""
+    if flux_id == 'v1':
+        experiment_choice_id = [0,
+                                1, 2, 3, 4, 5,
+                                11, 12, 13, 14, 15,
+                                16, 17, 18, 19, 20]
+        multi_index_labels = ['sample_name', 'experiment_id']
+        if noise:
+            if number_samples == 5:
+                file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                            '\ident\python2\ss-ident\experiments_noise_5_samples'
+            elif number_samples == 500:
+                file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                            '\ident\python2\ss-ident\experiments_noise_500_samples'
+        else:
+            file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                        '\ident\python2\ss-ident\experiments'
+        new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                             '\ident\python2\ss-ident\exp_v1_2_experiments'
+        experiments_per_set = 2
+    elif flux_id == 'v2':
+        experiment_choice_id = [0,
+                                1, 2, 3, 4, 5,
+                                6, 7, 8, 9, 10,
+                                11, 12, 13, 14, 15]
+        multi_index_labels = ['sample_name', 'experiment_id']
+        if noise:
+            if number_samples == 5:
+                file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                            '\ident\python2\ss-ident\experiments_noise_5_samples'
+            elif number_samples == 500:
+                file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                            '\ident\python2\ss-ident\experiments_noise_500_samples'
+        else:
+            file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                        '\ident\python2\ss-ident\experiments'
+        new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                             '\ident\python2\ss-ident\exp_v1_2_experiments'
+        experiments_per_set = 2
+    elif flux_id == 'v3':
+        experiment_choice_id = [0,
+                                1, 2, 3, 4, 5,
+                                6, 7, 8, 9, 10,
+                                16, 17, 18, 19, 20]
+        multi_index_labels = ['sample_name', 'experiment_id']
+        if noise:
+            if number_samples == 5:
+                file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                            '\ident\python2\ss-ident\experiments_noise_5_samples'
+            elif number_samples == 500:
+                file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                            '\ident\python2\ss-ident\experiments_noise_500_samples'
+        else:
+            file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                        '\ident\python2\ss-ident\experiments'
+        new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                             '\ident\python2\ss-ident\exp_v3_3_experiments_noise_5_samples'
+        experiments_per_set = 3
+    elif flux_id == 'v5':
+        experiment_choice_id = [0,
+                                1, 2, 3, 4, 5,
+                                6, 7, 8, 9, 10,
+                                11, 12, 13, 14, 15,
+                                16, 17, 18, 19, 20]
+        multi_index_labels = ['sample_name', 'experiment_id']
+        if noise:
+            if number_samples == 5:
+                file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                            '\ident\python2\ss-ident\experiments_noise_5_samples'
+            elif number_samples == 500:
+                file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                            '\ident\python2\ss-ident\experiments_noise_500_samples'
+        else:
+            file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                        '\ident\python2\ss-ident\experiments'
+        new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                             '\ident\python2\ss-ident\exp_v5_2_experiments'
+        experiments_per_set = 2
+
+    extract_and_create_data_for_analysis(file_name, multi_index_labels, new_data_file_name,
+                                         experiment_choice_id, experiments_per_set=experiments_per_set)
     return None
 
 
