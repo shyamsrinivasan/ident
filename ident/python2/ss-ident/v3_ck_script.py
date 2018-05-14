@@ -1,5 +1,6 @@
 import numpy as np
 from create_experiment_data import retrieve_experimental_data
+from create_experiment_data import retrieve_experimental_data_from_file
 from simulate_data import arrange_experimental_data
 from kotte_model import flux_ident_3_data_combination
 from process_ident_data import process_info_sample
@@ -9,6 +10,17 @@ from plot_ident_results import plot_parameter_value_hist
 from plot_ident_results import parameter_identifibaility_plot
 from plot_ident_results import parameter_experiment_info_spider
 
+
+# create data for identifiability analysis
+# from create_experiment_data import create_data_for_flux
+# create_data_for_flux(flux_id='v3', noise=0, number_samples=1)
+
+# extract data from file
+new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                     '\ident\python2\ss-ident\exp_v3_3_experiments'
+index_labels = ['sample_name', 'data_set_id', 'experiment_id']
+arranged_data_df = retrieve_experimental_data_from_file(data_file_name=new_data_file_name,
+                                                        multi_index_label=index_labels)
 
 # generate noisy experimental data for testing identifiability
 y0 = np.array([5, 1, 1])
