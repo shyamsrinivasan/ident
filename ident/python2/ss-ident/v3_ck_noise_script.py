@@ -1,5 +1,5 @@
 import numpy as np
-from create_experiment_data import retrieve_experimental_data
+from create_experiment_data import retrieve_experimental_data_from_file
 from simulate_data import arrange_experimental_data
 from kotte_model import flux_ident_3_data_combination
 from process_ident_data import process_info_sample
@@ -8,6 +8,17 @@ from plot_ident_results import data_utility_plot
 from plot_ident_results import plot_parameter_values
 from plot_ident_results import parameter_experiment_info_spider
 
+
+# create data for identifiability analysis
+# from create_experiment_data import create_data_for_flux
+# create_data_for_flux(flux_id='v3', noise=1, number_samples=5)
+
+# extract data from file
+new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                     '\ident\python2\ss-ident\exp_v3_3_experiments_noise_5_samples'
+index_labels = ['sample_name', 'data_set_id', 'experiment_id']
+arranged_data_df = retrieve_experimental_data_from_file(data_file_name=new_data_file_name,
+                                                        multi_index_label=index_labels)
 
 # generate noisy experimental data for testing identifiability
 y0 = np.array([5, 1, 1])
@@ -28,24 +39,24 @@ ode_parameter_values = {"K1ac": np.array([.1]),
                         "V2max": np.array([1]),
                         "ac": np.array([.1])}
 
-multi_index_labels = ['sample_name', 'experiment_id']
-file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\ident\python2\ss-ident\experiments_noise_5_samples'
-from create_experiment_data import retrieve_experimental_data_from_file
-experimental_df = retrieve_experimental_data_from_file(data_file_name=file_name, multi_index_label=multi_index_labels)
-exp_ss, perturbation_details = retrieve_experimental_data(file_name=file_name, multi_index_lablel=multi_index_labels)
+# create data for further analysis from existing analysis data
+# multi_index_labels = ['sample_name', 'experiment_id']
+# file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+#             '\ident\python2\ss-ident\experiments_noise_5_samples'
+
+# experiment_choice_id = [0,
+#                         1, 2, 3, 4, 5,
+#                         6, 7, 8, 9, 10,
+#                         16, 17, 18, 19, 20]
+# from create_experiment_data import extract_and_create_data_for_analysis
+# extract_and_create_data_for_analysis(file_name, multi_index_labels, new_data_file_name,
+#                                      experiment_choice_id, experiments_per_set=3)
+
+# retrieve analysis data
+
 
 # arrange experimental data to form multiple data sets
 exp_flux_index = np.array([0, 3, 2, 4, 1, 5])
-all_experiment_indices = ['experiment_0', 'experiment_1', 'experiment_2', 'experiment_3', 'experiment_4',
-                          'experiment_5', 'experiment_6', 'experiment_7', 'experiment_8', 'experiment_9',
-                          'experiment_10', 'experiment_11', 'experiment_12', 'experiment_13', 'experiment_14',
-                          'experiment_15', 'experiment_16', 'experiment_17', 'experiment_18', 'experiment_19',
-                          'experiment_20']
-experiment_choice_id = [0,
-                        1, 2, 3, 4, 5,
-                        6, 7, 8, 9, 10,
-                        16, 17, 18, 19, 20]
-experiment_index_choice = [all_experiment_indices[j_choice] for j_choice in experiment_choice_id]
 
 # get combination of 3 experiments and perform identifiability on all fluxes that require 3 data sets
 print('Practical Identifiability Analysis of v3 with 3 parameters: V3max, K3fdp and K3pep \n')
@@ -53,8 +64,7 @@ print('Practical Identifiability Analysis of v3 with 3 parameters: V3max, K3fdp 
 ident_fun_choice = [0]
 # get combinations of experimental datasets
 experimental_datasets_3_expts, \
-    experiment_choice, combination_choice = arrange_experimental_data(experimental_df, ode_parameter_values, exp_ss["y"], exp_ss["flux"],
-                                                                      perturbation_details,
+    experiment_choice, combination_choice = arrange_experimental_data(experimental_df,
                                                                       experiments_per_set=3,
                                                                       experiment_choice=experiment_index_choice)
 # different types of experiments 0 - wt, perturbations: 1 - acetate, 2 - k1cat, 3 - V3max, 4 - V2max
