@@ -149,21 +149,20 @@ def multi_sample_ident_fun(ident_fun_list, all_data_df, choose, flux_ids, flux_c
     sample_ids = list(reset_df.index.levels[0])
     number_samples = (len(sample_ids))
     all_sample_ident_details = []
-    for i_sample, sample_data in enumerate(all_data):
-        print('Identifiability analysis with Data Sample Number {}\n'.format(i_sample))
-        parameters_per_flux, one_sample_all_fun_array_list = one_sample_ident_fun(ident_fun_list, sample_data,
-                                                                                  choose, flux_ids, flux_choice)
-        # process info from each sample (number of samples > 1 when noisy data is used) of experimental data sets
-        all_fun_ident_details = []
-        for ifun, ifun_data in enumerate(one_sample_all_fun_array_list):
-            number_of_data_sets, number_of_parameters, _ = ifun_data.shape
-            # process denominator info only
-            _, plist_boolean = boolean_ident_info(ifun_data[:, :, -1], number_of_parameters)
-            ident_details = {"boolean": plist_boolean,
-                             "values": ifun_data,
-                             "parameters": number_of_parameters,
-                             "flux id": flux_ids[ifun],
-                             "flux choice": flux_choice[ifun]}
-            all_fun_ident_details.append(ident_details)
-        all_sample_ident_details.append(all_fun_ident_details)
-    return all_sample_ident_details
+    for i_sample, i_sample_id in enumerate(sample_ids):
+        print('Identifiability analysis with Data Sample Number {} of {}\n'.format(i_sample, number_samples))
+        # collect experimental data from all data sets
+        all_exp_data = collect_data(reset_df, i_sample_id)
+        # run identifiability with i_sample_data
+        all_ident_values, _ = get_ident_value(ident_fun_list, all_exp_data, flux_ids, flux_choice)
+        all_sample_ident_details.append(all_ident_values)
+
+    # initial information processing to get dictionary of relevant info for each flux and each parameter
+    all_data = defaultdict(list)
+    empty_dict = {}
+    for i_sample, sample_data in enumerate(all_sample_ident_details):
+        sample_name = 'sample_{}'.format(i_sample)
+        # number_data_sets = len(sample_data)
+        all_data = collect_ident_data(sample_name, sample_data, flux_ids, flux_choice, all_data, empty_dict)
+
+    return all_data
