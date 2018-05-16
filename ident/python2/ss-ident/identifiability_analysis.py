@@ -142,6 +142,12 @@ def collect_ident_data(j_sample_name, j_sample_ident_data, flux_ids, flux_choice
 def multi_sample_ident_fun(ident_fun_list, all_data_df, choose, flux_ids, flux_choice):
     """perform identifibaility analysis for multiple samples by
     looping through each experimental data sample for a list of identifibaility functions"""
+    reset_df = all_data_df.reset_index('experiment_id')
+    # lexographic ordering of df indices
+    reset_df.sort_index(level='data_set_id', inplace=True)
+    reset_df.sort_index(level='sample_name', inplace=True)
+    sample_ids = list(reset_df.index.levels[0])
+    number_samples = (len(sample_ids))
     all_sample_ident_details = []
     for i_sample, sample_data in enumerate(all_data):
         print('Identifiability analysis with Data Sample Number {}\n'.format(i_sample))
