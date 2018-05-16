@@ -1,4 +1,8 @@
 import numpy as np
+import pandas as pd
+from collections import defaultdict
+import itertools as it
+from names_strings import ident_parameter_name
 
 
 def truncate_values(f, n=3):
@@ -40,11 +44,6 @@ def boolean_ident_info(ident_values, number_of_parameters):
 
 def run_flux_ident(ident_function_list, data, flux_id=(), flux_choice=()):
     """test identifibaility using each function in function list for data set in set"""
-    number_of_parameters = 0
-    try:
-        number_of_parameters_per_flux = [None] * len(ident_function_list)
-    except TypeError:
-        number_of_parameters_per_flux = [None]
     ident_value_list = []
     flux_id_list = []
     flux_choice_list = []
@@ -58,30 +57,19 @@ def run_flux_ident(ident_function_list, data, flux_id=(), flux_choice=()):
             ident_value_list.append(ident_value)
             flux_id_list.append(i_d)
             flux_choice_list.append(flux_choice[iterator])
-            number_of_expressions = len(ident_value[0])
-            number_of_parameters_per_flux[iterator] = len(ident_value)
             iterator += 1
-            number_of_parameters += len(ident_value)
     except TypeError:
         ident_value = ident_function_list(data)
         ident_value_list.append(ident_value)
         flux_id_list.append(flux_id)
         flux_choice_list.append(flux_choice)
-        number_of_expressions = len(ident_value[0])
-        number_of_parameters_per_flux[iterator] = len(ident_value)
-        number_of_parameters += len(ident_value)
 
-    ident_value_array = np.zeros((number_of_parameters, number_of_expressions))
-    irow = 0
     all_flux_ident = []
     for iflux in ident_value_list:
         truncated_ident_value = call_truncate_method(iflux, len(iflux))
-        all_flux_ident.append(truncated_ident_value)
-        nrows, ncolumns = np.shape(truncated_ident_value)
-        ident_value_array[irow:(irow + nrows), :] = truncated_ident_value
-        irow += nrows
-    return ident_value_array, number_of_parameters_per_flux, ncolumns, all_flux_ident, \
-           flux_id_list, flux_choice_list
+        ident_value_list = [np.array(i_parameter) for i_parameter in list(truncated_ident_value)]
+        all_flux_ident.append(ident_value_list)
+    return all_flux_ident, flux_id_list, flux_choice_list
 
 
 def get_ident_value(ident_function_list, experimental_data_list, original_data_set_id, flux_ids, flux_choice):
