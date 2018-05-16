@@ -284,9 +284,9 @@ def flux_2_ident_expression(experimental_data):
 
 def v3_Vmax_value1(experimental_data):
     """V3max (root 1) identifiability expression for v3"""
-    _, x11, x21, _, _, _, v31, _, _, _, \
-    _, x12, x22, _, _, _, v32, _, _, _, \
-    _, x13, x23, _, _, _, v33, _, _, _ = list(experimental_data)
+    _, x11, x21, _, _, _, v31, _, \
+    _, x12, x22, _, _, _, v32, _, \
+    _, x13, x23, _, _, _, v33, _, = list(experimental_data)
 
     # V3max
     sqrt_v3max_nr_1 = ((v31 * v33 * x11 * x12 * x21 * x22 - v32 * v33 * x11 * x12 * x21 * x22 -
@@ -397,9 +397,9 @@ def v3_Vmax_value1(experimental_data):
 
 def v3_Vmax_value2(experimental_data):
     """V3max (root 2) identifiability expression for v3"""
-    _, x11, x21, _, _, _, v31, _, _, _, \
-    _, x12, x22, _, _, _, v32, _, _, _, \
-    _, x13, x23, _, _, _, v33, _, _, _ = list(experimental_data)
+    _, x11, x21, _, _, _, v31, _, \
+    _, x12, x22, _, _, _, v32, _, \
+    _, x13, x23, _, _, _, v33, _, = list(experimental_data)
 
     # v3max = second solution
     sqrt_v3max_nr_2 = ((v31 * v33 * x11 * x12 * x21 * x22 - v32 * v33 * x11 * x12 * x21 * x22 -
@@ -510,9 +510,9 @@ def v3_Vmax_value2(experimental_data):
 
 def v3_K3fdp_value1(experimental_data):
     """K3fdp (root 1) identifiability expression for v3"""
-    _, x11, x21, _, _, _, v31, _, _, _, \
-    _, x12, x22, _, _, _, v32, _, _, _, \
-    _, x13, x23, _, _, _, v33, _, _, _ = list(experimental_data)
+    _, x11, x21, _, _, _, v31, _, \
+    _, x12, x22, _, _, _, v32, _, \
+    _, x13, x23, _, _, _, v33, _, = list(experimental_data)
 
     # K3fdp
     sq_nr_1_k3fdp = ((v31 * v33 * x11 * x12 * x21 * x22 - v32 * v33 * x11 * x12 * x21 * x22 -
@@ -622,9 +622,9 @@ def v3_K3fdp_value1(experimental_data):
 
 def v3_K3fdp_value2(experimental_data):
     """K3fdp (root 2) identifiability expression for v3"""
-    _, x11, x21, _, _, _, v31, _, _, _, \
-    _, x12, x22, _, _, _, v32, _, _, _, \
-    _, x13, x23, _, _, _, v33, _, _, _ = list(experimental_data)
+    _, x11, x21, _, _, _, v31, _, \
+    _, x12, x22, _, _, _, v32, _, \
+    _, x13, x23, _, _, _, v33, _, = list(experimental_data)
 
     # K3fdp 2
     sq_k3fdp_nr_2 = ((v31 * v33 * x11 * x12 * x21 * x22 - v32 * v33 * x11 * x12 * x21 * x22 -
@@ -734,9 +734,9 @@ def v3_K3fdp_value2(experimental_data):
 
 def v3_K3pep_value1(experimental_data):
     """K3pep (root 1) identifiability expression for v3"""
-    _, x11, x21, _, _, _, v31, _, _, _, \
-    _, x12, x22, _, _, _, v32, _, _, _, \
-    _, x13, x23, _, _, _, v33, _, _, _ = list(experimental_data)
+    _, x11, x21, _, _, _, v31, _, \
+    _, x12, x22, _, _, _, v32, _, \
+    _, x13, x23, _, _, _, v33, _, = list(experimental_data)
 
     # K3pep
     sq_k3pep_nr_1 = ((v31 * v33 * x11 * x12 * x21 * x22 - v32 * v33 * x11 * x12 * x21 * x22 -
@@ -765,9 +765,9 @@ def v3_K3pep_value1(experimental_data):
 
 def v3_K3pep_value2(experimental_data):
     """K3pep (root 2) identifiability expression for v3"""
-    _, x11, x21, _, _, _, v31, _, _, _, \
-    _, x12, x22, _, _, _, v32, _, _, _, \
-    _, x13, x23, _, _, _, v33, _, _, _ = list(experimental_data)
+    _, x11, x21, _, _, _, v31, _, \
+    _, x12, x22, _, _, _, v32, _, \
+    _, x13, x23, _, _, _, v33, _, = list(experimental_data)
 
     # K3pep 2
     sq_k3pep_nr_2 = ((v31 * v33 * x11 * x12 * x21 * x22 - v32 * v33 * x11 * x12 * x21 * x22 -
@@ -840,8 +840,8 @@ def flux_3_ident_expression(experimental_data):
 
 def v3_V3max_var1(experimental_data):
     """v3max values when k3pep is assumed as known"""
-    _, x11, x21, _, _, _, v31, _, _, _, \
-    _, x12, x22, _, _, _, v32, _, _, _ = list(experimental_data)
+    _, x11, x21, _, _, _, v31, _, \
+    _, x12, x22, _, _, _, v32, _, = list(experimental_data)
     K3pep = np.array([.1])
     v3max_nr_1 = -((-(K3pep * v32 + v32 * x12) * (K3pep * v31 * x21 + v31 * x11 * x21) + (K3pep * v31 + v31 * x11) * (
                 K3pep * v32 * x22 + v32 * x12 * x22)))
@@ -852,8 +852,8 @@ def v3_V3max_var1(experimental_data):
 
 def v3_V3max_var2(experimental_data):
     """v3max value when k3fdp value is assumed as known"""
-    _, x11, x21, _, _, _, v31, _, _, _, \
-    _, x12, x22, _, _, _, v32, _, _, _ = list(experimental_data)
+    _, x11, x21, _, _, _, v31, _, \
+    _, x12, x22, _, _, _, v32, _, = list(experimental_data)
     K3fdp = np.array([.1])
     v3max_nr_2 = -((-(K3fdp*v31*x11 + v31*x11*x21)*(K3fdp*v32 + v32*x22) + (K3fdp*v31 + v31*x21)*(K3fdp*v32*x12 + v32*x12*x22)))
     v3max_dr_2 = (K3fdp*v32*x11*x21 - K3fdp*v31*x12*x22 + v32*x11*x21*x22 - v31*x12*x21*x22)
@@ -863,8 +863,8 @@ def v3_V3max_var2(experimental_data):
 
 def v3_K3fdp_var1(experimental_data):
     """k3fdp value when k3pep is assumed as known"""
-    _, x11, x21, _, _, _, v31, _, _, _, \
-    _, x12, x22, _, _, _, v32, _, _, _ = list(experimental_data)
+    _, x11, x21, _, _, _, v31, _, \
+    _, x12, x22, _, _, _, v32, _, = list(experimental_data)
     K3pep = np.array([.1])
     k3fdp_nr = (x21*(-K3pep*v32*x11*x22 + K3pep*v31*x12*x22 + v31*x11*x12*x22 - v32*x11*x12*x22))
     k3fdp_dr = (K3pep*v32*x11*x21 + v32*x11*x12*x21 - K3pep*v31*x12*x22 - v31*x11*x12*x22)
@@ -874,8 +874,8 @@ def v3_K3fdp_var1(experimental_data):
 
 def v3_K3pep_var2(experimental_data):
     """k3pep value when k3fdp is assumed as known"""
-    _, x11, x21, _, _, _, v31, _, _, _, \
-    _, x12, x22, _, _, _, v32, _, _, _ = list(experimental_data)
+    _, x11, x21, _, _, _, v31, _, \
+    _, x12, x22, _, _, _, v32, _, = list(experimental_data)
     K3fdp = np.array([.1])
     k3pep_nr = (x11*(-K3fdp*v32*x12*x21 + K3fdp*v31*x12*x22 + v31*x12*x21*x22 - v32*x12*x21*x22))
     k3pep_dr = (K3fdp*v32*x11*x21 - K3fdp*v31*x12*x22 + v32*x11*x21*x22 - v31*x12*x21*x22)
@@ -907,8 +907,8 @@ def flux_3_var_1_and_2(experimental_data):
 
 def v5_vemax_value1_ident(experimental_data):
     """both value 1 and value 2 are the same for vemax"""
-    _, _, x21, x31, _, _, _, _, v51, v61, \
-    _, _, x22, x32, _, _, _, _, v52, v62 = list(experimental_data)
+    _, _, x21, x31, _, _, _, v51, \
+    _, _, x22, x32, _, _, _, v52 = list(experimental_data)
 
     vemax_nr = v51 * v52 * (x21**2 - x22**2)
     vemax_dr = v51*x21**2 - v52*x22**2
@@ -920,8 +920,8 @@ def v5_vemax_value1_ident(experimental_data):
 def v5_Kefdp_value1_ident(experimental_data):
     """Kefdp has 2 different values for v5 upon determination of
     closed-form expressions due to the presence of a square root"""
-    _, _, x21, x31, _, _, _, _, v51, v61, \
-    _, _, x22, x32, _, _, _, _, v52, v62 = list(experimental_data)
+    _, _, x21, x31, _, _, _, v51, \
+    _, _, x22, x32, _, _, _, v52 = list(experimental_data)
 
     kefdp_nr_value1 = - np.sqrt(-v51*x21**2 + v52*x22**2)
     kefdp_dr_value1 = np.sqrt(v51 - v52)
@@ -931,8 +931,8 @@ def v5_Kefdp_value1_ident(experimental_data):
 
 
 def v5_Kefdp_value2_ident(experimental_data):
-    _, _, x21, x31, _, _, _, _, v51, v61, \
-    _, _, x22, x32, _, _, _, _, v52, v62 = list(experimental_data)
+    _, _, x21, x31, _, _, _, v51, \
+    _, _, x22, x32, _, _, _, v52 = list(experimental_data)
 
     kefdp_nr_value2 = np.sqrt(-v51 * x21 ** 2 + v52 * x22 ** 2)
     kefdp_dr_value2 = np.sqrt(v51 - v52)
@@ -1208,7 +1208,7 @@ def flux_ident_2_data_combination(all_data, flux_ids, choose=(), flux_choice=(),
     return all_sample_all_fun_ident_info
 
 
-def flux_ident_3_data_combination(all_data, flux_ids, choose=(), flux_choice=(), ident_fun_choice=()):
+def flux_ident_3_data_combination(data_df, flux_ids, choose=(), flux_choice=(), ident_fun_choice=()):
     """perform identifiability separately for each set of functions and generate separate identifiability info"""
     # 3 data combination ident list
     if flux_choice[0] == 1:
@@ -1230,7 +1230,7 @@ def flux_ident_3_data_combination(all_data, flux_ids, choose=(), flux_choice=(),
                 ident_fun_3_data = all_ident_fun_3_data[ident_fun_choice]
     else:
         ident_fun_3_data = all_ident_fun_3_data
-    all_sample_all_fun_ident_info = multi_sample_ident_fun(ident_fun_3_data, all_data, choose, flux_ids, flux_choice)
+    all_sample_all_fun_ident_info = multi_sample_ident_fun(ident_fun_3_data, data_df, choose, flux_ids, flux_choice)
     return all_sample_all_fun_ident_info
 
 
