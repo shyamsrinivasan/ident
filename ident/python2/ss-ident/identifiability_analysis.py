@@ -72,24 +72,18 @@ def run_flux_ident(ident_function_list, data, flux_id=(), flux_choice=()):
     return all_flux_ident, flux_id_list, flux_choice_list
 
 
-def get_ident_value(ident_function_list, experimental_data_list, original_data_set_id, flux_ids, flux_choice):
+def get_ident_value(ident_function_list, experimental_data_list, flux_ids, flux_choice):
     """perform idetifibaility for each data set by looping through data sets and
     using them to test each function in identifibaility list.
     Also process results into numpy arrays for future parsing, processing and analysis"""
+    # all_data_sets = len(experimental_data_list)
+    number_data_sets = (len(experimental_data_list))
     all_data_ident_lists = []
-    all_data_all_fun_ident_value = []
-    try:
-        number_of_parameters_per_flux = [0]*len(ident_function_list)
-    except TypeError:
-        number_of_parameters_per_flux = [0]
-    number_of_expressions_per_parameter = 0
-    for index, data_set in enumerate(experimental_data_list):
-        print('Identifiability for Dataset {} of {}: Original ID: {}\n'.format(index + 1,
-                                                                               len(experimental_data_list),
-                                                                               original_data_set_id[index]))
-        identifiability_values, number_of_parameters_per_flux, \
-        number_of_expressions_per_parameter, all_fun_ident_values, \
-        flux_id_list, flux_choice_list = run_flux_ident(ident_function_list, data_set, flux_ids, flux_choice)
+    # number_of_expressions_per_parameter = 0
+    for j_data_set_id, j_data_set in enumerate(experimental_data_list):
+        print('Identifiability for Dataset {} of {}: \n'.format(j_data_set_id, number_data_sets))
+        identifiability_values, flux_id_list, flux_choice_list = \
+            run_flux_ident(ident_function_list, j_data_set, flux_ids, flux_choice)
         all_data_ident_lists.append(identifiability_values)
         all_data_all_fun_ident_value.append(all_fun_ident_values)
 
