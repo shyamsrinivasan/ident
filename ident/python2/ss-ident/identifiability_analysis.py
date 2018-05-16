@@ -85,71 +85,61 @@ def get_ident_value(ident_function_list, experimental_data_list, flux_ids, flux_
         identifiability_values, flux_id_list, flux_choice_list = \
             run_flux_ident(ident_function_list, j_data_set, flux_ids, flux_choice)
         all_data_ident_lists.append(identifiability_values)
-        all_data_all_fun_ident_value.append(all_fun_ident_values)
+    number_of_parameters_per_flux = [len(i_flux_info) for i_flux_info in all_data_ident_lists[0]]
 
-    # classify ident data based on number of ident functions instead of by data sets
-    # convert to multi dimensional list = data set size x number of parameters per flux x number of fluxes/functions
-    number_of_data_sets = len(experimental_data_list)
-    # all_fun_ident_list = []
-    all_fun_array_list = []
-    try:
-        for ifun in range(0, len(ident_function_list)):
-            all_ident_data_in_fun = []
-            for idata in all_data_all_fun_ident_value:
-                all_ident_data_in_fun.append(idata[ifun])
-            # all_fun_ident_list.append(all_ident_data_in_fun)
-            # array - number of data sets x number of parameters per identifiability function/flux
-            ident_fun_array = np.zeros((number_of_data_sets, number_of_parameters_per_flux[ifun], 3))
-            for idata_id, idata_set_value in enumerate(all_ident_data_in_fun):
-                ident_fun_array[idata_id, :, 0] = idata_set_value[:, 0]
-                ident_fun_array[idata_id, :, 1] = idata_set_value[:, 1]
-                ident_fun_array[idata_id, :, 2] = idata_set_value[:, 2]
-            all_fun_array_list.append(ident_fun_array)
-    except TypeError:
-        ifun = 0
-        all_ident_data_in_fun = []
-        for idata in all_data_all_fun_ident_value:
-            all_ident_data_in_fun.append(idata[ifun])
-        # all_fun_ident_list.append(all_ident_data_in_fun)
-        # array - number of data sets x number of parameters per identifiability function/flux
-        ident_fun_array = np.zeros((number_of_data_sets, number_of_parameters_per_flux[ifun], 3))
-        for idata_id, idata_set_value in enumerate(all_ident_data_in_fun):
-            ident_fun_array[idata_id, :, 0] = idata_set_value[:, 0]
-            ident_fun_array[idata_id, :, 1] = idata_set_value[:, 1]
-            ident_fun_array[idata_id, :, 2] = idata_set_value[:, 2]
-        all_fun_array_list.append(ident_fun_array)
+    return all_data_ident_lists, number_of_parameters_per_flux
 
 
-    total_parameters_identified = sum(number_of_parameters_per_flux)
-    all_identifiability_values = \
-        np.zeros((number_of_data_sets * total_parameters_identified, number_of_expressions_per_parameter))
-    array_index = 0
-    for idata in all_data_ident_lists:
-        all_identifiability_values[array_index:(array_index + total_parameters_identified), :] = idata
-        array_index += total_parameters_identified
-    return all_identifiability_values, number_of_parameters_per_flux, all_fun_array_list
+def collect_data(exp_df, j_sample):
+    """collect data from df from all data sets in single sample to peform identiiability analysis"""
+    idx = pd.IndexSlice
+    all_data_set_ids = exp_df.index.levels[1].tolist()
+    # number_data_sets = (len(all_data_sets))
+    all_exp_data = []
+    for j_data_set, data_set_id in enumerate(all_data_set_ids):
+        ident_data = exp_df.loc[idx[j_sample, data_set_id],
+                                ['acetate', 'pep', 'fdp', 'E', 'v1', 'v2', 'v3', 'v5']].values.tolist()
+        single_list = [i_variable for i_exp_data in ident_data for i_variable in i_exp_data]
+        all_exp_data.append(single_list)
+    return all_exp_data
 
 
-def one_sample_ident_fun(ident_fun_list, sample_data, choose, flux_ids, flux_choice):
-    """get identifibaility information for a single sample of experimental data
-    using identifiablity function list passed as input args"""
-    if choose:
-        try:
-            chosen_values = list(sample_data["values"][:choose, :])
-        except TypeError:
-            iter_chosen_value = []
-            for indexes in range(0, len(choose)):
-                iter_chosen_value.append(list(sample_data["values"][indexes, :]))
-            chosen_values = iter_chosen_value[:]
-    else:
-        chosen_values = list(sample_data["values"][:, :])
-    # run identification function through every chosen data combination supplied as input
-    _, parameters_per_flux, all_fun_array_list = get_ident_value(ident_fun_list, chosen_values, choose,
-                                                                 flux_ids, flux_choice)
-    return parameters_per_flux, all_fun_array_list
+def collect_ident_data(j_sample_name, j_sample_ident_data, flux_ids, flux_choice, all_data_dict, empty_dict):
+    """collect identifiability information from processing info from
+    using experimental data from all samples"""
+
+    temp_dict = {}
+    for j_data_set, j_data_set_info in enumerate(j_sample_ident_data):
+        data_set_name = 'data_set_{}'.format(j_data_set)
+        for j_flux, j_flux_data in enumerate(j_data_set_info):
+            flux_name = 'flux{}'.format(flux_ids[j_flux])
+            # all_parameter names
+            all_parameter_names = [ident_parameter_name(j_parameter,
+                                                        flux_name,
+                                                        flux_choice[j_flux])
+                                   for j_parameter in range(0, len(j_flux_data))]
+            for i_parameter, i_parameter_info in enumerate(j_flux_data):
+                temp_dict["flux_name"] = flux_name
+                temp_dict["flux_choice"] = flux_choice[j_flux]
+                # replace with call to parameter name file
+                temp_dict["parameter_name"] = all_parameter_names[i_parameter]
+                i_parameter_nr, i_parameter_dr, i_parameter_value = i_parameter_info
+                temp_dict["parameter_nr"] = i_parameter_nr
+                temp_dict["parameter_dr"] = i_parameter_dr
+                temp_dict["parameter_value"] = i_parameter_value
+                temp_dict["data_set_name"] = data_set_name
+                temp_dict["sample_name"] = j_sample_name
+                if i_parameter_value > 0:
+                    temp_dict["identified"] = True
+                else:
+                    temp_dict["identified"] = False
+                for key, value in it.chain(empty_dict.items(), temp_dict.items()):
+                    all_data_dict[key].append(value)
+
+    return all_data_dict
 
 
-def multi_sample_ident_fun(ident_fun_list, all_data, choose, flux_ids, flux_choice):
+def multi_sample_ident_fun(ident_fun_list, all_data_df, choose, flux_ids, flux_choice):
     """perform identifibaility analysis for multiple samples by
     looping through each experimental data sample for a list of identifibaility functions"""
     all_sample_ident_details = []
