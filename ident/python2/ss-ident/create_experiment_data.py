@@ -201,6 +201,7 @@ def extract_and_create_data_for_analysis(original_data_file_name, original_index
 
     return None
 
+
 def create_data_for_flux(flux_id, noise, number_samples=1):
     """create and store data sets for each flux separately"""
     if flux_id == 'v1':
