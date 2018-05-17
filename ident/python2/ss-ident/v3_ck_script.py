@@ -22,6 +22,31 @@ index_labels = ['sample_name', 'data_set_id', 'experiment_id']
 arranged_data_df = retrieve_experimental_data_from_file(data_file_name=new_data_file_name,
                                                         multi_index_label=index_labels)
 
+# perform identifiability when v3 parameters are written for root (1)
+# get combination of 3 experiments and perform identifiability on all fluxes that require 3 data sets
+print('Practical Identifiability Analysis of v3 with 3 parameters: V3max, K3fdp and K3pep \n')
+# choose identifiability functions to test
+ident_fun_choice = [0]
+ident_details_v3_root1 = flux_ident_3_data_combination(arranged_data_df, flux_ids=[3], flux_choice=[1],
+                                                       ident_fun_choice=ident_fun_choice)
+from process_ident_data import process_ident
+process_ident(ident_details_v3_root1, arranged_data_df)
+
+# different types of experiments 0 - wt, perturbations: 1 - acetate, 2 - k1cat, 3 - V3max, 4 - V2max
+experiment_type_indices = [[0],
+                           [1, 2, 3, 4, 5],
+                           [6, 7, 8, 9, 10],
+                           [11, 12, 13, 14, 15],
+                           [16, 17, 18, 19, 20]]
+
+# data processing
+data_list_v3_root1, max_parameter_v3_root1, true_value_v3_root1, experiment_info_v3_root1, \
+    combined_data_list_v3_root1, combined_max_parameter_v3_root1, combined_true_value_v3_root1, \
+    combined_experiment_info_v3_root1 = process_info_sample(ident_details_v3_root1,
+                                                            experimental_datasets_3_expts,
+                                                            experiment_type_indices,
+                                                            ident_fun_choice=ident_fun_choice)
+
 # generate noisy experimental data for testing identifiability
 y0 = np.array([5, 1, 1])
 # default parameter values
@@ -41,43 +66,7 @@ ode_parameter_values = {"K1ac": np.array([.1]),
                         "V2max": np.array([1]),
                         "ac": np.array([.1])}
 
-multi_index_labels = ['sample_name', 'experiment_id']
-file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\ident\python2\ss-ident\experiments'
-exp_ss, perturbation_details = retrieve_experimental_data(file_name=file_name, multi_index_lablel=multi_index_labels)
 
-# arrange experimental data to form multiple data sets
-exp_flux_index = np.array([0, 3, 2, 4, 1, 5])
-
-# get combination of 3 experiments and perform identifiability on all fluxes that require 3 data sets
-print('Practical Identifiability Analysis of v3 with 3 parameters: V3max, K3fdp and K3pep \n')
-# choose identifiability functions to test
-ident_fun_choice = [0]
-# get combinations of experimental datasets
-experimental_datasets_3_expts, \
-    experiment_choice, combination_choice = arrange_experimental_data(exp_ss["y"], exp_ss["flux"],
-                                                                      perturbation_details,
-                                                                      experiments_per_set=3,
-                                                                      experiment_choice=[0,
-                                                                                         1, 2, 3, 4, 5,
-                                                                                         6, 7, 8, 9, 10,
-                                                                                         16, 17, 18, 19, 20])
-# different types of experiments 0 - wt, perturbations: 1 - acetate, 2 - k1cat, 3 - V3max, 4 - V2max
-experiment_type_indices = [[0],
-                           [1, 2, 3, 4, 5],
-                           [6, 7, 8, 9, 10],
-                           [11, 12, 13, 14, 15],
-                           [16, 17, 18, 19, 20]]
-# perform identifiability when v3 parameters are written for root (1)
-ident_details_v3_root1 = flux_ident_3_data_combination(experimental_datasets_3_expts, choose=combination_choice,
-                                                       flux_ids=[3], flux_choice=[1], ident_fun_choice=ident_fun_choice)
-print('Identifiability analysis for v3 with 3 parameters (V3max, K3fdp and K3pep) complete.\n')
-# data processing
-data_list_v3_root1, max_parameter_v3_root1, true_value_v3_root1, experiment_info_v3_root1, \
-    combined_data_list_v3_root1, combined_max_parameter_v3_root1, combined_true_value_v3_root1, \
-    combined_experiment_info_v3_root1 = process_info_sample(ident_details_v3_root1,
-                                                            experimental_datasets_3_expts,
-                                                            experiment_type_indices,
-                                                            ident_fun_choice=ident_fun_choice)
 
 # plot parameter identifibaility for all fluxes using 3 data combinations
 parameter_identifibaility_plot(max_parameter_v3_root1)
