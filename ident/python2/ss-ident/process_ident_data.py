@@ -1,8 +1,66 @@
 import numpy as np
 import itertools as it
-from kotte_model import kotte_true_parameter_values
-from names_strings import ident_parameter_name
 import pandas as pd
+from names_strings import true_parameter_values
+from names_strings import ident_parameter_name
+
+
+def write_ident_info_file(all_data_dict, exp_df, file_name):
+    """create data frame from identifiability data and write to csv file for future use"""
+    # reset index of experimental data df
+    reset_exp_df = exp_df.reset_index('experiment_id')
+    reset_exp_df.reset_index('sample_name', inplace=True)
+    # lexographic ordering of df indices
+    reset_exp_df.sort_index(level='data_set_id', inplace=True)
+    # reset_exp_df.sort_index(level='sample_name', inplace=True)
+
+    # create data frame
+    data_df = pd.DataFrame(all_data_dict, columns=all_data_dict.keys())
+
+    # number of occurrences of each data set id = number of experiments per data set
+    data_set_id_frequency = int(max(data_df["data_set_id"].value_counts()))
+    # all experiment ids
+    experiment_pos_names = ['experiment_{}_id'.format(i_experiment) for i_experiment in range(0, data_set_id_frequency)]
+    experiment_pos_parameters = ['experiment_{}_parameter'.format(i_experiment)
+                                 for i_experiment in range(0, data_set_id_frequency)]
+
+    # extract experiment ids for each data set
+    # get all data set ids
+    data_set_ids = reset_exp_df.index.unique().tolist()
+    all_data_set_experiments = [reset_exp_df.xs(j_data_set_id)["experiment_id"].values.tolist()
+                                for j_data_set_id in data_set_ids]
+    all_data_set_exp_parameters = [reset_exp_df.xs(j_data_set_id)["parameter_name"].values.tolist()
+                                   for j_data_set_id in data_set_ids]
+    # temp = [j_position_exp for j_data_set_exp in all_data_set_experiments for j_position_exp in j_data_set_exp]
+    all_pos_experiment_id = [[i_pos_rep_exp for j_data_set_exp in
+                              all_data_set_experiments for i_pos_rep_exp in [j_data_set_exp[j_position_exp]]*3]
+                             for j_position_exp in range(0, len(experiment_pos_names))]
+    all_pos_exp_parameters = [[i_pos_rep_exp for j_data_set_exp in
+                              all_data_set_exp_parameters for i_pos_rep_exp in [j_data_set_exp[j_position_exp]]*3]
+                              for j_position_exp in range(0, len(experiment_pos_parameters))]
+    experiment_pos_info_keys = experiment_pos_names + experiment_pos_parameters
+    experiment_pos_info_values = all_pos_experiment_id + all_pos_exp_parameters
+    exp_info_dict = dict(zip(experiment_pos_info_keys, experiment_pos_info_values))
+    all_data_dict.update(exp_info_dict)
+
+    # multi index tuples
+    ind_tuple = [(j_sample, j_data_set) for j_sample, j_data_set in
+                 zip(all_data_dict["sample_name"], all_data_dict["data_set_id"])]
+
+    # multi index index
+    index_label = ['sample_name', 'data_set_id']
+    index = pd.MultiIndex.from_tuples(ind_tuple, names=index_label)
+
+    # remove redundant columns
+    del all_data_dict["sample_name"]
+    del all_data_dict["data_set_id"]
+
+    # create multi index data frame
+    all_data_df = pd.DataFrame(all_data_dict, index=index, columns=all_data_dict.keys())
+
+    # save data frame to csv file
+    all_data_df.to_csv(file_name, index_label=index_label)
+    return all_data_df, index_label
 
 
 def get_all_indices(mother_list, value):
