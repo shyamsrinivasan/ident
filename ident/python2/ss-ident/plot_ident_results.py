@@ -99,14 +99,14 @@ def plot_on_axis_object_polar(axis_obj, x_data, y_data, data_label, fill_color='
     # exception here when all y_data = 0.0
     if not all(y_data_bool):
         max_y_data = max(y_data)
-        if max_y_data % 25 != 0:
-            if (max_y_data + max_y_data % 25) % 25 != 0:
-                max_y_data = (max_y_data - max_y_data % 25) + 25
+        if max_y_data % 20 != 0:
+            if (max_y_data + max_y_data % 20) % 20 != 0:
+                max_y_data = (max_y_data - max_y_data % 20) + 20
             else:
-                max_y_data = max_y_data + max_y_data % 25
+                max_y_data = max_y_data + max_y_data % 20
 
         plt.ylim(0, max_y_data)
-        y_ticks = range(25, int(max_y_data)+25, 25)
+        y_ticks = range(20, int(max_y_data)+20, 20)
         y_tick_labels = [str(value) for value in y_ticks]
         plt.yticks(y_ticks, y_tick_labels, color="grey", size=7)
 
