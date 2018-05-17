@@ -1,7 +1,7 @@
 import numpy as np
 import itertools as it
 from kotte_model import kotte_true_parameter_values
-from kotte_model import ident_parameter_name
+from names_strings import ident_parameter_name
 
 
 def get_all_indices(mother_list, value):

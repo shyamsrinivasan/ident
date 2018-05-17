@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
-from kotte_model import ident_parameter_name
+from names_strings import ident_parameter_name
 from kotte_model import kotte_experiment_type_name
 from kotte_model import kotte_variable_name
 plt.ion()
