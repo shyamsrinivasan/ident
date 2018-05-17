@@ -1,8 +1,7 @@
 import numpy as np
-from create_experiment_data import retrieve_experimental_data
 from create_experiment_data import retrieve_experimental_data_from_file
-from simulate_data import arrange_experimental_data
 from kotte_model import flux_ident_3_data_combination
+from process_ident_data import process_ident
 from process_ident_data import process_info_sample
 from plot_ident_results import data_utility_plot
 from plot_ident_results import plot_parameter_values
@@ -15,7 +14,7 @@ from plot_ident_results import parameter_experiment_info_spider
 # from create_experiment_data import create_data_for_flux
 # create_data_for_flux(flux_id='v3', noise=0, number_samples=1)
 
-# extract data from file
+# extract experimental data from file
 new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
                      '\ident\python2\ss-ident\exp_v3_3_experiments'
 index_labels = ['sample_name', 'data_set_id', 'experiment_id']
@@ -24,13 +23,27 @@ arranged_data_df = retrieve_experimental_data_from_file(data_file_name=new_data_
 
 # perform identifiability when v3 parameters are written for root (1)
 # get combination of 3 experiments and perform identifiability on all fluxes that require 3 data sets
-print('Practical Identifiability Analysis of v3 with 3 parameters: V3max, K3fdp and K3pep \n')
+# print('Practical Identifiability Analysis of v3 with 3 parameters: V3max, K3fdp and K3pep \n')
+storage_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                     '\ident\python2\ss-ident\ident_v3_root_1'
 # choose identifiability functions to test
 ident_fun_choice = [0]
-ident_details_v3_root1 = flux_ident_3_data_combination(arranged_data_df, flux_ids=[3], flux_choice=[1],
-                                                       ident_fun_choice=ident_fun_choice)
-from process_ident_data import process_ident
-process_ident(ident_details_v3_root1, arranged_data_df)
+# test identifiability and store data to file
+# flux_ident_3_data_combination(arranged_data_df, arranged_data_df, flux_ids=[3], flux_choice=[1],
+#                               ident_fun_choice=ident_fun_choice, file_name=storage_file_name)
+
+# retrieve identifiability data from file and process information
+ident_index_label = ['sample_name', 'data_set_id']
+# retrieve identifiability info from file
+ident_df = retrieve_experimental_data_from_file(storage_file_name, ident_index_label)
+all_parameter_info = process_ident(ident_df, arranged_data_df)
+
+# get identifiability plot
+# get experiment info plot
+from plot_ident_results import exp_info_plot
+exp_info_plot(all_parameter_info)
+# get parameter value plot
+# validate model
 
 # different types of experiments 0 - wt, perturbations: 1 - acetate, 2 - k1cat, 3 - V3max, 4 - V2max
 experiment_type_indices = [[0],
