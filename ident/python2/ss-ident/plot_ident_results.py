@@ -279,6 +279,55 @@ def parameter_experiment_info_spider(flux_based_experiment_info, noise=0):
     return None
 
 
+def exp_info_plot(info_dict):
+    """plot experiment contribution frequency for each parameter in a polar plot"""
+    number_parameters = len(info_dict["names"])
+    if number_parameters >= 3:
+        number_of_columns = 3
+    else:
+        number_of_columns = 1
+    if number_parameters % number_of_columns != 0:
+        number_of_rows = (number_parameters + 1) / number_of_columns
+    else:
+        number_of_rows = number_parameters / number_of_columns
+    figure = plt.figure(figsize=(6, 4))
+    # inner_grid = gridspec.GridSpec(number_of_rows, number_of_columns, wspace=0.2, hspace=0.2)
+    f, ax = plt.subplots(number_of_rows, number_of_columns, subplot_kw=dict(projection='polar'),
+                         figsize=(6, 4), dpi=100, gridspec_kw={"wspace": 0.2, "hspace": 0.2})
+    for i_parameter, i_parameter_info in enumerate(info_dict["exp_info"]):
+        # ax = plt.Subplot(figure, inner_grid[i_parameter])
+        fill_colors = ['b', 'g', 'y', 'r']
+        # plot data from all positions
+        pos_labels = []
+        for i_pos_key, i_pos_val in i_parameter_info.items():
+            pos_labels.append(i_pos_key)
+            y_data = i_pos_val["frequency"]
+            x_labels = i_pos_val["names"]
+            plot_on_axis_object_polar(ax[i_parameter], x_data=x_labels, y_data=y_data, data_label=pos_labels[-1])
+
+
+        # plot test
+        # f, ax = plt.subplots(1, 1, subplot_kw=dict(projection='polar'))
+        # y_data = [np.array(i_value) * 100/all_parameter_info["ident_mean"][0]
+        # for i_value in exp_frequency.values] + [float(0)]
+        # x_labels = exp_frequency.index.values.tolist() + ['V3max']
+        # plot_on_axis_object_polar(ax, x_data=x_labels, y_data=y_data, data_label='experiment 0')
+
+        pass
+        # collect and
+        # for i_position in range(0, number_of_experiment_positions):
+        #     y_data = k_parameter_data[i_position]["percentage"]["mean"]
+        #     x_data = range(0, len(y_data))
+        #     x_data_label = kotte_experiment_type_name(x_data)
+        #     data_label = "experiment {}".format(i_position)
+        #     plot_on_axis_object_polar(axarr, x_data_label, y_data, data_label, all_fill_colors[i_position])
+        #     # add legend
+        #     plt.legend(loc='upper right', bbox_to_anchor=(0.1, 0.1))
+
+
+    return None
+
+
 def data_utility_plot(data_list, noise=0):
     """collect processed data from all samples for each individual flux and
     plot the utility of the same data combination for all parameters of
