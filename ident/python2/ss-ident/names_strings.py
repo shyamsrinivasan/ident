@@ -46,6 +46,48 @@ def parameter_name(parameter_id):
         return parameter_list[parameter_id]
 
 
+def true_parameter_values(flux_based=0, flux_name=(), flux_choice_id=0, parameter_id=()):
+    if flux_based:
+        alter_parameter_value = {"flux1": [{"K1ac (enz)": np.array([.1]), "k1cat": np.array([1]),
+                                           "V1max": np.array([1]), "K1ac (no enz)": np.array([.1])},
+                                           {"V1max": np.array([1]), "K1ac (no enz)": np.array([.1])},
+                                           {"K1ac (enz)": np.array([.1]), "k1cat": np.array([1])},
+                                           {"V1max": np.array([1]), "K1ac (no enz)": np.array([.1]),
+                                            "k1cat (exp 1)": np.array([1]), "k1cat (exp 2)": np.array([1])}],
+                                 "flux2": [{"K2pep": np.array([.3]), "V2max": np.array([1])}],
+                                 "flux3": [{"K3fdp (1)": np.array([.1]), "K3pep (1)": np.array([.1]),
+                                            "V3max (1)": np.array([1]), "K3fdp (2)": np.array([.1]),
+                                            "K3pep (2)": np.array([.1]), "V3max (2)": np.array([1])},
+                                           {"K3fdp": np.array([.1]), "K3pep": np.array([.1]),
+                                            "V3max": np.array([1])},
+                                           {"K3fdp": np.array([.1]), "K3pep": np.array([.1]),
+                                            "V3max": np.array([1])},
+                                           {"V3max": np.array([1]), "K3fdp": np.array([.1]), "K3pep": np.array([.1])},
+                                           {"V3max": np.array([1]), "K3fdp": np.array([.1]), "K3pep": np.array([.1]),
+                                            "L3fdp": np.array([4])}],
+                                 "flux5": [{"vemax (1)": np.array([1.1]), "Kefdp (1)": np.array([.45]),
+                                            "Kefdp (2)": np.array([.45])},
+                                           {"vemax": np.array([1.1]), "Kefdp": np.array([.45])},
+                                           {"vemax": np.array([1.1]), "Kefdp": np.array([.45])}],
+                                 "flux6": [{"V3max (1)": np.array([1]), "K3fdp": np.array([.1]),
+                                            "V3max (2)": np.array([1]), "K3pep": np.array([.1])},
+                                           {"V3max": np.array([1]), "K3fdp": np.array([.1])},
+                                           {"V3max": np.array([1]), "K3pep": np.array([.1])}]}
+        try:
+            parameter_value = [alter_parameter_value[name][choice_id][id]
+                               for name, choice_id, id in zip(flux_name, flux_choice_id, parameter_id)]
+        except TypeError:
+            parameter_value = alter_parameter_value[flux_name][flux_choice_id][parameter_id]
+        return parameter_value
+    else:
+        default_parameter_value = {"K1ac": np.array([.1]), "K3fdp": np.array([.1]), "L3fdp": np.array([4e6]),
+                                   "K3pep": np.array([.1]), "K2pep": np.array([.3]), "vemax": np.array([1.1]),
+                                   "Kefdp": np.array([.45]), "ne": np.array([2]), "d": np.array([.25]),
+                                   "V4max": np.array([.2]), "k1cat": np.array([1]), "V3max": np.array([1]),
+                                   "V2max": np.array([1]), "ac": np.array([.1])}
+        return default_parameter_value
+
+
 def kotte_experiment_type_name(experiment_id):
     experiment_type_name_list = ['wildtype acetate', 'acetate perturbation', 'k1cat perturbation',
                                  'V3max perturbation', 'V2max perturbation']
