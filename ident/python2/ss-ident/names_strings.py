@@ -34,3 +34,52 @@ def ident_parameter_name(parameter_id, flux_name=(), flux_choice_id=0):
         except TypeError:
             parameter_name = parameter_list[parameter_id]
     return parameter_name
+
+
+def parameter_name(parameter_id):
+    parameter_list = ['K1ac', 'K3fdp', 'L3fdp', 'K3pep',
+                      'K2pep', 'vemax', 'Kefdp', 'ne', 'd',
+                      'V4max', 'k1cat', 'V3max', 'V2max', 'ac']
+    try:
+        return [parameter_list[id] for id in parameter_id]
+    except TypeError:
+        return parameter_list[parameter_id]
+
+
+def kotte_experiment_type_name(experiment_id):
+    experiment_type_name_list = ['wildtype acetate', 'acetate perturbation', 'k1cat perturbation',
+                                 'V3max perturbation', 'V2max perturbation']
+    try:
+        return [experiment_type_name_list[index] for index in experiment_id]
+    except TypeError:
+        return experiment_type_name_list[experiment_id]
+
+
+def experiment_name(experiment_id, experiment_details):
+    try:
+        parameter_changed = parameter_name([int(experiment_details["indices"][i, 0]) for i in experiment_id])
+        parameter_value = [experiment_details["indices"][i, 1] for i in experiment_id]
+    except TypeError:
+        parameter_changed = parameter_name(int(experiment_details["indices"][experiment_id, 0]))
+        parameter_value = experiment_details["indices"][experiment_id, 1]
+    experiment_name_list = ['{} changes {}'.format(j_p_change, j_p_value)
+                            for j_p_change, j_p_value in zip(parameter_changed, parameter_value)]
+    return experiment_name_list
+
+
+def variable_name(var_type, var_id):
+    met_list = ['pep', 'fdp', 'E']
+    flux_list = ['v1', 'v5', 'v3', 'v2', 'v4', 'v6']
+    if var_type == 'metabolite':
+        try:
+            var_names = [met_list[j_var_id] for j_var_id in var_id]
+        except TypeError:
+            var_names = met_list[var_id]
+    elif var_type == 'flux':
+        try:
+            var_names = [flux_list[j_var_id] for j_var_id in var_id]
+        except TypeError:
+            var_names = flux_list[var_id]
+    else:
+        var_names = []
+    return var_names
