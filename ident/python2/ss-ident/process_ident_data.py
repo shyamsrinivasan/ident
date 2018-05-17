@@ -1,8 +1,11 @@
 import numpy as np
 import itertools as it
 import pandas as pd
+import matplotlib.pyplot as plt
 from names_strings import true_parameter_values
 from names_strings import ident_parameter_name
+from plot_ident_results import plot_on_axis_object_polar
+
 
 
 def write_ident_info_file(all_data_dict, exp_df, file_name):
@@ -317,7 +320,7 @@ def true_parameter_value(ident_details):
                 parameter_name = ident_parameter_name(i_parameter, flux_name=flux_name,
                                                       flux_choice_id=flux_choice_id)
                 # get true parameter values
-                true_value = kotte_true_parameter_values(flux_based=1, flux_name=flux_name,
+                true_value = true_parameter_values(flux_based=1, flux_name=flux_name,
                                                          flux_choice_id=flux_choice_id,
                                                          parameter_id=parameter_name)
                 parameter_true_values = {"flux id": ident_details["flux id"],
@@ -352,7 +355,7 @@ def true_parameter_value(ident_details):
             parameter_name = ident_parameter_name(i_parameter, flux_name=flux_name,
                                                   flux_choice_id=flux_choice_id)
             # get true parameter values
-            true_value = kotte_true_parameter_values(flux_based=1, flux_name=flux_name,
+            true_value = true_parameter_values(flux_based=1, flux_name=flux_name,
                                                      flux_choice_id=flux_choice_id,
                                                      parameter_id=parameter_name)
             if found_value.size != 0:
@@ -828,38 +831,146 @@ def combined_sampled_based_averages_parameter_value(all_sample_combined_flux_par
     return all_parameter_info
 
 
-def process_ident(ident_info, exp_df):
+def parameter_ident_info(ident_df):
+    """returns info on identifiability and value of each parameter in df"""
+    # get parameter names
+    all_parameter_names = ident_df["parameter_name"].unique().tolist()
+
+    all_p_values = []
+    all_p_data_set_names = []
+    all_p_identifiability = []
+    total_data_sets = []
+    for i_parameter_name in all_parameter_names:
+        # get all data sets identifying each parameter
+        identifying_df = ident_df[(ident_df["parameter_name"] == i_parameter_name) & (ident_df["identified"])]
+        # get data set names
+        all_p_data_set_names.append([i_value[1] for i_value in identifying_df.index.values])
+        all_p_identifiability.append(len(all_p_data_set_names[-1]))
+        # get parameter values
+        all_p_values.append([np.array(i_value) for i_value in identifying_df["parameter_value"].values])
+        total_data_sets.append(len(ident_df.index.levels[1]))
+
+    all_p_info = {"names": all_parameter_names,
+                  "values": all_p_values,
+                  "identifiability": all_p_identifiability,
+                  "data_sets": all_p_data_set_names,
+                  "total_data_sets": total_data_sets,
+                  "identifiability_percentage": [np.array(float(i_nr) * 100/float(i_dr)) for i_nr, i_dr in
+                                                 zip(all_p_identifiability, total_data_sets)]}
+    return all_p_info
+
+
+def sample_ident_info(all_sample_info):
+    """return calculated mean identifiability and std in identifiability
+    from all samples for all parameters"""
+    all_identifiabilites = [i_sample_info["identifiability"] for i_sample_info in all_sample_info]
+    sample_mean_identifiability = np.mean(np.array(all_identifiabilites), axis=0)
+    sample_mean_ident = [np.array(i_parameter_ident) for i_parameter_ident in sample_mean_identifiability]
+    sample_std_identifiability = np.std(np.array(all_identifiabilites), axis=0)
+    sample_std_ident = [np.array(i_parameter_ident) for i_parameter_ident in sample_std_identifiability]
+    all_identifiabilites_percent = [i_sample_info["identifiability_percentage"]
+                                    for i_sample_info in all_sample_info]
+    sample_mean_identifiability_percent = np.mean(np.array(all_identifiabilites_percent), axis=0)
+    sample_mean_ident_percent = [np.array(i_parameter_ident) for i_parameter_ident in
+                                 sample_mean_identifiability_percent]
+    sample_std_identifiability_percent = np.std(np.array(all_identifiabilites_percent), axis=0)
+    sample_std_ident_percent = [np.array(i_parameter_ident) for i_parameter_ident in
+                                sample_std_identifiability_percent]
+    ident_dict = {"ident_mean": sample_mean_ident,
+                  "ident_std": sample_std_ident,
+                  "ident_percent_mean": sample_mean_ident_percent,
+                  "ident_percent_std": sample_std_ident_percent}
+    return ident_dict
+
+
+def parameter_exp_info(ident_df, exp_df, parameter_ident_info):
+    """return experiment type information for each parameter"""
+    # get parameter names
+    all_parameter_names = ident_df["parameter_name"].unique().tolist()
+    number_experiments = len(all_parameter_names)
+    exp_column_ids = ['experiment_{}_parameter'.format(i_experiment) for i_experiment in range(0, number_experiments)]
+    exp_column_name = ['experiment_{}'.format(i_experiment) for i_experiment in range(0, number_experiments)]
+
+    # all possible ss perturbation experiment types classified on the basis of parameter perturbed
+    all_possible_perturbations = set.union(set(exp_df["parameter_name"].unique()),
+                                           {'wt', 'ac', 'k1cat', 'V2max', 'V3max'})
+    all_parameter_exp_info = []
+    for i_parameter, i_parameter_name in enumerate(all_parameter_names):
+        # get all data sets identifying each parameter
+        identifying_df = ident_df[(ident_df["parameter_name"] == i_parameter_name) & (ident_df["identified"])]
+        all_experiment_info = {}
+        # get frequency of each experiment
+        for i_experiment, i_experiment_pos in enumerate(exp_column_ids):
+            exp_frequency = identifying_df[i_experiment_pos].value_counts()
+            # get name value pairs
+            name_value_pair = [(j_name, np.array(float(j_value) * 100 / parameter_ident_info[i_parameter]))
+                               for j_name, j_value in zip(exp_frequency.index.values, exp_frequency.values)]
+            # add missing experiment type with value = 0
+            missing_perturbation = all_possible_perturbations.difference(exp_frequency.index.values)
+            name_value_pair = name_value_pair + zip(missing_perturbation, [0.0] * len(missing_perturbation))
+            names, values = map(list, zip(*name_value_pair))
+            all_experiment_info.update({exp_column_name[i_experiment]: {"names": names, "frequency": values}})
+        all_parameter_exp_info.append(all_experiment_info)
+
+    return all_parameter_exp_info
+
+
+def process_ident(ident_df, exp_df, ident=1, exp_info=1):
     """process ident data to create final data frame of results for plotting"""
-    # lexographic ordering of df indices
+
+    idx = pd.IndexSlice
+
+    # lexographic ordering of exp df indices
     exp_df.sort_index(level='sample_name', inplace=True)
     exp_df.sort_index(level='data_set_id', inplace=True)
     exp_df.sort_index(level='experiment_id', inplace=True)
-    # get experiment info for each data set and add it to ident info
-    reset_exp_df = exp_df.reset_index('sample_name')
-    reset_exp_df.reset_index('experiment_id', inplace=True)
+    # reset_exp_df = exp_df.reset_index('experiment_id')
 
-    # create data frame of all values in indet_info
-    df = pd.DataFrame(ident_info, columns=ident_info.keys())
-    ind_df = df.set_index(['sample_name', 'data_set_name'])
-    # get parameter names
-    all_parameter_name = ind_df["parameter_name"].unique().tolist()
-    for i_parameter_name in all_parameter_name:
-        # get all data sets identifying each parameter
-        identifying_df = ind_df[(ind_df["parameter_name"] == i_parameter_name) & (ind_df["identified"])]
-        number_identifying_parameter = identifying_df.shape[0]
-        parameter_value = identifying_df["parameter_df"]
-        # get data set names
-        identifying_df.reset_index(level='data_set_name', inplace=True)
-        data_set_names = identifying_df["data_set_name"].values.tolist()
-        # get experiments (id and type) corresponding to each data set
+    # lexicographic ordering of ident df indices
+    ident_df.sort_index(level='sample_name', inplace=True)
+    ident_df.sort_index(level='data_set_id', inplace=True)
+    # reset_ident_df = ident_df.reset_index('data_set_id')
 
-        pass
+    # number of samples
+    sample_names = ident_df.index.levels[0].values.tolist()
+    number_samples = len(sample_names)
 
-    # get all experiment info for each data set (sample for each sample)
-    # reset_exp_df.xs('data_set_1')["experiment_id"].values.tolist()
-    # all_experiments = [reset_exp_df.loc[] for ]
+    if ident:
+        # parameter identifiability information for each sample
+        all_sample_info = []
+        for i_sample in sample_names:
+            j_sample_info = ident_df.loc[idx[i_sample, :], :]
+            # get all data sets identifying each parameter in each sample
+            all_p_info = parameter_ident_info(j_sample_info)
+            all_sample_info.append(all_p_info)
 
-    return None
+        ident_dict = sample_ident_info(all_sample_info)
+    else:
+        ident_dict = {}
+    # parameter identifiability information for all samples along with mean and std between samples
+    all_parameter_info = parameter_ident_info(ident_df)
+    all_parameter_info.update(ident_dict)
+
+    # get experiment information for each parameter (only for noise-less data)
+    # number_experiments = len(all_parameter_info["names"])
+
+    if exp_info and number_samples == 1:
+        exp_info = parameter_exp_info(ident_df, exp_df, all_parameter_info["ident_mean"])
+    else:
+        exp_info = []
+    all_parameter_info.update({"exp_info": exp_info})
+    # plot test
+    # f, ax = plt.subplots(1, 1, subplot_kw=dict(projection='polar'))
+    # y_data = [np.array(i_value) * 100/all_parameter_info["ident_mean"][0]
+    # for i_value in exp_frequency.values] + [float(0)]
+    # x_labels = exp_frequency.index.values.tolist() + ['V3max']
+    # plot_on_axis_object_polar(ax, x_data=x_labels, y_data=y_data, data_label='experiment 0')
+
+    # get flux names
+    all_flux_names = ident_df["flux_name"].unique().tolist() * len(all_parameter_info["names"])
+    all_parameter_info.update({"flux_name": all_flux_names})
+
+    return all_parameter_info
 
 
 def process_info_sample(ident_details, experiment_details, experiment_type_indices,
