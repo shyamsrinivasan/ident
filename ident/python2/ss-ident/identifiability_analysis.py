@@ -127,7 +127,7 @@ def collect_ident_data(j_sample_name, j_sample_ident_data, flux_ids, flux_choice
                 temp_dict["parameter_nr"] = i_parameter_nr
                 temp_dict["parameter_dr"] = i_parameter_dr
                 temp_dict["parameter_value"] = i_parameter_value
-                temp_dict["data_set_name"] = data_set_name
+                temp_dict["data_set_id"] = data_set_name
                 temp_dict["sample_name"] = j_sample_name
                 if i_parameter_value > 0:
                     temp_dict["identified"] = True
