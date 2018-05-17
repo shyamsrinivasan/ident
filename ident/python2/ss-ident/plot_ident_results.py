@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 from names_strings import ident_parameter_name
-from kotte_model import kotte_experiment_type_name
-from kotte_model import kotte_variable_name
+from names_strings import kotte_experiment_type_name
+from names_strings import variable_name
 plt.ion()
 
 
@@ -572,7 +572,7 @@ def plot_experiment_data_dist(exp_xss, exp_fss, experiment_choice=()):
     for flier in bp['fliers']:
         flier.set(marker='o', color='r', alpha=0.5)
     # set axis labels
-    metabolite_names = kotte_variable_name('metabolite', range(0, number_mets))
+    metabolite_names = variable_name('metabolite', range(0, number_mets))
     axarr[0].set_xticklabels(metabolite_names)
     # Remove top axes and right axes ticks
     axarr[0].get_xaxis().tick_bottom()
@@ -585,7 +585,7 @@ def plot_experiment_data_dist(exp_xss, exp_fss, experiment_choice=()):
     for flier in bp['fliers']:
         flier.set(marker='o', color='r', alpha=0.5)
     # set axis labels
-    flux_names = kotte_variable_name('flux', range(0, number_fluxes))
+    flux_names = variable_name('flux', range(0, number_fluxes))
     axarr[1].set_xticklabels(flux_names)
     # Remove top axes and right axes ticks
     axarr[1].get_xaxis().tick_bottom()

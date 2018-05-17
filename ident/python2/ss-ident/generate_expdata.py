@@ -3,7 +3,7 @@ from generate_noisy_data import generate_noisy_data
 from generate_noisy_data import run_no_noise_parameter_perturbation
 from generate_noisy_data import run_noisy_parameter_perturbation
 from plot_ident_results import plot_dynamic_sim_concentrations
-from kotte_model import kotte_variable_name
+from names_strings import variable_name
 # import numpy as np
 import pandas as pd
 
@@ -30,7 +30,7 @@ def create_ss_dict(ss_info, variable_type, noise=0):
         number_variables = len(ss_info[0][0])
     else:
         number_variables = len(ss_info[0])
-    variable_name_info = [kotte_variable_name(variable_type, j_variable) for j_variable in range(0, number_variables)]
+    variable_name_info = [variable_name(variable_type, j_variable) for j_variable in range(0, number_variables)]
 
     variable_value_info = []
     if noise:
