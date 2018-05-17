@@ -2,6 +2,7 @@ import numpy as np
 import itertools as it
 from kotte_model import kotte_true_parameter_values
 from names_strings import ident_parameter_name
+import pandas as pd
 
 
 def get_all_indices(mother_list, value):
@@ -767,6 +768,40 @@ def combined_sampled_based_averages_parameter_value(all_sample_combined_flux_par
         all_parameter_info.append(k_parameter_info)
 
     return all_parameter_info
+
+
+def process_ident(ident_info, exp_df):
+    """process ident data to create final data frame of results for plotting"""
+    # lexographic ordering of df indices
+    exp_df.sort_index(level='sample_name', inplace=True)
+    exp_df.sort_index(level='data_set_id', inplace=True)
+    exp_df.sort_index(level='experiment_id', inplace=True)
+    # get experiment info for each data set and add it to ident info
+    reset_exp_df = exp_df.reset_index('sample_name')
+    reset_exp_df.reset_index('experiment_id', inplace=True)
+
+    # create data frame of all values in indet_info
+    df = pd.DataFrame(ident_info, columns=ident_info.keys())
+    ind_df = df.set_index(['sample_name', 'data_set_name'])
+    # get parameter names
+    all_parameter_name = ind_df["parameter_name"].unique().tolist()
+    for i_parameter_name in all_parameter_name:
+        # get all data sets identifying each parameter
+        identifying_df = ind_df[(ind_df["parameter_name"] == i_parameter_name) & (ind_df["identified"])]
+        number_identifying_parameter = identifying_df.shape[0]
+        parameter_value = identifying_df["parameter_df"]
+        # get data set names
+        identifying_df.reset_index(level='data_set_name', inplace=True)
+        data_set_names = identifying_df["data_set_name"].values.tolist()
+        # get experiments (id and type) corresponding to each data set
+
+        pass
+
+    # get all experiment info for each data set (sample for each sample)
+    # reset_exp_df.xs('data_set_1')["experiment_id"].values.tolist()
+    # all_experiments = [reset_exp_df.loc[] for ]
+
+    return None
 
 
 def process_info_sample(ident_details, experiment_details, experiment_type_indices,
