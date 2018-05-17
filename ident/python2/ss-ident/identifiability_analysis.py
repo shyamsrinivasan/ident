@@ -139,7 +139,7 @@ def collect_ident_data(j_sample_name, j_sample_ident_data, flux_ids, flux_choice
     return all_data_dict
 
 
-def multi_sample_ident_fun(ident_fun_list, all_data_df, choose, flux_ids, flux_choice):
+def multi_sample_ident_fun(ident_fun_list, all_data_df, flux_ids, flux_choice):
     """perform identifibaility analysis for multiple samples by
     looping through each experimental data sample for a list of identifibaility functions"""
     reset_df = all_data_df.reset_index('experiment_id')
