@@ -2,9 +2,11 @@ import numpy as np
 from create_experiment_data import retrieve_experimental_data_from_file
 from kotte_model import flux_ident_3_data_combination
 from process_ident_data import process_ident
-from process_ident_data import process_info_sample
 from plot_ident_results import exp_info_plot
 from plot_ident_results import identifiability_plot
+from plot_ident_results import parameter_values_plot
+from names_strings import true_parameter_values
+from process_ident_data import process_info_sample
 from plot_ident_results import data_utility_plot
 from plot_ident_results import plot_parameter_values
 from plot_ident_results import plot_parameter_value_hist
@@ -38,12 +40,19 @@ ident_index_label = ['sample_name', 'data_set_id']
 ident_df = retrieve_experimental_data_from_file(storage_file_name, ident_index_label)
 all_parameter_info = process_ident(ident_df, arranged_data_df)
 
+# get parameter value plot
+default_parameter_values = true_parameter_values()
+parameter_values_plot(all_parameter_info, default_parameter_values)
 # get identifiability plot
 identifiability_plot(all_parameter_info)
 # get experiment info plot
 exp_info_plot(all_parameter_info)
-# get parameter value plot
 # validate model
+from process_ident_data import extract_parameter_values
+parameter_value_info = extract_parameter_values(true_value_v3_root1)
+from validate_estimation import validate_model
+validate_model(y0, cvode_options, ode_parameter_values, parameter_value_info, exp_info,
+               ss=1, dyn=0, noise=0, kinetics=2, target_data=range(0, 10))
 
 # different types of experiments 0 - wt, perturbations: 1 - acetate, 2 - k1cat, 3 - V3max, 4 - V2max
 experiment_type_indices = [[0],
@@ -81,16 +90,9 @@ ode_parameter_values = {"K1ac": np.array([.1]),
 
 
 
-# plot true parameter values and determined parameter values
-plot_parameter_values(true_value_v3_root1)
 plot_parameter_value_hist(true_value_v3_root1)
 # plot utility of data sets (number of data sets identifying n, n-1, n-2, ...., 1, 0 parameters
 data_utility_plot(data_list_v3_root1)
-from process_ident_data import extract_parameter_values
-parameter_value_info = extract_parameter_values(true_value_v3_root1)
-from validate_estimation import validate_model
-validate_model(y0, cvode_options, ode_parameter_values, parameter_value_info, exp_info,
-               ss=1, dyn=0, noise=0, kinetics=2, target_data=range(0, 10))
 
 print('Practical Identifiability Analysis of v3 with 3 parameters: V3max, K3fdp and K3pep \n')
 # perform identifiability when v3 parameters are written for root (2)
@@ -104,9 +106,6 @@ data_list_v3_root2, max_parameter_v3_root2, true_value_v3_root2, experiment_info
                                                             experimental_datasets_3_expts,
                                                             experiment_type_indices,
                                                             ident_fun_choice=ident_fun_choice)
-
-# plot true parameter values and determined parameter values
-plot_parameter_values(true_value_v3_root2)
 
 # plot utility of data sets (number of data sets identifying n, n-1, n-2, ...., 1, 0 parameters
 data_utility_plot(data_list_v3_root2)
