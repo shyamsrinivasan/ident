@@ -134,29 +134,29 @@ def run_all_parameter_perturbation(y0, cvode_options, original_parameter, extrac
                               {"V2max": .1}, {"V2max": .5}, {"V2max": 1}, {"V2max": -.1}, {"V2max": -.5}]
 
     # simulate system with each estimated set of parameter values
-    number_of_samples = len(all_sample_ode_parameters)
+    # number_of_samples = len(all_sample_ode_parameters)
     all_sample_ss = []
     all_sample_perturbation_ss = []
     all_sample_dyn = []
     all_sample_perturbation_dyn = []
-    for j_sample, j_sample_parameter in enumerate(all_sample_ode_parameters):
-        print("Parameters for sample {} of {}:\n".format(j_sample + 1, number_of_samples))
+    # for j_sample, j_sample_parameter in enumerate(all_sample_ode_parameters):
+        # print("Parameters for sample {} of {}:\n".format(j_sample + 1, number_of_samples))
         # get initial system steady state for all estimated parameter values
-        estimate_ss, estimate_dyn = run_initial_ss_simulation(y0, cvode_options, j_sample_parameter,
-                                                              noise=noise, kinetics=kinetics, noise_std=noise_std)
-        all_sample_ss.append(estimate_ss)
-        all_sample_dyn.append(estimate_dyn)
+    estimate_ss, estimate_dyn = run_initial_ss_simulation(y0, cvode_options, all_sample_ode_parameters,
+                                                          noise=noise, kinetics=kinetics, noise_std=noise_std)
+        # all_sample_ss.append(estimate_ss)
+        # all_sample_dyn.append(estimate_dyn)
 
-        # run all perturbations for each estimated parameter value
-        estimate_perturbation_ss, estimate_perturbation_dyn = run_perturbation_ss_simulation(estimate_ss, cvode_options,
-                                                                                             j_sample_parameter,
-                                                                                             parameter_perturbation,
-                                                                                             number_of_samples=1,
-                                                                                             noise=noise,
-                                                                                             kinetics=kinetics,
-                                                                                             noise_std=noise_std)
-        all_sample_perturbation_ss.append(estimate_perturbation_ss)
-        all_sample_perturbation_dyn.append(estimate_perturbation_dyn)
+    # run all perturbations for each estimated parameter value
+    estimate_perturbation_ss, estimate_perturbation_dyn = run_perturbation_ss_simulation(estimate_ss, cvode_options,
+                                                                                         all_sample_ode_parameters,
+                                                                                         parameter_perturbation,
+                                                                                         number_of_samples=1,
+                                                                                         noise=noise,
+                                                                                         kinetics=kinetics,
+                                                                                         noise_std=noise_std)
+        # all_sample_perturbation_ss.append(estimate_perturbation_ss)
+        # all_sample_perturbation_dyn.append(estimate_perturbation_dyn)
 
     # combine initial and perturbation ss for all samples
     all_sample_all_ss = []
