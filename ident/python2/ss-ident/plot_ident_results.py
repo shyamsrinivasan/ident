@@ -1,20 +1,27 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
+import matplotlib.font_manager as fnt
 from names_strings import ident_parameter_name
 from names_strings import kotte_experiment_type_name
 from names_strings import variable_name
 plt.ion()
 
 
-def plot_on_axis_object(axis_obj, x_data, y_data, x_error, x_percent_mean, x_percent_std, x_max, noise=0):
-    """given axis object plot given data on axis object along with all given annotations"""
+def plot_on_axis_object(axis_obj, x_data, y_data, x_error, noise=0):
+    """given axis object plot given data as horizontal bar on axis object"""
     # plot bar graphs for x_data vs y_data with x_error error bars
     if noise:
-        axis_obj.barh(y_data, x_data, xerr=x_error, align='center')
+        axis_obj.barh(y_data, x_data, xerr=x_error, align='center', ecolor='black', capsize=0.3,
+                      **{"alpha": 0.4, "capstyle": 'projecting'})
     else:
         # no error bars
-        axis_obj.barh(y_data, x_data, align='center')
+        axis_obj.barh(y_data, x_data, align='center', height=0.2, color='blue', **{"alpha": 0.4})
+    return None
+
+
+def set_hbar_axis_properties(axis_obj, y_data, y_tick_label, x_max, x_percent_mean, x_label=[], x_percent_std=[], figure_title=[]):
+    """set horizontal bar plot properties along with annotations for given """
     # set x-axis limits
     axis_obj.set_xlim(0, x_max)
     # recompute data limits
@@ -24,23 +31,31 @@ def plot_on_axis_object(axis_obj, x_data, y_data, x_error, x_percent_mean, x_per
     # axis_obj.xaxis.set_ticks(np.arange(0, x_max, 40))
 
     # annotate percentages onto each bar in the graph
+    f_p = fnt.FontProperties(size=14, weight='demibold')
     for j_bar, p in enumerate(axis_obj.patches):
-        p.set_facecolor('blue')
-        p.set_edgecolor('k')
-        # set hatch pattern
-        # p.set_hatch('/')
-
         # annotate percentages onto bar graphs
-        if noise:
+        if x_percent_std:
             y_annotation = "{:.2f} + {:.2f}%".format(x_percent_mean[j_bar],
                                                      x_percent_std[j_bar])
         else:
             y_annotation = "{:.2f}%".format(x_percent_mean[j_bar])
-        axis_obj.annotate(y_annotation, (p.get_width(), p.get_y() + p.get_height()/2),
-                          ha='center', va='center', xycoords='data')
+        axis_obj.annotate(y_annotation, (p.get_width() / 2, p.get_y() + p.get_height() / 2),
+                          ha='center', va='center', xycoords='data', **{"color": 'black', "font_properties": f_p})
     # set y axis ticks
     axis_obj.set_yticks(y_data)
     # set y axis tick labels (parameter names)
+    # y_tick_label_p = fnt.FontProperties(size=14, weight='demibold')
+    axis_obj.set_yticklabels(y_tick_label, **{"font_properties": f_p})
+    # set x-axis label
+    if x_label:
+        axis_obj.set_xlabel(x_label[0], **{"font_properties": f_p})
+    axis_obj.tick_params(axis='both', labelsize=14, color='grey')
+    # set axis title
+    if figure_title:
+        axis_obj.set_title(figure_title, **{"font_properties": f_p})
+    # invert y-axis
+    axis_obj.invert_yaxis()
+
     return None
 
 
