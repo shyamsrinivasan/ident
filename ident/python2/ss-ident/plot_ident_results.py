@@ -250,40 +250,6 @@ def parameter_experiment_info_plot(flux_based_experiment_info, noise=0):
     return None
 
 
-def parameter_experiment_info_spider(flux_based_experiment_info, noise=0):
-    """get spider plots for frequency of different types contributing towards
-    identification of different parameters of each flux"""
-    all_sample_all_flux_processed_info = flux_based_experiment_info["processed"]
-    for j_flux, j_flux_data in enumerate(all_sample_all_flux_processed_info):
-        # number_of_subplots = number_of_parameters_in_flux
-        number_of_subplots = 1
-        number_of_rows = 1
-        for k_parameter, k_parameter_data in enumerate(j_flux_data):
-            # get parameter name for figure title
-            parameter_name = ident_parameter_name(k_parameter,
-                                                  flux_name="flux{}".format(k_parameter_data[0]["total"]["flux id"]),
-                                                  flux_choice_id=k_parameter_data[0]["total"]["flux choice"])
-            # set figure title to parameter name
-            figure_title = "flux {}".format(k_parameter_data[0]["total"]["flux id"]) + " " + parameter_name
-            # separate plots for each parameter (no subplots)
-            f, axarr = plt.subplots(number_of_rows, number_of_subplots, subplot_kw=dict(projection='polar'),
-                                    figsize=(6, 4), dpi=100)
-            f.text(.5, .975, figure_title, horizontalalignment='center', verticalalignment='top')
-            number_of_experiment_positions = len(k_parameter_data)
-            all_fill_colors = ['b', 'g', 'y', 'r']
-            # collect and plot data from all positions
-            for i_position in range(0, number_of_experiment_positions):
-                y_data = k_parameter_data[i_position]["percentage"]["mean"]
-                x_data = range(0, len(y_data))
-                x_data_label = kotte_experiment_type_name(x_data)
-                data_label = "experiment {}".format(i_position)
-                plot_on_axis_object_polar(axarr, x_data_label, y_data, data_label, all_fill_colors[i_position])
-                # add legend
-                plt.legend(loc='upper right', bbox_to_anchor=(0.1, 0.1))
-            plt.show()
-    return None
-
-
 def exp_info_plot(info_dict):
     """plot experiment contribution frequency for each parameter in a polar plot"""
     number_parameters = len(info_dict["names"])
