@@ -959,18 +959,11 @@ def process_ident(ident_df, exp_df, ident=1, exp_info=1):
 
     # get experiment information for each parameter (only for noise-less data)
     # number_experiments = len(all_parameter_info["names"])
-
     if exp_info and number_samples == 1:
         exp_info = parameter_exp_info(ident_df, exp_df, all_parameter_info["ident_mean"])
     else:
         exp_info = []
     all_parameter_info.update({"exp_info": exp_info})
-    # plot test
-    # f, ax = plt.subplots(1, 1, subplot_kw=dict(projection='polar'))
-    # y_data = [np.array(i_value) * 100/all_parameter_info["ident_mean"][0]
-    # for i_value in exp_frequency.values] + [float(0)]
-    # x_labels = exp_frequency.index.values.tolist() + ['V3max']
-    # plot_on_axis_object_polar(ax, x_data=x_labels, y_data=y_data, data_label='experiment 0')
 
     # get flux names
     all_flux_names = ident_df["flux_name"].unique().tolist() * len(all_parameter_info["names"])
