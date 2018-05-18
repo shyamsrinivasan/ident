@@ -1109,6 +1109,40 @@ def extract_parameter_values(parameter_value):
     return all_sample_ident_info
 
 
+def get_parameter_value(info_dict, ident_df):
+    """extract parameter values in a given flux to re-simulate model with newly determined parameters.
+    get parameter values from data sets that can detect all parameters"""
+
+    # lexicographic ordering of ident df indices
+    ident_df.sort_index(level='sample_name', inplace=True)
+    ident_df.sort_index(level='data_set_id', inplace=True)
+
+    # get data sets identifying each parameter
+    identifying_data_sets = [set(i_parameter_data_set) for i_parameter_data_set in info_dict["data_sets"]]
+    size_of_data_sets = [len(i_parameter_set) for i_parameter_set in identifying_data_sets]
+    sort_index = np.argsort(size_of_data_sets)  # last position is the biggest data set
+    largest_set = identifying_data_sets[sort_index[-1]]
+    # del identifying_data_sets[sort_index[-1]]
+    for i_index in range(len(sort_index)-2, -1, -1):
+        largest_set.intersection_update(identifying_data_sets[sort_index[i_index]])
+
+    # get parameter values from data sets in largest_set
+    idx = pd.IndexSlice
+    relevant_df = ident_df.loc[idx[:, list(largest_set)], ['parameter_name', 'parameter_value']]
+    all_parameter_values = []
+    all_parameter_names = []
+    all_parameter_data_sets = [list(largest_set) for _ in info_dict["names"]]
+    for i_parameter, i_parameter_name in enumerate(info_dict["names"]):
+        i_p_value = relevant_df[relevant_df["parameter_name"] == i_parameter_name]["parameter_value"].values
+        all_parameter_values.append(i_p_value)
+        all_parameter_names.append(i_parameter_name)
+    all_parameter_info = {"names": all_parameter_names, "values": all_parameter_values,
+                          "data_sets": all_parameter_data_sets, "total_data_sets": info_dict["total_data_sets"],
+                          "flux_name": info_dict["flux_name"]}
+
+    return all_parameter_info
+
+
 def extract_parameter_values_numerical(all_parameter_info):
     """extract parameter values from numerical identifiability method"""
     number_parameters = len(all_parameter_info["values"])
