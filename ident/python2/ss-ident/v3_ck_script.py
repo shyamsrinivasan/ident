@@ -3,11 +3,11 @@ from create_experiment_data import retrieve_experimental_data_from_file
 from kotte_model import flux_ident_3_data_combination
 from process_ident_data import process_ident
 from process_ident_data import process_info_sample
+from plot_ident_results import exp_info_plot
 from plot_ident_results import data_utility_plot
 from plot_ident_results import plot_parameter_values
 from plot_ident_results import plot_parameter_value_hist
 from plot_ident_results import parameter_identifibaility_plot
-from plot_ident_results import parameter_experiment_info_spider
 
 
 # create data for identifiability analysis
@@ -40,7 +40,6 @@ all_parameter_info = process_ident(ident_df, arranged_data_df)
 
 # get identifiability plot
 # get experiment info plot
-from plot_ident_results import exp_info_plot
 exp_info_plot(all_parameter_info)
 # get parameter value plot
 # validate model
@@ -83,9 +82,6 @@ ode_parameter_values = {"K1ac": np.array([.1]),
 
 # plot parameter identifibaility for all fluxes using 3 data combinations
 parameter_identifibaility_plot(max_parameter_v3_root1)
-# plot experiment type in each position based on all parameter
-# identifiable data combinations for each parameter
-parameter_experiment_info_spider(experiment_info_v3_root1)
 # plot true parameter values and determined parameter values
 plot_parameter_values(true_value_v3_root1)
 plot_parameter_value_hist(true_value_v3_root1)
@@ -112,9 +108,6 @@ data_list_v3_root2, max_parameter_v3_root2, true_value_v3_root2, experiment_info
 
 # plot parameter identifibaility for all fluxes using 3 data combinations
 parameter_identifibaility_plot(max_parameter_v3_root2)
-# plot experiment type in each position based on all parameter
-# identifiable data combinations for each parameter
-parameter_experiment_info_spider(experiment_info_v3_root2)
 # plot true parameter values and determined parameter values
 plot_parameter_values(true_value_v3_root2)
 
