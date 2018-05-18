@@ -205,6 +205,28 @@ def parameter_identifibaility_plot(flux_based_parameter_ident, noise=0):
     return None
 
 
+def identifiability_plot(info_dict):
+    """plot identifiability (number and percentage of data sets identifying each parameter)
+    of every parameter in a given flux"""
+    number_of_parameters = len(info_dict["names"])
+    f, ax = plt.subplots(1, 1, figsize=(6, 4), dpi=100)
+    x_data = info_dict["ident_mean"]
+    y_data = range(0, number_of_parameters)
+    gap = 0.05
+    # y_add = [0, gap + 0.2, 2 * (gap + 0.2)]
+    y_add = [i_y_data * (gap + 0.2) for i_y_data in y_data]
+    x_error = info_dict["ident_std"]
+    x_percent_mean = info_dict["ident_percent_mean"]
+    x_percent_std = info_dict["ident_percent_std"]
+    x_max = max(info_dict["total_data_sets"])
+    x_label = ['Number of data combinations used for identification']
+    plot_on_axis_object(ax, x_data, y_add, x_error=x_error)
+    set_hbar_axis_properties(ax, y_add, y_tick_label=info_dict["names"], x_max=x_max, x_percent_mean=x_percent_mean,
+                             x_percent_std=x_percent_std, x_label=x_label,
+                             figure_title=info_dict["flux_name"][0]+' parameters')
+    return None
+
+
 def parameter_experiment_info_plot(flux_based_experiment_info, noise=0):
     """plot position based contribution from each experiment towards
     identifiable data combinations for each parameter for each flux"""
