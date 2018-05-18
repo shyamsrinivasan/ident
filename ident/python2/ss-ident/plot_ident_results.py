@@ -64,79 +64,6 @@ def plot_on_axis_object_hist(axis_object, distribution_data, mark_value=[], para
     return None
 
 
-def set_hbar_axis_properties(axis_obj, y_data, y_tick_label, x_max, x_percent_mean, x_label=[], x_percent_std=[], figure_title=[]):
-    """set horizontal bar plot properties along with annotations for given """
-    # set x-axis limits
-    axis_obj.set_xlim(0, x_max)
-    # recompute data limits
-    axis_obj.relim()
-    axis_obj.autoscale_view()
-    # set custom tick positions
-    # axis_obj.xaxis.set_ticks(np.arange(0, x_max, 40))
-
-    # annotate percentages onto each bar in the graph
-    f_p = fnt.FontProperties(size=14, weight='demibold')
-    for j_bar, p in enumerate(axis_obj.patches):
-        # annotate percentages onto bar graphs
-        if x_percent_std:
-            y_annotation = "{:.2f} + {:.2f}%".format(x_percent_mean[j_bar],
-                                                     x_percent_std[j_bar])
-        else:
-            y_annotation = "{:.2f}%".format(x_percent_mean[j_bar])
-        axis_obj.annotate(y_annotation, (p.get_width() / 2, p.get_y() + p.get_height() / 2),
-                          ha='center', va='center', xycoords='data', **{"color": 'black', "font_properties": f_p})
-    # set y axis ticks
-    axis_obj.set_yticks(y_data)
-    # set y axis tick labels (parameter names)
-    # y_tick_label_p = fnt.FontProperties(size=14, weight='demibold')
-    axis_obj.set_yticklabels(y_tick_label, **{"font_properties": f_p})
-    # set x-axis label
-    if x_label:
-        axis_obj.set_xlabel(x_label[0], **{"font_properties": f_p})
-    axis_obj.tick_params(axis='both', labelsize=14, color='grey')
-    # set axis title
-    if figure_title:
-        axis_obj.set_title(figure_title, **{"font_properties": f_p})
-    # invert y-axis
-    axis_obj.invert_yaxis()
-
-    return None
-
-
-def plot_on_axis_object_vertical(axis_obj, x_data, y_data, y_error, y_percent_mean, y_percent_std, y_max, noise=0):
-    if noise:
-        axis_obj.bar(x_data, y_data, width=.5, yerr=y_error, align='center')
-    else:
-        # no error bars
-        axis_obj.bar(x_data, y_data, width=.5, align='center')
-    # set y-axis limits
-    axis_obj.set_ylim(0, y_max)
-    # recompute data limits
-    axis_obj.relim()
-    axis_obj.autoscale_view()
-    # set custom tick positions
-    # axis_obj.yaxis.set_ticks(np.arange(0, y_max, 40))
-
-    # annotate percentages onto each bar in the graph
-    for j_bar, p in enumerate(axis_obj.patches):
-        p.set_facecolor('blue')
-        p.set_edgecolor('k')
-        # set hatch pattern
-        # p.set_hatch('/')
-
-        # annotate percentages onto bar graphs
-        if noise:
-            y_annotation = "{:.2f} + {:.2f}%".format(y_percent_mean[j_bar],
-                                                      y_percent_std[j_bar])
-        else:
-            y_annotation = "{:.2f}%".format(y_percent_mean[j_bar])
-        axis_obj.annotate(y_annotation, (p.get_x() + p.get_width()/2, p.get_height()*1.05),
-                          ha='center', va='center', textcoords='data')
-    # set x-ticks
-    axis_obj.set_xticks(x_data)
-    return None
-
-
 def plot_on_axis_object_polar(axis_obj, x_data, y_data, data_label, fill_color='b'):
     """plot on polar axis object. does not work on subplots due to the use of plt.methods toplace axis ticks"""
     number_of_experiment_types = len(x_data)
@@ -176,12 +103,86 @@ def plot_on_axis_object_polar(axis_obj, x_data, y_data, data_label, fill_color='
     return max_y_data
 
 
+def set_hbar_axis_properties(axis_obj, y_data, y_tick_label, x_max, x_percent_mean, x_label=[], x_percent_std=[],
+                             figure_title=[]):
+    """set horizontal bar plot properties along with annotations for given """
+    # set x-axis limits
+    axis_obj.set_xlim(0, x_max)
+    # recompute data limits
+    axis_obj.relim()
+    axis_obj.autoscale_view()
+    # set custom tick positions
+    # axis_obj.xaxis.set_ticks(np.arange(0, x_max, 40))
+
+    # annotate percentages onto each bar in the graph
+    f_p = fnt.FontProperties(size=14, weight='demibold')
+    for j_bar, p in enumerate(axis_obj.patches):
+        # annotate percentages onto bar graphs
+        if x_percent_std:
+            y_annotation = "{:.2f} + {:.2f}%".format(x_percent_mean[j_bar],
+                                                     x_percent_std[j_bar])
+        else:
+            y_annotation = "{:.2f}%".format(x_percent_mean[j_bar])
+        axis_obj.annotate(y_annotation, (p.get_width() / 2, p.get_y() + p.get_height() / 2),
+                          ha='center', va='center', xycoords='data', **{"color": 'black', "font_properties": f_p})
+    # set y axis ticks
+    axis_obj.set_yticks(y_data)
+    # set y axis tick labels (parameter names)
+    # y_tick_label_p = fnt.FontProperties(size=14, weight='demibold')
+    axis_obj.set_yticklabels(y_tick_label, **{"font_properties": f_p})
+    # set x-axis label
+    if x_label:
+        axis_obj.set_xlabel(x_label[0], **{"font_properties": f_p})
+    axis_obj.tick_params(axis='both', labelsize=14, color='grey')
+    # set axis title
+    if figure_title:
+        axis_obj.set_title(figure_title, **{"font_properties": f_p})
+    # invert y-axis
+    axis_obj.invert_yaxis()
+
+    return None
+
+
 def set_polar_axis_limits(axis_object, y_limit):
     """set axis limits for polar plots"""
     axis_object.set_rmax(y_limit)
     y_ticks = range(0, int(y_limit) + 10, 10)
     axis_object.set_rticks(y_ticks)
     axis_object.set_rlabel_position(22.5)
+    return None
+
+
+def plot_on_axis_object_vertical(axis_obj, x_data, y_data, y_error, y_percent_mean, y_percent_std, y_max, noise=0):
+    if noise:
+        axis_obj.bar(x_data, y_data, width=.5, yerr=y_error, align='center')
+    else:
+        # no error bars
+        axis_obj.bar(x_data, y_data, width=.5, align='center')
+    # set y-axis limits
+    axis_obj.set_ylim(0, y_max)
+    # recompute data limits
+    axis_obj.relim()
+    axis_obj.autoscale_view()
+    # set custom tick positions
+    # axis_obj.yaxis.set_ticks(np.arange(0, y_max, 40))
+
+    # annotate percentages onto each bar in the graph
+    for j_bar, p in enumerate(axis_obj.patches):
+        p.set_facecolor('blue')
+        p.set_edgecolor('k')
+        # set hatch pattern
+        # p.set_hatch('/')
+
+        # annotate percentages onto bar graphs
+        if noise:
+            y_annotation = "{:.2f} + {:.2f}%".format(y_percent_mean[j_bar],
+                                                      y_percent_std[j_bar])
+        else:
+            y_annotation = "{:.2f}%".format(y_percent_mean[j_bar])
+        axis_obj.annotate(y_annotation, (p.get_x() + p.get_width()/2, p.get_height()*1.05),
+                          ha='center', va='center', textcoords='data')
+    # set x-ticks
+    axis_obj.set_xticks(x_data)
     return None
 
 
@@ -204,66 +205,6 @@ def identifiability_plot(info_dict):
     set_hbar_axis_properties(ax, y_add, y_tick_label=info_dict["names"], x_max=x_max, x_percent_mean=x_percent_mean,
                              x_percent_std=x_percent_std, x_label=x_label,
                              figure_title=info_dict["flux_name"][0]+' parameters')
-    return None
-
-
-def parameter_experiment_info_plot(flux_based_experiment_info, noise=0):
-    """plot position based contribution from each experiment towards
-    identifiable data combinations for each parameter for each flux"""
-    all_sample_all_flux_processed_info = flux_based_experiment_info["processed"]
-    number_of_fluxes = len(all_sample_all_flux_processed_info)
-    for j_flux, j_flux_data in enumerate(all_sample_all_flux_processed_info):
-        number_of_parameters_in_flux = len(j_flux_data)
-        for k_parameter, k_parameter_data in enumerate(j_flux_data):
-            number_of_experiment_positions = len(k_parameter_data)
-            number_of_subplots = number_of_experiment_positions
-            number_of_rows = 1
-            f, axarr = plt.subplots(number_of_rows, number_of_subplots, sharey='row',
-                                    figsize=(8, 6), dpi=100, facecolor='w', edgecolor='k')
-            # get parameter name for figure title
-            parameter_name = ident_parameter_name(k_parameter,
-                                                  flux_name="flux{}".format(k_parameter_data[0]["total"]["flux id"]),
-                                                  flux_choice_id=k_parameter_data[0]["total"]["flux choice"])
-            # set figure title to parameter name
-            figure_title = "flux {}".format(k_parameter_data[0]["total"]["flux id"]) + " " + parameter_name
-            f.text(.5, .975, figure_title, horizontalalignment='center', verticalalignment='top')
-            try:
-                for i_position, i_axis_obj in enumerate(axarr):
-                    x_data = k_parameter_data[i_position]["total"]["mean"]
-                    y_data = np.arange(0, len(x_data))
-                    x_error = k_parameter_data[i_position]["total"]["std"]
-                    x_percent_mean = k_parameter_data[i_position]["percentage"]["mean"]
-                    x_percent_error = k_parameter_data[i_position]["percentage"]["std"]
-                    # get y-axis labels (experiment types)
-                    y_tick_labels = kotte_experiment_type_name(y_data)
-                    # plot and annotate using plotting function defined above
-                    plot_on_axis_object(i_axis_obj, x_data, y_data, x_error, x_percent_mean, x_percent_error, noise)
-                    # set axis title
-                    i_axis_obj.set_title('experiment {}'.format(i_position + 1))
-                # set x-axis label
-                axarr[-1].set_xlabel('Frequency of Experiment Appearance')
-                # set y-axis tick label
-                axarr[0].set_yticklabels(y_tick_labels)
-                # invert y-axis
-                axarr[0].invert_yaxis()
-            except TypeError:
-                for i_position in range(0, number_of_experiment_positions):
-                    x_data = k_parameter_data[i_position]["total"]["mean"]
-                    y_data = np.arange(0, len(x_data))
-                    x_error = k_parameter_data[i_position]["total"]["std"]
-                    x_percent_mean = k_parameter_data[i_position]["percentage"]["mean"]
-                    x_percent_error = k_parameter_data[i_position]["percentage"]["std"]
-                    # plot and annotate using plotting function defined above
-                    plot_on_axis_object(axarr, x_data, y_data, x_error, x_percent_mean, x_percent_error, noise)
-                    # set axis title
-                    axarr.set_title('experiment {}'.format(i_position + 1))
-                # set x-axis label
-                axarr.set_xlabel('Number of data combinations used for identification')
-                # set y-axis tick label
-                axarr[0].set_yticklabels(y_tick_labels)
-                # invert y-axis
-                axarr.invert_yaxis()
-    plt.show()
     return None
 
 
@@ -337,6 +278,66 @@ def parameter_values_plot(info_dict, original_values, violin=False, box=True):
         for i_parameter in range(0, number_parameters):
             hist_axis = f1.add_subplot(plot_grid[1, i_parameter])
 
+    return None
+
+
+def parameter_experiment_info_plot(flux_based_experiment_info, noise=0):
+    """plot position based contribution from each experiment towards
+    identifiable data combinations for each parameter for each flux"""
+    all_sample_all_flux_processed_info = flux_based_experiment_info["processed"]
+    number_of_fluxes = len(all_sample_all_flux_processed_info)
+    for j_flux, j_flux_data in enumerate(all_sample_all_flux_processed_info):
+        number_of_parameters_in_flux = len(j_flux_data)
+        for k_parameter, k_parameter_data in enumerate(j_flux_data):
+            number_of_experiment_positions = len(k_parameter_data)
+            number_of_subplots = number_of_experiment_positions
+            number_of_rows = 1
+            f, axarr = plt.subplots(number_of_rows, number_of_subplots, sharey='row',
+                                    figsize=(8, 6), dpi=100, facecolor='w', edgecolor='k')
+            # get parameter name for figure title
+            parameter_name = ident_parameter_name(k_parameter,
+                                                  flux_name="flux{}".format(k_parameter_data[0]["total"]["flux id"]),
+                                                  flux_choice_id=k_parameter_data[0]["total"]["flux choice"])
+            # set figure title to parameter name
+            figure_title = "flux {}".format(k_parameter_data[0]["total"]["flux id"]) + " " + parameter_name
+            f.text(.5, .975, figure_title, horizontalalignment='center', verticalalignment='top')
+            try:
+                for i_position, i_axis_obj in enumerate(axarr):
+                    x_data = k_parameter_data[i_position]["total"]["mean"]
+                    y_data = np.arange(0, len(x_data))
+                    x_error = k_parameter_data[i_position]["total"]["std"]
+                    x_percent_mean = k_parameter_data[i_position]["percentage"]["mean"]
+                    x_percent_error = k_parameter_data[i_position]["percentage"]["std"]
+                    # get y-axis labels (experiment types)
+                    y_tick_labels = kotte_experiment_type_name(y_data)
+                    # plot and annotate using plotting function defined above
+                    plot_on_axis_object(i_axis_obj, x_data, y_data, x_error, x_percent_mean, x_percent_error, noise)
+                    # set axis title
+                    i_axis_obj.set_title('experiment {}'.format(i_position + 1))
+                # set x-axis label
+                axarr[-1].set_xlabel('Frequency of Experiment Appearance')
+                # set y-axis tick label
+                axarr[0].set_yticklabels(y_tick_labels)
+                # invert y-axis
+                axarr[0].invert_yaxis()
+            except TypeError:
+                for i_position in range(0, number_of_experiment_positions):
+                    x_data = k_parameter_data[i_position]["total"]["mean"]
+                    y_data = np.arange(0, len(x_data))
+                    x_error = k_parameter_data[i_position]["total"]["std"]
+                    x_percent_mean = k_parameter_data[i_position]["percentage"]["mean"]
+                    x_percent_error = k_parameter_data[i_position]["percentage"]["std"]
+                    # plot and annotate using plotting function defined above
+                    plot_on_axis_object(axarr, x_data, y_data, x_error, x_percent_mean, x_percent_error, noise)
+                    # set axis title
+                    axarr.set_title('experiment {}'.format(i_position + 1))
+                # set x-axis label
+                axarr.set_xlabel('Number of data combinations used for identification')
+                # set y-axis tick label
+                axarr[0].set_yticklabels(y_tick_labels)
+                # invert y-axis
+                axarr.invert_yaxis()
+    plt.show()
     return None
 
 
