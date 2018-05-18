@@ -20,76 +20,47 @@ def plot_on_axis_object(axis_obj, x_data, y_data, x_error, noise=0):
     return None
 
 
-def set_hbar_axis_properties(axis_obj, y_data, y_tick_label, x_max, x_percent_mean, x_label=[], x_percent_std=[], figure_title=[]):
-    """set horizontal bar plot properties along with annotations for given """
-    # set x-axis limits
-    axis_obj.set_xlim(0, x_max)
-    # recompute data limits
-    axis_obj.relim()
-    axis_obj.autoscale_view()
-    # set custom tick positions
-    # axis_obj.xaxis.set_ticks(np.arange(0, x_max, 40))
+def plot_on_axis_object_box(axis_object, distribution_data, mark_value=[], vert_option=True):
+    """get box plot of distributions"""
+    # axis_object = plt.Subplot(fig_object, grid_object)
+    bp_object = axis_object.boxplot(distribution_data, vert=vert_option)
+    for whiskers in bp_object["whiskers"]:
+        whiskers.set(color='k', linewidth=2)
+    for flier in bp_object['fliers']:
+        flier.set(marker='o', color='r', alpha=0.5)
 
-    # annotate percentages onto each bar in the graph
-    f_p = fnt.FontProperties(size=14, weight='demibold')
-    for j_bar, p in enumerate(axis_obj.patches):
-        # annotate percentages onto bar graphs
-        if x_percent_std:
-            y_annotation = "{:.2f} + {:.2f}%".format(float(x_percent_mean[j_bar]),
-                                                     float(x_percent_std[j_bar]))
-        else:
-            y_annotation = "{:.2f}%".format(float(x_percent_mean[j_bar]))
-        axis_obj.annotate(y_annotation, (p.get_width() / 2, p.get_y() + p.get_height() / 2),
-                          ha='center', va='center', xycoords='data', **{"color": 'black', "font_properties": f_p})
-    # set y axis ticks
-    axis_obj.set_yticks(y_data)
-    # set y axis tick labels (parameter names)
-    # y_tick_label_p = fnt.FontProperties(size=14, weight='demibold')
-    axis_obj.set_yticklabels(y_tick_label, **{"font_properties": f_p})
-    # set x-axis label
-    if x_label:
-        axis_obj.set_xlabel(x_label[0], **{"font_properties": f_p})
-    axis_obj.tick_params(axis='both', labelsize=14, color='grey')
-    # set axis title
-    if figure_title:
-        axis_obj.set_title(figure_title, **{"font_properties": f_p})
-    # invert y-axis
-    axis_obj.invert_yaxis()
+    # plot actual value in red
+    if mark_value:
+        axis_object.scatter(range(1, len(distribution_data) + 1), mark_value,
+                            color='r', marker='o')
 
+    # Remove top axes and right axes ticks
+    axis_object.get_xaxis().tick_bottom()
+    axis_object.get_yaxis().tick_left()
     return None
 
 
-def plot_on_axis_object_vertical(axis_obj, x_data, y_data, y_error, y_percent_mean, y_percent_std, y_max, noise=0):
-    if noise:
-        axis_obj.bar(x_data, y_data, width=.5, yerr=y_error, align='center')
-    else:
-        # no error bars
-        axis_obj.bar(x_data, y_data, width=.5, align='center')
-    # set y-axis limits
-    axis_obj.set_ylim(0, y_max)
-    # recompute data limits
-    axis_obj.relim()
-    axis_obj.autoscale_view()
-    # set custom tick positions
-    # axis_obj.yaxis.set_ticks(np.arange(0, y_max, 40))
+def plot_on_axis_object_violin(axis_object, distribution_data):
+    """create violin plot of distributions"""
+    # axis_object = plt.Subplot(fig_object, grid_object)
+    violin_object = axis_object.violinplot(distribution_data, showmeans=True, showmedians=True)
 
-    # annotate percentages onto each bar in the graph
-    for j_bar, p in enumerate(axis_obj.patches):
-        p.set_facecolor('blue')
-        p.set_edgecolor('k')
-        # set hatch pattern
-        # p.set_hatch('/')
+    # Remove top axes and right axes ticks
+    axis_object.get_xaxis().tick_bottom()
+    axis_object.get_yaxis().tick_left()
+    return None
 
-        # annotate percentages onto bar graphs
-        if noise:
-            y_annotation = "{:.2f} + {:.2f}%".format(y_percent_mean[j_bar],
-                                                      y_percent_std[j_bar])
-        else:
-            y_annotation = "{:.2f}%".format(y_percent_mean[j_bar])
-        axis_obj.annotate(y_annotation, (p.get_x() + p.get_width()/2, p.get_height()*1.05),
-                          ha='center', va='center', textcoords='data')
-    # set x-ticks
-    axis_obj.set_xticks(x_data)
+
+def plot_on_axis_object_hist(axis_object, distribution_data, mark_value=[], parameter_name=[]):
+    """create histogram of distribution data"""
+    # axis_object = plt.Subplot(fig_object, grid_object)
+    hist_object = axis_object.hist(distribution_data)
+    if parameter_name:
+        axis_object.set_title(parameter_name, fontsize=14)
+    if mark_value:
+        mark_y_value = np.arange(0, np.max(hist_object[0]) + 2)
+        mark_x_value = np.repeat(mark_value, len(mark_y_value))
+        axis_object.plot(mark_x_value, mark_y_value, color='black', linestyle='dashed', linewidth=2)
     return None
 
 
@@ -132,12 +103,86 @@ def plot_on_axis_object_polar(axis_obj, x_data, y_data, data_label, fill_color='
     return max_y_data
 
 
+def set_hbar_axis_properties(axis_obj, y_data, y_tick_label, x_max, x_percent_mean, x_label=[], x_percent_std=[],
+                             figure_title=[]):
+    """set horizontal bar plot properties along with annotations for given """
+    # set x-axis limits
+    axis_obj.set_xlim(0, x_max)
+    # recompute data limits
+    axis_obj.relim()
+    axis_obj.autoscale_view()
+    # set custom tick positions
+    # axis_obj.xaxis.set_ticks(np.arange(0, x_max, 40))
+
+    # annotate percentages onto each bar in the graph
+    f_p = fnt.FontProperties(size=14, weight='demibold')
+    for j_bar, p in enumerate(axis_obj.patches):
+        # annotate percentages onto bar graphs
+        if x_percent_std:
+            y_annotation = "{:.2f} + {:.2f}%".format(float(x_percent_mean[j_bar]),
+                                                     float(x_percent_std[j_bar]))
+        else:
+            y_annotation = "{:.2f}%".format(float(x_percent_mean[j_bar]))
+        axis_obj.annotate(y_annotation, (p.get_width() / 2, p.get_y() + p.get_height() / 2),
+                          ha='center', va='center', xycoords='data', **{"color": 'black', "font_properties": f_p})
+    # set y axis ticks
+    axis_obj.set_yticks(y_data)
+    # set y axis tick labels (parameter names)
+    # y_tick_label_p = fnt.FontProperties(size=14, weight='demibold')
+    axis_obj.set_yticklabels(y_tick_label, **{"font_properties": f_p})
+    # set x-axis label
+    if x_label:
+        axis_obj.set_xlabel(x_label[0], **{"font_properties": f_p})
+    axis_obj.tick_params(axis='both', labelsize=14, color='grey')
+    # set axis title
+    if figure_title:
+        axis_obj.set_title(figure_title, **{"font_properties": f_p})
+    # invert y-axis
+    axis_obj.invert_yaxis()
+
+    return None
+
+
 def set_polar_axis_limits(axis_object, y_limit):
     """set axis limits for polar plots"""
     axis_object.set_rmax(y_limit)
     y_ticks = range(0, int(y_limit) + 10, 10)
     axis_object.set_rticks(y_ticks)
     axis_object.set_rlabel_position(22.5)
+    return None
+
+
+def plot_on_axis_object_vertical(axis_obj, x_data, y_data, y_error, y_percent_mean, y_percent_std, y_max, noise=0):
+    if noise:
+        axis_obj.bar(x_data, y_data, width=.5, yerr=y_error, align='center')
+    else:
+        # no error bars
+        axis_obj.bar(x_data, y_data, width=.5, align='center')
+    # set y-axis limits
+    axis_obj.set_ylim(0, y_max)
+    # recompute data limits
+    axis_obj.relim()
+    axis_obj.autoscale_view()
+    # set custom tick positions
+    # axis_obj.yaxis.set_ticks(np.arange(0, y_max, 40))
+
+    # annotate percentages onto each bar in the graph
+    for j_bar, p in enumerate(axis_obj.patches):
+        p.set_facecolor('blue')
+        p.set_edgecolor('k')
+        # set hatch pattern
+        # p.set_hatch('/')
+
+        # annotate percentages onto bar graphs
+        if noise:
+            y_annotation = "{:.2f} + {:.2f}%".format(y_percent_mean[j_bar],
+                                                      y_percent_std[j_bar])
+        else:
+            y_annotation = "{:.2f}%".format(y_percent_mean[j_bar])
+        axis_obj.annotate(y_annotation, (p.get_x() + p.get_width()/2, p.get_height()*1.05),
+                          ha='center', va='center', textcoords='data')
+    # set x-ticks
+    axis_obj.set_xticks(x_data)
     return None
 
 
@@ -160,6 +205,79 @@ def identifiability_plot(info_dict):
     set_hbar_axis_properties(ax, y_add, y_tick_label=info_dict["names"], x_max=x_max, x_percent_mean=x_percent_mean,
                              x_percent_std=x_percent_std, x_label=x_label,
                              figure_title=info_dict["flux_name"][0]+' parameters')
+    return None
+
+
+def exp_info_plot(info_dict):
+    """plot experiment contribution frequency for each parameter in a polar plot"""
+    number_parameters = len(info_dict["names"])
+    if number_parameters >= 3:
+        number_of_columns = 3
+    else:
+        number_of_columns = 1
+    if number_parameters % number_of_columns != 0:
+        number_of_rows = (number_parameters + 1) / number_of_columns
+    else:
+        number_of_rows = number_parameters / number_of_columns
+    # figure = plt.figure(figsize=(6, 4))
+    # inner_grid = gridspec.GridSpec(number_of_rows, number_of_columns, wspace=0.2, hspace=0.2)
+    f, ax = plt.subplots(number_of_rows, number_of_columns, subplot_kw=dict(projection='polar'),
+                         figsize=(6, 4), dpi=100, gridspec_kw={"wspace": 0.2, "hspace": 0.2})
+    all_max_y_data = []
+    for i_parameter, i_parameter_info in enumerate(info_dict["exp_info"]):
+        # ax = plt.Subplot(figure, inner_grid[i_parameter])
+        fill_colors = ['b', 'g', 'y', 'r']
+        # plot data from all positions
+        pos_labels = []
+        for i_pos, (i_pos_key, i_pos_val) in enumerate(i_parameter_info.items()):
+            pos_labels.append(i_pos_key)
+            y_data = i_pos_val["frequency"]
+            x_labels = i_pos_val["names"]
+            max_y_data = plot_on_axis_object_polar(ax[i_parameter], x_data=x_labels, y_data=y_data,
+                                                   data_label=pos_labels[-1], fill_color=fill_colors[i_pos])
+            all_max_y_data.append(max_y_data)
+
+    # set axis limits for all polar plots on subplot
+    for i_parameter, _ in enumerate(info_dict["exp_info"]):
+        set_polar_axis_limits(ax[i_parameter], max(all_max_y_data))
+
+    # add legend
+    plt.legend(loc='upper right', bbox_to_anchor=(0.1, 0.1))
+    return None
+
+
+def parameter_values_plot(info_dict, original_values, violin=False, box=True):
+    """plot distribution of parameter values as a box plot, violin plot and/or histogram"""
+    number_parameters = len(info_dict["names"])
+    if box:
+        f1 = plt.figure(figsize=(6, 4), dpi=100, tight_layout=True)
+        plot_grid = gridspec.GridSpec(2, number_parameters)
+
+        # plot box plot
+        box_axis = f1.add_subplot(plot_grid[0, :])
+        plot_on_axis_object_box(box_axis, info_dict["values"],
+                                mark_value=[original_values[i_name] for i_name in info_dict["names"]])
+        box_axis.set_xticklabels(info_dict["names"])
+
+        # plot histogram
+        for i_parameter, (i_parameter_value, i_parameter_name) in enumerate(zip(info_dict["values"], info_dict["names"])):
+            # parameter_name = info_dict["names"][i_parameter]
+            hist_axis = f1.add_subplot(plot_grid[1, i_parameter])
+            plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=original_values[i_parameter_name],
+                                     parameter_name=i_parameter_name)
+
+    if violin:
+        f2 = plt.figure(figsize=(6, 4), dpi=100, tight_layout=True)
+        plot_grid = gridspec.GridSpec(2, number_parameters)
+
+        # plot box plot
+        box_axis = f2.add_subplot(plot_grid[0, :])
+        plot_on_axis_object_violin(box_axis, info_dict["values"])
+
+        # plot histogram
+        for i_parameter in range(0, number_parameters):
+            hist_axis = f1.add_subplot(plot_grid[1, i_parameter])
+
     return None
 
 
@@ -220,44 +338,6 @@ def parameter_experiment_info_plot(flux_based_experiment_info, noise=0):
                 # invert y-axis
                 axarr.invert_yaxis()
     plt.show()
-    return None
-
-
-def exp_info_plot(info_dict):
-    """plot experiment contribution frequency for each parameter in a polar plot"""
-    number_parameters = len(info_dict["names"])
-    if number_parameters >= 3:
-        number_of_columns = 3
-    else:
-        number_of_columns = 1
-    if number_parameters % number_of_columns != 0:
-        number_of_rows = (number_parameters + 1) / number_of_columns
-    else:
-        number_of_rows = number_parameters / number_of_columns
-    # figure = plt.figure(figsize=(6, 4))
-    # inner_grid = gridspec.GridSpec(number_of_rows, number_of_columns, wspace=0.2, hspace=0.2)
-    f, ax = plt.subplots(number_of_rows, number_of_columns, subplot_kw=dict(projection='polar'),
-                         figsize=(6, 4), dpi=100, gridspec_kw={"wspace": 0.2, "hspace": 0.2})
-    all_max_y_data = []
-    for i_parameter, i_parameter_info in enumerate(info_dict["exp_info"]):
-        # ax = plt.Subplot(figure, inner_grid[i_parameter])
-        fill_colors = ['b', 'g', 'y', 'r']
-        # plot data from all positions
-        pos_labels = []
-        for i_pos, (i_pos_key, i_pos_val) in enumerate(i_parameter_info.items()):
-            pos_labels.append(i_pos_key)
-            y_data = i_pos_val["frequency"]
-            x_labels = i_pos_val["names"]
-            max_y_data = plot_on_axis_object_polar(ax[i_parameter], x_data=x_labels, y_data=y_data,
-                                                   data_label=pos_labels[-1], fill_color=fill_colors[i_pos])
-            all_max_y_data.append(max_y_data)
-
-    # set axis limits for all polar plots on subplot
-    for i_parameter, _ in enumerate(info_dict["exp_info"]):
-        set_polar_axis_limits(ax[i_parameter], max(all_max_y_data))
-
-    # add legend
-    plt.legend(loc='upper right', bbox_to_anchor=(0.1, 0.1))
     return None
 
 
@@ -521,11 +601,6 @@ def plot_parameter_values(parameter_values, noise=0, data_sets_to_plot=[]):
     figure.show()
     plt.show()
 
-    return None
-
-
-def parameter_values_plot():
-    """plot distribution of parameter values as a box plot, violin plot and/or histogram"""
     return None
 
 

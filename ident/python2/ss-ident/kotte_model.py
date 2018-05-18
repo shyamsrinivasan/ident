@@ -2,6 +2,7 @@ import numpy as np
 from identifiability_analysis import truncate_values
 from identifiability_analysis import multi_sample_ident_fun
 from process_ident_data import write_ident_info_file
+from names_strings import true_parameter_values
 
 
 def kotte_ck_flux(y, p={}):
@@ -9,7 +10,7 @@ def kotte_ck_flux(y, p={}):
 
     # K1ac, K3fdp, L3fdp, K3pep, K2pep, vemax, Kefdp, ne, d, V4max, k1cat, V3max, V2max, ac = p
     if not p:
-        p = kotte_true_parameter_values()
+        p = true_parameter_values()
     K1ac = p["K1ac"]
     K3fdp = p["K3fdp"]
     K3pep = p["K3pep"]
@@ -58,7 +59,7 @@ def kotte_flux(y, p={}):
 
     # K1ac, K3fdp, L3fdp, K3pep, K2pep, vemax, Kefdp, ne, d, V4max, k1cat, V3max, V2max, ac = p
     if not p:
-        p = kotte_true_parameter_values()
+        p = true_parameter_values()
     K1ac = p["K1ac"]
     K3fdp = p["K3fdp"]
     K3pep = p["K3pep"]
