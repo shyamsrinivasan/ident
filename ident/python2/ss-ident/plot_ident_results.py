@@ -92,17 +92,11 @@ def plot_on_axis_object_polar(axis_obj, x_data, y_data, data_label, fill_color='
 
     # set x-ticks (experiment types)
     axis_obj.set_thetagrids(np.degrees(angles[:-1]), x_data)
-    # plt.xticks(angles[:-1], x_data)
 
     # Draw ylabels
     axis_obj.set_rlabel_position(0)
     y_data_bool = [True if iy <= 0.0 else False for iy in y_data]
     # exception here when all y_data = 0.0
-
-    # plt.ylim(0, max_y_data)
-
-    # y_tick_labels = [str(value) for value in y_ticks]
-    # plt.yticks(y_ticks, y_tick_labels, color="grey", size=7)
 
     # set y_data to be similar to angles (close the circle)
     y_data += y_data[:1]
@@ -113,15 +107,22 @@ def plot_on_axis_object_polar(axis_obj, x_data, y_data, data_label, fill_color='
         axis_obj.plot(angles, y_data, linewidth=1, linestyle='solid', label=data_label, color=fill_color)
         axis_obj.fill(angles, y_data, fill_color, alpha=0.1)
         max_y_data = max(y_data)
-        if max_y_data % 20 != 0:
-            if (max_y_data + max_y_data % 20) % 20 != 0:
-                max_y_data = (max_y_data - max_y_data % 20) + 20
+        if max_y_data % 10 != 0:
+            if (max_y_data + max_y_data % 10) % 10 != 0:
+                max_y_data = (max_y_data - max_y_data % 10) + 10
             else:
-                max_y_data = max_y_data + max_y_data % 20
-        axis_obj.set_rmax(max_y_data)
-        y_ticks = range(20, int(max_y_data) + 20, 20)
-        axis_obj.set_rticks(y_ticks)
-        axis_obj.set_rlabel_position(-22.5)
+                max_y_data = max_y_data + max_y_data % 10
+    else:
+        max_y_data = 0.0
+    return max_y_data
+
+
+def set_polar_axis_limits(axis_object, y_limit):
+    """set axis limits for polar plots"""
+    axis_object.set_rmax(y_limit)
+    y_ticks = range(0, int(y_limit) + 10, 10)
+    axis_object.set_rticks(y_ticks)
+    axis_object.set_rlabel_position(22.5)
     return None
 
 
@@ -294,41 +295,30 @@ def exp_info_plot(info_dict):
         number_of_rows = (number_parameters + 1) / number_of_columns
     else:
         number_of_rows = number_parameters / number_of_columns
-    figure = plt.figure(figsize=(6, 4))
+    # figure = plt.figure(figsize=(6, 4))
     # inner_grid = gridspec.GridSpec(number_of_rows, number_of_columns, wspace=0.2, hspace=0.2)
     f, ax = plt.subplots(number_of_rows, number_of_columns, subplot_kw=dict(projection='polar'),
                          figsize=(6, 4), dpi=100, gridspec_kw={"wspace": 0.2, "hspace": 0.2})
+    all_max_y_data = []
     for i_parameter, i_parameter_info in enumerate(info_dict["exp_info"]):
         # ax = plt.Subplot(figure, inner_grid[i_parameter])
         fill_colors = ['b', 'g', 'y', 'r']
         # plot data from all positions
         pos_labels = []
-        for i_pos_key, i_pos_val in i_parameter_info.items():
+        for i_pos, (i_pos_key, i_pos_val) in enumerate(i_parameter_info.items()):
             pos_labels.append(i_pos_key)
             y_data = i_pos_val["frequency"]
             x_labels = i_pos_val["names"]
-            plot_on_axis_object_polar(ax[i_parameter], x_data=x_labels, y_data=y_data, data_label=pos_labels[-1])
+            max_y_data = plot_on_axis_object_polar(ax[i_parameter], x_data=x_labels, y_data=y_data,
+                                                   data_label=pos_labels[-1], fill_color=fill_colors[i_pos])
+            all_max_y_data.append(max_y_data)
 
+    # set axis limits for all polar plots on subplot
+    for i_parameter, _ in enumerate(info_dict["exp_info"]):
+        set_polar_axis_limits(ax[i_parameter], max(all_max_y_data))
 
-        # plot test
-        # f, ax = plt.subplots(1, 1, subplot_kw=dict(projection='polar'))
-        # y_data = [np.array(i_value) * 100/all_parameter_info["ident_mean"][0]
-        # for i_value in exp_frequency.values] + [float(0)]
-        # x_labels = exp_frequency.index.values.tolist() + ['V3max']
-        # plot_on_axis_object_polar(ax, x_data=x_labels, y_data=y_data, data_label='experiment 0')
-
-        pass
-        # collect and
-        # for i_position in range(0, number_of_experiment_positions):
-        #     y_data = k_parameter_data[i_position]["percentage"]["mean"]
-        #     x_data = range(0, len(y_data))
-        #     x_data_label = kotte_experiment_type_name(x_data)
-        #     data_label = "experiment {}".format(i_position)
-        #     plot_on_axis_object_polar(axarr, x_data_label, y_data, data_label, all_fill_colors[i_position])
-        #     # add legend
-        #     plt.legend(loc='upper right', bbox_to_anchor=(0.1, 0.1))
-
-
+    # add legend
+    plt.legend(loc='upper right', bbox_to_anchor=(0.1, 0.1))
     return None
 
 
