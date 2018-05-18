@@ -35,10 +35,10 @@ def set_hbar_axis_properties(axis_obj, y_data, y_tick_label, x_max, x_percent_me
     for j_bar, p in enumerate(axis_obj.patches):
         # annotate percentages onto bar graphs
         if x_percent_std:
-            y_annotation = "{:.2f} + {:.2f}%".format(x_percent_mean[j_bar],
-                                                     x_percent_std[j_bar])
+            y_annotation = "{:.2f} + {:.2f}%".format(float(x_percent_mean[j_bar]),
+                                                     float(x_percent_std[j_bar]))
         else:
-            y_annotation = "{:.2f}%".format(x_percent_mean[j_bar])
+            y_annotation = "{:.2f}%".format(float(x_percent_mean[j_bar]))
         axis_obj.annotate(y_annotation, (p.get_width() / 2, p.get_y() + p.get_height() / 2),
                           ha='center', va='center', xycoords='data', **{"color": 'black', "font_properties": f_p})
     # set y axis ticks
