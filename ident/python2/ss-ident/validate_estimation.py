@@ -54,40 +54,43 @@ def form_dict_one_data_set(original_parameter, data_set_info):
 def form_dict_one_sample(original_parameter, sample_info, target_data=[]):
     """form parameter dictionary for estimated parameters from each
     sample of experimental data that contains multiple data sets"""
+    # get all parameter names and values for each data set
     all_data_set_values = []
-    for data_iterator, (j_data_set_id, j_data_set_info) in \
-            enumerate(zip(sample_info["data_id"], sample_info["parameter_value"])):
+    for i_data_set, i_data_set_name in enumerate(sample_info["data_sets"][0]):
         if target_data:
-            if data_iterator in set(target_data):
-                # get new parameter dict for j_data_set
-                j_data_set_parameter_value = form_dict_one_data_set(original_parameter, j_data_set_info)
+            if i_data_set in target_data:
+                parameter_value = [i_p_value[i_data_set] for i_p_value in sample_info["values"]]
+                i_data_set_parameter_value = form_dict_one_data_set(original_parameter,
+                                                                    dict(zip(sample_info["names"], parameter_value)))
             else:
-                j_data_set_parameter_value = []
-            all_data_set_values.append(j_data_set_parameter_value)
+                i_data_set_parameter_value = []
+            all_data_set_values.append(i_data_set_parameter_value)
         else:
-            # get new parameter dict for j_data_set
-            j_data_set_parameter_value = form_dict_one_data_set(original_parameter, j_data_set_info)
-            all_data_set_values.append(j_data_set_parameter_value)
+            parameter_value = [i_p_value[i_data_set] for i_p_value in sample_info["values"]]
+            i_data_set_parameter_value = form_dict_one_data_set(original_parameter,
+                                                                dict(zip(sample_info["names"], parameter_value)))
+            all_data_set_values.append(i_data_set_parameter_value)
 
     if target_data:
-        select_data_set_values = [i_data_set_value
-                                  for data_iterator, i_data_set_value in enumerate(all_data_set_values)
+        select_data_set_values = [j_data_set_value
+                                  for data_iterator, j_data_set_value in enumerate(all_data_set_values)
                                   if data_iterator in set(target_data)]
     else:
         select_data_set_values = all_data_set_values
+
     return select_data_set_values
 
 
 def form_parameter_dict(original_parameter, extracted_parameters, target_samples=[], target_data=[]):
     """form parameter dictionaries from extracted parameters suitable for oden simulation"""
-    number_of_samples = len(extracted_parameters)
+    # number_of_samples = len(extracted_parameters)
     if not target_samples:
         # work with all samples
-        all_sample_values = []
-        for i_sample, i_sample_info in enumerate(extracted_parameters):
-            print("Parameters for sample {} of {}:\n".format(i_sample + 1, number_of_samples))
-            select_data_set_values = form_dict_one_sample(original_parameter, i_sample_info, target_data)
-            all_sample_values.append(select_data_set_values)
+        # all_sample_values = []
+        # for i_sample, i_sample_info in enumerate(extracted_parameters):
+        #     print("Parameters for sample {} of {}:\n".format(i_sample + 1, number_of_samples))
+        all_sample_values = form_dict_one_sample(original_parameter, extracted_parameters, target_data)
+            # all_sample_values.append(select_data_set_values)
     else:
         # work only with targeted samples
         all_sample_values = []
