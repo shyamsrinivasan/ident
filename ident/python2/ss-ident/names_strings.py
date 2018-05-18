@@ -1,3 +1,6 @@
+import numpy as np
+
+
 def ident_parameter_name(parameter_id, flux_name=(), flux_choice_id=0):
     parameter_list = ['V1max', 'K1ac (no enz)', 'k1cat', 'K1ac (enz)',
                       'V2max', 'K2pep',
