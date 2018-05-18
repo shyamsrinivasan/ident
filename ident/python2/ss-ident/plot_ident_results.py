@@ -524,6 +524,11 @@ def plot_parameter_values(parameter_values, noise=0, data_sets_to_plot=[]):
     return None
 
 
+def parameter_values_plot():
+    """plot distribution of parameter values as a box plot, violin plot and/or histogram"""
+    return None
+
+
 def plot_experiment_data_dist(exp_xss, exp_fss, experiment_choice=()):
     exp_xss = np.array(exp_xss[0])
     number_experiments, number_mets = exp_xss.shape
