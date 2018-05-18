@@ -1,9 +1,11 @@
+import copy
+import numpy as np
+import itertools as it
+from collections import defaultdict
 from generate_expdata import initialize_to_ss
 from generate_expdata import perturb_parameters
 from plot_ident_results import plot_all_ss_estimates
-import copy
-import matplotlib.pyplot as plt
-import numpy as np
+
 
 
 def run_initial_ss_simulation(y0, cvode_options, estimated_parameter, noise=0, kinetics=2, noise_std=0.05):
@@ -24,22 +26,22 @@ def run_initial_ss_simulation(y0, cvode_options, estimated_parameter, noise=0, k
 def run_perturbation_ss_simulation(estimate_initial_ss, cvode_options, estimated_parameter, parameter_perturbation,
                                    number_of_samples=1, noise=0, kinetics=2, noise_std=0.05):
     """run ode simulations for all estimated parameter sets - may take a while 21 * number_estimated_parameters"""
-    all_ss_estimate = []
     all_dyn_estimate = []
+    all_ss_data_dict = defaultdict(list)
+    empty_dict = {}
     number_of_estimates = len(estimated_parameter)
     for j_parameter_id, (initial_ss, j_parameter_estimate) in enumerate(zip(estimate_initial_ss, estimated_parameter)):
         print("\nSimulation for parameter set {} of {}....\n".format(j_parameter_id + 1, number_of_estimates))
-        estimate_perturbation_ss, _ = perturb_parameters(initial_ss, parameter_perturbation,
-                                                                            cvode_options,
-                                                                            j_parameter_estimate,
-                                                                            number_of_samples,
-                                                                            noise=noise,
-                                                                            kinetics=kinetics,
-                                                                            dynamic_plot=0,
-                                                                            noise_std=noise_std)
-        all_ss_estimate.append(estimate_perturbation_ss)
+        estimate_name = 'estimate_{}'.format(j_parameter_id)
+        estimate_perturbation_ss, _ = perturb_parameters(initial_ss, parameter_perturbation, cvode_options,
+                                                         j_parameter_estimate, number_of_samples, noise=noise,
+                                                         kinetics=kinetics, dynamic_plot=0, noise_std=noise_std)
+        estimate_perturbation_ss["estimate_id"] = [estimate_name for _ in estimate_perturbation_ss["pep"]]
+        for key, value in it.chain(empty_dict.items(), estimate_perturbation_ss.items()):
+            for i_value in value:
+                all_ss_data_dict[key].append(i_value)
         # all_dyn_estimate.append(estimated_dyn)
-    return all_ss_estimate, all_dyn_estimate
+    return all_ss_data_dict, all_dyn_estimate
 
 
 def form_dict_one_data_set(original_parameter, data_set_info):
@@ -47,7 +49,7 @@ def form_dict_one_data_set(original_parameter, data_set_info):
     data_set_parameter_value = copy.deepcopy(original_parameter)
     for j_keys in data_set_info.keys():
         if j_keys in data_set_parameter_value:
-            data_set_parameter_value[j_keys] = data_set_info[j_keys]
+            data_set_parameter_value[j_keys] = np.array([data_set_info[j_keys]])
     return data_set_parameter_value
 
 
@@ -159,17 +161,17 @@ def run_all_parameter_perturbation(y0, cvode_options, original_parameter, extrac
         # all_sample_perturbation_dyn.append(estimate_perturbation_dyn)
 
     # combine initial and perturbation ss for all samples
-    all_sample_all_ss = []
-    for j_sample_initial_ss, j_sample_perturbation_ss in zip(all_sample_ss, all_sample_perturbation_ss):
-        # get all perturbation concentrations for each parameter estimate
-        all_perturbation_y_ss = [[i_perturbation_info["y"] for i_perturbation_info in i_estimate_perturbation_ss]
-                                 for i_estimate_perturbation_ss in j_sample_perturbation_ss]
-        # get all perturbation fluxes for each parameter estimate
-        all_perturbation_f_ss = [[i_perturbation_info["flux"] for i_perturbation_info in i_estimate_perturbation_ss]
-                                 for i_estimate_perturbation_ss in j_sample_perturbation_ss]
-        # get all perturbation ss id for each parameter estimate
-        all_perturbation_ss_id = [[i_perturbation_info["ssid"] for i_perturbation_info in i_estimate_perturbation_ss]
-                                  for i_estimate_perturbation_ss in j_sample_perturbation_ss]
+    # all_sample_all_ss = []
+    # for j_sample_initial_ss, j_sample_perturbation_ss in zip(all_sample_ss, all_sample_perturbation_ss):
+    #     # get all perturbation concentrations for each parameter estimate
+    #     all_perturbation_y_ss = [[i_perturbation_info["y"] for i_perturbation_info in i_estimate_perturbation_ss]
+    #                              for i_estimate_perturbation_ss in j_sample_perturbation_ss]
+    #     # get all perturbation fluxes for each parameter estimate
+    #     all_perturbation_f_ss = [[i_perturbation_info["flux"] for i_perturbation_info in i_estimate_perturbation_ss]
+    #                              for i_estimate_perturbation_ss in j_sample_perturbation_ss]
+    #     # get all perturbation ss id for each parameter estimate
+    #     all_perturbation_ss_id = [[i_perturbation_info["ssid"] for i_perturbation_info in i_estimate_perturbation_ss]
+    #                               for i_estimate_perturbation_ss in j_sample_perturbation_ss]
 
         # get initial ss for each parameter estimate
         # all_initial_y_ss = [i_estimate_initial_ss["y"] for i_estimate_initial_ss in j_sample_initial_ss]
@@ -183,16 +185,16 @@ def run_all_parameter_perturbation(y0, cvode_options, original_parameter, extrac
         #     all_perturbation_f_ss[i_estimate].insert(0, all_initial_f_ss[i_estimate])
         #     all_perturbation_ss_id[i_estimate].insert(0, all_initial_ss_id[i_estimate])
 
-        all_sample_all_ss.append({"y": all_perturbation_y_ss,
-                                  "flux": all_perturbation_f_ss,
-                                  "ssid": all_perturbation_ss_id})
+        # all_sample_all_ss.append({"y": all_perturbation_y_ss,
+        #                           "flux": all_perturbation_f_ss,
+        #                           "ssid": all_perturbation_ss_id})
 
     # combine initial and perturbation dynamics for all samples
     all_sample_all_dyn = []
     # for j_sample_initial_dyn, j_sample_perturbation_dyn in zip(all_sample_dyn, all_sample_perturbation_dyn):
     #     pass
 
-    return all_sample_all_ss, all_sample_all_dyn
+    return estimate_perturbation_ss, all_sample_all_dyn
 
 
 def collate_ss_values(ss_values, exp_ss_values):
