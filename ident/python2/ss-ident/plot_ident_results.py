@@ -20,6 +20,50 @@ def plot_on_axis_object(axis_obj, x_data, y_data, x_error, noise=0):
     return None
 
 
+def plot_on_axis_object_box(axis_object, distribution_data, mark_value=[], vert_option=True):
+    """get box plot of distributions"""
+    # axis_object = plt.Subplot(fig_object, grid_object)
+    bp_object = axis_object.boxplot(distribution_data, vert=vert_option)
+    for whiskers in bp_object["whiskers"]:
+        whiskers.set(color='k', linewidth=2)
+    for flier in bp_object['fliers']:
+        flier.set(marker='o', color='r', alpha=0.5)
+
+    # plot actual value in red
+    if mark_value:
+        axis_object.scatter(range(1, len(distribution_data) + 1), mark_value,
+                            color='r', marker='o')
+
+    # Remove top axes and right axes ticks
+    axis_object.get_xaxis().tick_bottom()
+    axis_object.get_yaxis().tick_left()
+    return None
+
+
+def plot_on_axis_object_violin(axis_object, distribution_data):
+    """create violin plot of distributions"""
+    # axis_object = plt.Subplot(fig_object, grid_object)
+    violin_object = axis_object.violinplot(distribution_data, showmeans=True, showmedians=True)
+
+    # Remove top axes and right axes ticks
+    axis_object.get_xaxis().tick_bottom()
+    axis_object.get_yaxis().tick_left()
+    return None
+
+
+def plot_on_axis_object_hist(axis_object, distribution_data, mark_value=[], parameter_name=[]):
+    """create histogram of distribution data"""
+    # axis_object = plt.Subplot(fig_object, grid_object)
+    hist_object = axis_object.hist(distribution_data)
+    if parameter_name:
+        axis_object.set_title(parameter_name, fontsize=14)
+    if mark_value:
+        mark_y_value = np.arange(0, np.max(hist_object[0]) + 2)
+        mark_x_value = np.repeat(mark_value, len(mark_y_value))
+        axis_object.plot(mark_x_value, mark_y_value, color='black', linestyle='dashed', linewidth=2)
+    return None
+
+
 def set_hbar_axis_properties(axis_obj, y_data, y_tick_label, x_max, x_percent_mean, x_label=[], x_percent_std=[], figure_title=[]):
     """set horizontal bar plot properties along with annotations for given """
     # set x-axis limits
@@ -258,6 +302,41 @@ def exp_info_plot(info_dict):
 
     # add legend
     plt.legend(loc='upper right', bbox_to_anchor=(0.1, 0.1))
+    return None
+
+
+def parameter_values_plot(info_dict, original_values, violin=False, box=True):
+    """plot distribution of parameter values as a box plot, violin plot and/or histogram"""
+    number_parameters = len(info_dict["names"])
+    if box:
+        f1 = plt.figure(figsize=(6, 4), dpi=100, tight_layout=True)
+        plot_grid = gridspec.GridSpec(2, number_parameters)
+
+        # plot box plot
+        box_axis = f1.add_subplot(plot_grid[0, :])
+        plot_on_axis_object_box(box_axis, info_dict["values"],
+                                mark_value=[original_values[i_name] for i_name in info_dict["names"]])
+        box_axis.set_xticklabels(info_dict["names"])
+
+        # plot histogram
+        for i_parameter, (i_parameter_value, i_parameter_name) in enumerate(zip(info_dict["values"], info_dict["names"])):
+            # parameter_name = info_dict["names"][i_parameter]
+            hist_axis = f1.add_subplot(plot_grid[1, i_parameter])
+            plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=original_values[i_parameter_name],
+                                     parameter_name=i_parameter_name)
+
+    if violin:
+        f2 = plt.figure(figsize=(6, 4), dpi=100, tight_layout=True)
+        plot_grid = gridspec.GridSpec(2, number_parameters)
+
+        # plot box plot
+        box_axis = f2.add_subplot(plot_grid[0, :])
+        plot_on_axis_object_violin(box_axis, info_dict["values"])
+
+        # plot histogram
+        for i_parameter in range(0, number_parameters):
+            hist_axis = f1.add_subplot(plot_grid[1, i_parameter])
+
     return None
 
 
@@ -521,11 +600,6 @@ def plot_parameter_values(parameter_values, noise=0, data_sets_to_plot=[]):
     figure.show()
     plt.show()
 
-    return None
-
-
-def parameter_values_plot():
-    """plot distribution of parameter values as a box plot, violin plot and/or histogram"""
     return None
 
 
