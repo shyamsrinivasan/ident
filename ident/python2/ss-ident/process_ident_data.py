@@ -908,8 +908,14 @@ def parameter_exp_info(ident_df, exp_df, parameter_ident_info):
             # add missing experiment type with value = 0
             missing_perturbation = all_possible_perturbations.difference(exp_frequency.index.values)
             name_value_pair = name_value_pair + zip(missing_perturbation, [0.0] * len(missing_perturbation))
-            names, values = map(list, zip(*name_value_pair))
-            all_experiment_info.update({exp_column_name[i_experiment]: {"names": names, "frequency": values}})
+            # names, values = map(list, zip(*name_value_pair))
+            # arrange name/values in desired order for every parameter
+            given_value = []
+            for i_given_name in all_possible_perturbations:
+                given_value.append([i_obtained_value for i_obtained_name, i_obtained_value in name_value_pair
+                                    if i_given_name == i_obtained_name][0])
+            all_experiment_info.update({exp_column_name[i_experiment]: {"names": list(all_possible_perturbations),
+                                                                        "frequency": given_value}})
         all_parameter_exp_info.append(all_experiment_info)
 
     return all_parameter_exp_info
