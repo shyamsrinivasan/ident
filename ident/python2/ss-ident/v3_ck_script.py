@@ -8,7 +8,6 @@ from plot_ident_results import exp_info_plot
 from plot_ident_results import identifiability_plot
 from plot_ident_results import parameter_values_plot
 from names_strings import true_parameter_values
-from process_ident_data import process_info_sample
 from plot_ident_results import data_utility_plot
 
 
@@ -31,7 +30,7 @@ storage_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedM
 # choose identifiability functions to test
 ident_fun_choice = [0]
 # test identifiability and store data to file
-# flux_ident_3_data_combination(arranged_data_df, arranged_data_df, flux_ids=[3], flux_choice=[1],
+# flux_ident_3_data_combination(arranged_data_df, flux_ids=[3], flux_choice=[1],
 #                               ident_fun_choice=ident_fun_choice, file_name=storage_file_name)
 
 # retrieve identifiability data from file and process information
@@ -42,7 +41,6 @@ all_parameter_info = process_ident(ident_df, arranged_data_df)
 
 # run dynamic simulations to obtain ss data based on estimated parameter values
 # get info from data sets that identify all 3 parameters
-
 validation_info = get_parameter_value(all_parameter_info, ident_df)
 # get default parameter values
 default_parameter_values = true_parameter_values()
@@ -70,12 +68,12 @@ ident_details_v3_root2 = flux_ident_3_data_combination(experimental_datasets_3_e
                                                        flux_ids=[3], flux_choice=[2], ident_fun_choice=ident_fun_choice)
 print('Identifiability analysis for v3 with 3 parameters (V3max, K3fdp and K3pep) complete.\n')
 # data processing
-data_list_v3_root2, max_parameter_v3_root2, true_value_v3_root2, experiment_info_v3_root2, \
-    combined_data_list_v3_root2, combined_max_parameter_v3_root2, combined_true_value_v3_root2, \
-    combined_experiment_info_v3_root2 = process_info_sample(ident_details_v3_root2,
-                                                            experimental_datasets_3_expts,
-                                                            experiment_type_indices,
-                                                            ident_fun_choice=ident_fun_choice)
+# data_list_v3_root2, max_parameter_v3_root2, true_value_v3_root2, experiment_info_v3_root2, \
+#     combined_data_list_v3_root2, combined_max_parameter_v3_root2, combined_true_value_v3_root2, \
+#     combined_experiment_info_v3_root2 = process_info_sample(ident_details_v3_root2,
+#                                                             experimental_datasets_3_expts,
+#                                                             experiment_type_indices,
+#                                                             ident_fun_choice=ident_fun_choice)
 
 # plot utility of data sets (number of data sets identifying n, n-1, n-2, ...., 1, 0 parameters
 data_utility_plot(data_list_v3_root2)
