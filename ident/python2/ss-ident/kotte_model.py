@@ -172,10 +172,16 @@ def flux_1_kcat_ident(experimental_data):
 
     k1cat_enzyme_numerator_value = - ac1 * v11 * v12 + ac2 * v11 * v12
     k1cat_enzyme_denominator_value = -(ac1 * v12 * x31 - ac2 * v11 * x32)
-    k1cat_enzyme_value = k1cat_enzyme_numerator_value / k1cat_enzyme_denominator_value
+    try:
+        k1cat_enzyme_value = k1cat_enzyme_numerator_value / k1cat_enzyme_denominator_value
+    except ZeroDivisionError:
+        k1cat_enzyme_value = 0.0
     k1ac_enzyme_numerator_value = ac1 * (-ac2 * v12 * x31 + ac2 * v11 * x32)
     k1ac_enzyme_denominator_value = ac1 * v12 * x31 - ac2 * v11 * x32
-    k1ac_enzyme_value = k1ac_enzyme_numerator_value / k1ac_enzyme_denominator_value
+    try:
+        k1ac_enzyme_value = k1ac_enzyme_numerator_value / k1ac_enzyme_denominator_value
+    except ZeroDivisionError:
+        k1ac_enzyme_value = 0.0
     return [k1cat_enzyme_numerator_value, k1cat_enzyme_denominator_value, k1cat_enzyme_value], \
            [k1ac_enzyme_numerator_value, k1ac_enzyme_denominator_value, k1ac_enzyme_value]
 
