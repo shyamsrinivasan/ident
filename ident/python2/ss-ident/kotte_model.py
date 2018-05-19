@@ -976,7 +976,7 @@ def flux_ident_2_data_combination(exp_df, flux_ids, flux_choice=(), ident_fun_ch
     return ident_info_df, index_labels
 
 
-def flux_ident_3_data_combination(data_df, exp_df, flux_ids, flux_choice=(), ident_fun_choice=(), file_name=()):
+def flux_ident_3_data_combination(exp_df, flux_ids, flux_choice=(), ident_fun_choice=(), file_name=()):
     """perform identifiability separately for each set of functions and generate separate identifiability info"""
     # 3 data combination ident list
     if flux_choice[0] == 1:
@@ -998,7 +998,7 @@ def flux_ident_3_data_combination(data_df, exp_df, flux_ids, flux_choice=(), ide
                 ident_fun_3_data = all_ident_fun_3_data[ident_fun_choice]
     else:
         ident_fun_3_data = all_ident_fun_3_data
-    all_sample_all_fun_ident_info = multi_sample_ident_fun(ident_fun_3_data, data_df, flux_ids, flux_choice)
+    all_sample_all_fun_ident_info = multi_sample_ident_fun(ident_fun_3_data, exp_df, flux_ids, flux_choice)
 
     # create data frame
     # data_df = pd.DataFrame(all_sample_all_fun_ident_info, columns=all_sample_all_fun_ident_info.keys())
