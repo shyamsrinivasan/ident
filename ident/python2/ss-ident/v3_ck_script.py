@@ -40,19 +40,31 @@ ident_index_label = ['sample_name', 'data_set_id']
 ident_df = retrieve_experimental_data_from_file(storage_file_name, ident_index_label)
 all_parameter_info = process_ident(ident_df, arranged_data_df)
 
-# get parameter value plot
+# run dynamic simulations to obtain ss data based on estimated parameter values
+# get info from data sets that identify all 3 parameters
+from process_ident_data import get_parameter_value
+validation_info = get_parameter_value(all_parameter_info, ident_df)
+# get default parameter values
 default_parameter_values = true_parameter_values()
+# initial value used to generate experimental data
+y0 = np.array([5, 1, 1])
+# integrator options
+cvode_options = ('Newton', 'Adams', 1e-10, 1e-10, 200)
+from validate_estimation import validate_model
+validate_model(y0, cvode_options, default_parameter_values, validation_info,
+               save_file_name='C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\ident\python2' \
+                              '\ss-ident\ident_validate_v3_root_1',
+               ss=1, dyn=0, noise=0, kinetics=2)
+
+# get parameter value plot
 parameter_values_plot(all_parameter_info, default_parameter_values)
+
 # get identifiability plot
 identifiability_plot(all_parameter_info)
+
 # get experiment info plot
 exp_info_plot(all_parameter_info)
-# validate model
-from process_ident_data import extract_parameter_values
-parameter_value_info = extract_parameter_values(true_value_v3_root1)
-from validate_estimation import validate_model
-validate_model(y0, cvode_options, ode_parameter_values, parameter_value_info, exp_info,
-               ss=1, dyn=0, noise=0, kinetics=2, target_data=range(0, 10))
+
 
 # different types of experiments 0 - wt, perturbations: 1 - acetate, 2 - k1cat, 3 - V3max, 4 - V2max
 experiment_type_indices = [[0],
@@ -70,7 +82,7 @@ data_list_v3_root1, max_parameter_v3_root1, true_value_v3_root1, experiment_info
                                                             ident_fun_choice=ident_fun_choice)
 
 # generate noisy experimental data for testing identifiability
-y0 = np.array([5, 1, 1])
+
 # default parameter values
 cvode_options = ('Newton', 'Adams', 1e-10, 1e-10, 200)
 ode_parameter_values = {"K1ac": np.array([.1]),
