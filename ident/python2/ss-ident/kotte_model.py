@@ -933,7 +933,7 @@ def flux_5_ident_expression(experimental_data):
     # new_combos = calculate_experiment_combos(ident_details, experiment_details, perturbation_details, data_list)
 
 
-def flux_ident_2_data_combination(all_data, flux_ids, choose=(), flux_choice=(), ident_fun_choice=()):
+def flux_ident_2_data_combination(exp_df, flux_ids, flux_choice=(), ident_fun_choice=(), file_name=()):
     """perform identifiability separately for each set of functions and generate separate identifiability info"""
     # 2 data combination ident list
     if flux_choice[0] == 1:
@@ -962,8 +962,12 @@ def flux_ident_2_data_combination(all_data, flux_ids, choose=(), flux_choice=(),
         ident_fun_2_data = all_ident_fun_2_data
 
     # run flux identifiability
-    all_sample_all_fun_ident_info = multi_sample_ident_fun(ident_fun_2_data, all_data, choose, flux_ids, flux_choice)
-    return all_sample_all_fun_ident_info
+    all_sample_all_fun_ident_info = multi_sample_ident_fun(ident_fun_2_data, exp_df, flux_ids, flux_choice)
+
+    # create data frame, add experiment information for each data set and save file of identifiability information
+    ident_info_df, index_labels = write_ident_info_file(all_sample_all_fun_ident_info, exp_df, file_name)
+
+    return ident_info_df, index_labels
 
 
 def flux_ident_3_data_combination(data_df, exp_df, flux_ids, flux_choice=(), ident_fun_choice=(), file_name=()):
