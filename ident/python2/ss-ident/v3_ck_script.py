@@ -2,14 +2,14 @@ import numpy as np
 from create_experiment_data import retrieve_experimental_data_from_file
 from kotte_model import flux_ident_3_data_combination
 from process_ident_data import process_ident
+from process_ident_data import get_parameter_value
+from validate_estimation import validate_model
 from plot_ident_results import exp_info_plot
 from plot_ident_results import identifiability_plot
 from plot_ident_results import parameter_values_plot
 from names_strings import true_parameter_values
 from process_ident_data import process_info_sample
 from plot_ident_results import data_utility_plot
-from plot_ident_results import plot_parameter_values
-from plot_ident_results import plot_parameter_value_hist
 
 
 # create data for identifiability analysis
@@ -42,7 +42,7 @@ all_parameter_info = process_ident(ident_df, arranged_data_df)
 
 # run dynamic simulations to obtain ss data based on estimated parameter values
 # get info from data sets that identify all 3 parameters
-from process_ident_data import get_parameter_value
+
 validation_info = get_parameter_value(all_parameter_info, ident_df)
 # get default parameter values
 default_parameter_values = true_parameter_values()
@@ -50,7 +50,6 @@ default_parameter_values = true_parameter_values()
 y0 = np.array([5, 1, 1])
 # integrator options
 cvode_options = ('Newton', 'Adams', 1e-10, 1e-10, 200)
-from validate_estimation import validate_model
 validate_model(y0, cvode_options, default_parameter_values, validation_info,
                save_file_name='C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\ident\python2' \
                               '\ss-ident\ident_validate_v3_root_1',
