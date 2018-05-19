@@ -8,9 +8,9 @@ def ident_parameter_name(parameter_id, flux_name=(), flux_choice_id=0):
                       'V3max', 'K3fdp', 'K3pep',
                       'vemax', 'Kefdp',
                       'vemax', 'Kefdp']
-    alter_list = {"flux1": [['V1max', 'K1ac (no enz)', 'k1cat', 'K1ac (enz)'],
-                            ['V1max', 'K1ac (no enz)'],
-                            ['k1cat', 'K1ac (enz)'],
+    alter_list = {"flux1": [['V1max', 'K1ac', 'k1cat', 'K1ac'],
+                            ['V1max', 'K1ac'],
+                            ['k1cat', 'K1ac'],
                             ['V1max', 'K1ac (no enz)', 'k1cat (exp 1)', 'k1cat (exp 2)']],
                   "flux2": [['V2max', 'K2pep']],
                   "flux3": [['V3max (1)', 'K3fdp (1)', 'K3pep (1)', 'V3max (2)', 'K3fdp (2)', 'K3pep (2)'],
@@ -51,12 +51,12 @@ def parameter_name(parameter_id):
 
 def true_parameter_values(flux_based=0, flux_name=(), flux_choice_id=0, parameter_id=()):
     if flux_based:
-        alter_parameter_value = {"flux1": [{"K1ac (enz)": np.array([.1]), "k1cat": np.array([1]),
-                                           "V1max": np.array([1]), "K1ac (no enz)": np.array([.1])},
-                                           {"V1max": np.array([1]), "K1ac (no enz)": np.array([.1])},
-                                           {"K1ac (enz)": np.array([.1]), "k1cat": np.array([1])},
-                                           {"V1max": np.array([1]), "K1ac (no enz)": np.array([.1]),
-                                            "k1cat (exp 1)": np.array([1]), "k1cat (exp 2)": np.array([1])}],
+        alter_parameter_value = {"flux1": [{"K1ac": np.array([.1]), "k1cat": np.array([1]),
+                                           "V1max": np.array([1])},
+                                           {"V1max": np.array([1]), "K1ac": np.array([.1])},
+                                           {"K1ac": np.array([.1]), "k1cat": np.array([1])},
+                                           {"V1max": np.array([1]), "K1ac": np.array([.1]),
+                                            "k1cat": np.array([1])}],
                                  "flux2": [{"K2pep": np.array([.3]), "V2max": np.array([1])}],
                                  "flux3": [{"K3fdp (1)": np.array([.1]), "K3pep (1)": np.array([.1]),
                                             "V3max (1)": np.array([1]), "K3fdp (2)": np.array([.1]),
