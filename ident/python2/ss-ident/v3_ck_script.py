@@ -65,47 +65,6 @@ identifiability_plot(all_parameter_info)
 # get experiment info plot
 exp_info_plot(all_parameter_info)
 
-
-# different types of experiments 0 - wt, perturbations: 1 - acetate, 2 - k1cat, 3 - V3max, 4 - V2max
-experiment_type_indices = [[0],
-                           [1, 2, 3, 4, 5],
-                           [6, 7, 8, 9, 10],
-                           [11, 12, 13, 14, 15],
-                           [16, 17, 18, 19, 20]]
-
-# data processing
-data_list_v3_root1, max_parameter_v3_root1, true_value_v3_root1, experiment_info_v3_root1, \
-    combined_data_list_v3_root1, combined_max_parameter_v3_root1, combined_true_value_v3_root1, \
-    combined_experiment_info_v3_root1 = process_info_sample(ident_details_v3_root1,
-                                                            experimental_datasets_3_expts,
-                                                            experiment_type_indices,
-                                                            ident_fun_choice=ident_fun_choice)
-
-# generate noisy experimental data for testing identifiability
-
-# default parameter values
-cvode_options = ('Newton', 'Adams', 1e-10, 1e-10, 200)
-ode_parameter_values = {"K1ac": np.array([.1]),
-                        "K3fdp": np.array([.1]),
-                        "L3fdp": np.array([4e6]),
-                        "K3pep": np.array([.1]),
-                        "K2pep": np.array([.3]),
-                        "vemax": np.array([1.1]),
-                        "Kefdp": np.array([.45]),
-                        "ne": np.array([2]),
-                        "d": np.array([.25]),
-                        "V4max": np.array([.2]),
-                        "k1cat": np.array([1]),
-                        "V3max": np.array([1]),
-                        "V2max": np.array([1]),
-                        "ac": np.array([.1])}
-
-
-
-plot_parameter_value_hist(true_value_v3_root1)
-# plot utility of data sets (number of data sets identifying n, n-1, n-2, ...., 1, 0 parameters
-data_utility_plot(data_list_v3_root1)
-
 print('Practical Identifiability Analysis of v3 with 3 parameters: V3max, K3fdp and K3pep \n')
 # perform identifiability when v3 parameters are written for root (2)
 ident_details_v3_root2 = flux_ident_3_data_combination(experimental_datasets_3_expts, choose=combination_choice,
