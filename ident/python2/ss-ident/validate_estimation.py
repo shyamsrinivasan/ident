@@ -1,6 +1,7 @@
 import copy
 import numpy as np
 import itertools as it
+import pandas as pd
 from collections import defaultdict
 from generate_expdata import initialize_to_ss
 from generate_expdata import perturb_parameters
@@ -222,7 +223,7 @@ def collate_ss_values(ss_values, exp_ss_values):
     return all_sample_info
 
 
-def validate_model(y0, cvode_options, original_parameter, extracted_parameter, experimental_data, ss=1, dyn=0,
+def validate_model(y0, cvode_options, original_parameter, extracted_parameter, save_file_name=[], ss=1, dyn=0,
                    noise=0, kinetics=2, noise_std=0.05, target_data=[]):
     """vcalculate initial steady state for estimate parameter value"""
     # get initial and perturbation steady state information for original and all estimated parameter sets
@@ -233,13 +234,30 @@ def validate_model(y0, cvode_options, original_parameter, extracted_parameter, e
                                                                    kinetics=kinetics,
                                                                    noise_std=noise_std,
                                                                    target_data=target_data)
+    # convert ss info to multi index data frame for storage and retrieval
+    df_index_tuples = [(i_value_sample, i_value_exp) for i_value_sample, i_value_exp in
+                       zip(all_sample_ss["estimate_id"], all_sample_ss["experiment_id"])]
+    multi_index_labels = ['estimate_id', 'experiment_id']
+    index = pd.MultiIndex.from_tuples(df_index_tuples, names=multi_index_labels)
+
+    del all_sample_ss["estimate_id"]
+    del all_sample_ss["experiment_id"]
+
+    # create data frame
+    all_ss_df = pd.DataFrame(all_sample_ss, index=index, columns=all_sample_ss.keys())
+
+    # save data frame to csv file
+    if save_file_name:
+        all_ss_df.to_csv(save_file_name, index_label=multi_index_labels)
+
     # compare new steady state with original experimental steady state
     if ss:
         # collect all ss values
-        all_ss = collate_ss_values(all_sample_ss, experimental_data)
+        # all_ss = collate_ss_values(all_sample_ss, experimental_data)
         # plot_all_ss_estimates(all_ss["exp_y"], all_ss["y"])
-        plot_all_ss_estimates(all_ss["exp_flux"], all_ss["flux"])
+        # plot_all_ss_estimates(all_ss["exp_flux"], all_ss["flux"])
         # plot_ss_values(original_ss, all_ss, concentration=0, flux=1)
+        pass
 
     # compare new dynamic values with original experimental dynamic values
     if dyn:
