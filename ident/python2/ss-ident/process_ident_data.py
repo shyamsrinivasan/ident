@@ -20,8 +20,9 @@ def write_ident_info_file(all_data_dict, exp_df, file_name):
     # create data frame
     data_df = pd.DataFrame(all_data_dict, columns=all_data_dict.keys())
 
-    # number of occurrences of each data set id = number of experiments per data set
-    data_set_id_frequency = int(max(data_df["data_set_id"].value_counts()))
+    # number of occurrences of each data set id = number of experiments per data set in the first sample
+    first_sample_rows = data_df[data_df["sample_name"] == 'sample_0']
+    data_set_id_frequency = int(max(first_sample_rows["data_set_id"].value_counts()))
     # all experiment ids
     experiment_pos_names = ['experiment_{}_id'.format(i_experiment) for i_experiment in range(0, data_set_id_frequency)]
     experiment_pos_parameters = ['experiment_{}_parameter'.format(i_experiment)
