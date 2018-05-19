@@ -149,8 +149,8 @@ def flux_1_Vmax_get_kcat_ident(experimental_data):
 
 def flux_1_Vmax_ident(experimental_data):
     """v1 identifiability without enzyme"""
-    ac1, _, _, _, v11, _, _, _, _, _, \
-    ac2, _, _, _, v12, _, _, _, _, _ = list(experimental_data)
+    ac1, _, _, _, v11, _, _, _, \
+    ac2, _, _, _, v12, _, _, _, = list(experimental_data)
 
     # flux numerator and denominator w/o sympy
     # symbolic expression for flux v1 w/o enzyme concentration data
@@ -167,8 +167,8 @@ def flux_1_Vmax_ident(experimental_data):
 
 def flux_1_kcat_ident(experimental_data):
     """v1 identifiability with enzyme concentration"""
-    ac1, _, _, x31, v11, _, _, _, _, _, \
-    ac2, _, _, x32, v12, _, _, _, _, _ = list(experimental_data)
+    ac1, _, _, x31, v11, _, _, _, \
+    ac2, _, _, x32, v12, _, _, _, = list(experimental_data)
 
     k1cat_enzyme_numerator_value = - ac1 * v11 * v12 + ac2 * v11 * v12
     k1cat_enzyme_denominator_value = -(ac1 * v12 * x31 - ac2 * v11 * x32)
@@ -213,8 +213,8 @@ def flux_1_ident_expression(experimental_data):
 def flux_2_ident_expression(experimental_data):
     """symbolic and lambdify expression for flux 2 denominator from mathematica"""
     # get variable values (w/o sympy directly from experimental data)
-    _, x21, _, _, _, v21, _, _, _, _, \
-    _, x22, _, _, _, v22, _, _, _, _ = list(experimental_data)
+    _, x21, _, _, _, v21, _, _, \
+    _, x22, _, _, _, v22, _, _, = list(experimental_data)
 
     # symbolic expression for v2
     # V2max
