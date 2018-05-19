@@ -36,10 +36,12 @@ def write_ident_info_file(all_data_dict, exp_df, file_name):
                                    for j_data_set_id in data_set_ids]
     # temp = [j_position_exp for j_data_set_exp in all_data_set_experiments for j_position_exp in j_data_set_exp]
     all_pos_experiment_id = [[i_pos_rep_exp for j_data_set_exp in
-                              all_data_set_experiments for i_pos_rep_exp in [j_data_set_exp[j_position_exp]]*3]
+                              all_data_set_experiments for i_pos_rep_exp in
+                              [j_data_set_exp[j_position_exp]]*len(experiment_pos_names)]
                              for j_position_exp in range(0, len(experiment_pos_names))]
     all_pos_exp_parameters = [[i_pos_rep_exp for j_data_set_exp in
-                              all_data_set_exp_parameters for i_pos_rep_exp in [j_data_set_exp[j_position_exp]]*3]
+                              all_data_set_exp_parameters for i_pos_rep_exp in
+                               [j_data_set_exp[j_position_exp]]*len(experiment_pos_names)]
                               for j_position_exp in range(0, len(experiment_pos_parameters))]
     experiment_pos_info_keys = experiment_pos_names + experiment_pos_parameters
     experiment_pos_info_values = all_pos_experiment_id + all_pos_exp_parameters
