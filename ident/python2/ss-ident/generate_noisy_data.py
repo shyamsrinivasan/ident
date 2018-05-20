@@ -217,7 +217,10 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options, 
         parameter_name = perturbation_value.keys()[0]
         parameter_change = np.array(perturbation_value.values()[0])
         changed_ode_parameter = deepcopy(ode_parameters)
-        changed_ode_parameter[parameter_name] = changed_ode_parameter[parameter_name] * (1 + parameter_change)
+        if parameter_name == 'wt':
+            changed_ode_parameter['ac'] = changed_ode_parameter['ac'] * (1 + parameter_change)
+        else:
+            changed_ode_parameter[parameter_name] = changed_ode_parameter[parameter_name] * (1 + parameter_change)
         all_options = (cvode_options, changed_ode_parameter)
         # generate data using MWC Kinetics
         noisy_ss_iter, noisy_dynamic_iter, ss_iter, dynamic_iter = \
@@ -259,7 +262,9 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options, 
     parameter_name = [i_perturbation_info.keys()[0] for i_perturbation_info in perturbation_indices]
     parameter_change = [np.array(i_perturbation_info.values()[0])
                         for i_perturbation_info in perturbation_indices]
-    parameter_value = [np.array(i_parameter_value_dict[i_parameter_name][0])
+    # parameter_value = [np.array(i_parameter_value_dict[i_parameter_name][0])
+    #                    for i_parameter_name, i_parameter_value_dict in zip(parameter_name, perturbed_parameter)]
+    parameter_value = [np.array(i_parameter_value_dict[i_parameter_name][0]) if i_parameter_name != 'wt' else np.array(i_parameter_value_dict['ac'][0])
                        for i_parameter_name, i_parameter_value_dict in zip(parameter_name, perturbed_parameter)]
     essential_parameter_value = [np.array(i_perturbation_info["ac"][0]) for i_perturbation_info in perturbed_parameter]
     parameter_change_percentage = [i_parameter_change * 100 for i_parameter_change in parameter_change]
