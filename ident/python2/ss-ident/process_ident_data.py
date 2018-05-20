@@ -11,10 +11,12 @@ from plot_ident_results import plot_on_axis_object_polar
 def write_ident_info_file(all_data_dict, exp_df, file_name):
     """create data frame from identifiability data and write to csv file for future use"""
     # reset index of experimental data df
-    reset_exp_df = exp_df.reset_index('experiment_id')
-    reset_exp_df.reset_index('sample_name', inplace=True)
-    # lexographic ordering of df indices
+    reset_exp_df = exp_df.reset_index("sample_name")
     reset_exp_df.sort_index(level='data_set_id', inplace=True)
+    reset_exp_df.reset_index("data_set_id", inplace=True)
+    # reset_exp_df = exp_df.reset_index('experiment_id')
+    # reset_exp_df.reset_index('sample_name', inplace=True)
+    # lexographic ordering of df indices    #
     # reset_exp_df.sort_index(level='sample_name', inplace=True)
 
     # create data frame
@@ -30,19 +32,19 @@ def write_ident_info_file(all_data_dict, exp_df, file_name):
 
     # extract experiment ids for each data set
     # get all data set ids
-    data_set_ids = reset_exp_df.index.unique().tolist()
-    all_data_set_experiments = [reset_exp_df.xs(j_data_set_id)["experiment_id"].values.tolist()
-                                for j_data_set_id in data_set_ids]
-    all_data_set_exp_parameters = [reset_exp_df.xs(j_data_set_id)["parameter_name"].values.tolist()
-                                   for j_data_set_id in data_set_ids]
-    # temp = [j_position_exp for j_data_set_exp in all_data_set_experiments for j_position_exp in j_data_set_exp]
-    all_pos_experiment_id = [[i_pos_rep_exp for j_data_set_exp in
-                              all_data_set_experiments for i_pos_rep_exp in
-                              [j_data_set_exp[j_position_exp]]*len(experiment_pos_names)]
+    data_set_ids = reset_exp_df["data_set_id"].unique()
+    # get experiments for each data set based on first sample only
+    all_data_set_experiments = [reset_exp_df[(reset_exp_df["sample_name"] == "sample_0") &
+                                             (reset_exp_df["data_set_id"] == j_data_set_id)]
+                                ["parameter_name"].index.values.tolist() for j_data_set_id in data_set_ids]
+    all_data_set_exp_parameters = [reset_exp_df[(reset_exp_df["sample_name"] == "sample_0") &
+                                                (reset_exp_df["data_set_id"] == j_data_set_id)]
+                                   ["parameter_name"].values.tolist() for j_data_set_id in data_set_ids]
+    all_pos_experiment_id = [[i_p for j_data_set in all_data_set_experiments
+                              for i_p in [j_data_set[j_position_exp]]*len(experiment_pos_names)]*5
                              for j_position_exp in range(0, len(experiment_pos_names))]
-    all_pos_exp_parameters = [[i_pos_rep_exp for j_data_set_exp in
-                              all_data_set_exp_parameters for i_pos_rep_exp in
-                               [j_data_set_exp[j_position_exp]]*len(experiment_pos_names)]
+    all_pos_exp_parameters = [[i_p for j_data_set in all_data_set_exp_parameters
+                               for i_p in [j_data_set[j_position_exp]] * len(experiment_pos_parameters)] * 5
                               for j_position_exp in range(0, len(experiment_pos_parameters))]
     experiment_pos_info_keys = experiment_pos_names + experiment_pos_parameters
     experiment_pos_info_values = all_pos_experiment_id + all_pos_exp_parameters
