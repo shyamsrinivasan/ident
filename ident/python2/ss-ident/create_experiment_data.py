@@ -306,4 +306,9 @@ def create_data_for_flux(flux_id, noise, number_samples=1):
 if __name__ == "__main__":
     file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\ident\python2\ss-ident\experiments'
     experiment_info_df = create_experiment_data(file_name, noise=0, kinetics=2)
+    # file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\ident\python2\ss-ident' \
+    #             '\experiments_noise_5_samples'
+    # experiment_info_df = create_experiment_data(file_name, noise=1, kinetics=2, number_samples=5, noise_std=0.05)
+    # file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\ident\python2\ss-ident' \
+    #             '\experiments_noise_500_samples'
     # experiment_info_df = create_experiment_data(file_name, noise=1, kinetics=2, number_samples=500, noise_std=0.05)
