@@ -178,7 +178,8 @@ def run_no_noise_parameter_perturbation(parameter_perturbation, y0, other_option
     parameter_name = [i_perturbation_info.keys()[0] for i_perturbation_info in perturbation_indices]
     parameter_change = [np.array(i_perturbation_info.values()[0])
                         for i_perturbation_info in perturbation_indices]
-    parameter_value = [np.array(i_parameter_value_dict[i_parameter_name][0]) if i_parameter_name != 'wt' else np.array(i_parameter_value_dict['ac'][0])
+    parameter_value = [np.array(i_parameter_value_dict[i_parameter_name][0]) if i_parameter_name != 'wt'
+                       else np.array(i_parameter_value_dict['ac'][0])
                        for i_parameter_name, i_parameter_value_dict in zip(parameter_name, perturbed_parameter)]
     essential_parameter_value = [np.array(i_perturbation_info["ac"][0]) for i_perturbation_info in perturbed_parameter]
     parameter_change_percentage = [i_parameter_change * 100 for i_parameter_change in parameter_change]
@@ -264,7 +265,8 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options, 
                         for i_perturbation_info in perturbation_indices]
     # parameter_value = [np.array(i_parameter_value_dict[i_parameter_name][0])
     #                    for i_parameter_name, i_parameter_value_dict in zip(parameter_name, perturbed_parameter)]
-    parameter_value = [np.array(i_parameter_value_dict[i_parameter_name][0]) if i_parameter_name != 'wt' else np.array(i_parameter_value_dict['ac'][0])
+    parameter_value = [np.array(i_parameter_value_dict[i_parameter_name][0]) if i_parameter_name != 'wt'
+                       else np.array(i_parameter_value_dict['ac'][0])
                        for i_parameter_name, i_parameter_value_dict in zip(parameter_name, perturbed_parameter)]
     essential_parameter_value = [np.array(i_perturbation_info["ac"][0]) for i_perturbation_info in perturbed_parameter]
     parameter_change_percentage = [i_parameter_change * 100 for i_parameter_change in parameter_change]
