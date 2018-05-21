@@ -259,14 +259,14 @@ def sample_ident_info(all_sample_info):
     from all samples for all parameters"""
     # get common data sets identifying all parameters in all samples
     number_parameters = len(all_sample_info[0]["names"])
-    all_sample_data_sets = [[i_sample_info["data_sets"][i_parameter] for i_sample_info in all_sample_info]
-                            for i_parameter in range(0, number_parameters)]
-    all_parameter_data_sets = []
-    for i_parameter in all_sample_data_sets:
-        i_parameter_common_data_set = set(i_parameter[0])
-        for i_sample_info in i_parameter[1:]:
-            i_parameter_common_data_set.intersection_update(i_sample_info)
-        all_parameter_data_sets.append(list(i_parameter_common_data_set))
+    # all_sample_data_sets = [[i_sample_info["data_sets"][i_parameter] for i_sample_info in all_sample_info]
+    #                         for i_parameter in range(0, number_parameters)]
+    # all_parameter_data_sets = []
+    # for i_parameter in all_sample_data_sets:
+    #     i_parameter_common_data_set = set(i_parameter[0])
+    #     for i_sample_info in i_parameter[1:]:
+    #         i_parameter_common_data_set.intersection_update(i_sample_info)
+    #     all_parameter_data_sets.append(list(i_parameter_common_data_set))
 
     all_identifiabilites = [i_sample_info["identifiability"] for i_sample_info in all_sample_info]
     sample_mean_identifiability = np.mean(np.array(all_identifiabilites), axis=0)
@@ -281,7 +281,9 @@ def sample_ident_info(all_sample_info):
     sample_std_identifiability_percent = np.std(np.array(all_identifiabilites_percent), axis=0)
     sample_std_ident_percent = [np.array(i_parameter_ident) for i_parameter_ident in
                                 sample_std_identifiability_percent]
-    all_sample_data_pair = [[i_p for i_sample in all_sample_info for i_p in zip(i_sample["sample_name"][i_parameter], i_sample["data_sets"][i_parameter])] for i_parameter in range(0, number_parameters)]
+    all_sample_data_pair = [[i_p for i_sample in all_sample_info
+                             for i_p in zip(i_sample["sample_name"][i_parameter], i_sample["data_sets"][i_parameter])]
+                            for i_parameter in range(0, number_parameters)]
     ident_dict = {"ident_mean": sample_mean_ident,
                   "ident_std": sample_std_ident,
                   "ident_percent_mean": sample_mean_ident_percent,
@@ -388,7 +390,7 @@ def get_parameter_value(info_dict, ident_df):
     ident_df.sort_index(level='data_set_id', inplace=True)
 
     # get data sets identifying each parameter
-    identifying_data_sets = [set(i_parameter_data_set) for i_parameter_data_set in info_dict["data_sets"]]
+    identifying_data_sets = [set(i_parameter_data_set) for i_parameter_data_set in info_dict["sample_data_set_id"]]
     size_of_data_sets = [len(i_parameter_set) for i_parameter_set in identifying_data_sets]
     sort_index = np.argsort(size_of_data_sets)  # last position is the biggest data set
     largest_set = identifying_data_sets[sort_index[-1]]
@@ -398,7 +400,7 @@ def get_parameter_value(info_dict, ident_df):
 
     # get parameter values from data sets in largest_set
     idx = pd.IndexSlice
-    relevant_df = ident_df.loc[idx[:, list(largest_set)], ['parameter_name', 'parameter_value']]
+    relevant_df = ident_df.loc[idx[list(largest_set)], ['parameter_name', 'parameter_value']]
     all_parameter_values = []
     all_parameter_names = []
     all_parameter_data_sets = [list(largest_set) for _ in info_dict["names"]]
