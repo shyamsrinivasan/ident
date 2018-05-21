@@ -32,16 +32,6 @@ def call_truncate_method(ident_value_list, parameter_count, expression_count=3):
     return flux_ident_value
 
 
-def boolean_ident_info(ident_values, number_of_parameters):
-    """get absolute values for each identifiability function and convert them to boolean arrays
-    to denote whether a given combination of experimental data can identify a given parameter"""
-    signed_ident_values = np.sign(ident_values)
-    p_list = [[p_id for p_id, val in enumerate(data_set) if val > 0] for data_set in signed_ident_values]
-    p_list_boolean = [[True if parameter_id in list_1 else False for parameter_id in range(0, number_of_parameters)]
-                      for list_1 in p_list]
-    return p_list, np.array(p_list_boolean)
-
-
 def run_flux_ident(ident_function_list, data, flux_id=(), flux_choice=()):
     """test identifibaility using each function in function list for data set in set"""
     ident_value_list = []
