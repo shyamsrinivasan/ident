@@ -100,7 +100,7 @@ def collect_data(exp_df, j_sample, numerical=0):
                                     ['acetate', 'pep', 'fdp', 'E', 'v1', 'v2', 'v3', 'v5']].values.tolist()
             single_list = [i_variable for i_exp_data in ident_data for i_variable in i_exp_data]
             all_exp_data.append(single_list)
-    return all_exp_data
+    return all_exp_data, all_data_set_ids
 
 
 def collect_ident_data(j_sample_name, j_sample_ident_data, flux_ids, flux_choice, all_data_dict, empty_dict):
@@ -151,7 +151,7 @@ def multi_sample_ident_fun(ident_fun_list, all_data_df, flux_ids, flux_choice):
     for i_sample, i_sample_id in enumerate(sample_ids):
         print('Identifiability analysis with Data Sample Number {} of {}\n'.format(i_sample, number_samples))
         # collect experimental data from all data sets
-        all_exp_data = collect_data(reset_df, i_sample_id)
+        all_exp_data, _ = collect_data(reset_df, i_sample_id)
         # run identifiability with i_sample_data
         all_ident_values, _ = get_ident_value(ident_fun_list, all_exp_data, flux_ids, flux_choice)
         all_sample_ident_details.append(all_ident_values)
@@ -165,3 +165,12 @@ def multi_sample_ident_fun(ident_fun_list, all_data_df, flux_ids, flux_choice):
         all_data = collect_ident_data(sample_name, sample_data, flux_ids, flux_choice, all_data, empty_dict)
 
     return all_data
+
+
+def data_numerical_ident(exp_df, sample_name):
+    """create data sets of appropriate form for numerical identifiability"""
+    exp_df.sort_index(level='data_set_id', inplace=True)
+    exp_df.sort_index(level='sample_name', inplace=True)
+    all_exp_df, data_set_ids = collect_data(exp_df, j_sample=sample_name, numerical=1)
+    all_data_info = {"value": all_exp_df, "data_set_id": data_set_ids}
+    return all_data_info
