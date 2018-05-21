@@ -1,8 +1,11 @@
 import casadi as casadi
 import numpy as np
+import itertools as it
+import pandas as pd
 from numpy.random import RandomState
-from kotte_model import ident_parameter_name
-from kotte_model import kotte_true_parameter_values
+from names_strings import ident_parameter_name
+from names_strings import true_parameter_values
+from collections import defaultdict
 
 
 def v3_ck_numerical_problem(chosen_data):
@@ -18,7 +21,7 @@ def v3_ck_numerical_problem(chosen_data):
 
     all_constraints = []
     for i_data_id, i_data in enumerate(chosen_data):
-        _, pep, fdp, _, _, _, v3, _, _, _ = list(i_data)
+        _, pep, fdp, _, _, _, v3, _, = list(i_data)
 
         # flux equation for each experiment i_data in chosen_data
         fdp_sat = fdp / k3fdp
@@ -121,7 +124,7 @@ def parse_opt_result(opt_sol, data_id):
                    "xopt": opt_sol["x"].full(),
                    "lam_x": opt_sol["lam_x"].full(),
                    "lam_g": opt_sol["lam_g"].full(),
-                   "data_id": data_id}
+                   "data_set_id": data_id}
     # Print the optimal cost
     print("optimal cost: ", float(new_opt_sol["f"]))
 
@@ -150,6 +153,23 @@ def opt_result_for_plots(all_data_set_opt_sol):
     return all_solution_details
 
 
+def compile_opt_result(all_opt_sol):
+    """compile optimizaition results to create dict suitable for data frame creation"""
+    number_variables = len(all_opt_sol[0]["variable_name"])
+    all_x_opt = [[float(i_data_sol["xopt"][i_variable]) for i_data_sol in all_opt_sol]
+                 for i_variable in range(0, number_variables)]
+    all_lam_x_names = ["all_lam_x_{}".format(i_var) for i_var in range(0, number_variables)]
+    all_lam_x = [[float(i_data_sol["lam_x"][i_variable]) for i_data_sol in all_opt_sol]
+                 for i_variable in range(0, number_variables)]
+    all_f_opt = [float(i_data_sol["f"][0]) for i_data_sol in all_opt_sol]
+    all_data_set_id = [i_data_sol["data_set_id"] for i_data_sol in all_opt_sol]
+    all_sol_dict = {"data_set_id": all_data_set_id, "objective": all_f_opt}
+    all_sol_dict.update(dict(zip(all_lam_x_names, all_lam_x)))
+    all_sol_dict.update(dict(zip(all_opt_sol[0]["variable_name"], all_x_opt)))
+
+    return all_sol_dict
+
+
 def identify_all_data_sets(experimental_data, chosen_fun, x0, optim_options={}):
     """run numerical identifying algorithm for chosen flux (choose constraints, objective and bounds)
     for a given set of experimental data and initial condition"""
@@ -160,32 +180,38 @@ def identify_all_data_sets(experimental_data, chosen_fun, x0, optim_options={}):
                "ubx": [2, 1, 1, .1, .1, .1],
                "lbg": 3 * [0],
                "ubg": 3 * [0]}
+        variable_name = ["V3max", "K3fdp", "K3pep", "eps_1", "eps_2", "eps_3"]
     elif chosen_fun == 1:
         ident_fun = v3_numerical_problem
         arg = {"lbx": 8 * [0],
                "ubx": [2, 1, 1, 5, .1, .1, .1, .1],
                "lbg": 4 * [0],
                "ubg": 4 * [0]}
+        variable_name = ["V3max", "K3fdp", "K3pep", "L3fdp", "eps_1", "eps_2", "eps_3", "eps_4"]
     else:
         ident_fun = []
         arg = {}
+        variable_name = []
     arg["x0"] = x0
 
-    number_data_sets = len(experimental_data)
+    number_data_sets = len(experimental_data["value"])
     all_data_solutions = []
-    for i_data_id, i_data in enumerate(experimental_data):
+    for i_data_id, (i_data_value, i_data_name) in enumerate(zip(experimental_data["value"],
+                                                                experimental_data["data_set_id"])):
         print("Performing Identifiability Analysis on Data set {} of {}".format(i_data_id+1, number_data_sets))
         if ident_fun:
-            sol = solve_numerical_nlp(chosen_fun=ident_fun, chosen_data=i_data, opt_problem_details=arg,
+            sol = solve_numerical_nlp(chosen_fun=ident_fun, chosen_data=i_data_value, opt_problem_details=arg,
                                       optim_options=optim_options)
         else:
             sol = []
         if sol:
-            sol = parse_opt_result(sol, i_data_id)
+            sol = parse_opt_result(sol, i_data_name)
+        sol.update({"variable_name": variable_name})
         all_data_solutions.append(sol)
         print("Identifiability analysis on data set {} of {} complete".format(i_data_id+1, number_data_sets))
 
-    opt_solution = opt_result_for_plots(all_data_solutions)
+    opt_solution = compile_opt_result(all_data_solutions)
+    # opt_solution = opt_result_for_plots(all_data_solutions)
     return opt_solution
 
 
@@ -200,7 +226,7 @@ def process_opt_solution(opt_solution, number_of_parameters, flux_id, flux_choic
     flux_choice = flux_choice * 3
     all_parameter_name = ident_parameter_name(parameter_id=range(0, number_of_parameters),
                                               flux_name=flux_name, flux_choice_id=flux_choice)
-    all_parameter_true_value = kotte_true_parameter_values(flux_based=1, flux_name=flux_name,
+    all_parameter_true_value = true_parameter_values(flux_based=1, flux_name=flux_name,
                                                            flux_choice_id=flux_choice, parameter_id=all_parameter_name)
 
     all_parameter_values = []
@@ -217,21 +243,40 @@ def process_opt_solution(opt_solution, number_of_parameters, flux_id, flux_choic
 
 
 def solve_multiple_initial_conditions(all_initial_conditions, experimental_data, chosen_fun, optim_options,
-                                      number_of_parameters, flux_id, flux_choice):
+                                      number_of_parameters, flux_id, flux_choice, file_name=()):
     """solve numerical nlp ident for multiple parameter initial conditions"""
     number_initial_conditions = len(all_initial_conditions)
     all_x0_all_parameter_opt_info = []
+    all_initial_condition_sol = defaultdict(list)
+    empty_dict = {}
     for j_id, j_initial_condition in enumerate(all_initial_conditions):
         print("Working on Initial Conditions {} of {}....".format(j_id+1, number_initial_conditions))
+        initial_condition_id = "initial_value_{}".format(j_id)
         # code to run opt for each initial value in each element of list
         opt_solution = identify_all_data_sets(experimental_data, chosen_fun=chosen_fun,
                                               x0=j_initial_condition, optim_options=optim_options)
+        opt_solution.update({"initial_value_id": [initial_condition_id] * len(opt_solution["data_set_id"])})
+        # update dictionary
+        for key, value in it.chain(opt_solution.items(), empty_dict.items()):
+            for i_value in value:
+                all_initial_condition_sol[key].append(i_value)
         # process opt solution for ach initial condition for all experimental data sets
-        all_parameter_info = process_opt_solution(opt_solution, number_of_parameters=number_of_parameters,
-                                                  flux_id=flux_id, flux_choice=flux_choice)
-        all_x0_all_parameter_opt_info.append(all_parameter_info)
+        # all_parameter_info = process_opt_solution(opt_solution, number_of_parameters=number_of_parameters,
+        #                                           flux_id=flux_id, flux_choice=flux_choice)
+        # all_x0_all_parameter_opt_info.append(all_parameter_info)
         print("Analysis with Initial Condition {} of {} Complete".format(j_id+1, number_initial_conditions))
-    return all_x0_all_parameter_opt_info
+
+    # create multi index df of results and save it to file
+    ind_tuple = [(i_initial, i_data) for i_initial, i_data in
+                 zip(all_initial_condition_sol["initial_value_id"], all_initial_condition_sol["data_set_id"])]
+    ind = pd.MultiIndex.from_tuples(ind_tuple, names=['initial_value_id', 'data_set_id'])
+    del all_initial_condition_sol["initial_value_id"]
+    del all_initial_condition_sol["data_set_id"]
+    all_sol_df = pd.DataFrame(all_initial_condition_sol, index=ind, columns=all_initial_condition_sol.keys())
+
+    all_sol_df.to_csv()
+
+    return all_sol_df
 
 
 def generate_random_initial_conditions(given_initial_condition, number_random_conditions, negative=0):
