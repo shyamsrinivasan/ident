@@ -226,7 +226,7 @@ def validate_model(y0, cvode_options, original_parameter, extracted_parameter, s
         # collate all dyn values
         pass
 
-    return None
+    return all_ss_df
 
 
 def validate_perturbation_ss():
