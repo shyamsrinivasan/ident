@@ -54,59 +54,71 @@ def form_dict_one_data_set(original_parameter, data_set_info):
     return data_set_parameter_value
 
 
-def form_dict_one_sample(original_parameter, sample_info, target_data=[]):
+def form_dict_one_sample(original_parameter, all_sample_info, select_combination_pos, target_data=[]):
     """form parameter dictionary for estimated parameters from each
     sample of experimental data that contains multiple data sets"""
     # get all parameter names and values for each data set
     all_data_set_values = []
-    for i_data_set, i_data_set_name in enumerate(sample_info["data_sets"][0]):
-        if target_data:
-            if i_data_set in target_data:
-                parameter_value = [i_p_value[i_data_set] for i_p_value in sample_info["values"]]
-                i_data_set_parameter_value = form_dict_one_data_set(original_parameter,
-                                                                    dict(zip(sample_info["names"], parameter_value)))
-            else:
-                i_data_set_parameter_value = []
-            all_data_set_values.append(i_data_set_parameter_value)
-        else:
-            parameter_value = [i_p_value[i_data_set] for i_p_value in sample_info["values"]]
-            i_data_set_parameter_value = form_dict_one_data_set(original_parameter,
-                                                                dict(zip(sample_info["names"], parameter_value)))
-            all_data_set_values.append(i_data_set_parameter_value)
+    for i_sample_data_set_pair in select_combination_pos:
+        parameter_values = [i_p_value[i_sample_data_set_pair] for i_p_value in all_sample_info["values"]]
+        i_data_set_parameter_value = form_dict_one_data_set(original_parameter,
+                                                            dict(zip(all_sample_info["names"], parameter_values)))
+        all_data_set_values.append(i_data_set_parameter_value)
 
-    if target_data:
-        select_data_set_values = [j_data_set_value
-                                  for data_iterator, j_data_set_value in enumerate(all_data_set_values)
-                                  if data_iterator in set(target_data)]
-    else:
-        select_data_set_values = all_data_set_values
-
-    return select_data_set_values
+    return all_data_set_values
 
 
-def form_parameter_dict(original_parameter, extracted_parameters, target_samples=[], target_data=[]):
+def form_parameter_dict(original_parameter, extracted_parameters, target_samples=[], target_data_set=[],
+                        target_data=[]):
     """form parameter dictionaries from extracted parameters suitable for oden simulation"""
-    # number_of_samples = len(extracted_parameters)
-    if not target_samples:
-        # work with all samples
-        # all_sample_values = []
-        # for i_sample, i_sample_info in enumerate(extracted_parameters):
-        #     print("Parameters for sample {} of {}:\n".format(i_sample + 1, number_of_samples))
-        all_sample_values = form_dict_one_sample(original_parameter, extracted_parameters, target_data)
-            # all_sample_values.append(select_data_set_values)
-    else:
+    # get all available sample names
+    all_sample_names = [i_data_id[0] for i_data_id in extracted_parameters["data_sets"][0]]
+    all_unique_sample_names = np.unique(np.array(all_sample_names)).tolist()
+    select_sample_names = []
+    if target_samples:
         # work only with targeted samples
-        all_sample_values = []
-        pass
+        select_sample_names = set(target_samples).intersection(set(all_unique_sample_names))
+
+    # get all available data sets
+    all_data_set_ids = [i_data_id[1] for i_data_id in extracted_parameters["data_sets"][0]]
+    all_unique_data_set_ids = np.unique(np.array(all_data_set_ids)).tolist()
+    select_data_set_ids = []
+    if target_data_set:
+        # work only with selected data set ids
+        select_data_set_ids = set(target_data_set).intersection(set(all_unique_data_set_ids))
+
+    if select_sample_names and select_data_set_ids:
+        # get all possible combinations
+        number_data_sets = len(select_data_set_ids)
+        all_repeated_sample_names = [j_sample_id for i_sample_id in select_sample_names
+                                     for j_sample_id in [i_sample_id] * number_data_sets]
+        number_samples = len(select_sample_names)
+        all_repeated_data_set_ids = [j_data_set_id for j_data_set_id in [select_data_set_ids] * number_samples]
+        possible_select_combinations = zip(all_repeated_sample_names, all_repeated_data_set_ids)
+
+        # pick only available combinations of sample and data id
+        select_combination = [i_select_combinations for i_select_combinations in possible_select_combinations
+                              if i_select_combinations in set(extracted_parameters["data_sets"][0])]
+    elif target_data:
+        select_combination = [i_select_combinations for i_combination, i_select_combinations in
+                              enumerate(extracted_parameters["data_sets"][0]) if i_combination in target_data]
+    else:
+        select_combination = extracted_parameters["data_sets"][0]
+
+    select_combination_pos = [extracted_parameters["data_sets"][0].index(j_select_combo) for j_select_combo in
+                              select_combination]
+
+    all_sample_values = form_dict_one_sample(original_parameter, extracted_parameters, select_combination_pos)
     return all_sample_values
 
 
 def run_all_parameters(y0, cvode_options, original_parameter, extracted_parameter,
-                       noise=0, kinetics=2, noise_std=0.05, target_data=[]):
+                       noise=0, kinetics=2, noise_std=0.05, target_data=[], target_samples=[], target_data_set=[]):
     """validate parameter values based on obtained initial ss using parameters
         estimated using identifiability analysis"""
     # get all parameter sets in extracted parameter and form parameter dictionaries suitable for simulation
-    all_sample_ode_parameters = form_parameter_dict(original_parameter, extracted_parameter, target_data=target_data)
+    all_sample_ode_parameters = form_parameter_dict(original_parameter, extracted_parameter, target_data=target_data,
+                                                    target_samples=target_samples, target_data_set=target_data_set)
     # get initial steady state information for original parameter set
     original_ss, original_dyn = initialize_to_ss(y0, cvode_options, original_parameter,
                                                  noise=noise, kinetics=kinetics, noise_std=noise_std)
@@ -115,7 +127,7 @@ def run_all_parameters(y0, cvode_options, original_parameter, extracted_paramete
     all_sample_ss = []
     all_sample_dyn = []
     for j_sample, j_sample_parameter in enumerate(all_sample_ode_parameters):
-        print("Parameters for sample {} of {}:\n".format(j_sample+1, number_of_samples))
+        print("Parameters for data set {} of {}:\n".format(j_sample+1, number_of_samples))
         estimate_ss, estimate_dyn = run_initial_ss_simulation(y0, cvode_options, j_sample_parameter,
                                                               noise=noise, kinetics=kinetics, noise_std=noise_std)
         all_sample_ss.append(estimate_ss)
