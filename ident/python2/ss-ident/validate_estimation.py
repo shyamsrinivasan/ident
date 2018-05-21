@@ -109,38 +109,18 @@ def form_parameter_dict(original_parameter, extracted_parameters, target_samples
                               select_combination]
 
     all_sample_values = form_dict_one_sample(original_parameter, extracted_parameters, select_combination_pos)
-    return all_sample_values
-
-
-def run_all_parameters(y0, cvode_options, original_parameter, extracted_parameter,
-                       noise=0, kinetics=2, noise_std=0.05, target_data=[], target_samples=[], target_data_set=[]):
-    """validate parameter values based on obtained initial ss using parameters
-        estimated using identifiability analysis"""
-    # get all parameter sets in extracted parameter and form parameter dictionaries suitable for simulation
-    all_sample_ode_parameters = form_parameter_dict(original_parameter, extracted_parameter, target_data=target_data,
-                                                    target_samples=target_samples, target_data_set=target_data_set)
-    # get initial steady state information for original parameter set
-    original_ss, original_dyn = initialize_to_ss(y0, cvode_options, original_parameter,
-                                                 noise=noise, kinetics=kinetics, noise_std=noise_std)
-    # simulate system with each estimated set of parameter values
-    number_of_samples = len(all_sample_ode_parameters)
-    all_sample_ss = []
-    all_sample_dyn = []
-    for j_sample, j_sample_parameter in enumerate(all_sample_ode_parameters):
-        print("Parameters for data set {} of {}:\n".format(j_sample+1, number_of_samples))
-        estimate_ss, estimate_dyn = run_initial_ss_simulation(y0, cvode_options, j_sample_parameter,
-                                                              noise=noise, kinetics=kinetics, noise_std=noise_std)
-        all_sample_ss.append(estimate_ss)
-        all_sample_dyn.append(estimate_dyn)
-    return original_ss, all_sample_ss, original_dyn, all_sample_dyn
+    return all_sample_values, select_combination
 
 
 def run_all_parameter_perturbation(y0, cvode_options, original_parameter, extracted_parameter,
-                                   noise=0, kinetics=2, noise_std=0.05, target_data=[]):
+                                   noise=0, kinetics=2, noise_std=0.05, target_data=[], target_data_set=[], target_sample=[]):
     """run perturbation analysis for all estimated parameter data sets based on
     initial and perturbed steady states"""
     # get all parameter sets in extracted parameter and form parameter dictionaries suitable for simulation
-    all_sample_ode_parameters = form_parameter_dict(original_parameter, extracted_parameter, target_data=target_data)
+    all_sample_ode_parameters, select_combinations = form_parameter_dict(original_parameter, extracted_parameter,
+                                                                         target_data=target_data,
+                                                                         target_data_set=target_data_set,
+                                                                         target_samples=target_sample)
 
     # all parameter perturbations
     parameter_perturbation = [{"wt": 0}, {"ac": 1}, {"ac": 4}, {"ac": 9}, {"ac": -.1}, {"ac": -.5},
@@ -170,6 +150,15 @@ def run_all_parameter_perturbation(y0, cvode_options, original_parameter, extrac
                                                                                          noise=noise,
                                                                                          kinetics=kinetics,
                                                                                          noise_std=noise_std)
+    # add sample and data set ids to perturbations data
+    # unique_estimate_ids = np.unique(np.array(estimate_perturbation_ss["estimate_id"])).tolist()
+    unique_experiment_ids = np.unique(np.array(estimate_perturbation_ss["experiment_id"])).tolist()
+
+    all_sample_ids = [i_sample_name for i_estimate in select_combinations
+                      for i_sample_name in [i_estimate[0]] * len(unique_experiment_ids)]
+    all_data_set_ids = [i_data_set_id for i_estimate in select_combinations
+                        for i_data_set_id in [i_estimate[1]] * len(unique_experiment_ids)]
+    estimate_perturbation_ss.update({"sample_name": all_sample_ids, "data_set_id": all_data_set_ids})
         # all_sample_perturbation_ss.append(estimate_perturbation_ss)
         # all_sample_perturbation_dyn.append(estimate_perturbation_dyn)
 
