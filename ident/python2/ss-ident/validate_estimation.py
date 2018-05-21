@@ -5,8 +5,6 @@ import pandas as pd
 from collections import defaultdict
 from generate_expdata import initialize_to_ss
 from generate_expdata import perturb_parameters
-from plot_ident_results import plot_all_ss_estimates
-
 
 
 def run_initial_ss_simulation(y0, cvode_options, estimated_parameter, noise=0, kinetics=2, noise_std=0.05):
@@ -129,18 +127,8 @@ def run_all_parameter_perturbation(y0, cvode_options, original_parameter, extrac
                               {"V2max": .1}, {"V2max": .5}, {"V2max": 1}, {"V2max": -.1}, {"V2max": -.5}]
 
     # simulate system with each estimated set of parameter values
-    # number_of_samples = len(all_sample_ode_parameters)
-    all_sample_ss = []
-    all_sample_perturbation_ss = []
-    all_sample_dyn = []
-    all_sample_perturbation_dyn = []
-    # for j_sample, j_sample_parameter in enumerate(all_sample_ode_parameters):
-        # print("Parameters for sample {} of {}:\n".format(j_sample + 1, number_of_samples))
-        # get initial system steady state for all estimated parameter values
     estimate_ss, estimate_dyn = run_initial_ss_simulation(y0, cvode_options, all_sample_ode_parameters,
                                                           noise=noise, kinetics=kinetics, noise_std=noise_std)
-        # all_sample_ss.append(estimate_ss)
-        # all_sample_dyn.append(estimate_dyn)
 
     # run all perturbations for each estimated parameter value
     estimate_perturbation_ss, estimate_perturbation_dyn = run_perturbation_ss_simulation(estimate_ss, cvode_options,
@@ -152,44 +140,13 @@ def run_all_parameter_perturbation(y0, cvode_options, original_parameter, extrac
                                                                                          noise_std=noise_std)
     # add sample and data set ids to perturbations data
     # unique_estimate_ids = np.unique(np.array(estimate_perturbation_ss["estimate_id"])).tolist()
-    unique_experiment_ids = np.unique(np.array(estimate_perturbation_ss["experiment_id"])).tolist()
+    unique_experiment_ids = np.unique(np.array(estimate_perturbation_ss["experiment_id"]))
 
     all_sample_ids = [i_sample_name for i_estimate in select_combinations
                       for i_sample_name in [i_estimate[0]] * len(unique_experiment_ids)]
     all_data_set_ids = [i_data_set_id for i_estimate in select_combinations
                         for i_data_set_id in [i_estimate[1]] * len(unique_experiment_ids)]
     estimate_perturbation_ss.update({"sample_name": all_sample_ids, "data_set_id": all_data_set_ids})
-        # all_sample_perturbation_ss.append(estimate_perturbation_ss)
-        # all_sample_perturbation_dyn.append(estimate_perturbation_dyn)
-
-    # combine initial and perturbation ss for all samples
-    # all_sample_all_ss = []
-    # for j_sample_initial_ss, j_sample_perturbation_ss in zip(all_sample_ss, all_sample_perturbation_ss):
-    #     # get all perturbation concentrations for each parameter estimate
-    #     all_perturbation_y_ss = [[i_perturbation_info["y"] for i_perturbation_info in i_estimate_perturbation_ss]
-    #                              for i_estimate_perturbation_ss in j_sample_perturbation_ss]
-    #     # get all perturbation fluxes for each parameter estimate
-    #     all_perturbation_f_ss = [[i_perturbation_info["flux"] for i_perturbation_info in i_estimate_perturbation_ss]
-    #                              for i_estimate_perturbation_ss in j_sample_perturbation_ss]
-    #     # get all perturbation ss id for each parameter estimate
-    #     all_perturbation_ss_id = [[i_perturbation_info["ssid"] for i_perturbation_info in i_estimate_perturbation_ss]
-    #                               for i_estimate_perturbation_ss in j_sample_perturbation_ss]
-
-        # get initial ss for each parameter estimate
-        # all_initial_y_ss = [i_estimate_initial_ss["y"] for i_estimate_initial_ss in j_sample_initial_ss]
-        # all_initial_f_ss = [i_estimate_initial_ss["flux"] for i_estimate_initial_ss in j_sample_initial_ss]
-        # all_initial_ss_id = [i_estimate_initial_ss["ssid"] for i_estimate_initial_ss in j_sample_initial_ss]
-
-        # combine initial ss with perturbation ss
-        # number_parameter_estimates = len(all_initial_y_ss)
-        # for i_estimate in range(0, number_parameter_estimates):
-        #     all_perturbation_y_ss[i_estimate].insert(0, all_initial_y_ss[i_estimate])
-        #     all_perturbation_f_ss[i_estimate].insert(0, all_initial_f_ss[i_estimate])
-        #     all_perturbation_ss_id[i_estimate].insert(0, all_initial_ss_id[i_estimate])
-
-        # all_sample_all_ss.append({"y": all_perturbation_y_ss,
-        #                           "flux": all_perturbation_f_ss,
-        #                           "ssid": all_perturbation_ss_id})
 
     # combine initial and perturbation dynamics for all samples
     all_sample_all_dyn = []
@@ -236,12 +193,16 @@ def validate_model(y0, cvode_options, original_parameter, extracted_parameter, s
                                                                    noise_std=noise_std,
                                                                    target_data=target_data)
     # convert ss info to multi index data frame for storage and retrieval
-    df_index_tuples = [(i_value_sample, i_value_exp) for i_value_sample, i_value_exp in
-                       zip(all_sample_ss["estimate_id"], all_sample_ss["experiment_id"])]
-    multi_index_labels = ['estimate_id', 'experiment_id']
+    df_index_tuples = [(i_value_estimate, i_sample_id, i_data_set_id, i_exp_id)
+                       for i_value_estimate, i_sample_id, i_data_set_id, i_exp_id in
+                       zip(all_sample_ss["estimate_id"], all_sample_ss["sample_name"], all_sample_ss["data_set_id"],
+                           all_sample_ss["experiment_id"])]
+    multi_index_labels = ['estimate_id', 'sample_name', 'data_set_id', 'experiment_id']
     index = pd.MultiIndex.from_tuples(df_index_tuples, names=multi_index_labels)
 
     del all_sample_ss["estimate_id"]
+    del all_sample_ss["sample_name"]
+    del all_sample_ss["data_set_id"]
     del all_sample_ss["experiment_id"]
 
     # create data frame
