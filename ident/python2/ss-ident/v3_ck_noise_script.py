@@ -48,8 +48,8 @@ y0 = np.array([5, 1, 1])
 cvode_options = ('Newton', 'Adams', 1e-10, 1e-10, 200)
 validate_model(y0, cvode_options, default_parameter_values, validation_info,
                save_file_name='C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\ident\python2' \
-                              '\ss-ident\ident_validate_v3_root_1',
-               ss=1, dyn=0, noise=0, kinetics=2)
+                              '\ss-ident\ident_validate_v3_noise_root_1',
+               ss=1, dyn=0, noise=0, kinetics=2, target_data=range(0, 5))
 
 # plot true parameter values and determined parameter values
 plot_parameter_values(true_value_v3_root1, noise=1, data_sets_to_plot=range(0, 300))
