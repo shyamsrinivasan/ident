@@ -7,7 +7,6 @@ from names_strings import ident_parameter_name
 from plot_ident_results import plot_on_axis_object_polar
 
 
-
 def write_ident_info_file(all_data_dict, exp_df, file_name):
     """create data frame from identifiability data and write to csv file for future use"""
     # reset index of experimental data df
@@ -232,6 +231,7 @@ def parameter_ident_info(ident_df):
     all_p_data_set_names = []
     all_p_identifiability = []
     total_data_sets = []
+    all_p_sample_names = []
     for i_parameter_name in all_parameter_names:
         # get all data sets identifying each parameter
         identifying_df = ident_df[(ident_df["parameter_name"] == i_parameter_name) & (ident_df["identified"])]
@@ -241,6 +241,7 @@ def parameter_ident_info(ident_df):
         # get parameter values
         all_p_values.append([np.array(i_value) for i_value in identifying_df["parameter_value"].values])
         total_data_sets.append(len(ident_df.index.levels[1]))
+        all_p_sample_names.append([i_value[0] for i_value in identifying_df.index.values])
 
     all_p_info = {"names": all_parameter_names,
                   "values": all_p_values,
@@ -248,13 +249,25 @@ def parameter_ident_info(ident_df):
                   "data_sets": all_p_data_set_names,
                   "total_data_sets": total_data_sets,
                   "identifiability_percentage": [np.array(float(i_nr) * 100/float(i_dr)) for i_nr, i_dr in
-                                                 zip(all_p_identifiability, total_data_sets)]}
+                                                 zip(all_p_identifiability, total_data_sets)],
+                  "sample_name": all_p_sample_names}
     return all_p_info
 
 
 def sample_ident_info(all_sample_info):
     """return calculated mean identifiability and std in identifiability
     from all samples for all parameters"""
+    # get common data sets identifying all parameters in all samples
+    number_parameters = len(all_sample_info[0]["names"])
+    all_sample_data_sets = [[i_sample_info["data_sets"][i_parameter] for i_sample_info in all_sample_info]
+                            for i_parameter in range(0, number_parameters)]
+    all_parameter_data_sets = []
+    for i_parameter in all_sample_data_sets:
+        i_parameter_common_data_set = set(i_parameter[0])
+        for i_sample_info in i_parameter[1:]:
+            i_parameter_common_data_set.intersection_update(i_sample_info)
+        all_parameter_data_sets.append(list(i_parameter_common_data_set))
+
     all_identifiabilites = [i_sample_info["identifiability"] for i_sample_info in all_sample_info]
     sample_mean_identifiability = np.mean(np.array(all_identifiabilites), axis=0)
     sample_mean_ident = [np.array(i_parameter_ident) for i_parameter_ident in sample_mean_identifiability]
@@ -268,10 +281,12 @@ def sample_ident_info(all_sample_info):
     sample_std_identifiability_percent = np.std(np.array(all_identifiabilites_percent), axis=0)
     sample_std_ident_percent = [np.array(i_parameter_ident) for i_parameter_ident in
                                 sample_std_identifiability_percent]
+    all_sample_data_pair = [[i_p for i_sample in all_sample_info for i_p in zip(i_sample["sample_name"][i_parameter], i_sample["data_sets"][i_parameter])] for i_parameter in range(0, number_parameters)]
     ident_dict = {"ident_mean": sample_mean_ident,
                   "ident_std": sample_std_ident,
                   "ident_percent_mean": sample_mean_ident_percent,
-                  "ident_percent_std": sample_std_ident_percent}
+                  "ident_percent_std": sample_std_ident_percent,
+                  "sample_data_set_id": all_sample_data_pair}
     return ident_dict
 
 
