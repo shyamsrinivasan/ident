@@ -90,17 +90,26 @@ def get_ident_value(ident_function_list, experimental_data_list, flux_ids, flux_
     return all_data_ident_lists, number_of_parameters_per_flux
 
 
-def collect_data(exp_df, j_sample):
-    """collect data from df from all data sets in single sample to peform identiiability analysis"""
+def collect_data(exp_df, j_sample, numerical=0):
+    """collect data from df from all data sets in single sample to
+    peform identiiability analysis with cas and numerical method"""
     idx = pd.IndexSlice
     all_data_set_ids = exp_df.index.levels[1].tolist()
     # number_data_sets = (len(all_data_sets))
     all_exp_data = []
-    for j_data_set, data_set_id in enumerate(all_data_set_ids):
-        ident_data = exp_df.loc[idx[j_sample, data_set_id],
-                                ['acetate', 'pep', 'fdp', 'E', 'v1', 'v2', 'v3', 'v5']].values.tolist()
-        single_list = [i_variable for i_exp_data in ident_data for i_variable in i_exp_data]
-        all_exp_data.append(single_list)
+    if numerical:
+        # avoid converting list of lists to single list
+        for j_data_set, data_set_id in enumerate(all_data_set_ids):
+            ident_data = exp_df.loc[idx[j_sample, data_set_id],
+                                    ['acetate', 'pep', 'fdp', 'E', 'v1', 'v2', 'v3', 'v5']].values.tolist()
+            single_list = [i_exp_data for i_exp_data in ident_data]
+            all_exp_data.append(single_list)
+    else:
+        for j_data_set, data_set_id in enumerate(all_data_set_ids):
+            ident_data = exp_df.loc[idx[j_sample, data_set_id],
+                                    ['acetate', 'pep', 'fdp', 'E', 'v1', 'v2', 'v3', 'v5']].values.tolist()
+            single_list = [i_variable for i_exp_data in ident_data for i_variable in i_exp_data]
+            all_exp_data.append(single_list)
     return all_exp_data
 
 
