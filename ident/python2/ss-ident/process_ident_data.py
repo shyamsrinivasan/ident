@@ -22,6 +22,7 @@ def write_ident_info_file(all_data_dict, exp_df, file_name):
     data_df = pd.DataFrame(all_data_dict, columns=all_data_dict.keys())
 
     # number of occurrences of each data set id = number of experiments per data set in the first sample
+    number_samples = len(data_df["sample_name"].unique())
     first_sample_rows = data_df[data_df["sample_name"] == 'sample_0']
     data_set_id_frequency = int(max(first_sample_rows["data_set_id"].value_counts()))
     # all experiment ids
@@ -40,10 +41,10 @@ def write_ident_info_file(all_data_dict, exp_df, file_name):
                                                 (reset_exp_df["data_set_id"] == j_data_set_id)]
                                    ["parameter_name"].values.tolist() for j_data_set_id in data_set_ids]
     all_pos_experiment_id = [[i_p for j_data_set in all_data_set_experiments
-                              for i_p in [j_data_set[j_position_exp]]*len(experiment_pos_names)]*5
+                              for i_p in [j_data_set[j_position_exp]]*len(experiment_pos_names)]*number_samples
                              for j_position_exp in range(0, len(experiment_pos_names))]
     all_pos_exp_parameters = [[i_p for j_data_set in all_data_set_exp_parameters
-                               for i_p in [j_data_set[j_position_exp]] * len(experiment_pos_parameters)] * 5
+                               for i_p in [j_data_set[j_position_exp]] * len(experiment_pos_parameters)] * number_samples
                               for j_position_exp in range(0, len(experiment_pos_parameters))]
     experiment_pos_info_keys = experiment_pos_names + experiment_pos_parameters
     experiment_pos_info_values = all_pos_experiment_id + all_pos_exp_parameters
