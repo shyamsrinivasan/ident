@@ -186,6 +186,13 @@ def plot_on_axis_object_vertical(axis_obj, x_data, y_data, y_error, y_percent_me
     return None
 
 
+def plot_scatter(axis_object, x_data, y_data):
+    # axis_object = plt.Subplot(fig_object, grid_object)
+    axis_object.plot(x_data, y_data, linestyle='None', marker='o', markersize=2)
+    # fig_object.add_subplot(axis_object)
+    return None
+
+
 def identifiability_plot(info_dict):
     """plot identifiability (number and percentage of data sets identifying each parameter)
     of every parameter in a given flux"""
@@ -341,6 +348,7 @@ def separate_validation_plot(info_dict, scatter=True, box=False, violin=True):
             for i_variable, (i_var_value, i_var_name) in enumerate(zip(info_dict["values"], info_dict["names"])):
                 scatter_axis = f1.add_subplot(plot_grid[2, i_variable])
                 # scatter code
+                plot_scatter(scatter_axis, info_dict["experiment_values"][i_variable], info_dict["values"][i_variable])
     return None
 
 
@@ -348,7 +356,7 @@ def validation_plot(info_dict, concentration=True, flux=False, violin=True, box=
     """plot values of concentrations and fluxes obtained from validation experiments"""
     if concentration:
         concentration_dict = info_dict["concentration"]
-        separate_validation_plot(concentration_dict, violin=violin, box=box, scatter=False)
+        separate_validation_plot(concentration_dict, violin=violin, box=box, scatter=True)
 
     if flux:
         flux_dict = info_dict["flux"]
@@ -864,13 +872,6 @@ def plot_parameter_value_hist(parameter_value, noise=0):
 
             set_hist_box_axis_limits(all_hist_axis, all_box_axis)
     return None
-
-
-def plot_scatter(x_data, y_data, fig_object, grid_object):
-    axis_object = plt.Subplot(fig_object, grid_object)
-    axis_object.plot(x_data, y_data, linestyle='None', marker='o', markersize=2)
-    fig_object.add_subplot(axis_object)
-    return axis_object
 
 
 def plot_line(x_data, y_data, fig_object, grid_object):
