@@ -5,6 +5,7 @@ import pandas as pd
 from collections import defaultdict
 from generate_expdata import initialize_to_ss
 from generate_expdata import perturb_parameters
+from names_strings import variable_name
 
 
 def run_initial_ss_simulation(y0, cvode_options, estimated_parameter, noise=0, kinetics=2, noise_std=0.05):
@@ -229,8 +230,63 @@ def validate_model(y0, cvode_options, original_parameter, extracted_parameter, s
     return all_ss_df
 
 
-def validate_perturbation_ss():
-    """validate estimated parameter values based on ss values obtained for different perturbations"""
-    # get initial steady state information for all estimated parameter sets
-    # get perturbation steady state information for all estimated parameter sets
-    return None
+def get_variable_info(validate_df, exp_df, variable_type='metabolite'):
+    """return all extracted info from validation and experimental df for
+    desired type of variable (concentration/flux)"""
+
+    idx = pd.IndexSlice
+
+    # get all variable info from validation df
+    # get all concentration names
+    var_names = variable_name(variable_type)
+    relevant_df = validate_df[var_names]
+    # get all concentration values
+    all_var_values = relevant_df.values
+    all_var_list = [all_var_values[:, i_var] for i_var, _ in enumerate(var_names)]
+    # scatter plot of concentration
+
+    # number of parameter estiates
+    number_estimates = len(relevant_df.index.levels[0].unique())
+
+    # get all unique experiment info
+    experiment_ids = relevant_df.index.levels[3].unique()
+    # collect concentration info from all sample/data sets/experiments for distribution plots (violin/box)
+    all_exp_var_values = [[relevant_df.loc[idx[:, :, :, i_experiment], idx[i_var]].values.tolist()
+                          for i_experiment in experiment_ids] for i_var in var_names]
+    experiment_ids = experiment_ids.tolist()
+
+    # get steady state concentrations from original experimental data
+    relevant_exp_df = exp_df[var_names]
+    all_var_exp_values = relevant_exp_df.values
+    all_var_exp_list = [all_var_exp_values[:, i_var] for i_var, _ in enumerate(var_names)]
+
+    var_info = {"names": var_names,
+                "values": [list(i_var) for i_var in all_var_list],
+                "experiment_id": experiment_ids,
+                "experiment_id_dist": all_exp_var_values,
+                "experiment_values": [[x_val for i_val in j_var for x_val in [i_val]*number_estimates]
+                                      for j_var in all_var_exp_list],
+                "variable_type": variable_type}
+    return var_info
+
+
+def process_validation_info(validate_df, exp_df):
+    """process all validation information from stored df for plotting"""
+    idx = pd.IndexSlice
+    # lexicographic ordering of df indices
+    validate_df.sort_index(level="estimate_id", inplace=True)
+    validate_df.sort_index(level="sample_name", inplace=True)
+    validate_df.sort_index(level="data_set_id", inplace=True)
+    validate_df.sort_index(level="experiment_id", inplace=True)
+
+    # lexicographic ordering of exp df indices
+    exp_df.sort_index(level='sample_name', inplace=True)
+    exp_df.sort_index(level='experiment_id', inplace=True)
+
+    # get all concentration (validation and original experiment for plotting
+    all_c_info = get_variable_info(validate_df, exp_df, variable_type='metabolite')
+
+    # get all flux (validation and original experiment)
+    all_f_info = get_variable_info(validate_df, exp_df, variable_type='flux')
+
+    return all_c_info, all_f_info
