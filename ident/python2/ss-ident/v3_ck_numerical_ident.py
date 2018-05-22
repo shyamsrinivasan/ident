@@ -30,10 +30,10 @@ optim_options = {"solver": "ipopt",
                  "opts": {"ipopt.tol": 1e-12}}
 # optim_options = {"solver": "sqpmethod",\
 #                  "opts": {"qpsol": "qpoases"}}
-initial_value = [[100, 80, 400, 0, 0, 0], [100, 400, 400, 0, 0, 0]]
+initial_value = [[100, 80, 400, 0, 0, 0], [100, 400, 400, 0, 0, 0], [50, 50, 400, 0, 0, 0]]
 # randomized_initial_values = generate_random_initial_conditions(initial_value, 10, negative=1)
 problem = {"lbx": 6 * [0],
-           "ubx": [100, 500, 500, .0001, .0001, .0001],
+           "ubx": [200, 600, 600, .0001, .0001, .0001],
            "lbg": 3 * [0],
            "ubg": 3 * [0]}
 from numerical_ident import solve_multiple_initial_conditions
@@ -68,7 +68,7 @@ validation_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\Integrat
 from validate_estimation import validate_model
 validate_model(y0, cvode_options, default_parameter_values, validation_info,
                save_file_name=validation_file_name,
-               ss=1, dyn=0, noise=1, kinetics=2, target_data=range(0, 5))
+               ss=1, dyn=0, noise=1, kinetics=2)
 
 # retrieve validation info from file
 validate_index_labels = ['estimate_id', 'sample_name', 'data_set_id', 'experiment_id']
