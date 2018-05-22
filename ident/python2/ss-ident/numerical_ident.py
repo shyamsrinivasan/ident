@@ -189,16 +189,13 @@ def compile_opt_result(all_opt_sol):
     return all_sol_dict
 
 
-def identify_all_data_sets(experimental_data, chosen_fun, x0, optim_options={}):
+def identify_all_data_sets(experimental_data, chosen_fun, x0, prob, optim_options={}):
     """run numerical identifying algorithm for chosen flux (choose constraints, objective and bounds)
     for a given set of experimental data and initial condition"""
     if chosen_fun == 0:
         ident_fun = v3_ck_numerical_problem
-        # Initial condition
-        arg = {"lbx": 6 * [0],
-               "ubx": [50, 1, 1, .1, .1, .1],
-               "lbg": 3 * [0],
-               "ubg": 3 * [0]}
+        # set problem constraint and variable bounds
+        arg = prob
         variable_name = ["V3max", "K3fdp", "K3pep"]
         error_names = ["eps_1", "eps_2", "eps_3"]
     elif chosen_fun == 1:
@@ -213,6 +210,8 @@ def identify_all_data_sets(experimental_data, chosen_fun, x0, optim_options={}):
         ident_fun = []
         arg = {}
         variable_name = []
+        error_names = []
+    # Initial condition
     arg["x0"] = x0
 
     number_data_sets = len(experimental_data["value"])
@@ -304,7 +303,7 @@ def process_opt_solution(opt_sol, exp_df, opt_solution, number_of_parameters, fl
     return all_parameter_info
 
 
-def solve_multiple_initial_conditions(all_initial_conditions, experimental_data, chosen_fun, optim_options,
+def solve_multiple_initial_conditions(all_initial_conditions, experimental_data, chosen_fun, prob, optim_options,
                                       number_of_parameters, flux_id, flux_choice, exp_df, file_name=()):
     """solve numerical nlp ident for multiple parameter initial conditions"""
     number_initial_conditions = len(all_initial_conditions)
@@ -316,7 +315,7 @@ def solve_multiple_initial_conditions(all_initial_conditions, experimental_data,
         initial_condition_id = "sample_{}".format(j_id)
         # code to run opt for each initial value in each element of list
         opt_solution = identify_all_data_sets(experimental_data, chosen_fun=chosen_fun,
-                                              x0=j_initial_condition, optim_options=optim_options)
+                                              x0=j_initial_condition, prob=prob, optim_options=optim_options)
         opt_solution.update({"sample_name": [initial_condition_id] * len(opt_solution["data_set_id"])})
         # update dictionary
         for key, value in it.chain(opt_solution.items(), empty_dict.items()):

@@ -1,9 +1,10 @@
-import numpy as np
 from create_experiment_data import retrieve_experimental_data_from_file
 from identifiability_analysis import data_numerical_ident
+from numerical_ident import process_opt_solution
 from names_strings import true_parameter_values
-from validate_estimation import validate_model
-from plot_ident_results import plot_numerical_parameter_estimates
+from validate_estimation import process_validation_info
+from plot_ident_results import parameter_values_plot
+from plot_ident_results import validation_plot
 
 
 # create data for identifiability analysis
@@ -29,26 +30,29 @@ optim_options = {"solver": "ipopt",
                  "opts": {"ipopt.tol": 1e-12}}
 # optim_options = {"solver": "sqpmethod",\
 #                  "opts": {"qpsol": "qpoases"}}
-initial_value = [80, 80, 400, 0, 0, 0]
+initial_value = [100, 80, 400, 0, 0, 0]
 # randomized_initial_values = generate_random_initial_conditions(initial_value, 10, negative=1)
+problem = {"lbx": 6 * [0],
+           "ubx": [100, 500, 500, .001, .001, .001],
+           "lbg": 3 * [0],
+           "ubg": 3 * [0]}
 from numerical_ident import solve_multiple_initial_conditions
-# all_sol_df , _ = solve_multiple_initial_conditions(all_initial_conditions=[initial_value],
-#                                                    experimental_data=all_exp_data, chosen_fun=0,
-#                                                    optim_options=optim_options, number_of_parameters=3, flux_id=3,
-#                                                    flux_choice=[3], exp_df=arranged_data_df,
-#                                                    file_name=storage_file_name)
+all_sol_df, _ = solve_multiple_initial_conditions(all_initial_conditions=[initial_value],
+                                                  experimental_data=all_exp_data, chosen_fun=0, prob=problem,
+                                                  optim_options=optim_options, number_of_parameters=3, flux_id=3,
+                                                  flux_choice=[3], exp_df=arranged_data_df,
+                                                  file_name=storage_file_name)
 
 index_labels = ['sample_name', 'data_set_id']
 numerical_ident_df = retrieve_experimental_data_from_file(data_file_name=storage_file_name,
                                                           multi_index_label=index_labels)
-from numerical_ident import process_opt_solution
 all_parameter_info = process_opt_solution(numerical_ident_df, arranged_data_df, [], [], [], [])
 # plot_numerical_parameter_estimates(v3_all_x0_parameter_info[0])
 # extract all parameter values
 # from process_ident_data import get_parameter_value
 # validation_info = get_parameter_value(all_parameter_info, numerical_ident_df)
 # get default parameter values
-# default_parameter_values = true_parameter_values()
+default_parameter_values = true_parameter_values()
 # initial value used to generate experimental data
 # y0 = np.array([5, 1, 1])
 # integrator options
@@ -56,6 +60,7 @@ all_parameter_info = process_opt_solution(numerical_ident_df, arranged_data_df, 
 # validate all parameter values
 validation_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\ident\python2' \
                        '\ss-ident\ident_numerical_validate_v3_root_1'
+# from validate_estimation import validate_model
 # validate_model(y0, cvode_options, default_parameter_values, validation_info,
 #                save_file_name=validation_file_name,
 #                ss=1, dyn=0, noise=0, kinetics=2, target_data=range(0, 5))
@@ -64,7 +69,16 @@ validation_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\Integrat
 validate_index_labels = ['estimate_id', 'sample_name', 'data_set_id', 'experiment_id']
 validate_df = retrieve_experimental_data_from_file(data_file_name=validation_file_name,
                                                    multi_index_label=validate_index_labels)
-# plot validation info
+# validation plot
+original_experiment_file = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\ident\python2' \
+                            '\ss-ident\experiments'
+exp_df = retrieve_experimental_data_from_file(data_file_name=original_experiment_file,
+                                              multi_index_label=['sample_name', 'experiment_id'])
 
+all_c_info, all_f_info = process_validation_info(validate_df, exp_df)
+validation_plot({"concentration": all_c_info, "flux": all_f_info}, flux=True)
+
+# get parameter value plot
+parameter_values_plot(all_parameter_info, default_parameter_values)
 
 print("Run complete\n")
