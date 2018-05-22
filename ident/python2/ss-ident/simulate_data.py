@@ -98,24 +98,3 @@ def data_for_each_sample_numerical(perturbation_details, experiments_per_set,
     dataset_keys = ['values', 'dataset_id', 'experiments']
     experimental_data = dict(zip(dataset_keys, [all_data_values, choose, experiment_index_iter]))
     return experimental_data
-
-
-def arrange_experimental_data_numerical(xss, fss, perturbation_details, experiments_per_set,
-                              flux_id=np.array([0, 1, 2, 3, 4, 5]), combination_choice=(), experiment_choice=()):
-    """arrange experimental is a list with len(list) = number of experiments needed for identifying each flux"""
-    number_of_samples = len(xss)
-    # get combinations just based on number of experiments in each sample
-    data_combinations, data_combination_boolean, \
-    experiment_choice, combination_choice = get_data_combinations(xss[0], experiments_per_set,
-                                                                  experiment_choice, combination_choice)
-
-    # get values for each combination determined from above permutation
-    all_sample_experimental_data = []
-    for i_sample in range(0, number_of_samples):
-        experimental_data = data_for_each_sample_numerical(perturbation_details, experiments_per_set,
-                                                           data_combinations, xss[i_sample], fss[i_sample],
-                                                           flux_id, combination_choice)
-        experimental_data["boolean"] = data_combination_boolean
-        all_sample_experimental_data.append(experimental_data)
-    return all_sample_experimental_data, experiment_choice, combination_choice
-
