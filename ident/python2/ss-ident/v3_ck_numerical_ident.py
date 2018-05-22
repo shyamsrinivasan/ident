@@ -8,9 +8,6 @@ from plot_ident_results import parameter_values_plot
 from plot_ident_results import validation_plot
 
 
-from plot_ident_results import plot_numerical_parameter_estimates
-
-
 # create data for identifiability analysis
 # from create_experiment_data import create_data_for_flux
 # create_data_for_flux(flux_id='v3', noise=0, number_samples=1)
