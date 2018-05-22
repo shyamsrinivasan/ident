@@ -116,21 +116,37 @@ def variable_name(var_type, var_id=()):
     met_list = ['pep', 'fdp', 'E']
     flux_list = ['v1', 'v5', 'v3', 'v2', 'v4', 'v6']
     if var_type == 'metabolite':
-        if var_id:
-            try:
+        if hasattr(var_id, '__iter__'):
+            if var_id:
                 var_names = [met_list[j_var_id] for j_var_id in var_id]
-            except TypeError:
-                var_names = met_list[var_id]
+            else:
+                var_names = met_list
         else:
-            var_names = met_list
+            var_names = met_list[var_id]
+
+        # if var_id:
+        #     try:
+        #         var_names = [met_list[j_var_id] for j_var_id in var_id]
+        #     except TypeError:
+        #         var_names = met_list[var_id]
+        # else:
+        #     var_names = met_list
     elif var_type == 'flux':
-        if var_id:
-            try:
+        if hasattr(var_id, '__iter__'):
+            if var_id:
                 var_names = [flux_list[j_var_id] for j_var_id in var_id]
-            except TypeError:
-                var_names = flux_list[var_id]
+            else:
+                var_names = flux_list
         else:
-            var_names = flux_list
+            var_names = flux_list[var_id]
+
+        # if var_id:
+        #     try:
+        #         var_names = [flux_list[j_var_id] for j_var_id in var_id]
+        #     except TypeError:
+        #         var_names = flux_list[var_id]
+        # else:
+        #     var_names = flux_list
     else:
         var_names = []
     return var_names
