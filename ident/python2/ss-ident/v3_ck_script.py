@@ -66,6 +66,8 @@ exp_df = retrieve_experimental_data_from_file(data_file_name=original_experiment
 
 from validate_estimation import process_validation_info
 all_c_info, all_f_info = process_validation_info(validate_df, exp_df)
+from plot_ident_results import validation_plot
+validation_plot({"concentration": all_c_info, "flux": all_f_info})
 
 # get parameter value plot
 parameter_values_plot(all_parameter_info, default_parameter_values)
