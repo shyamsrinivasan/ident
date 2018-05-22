@@ -45,14 +45,14 @@ from numerical_ident import process_opt_solution
 all_parameter_info = process_opt_solution(numerical_ident_df, arranged_data_df, [], [], [], [])
 # plot_numerical_parameter_estimates(v3_all_x0_parameter_info[0])
 # extract all parameter values
-from process_ident_data import get_parameter_value
-validation_info = get_parameter_value(all_parameter_info, numerical_ident_df)
+# from process_ident_data import get_parameter_value
+# validation_info = get_parameter_value(all_parameter_info, numerical_ident_df)
 # get default parameter values
-default_parameter_values = true_parameter_values()
+# default_parameter_values = true_parameter_values()
 # initial value used to generate experimental data
-y0 = np.array([5, 1, 1])
+# y0 = np.array([5, 1, 1])
 # integrator options
-cvode_options = ('Newton', 'Adams', 1e-10, 1e-10, 200)
+# cvode_options = ('Newton', 'Adams', 1e-10, 1e-10, 200)
 # validate all parameter values
 validation_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\ident\python2' \
                        '\ss-ident\ident_numerical_validate_v3_root_1'
