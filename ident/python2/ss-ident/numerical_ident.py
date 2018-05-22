@@ -236,30 +236,71 @@ def identify_all_data_sets(experimental_data, chosen_fun, x0, optim_options={}):
     return opt_solution
 
 
-def process_opt_solution(opt_solution, number_of_parameters, flux_id, flux_choice):
+def process_opt_solution(opt_sol, exp_df, opt_solution, number_of_parameters, flux_id, flux_choice):
     """parse optimization solution based on each parameter from each data set"""
-    # optimal values
-    x_opt = opt_solution["x"]
-    # obj fun value
-    obj_f = opt_solution["f"]
 
-    flux_name = ['flux{}'.format(flux_id)] * number_of_parameters
-    flux_choice = flux_choice * 3
-    all_parameter_name = ident_parameter_name(parameter_id=range(0, number_of_parameters),
-                                              flux_name=flux_name, flux_choice_id=flux_choice)
-    all_parameter_true_value = true_parameter_values(flux_based=1, flux_name=flux_name,
-                                                           flux_choice_id=flux_choice, parameter_id=all_parameter_name)
+    idx = pd.IndexSlice
 
+    # lexicographic ordering of opt_sol df indices
+    opt_sol.sort_index(level='sample_name', inplace=True)
+    opt_sol.sort_index(level='data_set_id', inplace=True)
+
+    # get all parameter names
+    parameter_names = opt_sol["parameter_name"].unique().tolist()
+
+    # get all sample/data set ids (df indices)
+    sample_data_set_ids = np.unique(opt_sol.index.values).tolist()
+
+    # total number of data sets used
+    total_data_sets = [len(opt_sol.index.levels[1])] * len(parameter_names)
+
+    # bring all details together in number_parameter len lists
+    relevant_df = opt_sol.loc[idx[sample_data_set_ids], ['parameter_name', 'parameter_value']]
     all_parameter_values = []
-    for i_parameter in range(number_of_parameters):
-        i_parameter_sol = [i_data_set_sol[i_parameter] for i_data_set_sol in x_opt]
-        all_parameter_values.append(np.array(i_parameter_sol).flatten())
-    all_parameter_info = {"values": all_parameter_values,
-                          "names": all_parameter_name,
-                          "flux": flux_name,
-                          "flux choice": flux_choice,
-                          "true value": all_parameter_true_value,
-                          "data_id": opt_solution["data_id"]}
+    all_parameter_names = []
+    for i_parameter, i_parameter_name in enumerate(parameter_names):
+        i_p_value = relevant_df[relevant_df["parameter_name"] == i_parameter_name]["parameter_value"].values
+        all_parameter_values.append([j_p_value for j_p_value in i_p_value])
+        all_parameter_names.append(i_parameter_name)
+
+    # get flux names
+    # all_flux_names = ident_df["flux_name"].unique().tolist() * len(all_parameter_info["names"])
+    # all_parameter_info.update({"flux_name": all_flux_names})
+
+    all_parameter_info = {"names": all_parameter_names,
+                          "values": all_parameter_values,
+                          "sample_data_set_id": [sample_data_set_ids] * len(parameter_names),
+                          "total_data_sets": total_data_sets,
+                          "flux_name": ['flux'] * len(parameter_names)}
+
+    # lexographic ordering of exp df indices
+    # exp_df.sort_index(level='sample_name', inplace=True)
+    # exp_df.sort_index(level='data_set_id', inplace=True)
+    # exp_df.sort_index(level='experiment_id', inplace=True)
+    #
+    #
+    # # optimal values
+    # x_opt = opt_solution["x"]
+    # # obj fun value
+    # obj_f = opt_solution["f"]
+    #
+    # flux_name = ['flux{}'.format(flux_id)] * number_of_parameters
+    # flux_choice = flux_choice * 3
+    # all_parameter_name = ident_parameter_name(parameter_id=range(0, number_of_parameters),
+    #                                           flux_name=flux_name, flux_choice_id=flux_choice)
+    # all_parameter_true_value = true_parameter_values(flux_based=1, flux_name=flux_name,
+    #                                                        flux_choice_id=flux_choice, parameter_id=all_parameter_name)
+    #
+    # all_parameter_values = []
+    # for i_parameter in range(number_of_parameters):
+    #     i_parameter_sol = [i_data_set_sol[i_parameter] for i_data_set_sol in x_opt]
+    #     all_parameter_values.append(np.array(i_parameter_sol).flatten())
+    # all_parameter_info = {"values": all_parameter_values,
+    #                       "names": all_parameter_name,
+    #                       "flux": flux_name,
+    #                       "flux choice": flux_choice,
+    #                       "true value": all_parameter_true_value,
+    #                       "data_id": opt_solution["data_id"]}
     return all_parameter_info
 
 
@@ -288,19 +329,9 @@ def solve_multiple_initial_conditions(all_initial_conditions, experimental_data,
         print("Analysis with Initial Condition {} of {} Complete".format(j_id+1, number_initial_conditions))
 
     # process and write data to file
-    write_ident_info_file(all_initial_condition_sol, exp_df, file_name)
+    all_sol_df, index_labels = write_ident_info_file(all_initial_condition_sol, exp_df, file_name)
 
-    # create multi index df of results and save it to file
-    ind_tuple = [(i_initial, i_data) for i_initial, i_data in
-                 zip(all_initial_condition_sol["sample_name"], all_initial_condition_sol["data_set_id"])]
-    ind = pd.MultiIndex.from_tuples(ind_tuple, names=['sample_name', 'data_set_id'])
-    del all_initial_condition_sol["sample_name"]
-    del all_initial_condition_sol["data_set_id"]
-    all_sol_df = pd.DataFrame(all_initial_condition_sol, index=ind, columns=all_initial_condition_sol.keys())
-
-    all_sol_df.to_csv(file_name, index_label=['sample_name', 'data_set_id'])
-
-    return all_sol_df
+    return all_sol_df, index_labels
 
 
 def generate_random_initial_conditions(given_initial_condition, number_random_conditions, negative=0):
