@@ -1,4 +1,3 @@
-import numpy as np
 from create_experiment_data import retrieve_experimental_data_from_file
 from identifiability_analysis import data_numerical_ident
 from numerical_ident import process_opt_solution
