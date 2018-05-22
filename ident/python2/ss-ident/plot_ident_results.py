@@ -357,66 +357,6 @@ def validation_plot(info_dict, concentration=True, flux=False, violin=True, box=
     return None
 
 
-def parameter_experiment_info_plot(flux_based_experiment_info, noise=0):
-    """plot position based contribution from each experiment towards
-    identifiable data combinations for each parameter for each flux"""
-    all_sample_all_flux_processed_info = flux_based_experiment_info["processed"]
-    number_of_fluxes = len(all_sample_all_flux_processed_info)
-    for j_flux, j_flux_data in enumerate(all_sample_all_flux_processed_info):
-        number_of_parameters_in_flux = len(j_flux_data)
-        for k_parameter, k_parameter_data in enumerate(j_flux_data):
-            number_of_experiment_positions = len(k_parameter_data)
-            number_of_subplots = number_of_experiment_positions
-            number_of_rows = 1
-            f, axarr = plt.subplots(number_of_rows, number_of_subplots, sharey='row',
-                                    figsize=(8, 6), dpi=100, facecolor='w', edgecolor='k')
-            # get parameter name for figure title
-            parameter_name = ident_parameter_name(k_parameter,
-                                                  flux_name="flux{}".format(k_parameter_data[0]["total"]["flux id"]),
-                                                  flux_choice_id=k_parameter_data[0]["total"]["flux choice"])
-            # set figure title to parameter name
-            figure_title = "flux {}".format(k_parameter_data[0]["total"]["flux id"]) + " " + parameter_name
-            f.text(.5, .975, figure_title, horizontalalignment='center', verticalalignment='top')
-            try:
-                for i_position, i_axis_obj in enumerate(axarr):
-                    x_data = k_parameter_data[i_position]["total"]["mean"]
-                    y_data = np.arange(0, len(x_data))
-                    x_error = k_parameter_data[i_position]["total"]["std"]
-                    x_percent_mean = k_parameter_data[i_position]["percentage"]["mean"]
-                    x_percent_error = k_parameter_data[i_position]["percentage"]["std"]
-                    # get y-axis labels (experiment types)
-                    y_tick_labels = kotte_experiment_type_name(y_data)
-                    # plot and annotate using plotting function defined above
-                    plot_on_axis_object(i_axis_obj, x_data, y_data, x_error, x_percent_mean, x_percent_error, noise)
-                    # set axis title
-                    i_axis_obj.set_title('experiment {}'.format(i_position + 1))
-                # set x-axis label
-                axarr[-1].set_xlabel('Frequency of Experiment Appearance')
-                # set y-axis tick label
-                axarr[0].set_yticklabels(y_tick_labels)
-                # invert y-axis
-                axarr[0].invert_yaxis()
-            except TypeError:
-                for i_position in range(0, number_of_experiment_positions):
-                    x_data = k_parameter_data[i_position]["total"]["mean"]
-                    y_data = np.arange(0, len(x_data))
-                    x_error = k_parameter_data[i_position]["total"]["std"]
-                    x_percent_mean = k_parameter_data[i_position]["percentage"]["mean"]
-                    x_percent_error = k_parameter_data[i_position]["percentage"]["std"]
-                    # plot and annotate using plotting function defined above
-                    plot_on_axis_object(axarr, x_data, y_data, x_error, x_percent_mean, x_percent_error, noise)
-                    # set axis title
-                    axarr.set_title('experiment {}'.format(i_position + 1))
-                # set x-axis label
-                axarr.set_xlabel('Number of data combinations used for identification')
-                # set y-axis tick label
-                axarr[0].set_yticklabels(y_tick_labels)
-                # invert y-axis
-                axarr.invert_yaxis()
-    plt.show()
-    return None
-
-
 def data_utility_plot(data_list, noise=0):
     """collect processed data from all samples for each individual flux and
     plot the utility of the same data combination for all parameters of
