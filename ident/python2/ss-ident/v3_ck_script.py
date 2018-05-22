@@ -1,14 +1,11 @@
-import numpy as np
 from create_experiment_data import retrieve_experimental_data_from_file
-from kotte_model import flux_ident_3_data_combination
 from process_ident_data import process_ident
-from process_ident_data import get_parameter_value
-from validate_estimation import validate_model
+from validate_estimation import process_validation_info
 from plot_ident_results import exp_info_plot
 from plot_ident_results import identifiability_plot
 from plot_ident_results import parameter_values_plot
+from plot_ident_results import validation_plot
 from names_strings import true_parameter_values
-from plot_ident_results import data_utility_plot
 
 
 # create data for identifiability analysis
@@ -30,6 +27,7 @@ storage_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedM
 # choose identifiability functions to test
 ident_fun_choice = [0]
 # test identifiability and store data to file
+# from kotte_model import flux_ident_3_data_combination
 # flux_ident_3_data_combination(arranged_data_df, flux_ids=[3], flux_choice=[1],
 #                               ident_fun_choice=ident_fun_choice, file_name=storage_file_name)
 
@@ -43,10 +41,12 @@ all_parameter_info = process_ident(ident_df, arranged_data_df)
 # get info from data sets that identify all 3 parameters
 validation_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\ident\python2' \
                        '\ss-ident\ident_validate_v3_root_1'
+# from process_ident_data import get_parameter_value
 # validation_info = get_parameter_value(all_parameter_info, ident_df)
 # # get default parameter values
 default_parameter_values = true_parameter_values()
 # # initial value used to generate experimental data
+# from validate_estimation import validate_model
 # y0 = np.array([5, 1, 1])
 # # integrator options
 # cvode_options = ('Newton', 'Adams', 1e-10, 1e-10, 200)
@@ -64,10 +64,8 @@ original_experiment_file = 'C:\Users\shyam\Documents\Courses\CHE1125Project\Inte
 exp_df = retrieve_experimental_data_from_file(data_file_name=original_experiment_file,
                                               multi_index_label=['sample_name', 'experiment_id'])
 
-from validate_estimation import process_validation_info
 all_c_info, all_f_info = process_validation_info(validate_df, exp_df)
-from plot_ident_results import validation_plot
-validation_plot({"concentration": all_c_info, "flux": all_f_info})
+validation_plot({"concentration": all_c_info, "flux": all_f_info}, flux=True)
 
 # get parameter value plot
 parameter_values_plot(all_parameter_info, default_parameter_values)
