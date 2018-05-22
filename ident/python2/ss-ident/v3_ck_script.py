@@ -41,17 +41,31 @@ all_parameter_info = process_ident(ident_df, arranged_data_df)
 
 # run dynamic simulations to obtain ss data based on estimated parameter values
 # get info from data sets that identify all 3 parameters
-validation_info = get_parameter_value(all_parameter_info, ident_df)
-# get default parameter values
+validation_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\ident\python2' \
+                       '\ss-ident\ident_validate_v3_root_1'
+# validation_info = get_parameter_value(all_parameter_info, ident_df)
+# # get default parameter values
 default_parameter_values = true_parameter_values()
-# initial value used to generate experimental data
-y0 = np.array([5, 1, 1])
-# integrator options
-cvode_options = ('Newton', 'Adams', 1e-10, 1e-10, 200)
-validate_model(y0, cvode_options, default_parameter_values, validation_info,
-               save_file_name='C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\ident\python2' \
-                              '\ss-ident\ident_validate_v3_root_1',
-               ss=1, dyn=0, noise=0, kinetics=2, target_data=range(0, 5))
+# # initial value used to generate experimental data
+# y0 = np.array([5, 1, 1])
+# # integrator options
+# cvode_options = ('Newton', 'Adams', 1e-10, 1e-10, 200)
+# validate_model(y0, cvode_options, default_parameter_values, validation_info,
+#                save_file_name=validation_file_name,
+#                ss=1, dyn=0, noise=0, kinetics=2, target_data=range(0, 5))
+
+# retrieve validation info from file
+validate_index_labels = ['estimate_id', 'sample_name', 'data_set_id', 'experiment_id']
+validate_df = retrieve_experimental_data_from_file(data_file_name=validation_file_name,
+                                                   multi_index_label=validate_index_labels)
+# validation plot
+original_experiment_file = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\ident\python2' \
+                            '\ss-ident\experiments'
+exp_df = retrieve_experimental_data_from_file(data_file_name=original_experiment_file,
+                                              multi_index_label=['sample_name', 'experiment_id'])
+
+from validate_estimation import process_validation_info
+all_c_info, all_f_info = process_validation_info(validate_df, exp_df)
 
 # get parameter value plot
 parameter_values_plot(all_parameter_info, default_parameter_values)
@@ -61,21 +75,5 @@ identifiability_plot(all_parameter_info)
 
 # get experiment info plot
 exp_info_plot(all_parameter_info)
-
-print('Practical Identifiability Analysis of v3 with 3 parameters: V3max, K3fdp and K3pep \n')
-# perform identifiability when v3 parameters are written for root (2)
-ident_details_v3_root2 = flux_ident_3_data_combination(experimental_datasets_3_expts, choose=combination_choice,
-                                                       flux_ids=[3], flux_choice=[2], ident_fun_choice=ident_fun_choice)
-print('Identifiability analysis for v3 with 3 parameters (V3max, K3fdp and K3pep) complete.\n')
-# data processing
-# data_list_v3_root2, max_parameter_v3_root2, true_value_v3_root2, experiment_info_v3_root2, \
-#     combined_data_list_v3_root2, combined_max_parameter_v3_root2, combined_true_value_v3_root2, \
-#     combined_experiment_info_v3_root2 = process_info_sample(ident_details_v3_root2,
-#                                                             experimental_datasets_3_expts,
-#                                                             experiment_type_indices,
-#                                                             ident_fun_choice=ident_fun_choice)
-
-# plot utility of data sets (number of data sets identifying n, n-1, n-2, ...., 1, 0 parameters
-data_utility_plot(data_list_v3_root2)
 
 print("Run complete\n")
