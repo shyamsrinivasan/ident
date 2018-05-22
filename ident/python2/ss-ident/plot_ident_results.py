@@ -352,15 +352,44 @@ def separate_validation_plot(info_dict, scatter=True, box=False, violin=True):
     return None
 
 
+def experiment_based_validation(info_dict, box=False, violin=True):
+    """plot concentrations for different experiment separately to
+    look at distribution within each experiments"""
+    number_variables = len(info_dict["names"])
+    f1 = plt.figure(figsize=(6, 4), dpi=100, tight_layout=True)
+    plot_grid = gridspec.GridSpec(1, number_variables)
+    if box:
+        pass
+
+    if violin:
+        for i_variable, i_var_name in enumerate(info_dict["names"]):
+            violin_axis = f1.add_subplot(plot_grid[0, i_variable])
+            plot_on_axis_object_violin(violin_axis, info_dict["experiment_id_dist"][i_variable])
+            violin_axis.set_xticks(np.arange(1, len(info_dict["experiment_id"]) + 1))
+            violin_axis.set_xticklabels(info_dict["experiment_id"])
+            for tick in violin_axis.get_xticklabels():
+                tick.set_rotation(75)
+            violin_axis.set_title(i_var_name)
+        plt.show()
+        pass
+
+    return None
+
+
 def validation_plot(info_dict, concentration=True, flux=False, violin=True, box=False):
     """plot values of concentrations and fluxes obtained from validation experiments"""
     if concentration:
         concentration_dict = info_dict["concentration"]
+        # plot all concentrations together (irrespective of experiments)
         separate_validation_plot(concentration_dict, violin=violin, box=box, scatter=True)
+        # plot experiment-wise
+        experiment_based_validation(concentration_dict)
 
     if flux:
         flux_dict = info_dict["flux"]
-        separate_validation_plot(flux_dict, violin=violin, box=box, scatter=False)
+        separate_validation_plot(flux_dict, violin=violin, box=box, scatter=True)
+        # plot experiment-wise
+        experiment_based_validation(flux_dict)
 
     return None
 
