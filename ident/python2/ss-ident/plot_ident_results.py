@@ -186,6 +186,13 @@ def plot_on_axis_object_vertical(axis_obj, x_data, y_data, y_error, y_percent_me
     return None
 
 
+def plot_scatter(axis_object, x_data, y_data):
+    # axis_object = plt.Subplot(fig_object, grid_object)
+    axis_object.plot(x_data, y_data, linestyle='None', marker='o', markersize=2)
+    # fig_object.add_subplot(axis_object)
+    return None
+
+
 def identifiability_plot(info_dict):
     """plot identifiability (number and percentage of data sets identifying each parameter)
     of every parameter in a given flux"""
@@ -255,89 +262,135 @@ def parameter_values_plot(info_dict, original_values, violin=False, box=True):
 
         # plot box plot
         box_axis = f1.add_subplot(plot_grid[0, :])
-        plot_on_axis_object_box(box_axis, info_dict["values"],
-                                mark_value=[original_values[i_name] for i_name in info_dict["names"]])
+        if original_values:
+            plot_on_axis_object_box(box_axis, info_dict["values"],
+                                    mark_value=[original_values[i_name] for i_name in info_dict["names"]])
+        else:
+            plot_on_axis_object_box(box_axis, info_dict["values"],
+                                    mark_value=[])
         box_axis.set_xticklabels(info_dict["names"])
 
         # plot histogram
         for i_parameter, (i_parameter_value, i_parameter_name) in enumerate(zip(info_dict["values"], info_dict["names"])):
             # parameter_name = info_dict["names"][i_parameter]
             hist_axis = f1.add_subplot(plot_grid[1, i_parameter])
-            plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=original_values[i_parameter_name],
-                                     parameter_name=i_parameter_name)
+            if original_values:
+                plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=original_values[i_parameter_name],
+                                         parameter_name=i_parameter_name)
+            else:
+                plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=[],
+                                         parameter_name=i_parameter_name)
 
     if violin:
         f2 = plt.figure(figsize=(6, 4), dpi=100, tight_layout=True)
         plot_grid = gridspec.GridSpec(2, number_parameters)
 
         # plot box plot
-        box_axis = f2.add_subplot(plot_grid[0, :])
-        plot_on_axis_object_violin(box_axis, info_dict["values"])
+        violin_axis = f2.add_subplot(plot_grid[0, :])
+        plot_on_axis_object_violin(violin_axis, info_dict["values"])
+        violin_axis.set_xticks(np.arange(1, len(info_dict["names"])+1))
+        violin_axis.set_xticklabels(info_dict["names"])
 
         # plot histogram
-        for i_parameter in range(0, number_parameters):
-            hist_axis = f1.add_subplot(plot_grid[1, i_parameter])
+        for i_parameter, (i_parameter_value, i_parameter_name) in enumerate(zip(info_dict["values"], info_dict["names"])):
+            # parameter_name = info_dict["names"][i_parameter]
+            hist_axis = f2.add_subplot(plot_grid[1, i_parameter])
+            if original_values:
+                plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=original_values[i_parameter_name],
+                                         parameter_name=i_parameter_name)
+            else:
+                plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=[],
+                                         parameter_name=i_parameter_name)
+    return None
+
+
+def separate_validation_plot(info_dict, scatter=True, box=False, violin=True):
+    """plot scatter, hist and box/violin plot for given variables in input dict"""
+    number_variables = len(info_dict["names"])
+    if scatter:
+        f1 = plt.figure(figsize=(6, 4), dpi=100, tight_layout=True)
+        plot_grid = gridspec.GridSpec(3, number_variables)
+    else:
+        f1 = plt.figure(figsize=(6, 4), dpi=100, tight_layout=True)
+        plot_grid = gridspec.GridSpec(2, number_variables)
+
+    # box plot
+    if box:
+        box_axis = f1.add_subplot(plot_grid[0, :])
+        plot_on_axis_object_box(box_axis, info_dict["values"])
+        box_axis.set_xticklabels(info_dict["names"])
+
+        # plot histogram
+        for i_variable, (i_var_value, i_var_name) in enumerate(
+                zip(info_dict["values"], info_dict["names"])):
+            # parameter_name = info_dict["names"][i_parameter]
+            hist_axis = f1.add_subplot(plot_grid[1, i_variable])
+            plot_on_axis_object_hist(hist_axis, i_var_value, mark_value=[],
+                                     parameter_name=i_var_name)
+
+    # violin plot
+    if violin:
+        violin_axis = f1.add_subplot(plot_grid[0, :])
+        plot_on_axis_object_violin(violin_axis, info_dict["values"])
+        violin_axis.set_xticks(np.arange(1, len(info_dict["names"]) + 1))
+        violin_axis.set_xticklabels(info_dict["names"])
+
+        # plot histogram
+        for i_variable, (i_var_value, i_var_name) in enumerate(
+                zip(info_dict["values"], info_dict["names"])):
+            # parameter_name = info_dict["names"][i_parameter]
+            hist_axis = f1.add_subplot(plot_grid[1, i_variable])
+            plot_on_axis_object_hist(hist_axis, i_var_value, mark_value=[],
+                                     parameter_name=i_var_name)
+
+        # scatter plot
+        if scatter:
+            for i_variable, (i_var_value, i_var_name) in enumerate(zip(info_dict["values"], info_dict["names"])):
+                scatter_axis = f1.add_subplot(plot_grid[2, i_variable])
+                # scatter code
+                plot_scatter(scatter_axis, info_dict["experiment_values"][i_variable], info_dict["values"][i_variable])
+    return None
+
+
+def experiment_based_validation(info_dict, box=False, violin=True):
+    """plot concentrations for different experiment separately to
+    look at distribution within each experiments"""
+    number_variables = len(info_dict["names"])
+    f1 = plt.figure(figsize=(6, 4), dpi=100, tight_layout=True)
+    plot_grid = gridspec.GridSpec(1, number_variables)
+    if box:
+        pass
+
+    if violin:
+        for i_variable, i_var_name in enumerate(info_dict["names"]):
+            violin_axis = f1.add_subplot(plot_grid[0, i_variable])
+            plot_on_axis_object_violin(violin_axis, info_dict["experiment_id_dist"][i_variable])
+            violin_axis.set_xticks(np.arange(1, len(info_dict["experiment_id"]) + 1))
+            violin_axis.set_xticklabels(info_dict["experiment_id"])
+            for tick in violin_axis.get_xticklabels():
+                tick.set_rotation(75)
+            violin_axis.set_title(i_var_name)
+        plt.show()
+        pass
 
     return None
 
 
-def parameter_experiment_info_plot(flux_based_experiment_info, noise=0):
-    """plot position based contribution from each experiment towards
-    identifiable data combinations for each parameter for each flux"""
-    all_sample_all_flux_processed_info = flux_based_experiment_info["processed"]
-    number_of_fluxes = len(all_sample_all_flux_processed_info)
-    for j_flux, j_flux_data in enumerate(all_sample_all_flux_processed_info):
-        number_of_parameters_in_flux = len(j_flux_data)
-        for k_parameter, k_parameter_data in enumerate(j_flux_data):
-            number_of_experiment_positions = len(k_parameter_data)
-            number_of_subplots = number_of_experiment_positions
-            number_of_rows = 1
-            f, axarr = plt.subplots(number_of_rows, number_of_subplots, sharey='row',
-                                    figsize=(8, 6), dpi=100, facecolor='w', edgecolor='k')
-            # get parameter name for figure title
-            parameter_name = ident_parameter_name(k_parameter,
-                                                  flux_name="flux{}".format(k_parameter_data[0]["total"]["flux id"]),
-                                                  flux_choice_id=k_parameter_data[0]["total"]["flux choice"])
-            # set figure title to parameter name
-            figure_title = "flux {}".format(k_parameter_data[0]["total"]["flux id"]) + " " + parameter_name
-            f.text(.5, .975, figure_title, horizontalalignment='center', verticalalignment='top')
-            try:
-                for i_position, i_axis_obj in enumerate(axarr):
-                    x_data = k_parameter_data[i_position]["total"]["mean"]
-                    y_data = np.arange(0, len(x_data))
-                    x_error = k_parameter_data[i_position]["total"]["std"]
-                    x_percent_mean = k_parameter_data[i_position]["percentage"]["mean"]
-                    x_percent_error = k_parameter_data[i_position]["percentage"]["std"]
-                    # get y-axis labels (experiment types)
-                    y_tick_labels = kotte_experiment_type_name(y_data)
-                    # plot and annotate using plotting function defined above
-                    plot_on_axis_object(i_axis_obj, x_data, y_data, x_error, x_percent_mean, x_percent_error, noise)
-                    # set axis title
-                    i_axis_obj.set_title('experiment {}'.format(i_position + 1))
-                # set x-axis label
-                axarr[-1].set_xlabel('Frequency of Experiment Appearance')
-                # set y-axis tick label
-                axarr[0].set_yticklabels(y_tick_labels)
-                # invert y-axis
-                axarr[0].invert_yaxis()
-            except TypeError:
-                for i_position in range(0, number_of_experiment_positions):
-                    x_data = k_parameter_data[i_position]["total"]["mean"]
-                    y_data = np.arange(0, len(x_data))
-                    x_error = k_parameter_data[i_position]["total"]["std"]
-                    x_percent_mean = k_parameter_data[i_position]["percentage"]["mean"]
-                    x_percent_error = k_parameter_data[i_position]["percentage"]["std"]
-                    # plot and annotate using plotting function defined above
-                    plot_on_axis_object(axarr, x_data, y_data, x_error, x_percent_mean, x_percent_error, noise)
-                    # set axis title
-                    axarr.set_title('experiment {}'.format(i_position + 1))
-                # set x-axis label
-                axarr.set_xlabel('Number of data combinations used for identification')
-                # set y-axis tick label
-                axarr[0].set_yticklabels(y_tick_labels)
-                # invert y-axis
-                axarr.invert_yaxis()
-    plt.show()
+def validation_plot(info_dict, concentration=True, flux=False, violin=True, box=False):
+    """plot values of concentrations and fluxes obtained from validation experiments"""
+    if concentration:
+        concentration_dict = info_dict["concentration"]
+        # plot all concentrations together (irrespective of experiments)
+        separate_validation_plot(concentration_dict, violin=violin, box=box, scatter=True)
+        # plot experiment-wise
+        experiment_based_validation(concentration_dict)
+
+    if flux:
+        flux_dict = info_dict["flux"]
+        separate_validation_plot(flux_dict, violin=violin, box=box, scatter=True)
+        # plot experiment-wise
+        experiment_based_validation(flux_dict)
+
     return None
 
 
@@ -848,13 +901,6 @@ def plot_parameter_value_hist(parameter_value, noise=0):
 
             set_hist_box_axis_limits(all_hist_axis, all_box_axis)
     return None
-
-
-def plot_scatter(x_data, y_data, fig_object, grid_object):
-    axis_object = plt.Subplot(fig_object, grid_object)
-    axis_object.plot(x_data, y_data, linestyle='None', marker='o', markersize=2)
-    fig_object.add_subplot(axis_object)
-    return axis_object
 
 
 def plot_line(x_data, y_data, fig_object, grid_object):
