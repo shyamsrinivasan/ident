@@ -29,13 +29,13 @@ optim_options = {"solver": "ipopt",
                  "opts": {"ipopt.tol": 1e-12}}
 # optim_options = {"solver": "sqpmethod",\
 #                  "opts": {"qpsol": "qpoases"}}
-# initial_value = [80, 80, 400, 0, 0, 0]
+initial_value = [80, 80, 400, 0, 0, 0]
 # randomized_initial_values = generate_random_initial_conditions(initial_value, 10, negative=1)
-# from numerical_ident import solve_multiple_initial_conditions
-# all_sol_df = solve_multiple_initial_conditions(all_initial_conditions=[initial_value],
-#                                                experimental_data=all_exp_data, chosen_fun=0,
-#                                                optim_options=optim_options, number_of_parameters=3, flux_id=3,
-#                                                flux_choice=[3], file_name=storage_file_name)
+from numerical_ident import solve_multiple_initial_conditions
+all_sol_df = solve_multiple_initial_conditions(all_initial_conditions=[initial_value],
+                                               experimental_data=all_exp_data, chosen_fun=0,
+                                               optim_options=optim_options, number_of_parameters=3, flux_id=3,
+                                               flux_choice=[3], exp_df=arranged_data_df, file_name=storage_file_name)
 
 index_labels = ['sample_name', 'data_set_id']
 numerical_ident_df = retrieve_experimental_data_from_file(data_file_name=storage_file_name,

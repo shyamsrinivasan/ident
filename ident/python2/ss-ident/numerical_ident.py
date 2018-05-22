@@ -264,7 +264,7 @@ def process_opt_solution(opt_solution, number_of_parameters, flux_id, flux_choic
 
 
 def solve_multiple_initial_conditions(all_initial_conditions, experimental_data, chosen_fun, optim_options,
-                                      number_of_parameters, flux_id, flux_choice, file_name=()):
+                                      number_of_parameters, flux_id, flux_choice, exp_df, file_name=()):
     """solve numerical nlp ident for multiple parameter initial conditions"""
     number_initial_conditions = len(all_initial_conditions)
     all_x0_all_parameter_opt_info = []
@@ -286,6 +286,9 @@ def solve_multiple_initial_conditions(all_initial_conditions, experimental_data,
         #                                           flux_id=flux_id, flux_choice=flux_choice)
         # all_x0_all_parameter_opt_info.append(all_parameter_info)
         print("Analysis with Initial Condition {} of {} Complete".format(j_id+1, number_initial_conditions))
+
+    # process and write data to file
+    write_ident_info_file(all_initial_condition_sol, exp_df, file_name)
 
     # create multi index df of results and save it to file
     ind_tuple = [(i_initial, i_data) for i_initial, i_data in
