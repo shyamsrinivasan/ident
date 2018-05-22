@@ -112,19 +112,25 @@ def experiment_name(experiment_id, experiment_details):
     return experiment_name_list
 
 
-def variable_name(var_type, var_id):
+def variable_name(var_type, var_id=()):
     met_list = ['pep', 'fdp', 'E']
     flux_list = ['v1', 'v5', 'v3', 'v2', 'v4', 'v6']
     if var_type == 'metabolite':
-        try:
-            var_names = [met_list[j_var_id] for j_var_id in var_id]
-        except TypeError:
-            var_names = met_list[var_id]
+        if var_id:
+            try:
+                var_names = [met_list[j_var_id] for j_var_id in var_id]
+            except TypeError:
+                var_names = met_list[var_id]
+        else:
+            var_names = met_list
     elif var_type == 'flux':
-        try:
-            var_names = [flux_list[j_var_id] for j_var_id in var_id]
-        except TypeError:
-            var_names = flux_list[var_id]
+        if var_id:
+            try:
+                var_names = [flux_list[j_var_id] for j_var_id in var_id]
+            except TypeError:
+                var_names = flux_list[var_id]
+        else:
+            var_names = flux_list
     else:
         var_names = []
     return var_names
