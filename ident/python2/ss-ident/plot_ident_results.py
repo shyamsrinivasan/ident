@@ -345,10 +345,14 @@ def separate_validation_plot(info_dict, scatter=True, box=False, violin=True):
 
         # scatter plot
         if scatter:
-            for i_variable, (i_var_value, i_var_name) in enumerate(zip(info_dict["values"], info_dict["names"])):
+            for i_variable, (_, _) in enumerate(zip(info_dict["values"], info_dict["names"])):
                 scatter_axis = f1.add_subplot(plot_grid[2, i_variable])
                 # scatter code
                 plot_scatter(scatter_axis, info_dict["experiment_values"][i_variable], info_dict["values"][i_variable])
+                # line plot of experimental vs experimental
+                scatter_axis.plot(info_dict["experiment_values"][i_variable],
+                                  info_dict["experiment_values"][i_variable],
+                                  {'color': 'black', 'linestyle': 'dashdot', 'linewidth': 1.5})
     return None
 
 
