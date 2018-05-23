@@ -181,10 +181,14 @@ def compile_opt_result(all_opt_sol):
                  [float(i_data_sol["f"][0])] * number_variables]
     all_data_set_id = [i_x_data_set for i_data_sol in all_opt_sol for i_x_data_set in
                        [i_data_sol["data_set_id"]] * number_variables]
+
+    # parameter identifiability based on their numerical values (> 0) use all_var_opt
+    all_p_ident = [True if i_var_opt > 1e-4 else False for i_var_opt in all_var_opt]
+
     all_sol_dict = {"data_set_id": all_data_set_id, "parameter_value": all_var_opt, "parameter_name": all_var_name,
                     "error_value": all_error_opt, "error_name": all_err_name, "variable_dual_name": all_var_lam,
                     "error_dual_name": all_err_lam, "variable_dual_value": all_var_lam_x,
-                    "error_dual_value": all_err_lam_x, "objective": all_f_opt}
+                    "error_dual_value": all_err_lam_x, "objective": all_f_opt, "identifiability": all_p_ident}
 
     return all_sol_dict
 
@@ -247,20 +251,24 @@ def process_opt_solution(opt_sol, exp_df, opt_solution, number_of_parameters, fl
     # get all parameter names
     parameter_names = opt_sol["parameter_name"].unique().tolist()
 
-    # get all sample/data set ids (df indices)
-    sample_data_set_ids = np.unique(opt_sol.index.values).tolist()
+    # get all sample/data set ids (df indices) identifying each parameter
+    # sample_data_set_ids = np.unique(opt_sol.index.values).tolist()
 
     # total number of data sets used
     total_data_sets = [len(opt_sol.index.levels[1])] * len(parameter_names)
 
     # bring all details together in number_parameter len lists
-    relevant_df = opt_sol.loc[idx[sample_data_set_ids], ['parameter_name', 'parameter_value']]
+    relevant_df = opt_sol.loc[:, ['parameter_name', 'parameter_value', 'identifiability']]
     all_parameter_values = []
     all_parameter_names = []
+    all_parameter_data_set_ids = []
     for i_parameter, i_parameter_name in enumerate(parameter_names):
-        i_p_value = relevant_df[relevant_df["parameter_name"] == i_parameter_name]["parameter_value"].values
+        ident_df = relevant_df[(relevant_df["parameter_name"] == i_parameter_name) & (relevant_df["identifiability"])]
+        i_p_value = ident_df["parameter_value"].values
         all_parameter_values.append([j_p_value for j_p_value in i_p_value])
         all_parameter_names.append(i_parameter_name)
+        # get all sample/data set ids (df indices) identifying each parameter
+        all_parameter_data_set_ids.append(ident_df.index.values.tolist())
 
     # get flux names
     # all_flux_names = ident_df["flux_name"].unique().tolist() * len(all_parameter_info["names"])
@@ -268,7 +276,7 @@ def process_opt_solution(opt_sol, exp_df, opt_solution, number_of_parameters, fl
 
     all_parameter_info = {"names": all_parameter_names,
                           "values": all_parameter_values,
-                          "sample_data_set_id": [sample_data_set_ids] * len(parameter_names),
+                          "sample_data_set_id": all_parameter_data_set_ids,
                           "total_data_sets": total_data_sets,
                           "flux_name": ['flux'] * len(parameter_names)}
 
