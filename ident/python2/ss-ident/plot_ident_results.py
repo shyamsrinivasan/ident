@@ -2,8 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import matplotlib.font_manager as fnt
-from names_strings import ident_parameter_name
-from names_strings import kotte_experiment_type_name
 from names_strings import variable_name
 plt.ion()
 
@@ -306,11 +304,9 @@ def parameter_values_plot(info_dict, original_values, violin=False, box=True):
     return None
 
 
-def validation_hist(info_dict, figure_object, grid_objects):
+def validation_hist(values, names, figure_object, grid_objects):
     """plot histogram of validated variable distributions"""
-    for i_variable, (i_var_value, i_var_name) in enumerate(
-            zip(info_dict["values"], info_dict["names"])):
-        # parameter_name = info_dict["names"][i_parameter]
+    for i_variable, (i_var_value, i_var_name) in enumerate(zip(values, names)):
         hist_axis = figure_object.add_subplot(grid_objects[1, i_variable])
         plot_on_axis_object_hist(hist_axis, i_var_value, mark_value=[],
                                  parameter_name=i_var_name)
@@ -348,7 +344,7 @@ def separate_validation_plot(info_dict, scatter=True, box=False, violin=True):
         box_axis.set_xticklabels(info_dict["names"])
 
         # plot histogram
-        validation_hist(info_dict, figure_object=f1, grid_objects=plot_grid)
+        validation_hist(info_dict["values"], info_dict["names"], figure_object=f1, grid_objects=plot_grid)
 
         # scatter plot
         if scatter:
@@ -362,7 +358,7 @@ def separate_validation_plot(info_dict, scatter=True, box=False, violin=True):
         violin_axis.set_xticklabels(info_dict["names"])
 
         # plot histogram
-        validation_hist(info_dict, figure_object=f1, grid_objects=plot_grid)
+        validation_hist(info_dict["values"], info_dict["names"], figure_object=f1, grid_objects=plot_grid)
 
         # scatter plot
         if scatter:
@@ -401,6 +397,33 @@ def experiment_based_validation(info_dict, box=False, violin=True, flux_id=()):
                     tick.set_rotation(90)
                 violin_axis.set_title(i_var_name)
         plt.show()
+    return None
+
+
+def experiment_dist_plot(info_dict, box=False, violin=True):
+    """plot distribution of experiment concentration and flux data"""
+    number_variables = len(info_dict["names"])
+    f1 = plt.figure(figsize=(6, 4), dpi=100, tight_layout=True)
+    plot_grid = gridspec.GridSpec(2, number_variables)
+
+    # box plot
+    if box:
+        box_axis = f1.add_subplot(plot_grid[0, :])
+        plot_on_axis_object_box(box_axis, info_dict["experiment_values"])
+        box_axis.set_xticklabels(info_dict["names"])
+
+        # plot histogram
+        validation_hist(info_dict["experiment_values"], info_dict["names"], figure_object=f1, grid_objects=plot_grid)
+
+    # violin plot
+    if violin:
+        violin_axis = f1.add_subplot(plot_grid[0, :])
+        plot_on_axis_object_violin(violin_axis, info_dict["experiment_values"])
+        violin_axis.set_xticks(np.arange(1, len(info_dict["names"]) + 1))
+        violin_axis.set_xticklabels(info_dict["names"])
+
+        # plot histogram
+        validation_hist(info_dict["experiment_values"], info_dict["names"], figure_object=f1, grid_objects=plot_grid)
 
     return None
 
@@ -413,6 +436,8 @@ def validation_plot(info_dict, concentration=True, flux=False, violin=True, box=
         separate_validation_plot(concentration_dict, violin=violin, box=box, scatter=scatter)
         # plot experiment-wise
         experiment_based_validation(concentration_dict, violin=violin, box=box)
+        # plot experiment only data distribution
+        experiment_dist_plot(concentration_dict)
 
     if flux:
         flux_dict = info_dict["flux"]
