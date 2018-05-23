@@ -448,69 +448,6 @@ def validation_plot(info_dict, concentration=True, flux=False, violin=True, box=
     return None
 
 
-def data_utility_plot(data_list, noise=0):
-    """collect processed data from all samples for each individual flux and
-    plot the utility of the same data combination for all parameters of
-    different fluxes using the same data combination"""
-    # processed data from all samples
-    processed_data = data_list["processed"]
-    number_of_fluxes = len(processed_data)
-    number_of_subplots = number_of_fluxes
-    number_of_columns = 1
-    f, axarr = plt.subplots(number_of_subplots, number_of_columns, sharex='col',
-                            figsize=(8, 6), dpi=100, facecolor='w', edgecolor='k')
-    try:
-        max_x_data = []
-        # loop through each flux and plot
-        for i_flux, i_axis_obj in enumerate(axarr):
-            i_flux_info = processed_data[i_flux]
-            x_data = i_flux_info["total"]["number"]
-            y_data = i_flux_info["total"]["mean"]
-            y_error = i_flux_info["total"]["std"]
-            y_percent_mean = i_flux_info["percentage"]["mean"]
-            y_percent_std = i_flux_info["percentage"]["std"]
-            y_max = i_flux_info["percentage"]["data set size"]
-            plot_on_axis_object_vertical(i_axis_obj, x_data, y_data, y_error,
-                                         y_percent_mean, y_percent_std, y_max, noise)
-            # set axis title
-            i_axis_obj.set_title('v{} parameters type {}'.format(i_flux_info["total"]["flux id"],
-                                                                 i_flux_info["total"]["flux choice"]))
-            # set x-axis ticks
-            max_x_data = max(max_x_data, x_data)
-        # set x-axis and y-axis labels
-        axarr[-1].set_xlabel('Number of parameters identified')
-        axarr[-1].set_ylabel('Number of data combinations')
-        # set x-axis ticks
-        axarr[-1].set_xticks(max_x_data)
-        # set x-axis tick labels
-        axarr[-1].set_xticklabels(max_x_data)
-    except TypeError:
-        max_x_data = []
-        for i_flux in range(0, number_of_fluxes):
-            i_flux_info = processed_data[i_flux]
-            x_data = i_flux_info["total"]["number"]
-            y_data = i_flux_info["total"]["mean"]
-            y_error = i_flux_info["total"]["std"]
-            y_percent_mean = i_flux_info["percentage"]["mean"]
-            y_percent_std = i_flux_info["percentage"]["std"]
-            y_max = i_flux_info["percentage"]["data set size"]
-            plot_on_axis_object_vertical(axarr, x_data, y_data, y_error,
-                                         y_percent_mean, y_percent_std, y_max, noise)
-            # set axis title
-            axarr.set_title('v{} parameters type {}'.format(i_flux_info["total"]["flux id"],
-                                                            i_flux_info["total"]["flux choice"]))
-            # set x-axis ticks
-            max_x_data = max(max_x_data, x_data)
-        axarr.set_xlabel('Number of parameters identified')
-        axarr.set_ylabel('Number of data combinations')
-        # set x-axis ticks
-        axarr.set_xticks(max_x_data)
-        # set x-axis and y-axis labels
-        axarr.set_xticklabels(max_x_data)
-    plt.show()
-    return None
-
-
 def line_plots_2d(axis_obj, x_data, y_data, x_label=(), y_label=()):
     axis_obj.plot(x_data, y_data)
     if x_label:
