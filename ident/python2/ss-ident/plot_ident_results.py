@@ -195,7 +195,7 @@ def identifiability_plot(info_dict):
     """plot identifiability (number and percentage of data sets identifying each parameter)
     of every parameter in a given flux"""
     number_of_parameters = len(info_dict["names"])
-    f, ax = plt.subplots(1, 1, figsize=(6, 4), dpi=100)
+    f, ax = plt.subplots(1, 1, figsize=(10, 8), dpi=100)
     x_data = info_dict["ident_mean"]
     y_data = range(0, number_of_parameters)
     gap = 0.05
@@ -227,7 +227,7 @@ def exp_info_plot(info_dict):
     # figure = plt.figure(figsize=(6, 4))
     # inner_grid = gridspec.GridSpec(number_of_rows, number_of_columns, wspace=0.2, hspace=0.2)
     f, ax = plt.subplots(number_of_rows, number_of_columns, subplot_kw=dict(projection='polar'),
-                         figsize=(6, 4), dpi=100, gridspec_kw={"wspace": 0.2, "hspace": 0.2})
+                         figsize=(10, 8), dpi=100, gridspec_kw={"wspace": 0.2, "hspace": 0.2})
     all_max_y_data = []
     for i_parameter, i_parameter_info in enumerate(info_dict["exp_info"]):
         # ax = plt.Subplot(figure, inner_grid[i_parameter])
@@ -257,7 +257,7 @@ def parameter_values_plot(info_dict, original_values, violin=False, box=True):
     """plot distribution of parameter values as a box plot, violin plot and/or histogram"""
     number_parameters = len(info_dict["names"])
     if box:
-        f1 = plt.figure(figsize=(6, 4), dpi=100, tight_layout=True)
+        f1 = plt.figure(figsize=(10, 8), dpi=100, tight_layout=True)
         plot_grid = gridspec.GridSpec(2, number_parameters)
 
         # plot box plot
@@ -282,7 +282,7 @@ def parameter_values_plot(info_dict, original_values, violin=False, box=True):
                                          parameter_name=i_parameter_name)
 
     if violin:
-        f2 = plt.figure(figsize=(6, 4), dpi=100, tight_layout=True)
+        f2 = plt.figure(figsize=(10, 8), dpi=100, tight_layout=True)
         plot_grid = gridspec.GridSpec(2, number_parameters)
 
         # plot box plot
@@ -331,10 +331,10 @@ def separate_validation_plot(info_dict, scatter=True, box=False, violin=True):
     """plot scatter, hist and box/violin plot for given variables in input dict"""
     number_variables = len(info_dict["names"])
     if scatter:
-        f1 = plt.figure(figsize=(6, 4), dpi=100, tight_layout=True)
+        f1 = plt.figure(figsize=(10, 8), dpi=100, tight_layout=True)
         plot_grid = gridspec.GridSpec(3, number_variables)
     else:
-        f1 = plt.figure(figsize=(6, 4), dpi=100, tight_layout=True)
+        f1 = plt.figure(figsize=(10, 8), dpi=100, tight_layout=True)
         plot_grid = gridspec.GridSpec(2, number_variables)
 
     # box plot
@@ -373,7 +373,7 @@ def experiment_based_validation(info_dict, box=False, violin=True, flux_id=()):
         number_variables = len(flux_id)
     else:
         number_variables = len(info_dict["names"])
-    f1 = plt.figure(figsize=(6, 4), dpi=100, tight_layout=True)
+    f1 = plt.figure(figsize=(10, 8), dpi=100, tight_layout=True)
     plot_grid = gridspec.GridSpec(1, number_variables)
     if box:
         pass
@@ -406,7 +406,7 @@ def experiment_based_validation(info_dict, box=False, violin=True, flux_id=()):
 def experiment_dist_plot(info_dict, box=False, violin=True):
     """plot distribution of experiment concentration and flux data"""
     number_variables = len(info_dict["names"])
-    f1 = plt.figure(figsize=(6, 4), dpi=100, tight_layout=True)
+    f1 = plt.figure(figsize=(10, 8), dpi=100, tight_layout=True)
     plot_grid = gridspec.GridSpec(2, number_variables)
 
     # box plot
