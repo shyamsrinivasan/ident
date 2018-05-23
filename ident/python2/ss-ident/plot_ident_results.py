@@ -379,23 +379,26 @@ def experiment_based_validation(info_dict, box=False, violin=True, flux_id=()):
         pass
 
     if violin:
+        i_plot = 0
         for i_variable, i_var_name in enumerate(info_dict["names"]):
             if flux_id and (i_var_name in flux_id):
-                violin_axis = f1.add_subplot(plot_grid[0, i_variable])
+                violin_axis = f1.add_subplot(plot_grid[0, i_plot])
                 plot_on_axis_object_violin(violin_axis, info_dict["experiment_id_dist"][i_variable])
                 violin_axis.set_xticks(np.arange(1, len(info_dict["experiment_id"]) + 1))
                 violin_axis.set_xticklabels(info_dict["experiment_id"])
                 for tick in violin_axis.get_xticklabels():
                     tick.set_rotation(90)
                 violin_axis.set_title(i_var_name)
-            else:
-                violin_axis = f1.add_subplot(plot_grid[0, i_variable])
+                i_plot += 1
+            elif not flux_id:
+                violin_axis = f1.add_subplot(plot_grid[0, i_plot])
                 plot_on_axis_object_violin(violin_axis, info_dict["experiment_id_dist"][i_variable])
                 violin_axis.set_xticks(np.arange(1, len(info_dict["experiment_id"]) + 1))
                 violin_axis.set_xticklabels(info_dict["experiment_id"])
                 for tick in violin_axis.get_xticklabels():
                     tick.set_rotation(90)
                 violin_axis.set_title(i_var_name)
+                i_plot += 1
         plt.show()
     return None
 
@@ -444,6 +447,8 @@ def validation_plot(info_dict, concentration=True, flux=False, violin=True, box=
         separate_validation_plot(flux_dict, violin=violin, box=box, scatter=scatter)
         # plot experiment-wise
         experiment_based_validation(flux_dict, violin=violin, box=box, flux_id=flux_id)
+        # plot experiment only data distribution
+        experiment_dist_plot(flux_dict)
 
     return None
 
