@@ -304,6 +304,31 @@ def parameter_values_plot(info_dict, original_values, violin=False, box=True):
     return None
 
 
+def validation_hist(info_dict, figure_object, grid_objects):
+    """plot histogram of validated variable distributions"""
+    for i_variable, (i_var_value, i_var_name) in enumerate(
+            zip(info_dict["values"], info_dict["names"])):
+        # parameter_name = info_dict["names"][i_parameter]
+        hist_axis = figure_object.add_subplot(grid_objects[1, i_variable])
+        plot_on_axis_object_hist(hist_axis, i_var_value, mark_value=[],
+                                 parameter_name=i_var_name)
+    return None
+
+
+def validation_scatter(info_dict, grid_objects, figure_object):
+    """plot validation values vs experimental values as scatter plots"""
+    for i_variable, (_, _) in enumerate(zip(info_dict["values"], info_dict["names"])):
+        scatter_axis = figure_object.add_subplot(grid_objects[2, i_variable])
+        # scatter code
+        plot_scatter(scatter_axis, info_dict["experiment_values"][i_variable],
+                     info_dict["values"][i_variable])
+        # line plot of experimental vs experimental
+        scatter_axis.plot(info_dict["experiment_values"][i_variable],
+                          info_dict["experiment_values"][i_variable],
+                          {'color': 'black', 'linestyle': 'dashdot', 'linewidth': 1.5})
+    return None
+
+
 def separate_validation_plot(info_dict, scatter=True, box=False, violin=True):
     """plot scatter, hist and box/violin plot for given variables in input dict"""
     number_variables = len(info_dict["names"])
@@ -321,12 +346,11 @@ def separate_validation_plot(info_dict, scatter=True, box=False, violin=True):
         box_axis.set_xticklabels(info_dict["names"])
 
         # plot histogram
-        for i_variable, (i_var_value, i_var_name) in enumerate(
-                zip(info_dict["values"], info_dict["names"])):
-            # parameter_name = info_dict["names"][i_parameter]
-            hist_axis = f1.add_subplot(plot_grid[1, i_variable])
-            plot_on_axis_object_hist(hist_axis, i_var_value, mark_value=[],
-                                     parameter_name=i_var_name)
+        validation_hist(info_dict, figure_object=f1, grid_objects=plot_grid)
+
+        # scatter plot
+        if scatter:
+            validation_scatter(info_dict, figure_object=f1, grid_objects=plot_grid)
 
     # violin plot
     if violin:
@@ -336,23 +360,11 @@ def separate_validation_plot(info_dict, scatter=True, box=False, violin=True):
         violin_axis.set_xticklabels(info_dict["names"])
 
         # plot histogram
-        for i_variable, (i_var_value, i_var_name) in enumerate(
-                zip(info_dict["values"], info_dict["names"])):
-            # parameter_name = info_dict["names"][i_parameter]
-            hist_axis = f1.add_subplot(plot_grid[1, i_variable])
-            plot_on_axis_object_hist(hist_axis, i_var_value, mark_value=[],
-                                     parameter_name=i_var_name)
+        validation_hist(info_dict, figure_object=f1, grid_objects=plot_grid)
 
         # scatter plot
         if scatter:
-            for i_variable, (_, _) in enumerate(zip(info_dict["values"], info_dict["names"])):
-                scatter_axis = f1.add_subplot(plot_grid[2, i_variable])
-                # scatter code
-                plot_scatter(scatter_axis, info_dict["experiment_values"][i_variable], info_dict["values"][i_variable])
-                # line plot of experimental vs experimental
-                scatter_axis.plot(info_dict["experiment_values"][i_variable],
-                                  info_dict["experiment_values"][i_variable],
-                                  {'color': 'black', 'linestyle': 'dashdot', 'linewidth': 1.5})
+            validation_scatter(info_dict, figure_object=f1, grid_objects=plot_grid)
     return None
 
 
