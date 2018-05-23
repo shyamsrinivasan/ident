@@ -431,7 +431,8 @@ def experiment_dist_plot(info_dict, box=False, violin=True):
     return None
 
 
-def validation_plot(info_dict, concentration=True, flux=False, violin=True, box=False, flux_id=(), scatter=True):
+def validation_plot(info_dict, concentration=True, flux=False, violin=True, box=False, flux_id=(), scatter=True,
+                    experiment_dist=True):
     """plot values of concentrations and fluxes obtained from validation experiments"""
     if concentration:
         concentration_dict = info_dict["concentration"]
@@ -440,7 +441,8 @@ def validation_plot(info_dict, concentration=True, flux=False, violin=True, box=
         # plot experiment-wise
         experiment_based_validation(concentration_dict, violin=violin, box=box)
         # plot experiment only data distribution
-        experiment_dist_plot(concentration_dict)
+        if experiment_dist:
+            experiment_dist_plot(concentration_dict)
 
     if flux:
         flux_dict = info_dict["flux"]
@@ -448,7 +450,8 @@ def validation_plot(info_dict, concentration=True, flux=False, violin=True, box=
         # plot experiment-wise
         experiment_based_validation(flux_dict, violin=violin, box=box, flux_id=flux_id)
         # plot experiment only data distribution
-        experiment_dist_plot(flux_dict)
+        if experiment_dist:
+            experiment_dist_plot(flux_dict)
 
     return None
 
