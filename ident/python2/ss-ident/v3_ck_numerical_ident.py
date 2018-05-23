@@ -61,7 +61,8 @@ validation_info = get_parameter_value(all_parameter_info, numerical_ident_df)
 import numpy as np
 y0 = np.array([5, 1, 1])
 # integrator options
-cvode_options = ('Newton', 'Adams', 1e-10, 1e-10, 200)
+cvode_options = {'iter': 'Newton', 'discr': 'Adams', 'atol': 1e-10, 'rtol': 1e-10, 'time_points': 200,
+                 'display_progress': False, 'verbosity': 50}
 # validate all parameter values
 validation_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\ident\python2' \
                        '\ss-ident\ident_numerical_validate_v3_root_1'
