@@ -16,6 +16,9 @@ def run_initial_ss_simulation(y0, cvode_options, estimated_parameter, noise=0, k
     number_of_estimates = len(estimated_parameter)
     for j_parameter_id, j_parameter_estimate in enumerate(estimated_parameter):
         print("\nSimulation for parameter set {} of {}....\n".format(j_parameter_id + 1, number_of_estimates))
+        print("Parameter values: V3max: {}, K3fdp: {}, K3pep: {}\n".format(j_parameter_estimate["V3max"],
+                                                                           j_parameter_estimate["K3fdp"],
+                                                                           j_parameter_estimate["K3pep"]))
         estimated_ss, estimated_dyn = initialize_to_ss(y0, cvode_options, j_parameter_estimate,
                                                        noise=noise, kinetics=kinetics, noise_std=noise_std)
         all_ss_estimate.append(estimated_ss)
