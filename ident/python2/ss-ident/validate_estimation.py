@@ -32,6 +32,9 @@ def run_perturbation_ss_simulation(estimate_initial_ss, cvode_options, estimated
     number_of_estimates = len(estimated_parameter)
     for j_parameter_id, (initial_ss, j_parameter_estimate) in enumerate(zip(estimate_initial_ss, estimated_parameter)):
         print("\nSimulation for parameter set {} of {}....\n".format(j_parameter_id + 1, number_of_estimates))
+        print("Parameter values: V3max: {}, K3fdp: {}, K3pep: {}\n".format(j_parameter_estimate["V3max"],
+                                                                           j_parameter_estimate["K3fdp"],
+                                                                           j_parameter_estimate["K3pep"]))
         estimate_name = 'estimate_{}'.format(j_parameter_id)
         estimate_perturbation_ss, _ = perturb_parameters(initial_ss, parameter_perturbation, cvode_options,
                                                          j_parameter_estimate, number_of_samples, noise=noise,
