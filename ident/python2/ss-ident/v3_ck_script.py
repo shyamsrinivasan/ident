@@ -50,7 +50,8 @@ default_parameter_values = true_parameter_values()
 # from validate_estimation import validate_model
 # y0 = np.array([5, 1, 1])
 # # integrator options
-# cvode_options = ('Newton', 'Adams', 1e-10, 1e-10, 200)
+# cvode_options = {'iter': 'Newton', 'discr': 'Adams', 'atol': 1e-10, 'rtol': 1e-10, 'time_points': 200,
+#                  'display_progress': False, 'verbosity': 50}
 # validate_model(y0, cvode_options, default_parameter_values, validation_info,
 #                save_file_name=validation_file_name,
 #                ss=1, dyn=0, noise=0, kinetics=2, target_data=range(0, 5))
