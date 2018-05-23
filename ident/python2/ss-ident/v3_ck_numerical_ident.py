@@ -33,7 +33,7 @@ optim_options = {"solver": "ipopt",
 initial_value = [[100, 80, 400, 0, 0, 0], [100, 400, 400, 0, 0, 0], [50, 50, 400, 0, 0, 0]]
 # randomized_initial_values = generate_random_initial_conditions(initial_value, 10, negative=1)
 problem = {"lbx": 6 * [0],
-           "ubx": [200, 600, 600, .0001, .0001, .0001],
+           "ubx": [200, 600, 600, .00001, .00001, .00001],
            "lbg": 3 * [0],
            "ubg": 3 * [0]}
 from numerical_ident import solve_multiple_initial_conditions
