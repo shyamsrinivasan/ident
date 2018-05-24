@@ -39,7 +39,7 @@ all_parameter_info = process_ident(ident_df, arranged_data_df)
 # get default parameter values
 default_parameter_values = true_parameter_values()
 # # get parameter value plot
-# parameter_values_plot(all_parameter_info, default_parameter_values, violin=True, box=False)
+parameter_values_plot(all_parameter_info, default_parameter_values, violin=True, box=False)
 
 # get identifiability plot
 identifiability_plot(all_parameter_info)
