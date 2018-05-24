@@ -9,7 +9,7 @@ def create_experiment_data(save_file_name, noise=0, kinetics=2, number_samples=1
     # generate no-noise experimental data for testing identifiability
     y0 = np.array([5, 1, 1])
     # default parameter values
-    cvode_options = ('Newton', 'Adams', 1e-10, 1e-10, 200)
+    cvode_options = {'iter': 'Newton', 'discr': 'Adams', 'atol': 1e-10, 'rtol': 1e-10, 'time_points': 200}
     ode_parameter_values = {"K1ac": np.array([.1]),
                             "K3fdp": np.array([.1]),
                             "L3fdp": np.array([4e6]),
@@ -202,14 +202,14 @@ def extract_and_create_data_for_analysis(original_data_file_name, original_index
     return None
 
 
-def create_data_for_flux(flux_id, noise, number_samples=1):
+def create_data_for_flux(flux_id, noise, number_samples=1, kinetics=2):
     """create and store data sets for each flux separately"""
     if flux_id == 'v1':
         experiment_choice_id = [0,
                                 1, 2, 3, 4, 5,
                                 11, 12, 13, 14, 15,
                                 16, 17, 18, 19, 20]
-        multi_index_labels = ['sample_name', 'experiment_id']
+        
         if noise:
             if number_samples == 5:
                 file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
@@ -222,17 +222,22 @@ def create_data_for_flux(flux_id, noise, number_samples=1):
                 new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
                                      '\ident\python2\ss-ident\exp_v1_2_experiments_noise_500_samples'
         else:
-            file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                        '\ident\python2\ss-ident\experiments'
-            new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                                 '\ident\python2\ss-ident\exp_v1_2_experiments'
+            if kinetics == 1:
+                file_name = []
+                new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                                     '\ident\python2\ss-ident\exp_v1_2_experiments_mwc'
+            elif kinetics == 2:
+                file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                            '\ident\python2\ss-ident\experiments'
+                new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                                     '\ident\python2\ss-ident\exp_v1_2_experiments'
         experiments_per_set = 2
     elif flux_id == 'v2':
         experiment_choice_id = [0,
                                 1, 2, 3, 4, 5,
                                 6, 7, 8, 9, 10,
                                 11, 12, 13, 14, 15]
-        multi_index_labels = ['sample_name', 'experiment_id']
+
         if noise:
             if number_samples == 5:
                 file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
@@ -245,17 +250,23 @@ def create_data_for_flux(flux_id, noise, number_samples=1):
                 new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
                                      '\ident\python2\ss-ident\exp_v2_2_experiments_noise_500_samples'
         else:
-            file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                        '\ident\python2\ss-ident\experiments'
-            new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                                 '\ident\python2\ss-ident\exp_v2_2_experiments'
+            if kinetics == 1:
+                file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                            '\ident\python2\ss-ident\experiments_mwc'
+                new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                                     '\ident\python2\ss-ident\exp_v2_2_experiments_mwc'
+            elif kinetics == 2:
+                file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                            '\ident\python2\ss-ident\experiments'
+                new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                                     '\ident\python2\ss-ident\exp_v2_2_experiments'
         experiments_per_set = 2
     elif flux_id == 'v3':
         experiment_choice_id = [0,
                                 1, 2, 3, 4, 5,
                                 6, 7, 8, 9, 10,
                                 16, 17, 18, 19, 20]
-        multi_index_labels = ['sample_name', 'experiment_id']
+
         if noise:
             if number_samples == 5:
                 file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
@@ -268,10 +279,16 @@ def create_data_for_flux(flux_id, noise, number_samples=1):
                 new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
                                      '\ident\python2\ss-ident\exp_v3_3_experiments_noise_500_samples'
         else:
-            file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                        '\ident\python2\ss-ident\experiments'
-            new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                                 '\ident\python2\ss-ident\exp_v3_3_experiments'
+            if kinetics == 1:
+                file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                            '\ident\python2\ss-ident\experiments_mwc'
+                new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                                     '\ident\python2\ss-ident\exp_v3_3_experiments_mwc'
+            elif kinetics == 2:
+                file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                            '\ident\python2\ss-ident\experiments'
+                new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                                     '\ident\python2\ss-ident\exp_v3_3_experiments'
         experiments_per_set = 3
     elif flux_id == 'v5':
         experiment_choice_id = [0,
@@ -279,7 +296,7 @@ def create_data_for_flux(flux_id, noise, number_samples=1):
                                 6, 7, 8, 9, 10,
                                 11, 12, 13, 14, 15,
                                 16, 17, 18, 19, 20]
-        multi_index_labels = ['sample_name', 'experiment_id']
+
         if noise:
             if number_samples == 5:
                 file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
@@ -292,20 +309,31 @@ def create_data_for_flux(flux_id, noise, number_samples=1):
                 new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
                                      '\ident\python2\ss-ident\exp_v5_2_experiments_noise_500_samples'
         else:
-            file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                        '\ident\python2\ss-ident\experiments'
-            new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                                 '\ident\python2\ss-ident\exp_v5_2_experiments'
+            if kinetics == 1:
+                file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                            '\ident\python2\ss-ident\experiments_mwc'
+                new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                                     '\ident\python2\ss-ident\exp_v5_2_experiments_mwc'
+            elif kinetics == 2:
+                file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                            '\ident\python2\ss-ident\experiments'
+                new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                                     '\ident\python2\ss-ident\exp_v5_2_experiments'
         experiments_per_set = 2
 
+    multi_index_labels = ['sample_name', 'experiment_id']
     extract_and_create_data_for_analysis(file_name, multi_index_labels, new_data_file_name,
                                          experiment_choice_id, experiments_per_set=experiments_per_set)
     return None
 
 
 if __name__ == "__main__":
-    file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\ident\python2\ss-ident\experiments'
+    file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                '\ident\python2\ss-ident\experiments'
     experiment_info_df = create_experiment_data(file_name, noise=0, kinetics=2)
+    # file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+    #             '\ident\python2\ss-ident\experiments_mwc'
+    # experiment_info_df = create_experiment_data(file_name, noise=0, kinetics=1)
     # file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\ident\python2\ss-ident' \
     #             '\experiments_noise_5_samples'
     # experiment_info_df = create_experiment_data(file_name, noise=1, kinetics=2, number_samples=5, noise_std=0.05)
