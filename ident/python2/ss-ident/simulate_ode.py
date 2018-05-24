@@ -20,7 +20,7 @@ def simulate_ode(fun, y_initial, tf, opts):
     try:
         verbosity = ode_opts["verbosity"]
     except KeyError:
-        verbosity = 40
+        verbosity = 10
 
     ode_function = lambda t, x : fun(t,x,ode_system_options)
 
