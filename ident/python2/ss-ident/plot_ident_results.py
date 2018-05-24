@@ -253,7 +253,7 @@ def exp_info_plot(info_dict):
     return None
 
 
-def parameter_values_plot(info_dict, original_values, violin=False, box=True):
+def parameter_values_plot(info_dict, original_values=(), violin=False, box=True):
     """plot distribution of parameter values as a box plot, violin plot and/or histogram"""
     number_parameters = len(info_dict["names"])
     if box:
