@@ -186,36 +186,6 @@ def flux_1_kcat_ident(experimental_data):
            [k1ac_enzyme_numerator_value, k1ac_enzyme_denominator_value, k1ac_enzyme_value]
 
 
-def flux_1_ident_expression(experimental_data):
-    """symbolic and lambdify expression for flux 1 denominator from mathematica"""
-    # get variable values (w/o sympy directly from experimental data)
-    ac1, x11, x21, x31, v11, v21, v31, v41, v51, v61, \
-    ac2, x12, x22, x32, v12, v22, v32, v42, v52, v62 = list(experimental_data)
-
-    # flux numerator and denominator w/o sympy
-    # symbolic expression for flux v1 w/o enzyme concentration data
-    v1max_no_enzyme_numerator_value = ac1 * v11 * v12 - ac2 * v11 * v12
-    v1max_no_enzyme_denominator_value = -(ac2 * v11 - ac1 * v12)
-    k1ac_no_enzyme_numerator_value = ac1 * (ac2 * v11 - ac2 * v12)
-    k1ac_no_enzyme_denominator_value = -ac2 * v11 + ac1 * v12
-
-    v1max_no_enzyme_value = v1max_no_enzyme_numerator_value/v1max_no_enzyme_denominator_value
-    k1ac_no_enzyme_value = k1ac_no_enzyme_numerator_value/k1ac_no_enzyme_denominator_value
-
-    # symbolic expression for flux v1 w/ enzyme concentration data
-    k1cat_enzyme_numerator_value = - ac1 * v11 * v12 + ac2 * v11 * v12
-    k1cat_enzyme_denominator_value = -(ac1 * v12 * x31 - ac2 * v11 * x32)
-    k1cat_enzyme_value = k1cat_enzyme_numerator_value/k1cat_enzyme_denominator_value
-    k1ac_enzyme_numerator_value = ac1 * (-ac2 * v12 * x31 + ac2 * v11 * x32)
-    k1ac_enzyme_denominator_value = ac1 * v12 * x31 - ac2 * v11 * x32
-    k1ac_enzyme_value = k1ac_enzyme_numerator_value/k1ac_enzyme_denominator_value
-
-    return [v1max_no_enzyme_numerator_value, v1max_no_enzyme_denominator_value, v1max_no_enzyme_value], \
-           [k1ac_no_enzyme_numerator_value, k1ac_no_enzyme_denominator_value, k1ac_no_enzyme_value], \
-           [k1cat_enzyme_numerator_value, k1cat_enzyme_denominator_value, k1cat_enzyme_value], \
-           [k1ac_enzyme_numerator_value, k1ac_enzyme_denominator_value, k1ac_enzyme_value]
-
-
 def flux_2_ident_expression(experimental_data):
     """symbolic and lambdify expression for flux 2 denominator from mathematica"""
     # get variable values (w/o sympy directly from experimental data)
@@ -782,16 +752,6 @@ def flux_3_value2_ident(experimental_data):
            [k3pep_nr_2_value, k3pep_dr_2_value, k3pep_2_value]
 
 
-def flux_3_ident_expression(experimental_data):
-    """symbolic and lambdify expression for flux 3 denominator from mathematica"""
-
-    v3max_value_1, k3fdp_value_1, k3pep_value_1 = flux_3_value1_ident(experimental_data)
-    v3max_value_2, k3fdp_value_2, k3pep_value_2 = flux_3_value2_ident(experimental_data)
-
-    return v3max_value_1, k3fdp_value_1, k3pep_value_1, \
-           v3max_value_2, k3fdp_value_2, k3pep_value_2
-
-
 def v3_V3max_var1(experimental_data):
     """v3max values when k3pep is assumed as known"""
     _, x11, x21, _, _, _, v31, _, \
@@ -913,20 +873,6 @@ def flux_5_value2_ident(experimental_data):
     return [vemax_nr_1, vemax_dr_1, vemax_1_value], [kefdp_nr_2, kefdp_dr_2, kefdp_2_value]
 
 
-def flux_5_ident_expression(experimental_data):
-    """flux 5 (v5) identifiability for both values simultaneously"""
-    # value 1
-    vemax_nr_1, vemax_dr_1, vemax_1_value = v5_vemax_value1_ident(experimental_data)
-    kefdp_nr_1, kefdp_dr_1, kefdp_1_value = v5_Kefdp_value1_ident(experimental_data)
-
-    # value 2
-    vemax_nr_2, vemax_dr_2, vemax_2_value = v5_vemax_value1_ident(experimental_data)
-    kefdp_nr_2, kefdp_dr_2, kefdp_2_value = v5_Kefdp_value2_ident(experimental_data)
-
-    return [vemax_nr_1, vemax_dr_1, vemax_1_value], [kefdp_nr_1, kefdp_dr_1, kefdp_1_value], \
-           [vemax_nr_2, vemax_dr_2, vemax_2_value], [kefdp_nr_2, kefdp_dr_2, kefdp_2_value]
-
-
     # dataset dependent classification of parameters
     # data_list = data_based_processing(ident_details)
 
@@ -955,8 +901,8 @@ def flux_ident_2_data_combination(exp_df, flux_ids, flux_choice=(), ident_fun_ch
         flux_5 = []
         flux_6 = []
     else:
-        flux_1 = flux_1_ident_expression
-        flux_5 = flux_5_ident_expression
+        flux_1 = []
+        flux_5 = []
         flux_6 = flux_3_var_1_and_2
 
     all_ident_fun_2_data = (flux_1, flux_2_ident_expression, flux_5, flux_6)
