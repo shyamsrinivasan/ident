@@ -195,4 +195,5 @@ def all_data_numerical_ident(exp_df, sample_name, chosen_experiments):
         relevant_data = exp_df.loc[idx[sample_name, i_experiment],
                                    ['acetate', 'pep', 'fdp', 'E', 'v1', 'v2', 'v3', 'v5']].values.tolist()
         all_exp_data.append(relevant_data)
-    return all_exp_data
+    all_exp_info = {"value": [all_exp_data], "data_set_id": [chosen_experiment_id]}
+    return all_exp_info
