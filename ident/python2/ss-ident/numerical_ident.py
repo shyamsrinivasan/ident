@@ -91,6 +91,45 @@ def v3_ck_numerical_problem_l1_obj(chosen_data):
     return nlp
 
 
+def v3_numerical_ck_all(chosen_data):
+    """fun to return nlp problem when using all available experimental data for estimation"""
+
+    number_data = len(chosen_data)
+    # symbolic variables for use with casadi
+    v3max = casadi.SX.sym("v3max")
+    k3fdp = casadi.SX.sym("k3fdp")
+    k3pep = casadi.SX.sym("k3pep")
+    error = casadi.SX.sym("error", number_data)
+
+    all_constraints = []
+    for i_data_id, i_data in enumerate(chosen_data):
+        _, pep, fdp, _, _, _, v3, _, = list(i_data)
+
+        # flux equation for each experiment i_data in chosen_data
+        fdp_sat = fdp / k3fdp
+        pep_sat = pep / k3pep
+        nr_3 = v3max * fdp_sat
+        dr_3 = 1 + fdp_sat
+        regulation_activate = 1 / (1 + 1 / pep_sat)
+        flux_3 = regulation_activate * nr_3 / dr_3
+        # formulate constraint for each experimental data set
+        all_constraints.append(flux_3 - v3 - error[i_data_id])
+
+    # create casadi array of constraints
+    constraints = casadi.vertcat(*all_constraints)
+
+    # create complete casadi objective fun
+    objective = error[0]
+    for i_error_id in range(1, number_data):
+        objective += error[i_error_id]
+
+    # get complete set of all optimization variables vertcat([parameters, error])
+    x = casadi.vertcat(*[v3max, k3fdp, k3pep, error])
+
+    nlp = {'x': x, 'f': objective, 'g': constraints}
+    return nlp
+
+
 def v3_numerical_problem(chosen_data):
     """fun to calculate objectives and constraints for numerical identification of v3
         using MWC kinetics"""
@@ -270,6 +309,16 @@ def identify_all_data_sets(experimental_data, chosen_fun, x0, prob, optim_option
         variable_name = ["V3max", "K3fdp", "K3pep", "L3fdp"]
         error_names = ["eps_1", "eps_2", "eps_3", "eps_4"]
         cons_name = ["cons_1", "cons_2", "cons_3", "cons_4"]
+    elif chosen_fun == 3:
+        ident_fun = v3_numerical_ck_all
+        number_data = len(experimental_data["value"][0])
+        arg = {'lbx': [0, 0, 0] + [0] * number_data,
+               'ubx': [100, 100, 100] + [1e-16] * number_data,
+               'lbg': [0] * number_data,
+               'ubg': [0] * number_data}
+        variable_name = ["V3max", "K3fdp", "K3pep"]
+        error_names = ['eps_{}'.format(i) for i in range(0, number_data)]
+        cons_name = ['cons_{}'.format(j) for j in range(0, number_data)]
     else:
         ident_fun = []
         arg = {}
