@@ -21,27 +21,27 @@ arranged_data_df = retrieve_experimental_data_from_file(data_file_name=new_data_
 # perform identifiability when v3 parameters are written using convenience kinetics
 # get combination of 3 experiments and perform identifiability on all fluxes that require 3 data sets
 storage_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                     '\ident\python2\ss-ident\ident_numerical_v3'
+                     '\ident\python2\ss-ident\ident_numerical_v3_l1_obj'
 # lexographic ordering of df indices
 all_exp_data = data_numerical_ident(arranged_data_df, 'sample_0')
 
 # NLP solver options
 optim_options = {"solver": "ipopt",
-                 "opts": {"ipopt.tol": 1e-12}}
+                 "opts": {"ipopt.tol": 1e-18}}
 # optim_options = {"solver": "sqpmethod",\
 #                  "opts": {"qpsol": "qpoases"}}
-# initial_value = [[100, 80, 400, 0, 0, 0], [100, 400, 400, 0, 0, 0], [50, 50, 400, 0, 0, 0]]
+initial_value = [[80, 80, 80, 0, 0, 0]]  # [100, 400, 400, 0, 0, 0], [50, 50, 400, 0, 0, 0]
 # randomized_initial_values = generate_random_initial_conditions(initial_value, 10, negative=1)
-# problem = {"lbx": 6 * [0],
-#            "ubx": [200, 600, 600, .00001, .00001, .00001],
-#            "lbg": 3 * [0],
-#            "ubg": 3 * [0]}
-# from numerical_ident import solve_multiple_initial_conditions
-# all_sol_df, _ = solve_multiple_initial_conditions(all_initial_conditions=initial_value,
-#                                                   experimental_data=all_exp_data, chosen_fun=0, prob=problem,
-#                                                   optim_options=optim_options, number_of_parameters=3, flux_id=3,
-#                                                   flux_choice=[3], exp_df=arranged_data_df,
-#                                                   file_name=storage_file_name)
+problem = {"lbx": 6 * [0],
+           "ubx": [100, 100, 100, 1e-20, 1e-20, 1e-20],
+           "lbg": 3 * [0],
+           "ubg": 3 * [0]}
+from numerical_ident import solve_multiple_initial_conditions
+all_sol_df, _ = solve_multiple_initial_conditions(all_initial_conditions=initial_value,
+                                                  experimental_data=all_exp_data, chosen_fun=1, prob=problem,
+                                                  optim_options=optim_options, number_of_parameters=3, flux_id=3,
+                                                  flux_choice=[3], exp_df=arranged_data_df,
+                                                  file_name=storage_file_name)
 
 index_labels = ['sample_name', 'data_set_id']
 numerical_ident_df = retrieve_experimental_data_from_file(data_file_name=storage_file_name,
