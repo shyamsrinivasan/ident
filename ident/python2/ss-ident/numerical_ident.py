@@ -174,6 +174,11 @@ def parse_opt_result(opt_sol, data_id):
     print("optimal solution: ", new_opt_sol["xopt"])
     print("dual solution (x) = ", new_opt_sol["lam_x"])
     print("dual solution (g) = ", new_opt_sol["lam_g"])
+
+    # set optimal
+    optimal_bool = [True if abs(i_var) < 1e-14 else False for i_var in new_opt_sol["lam_g"]]
+    new_opt_sol["optimal"] = all(optimal_bool)
+
     return new_opt_sol
 
 
@@ -210,14 +215,16 @@ def compile_opt_result(all_opt_sol):
     all_var_name = [i_var_name for _ in all_opt_sol for i_var_name in variable_names]
     all_err_name = [i_err_name for _ in all_opt_sol for i_err_name in error_names]
     all_lam_x_names = ["all_lam_x_{}".format(i_var) for i_var in range(0, number_variables + len(error_names))]
-    all_var_lam = [i_x_value for _ in all_opt_sol for i_var_id, i_x_value in enumerate(all_lam_x_names)
-                   if i_var_id in var_id]
-    all_err_lam = [i_x_value for _ in all_opt_sol for i_var_id, i_x_value in enumerate(all_lam_x_names)
-                   if i_var_id in err_id]
+    all_var_lam_name = [i_x_value for _ in all_opt_sol for i_var_id, i_x_value in enumerate(all_lam_x_names)
+                        if i_var_id in var_id]
+    all_err_lam_name = [i_x_value for _ in all_opt_sol for i_var_id, i_x_value in enumerate(all_lam_x_names)
+                        if i_var_id in err_id]
     all_var_lam_x = [i_x_value[0] for i_data_sol in all_opt_sol for i_var_id, i_x_value in
                      enumerate(i_data_sol["lam_x"]) if i_var_id in var_id]
     all_err_lam_x = [i_x_value[0] for i_data_sol in all_opt_sol for i_var_id, i_x_value in
                      enumerate(i_data_sol["lam_x"]) if i_var_id in err_id]
+    all_cons_lam_name = [i_x_value for i_data_sol in all_opt_sol for i_x_value in i_data_sol["constraint_name"]]
+    all_cons_lam_x = [i_x_value[0] for i_data_sol in all_opt_sol for i_x_value in i_data_sol["lam_g"]]
     all_f_opt = [i_obj_value for i_data_sol in all_opt_sol for i_obj_value in
                  [float(i_data_sol["f"][0])] * number_variables]
     all_data_set_id = [i_x_data_set for i_data_sol in all_opt_sol for i_x_data_set in
@@ -225,13 +232,15 @@ def compile_opt_result(all_opt_sol):
 
     # parameter identifiability based on their numerical values (> 0) use all_var_opt
     all_p_ident = [True if i_var_opt > 1e-4 else False for i_var_opt in all_var_opt]
-    all_lam_opt = [True if abs(i_var_lam) < 1e-16 else False for i_var_lam in all_var_lam_x]
+    # all_lam_opt = [True if abs(i_var_lam) < 1e-16 else False for i_var_lam in all_var_lam_x]
+    all_opt = [j_opt for i_sol_opt in all_opt_sol for j_opt in [i_sol_opt["optimal"]] * number_variables]
 
     all_sol_dict = {"data_set_id": all_data_set_id, "parameter_value": all_var_opt, "parameter_name": all_var_name,
-                    "error_value": all_error_opt, "error_name": all_err_name, "variable_dual_name": all_var_lam,
-                    "error_dual_name": all_err_lam, "variable_dual_value": all_var_lam_x,
+                    "error_value": all_error_opt, "error_name": all_err_name, "variable_dual_name": all_var_lam_name,
+                    "error_dual_name": all_err_lam_name, "variable_dual_value": all_var_lam_x,
                     "error_dual_value": all_err_lam_x, "objective": all_f_opt, "identifiability": all_p_ident,
-                    "optimality": all_lam_opt}
+                    "optimality": all_opt, "constraint_dual_name": all_cons_lam_name,
+                    "constraint_dual_value": all_cons_lam_x}
 
     return all_sol_dict
 
@@ -251,6 +260,7 @@ def identify_all_data_sets(experimental_data, chosen_fun, x0, prob, optim_option
         arg = prob
         variable_name = ["V3max", "K3fdp", "K3pep"]
         error_names = ["eps_1", "eps_2", "eps_3"]
+        cons_name = ["cons_1", "cons_2", "cons_3"]
     elif chosen_fun == 2:
         ident_fun = v3_numerical_problem
         arg = {"lbx": 8 * [0],
@@ -259,6 +269,7 @@ def identify_all_data_sets(experimental_data, chosen_fun, x0, prob, optim_option
                "ubg": 4 * [0]}
         variable_name = ["V3max", "K3fdp", "K3pep", "L3fdp"]
         error_names = ["eps_1", "eps_2", "eps_3", "eps_4"]
+        cons_name = ["cons_1", "cons_2", "cons_3", "cons_4"]
     else:
         ident_fun = []
         arg = {}
@@ -279,7 +290,7 @@ def identify_all_data_sets(experimental_data, chosen_fun, x0, prob, optim_option
             sol = []
         if sol:
             sol = parse_opt_result(sol, i_data_name)
-        sol.update({"variable_name": variable_name, "error_name": error_names})
+        sol.update({"variable_name": variable_name, "error_name": error_names, "constraint_name": cons_name})
         all_data_solutions.append(sol)
         print("Identifiability analysis on data set {} of {} complete".format(i_data_id+1, number_data_sets))
 
@@ -312,8 +323,9 @@ def process_opt_solution(opt_sol, exp_df, opt_solution, number_of_parameters, fl
     all_parameter_names = []
     all_parameter_data_set_ids = []
     for i_parameter, i_parameter_name in enumerate(parameter_names):
-        optimal_df = relevant_df[(relevant_df["parameter_name"] == i_parameter_name) & (relevant_df["optimality"])]
-        ident_df = optimal_df[(optimal_df["parameter_name"] == i_parameter_name) & (optimal_df["identifiability"])]
+        ident_df = relevant_df[(relevant_df["parameter_name"] == i_parameter_name) & (relevant_df["optimality"]) &
+                               (relevant_df["identifiability"])]
+        # ident_df = optimal_df[(optimal_df["parameter_name"] == i_parameter_name) & (optimal_df["identifiability"])]
         i_p_value = ident_df["parameter_value"].values
         all_parameter_values.append([j_p_value for j_p_value in i_p_value])
         all_parameter_names.append(i_parameter_name)
