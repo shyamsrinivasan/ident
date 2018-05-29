@@ -11,12 +11,12 @@ from copy import deepcopy
 def generate_data(y0, all_options, kinetics):
     _, ode_par_val = all_options
     if kinetics == 1:  # MWC kinetics
-        time, y_dynamic = run_ode_sims(kotte_ode, y0, all_options, all_options[0][-1])[:2]
+        time, y_dynamic = run_ode_sims(kotte_ode, y0, all_options, all_options[0]["time_points"])[:2]
         # calculate dynamic flux data
         flux_dynamic = np.array(map(lambda x: kotte_flux(x, ode_par_val), y_dynamic))
 
     elif kinetics == 2:  # Convenience kinetics
-        time, y_dynamic = run_ode_sims(kotte_ck_ode, y0, all_options, all_options[0][-1])[:2]
+        time, y_dynamic = run_ode_sims(kotte_ck_ode, y0, all_options, all_options[0]["time_points"])[:2]
         # calculate dynamic flux
         flux_dynamic = np.array(map(lambda x: kotte_ck_flux(x, ode_par_val), y_dynamic))
     else:
@@ -144,7 +144,10 @@ def run_no_noise_parameter_perturbation(parameter_perturbation, y0, other_option
         parameter_name = perturbation_value.keys()[0]
         parameter_change = np.array(perturbation_value.values()[0])
         changed_ode_parameter = deepcopy(ode_parameters)
-        changed_ode_parameter[parameter_name] = changed_ode_parameter[parameter_name] * (1 + parameter_change)
+        if parameter_name == 'wt':
+            changed_ode_parameter['ac'] = changed_ode_parameter['ac'] * (1 + parameter_change)
+        else:
+            changed_ode_parameter[parameter_name] = changed_ode_parameter[parameter_name] * (1 + parameter_change)
         all_options = (cvode_options, changed_ode_parameter)
         # generate data using MWC or Convinience Kinetics (choice specified using "kinetics" parameter
         ss_iter, dynamic_iter = generate_no_noise_data(y0, all_options, kinetics=kinetics)
@@ -175,16 +178,19 @@ def run_no_noise_parameter_perturbation(parameter_perturbation, y0, other_option
     parameter_name = [i_perturbation_info.keys()[0] for i_perturbation_info in perturbation_indices]
     parameter_change = [np.array(i_perturbation_info.values()[0])
                         for i_perturbation_info in perturbation_indices]
-    parameter_value = [i_parameter_value_dict[i_parameter_name] for i_parameter_name, i_parameter_value_dict in
-                       zip(parameter_name, perturbed_parameter)]
+    parameter_value = [np.array(i_parameter_value_dict[i_parameter_name][0]) if i_parameter_name != 'wt'
+                       else np.array(i_parameter_value_dict['ac'][0])
+                       for i_parameter_name, i_parameter_value_dict in zip(parameter_name, perturbed_parameter)]
+    essential_parameter_value = [np.array(i_perturbation_info["ac"][0]) for i_perturbation_info in perturbed_parameter]
     parameter_change_percentage = [i_parameter_change * 100 for i_parameter_change in parameter_change]
     initial_value_ss_id = [int(i_perturbation_info[0]) for i_perturbation_info in perturbation_ssid]
     final_value_ss_id = [int(i_perturbation_info[1]) for i_perturbation_info in perturbation_ssid]
     dict_fields = ['parameter_name', 'parameter_change', 'parameter_change_percentage', 'parameter_value',
-                   'initial_ss', 'final_ss', 'experiment_id']
+                   'initial_ss', 'final_ss', 'experiment_id', 'acetate']
     experiment_info = dict(zip(dict_fields,
                                [parameter_name, parameter_change, parameter_change_percentage,
-                                parameter_value, initial_value_ss_id, final_value_ss_id, perturbation_names]))
+                                parameter_value, initial_value_ss_id, final_value_ss_id, perturbation_names,
+                                essential_parameter_value]))
     return ss_info, dynamic_info, experiment_info
 
 
@@ -212,7 +218,10 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options, 
         parameter_name = perturbation_value.keys()[0]
         parameter_change = np.array(perturbation_value.values()[0])
         changed_ode_parameter = deepcopy(ode_parameters)
-        changed_ode_parameter[parameter_name] = changed_ode_parameter[parameter_name] * (1 + parameter_change)
+        if parameter_name == 'wt':
+            changed_ode_parameter['ac'] = changed_ode_parameter['ac'] * (1 + parameter_change)
+        else:
+            changed_ode_parameter[parameter_name] = changed_ode_parameter[parameter_name] * (1 + parameter_change)
         all_options = (cvode_options, changed_ode_parameter)
         # generate data using MWC Kinetics
         noisy_ss_iter, noisy_dynamic_iter, ss_iter, dynamic_iter = \
@@ -254,15 +263,20 @@ def run_noisy_parameter_perturbation(parameter_perturbation, y0, other_options, 
     parameter_name = [i_perturbation_info.keys()[0] for i_perturbation_info in perturbation_indices]
     parameter_change = [np.array(i_perturbation_info.values()[0])
                         for i_perturbation_info in perturbation_indices]
-    parameter_value = [i_parameter_value_dict[i_parameter_name] for i_parameter_name, i_parameter_value_dict in
-                       zip(parameter_name, perturbed_parameter)]
+    # parameter_value = [np.array(i_parameter_value_dict[i_parameter_name][0])
+    #                    for i_parameter_name, i_parameter_value_dict in zip(parameter_name, perturbed_parameter)]
+    parameter_value = [np.array(i_parameter_value_dict[i_parameter_name][0]) if i_parameter_name != 'wt'
+                       else np.array(i_parameter_value_dict['ac'][0])
+                       for i_parameter_name, i_parameter_value_dict in zip(parameter_name, perturbed_parameter)]
+    essential_parameter_value = [np.array(i_perturbation_info["ac"][0]) for i_perturbation_info in perturbed_parameter]
     parameter_change_percentage = [i_parameter_change * 100 for i_parameter_change in parameter_change]
     initial_value_ss_id = [int(i_perturbation_info[0]) for i_perturbation_info in perturbation_ssid]
     final_value_ss_id = [int(i_perturbation_info[1]) for i_perturbation_info in perturbation_ssid]
     # experiment_id = [i_perturbation_info for i_perturbation_info in perturbation_details["experiment_id"]]
     dict_fields = ['parameter_name', 'parameter_change', 'parameter_change_percentage', 'parameter_value',
-                   'initial_ss', 'final_ss', 'experiment_id']
+                   'initial_ss', 'final_ss', 'experiment_id', 'acetate']
     experiment_info = dict(zip(dict_fields,
                                [parameter_name, parameter_change, parameter_change_percentage,
-                                parameter_value, initial_value_ss_id, final_value_ss_id, perturbation_names]))
+                                parameter_value, initial_value_ss_id, final_value_ss_id, perturbation_names,
+                                essential_parameter_value]))
     return all_sample_ss, noisy_dynamic, experiment_info, ss_info, dynamic_info

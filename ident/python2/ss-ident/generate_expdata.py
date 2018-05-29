@@ -3,7 +3,7 @@ from generate_noisy_data import generate_noisy_data
 from generate_noisy_data import run_no_noise_parameter_perturbation
 from generate_noisy_data import run_noisy_parameter_perturbation
 from plot_ident_results import plot_dynamic_sim_concentrations
-from kotte_model import kotte_variable_name
+from names_strings import variable_name
 # import numpy as np
 import pandas as pd
 
@@ -30,7 +30,7 @@ def create_ss_dict(ss_info, variable_type, noise=0):
         number_variables = len(ss_info[0][0])
     else:
         number_variables = len(ss_info[0])
-    variable_name_info = [kotte_variable_name(variable_type, j_variable) for j_variable in range(0, number_variables)]
+    variable_name_info = [variable_name(variable_type, j_variable) for j_variable in range(0, number_variables)]
 
     variable_value_info = []
     if noise:
@@ -120,7 +120,7 @@ def generate_expdata(y0, cvode_options, ode_parameter_values, number_of_samples=
         plot_dynamic_sim_concentrations(initial_dyn, noise=noise)
 
     # all parameter perturbations
-    parameter_perturbation = [{"ac": 0}, {"ac": 1}, {"ac": 4}, {"ac": 9}, {"ac": -.1}, {"ac": -.5},
+    parameter_perturbation = [{"wt": 0}, {"ac": 1}, {"ac": 4}, {"ac": 9}, {"ac": -.1}, {"ac": -.5},
                               {"k1cat": .1}, {"k1cat": .5}, {"k1cat": 1}, {"k1cat": -.1}, {"k1cat": -.5},
                               {"V3max": .1}, {"V3max": .5}, {"V3max": 1}, {"V3max": -.1}, {"V3max": -.5},
                               {"V2max": .1}, {"V2max": .5}, {"V2max": 1}, {"V2max": -.1}, {"V2max": -.5}]

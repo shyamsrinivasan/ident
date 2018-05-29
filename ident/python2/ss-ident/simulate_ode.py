@@ -7,7 +7,20 @@ def simulate_ode(fun, y_initial, tf, opts):
     "function to run CVode solver on given problem"
     # get options
     ode_opts, ode_system_options = opts
-    iter, discretization_method, atol, rtol, time_points = ode_opts
+    # iter, discretization_method, atol, rtol, time_points = ode_opts
+    iter = ode_opts["iter"]
+    discretization_method = ode_opts["discr"]
+    atol = ode_opts["atol"]
+    rtol = ode_opts["rtol"]
+    time_points = ode_opts["time_points"]
+    try:
+        display_progress = ode_opts["display_progress"]
+    except KeyError:
+        display_progress = True
+    try:
+        verbosity = ode_opts["verbosity"]
+    except KeyError:
+        verbosity = 10
 
     ode_function = lambda t, x : fun(t,x,ode_system_options)
 
@@ -18,7 +31,8 @@ def simulate_ode(fun, y_initial, tf, opts):
     solver = CVode(prob)
 
     # set solver options
-    solver.iter, solver.discr, solver.atol, solver.rtol = iter, discretization_method, atol, rtol
+    solver.iter, solver.discr, solver.atol, solver.rtol, solver.display_progress, solver.verbosity = \
+        iter, discretization_method, atol, rtol, display_progress, verbosity
 
     # simulate system
     time_course, y_result = solver.simulate(tf, time_points)
