@@ -50,6 +50,47 @@ def v3_ck_numerical_problem(chosen_data):
     return nlp
 
 
+def v3_ck_numerical_problem_l1_obj(chosen_data):
+    """fun to calculate objectives and constraints for numerical identification of v3
+    using convenience kinetics"""
+
+    number_data = len(chosen_data)
+    # symbolic variables for use with casadi
+    v3max = casadi.SX.sym("v3max")
+    k3fdp = casadi.SX.sym("k3fdp")
+    k3pep = casadi.SX.sym("k3pep")
+    error = casadi.SX.sym("error", number_data)
+
+    all_constraints = []
+    for i_data_id, i_data in enumerate(chosen_data):
+        _, pep, fdp, _, _, _, v3, _, = list(i_data)
+
+        # flux equation for each experiment i_data in chosen_data
+        fdp_sat = fdp / k3fdp
+        pep_sat = pep / k3pep
+        nr_3 = v3max * fdp_sat
+        dr_3 = 1 + fdp_sat
+        regulation_activate = 1 / (1 + 1 / pep_sat)
+        flux_3 = regulation_activate * nr_3 / dr_3
+        # formulate constraint for each experimental data set
+        all_constraints.append(flux_3 - v3 - error[i_data_id])
+
+    # create casadi array of constraints
+    constraints = casadi.vertcat(*all_constraints)
+
+    # create complete casadi objective fun
+    objective = error[0]
+    for i_error_id in range(1, number_data):
+        objective += error[i_error_id]
+
+    # get complete set of all optimization variables vertcat([parameters, error])
+    x = casadi.vertcat(*[v3max, k3fdp, k3pep, error])
+
+    nlp = {'x': x, 'f': objective, 'g': constraints}
+
+    return nlp
+
+
 def v3_numerical_problem(chosen_data):
     """fun to calculate objectives and constraints for numerical identification of v3
         using MWC kinetics"""
@@ -106,7 +147,7 @@ def solve_numerical_nlp(chosen_fun, chosen_data, opt_problem_details, optim_opti
         opts = optim_options["opts"]
     else:
         solver = "ipopt"
-        opts = {"ipopt.tol": 1e-12}
+        opts = {"ipopt.tol": 1e-16}
         # solver = "sqpmethod"
         # opts = {"qpsol": "qpoases"}
 
@@ -184,11 +225,13 @@ def compile_opt_result(all_opt_sol):
 
     # parameter identifiability based on their numerical values (> 0) use all_var_opt
     all_p_ident = [True if i_var_opt > 1e-4 else False for i_var_opt in all_var_opt]
+    all_lam_opt = [True if abs(i_var_lam) < 1e-16 else False for i_var_lam in all_var_lam_x]
 
     all_sol_dict = {"data_set_id": all_data_set_id, "parameter_value": all_var_opt, "parameter_name": all_var_name,
                     "error_value": all_error_opt, "error_name": all_err_name, "variable_dual_name": all_var_lam,
                     "error_dual_name": all_err_lam, "variable_dual_value": all_var_lam_x,
-                    "error_dual_value": all_err_lam_x, "objective": all_f_opt, "identifiability": all_p_ident}
+                    "error_dual_value": all_err_lam_x, "objective": all_f_opt, "identifiability": all_p_ident,
+                    "optimality": all_lam_opt}
 
     return all_sol_dict
 
@@ -203,6 +246,12 @@ def identify_all_data_sets(experimental_data, chosen_fun, x0, prob, optim_option
         variable_name = ["V3max", "K3fdp", "K3pep"]
         error_names = ["eps_1", "eps_2", "eps_3"]
     elif chosen_fun == 1:
+        ident_fun = v3_ck_numerical_problem_l1_obj
+        # set problem constraint and variable bounds
+        arg = prob
+        variable_name = ["V3max", "K3fdp", "K3pep"]
+        error_names = ["eps_1", "eps_2", "eps_3"]
+    elif chosen_fun == 2:
         ident_fun = v3_numerical_problem
         arg = {"lbx": 8 * [0],
                "ubx": [2, 1, 1, 5, .1, .1, .1, .1],
@@ -258,12 +307,13 @@ def process_opt_solution(opt_sol, exp_df, opt_solution, number_of_parameters, fl
     total_data_sets = [len(opt_sol.index.levels[1])] * len(parameter_names)
 
     # bring all details together in number_parameter len lists
-    relevant_df = opt_sol.loc[:, ['parameter_name', 'parameter_value', 'identifiability']]
+    relevant_df = opt_sol.loc[:, ['parameter_name', 'parameter_value', 'identifiability', 'optimality']]
     all_parameter_values = []
     all_parameter_names = []
     all_parameter_data_set_ids = []
     for i_parameter, i_parameter_name in enumerate(parameter_names):
-        ident_df = relevant_df[(relevant_df["parameter_name"] == i_parameter_name) & (relevant_df["identifiability"])]
+        optimal_df = relevant_df[(relevant_df["parameter_name"] == i_parameter_name) & (relevant_df["optimality"])]
+        ident_df = optimal_df[(optimal_df["parameter_name"] == i_parameter_name) & (optimal_df["identifiability"])]
         i_p_value = ident_df["parameter_value"].values
         all_parameter_values.append([j_p_value for j_p_value in i_p_value])
         all_parameter_names.append(i_parameter_name)
