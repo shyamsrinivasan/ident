@@ -174,3 +174,26 @@ def data_numerical_ident(exp_df, sample_name):
     all_exp_df, data_set_ids = collect_data(exp_df, j_sample=sample_name, numerical=1)
     all_data_info = {"value": all_exp_df, "data_set_id": data_set_ids}
     return all_data_info
+
+
+def all_data_numerical_ident(exp_df, sample_name, chosen_experiments):
+    """return experimental data from all experiments for numerical identifiability analysis"""
+    all_experiment_indices = ['experiment_0', 'experiment_1', 'experiment_2', 'experiment_3', 'experiment_4',
+                              'experiment_5', 'experiment_6', 'experiment_7', 'experiment_8', 'experiment_9',
+                              'experiment_10', 'experiment_11', 'experiment_12', 'experiment_13', 'experiment_14',
+                              'experiment_15', 'experiment_16', 'experiment_17', 'experiment_18', 'experiment_19',
+                              'experiment_20']
+    chosen_experiment_id = [all_experiment_indices[j] for j in chosen_experiments]
+    idx = pd.IndexSlice
+    # all_experiment_id = exp_df.index.levels[1].values
+    exp_df.sort_index(level='sample_name', inplace=True)
+    exp_df.sort_index(level='experiment_id')
+
+    # collect data
+    all_exp_data = []
+    for i_experiment in chosen_experiment_id:
+        relevant_data = exp_df.loc[idx[sample_name, i_experiment],
+                                   ['acetate', 'pep', 'fdp', 'E', 'v1', 'v2', 'v3', 'v5']].values.tolist()
+        all_exp_data.append(relevant_data)
+    all_exp_info = {"value": [all_exp_data], "data_set_id": [chosen_experiment_id]}
+    return all_exp_info
