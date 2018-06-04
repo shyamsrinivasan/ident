@@ -29,7 +29,7 @@ optim_options = {"solver": "ipopt",
                  "opts": {"ipopt.tol": 1e-18}}
 # optim_options = {"solver": "sqpmethod",\
 #                  "opts": {"qpsol": "qpoases"}}
-initial_value = [[80, 80, 80, 0, 0, 0]]  # [100, 400, 400, 0, 0, 0], [50, 50, 400, 0, 0, 0]
+initial_value = [[80, 80, 80, 80, 0, 0, 0, 0]]  # [100, 400, 400, 0, 0, 0], [50, 50, 400, 0, 0, 0]
 # randomized_initial_values = generate_random_initial_conditions(initial_value, 10, negative=1)
 problem = {"lbx": 8 * [0],
            "ubx": [2, 1, 1, 5, 1e-20, 1e-20, 1e-20, 1e-20],
