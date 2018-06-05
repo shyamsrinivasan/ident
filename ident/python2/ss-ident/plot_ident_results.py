@@ -52,6 +52,7 @@ def plot_on_axis_object_violin(axis_object, distribution_data):
 def plot_on_axis_object_hist(axis_object, distribution_data, mark_value=[], parameter_name=[]):
     """create histogram of distribution data"""
     # axis_object = plt.Subplot(fig_object, grid_object)
+    # need to add call to np.histogram to determine bin and edges beforehand and modify them
     hist_object = axis_object.hist(distribution_data)
     if parameter_name:
         axis_object.set_title(parameter_name, fontsize=14)
