@@ -37,7 +37,7 @@ problem = {"lbx": 8 * [0],
            "ubg": 4 * [0]}
 from numerical_ident import solve_multiple_initial_conditions
 all_sol_df, _ = solve_multiple_initial_conditions(all_initial_conditions=initial_value,
-                                                  experimental_data=all_exp_data, chosen_fun=2, prob=problem,
+                                                  experimental_data=all_exp_data, chosen_fun=4, prob=problem,
                                                   optim_options=optim_options, number_of_parameters=4, flux_id=3,
                                                   flux_choice=[3], exp_df=arranged_data_df,
                                                   file_name=storage_file_name)
