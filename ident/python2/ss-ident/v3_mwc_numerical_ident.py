@@ -51,20 +51,20 @@ all_parameter_info = process_opt_solution(numerical_ident_df, arranged_data_df, 
 default_parameter_values = true_parameter_values()
 
 # extract all parameter values
-# from process_ident_data import get_parameter_value
-# validation_info = get_parameter_value(all_parameter_info, numerical_ident_df)
+from process_ident_data import get_parameter_value
+validation_info = get_parameter_value(all_parameter_info, numerical_ident_df)
 # initial value used to generate experimental data
-# import numpy as np
-# y0 = np.array([5, 1, 1])
-# # integrator options
-# cvode_options = {'iter': 'Newton', 'discr': 'Adams', 'atol': 1e-10, 'rtol': 1e-10, 'time_points': 200,
-#                  'display_progress': False, 'verbosity': 50}
-# # validate all parameter values
+import numpy as np
+y0 = np.array([5, 1, 1])
+# integrator options
+cvode_options = {'iter': 'Newton', 'discr': 'Adams', 'atol': 1e-10, 'rtol': 1e-10, 'time_points': 200,
+                 'display_progress': False, 'verbosity': 50}
+# validate all parameter values
 validation_file_name = os.path.join(os.getcwd(), 'validate/ident_numerical_validate_v3_l1_obj')
-# from validate_estimation import validate_model
-# validate_model(y0, cvode_options, default_parameter_values, validation_info,
-#                save_file_name=validation_file_name,
-#                ss=1, dyn=0, noise=1, kinetics=2)
+from validate_estimation import validate_model
+validate_model(y0, cvode_options, default_parameter_values, validation_info,
+               save_file_name=validation_file_name,
+               ss=1, dyn=0, noise=1, kinetics=1)
 
 # get parameter value plot
 parameter_values_plot(all_parameter_info, default_parameter_values, box=False, violin=True)
