@@ -193,7 +193,7 @@ def v3_mwc_numerical_problem_l1_obj(chosen_data):
 
     all_constraints = []
     for i_data_id, i_data in enumerate(chosen_data):
-        _, pep, fdp, _, _, _, v3, _, _, _ = list(i_data)
+        _, pep, fdp, _, _, _, v3, _ = list(i_data)
 
         # flux equation for each experiment i_data in chosen_data
         fdp_sat = 1 + fdp / k3fdp
@@ -255,9 +255,9 @@ def parse_opt_result(opt_sol, data_id):
     print("optimal cost: ", float(new_opt_sol["f"]))
 
     # Print the optimal solution
-    print("optimal solution: ", new_opt_sol["xopt"])
-    print("dual solution (x) = ", new_opt_sol["lam_x"])
-    print("dual solution (g) = ", new_opt_sol["lam_g"])
+    # print("optimal solution: ", new_opt_sol["xopt"])
+    # print("dual solution (x) = ", new_opt_sol["lam_x"])
+    # print("dual solution (g) = ", new_opt_sol["lam_g"])
 
     # set optimal
     optimal_bool = [True if abs(i_var) < 1e-14 else False for i_var in new_opt_sol["lam_g"]]
