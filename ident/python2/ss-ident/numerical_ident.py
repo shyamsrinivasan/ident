@@ -148,7 +148,7 @@ def v3_mwc_numerical_problem(chosen_data):
 
     all_constraints = []
     for i_data_id, i_data in enumerate(chosen_data):
-        _, pep, fdp, _, _, _, v3, _, _, _ = list(i_data)
+        _, pep, fdp, _, _, _, v3, _ = list(i_data)
 
         # flux equation for each experiment i_data in chosen_data
         fdp_sat = 1 + fdp / k3fdp

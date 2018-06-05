@@ -10,17 +10,17 @@ import os.path
 
 # create data for identifiability analysis
 # from create_experiment_data import create_data_for_flux
-# create_data_for_flux(flux_id='v3', noise=0, number_samples=1)
+# create_data_for_flux(flux_id='v3a', noise=0, number_samples=1, kinetics=1)
 
 # extract experimental data from file
-new_data_file_name = os.path.join(os.getcwd(), 'exp/exp_v3_3_experiments')
+new_data_file_name = os.path.join(os.getcwd(), 'exp/exp_v3_4_experiments_mwc')
 index_labels = ['sample_name', 'data_set_id', 'experiment_id']
 arranged_data_df = retrieve_experimental_data_from_file(data_file_name=new_data_file_name,
                                                         multi_index_label=index_labels)
 
 # perform identifiability when v3 parameters are written using convenience kinetics
 # get combination of 3 experiments and perform identifiability on all fluxes that require 3 data sets
-storage_file_name = os.path.join(os.getcwd(), 'ident/ident_numerical_v3_l1_obj')
+storage_file_name = os.path.join(os.getcwd(), 'ident/ident_numerical_v3_mwc_l1_obj')
 # lexographic ordering of df indices
 all_exp_data = data_numerical_ident(arranged_data_df, 'sample_0')
 
@@ -37,8 +37,8 @@ problem = {"lbx": 8 * [0],
            "ubg": 4 * [0]}
 from numerical_ident import solve_multiple_initial_conditions
 all_sol_df, _ = solve_multiple_initial_conditions(all_initial_conditions=initial_value,
-                                                  experimental_data=all_exp_data, chosen_fun=1, prob=problem,
-                                                  optim_options=optim_options, number_of_parameters=3, flux_id=3,
+                                                  experimental_data=all_exp_data, chosen_fun=2, prob=problem,
+                                                  optim_options=optim_options, number_of_parameters=4, flux_id=3,
                                                   flux_choice=[3], exp_df=arranged_data_df,
                                                   file_name=storage_file_name)
 
