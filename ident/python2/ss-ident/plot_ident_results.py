@@ -54,17 +54,19 @@ def plot_on_axis_object_hist(axis_object, distribution_data, mark_value=[], para
     # axis_object = plt.Subplot(fig_object, grid_object)
     # need to add call to np.histogram to determine bin and edges beforehand and modify them
     counts, bins = np.histogram(distribution_data)
-    new_count = [counts[0]]
-    new_bin = [bins[0]]
-    j_pos = 0
-    for i_pos in range(1, len(bins)-1):
-        if bins[i_pos] - bins[i_pos-1] < 1e-3:
-            new_count[j_pos] += counts[i_pos]
-        else:
-            new_count.append(counts[i_pos])
-            new_bin.append(bins[i_pos])
-            j_pos += 1
-    new_bin.append(bins[-1])
+    set_bin = np.arange(min(distribution_data), max(distribution_data) + 1.0, 1.0)
+
+    # new_count = [counts[0]]
+    # new_bin = [bins[0]]
+    # j_pos = 0
+    # for i_pos in range(1, len(bins)-1):
+    #     if bins[i_pos] - bins[i_pos-1] < 1e-3:
+    #         new_count[j_pos] += counts[i_pos]
+    #     else:
+    #         new_count.append(counts[i_pos])
+    #         new_bin.append(bins[i_pos])
+    #         j_pos += 1
+    # new_bin.append(bins[-1])
 
     hist_object = axis_object.hist(distribution_data)
     if parameter_name:
