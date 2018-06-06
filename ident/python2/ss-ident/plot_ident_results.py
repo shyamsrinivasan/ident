@@ -53,22 +53,15 @@ def plot_on_axis_object_hist(axis_object, distribution_data, mark_value=[], para
     """create histogram of distribution data"""
     # axis_object = plt.Subplot(fig_object, grid_object)
     # need to add call to np.histogram to determine bin and edges beforehand and modify them
-    counts, bins = np.histogram(distribution_data)
-    set_bin = np.arange(min(distribution_data), max(distribution_data) + 1.0, 1.0)
+    # counts, bins = np.histogram(distribution_data)
+    set_bin = np.arange(0, max(distribution_data) + 0.5, 0.5)
 
-    # new_count = [counts[0]]
-    # new_bin = [bins[0]]
-    # j_pos = 0
-    # for i_pos in range(1, len(bins)-1):
-    #     if bins[i_pos] - bins[i_pos-1] < 1e-3:
-    #         new_count[j_pos] += counts[i_pos]
-    #     else:
-    #         new_count.append(counts[i_pos])
-    #         new_bin.append(bins[i_pos])
-    #         j_pos += 1
-    # new_bin.append(bins[-1])
+    hist_object = axis_object.hist(distribution_data, bins=set_bin, align='mid')
+    if max(distribution_data)+0.5 > 5:
+        axis_object.set_xticks(np.arange(0, max(distribution_data) + 0.5, 1))
+    else:
+        axis_object.set_xticks(np.arange(0, max(distribution_data) + 0.5, 0.5))
 
-    hist_object = axis_object.hist(distribution_data)
     if parameter_name:
         axis_object.set_title(parameter_name, fontsize=14)
     if mark_value:
@@ -201,9 +194,23 @@ def plot_on_axis_object_vertical(axis_obj, x_data, y_data, y_error, y_percent_me
 
 
 def plot_scatter(axis_object, x_data, y_data):
-    # axis_object = plt.Subplot(fig_object, grid_object)
+    """plot scatter data"""
     axis_object.plot(x_data, y_data, linestyle='None', marker='o', markersize=2)
-    # fig_object.add_subplot(axis_object)
+    return None
+
+
+def set_scatter_axis_limits(axis_object, x_data, y_data):
+    """set axis limits for scatter plots"""
+    # set x-axis ticks
+    if max(x_data) + 0.5 > 5:
+        axis_object.set_xticks(np.arange(0, max(x_data) + 0.5, 1))
+    else:
+        axis_object.set_xticks(np.arange(0, max(x_data) + 0.5, 0.5))
+    # set y-axis ticks
+    if max(y_data) + 0.5 > 5:
+        axis_object.set_yticks(np.arange(0, max(y_data) + 0.5, 1))
+    else:
+        axis_object.set_yticks(np.arange(0, max(y_data) + 0.5, 0.5))
     return None
 
 
@@ -340,6 +347,9 @@ def validation_scatter(info_dict, grid_objects, figure_object):
         scatter_axis.plot(info_dict["experiment_values"][i_variable],
                           info_dict["experiment_values"][i_variable],
                           **{'color': 'black', 'linestyle': 'dashdot', 'linewidth': 1.5})
+        # set scatter axis ticks
+        set_scatter_axis_limits(scatter_axis, x_data=info_dict["experiment_values"][i_variable],
+                                y_data=info_dict["values"][i_variable])
     return None
 
 
