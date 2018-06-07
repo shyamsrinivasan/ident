@@ -6,6 +6,7 @@ from plot_ident_results import identifiability_plot
 from plot_ident_results import parameter_values_plot
 from plot_ident_results import validation_plot
 from names_strings import true_parameter_values
+import os.path
 
 
 # create data for identifiability analysis
@@ -13,8 +14,7 @@ from names_strings import true_parameter_values
 # create_data_for_flux(flux_id='v3', noise=0, number_samples=1)
 
 # extract experimental data from file
-new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                     '\ident\python2\ss-ident\exp_v3_3_experiments'
+new_data_file_name = os.path.join(os.getcwd(), 'exp/exp_v3_3_experiments')
 index_labels = ['sample_name', 'data_set_id', 'experiment_id']
 arranged_data_df = retrieve_experimental_data_from_file(data_file_name=new_data_file_name,
                                                         multi_index_label=index_labels)
@@ -22,8 +22,7 @@ arranged_data_df = retrieve_experimental_data_from_file(data_file_name=new_data_
 # perform identifiability when v3 parameters are written for root (1)
 # get combination of 3 experiments and perform identifiability on all fluxes that require 3 data sets
 # print('Practical Identifiability Analysis of v3 with 3 parameters: V3max, K3fdp and K3pep \n')
-storage_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                     '\ident\python2\ss-ident\ident_v3_root_1'
+storage_file_name = os.path.join(os.getcwd(), 'ident/ident_v3_root_1')
 # choose identifiability functions to test
 ident_fun_choice = [0]
 # test identifiability and store data to file
@@ -39,8 +38,7 @@ all_parameter_info = process_ident(ident_df, arranged_data_df)
 
 # run dynamic simulations to obtain ss data based on estimated parameter values
 # get info from data sets that identify all 3 parameters
-validation_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\ident\python2' \
-                       '\ss-ident\ident_validate_v3_root_1'
+validation_file_name = os.path.join(os.getcwd(), 'validate/ident_validate_v3_root_1')
 # from process_ident_data import get_parameter_value
 # validation_info = get_parameter_value(all_parameter_info, ident_df)
 # # get default parameter values
@@ -61,8 +59,7 @@ validate_index_labels = ['estimate_id', 'sample_name', 'data_set_id', 'experimen
 validate_df = retrieve_experimental_data_from_file(data_file_name=validation_file_name,
                                                    multi_index_label=validate_index_labels)
 # validation plot
-original_experiment_file = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\ident\python2' \
-                            '\ss-ident\experiments'
+original_experiment_file = os.path.join(os.getcwd(), 'exp/experiments')
 exp_df = retrieve_experimental_data_from_file(data_file_name=original_experiment_file,
                                               multi_index_label=['sample_name', 'experiment_id'])
 

@@ -6,6 +6,7 @@ from plot_ident_results import identifiability_plot
 from plot_ident_results import parameter_values_plot
 from plot_ident_results import validation_plot
 from names_strings import true_parameter_values
+import os.path
 
 
 # create data for identifiability analysis
@@ -13,16 +14,14 @@ from names_strings import true_parameter_values
 # create_data_for_flux(flux_id='v5', noise=0, number_samples=1)
 
 # extract experimental data from file
-new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                     '\ident\python2\ss-ident\exp_v5_2_experiments'
+new_data_file_name = os.path.join(os.getcwd(), 'exp/exp_v5_2_experiments')
 index_labels = ['sample_name', 'data_set_id', 'experiment_id']
 arranged_data_df = retrieve_experimental_data_from_file(data_file_name=new_data_file_name,
                                                         multi_index_label=index_labels)
 
 # perform identifiability when v1 parameters with combination of 2 experiments
 # print('Practical Identifiability Analysis of v1 with 2 parameters: V1max and K1ac\n')
-storage_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                     '\ident\python2\ss-ident\ident_v5_root_2'
+storage_file_name = os.path.join(os.getcwd(), 'ident/ident_v5_root_2')
 # choose identifiability functions to test
 # ident_fun_choice = [2]
 # # test identifiability and store data to file
@@ -49,8 +48,7 @@ exp_info_plot(all_parameter_info)
 
 # run dynamic simulations to obtain ss data based on estimated parameter values
 # get info from data sets that identify all 3 parameters
-validation_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\ident\python2' \
-                       '\ss-ident\ident_validate_v5_root_2'
+validation_file_name = os.path.join(os.getcwd(), 'validate/ident_validate_v5_root_2')
 from process_ident_data import get_parameter_value
 validation_info = get_parameter_value(all_parameter_info, ident_df)
 
@@ -70,8 +68,7 @@ validate_index_labels = ['estimate_id', 'sample_name', 'data_set_id', 'experimen
 validate_df = retrieve_experimental_data_from_file(data_file_name=validation_file_name,
                                                    multi_index_label=validate_index_labels)
 # validation plot
-original_experiment_file = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\ident\python2' \
-                            '\ss-ident\experiments'
+original_experiment_file = os.path.join(os.getcwd(), 'exp/experiments')
 exp_df = retrieve_experimental_data_from_file(data_file_name=original_experiment_file,
                                               multi_index_label=['sample_name', 'experiment_id'])
 
