@@ -60,7 +60,7 @@ y0 = np.array([5, 1, 1])
 cvode_options = {'iter': 'Newton', 'discr': 'Adams', 'atol': 1e-10, 'rtol': 1e-10, 'time_points': 200,
                  'display_progress': False, 'verbosity': 50}
 # validate all parameter values
-validation_file_name = os.path.join(os.getcwd(), 'validate/ident_numerical_validate_v3_l1_obj')
+validation_file_name = os.path.join(os.getcwd(), 'validate/ident_numerical_validate_v3_mwc_l1_obj')
 from validate_estimation import validate_model
 validate_model(y0, cvode_options, default_parameter_values, validation_info,
                save_file_name=validation_file_name,
