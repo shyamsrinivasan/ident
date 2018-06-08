@@ -10,8 +10,8 @@ import os.path
 
 
 # create data for identifiability analysis
-from create_experiment_data import create_data_for_flux
-create_data_for_flux(flux_id='v3b', noise=0, number_samples=1)
+# from create_experiment_data import create_data_for_flux
+# create_data_for_flux(flux_id='v3b', noise=0, number_samples=1)
 
 # extract experimental data from file
 new_data_file_name = os.path.join(os.getcwd(), 'exp/exp_v3_2_experiments')
@@ -20,8 +20,8 @@ arranged_data_df = retrieve_experimental_data_from_file(data_file_name=new_data_
                                                         multi_index_label=index_labels)
 
 # perform identifiability when v3 parameters are written for root (1)
-# get combination of 3 experiments and perform identifiability on all fluxes that require 3 data sets
-# print('Practical Identifiability Analysis of v3 with 3 parameters: V3max, K3fdp and K3pep \n')
+# get combination of 3 experiments and perform identifiability on all fluxes that require 2 data sets
+# print('Practical Identifiability Analysis of v3 with 2 parameters: V3max and K3fdp \n')
 storage_file_name = os.path.join(os.getcwd(), 'ident/ident_v3_k3fdp')
 # choose identifiability functions to test
 ident_fun_choice = [3]
