@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import matplotlib.font_manager as fnt
+import seaborn as sns
 from names_strings import variable_name
 plt.ion()
 
@@ -51,23 +52,14 @@ def plot_on_axis_object_violin(axis_object, distribution_data):
 
 def plot_on_axis_object_hist(axis_object, distribution_data, mark_value=[], parameter_name=[]):
     """create histogram of distribution data"""
-    # axis_object = plt.Subplot(fig_object, grid_object)
-    # need to add call to np.histogram to determine bin and edges beforehand and modify them
-    # counts, bins = np.histogram(distribution_data)
-    set_bin = np.arange(0, max(distribution_data) + 0.5, 0.5)
 
-    hist_object = axis_object.hist(distribution_data, bins=set_bin, align='mid')
-    if max(distribution_data)+0.5 > 5:
-        axis_object.set_xticks(np.arange(0, max(distribution_data) + 0.5, 1))
-    else:
-        axis_object.set_xticks(np.arange(0, max(distribution_data) + 0.5, 0.5))
-
+    new_ax = sns.distplot(distribution_data, kde=False, ax=axis_object)
+    
     if parameter_name:
         axis_object.set_title(parameter_name, fontsize=14)
+
     if mark_value:
-        mark_y_value = np.arange(0, np.max(hist_object[0]) + 2)
-        mark_x_value = np.repeat(mark_value, len(mark_y_value))
-        axis_object.plot(mark_x_value, mark_y_value, color='black', linestyle='dashed', linewidth=2)
+        axis_object.plot(np.repeat(mark_value, 2), new_ax.get_ylim(), color='black', linestyle='dashed', linewidth=0.8)
     return None
 
 
