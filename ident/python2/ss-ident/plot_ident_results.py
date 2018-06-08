@@ -50,10 +50,13 @@ def plot_on_axis_object_violin(axis_object, distribution_data):
     return None
 
 
-def plot_on_axis_object_hist(axis_object, distribution_data, mark_value=[], parameter_name=[]):
+def plot_on_axis_object_hist(axis_object, distribution_data, mark_value=[], parameter_name=[], bins=[]):
     """create histogram of distribution data"""
 
-    new_ax = sns.distplot(distribution_data, kde=False, ax=axis_object)
+    if bins:
+        new_ax = sns.distplot(distribution_data, kde=False, ax=axis_object, bins=bins)
+    else:
+        new_ax = sns.distplot(distribution_data, kde=False, ax=axis_object)
 
     if parameter_name:
         axis_object.set_title(parameter_name, fontsize=14)
@@ -268,7 +271,7 @@ def exp_info_plot(info_dict):
     return None
 
 
-def parameter_values_plot(info_dict, original_values=(), violin=False, box=True):
+def parameter_values_plot(info_dict, original_values=(), violin=False, box=True, bins=[]):
     """plot distribution of parameter values as a box plot, violin plot and/or histogram"""
     number_parameters = len(info_dict["names"])
     if box:
@@ -291,10 +294,10 @@ def parameter_values_plot(info_dict, original_values=(), violin=False, box=True)
             hist_axis = f1.add_subplot(plot_grid[1, i_parameter])
             if original_values:
                 plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=original_values[i_parameter_name],
-                                         parameter_name=i_parameter_name)
+                                         parameter_name=i_parameter_name, bins=bins)
             else:
                 plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=[],
-                                         parameter_name=i_parameter_name)
+                                         parameter_name=i_parameter_name, bins=bins)
 
     if violin:
         f2 = plt.figure(figsize=(10, 8), dpi=100, tight_layout=True)
