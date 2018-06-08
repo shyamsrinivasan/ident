@@ -303,6 +303,31 @@ def create_data_for_flux(flux_id, noise, number_samples=1, kinetics=2):
                 file_name = os.path.join(os.getcwd(), 'exp/experiments')
                 new_data_file_name = os.path.join(os.getcwd(), 'exp/exp_v3_4_experiments')
         experiments_per_set = 4
+    elif flux_id == 'v3b':
+        experiment_choice_id = [0,
+                                1, 2, 3, 4, 5,
+                                6, 7, 8, 9, 10,
+                                16, 17, 18, 19, 20]
+
+        if noise:
+            if number_samples == 5:
+                file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                            '\ident\python2\ss-ident\experiments_noise_5_samples'
+                new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                                     '\ident\python2\ss-ident\exp_v3_2_experiments_noise_5_samples'
+            elif number_samples == 500:
+                file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                            '\ident\python2\ss-ident\experiments_noise_500_samples'
+                new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
+                                     '\ident\python2\ss-ident\exp_v3_2_experiments_noise_500_samples'
+        else:
+            if kinetics == 1:
+                file_name = os.path.join(os.getcwd(), 'exp/experiments_mwc')
+                new_data_file_name = os.path.join(os.getcwd(), 'exp/exp_v3_2_experiments_mwc')
+            elif kinetics == 2:
+                file_name = os.path.join(os.getcwd(), 'exp/experiments')
+                new_data_file_name = os.path.join(os.getcwd(), 'exp/exp_v3_2_experiments')
+        experiments_per_set = 2
     elif flux_id == 'v5':
         experiment_choice_id = [0,
                                 1, 2, 3, 4, 5,
