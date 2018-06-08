@@ -49,7 +49,7 @@ from validate_estimation import validate_model
 import numpy as np
 y0 = np.array([5, 1, 1])
 # integrator options
-cvode_options = {'iter': 'Newton', 'discr': 'Adams', 'atol': 1e-10, 'rtol': 1e-10, 'time_points': 200,
+cvode_options = {'iter': 'Newton', 'discr': 'Adams', 'atol': 1e-10, 'rtol': 1e-10, 'time_points': 500,
                  'display_progress': False, 'verbosity': 50}
 validate_model(y0, cvode_options, default_parameter_values, validation_info,
                save_file_name=validation_file_name,
