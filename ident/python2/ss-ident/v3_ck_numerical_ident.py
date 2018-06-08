@@ -31,16 +31,16 @@ optim_options = {"solver": "ipopt",
 #                  "opts": {"qpsol": "qpoases"}}
 initial_value = [[80, 80, 80, 0, 0, 0]]  # [100, 400, 400, 0, 0, 0], [50, 50, 400, 0, 0, 0]
 # randomized_initial_values = generate_random_initial_conditions(initial_value, 10, negative=1)
-# problem = {"lbx": 6 * [0],
-#            "ubx": [100, 100, 100, 1e-20, 1e-20, 1e-20],
-#            "lbg": 3 * [0],
-#            "ubg": 3 * [0]}
-# from numerical_ident import solve_multiple_initial_conditions
-# all_sol_df, _ = solve_multiple_initial_conditions(all_initial_conditions=initial_value,
-#                                                   experimental_data=all_exp_data, chosen_fun=1, prob=problem,
-#                                                   optim_options=optim_options, number_of_parameters=3, flux_id=3,
-#                                                   flux_choice=[3], exp_df=arranged_data_df,
-#                                                   file_name=storage_file_name)
+problem = {"lbx": 6 * [0],
+           "ubx": [100, 100, 100, 1e-20, 1e-20, 1e-20],
+           "lbg": 3 * [0],
+           "ubg": 3 * [0]}
+from numerical_ident import solve_multiple_initial_conditions
+all_sol_df, _ = solve_multiple_initial_conditions(all_initial_conditions=initial_value,
+                                                  experimental_data=all_exp_data, chosen_fun=1, prob=problem,
+                                                  optim_options=optim_options, number_of_parameters=3, flux_id=3,
+                                                  flux_choice=[3], exp_df=arranged_data_df,
+                                                  file_name=storage_file_name)
 
 index_labels = ['sample_name', 'data_set_id']
 numerical_ident_df = retrieve_experimental_data_from_file(data_file_name=storage_file_name,
@@ -51,20 +51,20 @@ all_parameter_info = process_opt_solution(numerical_ident_df, arranged_data_df, 
 default_parameter_values = true_parameter_values()
 
 # extract all parameter values
-# from process_ident_data import get_parameter_value
-# validation_info = get_parameter_value(all_parameter_info, numerical_ident_df)
-# initial value used to generate experimental data
-# import numpy as np
-# y0 = np.array([5, 1, 1])
-# # integrator options
-# cvode_options = {'iter': 'Newton', 'discr': 'Adams', 'atol': 1e-10, 'rtol': 1e-10, 'time_points': 200,
-#                  'display_progress': False, 'verbosity': 50}
-# # validate all parameter values
+from process_ident_data import get_parameter_value
+validation_info = get_parameter_value(all_parameter_info, numerical_ident_df)
+initial value used to generate experimental data
+import numpy as np
+y0 = np.array([5, 1, 1])
+# integrator options
+cvode_options = {'iter': 'Newton', 'discr': 'Adams', 'atol': 1e-10, 'rtol': 1e-10, 'time_points': 200,
+                 'display_progress': False, 'verbosity': 50}
+# validate all parameter values
 validation_file_name = os.path.join(os.getcwd(), 'validate/ident_numerical_validate_v3_l1_obj')
-# from validate_estimation import validate_model
-# validate_model(y0, cvode_options, default_parameter_values, validation_info,
-#                save_file_name=validation_file_name,
-#                ss=1, dyn=0, noise=1, kinetics=2)
+from validate_estimation import validate_model
+validate_model(y0, cvode_options, default_parameter_values, validation_info,
+               save_file_name=validation_file_name,
+               ss=1, dyn=0, noise=1, kinetics=2)
 
 # get parameter value plot
 parameter_values_plot(all_parameter_info, default_parameter_values, box=False, violin=True)
