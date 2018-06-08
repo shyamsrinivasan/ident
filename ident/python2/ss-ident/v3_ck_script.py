@@ -53,7 +53,7 @@ default_parameter_values = true_parameter_values()
 #                  'display_progress': False, 'verbosity': 50}
 # validate_model(y0, cvode_options, default_parameter_values, validation_info,
 #                save_file_name=validation_file_name,
-#                ss=1, dyn=0, noise=0, kinetics=2, target_data=range(0, 5))
+#                ss=1, dyn=0, noise=0, kinetics=2)
 
 # retrieve validation info from file
 validate_index_labels = ['estimate_id', 'sample_name', 'data_set_id', 'experiment_id']

@@ -41,7 +41,7 @@ all_parameter_info = process_ident(ident_df, arranged_data_df)
 validation_file_name = os.path.join(os.getcwd(), 'validate/ident_validate_v3_k3pep')
 from process_ident_data import get_parameter_value
 validation_info = get_parameter_value(all_parameter_info, ident_df)
-# # get default parameter values
+# get default parameter values
 default_parameter_values = true_parameter_values()
 
 # initial value used to generate experimental data
@@ -53,7 +53,7 @@ cvode_options = {'iter': 'Newton', 'discr': 'Adams', 'atol': 1e-10, 'rtol': 1e-1
                  'display_progress': False, 'verbosity': 50}
 validate_model(y0, cvode_options, default_parameter_values, validation_info,
                save_file_name=validation_file_name,
-               ss=1, dyn=0, noise=0, kinetics=2, target_data=range(0, 5))
+               ss=1, dyn=0, noise=0, kinetics=2)
 
 # retrieve validation info from file
 validate_index_labels = ['estimate_id', 'sample_name', 'data_set_id', 'experiment_id']
