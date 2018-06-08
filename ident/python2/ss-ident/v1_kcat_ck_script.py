@@ -68,7 +68,7 @@ validation_plot({"concentration": all_c_info, "flux": all_f_info}, flux=True, fl
                 experiment_dist=False)
 
 # get parameter value plot
-parameter_values_plot(all_parameter_info, default_parameter_values, violin=True, box=False)
+parameter_values_plot(all_parameter_info, default_parameter_values, violin=True, box=False, bins=1)
 
 # get identifiability plot
 identifiability_plot(all_parameter_info)
