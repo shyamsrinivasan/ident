@@ -54,7 +54,7 @@ def plot_on_axis_object_hist(axis_object, distribution_data, mark_value=[], para
     """create histogram of distribution data"""
 
     new_ax = sns.distplot(distribution_data, kde=False, ax=axis_object)
-    
+
     if parameter_name:
         axis_object.set_title(parameter_name, fontsize=14)
 
