@@ -43,6 +43,9 @@ def plot_on_axis_object_violin(axis_object, distribution_data):
     """create violin plot of distributions"""
     # axis_object = plt.Subplot(fig_object, grid_object)
     violin_object = axis_object.violinplot(distribution_data, showmeans=True, showmedians=True)
+    # set meadian and mean line colors
+    violin_object['cmeans'].set_color('k')
+    violin_object['cmedians'].set_color('r')
 
     # Remove top axes and right axes ticks
     axis_object.get_xaxis().tick_bottom()
