@@ -891,21 +891,21 @@ def flux_ident_2_data_combination(exp_df, flux_ids, flux_choice=(), ident_fun_ch
     if flux_choice[0] == 1:
         flux_1 = flux_1_Vmax_ident
         flux_5 = flux_5_value1_ident
-        flux_6 = flux_3_var1
+        flux_3var = flux_3_var1
     elif flux_choice[0] == 2:
         flux_1 = flux_1_kcat_ident
         flux_5 = flux_5_value2_ident
-        flux_6 = flux_3_var2
+        flux_3var = flux_3_var2
     elif flux_choice[0] == 3:
         flux_1 = flux_1_Vmax_get_kcat_ident
         flux_5 = []
-        flux_6 = []
+        flux_3var = []
     else:
         flux_1 = []
         flux_5 = []
-        flux_6 = flux_3_var_1_and_2
+        flux_3var = flux_3_var_1_and_2
 
-    all_ident_fun_2_data = (flux_1, flux_2_ident_expression, flux_5, flux_6)
+    all_ident_fun_2_data = (flux_1, flux_2_ident_expression, flux_5, flux_3var)
 
     # choose which flux functions to test identifiability for
     if ident_fun_choice:
