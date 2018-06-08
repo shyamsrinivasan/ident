@@ -53,7 +53,7 @@ default_parameter_values = true_parameter_values()
 # extract all parameter values
 from process_ident_data import get_parameter_value
 validation_info = get_parameter_value(all_parameter_info, numerical_ident_df)
-initial value used to generate experimental data
+# initial value used to generate experimental data
 import numpy as np
 y0 = np.array([5, 1, 1])
 # integrator options
