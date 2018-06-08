@@ -46,6 +46,7 @@ default_parameter_values = true_parameter_values()
 
 # # initial value used to generate experimental data
 # from validate_estimation import validate_model
+# import numpy as np
 # y0 = np.array([5, 1, 1])
 # # integrator options
 # cvode_options = {'iter': 'Newton', 'discr': 'Adams', 'atol': 1e-10, 'rtol': 1e-10, 'time_points': 200,
