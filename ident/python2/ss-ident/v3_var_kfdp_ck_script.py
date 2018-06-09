@@ -65,7 +65,8 @@ exp_df = retrieve_experimental_data_from_file(data_file_name=original_experiment
                                               multi_index_label=['sample_name', 'experiment_id'])
 
 all_c_info, all_f_info = process_validation_info(validate_df, exp_df)
-validation_plot({"concentration": all_c_info, "flux": all_f_info}, flux=True, flux_id=['v1', 'v2', 'v3', 'v5'])
+validation_plot({"concentration": all_c_info, "flux": all_f_info}, flux=True, flux_id=['v1', 'v2', 'v3', 'v5'],
+                experiment_dist=False)
 
 # get parameter value plot
 parameter_values_plot(all_parameter_info, default_parameter_values, violin=True, box=False)
