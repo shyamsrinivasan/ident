@@ -113,7 +113,7 @@
 \end{figure}
 
 \begin{figure}[!tbhp]
-	\centering{\includegraphics[width=1.0\textwidth,height=0.8\textheight, keepaspectratio]{figures/figure6/v1_vmax_ck_parameter_values}}
+	\centering{\includegraphics[width=1.0\textwidth,height=1.0\textheight, keepaspectratio]{figures/figure6/v1_vmax_ck_parameter_values}}
 	\caption{Distribution of predicted parameter values when performing practical identifiability analysis using closed-form solutions for each parameter in flux $v_1$, which is described using as a Michaelis-Menten model, without using the enzyme concentration $E$ for identification when there is no noise in the input experimental data. Here $V_1^{max} = k_1^{cat}E$. The top panel shows a violin plot of the distribution of parameter values. The means are indicated by a black line and the median values are indicated by a red line. The bottom panels show the corresponding distributions as histograms.}\label{fig:v1_v1max_ck_values}
 \end{figure}
 
@@ -144,8 +144,13 @@
 
 
 \begin{figure}[!tbhp]
-	\centering{\includegraphics[width=1.0\textwidth,height=0.3\textheight, keepaspectratio]{figures/figure6/mwc_ck_experimental_data}}
-	\caption{Variability in the metabolite concentrations and fluxes between different in silico experiments from which data is used for identifiability analysis. a) Metabolite (\textit{pep}, \textit{fdp}) and enzyme concentration (\textit{E}), and b) flux data ($v_1$, $v_2$, $v_3$, $v_4$, $v_5$ and $v_6$) are generated using the Monod-Wyman-Changeaux model for $v_3$. The Convenience Kientic rate law model is used for $v_3$ to generate in silico c) metabolite and enzyme concentration, and d) flux data through enzyme expression parameter and substrate concentration perturbations.}\label{fig:experimental_data_dist}
+	\centering{\includegraphics[width=1.0\textwidth,height=0.8\textheight, keepaspectratio]{figures/figure6/exp_concentration_dist}}
+	\caption{Variability in the metabolite concentrations between different in silico experiments from which data is used for identifiability analysis. The top panel shows a violin plot of the distribution of concentration values. The means are indicated by a black line and the median values are indicated by a red line. The bottom panels show the corresponding distributions as histograms. Data are are generated using the Convenience Kinetics model for $v_3$. }\label{fig:experimental_data_dist}
+\end{figure}
+
+\begin{figure}[!tbhp]
+	\centering{\includegraphics[width=1.0\textwidth,height=0.8\textheight, keepaspectratio]{figures/figure6/exp_flux_dist}}
+	\caption{Variability in the fluxes between different in silico experiments from which data is used for identifiability analysis. The top panel shows a violin plot of the distribution of flux values. The means are indicated by a black line and the median values are indicated by a red line. The bottom panels show the corresponding distributions as histograms. Data are are generated using the Convenience Kinetics model for $v_3$.}\label{fig:exp_flux_dist}
 \end{figure}	
 
 \begin{figure}[!tbhp]
