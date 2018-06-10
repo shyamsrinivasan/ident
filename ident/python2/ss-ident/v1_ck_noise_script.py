@@ -10,8 +10,8 @@ import os.path
 
 
 # create data for identifiability analysis
-from create_experiment_data import create_data_for_flux
-create_data_for_flux(flux_id='v1', noise=1, number_samples=500)
+# from create_experiment_data import create_data_for_flux
+# create_data_for_flux(flux_id='v1', noise=1, number_samples=500)
 
 # extract data from file
 new_data_file_name = os.path.join(os.getcwd(), 'exp/exp_v1_2_experiments_noise_500_samples')
