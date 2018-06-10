@@ -212,14 +212,9 @@ def create_data_for_flux(flux_id, noise, number_samples=1, kinetics=2):
                                 16, 17, 18, 19, 20]
 
         if noise:
-            if number_samples == 5:
-                file_name = os.path.join(os.getcwd(), 'exp/experiments_noise_5_samples')
-                new_data_file_name = os.path.join(os.getcwd(), 'exp/exp_v1_2_experiments_noise_5_samples')
-            elif number_samples == 500:
-                file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                            '\ident\python2\ss-ident\experiments_noise_500_samples'
-                new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                                     '\ident\python2\ss-ident\exp_v1_2_experiments_noise_500_samples'
+            file_name = os.path.join(os.getcwd(), 'exp/experiments_noise_{}_samples'.format(number_samples))
+            new_data_file_name = os.path.join(os.getcwd(),
+                                              'exp/exp_v1_2_experiments_noise_{}_samples'.format(number_samples))
         else:
             if kinetics == 1:
                 file_name = os.path.join(os.getcwd(), 'exp/experiments_mwc')
@@ -235,16 +230,9 @@ def create_data_for_flux(flux_id, noise, number_samples=1, kinetics=2):
                                 11, 12, 13, 14, 15]
 
         if noise:
-            if number_samples == 5:
-                file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                            '\ident\python2\ss-ident\experiments_noise_5_samples'
-                new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                                     '\ident\python2\ss-ident\exp_v2_2_experiments_noise_5_samples'
-            elif number_samples == 500:
-                file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                            '\ident\python2\ss-ident\experiments_noise_500_samples'
-                new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                                     '\ident\python2\ss-ident\exp_v2_2_experiments_noise_500_samples'
+            file_name = os.path.join(os.getcwd(), 'exp/experiments_noise_{}_samples'.format(number_samples))
+            new_data_file_name = os.path.join(os.getcwd(),
+                                              'exp/exp_v2_2_experiments_noise_{}_samples'.format(number_samples))
         else:
             if kinetics == 1:
                 file_name = os.path.join(os.getcwd(), 'exp/experiments_mwc')
@@ -260,16 +248,9 @@ def create_data_for_flux(flux_id, noise, number_samples=1, kinetics=2):
                                 16, 17, 18, 19, 20]
 
         if noise:
-            if number_samples == 5:
-                file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                            '\ident\python2\ss-ident\experiments_noise_5_samples'
-                new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels'\
-                                     '\ident\python2\ss-ident\exp_v3_3_experiments_noise_5_samples'
-            elif number_samples == 500:
-                file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                            '\ident\python2\ss-ident\experiments_noise_500_samples'
-                new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                                     '\ident\python2\ss-ident\exp_v3_3_experiments_noise_500_samples'
+            file_name = os.path.join(os.getcwd(), 'exp/experiments_noise_{}_samples'.format(number_samples))
+            new_data_file_name = os.path.join(os.getcwd(),
+                                              'exp/exp_v3_3_experiments_noise_{}_samples'.format(number_samples))
         else:
             if kinetics == 1:
                 file_name = os.path.join(os.getcwd(), 'exp/experiments_mwc')
@@ -285,16 +266,9 @@ def create_data_for_flux(flux_id, noise, number_samples=1, kinetics=2):
                                 16, 17, 18, 19, 20]
 
         if noise:
-            if number_samples == 5:
-                file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                            '\ident\python2\ss-ident\experiments_noise_5_samples'
-                new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                                     '\ident\python2\ss-ident\exp_v3_4_experiments_noise_5_samples'
-            elif number_samples == 500:
-                file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                            '\ident\python2\ss-ident\experiments_noise_500_samples'
-                new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                                     '\ident\python2\ss-ident\exp_v3_4_experiments_noise_500_samples'
+            file_name = os.path.join(os.getcwd(), 'exp/experiments_noise_{}_samples'.format(number_samples))
+            new_data_file_name = os.path.join(os.getcwd(),
+                                              'exp/exp_v3_4_experiments_noise_{}_samples'.format(number_samples))
         else:
             if kinetics == 1:
                 file_name = os.path.join(os.getcwd(), 'exp/experiments_mwc')
@@ -310,16 +284,9 @@ def create_data_for_flux(flux_id, noise, number_samples=1, kinetics=2):
                                 16, 17, 18, 19, 20]
 
         if noise:
-            if number_samples == 5:
-                file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                            '\ident\python2\ss-ident\experiments_noise_5_samples'
-                new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                                     '\ident\python2\ss-ident\exp_v3_2_experiments_noise_5_samples'
-            elif number_samples == 500:
-                file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                            '\ident\python2\ss-ident\experiments_noise_500_samples'
-                new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                                     '\ident\python2\ss-ident\exp_v3_2_experiments_noise_500_samples'
+            file_name = os.path.join(os.getcwd(), 'exp/experiments_noise_{}_samples'.format(number_samples))
+            new_data_file_name = os.path.join(os.getcwd(),
+                                              'exp/exp_v3_2_experiments_noise_{}_samples'.format(number_samples))
         else:
             if kinetics == 1:
                 file_name = os.path.join(os.getcwd(), 'exp/experiments_mwc')
@@ -337,15 +304,11 @@ def create_data_for_flux(flux_id, noise, number_samples=1, kinetics=2):
 
         if noise:
             if number_samples == 5:
-                file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                            '\ident\python2\ss-ident\experiments_noise_5_samples'
-                new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                                     '\ident\python2\ss-ident\exp_v5_2_experiments_noise_5_samples'
+                file_name = os.path.join(os.getcwd(), 'exp/experiments_noise_5_samples')
+                new_data_file_name = os.path.join(os.getcwd(), 'exp/exp_v5_2_experiments_noise_5_samples')
             elif number_samples == 500:
-                file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                            '\ident\python2\ss-ident\experiments_noise_500_samples'
-                new_data_file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                                     '\ident\python2\ss-ident\exp_v5_2_experiments_noise_500_samples'
+                file_name = os.path.join(os.getcwd(), 'exp/experiments_noise_500_samples')
+                new_data_file_name = os.path.join(os.getcwd(), 'exp/exp_v5_2_experiments_noise_500_samples')
         else:
             if kinetics == 1:
                 file_name = os.path.join(os.getcwd(), 'exp/experiments_mwc')
@@ -362,15 +325,14 @@ def create_data_for_flux(flux_id, noise, number_samples=1, kinetics=2):
 
 
 if __name__ == "__main__":
-    file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-                '\ident\python2\ss-ident\experiments'
+    file_name = os.path.join(os.getcwd(), 'exp/experiments')
     experiment_info_df = create_experiment_data(file_name, noise=0, kinetics=2)
-    # file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels' \
-    #             '\ident\python2\ss-ident\experiments_mwc'
+
+    # file_name = os.path.join(os.getcwd(), 'exp/experiments_mwc')
     # experiment_info_df = create_experiment_data(file_name, noise=0, kinetics=1)
-    # file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\ident\python2\ss-ident' \
-    #             '\experiments_noise_5_samples'
+
+    # file_name = os.path.join(os.getcwd(), 'exp/experiments_noise_5_samples')
     # experiment_info_df = create_experiment_data(file_name, noise=1, kinetics=2, number_samples=5, noise_std=0.05)
-    # file_name = 'C:\Users\shyam\Documents\Courses\CHE1125Project\IntegratedModels\ident\python2\ss-ident' \
-    #             '\experiments_noise_500_samples'
+
+    # file_name = os.path.join(os.getcwd(), 'exp/experiments_noise_500_samples')
     # experiment_info_df = create_experiment_data(file_name, noise=1, kinetics=2, number_samples=500, noise_std=0.05)
