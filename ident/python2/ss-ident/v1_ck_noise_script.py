@@ -11,10 +11,10 @@ import os.path
 
 # create data for identifiability analysis
 from create_experiment_data import create_data_for_flux
-create_data_for_flux(flux_id='v1', noise=1, number_samples=5)
+create_data_for_flux(flux_id='v1', noise=1, number_samples=500)
 
 # extract data from file
-new_data_file_name = os.path.join(os.getcwd(), 'exp/exp_v1_2_experiments_noise_5_samples')
+new_data_file_name = os.path.join(os.getcwd(), 'exp/exp_v1_2_experiments_noise_500_samples')
 index_labels = ['sample_name', 'data_set_id', 'experiment_id']
 arranged_data_df = retrieve_experimental_data_from_file(data_file_name=new_data_file_name,
                                                         multi_index_label=index_labels)
