@@ -108,29 +108,64 @@
 
 \section{Supplementary Figures}	
 \begin{figure}[!tbhp]
-	\centering{\includegraphics[width=1.0\textwidth,height=0.8\textheight, keepaspectratio]{figures/figure6/v1_kcat_ck_parameter_dist}}
+	\centering{\includegraphics[width=1.0\textwidth,height=0.8\textheight, keepaspectratio]{figures/parameter_dist/v1_kcat_ck_parameter_dist}}
 	\caption{Distribution of predicted parameter values when performing practical identifiability analysis using closed-form solutions for each parameter in flux $v_1$ when there is no noise in the input experimental data. The top panel shows a violin plot of the distribution of parameter values. The means are indicated by a black line and the median values are indicated by a red line. The bottom panels show the corresponding distributions as histograms.}\label{fig:v1_kcat_ck_values}
 \end{figure}
 
 \begin{figure}[!tbhp]
-	\centering{\includegraphics[width=1.0\textwidth,height=1.0\textheight, keepaspectratio]{figures/figure6/v1_vmax_ck_parameter_values}}
-	\caption{Distribution of predicted parameter values when performing practical identifiability analysis using closed-form solutions for each parameter in flux $v_1$, which is described using as a Michaelis-Menten model, without using the enzyme concentration $E$ for identification when there is no noise in the input experimental data. Here $V_1^{max} = k_1^{cat}E$. The top panel shows a violin plot of the distribution of parameter values. The means are indicated by a black line and the median values are indicated by a red line. The bottom panels show the corresponding distributions as histograms.}\label{fig:v1_v1max_ck_values}
+	\centering{\includegraphics[width=0.8\textwidth,height=0.8\textheight, keepaspectratio]{figures/parameter_dist/v2_parameter_dist}}
+	\caption{Distribution of predicted parameter values when performing practical identifiability analysis using closed-form solutions for each parameter in flux $v_2$ when there is no noise in the input experimental data. The top panel shows a violin plot of the distribution of parameter values. The means are indicated by a black line and the median values are indicated by a red line. The bottom panels show the corresponding distributions as histograms.}\label{fig:v2_ck_values}
 \end{figure}
 
 \begin{figure}[!tbhp]
-	\centering{\includegraphics[width=1.0\textwidth,height=1.0\textheight, keepaspectratio]{figures/figure1/v1_vmax_exp_info}}
+	\centering{\includegraphics[width=1.0\textwidth,height=0.8\textheight, keepaspectratio]{figures/parameter_dist/v3_parameter_dist}}
+	\caption{Distribution of predicted parameter values when performing practical identifiability analysis using closed-form solutions for each parameter in flux $v_3$ when there is no noise in the input experimental data, and $v_3$ is expressed using the Convenience Kinetics model. The top panel shows a violin plot of the distribution of parameter values. The means are indicated by a black line and the median values are indicated by a red line. The bottom panels show the corresponding distributions as histograms.}\label{fig:v3_ck_values}
+\end{figure}
+
+\begin{figure}[!tbhp]
+	\centering{\includegraphics[width=1.0\textwidth,height=0.8\textheight, keepaspectratio]{figures/parameter_dist/v5_parameter_dist}}
+	\caption{Distribution of predicted parameter values when performing practical identifiability analysis using closed-form solutions for each parameter in flux $v_5$ when there is no noise in the input experimental data. The top panel shows a violin plot of the distribution of parameter values. The means are indicated by a black line and the median values are indicated by a red line. The bottom panels show the corresponding distributions as histograms.}\label{fig:v5_ck_values}
+\end{figure}
+
+\begin{figure}[!tbhp]
+	\centering{\includegraphics[width=1.0\textwidth,height=1.0\textheight, keepaspectratio]{figures/parameter_dist/v1_vmax_ck_parameter_values}}
+	\caption{Distribution of predicted parameter values when performing practical identifiability analysis using closed-form solutions for each parameter in flux $v_1$, which is described using as a Michaelis-Menten model, without using the enzyme concentration $E$ for identification when there is no noise in the input experimental data. Here $V_1^{max} = k_1^{cat}E$. The top panel shows a violin plot of the distribution of parameter values. The means are indicated by a black line and the median values are indicated by a red line. The bottom panels show the corresponding distributions as histograms.}\label{fig:v5_v1max_ck_values}
+\end{figure}
+
+\begin{figure}[!tbhp]
+	\centering{\includegraphics[width=1.0\textwidth,height=1.0\textheight, keepaspectratio]{figures/ident_exp_info/v1_vmax_exp_info}}
 	\caption{The number of data combination from 21 different in silico experiments that can practically identify each parameter in flux $v_1$, which is described using as a Michaelis-Menten model, without using the enzyme concentration $E$ for identification when there is no noise in the input experimental data. Here $V_1^{max} = k_1^{cat}E$. The percentage of total combinations of experimental data used for analysis (240 for $v_1$) that can identify each parameter is also specified. $v_1$ requires data from two experiments for analysis. The contribution of different experiment type towards identifying each parameter is shown in the spider plots for b) $v_1$. The choice of perturbation chosen for the first experiment (blue) determines the choice of the second perturbation (green) required for identifying the parameters.}\label{fig:v1_v1max_ck_ident}
 \end{figure}	
 
 \begin{figure}[!tbhp]
-	\centering{\includegraphics[width=1.0\textwidth,height=0.6\textheight, keepaspectratio]{figures/figure1/v3_ck_exp_info}}
+	\centering{\includegraphics[width=1.0\textwidth,height=0.6\textheight, keepaspectratio]{figures/ident_exp_info/v3_ck_exp_info}}
 	\caption{a) The number of data combination from 21 different in silico experiments that can practically identify each parameter in flux $v_3$ when there is no noise in the input experimental data. The percentage of total combinations of experimental data used for analysis (3360) that can identify each parameter is also specified. $v_3$ required data from three experiments for analysis. The contribution of different experiment type towards identifying each parameter is shown in the spider plots for b) $V_3^{max}$, c) $K_3^{fdp}$ and d) $K_3^{pep}$. The choice of perturbation chosen for the first experiment (blue) determines the choice of the second (green) and the third perturbation (yellow) required for identifying the parameters.}\label{fig:v3_1_ck_ident}
+\end{figure}
+
+\begin{figure}[!tbhp]
+	\centering{\includegraphics[width=1.0\textwidth,height=0.8\textheight, keepaspectratio]{figures/parameter_dist/v3_var_k3fdp_parameter_dist}}
+	\caption{Distribution of predicted parameter values when performing practical identifiability analysis using closed-form solutions for each parameter in flux $v_3$ (with constant $K_3^{pep}$) when there is no noise in the input experimental data. The top panel shows a violin plot of the distribution of parameter values. The means are indicated by a black line and the median values are indicated by a red line. The bottom panels show the corresponding distributions as histograms.}\label{fig:v3_var_k3fdp_values}
 \end{figure}	
 
 \begin{figure}[!tbhp]
-	\centering{\includegraphics[width=1.0\textwidth,height=0.3\textheight, keepaspectratio]{figures/figure1/v3_var_1_2_ck_ident_exp_info}}
+	\centering{\includegraphics[width=1.0\textwidth,height=0.8\textheight, keepaspectratio]{figures/parameter_dist/v3_var_k3pep_parameter_dist}}
+	\caption{Distribution of predicted parameter values when performing practical identifiability analysis using closed-form solutions for each parameter in flux $v_3$ (with constant $K_3^{fdp}$) when there is no noise in the input experimental data. The top panel shows a violin plot of the distribution of parameter values. The means are indicated by a black line and the median values are indicated by a red line. The bottom panels show the corresponding distributions as histograms.}\label{fig:v3_var_k3pep_values}
+\end{figure}	
+
+\begin{figure}[!tbhp]
+	\centering{\includegraphics[width=1.0\textwidth,height=0.3\textheight, keepaspectratio]{figures/ident_exp_info/v3_var_exp_info}}
 	\caption{}\label{fig:v3_var_1_2_ck_ident}
 \end{figure}
+
+\begin{figure}[!tbhp]
+	\centering{\includegraphics[width=1.0\textwidth,height=0.8\textheight, keepaspectratio]{figures/figure6/exp_concentration_dist}}
+	\caption{Variability in the metabolite concentrations between different in silico experiments from which data is used for identifiability analysis. The top panel shows a violin plot of the distribution of concentration values. The means are indicated by a black line and the median values are indicated by a red line. The bottom panels show the corresponding distributions as histograms. Data are are generated using the Convenience Kinetics model for $v_3$. }\label{fig:experimental_data_dist}
+\end{figure}
+
+\begin{figure}[!tbhp]
+	\centering{\includegraphics[width=1.0\textwidth,height=0.8\textheight, keepaspectratio]{figures/figure6/exp_flux_dist}}
+	\caption{Variability in the fluxes between different in silico experiments from which data is used for identifiability analysis. The top panel shows a violin plot of the distribution of flux values. The means are indicated by a black line and the median values are indicated by a red line. The bottom panels show the corresponding distributions as histograms. Data are are generated using the Convenience Kinetics model for $v_3$.}\label{fig:exp_flux_dist}
+\end{figure}	
 
 \begin{figure}[!tbhp]
 	\centering{\includegraphics[width=0.6\textwidth,height=0.6\textheight,keepaspectratio]{figures/figure3/experimental_design}}
@@ -143,15 +178,7 @@
 \end{figure}	
 
 
-\begin{figure}[!tbhp]
-	\centering{\includegraphics[width=1.0\textwidth,height=0.8\textheight, keepaspectratio]{figures/figure6/exp_concentration_dist}}
-	\caption{Variability in the metabolite concentrations between different in silico experiments from which data is used for identifiability analysis. The top panel shows a violin plot of the distribution of concentration values. The means are indicated by a black line and the median values are indicated by a red line. The bottom panels show the corresponding distributions as histograms. Data are are generated using the Convenience Kinetics model for $v_3$. }\label{fig:experimental_data_dist}
-\end{figure}
 
-\begin{figure}[!tbhp]
-	\centering{\includegraphics[width=1.0\textwidth,height=0.8\textheight, keepaspectratio]{figures/figure6/exp_flux_dist}}
-	\caption{Variability in the fluxes between different in silico experiments from which data is used for identifiability analysis. The top panel shows a violin plot of the distribution of flux values. The means are indicated by a black line and the median values are indicated by a red line. The bottom panels show the corresponding distributions as histograms. Data are are generated using the Convenience Kinetics model for $v_3$.}\label{fig:exp_flux_dist}
-\end{figure}	
 
 \begin{figure}[!tbhp]
 	\centering{\includegraphics[width=1.0\textwidth,height=0.3\textheight, keepaspectratio]{figures/figure6/v3_1_2_ck_1_2_parameter_values}}
@@ -182,11 +209,6 @@
 	\centering{\includegraphics[width=1.0\textwidth,height=0.6\textheight, keepaspectratio]{figures/figure4/v3_var_1_2_mwc_ck_data_utility}}
 	\caption{Utility of data from combinations of two different experiments for identifying two parameters in $v_3$ when a) $K_3^{pep}$ is held constant, and when b) $K_3^{fdp}$ is held constant. Notice that a significant number of combinations can identify both $V_3^{max}$ and $K_3^{pep}$ when $K_3^{fdp}$ is known and fixed. c and d data is from convenience kinetics model.}%\label{fig:figure2}
 \end{figure}		
-
-\begin{figure}[!tbhp]
-	\centering{\includegraphics[width=1.0\textwidth,height=0.6\textheight, keepaspectratio]{figures/figure2/v1_k1cat_exp_info}}
-	\caption{Contribution of different experiment types towards identification of a) $k_1^{cat}$ and b) $K_1^{ac}$ in $v_1$ based on using data from two different experiments. Data from MWC model.}%\label{fig:figure2}
-\end{figure} 	
 
 \begin{figure}[!tbhp]
 	\centering{\includegraphics[width=1.0\textwidth,height=0.3\textheight, keepaspectratio]{figures/figure6/v1_v1max_k1cat_parameter_value}}
