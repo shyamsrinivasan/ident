@@ -1,67 +1,85 @@
- import numpy as np
-from generate_expdata import generate_expdata
-from simulate_data import arrange_experimental_data_numerical
-from numerical_ident import generate_random_initial_conditions
-from numerical_ident import solve_multiple_initial_conditions
-from plot_ident_results import plot_numerical_parameter_estimates
+from create_experiment_data import retrieve_experimental_data_from_file
+from identifiability_analysis import data_numerical_ident
+from numerical_ident import process_opt_solution
+from names_strings import true_parameter_values
+from validate_estimation import process_validation_info
+from plot_ident_results import parameter_values_plot
+from plot_ident_results import validation_plot
+import os.path
 
 
-# generate noisy experimental data for testing identifiability
-y0 = np.array([5, 1, 1])
-# default parameter values
-cvode_options = ('Newton', 'Adams', 1e-10, 1e-10, 200)
-ode_parameter_values = {"K1ac": np.array([.1]),
-                        "K3fdp": np.array([.1]),
-                        "L3fdp": np.array([4e6]),
-                        "K3pep": np.array([.1]),
-                        "K2pep": np.array([.3]),
-                        "vemax": np.array([1.1]),
-                        "Kefdp": np.array([.45]),
-                        "ne": np.array([2]),
-                        "d": np.array([.25]),
-                        "V4max": np.array([.2]),
-                        "k1cat": np.array([1]),
-                        "V3max": np.array([1]),
-                        "V2max": np.array([1]),
-                        "ac": np.array([.1])}
+# create data for identifiability analysis
+# from create_experiment_data import create_data_for_flux
+# create_data_for_flux(flux_id='v3', noise=0, number_samples=1)
 
-# get experimental system steady state data without noise using Convenience Kinetics for v3 (kinetics = 2)
-exp_info, perturbation_details = generate_expdata(y0, cvode_options, ode_parameter_values,
-                                                  noise=0, kinetics=2, dynamic_plot=0, perturbation_plot=0)
+# extract experimental data from file
+new_data_file_name = os.path.join(os.getcwd(), 'exp/exp_v3_3_experiments')
+index_labels = ['sample_name', 'data_set_id', 'experiment_id']
+arranged_data_df = retrieve_experimental_data_from_file(data_file_name=new_data_file_name,
+                                                        multi_index_label=index_labels)
 
-# arrange experimental data to form multiple data sets
-exp_flux_index = np.array([0, 3, 2, 4, 1, 5])
-
+# perform identifiability when v3 parameters are written using convenience kinetics
 # get combination of 3 experiments and perform identifiability on all fluxes that require 3 data sets
-print('Practical Identifiability Analysis of v3 with 3 parameters: V3max, K3fdp and K3pep \n')
-# choose identifiability functions to test
-ident_fun_choice = [0]
-# get combinations of experimental datasets
-experimental_datasets_3_expts, \
-    experiment_choice, combination_choice = arrange_experimental_data_numerical(exp_info["y"], exp_info["flux"],
-                                                                                perturbation_details,
-                                                                                experiments_per_set=3,
-                                                                                flux_id=exp_flux_index,
-                                                                                experiment_choice=[0,
-                                                                                                   1, 2, 3, 4, 5,
-                                                                                                   6, 7, 8, 9, 10,
-                                                                                                   16, 17, 18, 19, 20])
-# choose one combination of experimental data and solve nlp for that combination
+storage_file_name = os.path.join(os.getcwd(), 'ident/ident_numerical_v3_l1_obj')
+# lexographic ordering of df indices
+all_exp_data = data_numerical_ident(arranged_data_df, 'sample_0')
 
 # NLP solver options
 optim_options = {"solver": "ipopt",
-                 "opts": {"ipopt.tol": 1e-12}}
+                 "opts": {"ipopt.tol": 1e-18}}
 # optim_options = {"solver": "sqpmethod",\
 #                  "opts": {"qpsol": "qpoases"}}
-initial_value = [80, 80, 400, 0, 0, 0]
+initial_value = [[80, 80, 80, 0, 0, 0]]  # [100, 400, 400, 0, 0, 0], [50, 50, 400, 0, 0, 0]
 # randomized_initial_values = generate_random_initial_conditions(initial_value, 10, negative=1)
-v3_all_x0_parameter_info = solve_multiple_initial_conditions(all_initial_conditions=[initial_value],
-                                                             experimental_data=experimental_datasets_3_expts[0]["values"],
-                                                             chosen_fun=0, optim_options=optim_options,
-                                                             number_of_parameters=3, flux_id=3, flux_choice=[3])
-plot_numerical_parameter_estimates(v3_all_x0_parameter_info[0])
+problem = {"lbx": 6 * [0],
+           "ubx": [100, 100, 100, 1e-20, 1e-20, 1e-20],
+           "lbg": 3 * [0],
+           "ubg": 3 * [0]}
+from numerical_ident import solve_multiple_initial_conditions
+all_sol_df, _ = solve_multiple_initial_conditions(all_initial_conditions=initial_value,
+                                                  experimental_data=all_exp_data, chosen_fun=1, prob=problem,
+                                                  optim_options=optim_options, number_of_parameters=3, flux_id=3,
+                                                  flux_choice=[3], exp_df=arranged_data_df,
+                                                  file_name=storage_file_name)
+
+index_labels = ['sample_name', 'data_set_id']
+numerical_ident_df = retrieve_experimental_data_from_file(data_file_name=storage_file_name,
+                                                          multi_index_label=index_labels)
+all_parameter_info = process_opt_solution(numerical_ident_df, arranged_data_df, [], [], [], [])
+
+# get default parameter values
+default_parameter_values = true_parameter_values()
+
 # extract all parameter values
-from process_ident_data import extract_parameter_values_numerical
-parameter_value_info = extract_parameter_values_numerical(v3_all_x0_parameter_info[0])
+from process_ident_data import get_parameter_value
+validation_info = get_parameter_value(all_parameter_info, numerical_ident_df)
+# initial value used to generate experimental data
+import numpy as np
+y0 = np.array([5, 1, 1])
+# integrator options
+cvode_options = {'iter': 'Newton', 'discr': 'Adams', 'atol': 1e-10, 'rtol': 1e-10, 'time_points': 200,
+                 'display_progress': False, 'verbosity': 50}
 # validate all parameter values
+validation_file_name = os.path.join(os.getcwd(), 'validate/ident_numerical_validate_v3_l1_obj')
+from validate_estimation import validate_model
+validate_model(y0, cvode_options, default_parameter_values, validation_info,
+               save_file_name=validation_file_name,
+               ss=1, dyn=0, noise=1, kinetics=2)
+
+# get parameter value plot
+parameter_values_plot(all_parameter_info, default_parameter_values, box=False, violin=True)
+
+# retrieve validation info from file
+validate_index_labels = ['estimate_id', 'sample_name', 'data_set_id', 'experiment_id']
+validate_df = retrieve_experimental_data_from_file(data_file_name=validation_file_name,
+                                                   multi_index_label=validate_index_labels)
+# validation plot
+original_experiment_file = os.path.join(os.getcwd(), 'exp/experiments')
+exp_df = retrieve_experimental_data_from_file(data_file_name=original_experiment_file,
+                                              multi_index_label=['sample_name', 'experiment_id'])
+
+all_c_info, all_f_info = process_validation_info(validate_df, exp_df)
+validation_plot({"concentration": all_c_info, "flux": all_f_info}, flux=True, flux_id=['v1', 'v2', 'v3', 'v5'],
+                experiment_dist=True)
+
 print("Run complete\n")
