@@ -505,19 +505,20 @@ def plot_dynamic_sim_concentrations(dynamic_data, multiple=0, noise=0):
         i_plot = 0
         for i_row in range(0, number_of_rows):
             for i_column in range(0, number_of_columns):
-                x_data = dynamic_data[i_plot]["time"]
-                y_data = dynamic_data[i_plot]["y"]
-                line_plots_2d(axarr[i_row, i_column], x_data, y_data)
-                axarr[i_row, i_column].set_title('Data set {}'.format(i_plot + 1))
-                if i_row == 0:
-                    plt.setp(axarr[i_row, i_column].get_xticklabels(), visible=False)
-                if i_column > 0:
-                    plt.setp(axarr[i_row, i_column].get_yticklabels(), visible=False)
-                if i_row == number_of_rows - 1:
-                    axarr[i_row, i_column].set_xlabel('Time (s)')
-                if i_column == 0:
-                    axarr[i_row, i_column].set_ylabel('Concentrations (a.u.)')
-                i_plot += 1
+                if i_plot < number_of_plots:
+                    x_data = dynamic_data[i_plot]["time"]
+                    y_data = dynamic_data[i_plot]["y"]
+                    line_plots_2d(axarr[i_row, i_column], x_data, y_data)
+                    axarr[i_row, i_column].set_title('Data set {}'.format(i_plot + 1))
+                    if i_row == 0:
+                        plt.setp(axarr[i_row, i_column].get_xticklabels(), visible=False)
+                    if i_column > 0:
+                        plt.setp(axarr[i_row, i_column].get_yticklabels(), visible=False)
+                    if i_row == number_of_rows - 1:
+                        axarr[i_row, i_column].set_xlabel('Time (s)')
+                    if i_column == 0:
+                        axarr[i_row, i_column].set_ylabel('Concentrations (a.u.)')
+                    i_plot += 1
     else:
         f, axis_obj = plt.subplots(1, 1, figsize=(6, 4), dpi=100, facecolor='w', edgecolor='k')
         x_data = dynamic_data["time"]
@@ -548,19 +549,20 @@ def plot_dynamic_sim_fluxes(dynamic_data, multiple=0):
         i_plot = 0
         for i_row in range(0, number_of_rows):
             for i_column in range(0, number_of_columns):
-                x_data = dynamic_data[i_plot]["time"]
-                y_data = dynamic_data[i_plot]["flux"]
-                line_plots_2d(axarr[i_row, i_column], x_data, y_data)
-                axarr[i_row, i_column].set_title('Data set {}'.format(i_plot + 1))
-                if i_row == 0:
-                    plt.setp(axarr[i_row, i_column].get_xticklabels(), visible=False)
-                if i_column > 0:
-                    plt.setp(axarr[i_row, i_column].get_yticklabels(), visible=False)
-                if i_row == number_of_rows - 1:
-                    axarr[i_row, i_column].set_xlabel('Time (s)')
-                if i_column == 0:
-                    axarr[i_row, i_column].set_ylabel('Fluxes (a.u.)')
-                i_plot += 1
+                if i_plot < number_of_plots:
+                    x_data = dynamic_data[i_plot]["time"]
+                    y_data = dynamic_data[i_plot]["flux"]
+                    line_plots_2d(axarr[i_row, i_column], x_data, y_data)
+                    axarr[i_row, i_column].set_title('Data set {}'.format(i_plot + 1))
+                    if i_row == 0:
+                        plt.setp(axarr[i_row, i_column].get_xticklabels(), visible=False)
+                    if i_column > 0:
+                        plt.setp(axarr[i_row, i_column].get_yticklabels(), visible=False)
+                    if i_row == number_of_rows - 1:
+                        axarr[i_row, i_column].set_xlabel('Time (s)')
+                    if i_column == 0:
+                        axarr[i_row, i_column].set_ylabel('Fluxes (a.u.)')
+                    i_plot += 1
     else:
         f, axis_obj = plt.subplots(1, 1, figsize=(6, 4), dpi=100, facecolor='w', edgecolor='k')
         x_data = dynamic_data["time"]
