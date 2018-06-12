@@ -73,7 +73,7 @@
 \renewcommand\thesubsection{\thesection.\arabic{subsection}}
 \renewcommand{\theequation}{S\arabic{equation}}
 
-\externaldocument{draft_3} % reference to existing external document
+\externaldocument{draft_4} % reference to existing external document
 
 \captionsetup{font={stretch=2.0}}
 \begin{document}
@@ -83,7 +83,17 @@
 		\end{Large}\\
 		Shyam Srinivasan\textsuperscript{a}, William R. Cluett\textsuperscript{a} and Radhakrishnan Mahadevan\textsuperscript{*,a,b}\\
 	\end{center}	
-\section{Supplementary Tables}
+
+\section{Supplementary Methods}
+\subsection{Data for establishing parameter identifiability in kinetic model of gluconeogenesis}\label{sec:experiments}
+Steady state information on the metabolome and the fluxome can be gathered under different physiological conditions. One way to alter the physiological conditions is to change the substrate concentration under which the cells grow. In the small metabolic network (Figure \ref{fig:network}), the acetate concentration plays the role of a substrate, and  determines the acetate uptake flux $v_1$ (Equation \ref{eq:flux1}). Thus, steady state metabolite concentrations and fluxes can be calculated under various acetate concentrations to form different experimental data combinations that measure cellular response to changes in the substrate concentration. 
+
+Physiological changes can also be brought about by perturbing the expression levels for different enzymes within a metabolic network. The model of gluconeogenesis (Figure \ref{fig:network}) described in section \ref{sec:small-model} has three different fluxes ($v_1$, $v_2$ and $v_3$) whose enzyme expression parameters ($k_1^{cat}$, $V_2^{max}$ and $V_3^{max}$) can be perturbed to simulate the repression and over expression of the corresponding enzymes. Accordingly, in addition to measuring network responses to substrate perturbations, changes in steady state concentrations and fluxes can also be observed for enzyme expression perturbations. In total, based on the above discussion, we can perturb four different model parameters ($acetate$, $k_1^{cat}$, $V_2^{max}$ and $V_3^{max}$) to obtain experimental data in silico. The 21 different parameter values used to generate experimental data are given in Table \ref{tab:pval}. The box plots in Figure \ref{fig:experimental_data_dist} show the distribution in the in silico metabolite and enzyme concentration and flux data obtained from these experiments.
+
+As described in section \ref{sec:ident} and Figure \ref{fig:ident-flowchart}b, the minimum number of experiments from which steady state data is required for identifying all the parameters of a given flux is determined by dimension $\mathbb{R}^p$ of the parameter space of a chosen flux $v_i$. For instance, the flux $v_2$ in the model described in section \ref{sec:small-model} has two parameters: $V_2^{max}$ and $K_2^{pep}$. Thus $\theta = \{V_2^{max}, K_2^{pep}\} \in \mathbb{R}^2$. So, steady state data from two distinct experiments is required for identifying $v_2$. Accordingly, multiple combinations of data generated from any two different experiments are used to test the identifiability of $v_2$. The total number of such possible combinations is 420 (21 x 20) from the 21 different experiments shown in Table \ref{tab:pval}. Assuming we also have data for the enzyme concentration $E$ in the expression for flux $v_1$ (Equation \ref{eq:flux1}), identifying the two parameters $k_1^{cat}$ and $K_1^{ac}$ ($\theta \in \mathbb{R}^2$) also requires steady state experimental data from two different experiments.
+
+Similarly, for identifying $v_3$ that is described by three parameters ($\theta \in \mathbb{R}^3$), we need data from a combination of three different experiments. Based on the 21 experiments in Table \ref{tab:pval}, we have 7980 distinct combinations (21 x 20 x 19) of three experiments. However, it is important to note that not all of the either 420 combinations (for $v_1$ and $v_2$), or the 7980 combinations (for $v_3$), may be suitable for parameter estimation. Hence, the actual number of data combinations that can be used for practically identifying parameters in these fluxes would be smaller than the aforementioned numbers. Moreover, among the chosen smaller number of experimental data combinations, the methodology that we propose enables us to determine the number and nature of experimental data combinations, and consequently, the experiments that might allow for parameter identification, and subsequent parameter estimation.
+
 \begin{table}[!thbp]
 	\caption{Table showing the perturbed values of all parameters used to generate experimental data in silico for testing practical identifiability of all fluxes in the small metabolic network.}
 	\begin{center}				
@@ -108,6 +118,16 @@
 
 \section{Supplementary Figures}	
 \begin{figure}[!tbhp]
+	\centering{\includegraphics[width=0.6\textwidth,height=0.6\textheight,keepaspectratio]{figures/figure3/experimental_design}}
+	\caption{Flow diagram showing a method for experimental design that uses our methodology for practical identification of parameters to determine the number and type of experiments required to identify all fluxes within a given metabolic network.}\label{fig:ident-design}
+\end{figure}
+
+\begin{figure}[!tbhp]
+	\centering{\includegraphics[width=1.0\textwidth,height=1.0\textheight, keepaspectratio]{figures/parameter_dist/v1_vmax_ck_parameter_values}}
+	\caption{Distribution of predicted parameter values when performing practical identifiability analysis using closed-form solutions for each parameter in flux $v_1$, which is described using as a Michaelis-Menten model, without using the enzyme concentration $E$ for identification when there is no noise in the input experimental data. Here $V_1^{max} = k_1^{cat}E$. The top panel shows a violin plot of the distribution of parameter values. The means are indicated by a black line and the median values are indicated by a red line. The bottom panels show the corresponding distributions as histograms.}\label{fig:v1_v1max_ck_values}
+\end{figure}
+
+\begin{figure}[!tbhp]
 	\centering{\includegraphics[width=1.0\textwidth,height=0.8\textheight, keepaspectratio]{figures/parameter_dist/v1_kcat_ck_parameter_dist}}
 	\caption{Distribution of predicted parameter values when performing practical identifiability analysis using closed-form solutions for each parameter in flux $v_1$ when there is no noise in the input experimental data. The top panel shows a violin plot of the distribution of parameter values. The means are indicated by a black line and the median values are indicated by a red line. The bottom panels show the corresponding distributions as histograms.}\label{fig:v1_kcat_ck_values}
 \end{figure}
@@ -125,11 +145,6 @@
 \begin{figure}[!tbhp]
 	\centering{\includegraphics[width=1.0\textwidth,height=0.8\textheight, keepaspectratio]{figures/parameter_dist/v5_parameter_dist}}
 	\caption{Distribution of predicted parameter values when performing practical identifiability analysis using closed-form solutions for each parameter in flux $v_5$ when there is no noise in the input experimental data. The top panel shows a violin plot of the distribution of parameter values. The means are indicated by a black line and the median values are indicated by a red line. The bottom panels show the corresponding distributions as histograms.}\label{fig:v5_ck_values}
-\end{figure}
-
-\begin{figure}[!tbhp]
-	\centering{\includegraphics[width=1.0\textwidth,height=1.0\textheight, keepaspectratio]{figures/parameter_dist/v1_vmax_ck_parameter_values}}
-	\caption{Distribution of predicted parameter values when performing practical identifiability analysis using closed-form solutions for each parameter in flux $v_1$, which is described using as a Michaelis-Menten model, without using the enzyme concentration $E$ for identification when there is no noise in the input experimental data. Here $V_1^{max} = k_1^{cat}E$. The top panel shows a violin plot of the distribution of parameter values. The means are indicated by a black line and the median values are indicated by a red line. The bottom panels show the corresponding distributions as histograms.}\label{fig:v5_v1max_ck_values}
 \end{figure}
 
 \begin{figure}[!tbhp]
@@ -177,10 +192,7 @@
 	\caption{Variability in the fluxes between different in silico experiments from which data is used for identifiability analysis. The top panel shows a violin plot of the distribution of flux values. The means are indicated by a black line and the median values are indicated by a red line. The bottom panels show the corresponding distributions as histograms. Data are are generated using the Convenience Kinetics model for $v_3$.}\label{fig:exp_flux_dist}
 \end{figure}	
 
-\begin{figure}[!tbhp]
-	\centering{\includegraphics[width=0.6\textwidth,height=0.6\textheight,keepaspectratio]{figures/figure3/experimental_design}}
-	\caption{Flow diagram showing a method for experimental design that uses our methodology for practical identification of parameters to determine the number and type of experiments required to identify all fluxes within a given metabolic network.}\label{fig:ident-design}
-\end{figure}
+
 
 \begin{figure}[!tbhp]
 	\centering{\includegraphics[width=1.0\textwidth,height=0.5\textheight,keepaspectratio]{figures/figure4/v1_V1max_v2_v3_1_v5_2_mwc_ck_data_utility}}
@@ -219,15 +231,7 @@
 
 \clearpage
 
-\section{Supplementary Methods}
-\subsection{Data for establishing parameter identifiability in kinetic model of gluconeogenesis}\label{sec:experiments}
-Steady state information on the metabolome and the fluxome can be gathered under different physiological conditions. One way to alter the physiological conditions is to change the substrate concentration under which the cells grow. In the small metabolic network (Figure \ref{fig:network}), the acetate concentration plays the role of a substrate, and  determines the acetate uptake flux $v_1$ (Equation \ref{eq:flux1}). Thus, steady state metabolite concentrations and fluxes can be calculated under various acetate concentrations to form different experimental data combinations that measure cellular response to changes in the substrate concentration. 
 
-Physiological changes can also be brought about by perturbing the expression levels for different enzymes within a metabolic network. The model of gluconeogenesis (Figure \ref{fig:network}) described in section \ref{sec:small-model} has three different fluxes ($v_1$, $v_2$ and $v_3$) whose enzyme expression parameters ($k_1^{cat}$, $V_2^{max}$ and $V_3^{max}$) can be perturbed to simulate the repression and over expression of the corresponding enzymes. Accordingly, in addition to measuring network responses to substrate perturbations, changes in steady state concentrations and fluxes can also be observed for enzyme expression perturbations. In total, based on the above discussion, we can perturb four different model parameters ($acetate$, $k_1^{cat}$, $V_2^{max}$ and $V_3^{max}$) to obtain experimental data in silico. The 21 different parameter values used to generate experimental data are given in Table \ref{tab:pval}. The box plots in Figure \ref{fig:experimental_data_dist} show the distribution in the in silico metabolite and enzyme concentration and flux data obtained from these experiments.
-
-As described in section \ref{sec:ident} and Figure \ref{fig:ident-flowchart}b, the minimum number of experiments from which steady state data is required for identifying all the parameters of a given flux is determined by dimension $\mathbb{R}^p$ of the parameter space of a chosen flux $v_i$. For instance, the flux $v_2$ in the model described in section \ref{sec:small-model} has two parameters: $V_2^{max}$ and $K_2^{pep}$. Thus $\theta = \{V_2^{max}, K_2^{pep}\} \in \mathbb{R}^2$. So, steady state data from two distinct experiments is required for identifying $v_2$. Accordingly, multiple combinations of data generated from any two different experiments are used to test the identifiability of $v_2$. The total number of such possible combinations is 420 (21 x 20) from the 21 different experiments shown in Table \ref{tab:pval}. Assuming we also have data for the enzyme concentration $E$ in the expression for flux $v_1$ (Equation \ref{eq:flux1}), identifying the two parameters $k_1^{cat}$ and $K_1^{ac}$ ($\theta \in \mathbb{R}^2$) also requires steady state experimental data from two different experiments.
-
-Similarly, for identifying $v_3$ that is described by three parameters ($\theta \in \mathbb{R}^3$), we need data from a combination of three different experiments. Based on the 21 experiments in Table \ref{tab:pval}, we have 7980 distinct combinations (21 x 20 x 19) of three experiments. However, it is important to note that not all of the either 420 combinations (for $v_1$ and $v_2$), or the 7980 combinations (for $v_3$), may be suitable for parameter estimation. Hence, the actual number of data combinations that can be used for practically identifying parameters in these fluxes would be smaller than the aforementioned numbers. Moreover, among the chosen smaller number of experimental data combinations, the methodology that we propose enables us to determine the number and nature of experimental data combinations, and consequently, the experiments that might allow for parameter identification, and subsequent parameter estimation.
 
 \printbibliography
 
