@@ -24,11 +24,11 @@ arranged_data_df = retrieve_experimental_data_from_file(data_file_name=new_data_
 # print('Practical Identifiability Analysis of v3 with 3 parameters: V3max, K3fdp and K3pep \n')
 storage_file_name = os.path.join(os.getcwd(), 'ident/ident_v3_noise_root_1')
 # choose identifiability functions to test
-ident_fun_choice = [0]
-# test identifiability and store data to file
-from kotte_model import flux_ident_3_data_combination
-flux_ident_3_data_combination(arranged_data_df, flux_ids=[3], flux_choice=[1],
-                              ident_fun_choice=ident_fun_choice, file_name=storage_file_name)
+# ident_fun_choice = [0]
+# # test identifiability and store data to file
+# from kotte_model import flux_ident_3_data_combination
+# flux_ident_3_data_combination(arranged_data_df, flux_ids=[3], flux_choice=[1],
+#                               ident_fun_choice=ident_fun_choice, file_name=storage_file_name)
 
 # retrieve identifiability data from file and process information
 ident_index_label = ['sample_name', 'data_set_id']
