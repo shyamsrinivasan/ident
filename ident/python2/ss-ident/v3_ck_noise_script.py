@@ -10,8 +10,8 @@ import os.path
 
 
 # create data for identifiability analysis
-from create_experiment_data import create_data_for_flux
-create_data_for_flux(flux_id='v3', noise=1, number_samples=500)
+# from create_experiment_data import create_data_for_flux
+# create_data_for_flux(flux_id='v3', noise=1, number_samples=500)
 
 # extract data from file
 new_data_file_name = os.path.join(os.getcwd(), 'exp/exp_v3_3_experiments_noise_500_samples')
@@ -38,7 +38,7 @@ all_parameter_info = process_ident(ident_df, arranged_data_df)
 
 # run dynamic simulations to obtain ss data based on estimated parameter values
 # get info from data sets that identify all 3 parameters
-validation_file_name = os.path.join(os.getcwd(), 'validate/ident_validate_v1_noise_k1cat')
+validation_file_name = os.path.join(os.getcwd(), 'validate/ident_validate_v3_noise_root_1')
 from process_ident_data import get_parameter_value
 validation_info = get_parameter_value(all_parameter_info, ident_df)
 # get default parameter values
