@@ -61,6 +61,4 @@ row_ind = pd.MultiIndex.from_tuples(flux_tuple, names=['flux_name', 'parameter_n
 df = pd.DataFrame(all_frequency, index=row_ind, columns=col_ind)
 
 
-
-
 print('Run Complete\n')
