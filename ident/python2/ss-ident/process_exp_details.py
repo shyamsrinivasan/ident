@@ -90,3 +90,11 @@ def exp_design_info(list_of_files, original_experiment_file, write_to_file_name,
     df = pd.DataFrame(all_frequency, index=row_ind, columns=col_ind)
     df.to_csv(write_to_file_name, index_label=['flux_name', 'parameter_name'])
     return df
+
+
+def logical_values(x):
+    """return True if x > 0 else False"""
+    if x > 0:
+        return 1
+    else:
+        return 0
