@@ -1,7 +1,7 @@
 # from create_experiment_data import retrieve_experimental_data_from_file
 from process_exp_details import exp_design_info
-import seaborn as sns
-import pandas as pd
+from process_exp_details import logical_values
+from plot_ident_results import plot_exp_details
 import os.path
 
 
@@ -23,5 +23,10 @@ df = exp_design_info(list_of_files=file_name_list, original_experiment_file=orig
 # idx = pd.IndexSlice
 # new_df = df.loc[idx[:, :], idx['experiment_0_id', :]]
 # iris = sns.load_dataset('iris')
+
+
+logical_df = df.applymap(logical_values)
+plot_exp_details(logical_df)
+plot_exp_details(df, color_bar=True, set_palette=False)
 
 print('Run Complete\n')
