@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import matplotlib.font_manager as fnt
+import pandas as pd
 import seaborn as sns
 from names_strings import variable_name
 plt.ion()
@@ -579,4 +580,33 @@ def plot_dynamic_sims(dynamic_data, multiple=0, concentrations=1, fluxes=0):
 
     if fluxes:
         plot_dynamic_sim_fluxes(dynamic_data, multiple=multiple)
+    return None
+
+
+def plot_exp_details(df, color_bar=False, set_palette=True):
+    """plot occurrence of each experiment as a heat map"""
+    # set color palette for seaborn heat map
+    if set_palette:
+        c_pal = sns.color_palette('Blues', 2)
+    else:
+        c_pal = sns.color_palette('Blues', 16)
+    f, ax = plt.subplots(3, 1, squeeze=True)
+
+    idx = pd.IndexSlice
+    for i_exp, i_exp_pos in enumerate(df.columns.levels[0]):
+        i_exp_pos_df = df.loc[:, idx[i_exp_pos, :]]
+        i_exp_pos_df.columns = i_exp_pos_df.columns.droplevel(level=0)
+        sns.heatmap(i_exp_pos_df, square=True, linewidth=0.5, cmap=c_pal, ax=ax[i_exp], cbar=color_bar)
+        for item in ax[i_exp].get_xticklabels():
+            item.set_rotation(90)
+        # for item in ax[i_exp].get_yticklabels():
+        #     item.set_rotation(90)
+
+    # remove axis labels for shared x-axis
+    for axis in range(0, len(df.columns.levels[0]) - 1):
+        number_x_ticks = len(ax[axis].get_xticklabels())
+        empty_tick_labels = [''] * number_x_ticks
+        ax[axis].set_xticklabels(empty_tick_labels)
+        ax[axis].set_xlabel('')
+
     return None
