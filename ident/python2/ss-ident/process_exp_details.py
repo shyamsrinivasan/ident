@@ -61,7 +61,7 @@ def get_ident_experiments(ident_df, all_experiment_ids, max_number_experiments, 
     return all_parameter_info, all_parameter_flux, parameter_names
 
 
-def exp_design_info(list_of_files, original_experiment_file, max_number_experiments):
+def exp_design_info(list_of_files, original_experiment_file, write_to_file_name, max_number_experiments):
     """get df of all experiments contributing to identification of all parameters in all fluxes
     (ident info for each flux is given in a separate file)"""
 
@@ -88,4 +88,5 @@ def exp_design_info(list_of_files, original_experiment_file, max_number_experime
     flux_tuple = zip(all_parameter_flux, all_parameter_names)
     row_ind = pd.MultiIndex.from_tuples(flux_tuple, names=['flux_name', 'parameter_name'])
     df = pd.DataFrame(all_frequency, index=row_ind, columns=col_ind)
-    return None
+    df.to_csv(write_to_file_name, index_label=['flux_name', 'parameter_name'])
+    return df
