@@ -1,25 +1,32 @@
-from create_experiment_data import retrieve_experimental_data_from_file
-import pandas as pd
+# from create_experiment_data import retrieve_experimental_data_from_file
+from process_exp_details import exp_design_info
+from process_exp_details import logical_values
+from plot_ident_results import plot_exp_details
 import os.path
 
 
+# get all info on original experiments
+original_experiment_file = os.path.join(os.getcwd(), 'exp/experiments')
+
 # get identifiability info all fluxes from ident files
 v1_file_name = os.path.join(os.getcwd(), 'ident/ident_v1_kcat')
-ident_index_label = ['sample_name', 'data_set_id']
-# retrieve identifiability info from file
-ident_df = retrieve_experimental_data_from_file(v1_file_name, ident_index_label)
-# all_parameter_info = process_ident(ident_df, arranged_data_df)
-idx = pd.IndexSlice
+v2_file_name = os.path.join(os.getcwd(), 'ident/ident_v2')
+v3_file_name = os.path.join(os.getcwd(), 'ident/ident_v3_root_1')
+v5_file_name = os.path.join(os.getcwd(), 'ident/ident_v5_root_2')
+file_name_list = [v1_file_name, v2_file_name, v3_file_name, v5_file_name]
 
-all_parameter_names = ident_df["parameter_name"].unique().tolist()
-number_experiments = len(all_parameter_names)
-exp_column_ids = ['experiment_{}_id'.format(i_experiment) for i_experiment in range(0, number_experiments)]
-for i_parameter, i_parameter_name in enumerate(all_parameter_names):
-    # get all data sets identifying each parameter
-    identifying_df = ident_df[(ident_df["parameter_name"] == i_parameter_name) & (ident_df["identified"])]
-    for i_experiment, i_experiment_pos in enumerate(exp_column_ids):
-        exp_frequency = identifying_df[i_experiment_pos].value_counts()
-        pass
-    pass
+write_to_file_name = os.path.join(os.getcwd(), 'ident/ident_experiments')
+
+df = exp_design_info(list_of_files=file_name_list, original_experiment_file=original_experiment_file,
+                     write_to_file_name=write_to_file_name, max_number_experiments=3)
+
+# idx = pd.IndexSlice
+# new_df = df.loc[idx[:, :], idx['experiment_0_id', :]]
+# iris = sns.load_dataset('iris')
+
+
+logical_df = df.applymap(logical_values)
+plot_exp_details(logical_df)
+plot_exp_details(df, color_bar=True, set_palette=False)
 
 print('Run Complete\n')

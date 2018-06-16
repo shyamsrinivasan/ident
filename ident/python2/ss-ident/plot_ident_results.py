@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import matplotlib.font_manager as fnt
+import pandas as pd
 import seaborn as sns
 from names_strings import variable_name
 plt.ion()
@@ -505,19 +506,20 @@ def plot_dynamic_sim_concentrations(dynamic_data, multiple=0, noise=0):
         i_plot = 0
         for i_row in range(0, number_of_rows):
             for i_column in range(0, number_of_columns):
-                x_data = dynamic_data[i_plot]["time"]
-                y_data = dynamic_data[i_plot]["y"]
-                line_plots_2d(axarr[i_row, i_column], x_data, y_data)
-                axarr[i_row, i_column].set_title('Data set {}'.format(i_plot + 1))
-                if i_row == 0:
-                    plt.setp(axarr[i_row, i_column].get_xticklabels(), visible=False)
-                if i_column > 0:
-                    plt.setp(axarr[i_row, i_column].get_yticklabels(), visible=False)
-                if i_row == number_of_rows - 1:
-                    axarr[i_row, i_column].set_xlabel('Time (s)')
-                if i_column == 0:
-                    axarr[i_row, i_column].set_ylabel('Concentrations (a.u.)')
-                i_plot += 1
+                if i_plot < number_of_plots:
+                    x_data = dynamic_data[i_plot]["time"]
+                    y_data = dynamic_data[i_plot]["y"]
+                    line_plots_2d(axarr[i_row, i_column], x_data, y_data)
+                    axarr[i_row, i_column].set_title('Data set {}'.format(i_plot + 1))
+                    if i_row == 0:
+                        plt.setp(axarr[i_row, i_column].get_xticklabels(), visible=False)
+                    if i_column > 0:
+                        plt.setp(axarr[i_row, i_column].get_yticklabels(), visible=False)
+                    if i_row == number_of_rows - 1:
+                        axarr[i_row, i_column].set_xlabel('Time (s)')
+                    if i_column == 0:
+                        axarr[i_row, i_column].set_ylabel('Concentrations (a.u.)')
+                    i_plot += 1
     else:
         f, axis_obj = plt.subplots(1, 1, figsize=(6, 4), dpi=100, facecolor='w', edgecolor='k')
         x_data = dynamic_data["time"]
@@ -548,19 +550,20 @@ def plot_dynamic_sim_fluxes(dynamic_data, multiple=0):
         i_plot = 0
         for i_row in range(0, number_of_rows):
             for i_column in range(0, number_of_columns):
-                x_data = dynamic_data[i_plot]["time"]
-                y_data = dynamic_data[i_plot]["flux"]
-                line_plots_2d(axarr[i_row, i_column], x_data, y_data)
-                axarr[i_row, i_column].set_title('Data set {}'.format(i_plot + 1))
-                if i_row == 0:
-                    plt.setp(axarr[i_row, i_column].get_xticklabels(), visible=False)
-                if i_column > 0:
-                    plt.setp(axarr[i_row, i_column].get_yticklabels(), visible=False)
-                if i_row == number_of_rows - 1:
-                    axarr[i_row, i_column].set_xlabel('Time (s)')
-                if i_column == 0:
-                    axarr[i_row, i_column].set_ylabel('Fluxes (a.u.)')
-                i_plot += 1
+                if i_plot < number_of_plots:
+                    x_data = dynamic_data[i_plot]["time"]
+                    y_data = dynamic_data[i_plot]["flux"]
+                    line_plots_2d(axarr[i_row, i_column], x_data, y_data)
+                    axarr[i_row, i_column].set_title('Data set {}'.format(i_plot + 1))
+                    if i_row == 0:
+                        plt.setp(axarr[i_row, i_column].get_xticklabels(), visible=False)
+                    if i_column > 0:
+                        plt.setp(axarr[i_row, i_column].get_yticklabels(), visible=False)
+                    if i_row == number_of_rows - 1:
+                        axarr[i_row, i_column].set_xlabel('Time (s)')
+                    if i_column == 0:
+                        axarr[i_row, i_column].set_ylabel('Fluxes (a.u.)')
+                    i_plot += 1
     else:
         f, axis_obj = plt.subplots(1, 1, figsize=(6, 4), dpi=100, facecolor='w', edgecolor='k')
         x_data = dynamic_data["time"]
@@ -580,104 +583,30 @@ def plot_dynamic_sims(dynamic_data, multiple=0, concentrations=1, fluxes=0):
     return None
 
 
-def plot_hist(fig_object, grid_object, distribution_data, mark_value=[], parameter_name=[],
-              sharex_axis_object=[], sharey_axis_object=[]):
-    """create subplot with grid object and plot histogram"""
-    axis_object = plt.Subplot(fig_object, grid_object)
-    hist_object = axis_object.hist(distribution_data)
-    if parameter_name:
-        axis_object.set_title(parameter_name, fontsize=18)
-    if mark_value:
-        mark_y_value = np.arange(0, np.max(hist_object[0]) + 2)
-        mark_x_value = np.repeat(mark_value, len(mark_y_value))
-        axis_object.plot(mark_x_value, mark_y_value, color='black', linestyle='dashed', linewidth=2)
-    if sharex_axis_object and sharey_axis_object:
-        fig_object.add_subplot(axis_object, sharex=sharex_axis_object, sharey=sharey_axis_object)
-        plt.setp(axis_object.get_xticklabels(), visible=False)
-        plt.setp(axis_object.get_yticklabels(), visible=False)
-    elif sharex_axis_object:
-        fig_object.add_subplot(axis_object, sharex=sharex_axis_object)
-        plt.setp(axis_object.get_xticklabels(), visible=False)
-        plt.ylabel('Frequency', fontsize=18)
-    elif sharey_axis_object:
-        fig_object.add_subplot(axis_object, sharey=sharey_axis_object)
-        plt.setp(axis_object.get_yticklabels(), visible=False)
+def plot_exp_details(df, color_bar=False, set_palette=True):
+    """plot occurrence of each experiment as a heat map"""
+    # set color palette for seaborn heat map
+    if set_palette:
+        c_pal = sns.color_palette('Blues', 2)
     else:
-        plt.ylabel('Frequency', fontsize=18)
-        fig_object.add_subplot(axis_object)
-    return axis_object
+        c_pal = sns.color_palette('Blues', 16)
+    f, ax = plt.subplots(3, 1, squeeze=True)
 
+    idx = pd.IndexSlice
+    for i_exp, i_exp_pos in enumerate(df.columns.levels[0]):
+        i_exp_pos_df = df.loc[:, idx[i_exp_pos, :]]
+        i_exp_pos_df.columns = i_exp_pos_df.columns.droplevel(level=0)
+        sns.heatmap(i_exp_pos_df, square=True, linewidth=0.5, cmap=c_pal, ax=ax[i_exp], cbar=color_bar)
+        for item in ax[i_exp].get_xticklabels():
+            item.set_rotation(90)
+        # for item in ax[i_exp].get_yticklabels():
+        #     item.set_rotation(90)
 
-def plot_box(fig_object, grid_object, distribution_data, sharex_axis_object=[], sharey_axis_object=[],
-             vert_option=False):
-    """create subplot with grid object and get box plot of distributions"""
-    axis_object = plt.Subplot(fig_object, grid_object)
-    bp_object = axis_object.boxplot(distribution_data, vert=vert_option)
-    for whiskers in bp_object["whiskers"]:
-        whiskers.set(color='k', linewidth=2)
-    for flier in bp_object['fliers']:
-        flier.set(marker='o', color='r', alpha=0.5)
-    # Remove top axes and right axes ticks
-    axis_object.get_xaxis().tick_bottom()
-    axis_object.get_yaxis().tick_left()
-    if sharex_axis_object and sharey_axis_object:
-        fig_object.add_subplot(axis_object, sharex=sharex_axis_object, sharey=sharey_axis_object)
-        plt.setp(axis_object.get_xticklabels(), visible=False)
-        plt.setp(axis_object.get_yticklabels(), visible=False)
-    elif sharex_axis_object:
-        fig_object.add_subplot(axis_object, sharex=sharex_axis_object)
-        plt.setp(axis_object.get_xticklabels(), visible=False)
-    elif sharey_axis_object:
-        fig_object.add_subplot(axis_object, sharey=sharey_axis_object)
-        plt.setp(axis_object.get_yticklabels(), visible=False)
-    else:
-        fig_object.add_subplot(axis_object)
-    return axis_object
+    # remove axis labels for shared x-axis
+    for axis in range(0, len(df.columns.levels[0]) - 1):
+        number_x_ticks = len(ax[axis].get_xticklabels())
+        empty_tick_labels = [''] * number_x_ticks
+        ax[axis].set_xticklabels(empty_tick_labels)
+        ax[axis].set_xlabel('')
 
-
-def set_hist_box_axis_limits(hist_axis, box_axis):
-    """set axis limits for hist and box plot of parameter values obtained from identifiability analysis"""
-    box_x_lim = []
-    hist_y_lim = []
-    for i_box_axis, i_hist_axis in zip(box_axis, hist_axis):
-        # get box axis x-limit
-        box_x_lim.append(i_box_axis.get_xlim())
-        # get hist y-limit
-        hist_y_lim.append(i_hist_axis.get_ylim())
-
-    # get maximimum of the histogram limits
-    max_hist_lim = []
-    min_hist_lim = []
-    for i_hist in hist_y_lim:
-        max_hist_lim.append(max(i_hist))
-        min_hist_lim.append(min(i_hist))
-    max_hist_lim = max(max_hist_lim)
-    # min_hist_lim = min(min_hist_lim)
-
-    # get maximums of box plot limits
-    max_box_lim = []
-    min_box_lim = []
-    for i_box in box_x_lim:
-        max_box_lim.append(max(i_box))
-        min_box_lim.append(min(i_box))
-
-    # set x-axis, y-axis limits
-    for i_plot, (i_hist_axis, i_box_axis) in enumerate(zip(hist_axis, box_axis)):
-        i_box_axis.set_xlim([0, max_box_lim[i_plot]])
-        i_hist_axis.set_xlim([0, max_box_lim[i_plot]])
-        i_hist_axis.set_ylim([0, max_hist_lim])
-    plt.show()
     return None
-
-
-def identify_column_row_numbers(number_of_plots):
-    """get number of rows and columns based on number of plots"""
-    if number_of_plots >= 3:
-        number_of_rows = 3
-    else:
-        number_of_rows = 1
-    if number_of_plots % number_of_rows != 0:
-        number_of_columns = (number_of_plots + 1) / number_of_rows
-    else:
-        number_of_columns = number_of_plots / number_of_rows
-    return number_of_rows, number_of_columns
