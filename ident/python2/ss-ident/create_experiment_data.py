@@ -33,6 +33,7 @@ def create_experiment_data(save_file_name, noise=0, kinetics=2, number_samples=1
                                                                              number_of_samples=number_samples, noise_std=noise_std)
     # save data frame to csv file
     experiment_df.to_csv(save_file_name, index_label=multi_index_labels)
+    # dyn_df.to_csv(save_dyn_file_name, index_label=dyn_labels)
     return experiment_df
 
 
