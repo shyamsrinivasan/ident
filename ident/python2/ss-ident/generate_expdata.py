@@ -60,6 +60,30 @@ def create_ss_dict(ss_info, variable_type, noise=0):
     return variable_name_info, variable_value_info, sample_name_info
 
 
+def create_dyn_dict(dyn_info, variable_type, noise=0):
+    """create dict of dynamic data for creating data frame"""
+    if noise:
+        pass
+    else:
+        number_time_points, number_variables = dyn_info[0].shape
+    variable_name_info = [variable_name(variable_type, j_variable) for j_variable in range(0, number_variables)]
+
+    variable_value_info = []
+    if noise:
+        pass
+    else:
+        variable_value_info = [[i_time_value for i_experiment_info in dyn_info
+                                for i_time_value in i_experiment_info[:, j_variable]]
+                               for j_variable in range(0, number_variables)]
+        i_sample_id = 0
+        sample_name_info = [i_time_sample for _ in dyn_info
+                            for i_time_sample in ['sample_{}'.format(i_sample_id)] * number_time_points]
+        experiment_id_info = [i_time_id for i_experiment_id, _ in enumerate(dyn_info)
+                              for i_time_id in ['experiment_{}'.format(i_experiment_id)] * number_time_points]
+
+    return variable_name_info, variable_value_info, sample_name_info, experiment_id_info
+
+
 def create_other_value_dict(other_info, number_of_samples, noise=0):
     """create dictionary of other values based on number of samples
     to create consistent dict for data frame creation"""
@@ -103,6 +127,16 @@ def perturb_parameters(initial_ss, parameter_perturbations, cvode_options, ode_p
     # prepare list of column names for dataframe
     dict_fields = experiment_info.keys()
     # experiment_info_df = pd.DataFrame(experiment_info, columns=dict_fields)
+
+    # dynamic info dict
+    dyn_concentration_name, dyn_concentration_value, dyn_sample_name_info, dyn_experiment_id_info = \
+        create_dyn_dict([i_dyn['y'] for i_dyn in no_noise_dynamic], variable_type='metabolite', noise=noise)
+    dyn_flux_name, dyn_flux_value, _, _ = \
+        create_dyn_dict([i_dyn['flux'] for i_dyn in no_noise_dynamic], variable_type='flux', noise=noise)
+
+    dynamic_dict = dict(zip(dyn_concentration_name, dyn_concentration_value))
+    dynamic_dict.update(dict(zip(dyn_flux_name, dyn_flux_value)))
+    dynamic_dict.update({'sample_name': dyn_sample_name_info, 'experiment_id': dyn_experiment_id_info})
 
     return experiment_info, dict_fields
 
