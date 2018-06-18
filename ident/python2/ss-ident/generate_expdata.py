@@ -135,11 +135,13 @@ def perturb_parameters(initial_ss, parameter_perturbations, cvode_options, ode_p
         create_dyn_dict([i_dyn['flux'] for i_dyn in no_noise_dynamic], variable_type='flux', noise=noise)
     all_time = [i_dyn['time'] for i_dyn in no_noise_dynamic]
     all_time_info = [i_time_value for i_experiment_info in all_time for i_time_value in i_experiment_info]
+    all_dyn_ids = [j_time_id for i_dyn in no_noise_dynamic for j_time_id in range(0, len(i_dyn['time']))]
 
     dynamic_dict = dict(zip(dyn_concentration_name, dyn_concentration_value))
     dynamic_dict.update(dict(zip(dyn_flux_name, dyn_flux_value)))
     dynamic_dict.update({'time': all_time_info,
-                         'sample_name': dyn_sample_name_info, 'experiment_id': dyn_experiment_id_info})
+                         'sample_name': dyn_sample_name_info, 'experiment_id': dyn_experiment_id_info,
+                         'data_point': all_dyn_ids})
     dynamic_dict_fields = dynamic_dict.keys()
 
     return experiment_info, dict_fields, dynamic_dict, dynamic_dict_fields
@@ -184,10 +186,11 @@ def generate_expdata(y0, cvode_options, ode_parameter_values, number_of_samples=
     # create data frame
     all_ss_df = pd.DataFrame(perturbation_info, index=index, columns=perturbation_info.keys())
 
-    dyn_df_index_tuples = zip(dynamic_info['sample_name'], dynamic_info['experiment_id'])
-    dyn_index = pd.MultiIndex.from_tuples(dyn_df_index_tuples, names=multi_index_labels)
+    dyn_df_index_tuples = zip(dynamic_info['sample_name'], dynamic_info['experiment_id'], dynamic_info['data_point'])
+    dyn_index = pd.MultiIndex.from_tuples(dyn_df_index_tuples, names=['sample_name', 'experiment_id', 'data_point'])
     del dynamic_info['sample_name']
     del dynamic_info['experiment_id']
+    del dynamic_info['data_point']
 
     dyn_df = pd.DataFrame(dynamic_info, index=dyn_index, columns=dynamic_info.keys())
 
