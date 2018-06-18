@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[    390010,       9480]
-NotebookOptionsPosition[    387477,       9390]
-NotebookOutlinePosition[    387971,       9410]
-CellTagsIndexPosition[    387928,       9407]
+NotebookDataLength[    397367,       9692]
+NotebookOptionsPosition[    394716,       9598]
+NotebookOutlinePosition[    395209,       9618]
+CellTagsIndexPosition[    395166,       9615]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -9386,10 +9386,218 @@ Cell[BoxData[
         RowBox[{"v51", "-", "v52"}]]]}]}], "}"}]}], "}"}]], "Output",
  CellChangeTimes->{3.729473574825588*^9, 3.7294736081341467`*^9, 
   3.729473644531511*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"ackf1", ":=", 
+     RowBox[{
+      RowBox[{"v1", "-", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"Vmax", "*", 
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"acp1", "*", "adp1"}], "-", 
+             RowBox[{"acex1", "*", 
+              RowBox[{"atp1", "/", "Keq"}]}]}], ")"}], "/", 
+           RowBox[{"(", 
+            RowBox[{"Kmacp", "*", "Kmadp"}], ")"}]}]}], ")"}], "/", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"1", "+", 
+            RowBox[{"acp1", "/", "Kmacp"}], "+", 
+            RowBox[{"acex1", "/", "Kmacex"}]}], ")"}], "*", 
+          RowBox[{"(", 
+           RowBox[{"1", "+", 
+            RowBox[{"adp1", "/", "Kmadp"}], "+", 
+            RowBox[{"atp1", "/", "Kmatp"}]}], ")"}]}], ")"}]}]}], "\[Equal]", 
+      "0"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"ackf2", ":=", 
+     RowBox[{
+      RowBox[{"v2", "-", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"Vmax", "*", 
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"acp2", "*", "adp2"}], "-", 
+             RowBox[{"acex2", "*", 
+              RowBox[{"atp2", "/", "Keq"}]}]}], ")"}], "/", 
+           RowBox[{"(", 
+            RowBox[{"Kmacp", "*", "Kmadp"}], ")"}]}]}], ")"}], "/", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"1", "+", 
+            RowBox[{"acp2", "/", "Kmacp"}], "+", 
+            RowBox[{"acex2", "/", "Kmacex"}]}], ")"}], "*", 
+          RowBox[{"(", 
+           RowBox[{"1", "+", 
+            RowBox[{"adp2", "/", "Kmadp"}], "+", 
+            RowBox[{"atp2", "/", "Kmatp"}]}], ")"}]}], ")"}]}]}], "\[Equal]", 
+      "0"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"ackf3", ":=", 
+     RowBox[{
+      RowBox[{"v3", "-", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"Vmax", "*", 
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"acp3", "*", "adp3"}], "-", 
+             RowBox[{"acex3", "*", 
+              RowBox[{"atp3", "/", "Keq"}]}]}], ")"}], "/", 
+           RowBox[{"(", 
+            RowBox[{"Kmacp", "*", "Kmadp"}], ")"}]}]}], ")"}], "/", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"1", "+", 
+            RowBox[{"acp3", "/", "Kmacp"}], "+", 
+            RowBox[{"acex3", "/", "Kmacex"}]}], ")"}], "*", 
+          RowBox[{"(", 
+           RowBox[{"1", "+", 
+            RowBox[{"adp3", "/", "Kmadp"}], "+", 
+            RowBox[{"atp3", "/", "Kmatp"}]}], ")"}]}], ")"}]}]}], "\[Equal]", 
+      "0"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"ackf4", ":=", 
+     RowBox[{
+      RowBox[{"v4", "-", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"Vmax", "*", 
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"acp4", "*", "adp4"}], "-", 
+             RowBox[{"acex4", "*", 
+              RowBox[{"atp4", "/", "Keq"}]}]}], ")"}], "/", 
+           RowBox[{"(", 
+            RowBox[{"Kmacp", "*", "Kmadp"}], ")"}]}]}], ")"}], "/", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"1", "+", 
+            RowBox[{"acp4", "/", "Kmacp"}], "+", 
+            RowBox[{"acex4", "/", "Kmacex"}]}], ")"}], "*", 
+          RowBox[{"(", 
+           RowBox[{"1", "+", 
+            RowBox[{"adp4", "/", "Kmadp"}], "+", 
+            RowBox[{"atp4", "/", "Kmatp"}]}], ")"}]}], ")"}]}]}], "\[Equal]", 
+      "0"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"ackf5", ":=", 
+     RowBox[{
+      RowBox[{"v5", "-", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"Vmax", "*", 
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"acp5", "*", "adp5"}], "-", 
+             RowBox[{"acex5", "*", 
+              RowBox[{"atp5", "/", "Keq"}]}]}], ")"}], "/", 
+           RowBox[{"(", 
+            RowBox[{"Kmacp", "*", "Kmadp"}], ")"}]}]}], ")"}], "/", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"1", "+", 
+            RowBox[{"acp5", "/", "Kmacp"}], "+", 
+            RowBox[{"acex5", "/", "Kmacex"}]}], ")"}], "*", 
+          RowBox[{"(", 
+           RowBox[{"1", "+", 
+            RowBox[{"adp5", "/", "Kmadp"}], "+", 
+            RowBox[{"atp5", "/", "Kmatp"}]}], ")"}]}], ")"}]}]}], "\[Equal]", 
+      "0"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"ackf6", ":=", 
+     RowBox[{
+      RowBox[{"v6", "-", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"Vmax", "*", 
+          RowBox[{
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"acp6", "*", "adp6"}], "-", 
+             RowBox[{"acex6", "*", 
+              RowBox[{"atp6", "/", "Keq"}]}]}], ")"}], "/", 
+           RowBox[{"(", 
+            RowBox[{"Kmacp", "*", "Kmadp"}], ")"}]}]}], ")"}], "/", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"1", "+", 
+            RowBox[{"acp6", "/", "Kmacp"}], "+", 
+            RowBox[{"acex6", "/", "Kmacex"}]}], ")"}], "*", 
+          RowBox[{"(", 
+           RowBox[{"1", "+", 
+            RowBox[{"adp6", "/", "Kmadp"}], "+", 
+            RowBox[{"atp6", "/", "Kmatp"}]}], ")"}]}], ")"}]}]}], "\[Equal]", 
+      "0"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"met", "=", 
+     RowBox[{"{", 
+      RowBox[{
+      "acp1", ",", "acp2", ",", "acp3", ",", "acp4", ",", "acp5", ",", "acp6",
+        ",", "adp1", ",", "adp2", ",", "adp3", ",", "adp4", ",", "adp5", ",", 
+       "adp6", ",", "atp1", ",", "atp2", ",", "atp3", ",", "atp4", ",", 
+       "atp5", ",", "atp6", ",", "acex1", ",", "acex2", ",", "acex3", ",", 
+       "acex4", ",", "acex5", ",", "acex6"}], "}"}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"flux", "=", 
+     RowBox[{"{", 
+      RowBox[{"v1", ",", "v2", ",", "v3", ",", "v4", ",", "v5", ",", "v6"}], 
+      "}"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"parameters", "=", 
+     RowBox[{"{", 
+      RowBox[{
+      "Vmax", ",", "Keq", ",", "Kmacp", ",", "Kmadp", ",", "Kmacex", ",", 
+       "Kmatp"}], "}"}]}], ";"}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Solve", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+       "ackf1", ",", "ackf2", ",", "ackf3", ",", "ackf4", ",", "ackf5", ",", 
+        "ackf6"}], "}"}], ",", "parameters"}], "]"}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{
+     RowBox[{"p1", "=", 
+      RowBox[{"V3max", "/.", "sol"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"p2", "=", 
+      RowBox[{"K3fdp", "/.", "sol"}]}], ";", "\[IndentingNewLine]", 
+     RowBox[{"p3", "=", 
+      RowBox[{"K3pep", "/.", "sol"}]}], ";"}], "*)"}]}]}]], "Input",
+ CellChangeTimes->{{3.7380673399069834`*^9, 3.7380673407170296`*^9}, {
+  3.738078278445879*^9, 3.738078516665104*^9}, {3.7380785528150806`*^9, 
+  3.7380788591954336`*^9}, {3.7380789042810984`*^9, 3.738079004893999*^9}, {
+  3.7380791808210382`*^9, 3.7380792184996977`*^9}}],
+
+Cell[BoxData["$Aborted"], "Output",
+ CellChangeTimes->{3.7380879526286645`*^9}]
 }, Open  ]]
 },
 WindowSize->{1350, 522},
-WindowMargins->{{-15, Automatic}, {Automatic, 47}},
+WindowMargins->{{-2, Automatic}, {Automatic, 47}},
 PrintingCopies->1,
 PrintingPageRange->{32000, 32000},
 PrintingOptions->{"Magnification"->1.,
@@ -9481,6 +9689,10 @@ Cell[377532, 9109, 4824, 120, 160, "Output"]
 Cell[CellGroupData[{
 Cell[382393, 9234, 3369, 96, 312, "Input"],
 Cell[385765, 9332, 1696, 55, 61, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[387498, 9392, 7120, 200, 312, "Input"],
+Cell[394621, 9594, 79, 1, 31, "Output"]
 }, Open  ]]
 }
 ]
