@@ -133,12 +133,16 @@ def perturb_parameters(initial_ss, parameter_perturbations, cvode_options, ode_p
         create_dyn_dict([i_dyn['y'] for i_dyn in no_noise_dynamic], variable_type='metabolite', noise=noise)
     dyn_flux_name, dyn_flux_value, _, _ = \
         create_dyn_dict([i_dyn['flux'] for i_dyn in no_noise_dynamic], variable_type='flux', noise=noise)
+    all_time = [i_dyn['time'] for i_dyn in no_noise_dynamic]
+    all_time_info = [i_time_value for i_experiment_info in all_time for i_time_value in i_experiment_info]
 
     dynamic_dict = dict(zip(dyn_concentration_name, dyn_concentration_value))
     dynamic_dict.update(dict(zip(dyn_flux_name, dyn_flux_value)))
-    dynamic_dict.update({'sample_name': dyn_sample_name_info, 'experiment_id': dyn_experiment_id_info})
+    dynamic_dict.update({'time': all_time_info,
+                         'sample_name': dyn_sample_name_info, 'experiment_id': dyn_experiment_id_info})
+    dynamic_dict_fields = dynamic_dict.keys()
 
-    return experiment_info, dict_fields
+    return experiment_info, dict_fields, dynamic_dict, dynamic_dict_fields
 
 
 def generate_expdata(y0, cvode_options, ode_parameter_values, number_of_samples=1, noise=0, kinetics=2,
@@ -159,15 +163,15 @@ def generate_expdata(y0, cvode_options, ode_parameter_values, number_of_samples=
                               {"V3max": .1}, {"V3max": .5}, {"V3max": 1}, {"V3max": -.1}, {"V3max": -.5},
                               {"V2max": .1}, {"V2max": .5}, {"V2max": 1}, {"V2max": -.1}, {"V2max": -.5}]
     try:
-        perturbation_info, info_dict_keys = perturb_parameters(initial_ss[0], parameter_perturbation,
-                                                               cvode_options, ode_parameter_values,
-                                                               number_of_samples, noise=noise, kinetics=kinetics,
-                                                               dynamic_plot=perturbation_plot, noise_std=noise_std)
+        perturbation_info, info_dict_keys, dynamic_info, dyn_dict_keys = \
+            perturb_parameters(initial_ss[0], parameter_perturbation, cvode_options, ode_parameter_values,
+                               number_of_samples, noise=noise, kinetics=kinetics, dynamic_plot=perturbation_plot,
+                               noise_std=noise_std)
     except KeyError:
-        perturbation_info, info_dict_keys = perturb_parameters(initial_ss, parameter_perturbation,
-                                                               cvode_options, ode_parameter_values,
-                                                               number_of_samples, noise=noise, kinetics=kinetics,
-                                                               dynamic_plot=perturbation_plot, noise_std=noise_std)
+        perturbation_info, info_dict_keys, dynamic_info, dyn_dict_keys = \
+            perturb_parameters(initial_ss, parameter_perturbation, cvode_options, ode_parameter_values,
+                               number_of_samples, noise=noise, kinetics=kinetics,
+                               dynamic_plot=perturbation_plot, noise_std=noise_std)
 
     # convert info to multi index data frame for storage and retrieval
     df_index_tuples = [(i_value_sample, i_value_exp) for i_value_sample, i_value_exp in
@@ -179,6 +183,13 @@ def generate_expdata(y0, cvode_options, ode_parameter_values, number_of_samples=
 
     # create data frame
     all_ss_df = pd.DataFrame(perturbation_info, index=index, columns=perturbation_info.keys())
+
+    dyn_df_index_tuples = zip(dynamic_info['sample_name'], dynamic_info['experiment_id'])
+    dyn_index = pd.MultiIndex.from_tuples(dyn_df_index_tuples, names=multi_index_labels)
+    del dynamic_info['sample_name']
+    del dynamic_info['experiment_id']
+
+    dyn_df = pd.DataFrame(dynamic_info, index=dyn_index, columns=dynamic_info.keys())
 
     return all_ss_df, multi_index_labels
 
