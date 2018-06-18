@@ -187,14 +187,15 @@ def generate_expdata(y0, cvode_options, ode_parameter_values, number_of_samples=
     all_ss_df = pd.DataFrame(perturbation_info, index=index, columns=perturbation_info.keys())
 
     dyn_df_index_tuples = zip(dynamic_info['sample_name'], dynamic_info['experiment_id'], dynamic_info['data_point'])
-    dyn_index = pd.MultiIndex.from_tuples(dyn_df_index_tuples, names=['sample_name', 'experiment_id', 'data_point'])
+    dyn_index_labels = ['sample_name', 'experiment_id', 'data_point']
+    dyn_index = pd.MultiIndex.from_tuples(dyn_df_index_tuples, names=dyn_index_labels)
     del dynamic_info['sample_name']
     del dynamic_info['experiment_id']
     del dynamic_info['data_point']
 
     dyn_df = pd.DataFrame(dynamic_info, index=dyn_index, columns=dynamic_info.keys())
 
-    return all_ss_df, multi_index_labels
+    return all_ss_df, multi_index_labels, dyn_df, dyn_index_labels
 
 
 if __name__ == "__main__":
