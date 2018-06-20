@@ -583,14 +583,14 @@ def plot_dynamic_sims(dynamic_data, multiple=0, concentrations=1, fluxes=0):
     return None
 
 
-def plot_exp_details(df, color_bar=False, set_palette=True):
+def plot_exp_details(df, max_number_experiments=3, color_bar=False, set_palette=True):
     """plot occurrence of each experiment as a heat map"""
     # set color palette for seaborn heat map
     if set_palette:
         c_pal = sns.color_palette('Blues', 2)
     else:
         c_pal = sns.color_palette('Blues', 16)
-    f, ax = plt.subplots(3, 1, squeeze=True)
+    f, ax = plt.subplots(max_number_experiments, 1, squeeze=True)
 
     idx = pd.IndexSlice
     for i_exp, i_exp_pos in enumerate(df.columns.levels[0]):
