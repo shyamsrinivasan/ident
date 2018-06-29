@@ -184,3 +184,30 @@ class MySlave(Slave):
             return y0_id, done, time_course, y_result
         else:
             return y0_id, done, [], []
+
+
+def setup_parallel_ode(ode_rhs_fun, parameters, y0, t_final):
+    name = MPI.Get_processor_name()
+    rank = MPI.COMM_WORLD.Get_rank()
+    size = MPI.COMM_WORLD.Get_size()
+
+    sim_result = {}
+    print('I am  %s rank %d (total %d)' % (name, rank, size))
+    if rank == 0:  # Master
+        # import pdb; pdb.set_trace()
+        # set parameter value
+        # parameters = {'ode_opts': {'iter': 'Newton', 'discr': 'Adams', 'atol': 1e-10, 'rtol': 1e-10,
+        #                            'time_points': 200, 'display_progress': True, 'verbosity': 30},
+        #               'ode_sys_opts': np.array([.5, .02, .4, .004])}
+        # y0 = [np.array([1, .0001]), np.array([2, .0001]), np.array([3, .0001]), np.array([4, .0001]),
+        #       np.array([5, .0001]), np.array([.0001, 1]), np.array([.0001, 2]), np.array([.0001, 3]),
+        #       np.array([.0001, 4]), np.array([.0001, 5]), np.array([10, 1]), np.array([1, 10])]
+        # import pdb; pdb.set_trace()
+        ode_job = ParallelOde(slaves=range(1, size))
+        sim_result = ode_job.run_i_value(ode_rhs_fun=ode_rhs_fun, t_final=t_final, parameters=parameters,
+                                         initial_values=y0)
+        import pdb; pdb.set_trace()
+        ode_job.terminate_slaves()
+    else:  # Any slave
+        MySlave().run()
+    return sim_result
