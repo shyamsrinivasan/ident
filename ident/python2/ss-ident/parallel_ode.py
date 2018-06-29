@@ -204,6 +204,7 @@ def setup_parallel_ode(ode_rhs_fun, parameters, y0, t_final):
         #       np.array([.0001, 4]), np.array([.0001, 5]), np.array([10, 1]), np.array([1, 10])]
         # import pdb; pdb.set_trace()
         ode_job = ParallelOde(slaves=range(1, size))
+        import pdb;pdb.set_trace()
         sim_result = ode_job.run_i_value(ode_rhs_fun=ode_rhs_fun, t_final=t_final, parameters=parameters,
                                          initial_values=y0)
         import pdb; pdb.set_trace()
