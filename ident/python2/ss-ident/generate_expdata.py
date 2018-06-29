@@ -1,7 +1,5 @@
-from generate_noisy_data import generate_no_noise_data
-from generate_noisy_data import generate_noisy_data
-from generate_noisy_data import run_no_noise_parameter_perturbation
-from generate_noisy_data import run_noisy_parameter_perturbation
+from generate_noisy_data import generate_no_noise_data, generate_noisy_data
+from generate_noisy_data import run_no_noise_parameter_perturbation, run_noisy_parameter_perturbation
 from plot_ident_results import plot_dynamic_sim_concentrations
 from names_strings import variable_name
 # import numpy as np
