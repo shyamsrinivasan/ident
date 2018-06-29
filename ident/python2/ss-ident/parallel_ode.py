@@ -20,19 +20,19 @@ class ParallelOde(object):
         """
         self.master.terminate_slaves()
 
-    def __add_next_task(self, ode_rhs_fun, t_final, parameters, initial_value=(), initial_value_id=()):
+    def __add_next_task(self, ode_rhs_fun, t_final, parameters, ode_opts, initial_value=(), value_id=()):
         """
         create tasks and add it to the work queue
         Every task has specific arguments
         """
         # set ode rhs function, initial condition and parameters
-        data = {'ode_fun': ode_rhs_fun, 'y0': initial_value, 'y0_id': initial_value_id,
-                'ode_sys_opts': parameters['ode_sys_opts'], 'ode_opts': parameters['ode_opts'],
+        data = {'ode_fun': ode_rhs_fun, 'y0': initial_value, 'y0_id': value_id,
+                'ode_sys_opts': parameters, 'ode_opts': ode_opts,
                 't_final': t_final}
         # add data to work queue
         self.work_queue.add_work(data)
 
-    def run_i_value(self, ode_rhs_fun, t_final, parameters, initial_values):
+    def run_i_value(self, ode_rhs_fun, ode_sys_opts, initial_values, t_final, ode_opts):
         """
         This is the core where I keep starting slaves
         as long as there is work to do
@@ -42,8 +42,8 @@ class ParallelOde(object):
         # but it can also be added later as more work become available
         #
         for idx, j_value in enumerate(initial_values):
-            self.__add_next_task(ode_rhs_fun=ode_rhs_fun, t_final=t_final, parameters=parameters,
-                                 initial_value=j_value, initial_value_id=idx)
+            self.__add_next_task(ode_rhs_fun=ode_rhs_fun, t_final=t_final, parameters=ode_sys_opts, ode_opts=ode_opts,
+                                 initial_value=j_value, value_id=idx)
 
         # Keeep starting slaves as long as there is work to do
         all_boolean = []
@@ -69,44 +69,41 @@ class ParallelOde(object):
         results = {'time': all_tout, 'y': all_yout, 'y0_id': all_y0_id, 'boolean': all_boolean}
         return results
 
-    # def run_parameters(self, ode_rhs_fun, t_final, parameters, initial_value):
-    #     """
-    #     This is the core where I keep starting slaves
-    #     as long as there is work to do
-    #     """
-    #     # set parameter value
-    #     # p = np.array([.5, .02, .4, .004])
-    #
-    #     # let's prepare our work queue. This can be built at initialization time
-    #     # but it can also be added later as more work become available
-    #     #
-    #     for idx, j_value in enumerate(initial_values):
-    #         self.__add_next_task(ode_rhs_fun=ode_rhs_fun, t_final=t_final, parameters=parameters,
-    #                              initial_value=j_value, initial_value_id=idx)
-    #
-    #     # Keeep starting slaves as long as there is work to do
-    #     all_boolean = []
-    #     all_tout = []
-    #     all_yout = []
-    #     all_y0_id = []
-    #     while not self.work_queue.done():
-    #         # give more work to do to each idle slave (if any)
-    #         self.work_queue.do_work()
-    #         # reclaim returned data from completed slaves
-    #         for slave_return_data in self.work_queue.get_completed_work():
-    #             done, tout, yout, y0_id = slave_return_data
-    #             # import pdb; pdb.set_trace()
-    #             all_boolean.append(done)
-    #             all_tout.append(tout)
-    #             all_yout.append(yout)
-    #             all_y0_id.append(y0_id)
-    #
-    #             if done:
-    #                 print('Master: slave finished its task returning: %s)' % str(y0_id))
-    #         # sleep some time
-    #         # time.sleep(0.3)
-    #     results = {'time': all_tout, 'y': all_yout, 'y0_id': all_y0_id, 'boolean': all_boolean}
-    #     return results
+    def run_i_parameter(self, ode_rhs_fun, t_final, parameters, initial_value):
+        """
+        This is the core where I keep starting slaves
+        as long as there is work to do
+        """
+        # let's prepare our work queue. This can be built at initialization time
+        # but it can also be added later as more work become available
+        #
+        for idx, j_parameter in enumerate(parameters['ode_sys_opts']):
+            self.__add_next_task(ode_rhs_fun=ode_rhs_fun, t_final=t_final, parameters=j_parameter,
+                                 initial_value=initial_value, value_id=idx)
+
+        # Keeep starting slaves as long as there is work to do
+        all_boolean = []
+        all_tout = []
+        all_yout = []
+        all_y0_id = []
+        while not self.work_queue.done():
+            # give more work to do to each idle slave (if any)
+            self.work_queue.do_work()
+            # reclaim returned data from completed slaves
+            for slave_return_data in self.work_queue.get_completed_work():
+                y0_id, done, time_course, y_result = slave_return_data
+                # import pdb; pdb.set_trace()
+                all_boolean.append(done)
+                all_tout.append(time_course)
+                all_yout.append(y_result)
+                all_y0_id.append(y0_id)
+
+                if done:
+                    print('Master: slave finished its task returning: %s)' % str(y0_id))
+            # sleep some time
+            # time.sleep(0.3)
+        results = {'time': all_tout, 'y': all_yout, 'y0_id': all_y0_id, 'boolean': all_boolean}
+        return results
 
 
 class MySlave(Slave):
@@ -153,7 +150,10 @@ class MySlave(Slave):
             return y0_id, done, [], []
 
 
-def setup_parallel_ode(ode_rhs_fun, parameters, y0, t_final):
+def setup_parallel_ode(ode_rhs_fun, parameters, y0, t_final, ode_opts=()):
+    if not ode_opts:
+        ode_opts = {'iter': 'Newton', 'discr': 'Adams', 'atol': 1e-10, 'rtol': 1e-10,
+                    'time_points': 200, 'display_progress': True, 'verbosity': 30}
     name = MPI.Get_processor_name()
     rank = MPI.COMM_WORLD.Get_rank()
     size = MPI.COMM_WORLD.Get_size()
@@ -163,8 +163,8 @@ def setup_parallel_ode(ode_rhs_fun, parameters, y0, t_final):
     if rank == 0:  # Master
         ode_job = ParallelOde(slaves=range(1, size))
         # import pdb;pdb.set_trace()
-        sim_result = ode_job.run_i_value(ode_rhs_fun=ode_rhs_fun, t_final=t_final, parameters=parameters,
-                                         initial_values=y0)
+        sim_result = ode_job.run_i_value(ode_rhs_fun=ode_rhs_fun, t_final=t_final, ode_sys_opts=parameters,
+                                         ode_opts=ode_opts, initial_values=y0)
         ode_job.terminate_slaves()
     else:  # Any slave
         MySlave().run()
