@@ -165,7 +165,6 @@ def setup_parallel_ode(ode_rhs_fun, parameters, y0, t_final):
         # import pdb;pdb.set_trace()
         sim_result = ode_job.run_i_value(ode_rhs_fun=ode_rhs_fun, t_final=t_final, parameters=parameters,
                                          initial_values=y0)
-        import pdb; pdb.set_trace()
         ode_job.terminate_slaves()
     else:  # Any slave
         MySlave().run()
