@@ -55,11 +55,11 @@ class ParallelOde(object):
             self.work_queue.do_work()
             # reclaim returned data from completed slaves
             for slave_return_data in self.work_queue.get_completed_work():
-                done, tout, yout, y0_id = slave_return_data
+                y0_id, done, time_course, y_result = slave_return_data
                 # import pdb; pdb.set_trace()
                 all_boolean.append(done)
-                all_tout.append(tout)
-                all_yout.append(yout)
+                all_tout.append(time_course)
+                all_yout.append(y_result)
                 all_y0_id.append(y0_id)
 
                 if done:
