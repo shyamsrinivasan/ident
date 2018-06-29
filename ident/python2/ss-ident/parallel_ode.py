@@ -138,45 +138,12 @@ class MySlave(Slave):
         t_final = data['t_final']
         all_options = [ode_opts, ode_sys_opts]
         time_course, y_result, _, _ = simulate_ode(rhs_fun, y_initial, tf=t_final, opts=all_options)
-        # prob = Explicit_Problem(lambda t, x: rhs_fun(t, x, p), y0=y_initial)
-        #
-        # # create solver instance
-        # solver = CVode(prob)
-        #
-        # solver.iter = 'Newton'
-        # solver.discr = 'Adams'
-        # solver.atol = 1e-10
-        # solver.rtol = 1e-10
-        # solver.display_progress = True
-        # solver.verbosity = 30
 
         rank = MPI.COMM_WORLD.Get_rank()
         name = MPI.Get_processor_name()
 
-        #
-        # Every task type has its specific data input and return output
-        #
-        # ret = None
-        # if task == Tasks.TASK1:
-        #
-        #     arg1 = data
-        #     print('  Slave %s rank %d executing %s with task_id %d' % (name, rank, task, arg1))
-        #     ret = (True, arg1)
-        #
-        # elif task == Tasks.TASK2:
-        #
-        #     arg1, arg2 = data
         print('  Slave %s rank %d executing task %s' % (name, rank, y0_id))
-        #     ret = (True, arg1, 'something', 'else')
-        #
-        # elif task == Tasks.TASK3:
-        #
-        #     arg1, arg2, arg3 = data
-        #     print('  Slave %s rank %d executing %s with task_id %d arg2 %d arg3 %s' % (
-        #     name, rank, task, arg1, arg2, arg3))
-        #     ret = (True, arg1, 'something')
-        # simulate system
-        # time_course, y_dynamic = solver.simulate(10, 200)
+
         if len(time_course) and len(y_result):
             done = True
 
@@ -194,15 +161,6 @@ def setup_parallel_ode(ode_rhs_fun, parameters, y0, t_final):
     sim_result = {}
     print('I am  %s rank %d (total %d)' % (name, rank, size))
     if rank == 0:  # Master
-        # import pdb; pdb.set_trace()
-        # set parameter value
-        # parameters = {'ode_opts': {'iter': 'Newton', 'discr': 'Adams', 'atol': 1e-10, 'rtol': 1e-10,
-        #                            'time_points': 200, 'display_progress': True, 'verbosity': 30},
-        #               'ode_sys_opts': np.array([.5, .02, .4, .004])}
-        # y0 = [np.array([1, .0001]), np.array([2, .0001]), np.array([3, .0001]), np.array([4, .0001]),
-        #       np.array([5, .0001]), np.array([.0001, 1]), np.array([.0001, 2]), np.array([.0001, 3]),
-        #       np.array([.0001, 4]), np.array([.0001, 5]), np.array([10, 1]), np.array([1, 10])]
-        # import pdb; pdb.set_trace()
         ode_job = ParallelOde(slaves=range(1, size))
         # import pdb;pdb.set_trace()
         sim_result = ode_job.run_i_value(ode_rhs_fun=ode_rhs_fun, t_final=t_final, parameters=parameters,
