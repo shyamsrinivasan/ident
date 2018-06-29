@@ -1,4 +1,5 @@
 import numpy as np
+import predator_prey_model
 from parallel_ode import setup_parallel_ode
 
 
@@ -10,6 +11,14 @@ def py_rhs_fun(t, y, p):
 
     flux = np.array([alpha * y[0], beta * y[0] * y[1], delta * y[0] * y[1], gamma * y[1]])
     rhs = np.array([flux[0] - flux[1], flux[2] - flux[3]])
+
+    return rhs
+
+
+def rhs_fun(t, y, p):
+    """ode rhs fun for predator prey model using imported fortran code"""
+    flux = predator_prey_model.all_flux(y, p)
+    rhs = predator_prey_model.ode(flux)
 
     return rhs
 
