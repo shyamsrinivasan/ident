@@ -20,7 +20,7 @@ def simulate_ode(fun, y_initial, tf, opts):
     try:
         verbosity = ode_opts["verbosity"]
     except KeyError:
-        verbosity = 10    
+        verbosity = 10
 
     # define explicit assimulo problem
     prob = Explicit_Problem(lambda t, x: fun(t, x, ode_system_options), y0=y_initial)
