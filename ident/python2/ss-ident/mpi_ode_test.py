@@ -22,5 +22,5 @@ if __name__ == "__main__":
     y0 = [np.array([1, .0001]), np.array([2, .0001]), np.array([3, .0001]), np.array([4, .0001]),
           np.array([5, .0001]), np.array([.0001, 1]), np.array([.0001, 2]), np.array([.0001, 3]),
           np.array([.0001, 4]), np.array([.0001, 5]), np.array([10, 1]), np.array([1, 10])]
-
+    import pdb; pdb.set_trace()
     sim_result = setup_parallel_ode(ode_rhs_fun=py_rhs_fun, parameters=parameters, y0=y0, t_final=200)
