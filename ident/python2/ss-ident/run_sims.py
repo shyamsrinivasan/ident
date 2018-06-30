@@ -88,17 +88,29 @@ if __name__ == '__main__':
     # initial ss to begin all simulations from
     y0 = np.array([5, 1, 1])
     # default set of parameters to begin simulations with
-    model_parameters = {"K1ac": np.array([.1]), "K3fdp": np.array([.1]), "L3fdp": np.array([4e6]),
-                        "K3pep": np.array([.1]), "K2pep": np.array([.3]), "vemax": np.array([1.1]),
-                        "Kefdp": np.array([.45]), "ne": np.array([2]), "d": np.array([.25]), "V4max": np.array([.2]),
-                        "k1cat": np.array([1]), "V3max": np.array([1]), "V2max": np.array([1]), "ac": np.array([.1])}
+    model_parameters = [{"K1ac": np.array([.1]), "K3fdp": np.array([.1]), "L3fdp": np.array([4e6]),
+                         "K3pep": np.array([.1]), "K2pep": np.array([.3]), "vemax": np.array([1.1]),
+                         "Kefdp": np.array([.45]), "ne": np.array([2]), "d": np.array([.25]), "V4max": np.array([.2]),
+                         "k1cat": np.array([1]), "V3max": np.array([1]), "V2max": np.array([1]), "ac": np.array([.1])},
+                        {"K1ac": np.array([.1]), "K3fdp": np.array([.1]), "L3fdp": np.array([4e6]),
+                         "K3pep": np.array([.1]), "K2pep": np.array([.3]), "vemax": np.array([1.1]),
+                         "Kefdp": np.array([.45]), "ne": np.array([2]), "d": np.array([.25]), "V4max": np.array([.2]),
+                         "k1cat": np.array([1]), "V3max": np.array([1]), "V2max": np.array([1]), "ac": np.array([.01])},
+                        {"K1ac": np.array([.1]), "K3fdp": np.array([.1]), "L3fdp": np.array([4e6]),
+                         "K3pep": np.array([.1]), "K2pep": np.array([.3]), "vemax": np.array([1.1]),
+                         "Kefdp": np.array([.45]), "ne": np.array([2]), "d": np.array([.25]), "V4max": np.array([.2]),
+                         "k1cat": np.array([1]), "V3max": np.array([1]), "V2max": np.array([1]), "ac": np.array([.5])},
+                        {"K1ac": np.array([.1]), "K3fdp": np.array([.1]), "L3fdp": np.array([4e6]),
+                         "K3pep": np.array([.1]), "K2pep": np.array([.3]), "vemax": np.array([1.1]),
+                         "Kefdp": np.array([.45]), "ne": np.array([2]), "d": np.array([.25]), "V4max": np.array([.2]),
+                         "k1cat": np.array([1]), "V3max": np.array([1]), "V2max": np.array([1]), "ac": np.array([1])}]
     # create simulation object to simulate model with above parameters and initial conditions
     model_1 = ModelSim(kotte_model.kotte_ck_ode, kotte_model.kotte_ck_flux, noise=0, **{'kinetics': 2,
                                                                                         'ode_opts': user_ode_opts,
                                                                                         't_final': 200,
                                                                                         'wt_y0': y0})
     # call model.simulate to get initial (WT) steady state for all parameter sets strating from same y0
-    initial_wt_result = model_1.run_initial_sim(parameter=[model_parameters])
+    initial_wt_result = model_1.run_initial_sim(parameter=model_parameters)
 
     # sim_result = model_1.sim_model(parameter=model_parameter, initial_value=y0)
 
