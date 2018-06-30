@@ -38,9 +38,9 @@ class ModelSim(object):
 
     def run_initial_sim(self, parameter, **kwargs):
         try:
-            wt_sim_result = self.sim_model([parameter], [kwargs['y0']])
+            wt_sim_result = self.sim_model(parameter, [kwargs['y0']])
         except KeyError:
-            wt_sim_result = self.sim_model([parameter], [self.wt_y0])
+            wt_sim_result = self.sim_model(parameter, [self.wt_y0])
         return wt_sim_result
 
     def sim_model(self, parameter, initial_value):
@@ -49,12 +49,12 @@ class ModelSim(object):
 
         # call parallel solver instance for multiple parameter/initial values
         if len(initial_value) > 1:
-            sim_result = setup_parallel_ode(ode_rhs_fun=self.rhs_fun, parameters=parameter, y0=initial_value,
+            sim_result = setup_parallel_ode(ode_rhs_fun=self.rhs_fun, parameters=parameter[0], y0=initial_value,
                                             t_final=self.t_final, ode_opts=self.ode_opts, i_value_opt=1,
                                             parameter_opt=0)
             # get flux values
         elif len(parameter) > 1:
-            sim_result = setup_parallel_ode(ode_rhs_fun=self.rhs_fun, parameters=parameter, y0=initial_value,
+            sim_result = setup_parallel_ode(ode_rhs_fun=self.rhs_fun, parameters=parameter, y0=initial_value[0],
                                             t_final=self.t_final, ode_opts=self.ode_opts, i_value_opt=0,
                                             parameter_opt=1)
             # get flux values
@@ -98,7 +98,7 @@ if __name__ == '__main__':
                                                                                         't_final': 200,
                                                                                         'wt_y0': y0})
     # call model.simulate to get initial (WT) steady state for all parameter sets strating from same y0
-    initial_wt_result = model_1.run_initial_sim(parameter=model_parameters)
+    initial_wt_result = model_1.run_initial_sim(parameter=[model_parameters])
 
     # sim_result = model_1.sim_model(parameter=model_parameter, initial_value=y0)
 
