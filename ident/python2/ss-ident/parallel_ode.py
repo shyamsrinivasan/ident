@@ -69,7 +69,7 @@ class ParallelOde(object):
         results = {'time': all_tout, 'y': all_yout, 'y0_id': all_y0_id, 'boolean': all_boolean}
         return results
 
-    def run_i_parameter(self, ode_rhs_fun, t_final, parameters, initial_value):
+    def run_i_parameter(self, ode_rhs_fun, ode_sys_opts, initial_value, t_final, ode_opts):
         """
         This is the core where I keep starting slaves
         as long as there is work to do
@@ -77,8 +77,8 @@ class ParallelOde(object):
         # let's prepare our work queue. This can be built at initialization time
         # but it can also be added later as more work become available
         #
-        for idx, j_parameter in enumerate(parameters['ode_sys_opts']):
-            self.__add_next_task(ode_rhs_fun=ode_rhs_fun, t_final=t_final, parameters=j_parameter,
+        for idx, j_parameter in enumerate(ode_sys_opts):
+            self.__add_next_task(ode_rhs_fun=ode_rhs_fun, t_final=t_final, parameters=j_parameter, ode_opts=ode_opts,
                                  initial_value=initial_value, value_id=idx)
 
         # Keeep starting slaves as long as there is work to do
@@ -150,7 +150,7 @@ class MySlave(Slave):
             return y0_id, done, [], []
 
 
-def setup_parallel_ode(ode_rhs_fun, parameters, y0, t_final, ode_opts=()):
+def setup_parallel_ode(ode_rhs_fun, parameters, y0, t_final, ode_opts=(), i_value_opt=1, parameter_opt=0):
     if not ode_opts:
         ode_opts = {'iter': 'Newton', 'discr': 'Adams', 'atol': 1e-10, 'rtol': 1e-10,
                     'time_points': 200, 'display_progress': True, 'verbosity': 30}
@@ -163,8 +163,12 @@ def setup_parallel_ode(ode_rhs_fun, parameters, y0, t_final, ode_opts=()):
     if rank == 0:  # Master
         ode_job = ParallelOde(slaves=range(1, size))
         # import pdb;pdb.set_trace()
-        sim_result = ode_job.run_i_value(ode_rhs_fun=ode_rhs_fun, t_final=t_final, ode_sys_opts=parameters,
-                                         ode_opts=ode_opts, initial_values=y0)
+        if i_value_opt:
+            sim_result = ode_job.run_i_value(ode_rhs_fun=ode_rhs_fun, t_final=t_final, ode_sys_opts=parameters,
+                                             ode_opts=ode_opts, initial_values=y0)
+        elif parameter_opt:
+            sim_result = ode_job.run_i_parameter(ode_rhs_fun=ode_rhs_fun, t_final=t_final, ode_sys_opts=parameters,
+                                                 ode_opts=ode_opts, initial_value=y0)
         ode_job.terminate_slaves()
     else:  # Any slave
         MySlave().run()
