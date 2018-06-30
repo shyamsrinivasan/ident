@@ -60,13 +60,13 @@ class ModelSim(object):
             # get flux values
         else:
             # use serial solver instance to solve for multiple parameter/initial values
-            import pdb; pdb.set_trace()
             dynamic_info = setup_serial_ode(ode_fun=self.rhs_fun, y_initial=initial_value[0], t_final=self.t_final,
                                             opts=[self.ode_opts, parameter[0]])
             # calculate flux
             dynamic_info['flux'] = np.array(map(lambda x: self.flux_fun(x, parameter[0]), dynamic_info['y']))
 
             # info on bistability
+            import pdb; pdb.set_trace()
             if dynamic_info['y'][-1, 0] > dynamic_info['y'][-1, 1]:
                 bistable = 1
             elif dynamic_info['y'][-1, 0] < dynamic_info['y'][-1, 1]:
