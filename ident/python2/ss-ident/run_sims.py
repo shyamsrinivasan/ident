@@ -1,6 +1,7 @@
 import kotte_model
 from parallel_ode import setup_parallel_ode
 from simulate_ode import setup_serial_ode
+import numpy as np
 
 
 class ModelSim(object):
