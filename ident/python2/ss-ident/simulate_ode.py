@@ -38,6 +38,13 @@ def simulate_ode(fun, y_initial, tf, opts):
     return time_course, y_result, prob, solver
 
 
+def setup_serial_ode(ode_fun, y_initial, t_final, opts):
+    """run ode code on single processor as a serial process"""
+    time_points, y_dynamic, prob, solver = simulate_ode(ode_fun, y_initial, t_final, opts)
+    sim_result = {'time': time_points, 'y': y_dynamic}
+    return sim_result
+
+
 def run_ode_sims(fun, y_initial, opts, t_final=500, args_1=False):
     """run kotte model ode using cvode from assimulo"""
 
