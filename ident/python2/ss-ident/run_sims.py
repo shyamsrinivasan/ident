@@ -61,13 +61,24 @@ class ModelSim(object):
         else:
             # use serial solver instance to solve for multiple parameter/initial values
             import pdb; pdb.set_trace()
-            sim_result = setup_serial_ode(ode_fun=self.rhs_fun, y_initial=initial_value[0], t_final=self.t_final,
-                                          opts=[self.ode_opts, parameter[0]])
-            import pdb; pdb.set_trace()
+            dynamic_info = setup_serial_ode(ode_fun=self.rhs_fun, y_initial=initial_value[0], t_final=self.t_final,
+                                            opts=[self.ode_opts, parameter[0]])
+            # calculate flux
+            dynamic_info['flux'] = np.array(map(lambda x: self.flux_fun(x, parameter[0]), dynamic_info['y']))
 
-        # get ss values
-        # set self.wt_ss
+            # info on bistability
+            if dynamic_info['y'][-1, 0] > dynamic_info['y'][-1, 1]:
+                bistable = 1
+            elif dynamic_info['y'][-1, 0] < dynamic_info['y'][-1, 1]:
+                bistable = 2
+            else:
+                bistable = 0
 
+            # get ss values
+            ss_info = {'y': dynamic_info['y'][-1, :], 'flux': dynamic_info['flux'][-1, :], 'ss_id': bistable}
+            sim_result = {'ss': ss_info, 'dynamic': dynamic_info}
+
+        import pdb; pdb.set_trace()
         return sim_result
 
 
