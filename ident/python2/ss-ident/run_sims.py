@@ -37,6 +37,7 @@ class ModelSim(object):
             self.wt_y0 = []
 
     def run_initial_sim(self, parameter, **kwargs):
+        import pdb;pdb.set_trace()
         try:
             wt_sim_result = self.sim_model(parameter, [kwargs['y0']])
         except KeyError:
