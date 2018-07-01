@@ -79,6 +79,9 @@ class ModelSim(object):
             ss_info = {'y': dynamic_info['y'][-1, :], 'flux': dynamic_info['flux'][-1, :], 'ss_id': bistable}
             sim_result = {'ss': ss_info, 'dynamic': dynamic_info}
 
+        # get bistabile id, ss info and flux info for all parameter/initial values
+
+
         import pdb; pdb.set_trace()
         return sim_result
 
