@@ -86,7 +86,7 @@ class ModelSim(object):
                                             i_value_opt=0, parameter_opt=1)
             collated_result = self.collate_results(sim_result, parameter, experiment_ids)
             # get bistabile id, ss info and flux info for all parameter/initial values
-            all_flux = setup_parallel_flux(self.flux_fun, collated_result['y'], collated_result['parameters'])
+            all_flux = setup_parallel_flux(self.flux_fun, collated_result['y'], collated_result['parameter'])
         else:
             # use serial solver instance to solve for multiple parameter/initial values
             dynamic_info = setup_serial_ode(ode_fun=self.rhs_fun, y_initial=initial_value[0], t_final=self.t_final,
