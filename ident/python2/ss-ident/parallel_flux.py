@@ -1,6 +1,7 @@
 from mpi4py import MPI
 from mpi_master_slave import Master, Slave
 from mpi_master_slave import WorkQueue
+import numpy as np
 
 
 class ParallelFlux(object):
@@ -89,7 +90,8 @@ class MySlave(Slave):
         value_id = data['id']
         ode_sys_opts = data['ode_sys_opts']
         concentration = data['concentration']
-        flux_value = flux_fun(concentration, ode_sys_opts)
+        # flux_value = flux_fun(concentration, ode_sys_opts)
+        flux_value = np.array(list(map(lambda x: flux_fun(x, ode_sys_opts), concentration)))
 
         rank = MPI.COMM_WORLD.Get_rank()
         name = MPI.Get_processor_name()
@@ -119,4 +121,5 @@ def setup_parallel_flux(flux_fun, concentrations, parameters):
         ode_job.terminate_slaves()
     else:  # Any slave
         MySlave().run()
+    import pdb; pdb.set_trace()
     return all_flux
