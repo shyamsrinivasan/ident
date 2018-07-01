@@ -52,9 +52,10 @@ class ModelSim(object):
         # collated_concentration = []
         # collated_id = []
         import pdb; pdb.set_trace()
-        for i_value_id, i_value in zip(experiment_id, external_info):
-            collated_info = [{'info': i_value, 'id': j_value, 'y': results['y'][j_id], 'time': results['time'][j_id]}
-                             for j_id, j_value in enumerate(results['id']) if j_value == i_value_id]
+        # for i_value_id, i_value in zip(experiment_id, external_info):
+        collated_info = [{'info': i_value, 'id': j_value, 'y': results['y'][j_id], 'time': results['time'][j_id]}
+                         for i_value_id, i_value in zip(experiment_id, external_info)
+                         for j_id, j_value in enumerate(results['id']) if j_value == i_value_id]
         # for i_value_id, i_value in zip(results['id'], results['y']):
         #     collated_parameter.append(external_info[i_value_id])
         #     collated_concentration.append(i_value)
