@@ -137,7 +137,7 @@ if __name__ == '__main__':
     experiment_id = ['experiment_{}'.format(parameter_id) for parameter_id, _ in enumerate(model_parameters)]
 
     # call model.simulate to get initial (WT) steady state for all parameter sets strating from same y0
-    initial_wt_result = model_1.run_initial_sim(parameter=model_parameters, parameter_id=experiment_id)
+    initial_wt_result = model_1.run_initial_sim(parameter=model_parameters, parameter_ids=experiment_id)
 
     # sim_result = model_1.sim_model(parameter=model_parameter, initial_value=y0)
 
