@@ -1,6 +1,5 @@
 import kotte_model
 from parallel_ode import setup_parallel_ode
-from parallel_flux import setup_parallel_flux
 from simulate_ode import setup_serial_ode
 import numpy as np
 
@@ -52,7 +51,7 @@ class ModelSim(object):
         # import pdb; pdb.set_trace()
 
         collated_info = [{'info': i_value, 'id': j_value, 'y': results['y'][j_id],
-                          'time': results['time'][j_id]}
+                          'time': results['time'][j_id], 'flux': results['flux'][j_id]}
                          for i_value_id, i_value in zip(experiment_id, external_info)
                          for j_id, j_value in enumerate(results['id']) if j_value == i_value_id]
 
@@ -60,12 +59,14 @@ class ModelSim(object):
             experiment_info = {'parameter': [j_info['info'] for j_info in collated_info],
                                'time': [j_info['time'] for j_info in collated_info],
                                'y': [j_info['y'] for j_info in collated_info],
-                               'id': [j_info['id'] for j_info in collated_info]}
+                               'id': [j_info['id'] for j_info in collated_info],
+                               'flux': [j_info['flux'] for j_info in collated_info]}
         elif i_value_opt:
             experiment_info = {'initial_value': [j_info['info'] for j_info in collated_info],
                                'time': [j_info['time'] for j_info in collated_info],
                                'y': [j_info['y'] for j_info in collated_info],
-                               'id': [j_info['id'] for j_info in collated_info]}
+                               'id': [j_info['id'] for j_info in collated_info],
+                               'flux': [j_info['flux'] for j_info in collated_info]}
         else:
             experiment_info = {}
         return experiment_info
@@ -76,17 +77,17 @@ class ModelSim(object):
 
         # call parallel solver instance for multiple parameter/initial values
         if len(initial_value) > 1:
-            sim_result = setup_parallel_ode(ode_rhs_fun=self.rhs_fun, parameters=parameter[0], y0=initial_value,
+            sim_result = setup_parallel_ode(ode_rhs_fun=self.rhs_fun, flux_fun=self.flux_fun, parameters=parameter[0],
+                                            y0=initial_value,
                                             t_final=self.t_final, experiment_id=experiment_ids, ode_opts=self.ode_opts,
                                             i_value_opt=1, parameter_opt=0)
             # get flux values
         elif len(parameter) > 1:
-            sim_result = setup_parallel_ode(ode_rhs_fun=self.rhs_fun, parameters=parameter, y0=initial_value[0],
-                                            t_final=self.t_final, experiment_id=experiment_ids, ode_opts=self.ode_opts,
+            sim_result = setup_parallel_ode(ode_rhs_fun=self.rhs_fun, flux_fun=self.flux_fun, parameters=parameter,
+                                            y0=initial_value[0], t_final=self.t_final, experiment_id=experiment_ids,
+                                            ode_opts=self.ode_opts,
                                             i_value_opt=0, parameter_opt=1)
             collated_result = self.collate_results(sim_result, parameter, experiment_ids)
-            # get bistabile id, ss info and flux info for all parameter/initial values
-            all_flux = setup_parallel_flux(self.flux_fun, collated_result['y'], collated_result['parameter'])
         else:
             # use serial solver instance to solve for multiple parameter/initial values
             dynamic_info = setup_serial_ode(ode_fun=self.rhs_fun, y_initial=initial_value[0], t_final=self.t_final,

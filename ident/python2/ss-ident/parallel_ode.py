@@ -2,6 +2,7 @@ from mpi4py import MPI
 from mpi_master_slave import Master, Slave
 from mpi_master_slave import WorkQueue
 from simulate_ode import simulate_ode
+import numpy as np
 
 
 class ParallelOde(object):
@@ -20,7 +21,7 @@ class ParallelOde(object):
         """
         self.master.terminate_slaves()
 
-    def __add_next_task(self, ode_rhs_fun, t_final, parameters, ode_opts, initial_value=(), value_id=()):
+    def __add_next_task(self, ode_rhs_fun, flux_fun, t_final, parameters, ode_opts, initial_value=(), value_id=()):
         """
         create tasks and add it to the work queue
         Every task has specific arguments
@@ -28,11 +29,11 @@ class ParallelOde(object):
         # set ode rhs function, initial condition and parameters
         data = {'ode_fun': ode_rhs_fun, 'y0': initial_value, 'id': value_id,
                 'ode_sys_opts': parameters, 'ode_opts': ode_opts,
-                't_final': t_final}
+                't_final': t_final, 'flux_fun': flux_fun}
         # add data to work queue
         self.work_queue.add_work(data)
 
-    def run_i_value(self, ode_rhs_fun, ode_sys_opts, initial_values, t_final, ode_opts, experiment_id):
+    def run_i_value(self, ode_rhs_fun, flux_fun, ode_sys_opts, initial_values, t_final, ode_opts, experiment_id):
         """
         This is the core where I keep starting slaves
         as long as there is work to do
@@ -42,7 +43,7 @@ class ParallelOde(object):
         # but it can also be added later as more work become available
         #
         for j_experiment_id, j_value in zip(experiment_id, initial_values):
-            self.__add_next_task(ode_rhs_fun=ode_rhs_fun, t_final=t_final, parameters=ode_sys_opts, ode_opts=ode_opts,
+            self.__add_next_task(ode_rhs_fun=ode_rhs_fun, flux_fun=flux_fun, t_final=t_final, parameters=ode_sys_opts, ode_opts=ode_opts,
                                  initial_value=j_value, value_id=j_experiment_id)
 
         # Keeep starting slaves as long as there is work to do
@@ -69,7 +70,7 @@ class ParallelOde(object):
         results = {'time': all_tout, 'y': all_yout, 'id': all_y0_id, 'boolean': all_boolean}
         return results
 
-    def run_i_parameter(self, ode_rhs_fun, ode_sys_opts, initial_value, t_final, ode_opts, experiment_id):
+    def run_i_parameter(self, ode_rhs_fun, flux_fun, ode_sys_opts, initial_value, t_final, ode_opts, experiment_id):
         """
         This is the core where I keep starting slaves
         as long as there is work to do
@@ -78,7 +79,7 @@ class ParallelOde(object):
         # but it can also be added later as more work become available
         #
         for j_experiment_id, j_parameter in zip(experiment_id, ode_sys_opts):
-            self.__add_next_task(ode_rhs_fun=ode_rhs_fun, t_final=t_final, parameters=j_parameter, ode_opts=ode_opts,
+            self.__add_next_task(ode_rhs_fun=ode_rhs_fun, flux_fun=flux_fun, t_final=t_final, parameters=j_parameter, ode_opts=ode_opts,
                                  initial_value=initial_value, value_id=j_experiment_id)
 
         # Keeep starting slaves as long as there is work to do
@@ -86,23 +87,25 @@ class ParallelOde(object):
         all_tout = []
         all_yout = []
         all_y0_id = []
+        all_flux = []
         while not self.work_queue.done():
             # give more work to do to each idle slave (if any)
             self.work_queue.do_work()
             # reclaim returned data from completed slaves
             for slave_return_data in self.work_queue.get_completed_work():
-                y0_id, done, time_course, y_result = slave_return_data
+                y0_id, done, time_course, y_result, flux = slave_return_data
                 # import pdb; pdb.set_trace()
                 all_boolean.append(done)
                 all_tout.append(time_course)
                 all_yout.append(y_result)
                 all_y0_id.append(y0_id)
+                all_flux.append(flux)
 
                 if done:
                     print('Master: slave finished its task returning: %s)' % str(y0_id))
             # sleep some time
             # time.sleep(0.3)
-        results = {'time': all_tout, 'y': all_yout, 'id': all_y0_id, 'boolean': all_boolean}
+        results = {'time': all_tout, 'y': all_yout, 'id': all_y0_id, 'boolean': all_boolean, 'flux': all_flux}
         return results
 
 
@@ -136,6 +139,10 @@ class MySlave(Slave):
         all_options = [ode_opts, ode_sys_opts]
         time_course, y_result, _, _ = simulate_ode(rhs_fun, y_initial, tf=t_final, opts=all_options)
 
+        # calculate flux
+        flux_fun = data['flux_fun']
+        flux = np.array(list(map(lambda x: flux_fun(x, ode_sys_opts), y_result)))
+
         rank = MPI.COMM_WORLD.Get_rank()
         name = MPI.Get_processor_name()
 
@@ -145,12 +152,13 @@ class MySlave(Slave):
             done = True
 
         if done:
-            return y0_id, done, time_course, y_result
+            return y0_id, done, time_course, y_result, flux
         else:
-            return y0_id, done, [], []
+            return y0_id, done, [], [], []
 
 
-def setup_parallel_ode(ode_rhs_fun, parameters, y0, t_final, experiment_id, ode_opts=(), i_value_opt=1, parameter_opt=0):
+def setup_parallel_ode(ode_rhs_fun, flux_fun, parameters, y0, t_final, experiment_id, ode_opts=(),
+                       i_value_opt=1, parameter_opt=0):
     if not ode_opts:
         ode_opts = {'iter': 'Newton', 'discr': 'Adams', 'atol': 1e-10, 'rtol': 1e-10,
                     'time_points': 200, 'display_progress': True, 'verbosity': 30}
@@ -164,10 +172,10 @@ def setup_parallel_ode(ode_rhs_fun, parameters, y0, t_final, experiment_id, ode_
         ode_job = ParallelOde(slaves=range(1, size))
         # import pdb;pdb.set_trace()
         if i_value_opt:
-            sim_result = ode_job.run_i_value(ode_rhs_fun=ode_rhs_fun, t_final=t_final, ode_sys_opts=parameters,
+            sim_result = ode_job.run_i_value(ode_rhs_fun=ode_rhs_fun, flux_fun=flux_fun, t_final=t_final, ode_sys_opts=parameters,
                                              ode_opts=ode_opts, initial_values=y0, experiment_id=experiment_id)
         elif parameter_opt:
-            sim_result = ode_job.run_i_parameter(ode_rhs_fun=ode_rhs_fun, t_final=t_final, ode_sys_opts=parameters,
+            sim_result = ode_job.run_i_parameter(ode_rhs_fun=ode_rhs_fun, flux_fun=flux_fun, t_final=t_final, ode_sys_opts=parameters,
                                                  ode_opts=ode_opts, initial_value=y0, experiment_id=experiment_id)
         ode_job.terminate_slaves()
     else:  # Any slave
