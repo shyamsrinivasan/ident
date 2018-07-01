@@ -88,6 +88,8 @@ class ModelSim(object):
                                             ode_opts=self.ode_opts,
                                             i_value_opt=0, parameter_opt=1)
             collated_result = self.collate_results(sim_result, parameter, experiment_ids)
+            # info on bistability
+            # info on ss values
         else:
             # use serial solver instance to solve for multiple parameter/initial values
             dynamic_info = setup_serial_ode(ode_fun=self.rhs_fun, y_initial=initial_value[0], t_final=self.t_final,
