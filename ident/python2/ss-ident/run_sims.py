@@ -35,29 +35,51 @@ class ModelSim(object):
             self.wt_y0 = kwargs['wt_y0']
         except KeyError:
             self.wt_y0 = []
+        self.results = []
 
-    def run_initial_sim(self, parameter, **kwargs):
+    def run_initial_sim(self, parameter, parameter_ids, **kwargs):
         # import pdb;pdb.set_trace()
         try:
-            wt_sim_result = self.sim_model(parameter, [kwargs['y0']])
+            wt_sim_result = self.sim_model(parameter, parameter_ids, [kwargs['y0']])
         except KeyError:
-            wt_sim_result = self.sim_model(parameter, [self.wt_y0])
+            wt_sim_result = self.sim_model(parameter, parameter_ids, [self.wt_y0])
         return wt_sim_result
 
-    def sim_model(self, parameter, initial_value):
+    @staticmethod
+    def collate_results(results, external_info, experiment_id):
+        """collate results from all parallel simulations"""
+        # collated_parameter = []
+        # collated_concentration = []
+        # collated_id = []
+        import pdb; pdb.set_trace()
+        for i_value_id, i_value in zip(experiment_id, external_info):
+            collated_info = [{'info': i_value, 'id': j_value, 'y': results['y'][j_id], 'time': results['time'][j_id]}
+                             for j_id, j_value in enumerate(results['id']) if j_value == i_value_id]
+        # for i_value_id, i_value in zip(results['id'], results['y']):
+        #     collated_parameter.append(external_info[i_value_id])
+        #     collated_concentration.append(i_value)
+        #     collated_id.append(i_value_id)
+
+        # self.results = {'parameter': collated_parameter, 'y': collated_concentration,
+        #                 'id': collated_id}
+        return collated_info
+
+    def sim_model(self, parameter, experiment_ids, initial_value):
         """simulate model with defined rhs fun and given parameters, initial values and
         ode solver options (if given, else use default)"""
 
         # call parallel solver instance for multiple parameter/initial values
         if len(initial_value) > 1:
             sim_result = setup_parallel_ode(ode_rhs_fun=self.rhs_fun, parameters=parameter[0], y0=initial_value,
-                                            t_final=self.t_final, ode_opts=self.ode_opts, i_value_opt=1,
-                                            parameter_opt=0)
+                                            t_final=self.t_final, experiment_id=experiment_ids, ode_opts=self.ode_opts,
+                                            i_value_opt=1, parameter_opt=0)
+            collated_result = self.collate_results(sim_result, initial_value, experiment_ids)
             # get flux values
         elif len(parameter) > 1:
             sim_result = setup_parallel_ode(ode_rhs_fun=self.rhs_fun, parameters=parameter, y0=initial_value[0],
-                                            t_final=self.t_final, ode_opts=self.ode_opts, i_value_opt=0,
-                                            parameter_opt=1)
+                                            t_final=self.t_final, experiment_id=experiment_ids, ode_opts=self.ode_opts,
+                                            i_value_opt=0, parameter_opt=1)
+            collated_result = self.collate_results(sim_result, parameter, experiment_ids)
             # get flux values
         else:
             # use serial solver instance to solve for multiple parameter/initial values
@@ -81,7 +103,6 @@ class ModelSim(object):
 
         # get bistabile id, ss info and flux info for all parameter/initial values
 
-
         import pdb; pdb.set_trace()
         return sim_result
 
@@ -91,6 +112,11 @@ if __name__ == '__main__':
                      'time_points': 200, 'display_progress': True, 'verbosity': 30}
     # initial ss to begin all simulations from
     y0 = np.array([5, 1, 1])
+    # create simulation object to simulate model with above parameters and initial conditions
+    model_1 = ModelSim(kotte_model.kotte_ck_ode, kotte_model.kotte_ck_flux, noise=0, **{'kinetics': 2,
+                                                                                        'ode_opts': user_ode_opts,
+                                                                                        't_final': 200,
+                                                                                        'wt_y0': y0})
     # default set of parameters to begin simulations with
     model_parameters = [{"K1ac": np.array([.1]), "K3fdp": np.array([.1]), "L3fdp": np.array([4e6]),
                          "K3pep": np.array([.1]), "K2pep": np.array([.3]), "vemax": np.array([1.1]),
@@ -108,13 +134,10 @@ if __name__ == '__main__':
                          "K3pep": np.array([.1]), "K2pep": np.array([.3]), "vemax": np.array([1.1]),
                          "Kefdp": np.array([.45]), "ne": np.array([2]), "d": np.array([.25]), "V4max": np.array([.2]),
                          "k1cat": np.array([1]), "V3max": np.array([1]), "V2max": np.array([1]), "ac": np.array([1])}]
-    # create simulation object to simulate model with above parameters and initial conditions
-    model_1 = ModelSim(kotte_model.kotte_ck_ode, kotte_model.kotte_ck_flux, noise=0, **{'kinetics': 2,
-                                                                                        'ode_opts': user_ode_opts,
-                                                                                        't_final': 200,
-                                                                                        'wt_y0': y0})
+    experiment_id = ['experiment_{}'.format(parameter_id) for parameter_id, _ in enumerate(model_parameters)]
+
     # call model.simulate to get initial (WT) steady state for all parameter sets strating from same y0
-    initial_wt_result = model_1.run_initial_sim(parameter=model_parameters)
+    initial_wt_result = model_1.run_initial_sim(parameter=model_parameters, parameter_id=experiment_id)
 
     # sim_result = model_1.sim_model(parameter=model_parameter, initial_value=y0)
 
