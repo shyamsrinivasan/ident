@@ -182,5 +182,5 @@ def setup_parallel_ode(ode_rhs_fun, flux_fun, parameters, y0, t_final, experimen
         MySlave().run()
 
     # rearrange results based on order of parameters/initial values
-    import pdb;pdb.set_trace()
+    # import pdb;pdb.set_trace()
     return sim_result
