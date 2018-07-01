@@ -46,24 +46,29 @@ class ModelSim(object):
         return wt_sim_result
 
     @staticmethod
-    def collate_results(results, external_info, experiment_id):
+    def collate_results(results, external_info, experiment_id, parameter_opt=1, i_value_opt=0):
         """collate results from all parallel simulations"""
-        # collated_parameter = []
-        # collated_concentration = []
-        # collated_id = []
-        import pdb; pdb.set_trace()
-        # for i_value_id, i_value in zip(experiment_id, external_info):
-        collated_info = [{'info': i_value, 'id': j_value, 'y': results['y'][j_id], 'time': results['time'][j_id]}
+        # import pdb; pdb.set_trace()
+
+        collated_info = [{'info': i_value, 'id': j_value, 'y': results['y'][j_id],
+                          'time': results['time'][j_id]}
                          for i_value_id, i_value in zip(experiment_id, external_info)
                          for j_id, j_value in enumerate(results['id']) if j_value == i_value_id]
-        # for i_value_id, i_value in zip(results['id'], results['y']):
-        #     collated_parameter.append(external_info[i_value_id])
-        #     collated_concentration.append(i_value)
-        #     collated_id.append(i_value_id)
 
-        # self.results = {'parameter': collated_parameter, 'y': collated_concentration,
-        #                 'id': collated_id}
-        return collated_info
+        if parameter_opt:
+            experiment_info = {'parameter': [j_info['info'] for j_info in collated_info],
+                               'time': [j_info['time'] for j_info in collated_info],
+                               'y': [j_info['y'] for j_info in collated_info],
+                               'id': [j_info['id'] for j_info in collated_info]}
+        elif i_value_opt:
+            experiment_info = {'initial_value': [j_info['info'] for j_info in collated_info],
+                               'time': [j_info['time'] for j_info in collated_info],
+                               'y': [j_info['y'] for j_info in collated_info],
+                               'id': [j_info['id'] for j_info in collated_info]}
+        else:
+            experiment_info = {}
+
+        return experiment_info
 
     def sim_model(self, parameter, experiment_ids, initial_value):
         """simulate model with defined rhs fun and given parameters, initial values and
@@ -74,18 +79,18 @@ class ModelSim(object):
             sim_result = setup_parallel_ode(ode_rhs_fun=self.rhs_fun, parameters=parameter[0], y0=initial_value,
                                             t_final=self.t_final, experiment_id=experiment_ids, ode_opts=self.ode_opts,
                                             i_value_opt=1, parameter_opt=0)
-            collated_result = self.collate_results(sim_result, initial_value, experiment_ids)
             # get flux values
         elif len(parameter) > 1:
             sim_result = setup_parallel_ode(ode_rhs_fun=self.rhs_fun, parameters=parameter, y0=initial_value[0],
                                             t_final=self.t_final, experiment_id=experiment_ids, ode_opts=self.ode_opts,
                                             i_value_opt=0, parameter_opt=1)
-            collated_result = self.collate_results(sim_result, parameter, experiment_ids)
             # get flux values
         else:
             # use serial solver instance to solve for multiple parameter/initial values
             dynamic_info = setup_serial_ode(ode_fun=self.rhs_fun, y_initial=initial_value[0], t_final=self.t_final,
                                             opts=[self.ode_opts, parameter[0]])
+            collated_result = [{'info': parameter[0], 'id': 'experiment_0', 'y': dynamic_info['y'],
+                                'time': dynamic_info['time']}]
             # calculate flux
             dynamic_info['flux'] = np.array(list(map(lambda x: self.flux_fun(x, parameter[0]), dynamic_info['y'])))
 
@@ -102,6 +107,7 @@ class ModelSim(object):
             ss_info = {'y': dynamic_info['y'][-1, :], 'flux': dynamic_info['flux'][-1, :], 'ss_id': bistable}
             sim_result = {'ss': ss_info, 'dynamic': dynamic_info}
 
+        collated_result = self.collate_results(sim_result, parameter, experiment_ids)
         # get bistabile id, ss info and flux info for all parameter/initial values
 
         import pdb; pdb.set_trace()
