@@ -172,4 +172,7 @@ def setup_parallel_ode(ode_rhs_fun, parameters, y0, t_final, ode_opts=(), i_valu
         ode_job.terminate_slaves()
     else:  # Any slave
         MySlave().run()
+
+    # rearrange results based on order of parameters/initial values
+    import pdb;pdb.set_trace()
     return sim_result
