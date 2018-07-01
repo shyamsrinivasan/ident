@@ -115,6 +115,7 @@ def setup_parallel_flux(flux_fun, concentrations, parameters):
 
     all_flux = {}
     print('I am  %s rank %d (total %d)' % (name, rank, size))
+    import pdb;pdb.set_trace()
     if rank == 0:  # Master
         ode_job = ParallelFlux(slaves=range(1, size))
         all_flux = ode_job.run_i_value(flux_fun=flux_fun, concentration=concentrations, ode_sys_opts=parameters)
