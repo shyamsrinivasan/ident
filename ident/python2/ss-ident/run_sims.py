@@ -81,15 +81,28 @@ class ModelSim(object):
                                             y0=initial_value,
                                             t_final=self.t_final, experiment_id=experiment_ids, ode_opts=self.ode_opts,
                                             i_value_opt=1, parameter_opt=0)
-            # get flux values
         elif len(parameter) > 1:
             sim_result = setup_parallel_ode(ode_rhs_fun=self.rhs_fun, flux_fun=self.flux_fun, parameters=parameter,
                                             y0=initial_value[0], t_final=self.t_final, experiment_id=experiment_ids,
                                             ode_opts=self.ode_opts,
                                             i_value_opt=0, parameter_opt=1)
-            collated_result = self.collate_results(sim_result, parameter, experiment_ids)
-            # info on bistability
-            # info on ss values
+            dynamic_info = self.collate_results(sim_result, parameter, experiment_ids)
+
+            bistable = []
+            ss_y = []
+            ss_flux = []
+            for j_experiment_y, j_experiment_flux in zip(dynamic_info['y'], dynamic_info['flux']):
+                # info on bistability
+                if j_experiment_y[-1, 0] > j_experiment_y[-1, 1]:
+                    bistable.append(1)
+                elif j_experiment_y[-1, 0] < j_experiment_y[-1, 1]:
+                    bistable.append(2)
+                else:
+                    bistable.append(0)
+                # info on ss values
+                ss_y.append(j_experiment_y[-1, :])
+                ss_flux.append(j_experiment_flux[-1, :])
+            ss_info = {'y': ss_y, 'flux': ss_flux, 'ss_id': bistable}
         else:
             # use serial solver instance to solve for multiple parameter/initial values
             dynamic_info = setup_serial_ode(ode_fun=self.rhs_fun, y_initial=initial_value[0], t_final=self.t_final,
