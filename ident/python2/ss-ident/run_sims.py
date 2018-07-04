@@ -46,12 +46,12 @@ class ModelSim(object):
         self.dynamic_info = []
         self.ss_info = []
 
-    def run_initial_sim(self, parameter, parameter_ids, **kwargs):
+    def run_initial_sim(self, parameter, parameter_ids=(), **kwargs):
         # import pdb;pdb.set_trace()
         try:
             self.sim_model(parameter, parameter_ids, [kwargs['y0']])
         except KeyError:
-            self.sim_model(parameter, parameter_ids, [self.wt_y0])
+            self.sim_model(self.i_parameter, parameter_ids, [self.wt_y0])
         return self
 
     def change_parameter_values(self, changed_parameter, default_parameter={}):
@@ -162,7 +162,7 @@ if __name__ == '__main__':
                                                                                         'i_parameter':
                                                                                             default_parameters})
     # initial value determination for wt before perturbation
-    initial_wt_sim = model_1.run_initial_sim(default_parameters, 'default_parameters')
+    model_1.run_initial_sim([default_parameters], 'default_parameters')
 
     # all parameter perturbations
     import pdb; pdb.set_trace()
