@@ -35,7 +35,8 @@ class ModelSim(object):
             self.wt_y0 = kwargs['wt_y0']
         except KeyError:
             self.wt_y0 = []
-        self.results = []
+        self.dynamic_info = []
+        self.ss_info = []
 
     def run_initial_sim(self, parameter, parameter_ids, **kwargs):
         # import pdb;pdb.set_trace()
@@ -81,53 +82,45 @@ class ModelSim(object):
                                             y0=initial_value,
                                             t_final=self.t_final, experiment_id=experiment_ids, ode_opts=self.ode_opts,
                                             i_value_opt=1, parameter_opt=0)
+            dynamic_info = sim_result
         elif len(parameter) > 1:
             sim_result = setup_parallel_ode(ode_rhs_fun=self.rhs_fun, flux_fun=self.flux_fun, parameters=parameter,
                                             y0=initial_value[0], t_final=self.t_final, experiment_id=experiment_ids,
                                             ode_opts=self.ode_opts,
                                             i_value_opt=0, parameter_opt=1)
-            import pdb;pdb.set_trace()
             dynamic_info = self.collate_results(sim_result, parameter, experiment_ids)
-            import pdb;pdb.set_trace()
-            bistable = []
-            ss_y = []
-            ss_flux = []
-            for j_experiment_y, j_experiment_flux in zip(dynamic_info['y'], dynamic_info['flux']):
-                # info on bistability
-                if j_experiment_y[-1, 0] > j_experiment_y[-1, 1]:
-                    bistable.append(1)
-                elif j_experiment_y[-1, 0] < j_experiment_y[-1, 1]:
-                    bistable.append(2)
-                else:
-                    bistable.append(0)
-                # info on ss values
-                ss_y.append(j_experiment_y[-1, :])
-                ss_flux.append(j_experiment_flux[-1, :])
-            ss_info = {'y': ss_y, 'flux': ss_flux, 'ss_id': bistable}
         else:
-            # use serial solver instance to solve for multiple parameter/initial values
+            # use serial solver instance to solve for single parameter/initial values
             dynamic_info = setup_serial_ode(ode_fun=self.rhs_fun, y_initial=initial_value[0], t_final=self.t_final,
                                             opts=[self.ode_opts, parameter[0]])
             # collated_result = [{'info': parameter[0], 'id': 'experiment_0', 'y': dynamic_info['y'],
             #                     'time': dynamic_info['time']}]
             # calculate flux
-            dynamic_info['flux'] = np.array(list(map(lambda x: self.flux_fun(x, parameter[0]), dynamic_info['y'])))
+            all_dyn_flux = []
+            for i_y in dynamic_info['y']:
+                all_dyn_flux.append(np.array(list(map(lambda x: self.flux_fun(x, parameter[0]), i_y))))
+            dynamic_info['flux'] = all_dyn_flux
 
+        # bistability info and ss values
+        bistable = []
+        ss_y = []
+        ss_flux = []
+        for j_experiment_y, j_experiment_flux in zip(dynamic_info['y'], dynamic_info['flux']):
             # info on bistability
-            import pdb; pdb.set_trace()
-            if dynamic_info['y'][-1, 0] > dynamic_info['y'][-1, 1]:
-                bistable = 1
-            elif dynamic_info['y'][-1, 0] < dynamic_info['y'][-1, 1]:
-                bistable = 2
+            if j_experiment_y[-1, 0] > j_experiment_y[-1, 1]:
+                bistable.append(1)
+            elif j_experiment_y[-1, 0] < j_experiment_y[-1, 1]:
+                bistable.append(2)
             else:
-                bistable = 0
-
-            # get ss values
-            ss_info = {'y': dynamic_info['y'][-1, :], 'flux': dynamic_info['flux'][-1, :], 'ss_id': bistable}
-            sim_result = {'ss': ss_info, 'dynamic': dynamic_info}
+                bistable.append(0)
+            # info on ss values
+            ss_y.append(j_experiment_y[-1, :])
+            ss_flux.append(j_experiment_flux[-1, :])
+        self.dynamic_info = dynamic_info
+        self.ss_info = {'y': ss_y, 'flux': ss_flux, 'ss_id': bistable}
 
         import pdb; pdb.set_trace()
-        return sim_result
+        return self
 
 
 if __name__ == '__main__':
