@@ -41,7 +41,7 @@ def simulate_ode(fun, y_initial, tf, opts):
 def setup_serial_ode(ode_fun, y_initial, t_final, opts):
     """run ode code on single processor as a serial process"""
     time_points, y_dynamic, prob, solver = simulate_ode(ode_fun, y_initial, t_final, opts)
-    sim_result = {'time': time_points, 'y': y_dynamic}
+    sim_result = {'time': [time_points], 'y': [y_dynamic]}
     return sim_result
 
 
