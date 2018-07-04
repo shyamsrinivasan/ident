@@ -49,10 +49,10 @@ class ModelSim(object):
     def run_initial_sim(self, parameter, parameter_ids, **kwargs):
         # import pdb;pdb.set_trace()
         try:
-            wt_sim_result = self.sim_model(parameter, parameter_ids, [kwargs['y0']])
+            self.sim_model(parameter, parameter_ids, [kwargs['y0']])
         except KeyError:
-            wt_sim_result = self.sim_model(parameter, parameter_ids, [self.wt_y0])
-        return wt_sim_result
+            self.sim_model(parameter, parameter_ids, [self.wt_y0])
+        return self
 
     def change_parameter_values(self, changed_parameter, default_parameter={}):
         """change default parameter by value metnioned in one of changed parameter"""
@@ -161,7 +161,11 @@ if __name__ == '__main__':
                                                                                         'wt_y0': y0,
                                                                                         'i_parameter':
                                                                                             default_parameters})
+    # initial value determination for wt before perturbation
+    initial_wt_sim = model_1.run_initial_sim(default_parameters, 'default_parameters')
+
     # all parameter perturbations
+    import pdb; pdb.set_trace()
     parameter_perturbation = [{"wt": 0}, {"ac": 1}, {"ac": 4}, {"ac": 9}, {"ac": -.1}, {"ac": -.5},
                               {"k1cat": .1}, {"k1cat": .5}, {"k1cat": 1}, {"k1cat": -.1}, {"k1cat": -.5},
                               {"V3max": .1}, {"V3max": .5}, {"V3max": 1}, {"V3max": -.1}, {"V3max": -.5},
@@ -190,7 +194,7 @@ if __name__ == '__main__':
     # call model.simulate to get initial (WT) steady state for all parameter sets strating from same y0
     initial_wt_result = model_1.run_initial_sim(parameter=experiment_details, parameter_ids=experiment_id)
     import pdb;pdb.set_trace()
-    sim_result = model_1.sim_model(parameter=experiment_details, initial_value=y0)
+    sim_result = model_1.sim_model(parameter=experiment_details, experiment_ids=experiment_id, initial_value=y0)
 
     # call model.simulate to get perturbed steady state for all
     # parameter perturbation from corresponding steady states y0
