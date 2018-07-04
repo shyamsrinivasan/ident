@@ -1,7 +1,9 @@
 import kotte_model
+from names_strings import true_parameter_values
 from parallel_ode import setup_parallel_ode
 from simulate_ode import setup_serial_ode
 import numpy as np
+from copy import deepcopy
 
 
 class ModelSim(object):
@@ -35,6 +37,12 @@ class ModelSim(object):
             self.wt_y0 = kwargs['wt_y0']
         except KeyError:
             self.wt_y0 = []
+        # default/initial parameter list
+        try:
+            self.i_parameter = kwargs['i_parameter']
+        except KeyError:
+            self.i_parameter = {}
+
         self.dynamic_info = []
         self.ss_info = []
 
@@ -45,6 +53,23 @@ class ModelSim(object):
         except KeyError:
             wt_sim_result = self.sim_model(parameter, parameter_ids, [self.wt_y0])
         return wt_sim_result
+
+    def change_parameter_values(self, changed_parameter, default_parameter={}):
+        """change default parameter by value metnioned in one of changed parameter"""
+        if not default_parameter:
+            default_parameter = self.i_parameter
+
+        new_parameter_list = []
+        for i_parameter_change in changed_parameter:
+            new_parameter = deepcopy(default_parameter)
+            parameter_name = i_parameter_change.keys()[0]
+            parameter_change = np.array(i_parameter_change.values()[0])
+            if parameter_name == 'wt':
+                new_parameter['ac'] = new_parameter['ac'] * (1 + parameter_change)
+            else:
+                new_parameter[parameter_name] = new_parameter[parameter_name] * (1 + parameter_change)
+            new_parameter_list.append(new_parameter)
+        return new_parameter_list
 
     @staticmethod
     def collate_results(results, external_info, experiment_id, parameter_opt=1, i_value_opt=0):
@@ -119,7 +144,6 @@ class ModelSim(object):
         self.dynamic_info = dynamic_info
         self.ss_info = {'y': ss_y, 'flux': ss_flux, 'ss_id': bistable}
 
-        import pdb; pdb.set_trace()
         return self
 
 
@@ -128,32 +152,46 @@ if __name__ == '__main__':
                      'time_points': 200, 'display_progress': True, 'verbosity': 30}
     # initial ss to begin all simulations from
     y0 = np.array([5, 1, 1])
+    # get and set true parameter values, if available separately
+    default_parameters = true_parameter_values()
     # create simulation object to simulate model with above parameters and initial conditions
     model_1 = ModelSim(kotte_model.kotte_ck_ode, kotte_model.kotte_ck_flux, noise=0, **{'kinetics': 2,
                                                                                         'ode_opts': user_ode_opts,
                                                                                         't_final': 200,
-                                                                                        'wt_y0': y0})
+                                                                                        'wt_y0': y0,
+                                                                                        'i_parameter':
+                                                                                            default_parameters})
+    # all parameter perturbations
+    parameter_perturbation = [{"wt": 0}, {"ac": 1}, {"ac": 4}, {"ac": 9}, {"ac": -.1}, {"ac": -.5},
+                              {"k1cat": .1}, {"k1cat": .5}, {"k1cat": 1}, {"k1cat": -.1}, {"k1cat": -.5},
+                              {"V3max": .1}, {"V3max": .5}, {"V3max": 1}, {"V3max": -.1}, {"V3max": -.5},
+                              {"V2max": .1}, {"V2max": .5}, {"V2max": 1}, {"V2max": -.1}, {"V2max": -.5}]
+
     # default set of parameters to begin simulations with
-    model_parameters = [{"K1ac": np.array([.1]), "K3fdp": np.array([.1]), "L3fdp": np.array([4e6]),
-                         "K3pep": np.array([.1]), "K2pep": np.array([.3]), "vemax": np.array([1.1]),
-                         "Kefdp": np.array([.45]), "ne": np.array([2]), "d": np.array([.25]), "V4max": np.array([.2]),
-                         "k1cat": np.array([1]), "V3max": np.array([1]), "V2max": np.array([1]), "ac": np.array([.1])},
-                        {"K1ac": np.array([.1]), "K3fdp": np.array([.1]), "L3fdp": np.array([4e6]),
-                         "K3pep": np.array([.1]), "K2pep": np.array([.3]), "vemax": np.array([1.1]),
-                         "Kefdp": np.array([.45]), "ne": np.array([2]), "d": np.array([.25]), "V4max": np.array([.2]),
-                         "k1cat": np.array([1]), "V3max": np.array([1]), "V2max": np.array([1]), "ac": np.array([.01])},
-                        {"K1ac": np.array([.1]), "K3fdp": np.array([.1]), "L3fdp": np.array([4e6]),
-                         "K3pep": np.array([.1]), "K2pep": np.array([.3]), "vemax": np.array([1.1]),
-                         "Kefdp": np.array([.45]), "ne": np.array([2]), "d": np.array([.25]), "V4max": np.array([.2]),
-                         "k1cat": np.array([1]), "V3max": np.array([1]), "V2max": np.array([1]), "ac": np.array([.5])},
-                        {"K1ac": np.array([.1]), "K3fdp": np.array([.1]), "L3fdp": np.array([4e6]),
-                         "K3pep": np.array([.1]), "K2pep": np.array([.3]), "vemax": np.array([1.1]),
-                         "Kefdp": np.array([.45]), "ne": np.array([2]), "d": np.array([.25]), "V4max": np.array([.2]),
-                         "k1cat": np.array([1]), "V3max": np.array([1]), "V2max": np.array([1]), "ac": np.array([1])}]
-    experiment_id = ['experiment_{}'.format(parameter_id) for parameter_id, _ in enumerate(model_parameters)]
+    # model_parameters = [{"K1ac": np.array([.1]), "K3fdp": np.array([.1]), "L3fdp": np.array([4e6]),
+    #                      "K3pep": np.array([.1]), "K2pep": np.array([.3]), "vemax": np.array([1.1]),
+    #                      "Kefdp": np.array([.45]), "ne": np.array([2]), "d": np.array([.25]), "V4max": np.array([.2]),
+    #                      "k1cat": np.array([1]), "V3max": np.array([1]), "V2max": np.array([1]), "ac": np.array([.1])},
+    #                     {"K1ac": np.array([.1]), "K3fdp": np.array([.1]), "L3fdp": np.array([4e6]),
+    #                      "K3pep": np.array([.1]), "K2pep": np.array([.3]), "vemax": np.array([1.1]),
+    #                      "Kefdp": np.array([.45]), "ne": np.array([2]), "d": np.array([.25]), "V4max": np.array([.2]),
+    #                      "k1cat": np.array([1]), "V3max": np.array([1]), "V2max": np.array([1]), "ac": np.array([.01])},
+    #                     {"K1ac": np.array([.1]), "K3fdp": np.array([.1]), "L3fdp": np.array([4e6]),
+    #                      "K3pep": np.array([.1]), "K2pep": np.array([.3]), "vemax": np.array([1.1]),
+    #                      "Kefdp": np.array([.45]), "ne": np.array([2]), "d": np.array([.25]), "V4max": np.array([.2]),
+    #                      "k1cat": np.array([1]), "V3max": np.array([1]), "V2max": np.array([1]), "ac": np.array([.5])},
+    #                     {"K1ac": np.array([.1]), "K3fdp": np.array([.1]), "L3fdp": np.array([4e6]),
+    #                      "K3pep": np.array([.1]), "K2pep": np.array([.3]), "vemax": np.array([1.1]),
+    #                      "Kefdp": np.array([.45]), "ne": np.array([2]), "d": np.array([.25]), "V4max": np.array([.2]),
+    #                      "k1cat": np.array([1]), "V3max": np.array([1]), "V2max": np.array([1]), "ac": np.array([1])}]
+    experiment_id = ['experiment_{}'.format(parameter_id) for parameter_id, _ in enumerate(parameter_perturbation)]
+    experiment_details = model_1.change_parameter_values(parameter_perturbation)
 
     # call model.simulate to get initial (WT) steady state for all parameter sets strating from same y0
-    initial_wt_result = model_1.run_initial_sim(parameter=model_parameters, parameter_ids=experiment_id)
+    import pdb;
+
+    pdb.set_trace()
+    initial_wt_result = model_1.run_initial_sim(parameter=experiment_details, parameter_ids=experiment_id)
 
     # sim_result = model_1.sim_model(parameter=model_parameter, initial_value=y0)
 
