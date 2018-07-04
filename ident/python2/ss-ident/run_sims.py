@@ -62,8 +62,7 @@ class ModelSim(object):
         new_parameter_list = []
         for i_parameter_change in changed_parameter:
             new_parameter = deepcopy(default_parameter)
-            import pdb;pdb.set_trace()
-            parameter_name = i_parameter_change.keys()[0]
+            parameter_name = list(i_parameter_change.keys())[0]
             parameter_change = np.array(i_parameter_change.values()[0])
             if parameter_name == 'wt':
                 new_parameter['ac'] = new_parameter['ac'] * (1 + parameter_change)
