@@ -49,7 +49,6 @@ class ModelSim(object):
         self.ss_info = []
 
     def run_initial_sim(self, parameter, parameter_ids=(), **kwargs):
-        import pdb;pdb.set_trace()
         try:
             self.sim_model(parameter, parameter_ids, [kwargs['y0']])
         except KeyError:
@@ -110,8 +109,6 @@ class ModelSim(object):
         ode solver options (if given, else use default)"""
 
         # call parallel solver instance for multiple parameter/initial values
-        import pdb;
-        pdb.set_trace()
         if len(initial_value) > 1:
             sim_result = setup_parallel_ode(ode_rhs_fun=self.rhs_fun, flux_fun=self.flux_fun, parameters=parameter[0],
                                             y0=initial_value,
@@ -126,7 +123,6 @@ class ModelSim(object):
             dynamic_info = self.collate_results(sim_result, parameter, experiment_ids)
         else:
             # use serial solver instance to solve for single parameter/initial values
-            import pdb;pdb.set_trace()
             dynamic_info = setup_serial_ode(ode_fun=self.rhs_fun, y_initial=initial_value[0], t_final=self.t_final,
                                             opts=[self.ode_opts, parameter[0]])
             # collated_result = [{'info': parameter[0], 'id': 'experiment_0', 'y': dynamic_info['y'],
@@ -177,7 +173,6 @@ if __name__ == '__main__':
     wt_ss, wt_dynamics = model_1.run_initial_sim([default_parameters], ['default_parameters'])
 
     # all parameter perturbations
-    import pdb; pdb.set_trace()
     parameter_perturbation = [{"wt": 0}, {"ac": 1}, {"ac": 4}, {"ac": 9}, {"ac": -.1}, {"ac": -.5},
                               {"k1cat": .1}, {"k1cat": .5}, {"k1cat": 1}, {"k1cat": -.1}, {"k1cat": -.5},
                               {"V3max": .1}, {"V3max": .5}, {"V3max": 1}, {"V3max": -.1}, {"V3max": -.5},
@@ -206,7 +201,7 @@ if __name__ == '__main__':
     # call model.simulate to get initial (WT) steady state for all parameter sets strating from same y0
     model_1.sim_model(parameter=experiment_details, experiment_ids=experiment_id, initial_value=wt_ss['y'])
     import pdb;pdb.set_trace()
-    sim_result = model_1.sim_model(parameter=experiment_details, experiment_ids=experiment_id, initial_value=y0)
+    print('Done')
 
     # call model.simulate to get perturbed steady state for all
     # parameter perturbation from corresponding steady states y0
