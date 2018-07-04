@@ -189,7 +189,7 @@ if __name__ == '__main__':
 
     # call model.simulate to get initial (WT) steady state for all parameter sets strating from same y0
     initial_wt_result = model_1.run_initial_sim(parameter=experiment_details, parameter_ids=experiment_id)
-
+    improt pdb;pdb.set_trace()
     sim_result = model_1.sim_model(parameter=experiment_details, initial_value=y0)
 
     # call model.simulate to get perturbed steady state for all
