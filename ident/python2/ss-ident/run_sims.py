@@ -51,7 +51,7 @@ class ModelSim(object):
         try:
             self.sim_model(parameter, parameter_ids, [kwargs['y0']])
         except KeyError:
-            self.sim_model(self.i_parameter, parameter_ids, [self.wt_y0])
+            self.sim_model(parameter, parameter_ids, [self.wt_y0])
         return self
 
     def change_parameter_values(self, changed_parameter, default_parameter={}):
