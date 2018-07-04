@@ -188,12 +188,9 @@ if __name__ == '__main__':
     experiment_details = model_1.change_parameter_values(parameter_perturbation)
 
     # call model.simulate to get initial (WT) steady state for all parameter sets strating from same y0
-    import pdb;
-
-    pdb.set_trace()
     initial_wt_result = model_1.run_initial_sim(parameter=experiment_details, parameter_ids=experiment_id)
 
-    # sim_result = model_1.sim_model(parameter=model_parameter, initial_value=y0)
+    sim_result = model_1.sim_model(parameter=experiment_details, initial_value=y0)
 
     # call model.simulate to get perturbed steady state for all
     # parameter perturbation from corresponding steady states y0
