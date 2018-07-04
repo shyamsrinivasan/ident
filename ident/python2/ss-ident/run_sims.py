@@ -43,6 +43,8 @@ class ModelSim(object):
         except KeyError:
             self.i_parameter = {}
 
+        self.wt_ss = []
+        self.wt_dynamic = []
         self.dynamic_info = []
         self.ss_info = []
 
@@ -52,7 +54,13 @@ class ModelSim(object):
             self.sim_model(parameter, parameter_ids, [kwargs['y0']])
         except KeyError:
             self.sim_model(parameter, parameter_ids, [self.wt_y0])
-        return self
+
+        initial_ss = deepcopy(self.ss_info)
+        self.ss_info = []
+        initial_dynamics = deepcopy(self.dynamic_info)
+        self.dynamic_info = []
+
+        return initial_ss, initial_dynamics
 
     def change_parameter_values(self, changed_parameter, default_parameter={}):
         """change default parameter by value metnioned in one of changed parameter"""
@@ -128,6 +136,7 @@ class ModelSim(object):
             for i_y in dynamic_info['y']:
                 all_dyn_flux.append(np.array(list(map(lambda x: self.flux_fun(x, parameter[0]), i_y))))
             dynamic_info['flux'] = all_dyn_flux
+            dynamic_info['id'] = experiment_ids
 
         # bistability info and ss values
         bistable = []
@@ -165,7 +174,7 @@ if __name__ == '__main__':
                                                                                         'i_parameter':
                                                                                             default_parameters})
     # initial value determination for wt before perturbation
-    model_1.run_initial_sim([default_parameters], 'default_parameters')
+    wt_ss, wt_dynamics = model_1.run_initial_sim([default_parameters], ['default_parameters'])
 
     # all parameter perturbations
     import pdb; pdb.set_trace()
@@ -195,7 +204,7 @@ if __name__ == '__main__':
     experiment_details = model_1.change_parameter_values(parameter_perturbation)
 
     # call model.simulate to get initial (WT) steady state for all parameter sets strating from same y0
-    initial_wt_result = model_1.run_initial_sim(parameter=experiment_details, parameter_ids=experiment_id)
+    model_1.sim_model(parameter=experiment_details, parameter_ids=experiment_id, initial_value=wt_ss['y'][0])
     import pdb;pdb.set_trace()
     sim_result = model_1.sim_model(parameter=experiment_details, experiment_ids=experiment_id, initial_value=y0)
 
