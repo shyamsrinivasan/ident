@@ -87,7 +87,7 @@ class ModelSim(object):
                                             ode_opts=self.ode_opts,
                                             i_value_opt=0, parameter_opt=1)
             dynamic_info = self.collate_results(sim_result, parameter, experiment_ids)
-
+            import pdb;pdb.set_trace()
             bistable = []
             ss_y = []
             ss_flux = []
