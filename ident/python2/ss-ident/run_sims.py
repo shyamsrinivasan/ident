@@ -47,7 +47,7 @@ class ModelSim(object):
         self.ss_info = []
 
     def run_initial_sim(self, parameter, parameter_ids=(), **kwargs):
-        # import pdb;pdb.set_trace()
+        import pdb;pdb.set_trace()
         try:
             self.sim_model(parameter, parameter_ids, [kwargs['y0']])
         except KeyError:
@@ -102,6 +102,8 @@ class ModelSim(object):
         ode solver options (if given, else use default)"""
 
         # call parallel solver instance for multiple parameter/initial values
+        import pdb;
+        pdb.set_trace()
         if len(initial_value) > 1:
             sim_result = setup_parallel_ode(ode_rhs_fun=self.rhs_fun, flux_fun=self.flux_fun, parameters=parameter[0],
                                             y0=initial_value,
