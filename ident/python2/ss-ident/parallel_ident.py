@@ -80,6 +80,7 @@ class ParallelIdent(object):
                     print('Master: slave finished its task returning: %s)' % str(data_set_id))
             # sleep some time
             # time.sleep(0.3)
+        import pdb;pdb.set_trace()
         results = {'ident_info': ident_results, 'flux_id': all_flux_id, 'data_set_id': all_data_set_id,
                    'sample_id': all_sample_id, 'boolean': all_boolean}
         return results
