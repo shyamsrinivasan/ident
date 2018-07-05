@@ -128,7 +128,7 @@ class MySlave(Slave):
         if done:
             return done, ident_info, all_flux_id, all_flux_choice, sample_id, data_set_id
         else:
-            return done, [], [], []
+            return done, [], [], [], [], []
 
 
 def setup_parallel_ident(ident_fun, flux_id, flux_choice, exp_data):
