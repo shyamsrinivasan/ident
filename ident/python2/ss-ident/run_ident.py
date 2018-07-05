@@ -30,6 +30,8 @@ class ModelIdent(object):
         except KeyError:
             self.original_index_label = ['sample_name', 'experiment_id']
 
+        self.unique_indices = []
+
     def retrieve_df_from_file(self, original_exp=0):
         """retrieve experimental data from csv file"""
         # read dataframe from csv file
@@ -58,60 +60,56 @@ class ModelIdent(object):
         # collect, arrange and collate data
         return sim_result
 
-    # @staticmethod
-    # def collect_data(exp_df, j_sample, numerical=0):
-    #     """collect data from df from all data sets in single sample to
-    #     peform identiiability analysis with cas and numerical method"""
-    #     idx = pd.IndexSlice
-    #     all_sample_ids = exp_df.index.levels[0].tolist()
-    #     all_data_set_ids = exp_df.index.levels[1].tolist()
-    #     # number_data_sets = (len(all_data_sets))
-    #     all_exp_data = []
-    #     if numerical:
-    #         # avoid converting list of lists to single list
-    #         for j_data_set, data_set_id in enumerate(all_data_set_ids):
-    #             ident_data = exp_df.loc[idx[j_sample, data_set_id],
-    #                                     ['acetate', 'pep', 'fdp', 'E', 'v1', 'v2', 'v3', 'v5']].values.tolist()
-    #             single_list = [i_exp_data for i_exp_data in ident_data]
-    #             all_exp_data.append(single_list)
-    #     else:
-    #         for j_data_set, data_set_id in enumerate(all_data_set_ids):
-    #             ident_data = exp_df.loc[idx[j_sample, data_set_id],
-    #                                     ['acetate', 'pep', 'fdp', 'E', 'v1', 'v2', 'v3', 'v5']].values.tolist()
-    #             single_list = [i_variable for i_exp_data in ident_data for i_variable in i_exp_data]
-    #             all_exp_data.append(single_list)
-    #     return all_exp_data, all_data_set_ids
+    def collect_ident_data(self, all_results, all_data_dict, empty_dict):
+        """collect ident info for all data sets from all samples together"""
 
-    # def multi_sample_ident_fun(self, ident_fun_list, all_data_df, flux_ids, flux_choice):
-    #     """perform identifibaility analysis for multiple samples by
-    #     looping through each experimental data sample for a list of identifibaility functions"""
-    #
-    #     reset_df = all_data_df.reset_index('experiment_id')
-    #     # lexographic ordering of df indices
-    #     reset_df.sort_index(level='data_set_id', inplace=True)
-    #     reset_df.sort_index(level='sample_name', inplace=True)
-    #
-    #
-    #     sample_ids = list(reset_df.index.levels[0])
-    #     number_samples = (len(sample_ids))
-    #     all_sample_ident_details = []
-    #     for i_sample, i_sample_id in enumerate(sample_ids):
-    #         print('Identifiability analysis with Data Sample Number {} of {}\n'.format(i_sample, number_samples))
-    #         # collect experimental data from all data sets
-    #         all_exp_data, _ = collect_data(reset_df, i_sample_id)
-    #         # run identifiability with i_sample_data
-    #         all_ident_values, _ = get_ident_value(ident_fun_list, all_exp_data, flux_ids, flux_choice)
-    #         all_sample_ident_details.append(all_ident_values)
-    #
-    #     # initial information processing to get dictionary of relevant info for each flux and each parameter
-    #     all_data = defaultdict(list)
-    #     empty_dict = {}
-    #     for i_sample, sample_data in enumerate(all_sample_ident_details):
-    #         sample_name = 'sample_{}'.format(i_sample)
-    #         # number_data_sets = len(sample_data)
-    #         all_data = collect_ident_data(sample_name, sample_data, flux_ids, flux_choice, all_data, empty_dict)
-    #
-    #     return all_data
+        # read experimental data from file (serially)
+        arranged_df = self.retrieve_df_from_file()
+
+        reset_df = arranged_df.reset_index('experiment_id')
+        # lexographic ordering of df indices
+        reset_df.sort_index(level='data_set_id', inplace=True)
+        reset_df.sort_index(level='sample_name', inplace=True)
+
+        # arrange results based on original experimental df
+        all_df_indices = reset_df.index.unique().tolist()
+        self.unique_indices = all_df_indices
+        import pdb;pdb.set_trace()
+        collated_info = [j_result for i_data_id in self.unique_indices for j_result in all_results
+                         if (j_result['sample_id'] == i_data_id[0] and j_result['data_set_id'] == i_data_id[1])]
+
+        # temp_dict = {}
+        # for j_data_set, j_data_set_info in enumerate(j_sample_ident_data):
+        #     data_set_name = 'data_set_{}'.format(j_data_set)
+        #     for j_flux, j_flux_data in enumerate(j_data_set_info):
+        #         flux_name = 'flux{}'.format(flux_ids[j_flux])
+        #         # all_parameter names
+        #         all_parameter_names = [ident_parameter_name(j_parameter,
+        #                                                     flux_name,
+        #                                                     flux_choice[j_flux])
+        #                                for j_parameter in range(0, len(j_flux_data))]
+        #         for i_parameter, i_parameter_info in enumerate(j_flux_data):
+        #             temp_dict["flux_name"] = flux_name
+        #             temp_dict["flux_choice"] = flux_choice[j_flux]
+        #             # replace with call to parameter name file
+        #             temp_dict["parameter_name"] = all_parameter_names[i_parameter]
+        #             i_parameter_nr, i_parameter_dr, i_parameter_value = i_parameter_info
+        #             temp_dict["parameter_nr"] = i_parameter_nr
+        #             temp_dict["parameter_dr"] = i_parameter_dr
+        #             temp_dict["parameter_value"] = i_parameter_value
+        #             temp_dict["data_set_id"] = data_set_name
+        #             temp_dict["sample_name"] = j_sample_name
+        #             if i_parameter_value > 0:
+        #                 temp_dict["identified"] = True
+        #             else:
+        #                 temp_dict["identified"] = False
+        #             for key, value in it.chain(empty_dict.items(), temp_dict.items()):
+        #                 all_data_dict[key].append(value)
+        import pdb;pdb.set_trace()
+        return collated_info
+
+
+
 
 
 if __name__ == '__main__':
