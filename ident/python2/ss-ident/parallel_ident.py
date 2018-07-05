@@ -82,7 +82,6 @@ class ParallelIdent(object):
             # time.sleep(0.01)
         # results = {'ident_info': ident_results, 'flux_id': all_flux_id, 'data_set_id': all_data_set_id,
         #            'sample_id': all_sample_id, 'boolean': all_boolean}
-        import pdb; pdb.set_trace()
         return ident_results
 
 
