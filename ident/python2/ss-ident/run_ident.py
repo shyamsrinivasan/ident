@@ -2,6 +2,9 @@ import pandas as pd
 from parallel_ident import setup_parallel_ident
 import os.path
 import kotte_model
+from collections import defaultdict
+from names_strings import default_ident_parameter_name
+import itertools as it
 
 
 class ModelIdent(object):
@@ -15,12 +18,19 @@ class ModelIdent(object):
             self.original_exp_file = ''
         try:
             self.flux_id = kwargs['flux_id']
+            self.flux_name = 'flux{}'.format(self.flux_id)
         except KeyError:
             self.flux_id = []
+            self.flux_name = ''
         try:
             self.flux_choice = kwargs['flux_choice']
         except KeyError:
             self.flux_choice = []
+        try:
+            self.parameter_name = default_ident_parameter_name(flux_name=self.flux_name, flux_choice=self.flux_choice)
+        except AttributeError:
+            self.parameter_name = []
+
         try:
             self.arranged_index_label = kwargs['arranged_index_label']
         except KeyError:
@@ -31,6 +41,7 @@ class ModelIdent(object):
             self.original_index_label = ['sample_name', 'experiment_id']
 
         self.unique_indices = []
+        self.ident_data = []
 
     def retrieve_df_from_file(self, original_exp=0):
         """retrieve experimental data from csv file"""
@@ -58,10 +69,12 @@ class ModelIdent(object):
         sim_result = setup_parallel_ident(ident_fun=self.ident_fun, flux_id=self.flux_id, flux_choice=self.flux_choice,
                                           exp_data=reset_df)
         # collect, arrange and collate data
-        self._collect_ident_data(sim_result, [], [])
+        ordered_info = self._order_ident_data(sim_result)
+        self._create_dict_for_df(ordered_info)
+        import pdb;pdb.set_trace()
         return sim_result
 
-    def _collect_ident_data(self, all_results, all_data_dict, empty_dict):
+    def _order_ident_data(self, all_results):
         """collect ident info for all data sets from all samples together"""
 
         # read experimental data from file (serially)
@@ -76,41 +89,114 @@ class ModelIdent(object):
         all_df_indices = reset_df.index.unique().tolist()
         self.unique_indices = all_df_indices
         import pdb;pdb.set_trace()
-        collated_info = [j_result for i_data_id in self.unique_indices for j_result in all_results
-                         if (j_result['sample_id'] == i_data_id[0] and j_result['data_set_id'] == i_data_id[1])]
+        ordered_info = [j_result for i_data_id in self.unique_indices for j_result in all_results
+                        if (j_result['sample_id'] == i_data_id[0] and j_result['data_set_id'] == i_data_id[1])]
 
-        # temp_dict = {}
-        # for j_data_set, j_data_set_info in enumerate(j_sample_ident_data):
-        #     data_set_name = 'data_set_{}'.format(j_data_set)
-        #     for j_flux, j_flux_data in enumerate(j_data_set_info):
-        #         flux_name = 'flux{}'.format(flux_ids[j_flux])
-        #         # all_parameter names
-        #         all_parameter_names = [ident_parameter_name(j_parameter,
-        #                                                     flux_name,
-        #                                                     flux_choice[j_flux])
-        #                                for j_parameter in range(0, len(j_flux_data))]
-        #         for i_parameter, i_parameter_info in enumerate(j_flux_data):
-        #             temp_dict["flux_name"] = flux_name
-        #             temp_dict["flux_choice"] = flux_choice[j_flux]
-        #             # replace with call to parameter name file
-        #             temp_dict["parameter_name"] = all_parameter_names[i_parameter]
-        #             i_parameter_nr, i_parameter_dr, i_parameter_value = i_parameter_info
-        #             temp_dict["parameter_nr"] = i_parameter_nr
-        #             temp_dict["parameter_dr"] = i_parameter_dr
-        #             temp_dict["parameter_value"] = i_parameter_value
-        #             temp_dict["data_set_id"] = data_set_name
-        #             temp_dict["sample_name"] = j_sample_name
-        #             if i_parameter_value > 0:
-        #                 temp_dict["identified"] = True
-        #             else:
-        #                 temp_dict["identified"] = False
-        #             for key, value in it.chain(empty_dict.items(), temp_dict.items()):
-        #                 all_data_dict[key].append(value)
+        return ordered_info
+
+    def _create_dict_for_df(self, ident_results):
+        # read experimental data from file (serially)
+        arranged_df = self.retrieve_df_from_file()
+        # remove index experiment_id
+        reset_df = arranged_df.reset_index('experiment_id')
+        # lexographic ordering of remaining df indices
+        reset_df.sort_index(level='data_set_id', inplace=True)
+        reset_df.sort_index(level='sample_name', inplace=True)
+        temp_dict = {}
+        all_data = defaultdict(list)
+        empty_dict = {}
+
         import pdb;pdb.set_trace()
-        return collated_info
+        for i_data_set in ident_results:
+            data_set_id = i_data_set['data_set_id']
+            sample_id = i_data_set['sample_id']
+            import pdb;pdb.set_trace()
+            for i_parameter, i_parameter_info in enumerate(i_data_set['ident_info']):
+                temp_dict["flux_name"] = self.flux_name
+                temp_dict["flux_choice"] = self.flux_choice
+                temp_dict["parameter_name"] = self.parameter_name[i_parameter]
+                i_parameter_nr, i_parameter_dr, i_parameter_value = i_parameter_info
+                temp_dict["parameter_nr"] = i_parameter_nr
+                temp_dict["parameter_dr"] = i_parameter_dr
+                temp_dict["parameter_value"] = i_parameter_value
+                temp_dict["data_set_id"] = data_set_id
+                temp_dict["sample_name"] = sample_id
+                if i_parameter_value > 0:
+                    temp_dict["identified"] = True
+                else:
+                    temp_dict["identified"] = False
+                import pdb;pdb.set_trace()
+                for key, value in it.chain(empty_dict.items(), temp_dict.items()):
+                    all_data[key].append(value)
+        import pdb;pdb.set_trace()
+        self.ident_data = all_data
+        return self
 
-
-
+    @staticmethod
+    # def write_ident_info_file(all_data_dict, exp_df, file_name):
+    #     """create data frame from identifiability data and write to csv file for future use"""
+    #     # reset index of experimental data df
+    #     reset_exp_df = exp_df.reset_index("sample_name")
+    #     reset_exp_df.sort_index(level='data_set_id', inplace=True)
+    #     reset_exp_df.reset_index("data_set_id", inplace=True)
+    #     # reset_exp_df = exp_df.reset_index('experiment_id')
+    #     # reset_exp_df.reset_index('sample_name', inplace=True)
+    #     # lexographic ordering of df indices    #
+    #     # reset_exp_df.sort_index(level='sample_name', inplace=True)
+    #
+    #     # create data frame
+    #     data_df = pd.DataFrame(all_data_dict, columns=all_data_dict.keys())
+    #
+    #     # number of occurrences of each data set id = number of experiments per data set in the first sample
+    #     number_samples = len(data_df["sample_name"].unique())
+    #     first_sample_rows = data_df[data_df["sample_name"] == 'sample_0']
+    #     data_set_id_frequency = int(max(first_sample_rows["data_set_id"].value_counts()))
+    #     # all experiment ids
+    #     experiment_pos_names = ['experiment_{}_id'.format(i_experiment) for i_experiment in
+    #                             range(0, data_set_id_frequency)]
+    #     experiment_pos_parameters = ['experiment_{}_parameter'.format(i_experiment)
+    #                                  for i_experiment in range(0, data_set_id_frequency)]
+    #
+    #     # extract experiment ids for each data set
+    #     # get all data set ids
+    #     data_set_ids = reset_exp_df["data_set_id"].unique()
+    #     # get experiments for each data set based on first sample only
+    #     all_data_set_experiments = [reset_exp_df[(reset_exp_df["sample_name"] == "sample_0") &
+    #                                              (reset_exp_df["data_set_id"] == j_data_set_id)]
+    #                                 ["parameter_name"].index.values.tolist() for j_data_set_id in data_set_ids]
+    #     all_data_set_exp_parameters = [reset_exp_df[(reset_exp_df["sample_name"] == "sample_0") &
+    #                                                 (reset_exp_df["data_set_id"] == j_data_set_id)]
+    #                                    ["parameter_name"].values.tolist() for j_data_set_id in data_set_ids]
+    #     all_pos_experiment_id = [[i_p for j_data_set in all_data_set_experiments
+    #                               for i_p in [j_data_set[j_position_exp]] * len(experiment_pos_names)] * number_samples
+    #                              for j_position_exp in range(0, len(experiment_pos_names))]
+    #     all_pos_exp_parameters = [[i_p for j_data_set in all_data_set_exp_parameters
+    #                                for i_p in
+    #                                [j_data_set[j_position_exp]] * len(experiment_pos_parameters)] * number_samples
+    #                               for j_position_exp in range(0, len(experiment_pos_parameters))]
+    #     experiment_pos_info_keys = experiment_pos_names + experiment_pos_parameters
+    #     experiment_pos_info_values = all_pos_experiment_id + all_pos_exp_parameters
+    #     exp_info_dict = dict(zip(experiment_pos_info_keys, experiment_pos_info_values))
+    #     all_data_dict.update(exp_info_dict)
+    #
+    #     # multi index tuples
+    #     ind_tuple = [(j_sample, j_data_set) for j_sample, j_data_set in
+    #                  zip(all_data_dict["sample_name"], all_data_dict["data_set_id"])]
+    #
+    #     # multi index index
+    #     index_label = ['sample_name', 'data_set_id']
+    #     index = pd.MultiIndex.from_tuples(ind_tuple, names=index_label)
+    #
+    #     # remove redundant columns
+    #     del all_data_dict["sample_name"]
+    #     del all_data_dict["data_set_id"]
+    #
+    #     # create multi index data frame
+    #     all_data_df = pd.DataFrame(all_data_dict, index=index, columns=all_data_dict.keys())
+    #
+    #     # save data frame to csv file
+    #     all_data_df.to_csv(file_name, index_label=index_label)
+    #     return all_data_df, index_label
 
 
 if __name__ == '__main__':
