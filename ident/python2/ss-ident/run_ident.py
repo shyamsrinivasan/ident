@@ -46,6 +46,7 @@ class ModelIdent(object):
     def perform_ident(self):
         # read experimental data from file (serially)
         arranged_df = self.retrieve_df_from_file()
+        
         reset_df = arranged_df.reset_index('experiment_id')
         # lexographic ordering of df indices
         reset_df.sort_index(level='data_set_id', inplace=True)
