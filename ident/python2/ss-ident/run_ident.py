@@ -46,9 +46,14 @@ class ModelIdent(object):
     def perform_ident(self):
         # read experimental data from file (serially)
         arranged_df = self.retrieve_df_from_file()
+        reset_df = arranged_df.reset_index('experiment_id')
+        # lexographic ordering of df indices
+        reset_df.sort_index(level='data_set_id', inplace=True)
+        reset_df.sort_index(level='sample_name', inplace=True)
+
         # run ident analysis in parallel
         sim_result = setup_parallel_ident(ident_fun=self.ident_fun, flux_id=self.flux_id, flux_choice=self.flux_choice,
-                                          exp_data=arranged_df)
+                                          exp_data=reset_df)
         # collect, arrange and collate data
         import pdb; pdb.set_trace()
         return sim_result
