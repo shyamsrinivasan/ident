@@ -88,7 +88,6 @@ class ModelIdent(object):
         # arrange results based on original experimental df
         all_df_indices = reset_df.index.unique().tolist()
         self.unique_indices = all_df_indices
-        import pdb;pdb.set_trace()
         ordered_info = [j_result for i_data_id in self.unique_indices for j_result in all_results
                         if (j_result['sample_id'] == i_data_id[0] and j_result['data_set_id'] == i_data_id[1])]
 
@@ -106,11 +105,9 @@ class ModelIdent(object):
         all_data = defaultdict(list)
         empty_dict = {}
 
-        import pdb;pdb.set_trace()
         for i_data_set in ident_results:
             data_set_id = i_data_set['data_set_id']
             sample_id = i_data_set['sample_id']
-            import pdb;pdb.set_trace()
             for i_parameter, i_parameter_info in enumerate(i_data_set['ident_info']):
                 temp_dict["flux_name"] = self.flux_name
                 temp_dict["flux_choice"] = self.flux_choice
