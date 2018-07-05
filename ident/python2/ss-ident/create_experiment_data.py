@@ -40,7 +40,6 @@ def create_experiment_data(save_file_name, noise=0, kinetics=2, number_samples=1
     experiment_details = model_1.change_parameter_values(parameter_perturbation)
 
     # call model.simulate to get initial (WT) steady state for all parameter sets strating from same y0
-    import pdb;pdb.set_trace()
     model_1.sim_model(parameter=experiment_details, experiment_ids=experiment_id, initial_value=[wt_ss[0]['y']])
 
     # create dictionary suitable for writing to df
