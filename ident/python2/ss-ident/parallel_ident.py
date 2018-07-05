@@ -111,11 +111,8 @@ class MySlave(Slave):
         flux_choice = data['flux_choice']
         sample_id = data['sample_id']
         data_set_id = data['data_set_id']
-        ident_info = []
-        all_flux_id = []
-        all_flux_choice = []
         try:
-            ident_info, all_flux_id, all_flux_choice = run_flux_ident(ident_fun, exp_data, flux_id, flux_choice)
+            ident_info, _, _ = run_flux_ident(ident_fun, exp_data, flux_id, flux_choice)
             done = True
         except TypeError:
             done = False
@@ -126,7 +123,7 @@ class MySlave(Slave):
         print('  Slave %s rank %d executing task (sample: %s, data set: %s)' % (name, rank, sample_id, data_set_id))
 
         if done:
-            return done, ident_info, all_flux_id, all_flux_choice, sample_id, data_set_id
+            return done, ident_info, flux_id, flux_choice, sample_id, data_set_id
         else:
             return done, [], [], [], [], []
 
