@@ -139,7 +139,6 @@ class ModelSim(object):
                                             y0=initial_value[0], t_final=self.t_final, experiment_id=experiment_ids,
                                             ode_opts=self.ode_opts,
                                             i_value_opt=0, parameter_opt=1)
-            import pdb;pdb.set_trace()
             dynamic_info = self.collate_results(sim_result, parameter, experiment_ids)
         else:
             # use serial solver instance to solve for single parameter/initial values
