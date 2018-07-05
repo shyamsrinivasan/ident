@@ -49,7 +49,8 @@ class ParallelIdent(object):
         for j_index, sample_data_set_id in enumerate(all_df_indices):
             j_exp_data_set = exp_df.loc[idx[sample_data_set_id],
                                         ['acetate', 'pep', 'fdp', 'E', 'v1', 'v2', 'v3', 'v5']].values.tolist()
-            self.__add_next_task(exp_data=j_exp_data_set, ident_fun=ident_fun, flux_id=flux_id, flux_choice=flux_choice,
+            flat_data_list = [i_element for i_data in j_exp_data_set for i_element in i_data]
+            self.__add_next_task(exp_data=flat_data_list, ident_fun=ident_fun, flux_id=flux_id, flux_choice=flux_choice,
                                  sample_id=sample_data_set_id[0], data_set_id=sample_data_set_id[1])
 
         # Keeep starting slaves as long as there is work to do
@@ -67,6 +68,7 @@ class ParallelIdent(object):
                 done, ident_info, slave_flux_id, slave_flux_choice, sample_id, data_set_id = slave_return_data
                 i_slave_result = {'done': done, 'flux_id': flux_id, 'flux_choice': flux_choice, 'sample_id': sample_id,
                                   'data_set_id': data_set_id, 'ident_info': ident_info}
+                ident_results.append(i_slave_result)
                 all_boolean.append(done)
                 ident_results.append(ident_info)
                 all_flux_id.append(slave_flux_id)
