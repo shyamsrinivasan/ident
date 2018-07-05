@@ -25,11 +25,12 @@ def truncate_values(f, n=3):
 def call_truncate_method(ident_value_list, parameter_count, expression_count=3):
     """calculate truncate_values using map on list of values"""
     flux_ident_value = np.zeros((parameter_count, expression_count))
+    trunc_ident_value = []
     for i, j in enumerate(ident_value_list):
         trunc_value = list(map(truncate_values, j))
         # trunc_value = map(float, trunc_value)
-        flux_ident_value[i, :] = np.array(trunc_value)
-    return flux_ident_value
+        trunc_ident_value.append(np.array(trunc_value))
+    return trunc_ident_value
 
 
 def run_flux_ident(ident_function, data, flux_id=(), flux_choice=()):
@@ -58,9 +59,9 @@ def run_flux_ident(ident_function, data, flux_id=(), flux_choice=()):
     # for iflux in ident_value_list:
     import pdb;pdb.set_trace()
     truncated_ident_value = call_truncate_method(ident_value, len(ident_value))
-    ident_value_list = [np.array(i_parameter) for i_parameter in list(truncated_ident_value)]
+    # ident_value_list = [np.array(i_parameter) for i_parameter in list(truncated_ident_value)]
     # all_flux_ident.append(ident_value_list)
-    return ident_value_list, flux_id, flux_choice
+    return truncated_ident_value, flux_id, flux_choice
 
 
 def get_ident_value(ident_function_list, experimental_data_list, flux_ids, flux_choice):
