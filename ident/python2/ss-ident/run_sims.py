@@ -197,7 +197,7 @@ class ModelSim(object):
     def whatever(self, perturbations, experiment_details):
         """create dictionary from results suitable for writing to df"""
         # convert perturbation details to dictionary suitable for data_frame creation
-        parameter_name = [i_perturbation_info.keys()[0] for i_perturbation_info in perturbations]
+        parameter_name = [list(i_perturbation_info.keys())[0] for i_perturbation_info in perturbations]
         parameter_change = [np.array(i_perturbation_info.values()[0])
                             for i_perturbation_info in perturbations]
         parameter_value = [np.array(i_parameter_value_dict[i_parameter_name][0]) if i_parameter_name != 'wt'
