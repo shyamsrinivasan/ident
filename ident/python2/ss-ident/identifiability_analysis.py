@@ -116,40 +116,6 @@ def collect_ident_data(j_sample_name, j_sample_ident_data, flux_ids, flux_choice
 
     return all_data_dict
 
-#
-# def collate_ident_data(sample_id, data_set_id, ident_data, flux_id, flux_choice, all_data_dict, empty_dict):
-#     """collect and collate identifiability info from all samples and all data sets"""
-#
-#     temp_dict = {}
-#     for j_data_set, j_data_set_info in enumerate(ident_data):
-#         data_set_name = 'data_set_{}'.format(j_data_set)
-#         for j_flux, j_flux_data in enumerate(j_data_set_info):
-#             flux_name = 'flux{}'.format(flux_ids[j_flux])
-#             # all_parameter names
-#             all_parameter_names = [ident_parameter_name(j_parameter,
-#                                                         flux_name,
-#                                                         flux_choice[j_flux])
-#                                    for j_parameter in range(0, len(j_flux_data))]
-#             for i_parameter, i_parameter_info in enumerate(j_flux_data):
-#                 temp_dict["flux_name"] = flux_name
-#                 temp_dict["flux_choice"] = flux_choice[j_flux]
-#                 # replace with call to parameter name file
-#                 temp_dict["parameter_name"] = all_parameter_names[i_parameter]
-#                 i_parameter_nr, i_parameter_dr, i_parameter_value = i_parameter_info
-#                 temp_dict["parameter_nr"] = i_parameter_nr
-#                 temp_dict["parameter_dr"] = i_parameter_dr
-#                 temp_dict["parameter_value"] = i_parameter_value
-#                 temp_dict["data_set_id"] = data_set_name
-#                 temp_dict["sample_name"] = j_sample_name
-#                 if i_parameter_value > 0:
-#                     temp_dict["identified"] = True
-#                 else:
-#                     temp_dict["identified"] = False
-#                 for key, value in it.chain(empty_dict.items(), temp_dict.items()):
-#                     all_data_dict[key].append(value)
-#
-#     return all_data_dict
-
 
 def multi_sample_ident_fun(ident_fun_list, all_data_df, flux_ids, flux_choice):
     """perform identifibaility analysis for multiple samples by
