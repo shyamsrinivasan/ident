@@ -6,6 +6,7 @@ import numpy as np
 from copy import deepcopy
 from add_noise import add_noise
 from names_strings import variable_name
+import pandas as pd
 
 
 class ModelSim(object):
@@ -61,6 +62,8 @@ class ModelSim(object):
         self.ss_info = []
         self.noisy_dynamic_info = []
         self.noisy_ss_info = []
+        self.df_info = []
+        self.df_fields = []
 
     def run_initial_sim(self, parameter, parameter_ids=(), **kwargs):
         try:
@@ -168,11 +171,11 @@ class ModelSim(object):
         self.ss_info = ss_data
 
         # add noise
-        self.add_noise_dynamic()
+        self._add_noise_dynamic()
 
         return self
 
-    def add_noise_dynamic(self):
+    def _add_noise_dynamic(self):
         """function to add noise to input dynamic data.
         number_of_samples creates number_of_samples noisy data sets from original data set passed as input argument"""
 
@@ -195,7 +198,7 @@ class ModelSim(object):
             self.noisy_ss_info = all_noisy_ss
         return None
 
-    def whatever(self, perturbations, experiment_details):
+    def create_dict_for_df(self, perturbations, experiment_details):
         """create dictionary from results suitable for writing to df"""
         # convert perturbation details to dictionary suitable for data_frame creation
         parameter_name = [list(i_perturbation_info.keys())[0] for i_perturbation_info in perturbations]
@@ -207,7 +210,7 @@ class ModelSim(object):
         essential_parameter_value = [np.array(i_perturbation_info["ac"][0]) for i_perturbation_info in
                                      experiment_details]
         parameter_change_percentage = [i_parameter_change * 100 for i_parameter_change in parameter_change]
-        initial_value_ss_id = [int(i_ss_info['ssid']) for i_ss_info in self.wt_ss]
+        initial_value_ss_id = [int(i_ss_info['ssid']) for i_ss_info in self.wt_ss] * len(self.ss_info)
         final_value_ss_id = [int(i_ss_info['ssid']) for i_ss_info in self.ss_info]
         perturbation_names = [i_ss_info['id'] for i_ss_info in self.ss_info]
         dict_fields = ['parameter_name', 'parameter_change', 'parameter_change_percentage', 'parameter_value',
@@ -236,11 +239,40 @@ class ModelSim(object):
         experiment_info.update({"sample_name": sample_name_info})
 
         # prepare list of column names for dataframe
-        dict_fields = experiment_info.keys()
-        # experiment_info_df = pd.DataFrame(experiment_info, columns=dict_fields)
+        dict_fields = list(experiment_info.keys())
+        self.df_info = experiment_info
+        self.df_fields = dict_fields
 
-        import pdb;pdb.set_trace()
         return None
+
+    def create_df(self, perturbations, experiment_details):
+        # create dict for df
+        self.create_dict_for_df(perturbations, experiment_details)
+
+        # convert info to multi index data frame for storage and retrieval
+        df_index_tuples = [(i_value_sample, i_value_exp) for i_value_sample, i_value_exp in
+                           zip(self.df_info["sample_name"], self.df_info["experiment_id"])]
+        multi_index_labels = ['sample_name', 'experiment_id']
+        index = pd.MultiIndex.from_tuples(df_index_tuples, names=multi_index_labels)
+        del self.df_info["sample_name"]
+        del self.df_info["experiment_id"]
+
+        # create data frame
+        all_ss_df = pd.DataFrame(self.df_info, index=index, columns=self.df_info.keys())
+
+        # create data frame
+        # all_ss_df = pd.DataFrame(perturbation_info, index=index, columns=perturbation_info.keys())
+        #
+        # dyn_df_index_tuples = zip(dynamic_info['sample_name'], dynamic_info['experiment_id'],
+        #                           dynamic_info['data_point'])
+        # dyn_index_labels = ['sample_name', 'experiment_id', 'data_point']
+        # dyn_index = pd.MultiIndex.from_tuples(dyn_df_index_tuples, names=dyn_index_labels)
+        # del dynamic_info['sample_name']
+        # del dynamic_info['experiment_id']
+        # del dynamic_info['data_point']
+
+        # dyn_df = pd.DataFrame(dynamic_info, index=dyn_index, columns=dynamic_info.keys())
+        return all_ss_df, multi_index_labels
 
     @staticmethod
     def create_ss_dict(ss_info, variable_type, noise=0):
