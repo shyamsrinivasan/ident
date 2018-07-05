@@ -4,6 +4,8 @@ from parallel_ode import setup_parallel_ode
 from simulate_ode import setup_serial_ode
 import numpy as np
 from copy import deepcopy
+from add_noise import add_noise
+from names_strings import variable_name
 
 
 class ModelSim(object):
@@ -11,6 +13,16 @@ class ModelSim(object):
         self.rhs_fun = rhs_fun
         self.flux_fun = flux_fun
         self.noise = noise
+        try:
+            self.sample_size = kwargs['sample_size']
+        except KeyError:
+            self.sample_size = 1
+
+        try:
+            self.noise_std = kwargs['noise_std']
+        except KeyError:
+            self.noise_std = 0.05
+
         # kinetics
         try:
             self.kinetics = kwargs['kinetics']
@@ -47,6 +59,8 @@ class ModelSim(object):
         self.wt_dynamic = []
         self.dynamic_info = []
         self.ss_info = []
+        self.noisy_dynamic_info = []
+        self.noisy_ss_info = []
 
     def run_initial_sim(self, parameter, parameter_ids=(), **kwargs):
         try:
@@ -55,8 +69,10 @@ class ModelSim(object):
             self.sim_model(parameter, parameter_ids, [self.wt_y0])
 
         initial_ss = deepcopy(self.ss_info)
+        self.wt_ss = initial_ss
         self.ss_info = []
         initial_dynamics = deepcopy(self.dynamic_info)
+        self.wt_dynamic = initial_dynamics
         self.dynamic_info = []
 
         return initial_ss, initial_dynamics
@@ -88,21 +104,21 @@ class ModelSim(object):
                          for i_value_id, i_value in zip(experiment_id, external_info)
                          for j_id, j_value in enumerate(results['id']) if j_value == i_value_id]
 
-        if parameter_opt:
-            experiment_info = {'parameter': [j_info['info'] for j_info in collated_info],
-                               'time': [j_info['time'] for j_info in collated_info],
-                               'y': [j_info['y'] for j_info in collated_info],
-                               'id': [j_info['id'] for j_info in collated_info],
-                               'flux': [j_info['flux'] for j_info in collated_info]}
-        elif i_value_opt:
-            experiment_info = {'initial_value': [j_info['info'] for j_info in collated_info],
-                               'time': [j_info['time'] for j_info in collated_info],
-                               'y': [j_info['y'] for j_info in collated_info],
-                               'id': [j_info['id'] for j_info in collated_info],
-                               'flux': [j_info['flux'] for j_info in collated_info]}
-        else:
-            experiment_info = {}
-        return experiment_info
+        # if parameter_opt:
+        #     experiment_info = {'parameter': [j_info['info'] for j_info in collated_info],
+        #                        'time': [j_info['time'] for j_info in collated_info],
+        #                        'y': [j_info['y'] for j_info in collated_info],
+        #                        'id': [j_info['id'] for j_info in collated_info],
+        #                        'flux': [j_info['flux'] for j_info in collated_info]}
+        # elif i_value_opt:
+        #     experiment_info = {'initial_value': [j_info['info'] for j_info in collated_info],
+        #                        'time': [j_info['time'] for j_info in collated_info],
+        #                        'y': [j_info['y'] for j_info in collated_info],
+        #                        'id': [j_info['id'] for j_info in collated_info],
+        #                        'flux': [j_info['flux'] for j_info in collated_info]}
+        # else:
+        #     experiment_info = {}
+        return collated_info
 
     def sim_model(self, parameter, experiment_ids, initial_value):
         """simulate model with defined rhs fun and given parameters, initial values and
@@ -129,30 +145,147 @@ class ModelSim(object):
             #                     'time': dynamic_info['time']}]
             # calculate flux
             all_dyn_flux = []
-            for i_y in dynamic_info['y']:
-                all_dyn_flux.append(np.array(list(map(lambda x: self.flux_fun(x, parameter[0]), i_y))))
-            dynamic_info['flux'] = all_dyn_flux
-            dynamic_info['id'] = experiment_ids
+            for index, i_experiment in enumerate(dynamic_info):
+                dyn_flux = np.array(list(map(lambda x: self.flux_fun(x, parameter[0]), i_experiment['y'])))
+                i_experiment.update({'flux': dyn_flux, 'id': experiment_ids[index]})
 
         # bistability info and ss values
-        bistable = []
-        ss_y = []
-        ss_flux = []
-        for j_experiment_y, j_experiment_flux in zip(dynamic_info['y'], dynamic_info['flux']):
+        ss_data = []
+        for j_experiment in dynamic_info:
             # info on bistability
-            if j_experiment_y[-1, 0] > j_experiment_y[-1, 1]:
-                bistable.append(1)
-            elif j_experiment_y[-1, 0] < j_experiment_y[-1, 1]:
-                bistable.append(2)
+            if j_experiment['y'][-1, 0] > j_experiment['y'][-1, 1]:
+                stability_id = 1
+            elif j_experiment['y'][-1, 0] < j_experiment['y'][-1, 1]:
+                stability_id = 2
             else:
-                bistable.append(0)
+                stability_id = 0
             # info on ss values
-            ss_y.append(j_experiment_y[-1, :])
-            ss_flux.append(j_experiment_flux[-1, :])
+            j_experiment.update({'ssid': stability_id})
+            ss_data.append({'y': j_experiment['y'][-1, :], 'flux': j_experiment['flux'][-1, :], 'ssid': stability_id,
+                            'id': j_experiment['id']})
         self.dynamic_info = dynamic_info
-        self.ss_info = {'y': ss_y, 'flux': ss_flux, 'ss_id': bistable}
+        self.ss_info = ss_data
+
+        # add noise
+        self.add_noise_dynamic()
 
         return self
+
+    def add_noise_dynamic(self):
+        """function to add noise to input dynamic data.
+        number_of_samples creates number_of_samples noisy data sets from original data set passed as input argument"""
+
+        if self.noise:
+            all_noisy_dyn = []
+            all_noisy_ss = []
+            for i_value, i_ss_value in zip(self.dynamic_info, self.ss_info):
+                noisy_y = add_noise(data=i_value['y'], default_shape=i_value['y'].shape,
+                                    number_of_samples=self.sample_size, noise_std=self.noise_std)
+                noisy_y_ss = add_noise(data=i_ss_value['y'], default_shape=i_ss_value['y'].shape,
+                                       number_of_samples=self.sample_size, noise_std=self.noise_std)
+                noisy_flux = add_noise(data=i_value['flux'], default_shape=i_value['flux'].shape,
+                                       number_of_samples=self.sample_size, noise_std=self.noise_std)
+                noisy_flux_ss = add_noise(data=i_ss_value['flux'], default_shape=i_ss_value['flux'].shape,
+                                          number_of_samples=self.sample_size, noise_std=self.noise_std)
+                all_noisy_dyn.append({'y': noisy_y, 'flux': noisy_flux})
+                all_noisy_ss.append({'y': noisy_y_ss, 'flux': noisy_flux_ss})
+
+            self.noisy_dynamic_info = all_noisy_dyn
+            self.noisy_ss_info = all_noisy_ss
+        return None
+
+    def whatever(self, perturbations, experiment_details):
+        """create dictionary from results suitable for writing to df"""
+        # convert perturbation details to dictionary suitable for data_frame creation
+        parameter_name = [i_perturbation_info.keys()[0] for i_perturbation_info in perturbations]
+        parameter_change = [np.array(i_perturbation_info.values()[0])
+                            for i_perturbation_info in perturbations]
+        parameter_value = [np.array(i_parameter_value_dict[i_parameter_name][0]) if i_parameter_name != 'wt'
+                           else np.array(i_parameter_value_dict['ac'][0])
+                           for i_parameter_name, i_parameter_value_dict in zip(parameter_name, experiment_details)]
+        essential_parameter_value = [np.array(i_perturbation_info["ac"][0]) for i_perturbation_info in
+                                     experiment_details]
+        parameter_change_percentage = [i_parameter_change * 100 for i_parameter_change in parameter_change]
+        initial_value_ss_id = [int(i_ss_info['ssid']) for i_ss_info in self.wt_ss]
+        final_value_ss_id = [int(i_ss_info['ssid']) for i_ss_info in self.ss_info]
+        perturbation_names = [i_ss_info['id'] for i_ss_info in self.ss_info]
+        dict_fields = ['parameter_name', 'parameter_change', 'parameter_change_percentage', 'parameter_value',
+                       'initial_ss', 'final_ss', 'experiment_id', 'acetate']
+        experiment_info = dict(zip(dict_fields,
+                                   [parameter_name, parameter_change, parameter_change_percentage,
+                                    parameter_value, initial_value_ss_id, final_value_ss_id, perturbation_names,
+                                    essential_parameter_value]))
+
+        # convert final_ss to dictionary suitable for data frame creation
+        concentration_name, concentration_value, sample_name_info = self.create_ss_dict([i_ss["y"]
+                                                                                         for i_ss in self.ss_info],
+                                                                                        variable_type='metabolite',
+                                                                                        noise=self.noise)
+        flux_name, flux_value, _ = self.create_ss_dict([i_ss["flux"] for i_ss in self.ss_info], variable_type='flux',
+                                                       noise=self.noise)
+
+        # convert experiment_info to dict consistent with concentration_value and flux_value
+        for i_field_name in experiment_info:
+            new_field_value = self.create_other_value_dict(experiment_info[i_field_name],
+                                                           number_of_samples=self.sample_size, noise=self.noise)
+            experiment_info[i_field_name] = new_field_value
+
+        experiment_info.update(zip(concentration_name, concentration_value))
+        experiment_info.update(zip(flux_name, flux_value))
+        experiment_info.update({"sample_name": sample_name_info})
+
+        # prepare list of column names for dataframe
+        dict_fields = experiment_info.keys()
+        # experiment_info_df = pd.DataFrame(experiment_info, columns=dict_fields)
+
+        import pdb;pdb.set_trace()
+        return None
+
+    @staticmethod
+    def create_ss_dict(ss_info, variable_type, noise=0):
+        """create dictionary of all ss values variables-wise for use in creating data frames"""
+        if noise:
+            number_variables = len(ss_info[0][0])
+        else:
+            number_variables = len(ss_info[0])
+        variable_name_info = [variable_name(variable_type, j_variable) for j_variable in range(0, number_variables)]
+
+        variable_value_info = []
+        if noise:
+            for j_variable in range(0, number_variables):
+                j_variable_info = []
+                for i_sample_id, i_sample_info in enumerate(ss_info):
+                    for i_experiment_info in i_sample_info:
+                        j_variable_info.append(i_experiment_info[j_variable])
+                variable_value_info.append(j_variable_info)
+
+            sample_name_info = []
+            for i_sample_id, i_sample_info in enumerate(ss_info):
+                for _ in i_sample_info:
+                    sample_name_info.append('sample_{}'.format(i_sample_id))
+        else:
+            for j_variable in range(0, number_variables):
+                j_variable_info = []
+                for i_experiment_id, i_experiment_info in enumerate(ss_info):
+                    j_variable_info.append(i_experiment_info[j_variable])
+                variable_value_info.append(j_variable_info)
+
+            sample_name_info = []
+            i_sample_id = 0
+            for _ in ss_info:
+                sample_name_info.append('sample_{}'.format(i_sample_id))
+
+        return variable_name_info, variable_value_info, sample_name_info
+
+    @staticmethod
+    def create_other_value_dict(other_info, number_of_samples, noise=0):
+        """create dictionary of other values based on number of samples
+        to create consistent dict for data frame creation"""
+        all_sample_final_ss = []
+        for _ in range(0, number_of_samples):
+            for i_experiment_value in other_info:
+                all_sample_final_ss.append(i_experiment_value)
+        return all_sample_final_ss
 
 
 if __name__ == '__main__':
@@ -178,23 +311,6 @@ if __name__ == '__main__':
                               {"V3max": .1}, {"V3max": .5}, {"V3max": 1}, {"V3max": -.1}, {"V3max": -.5},
                               {"V2max": .1}, {"V2max": .5}, {"V2max": 1}, {"V2max": -.1}, {"V2max": -.5}]
 
-    # default set of parameters to begin simulations with
-    # model_parameters = [{"K1ac": np.array([.1]), "K3fdp": np.array([.1]), "L3fdp": np.array([4e6]),
-    #                      "K3pep": np.array([.1]), "K2pep": np.array([.3]), "vemax": np.array([1.1]),
-    #                      "Kefdp": np.array([.45]), "ne": np.array([2]), "d": np.array([.25]), "V4max": np.array([.2]),
-    #                      "k1cat": np.array([1]), "V3max": np.array([1]), "V2max": np.array([1]), "ac": np.array([.1])},
-    #                     {"K1ac": np.array([.1]), "K3fdp": np.array([.1]), "L3fdp": np.array([4e6]),
-    #                      "K3pep": np.array([.1]), "K2pep": np.array([.3]), "vemax": np.array([1.1]),
-    #                      "Kefdp": np.array([.45]), "ne": np.array([2]), "d": np.array([.25]), "V4max": np.array([.2]),
-    #                      "k1cat": np.array([1]), "V3max": np.array([1]), "V2max": np.array([1]), "ac": np.array([.01])},
-    #                     {"K1ac": np.array([.1]), "K3fdp": np.array([.1]), "L3fdp": np.array([4e6]),
-    #                      "K3pep": np.array([.1]), "K2pep": np.array([.3]), "vemax": np.array([1.1]),
-    #                      "Kefdp": np.array([.45]), "ne": np.array([2]), "d": np.array([.25]), "V4max": np.array([.2]),
-    #                      "k1cat": np.array([1]), "V3max": np.array([1]), "V2max": np.array([1]), "ac": np.array([.5])},
-    #                     {"K1ac": np.array([.1]), "K3fdp": np.array([.1]), "L3fdp": np.array([4e6]),
-    #                      "K3pep": np.array([.1]), "K2pep": np.array([.3]), "vemax": np.array([1.1]),
-    #                      "Kefdp": np.array([.45]), "ne": np.array([2]), "d": np.array([.25]), "V4max": np.array([.2]),
-    #                      "k1cat": np.array([1]), "V3max": np.array([1]), "V2max": np.array([1]), "ac": np.array([1])}]
     experiment_id = ['experiment_{}'.format(parameter_id) for parameter_id, _ in enumerate(parameter_perturbation)]
     experiment_details = model_1.change_parameter_values(parameter_perturbation)
 
