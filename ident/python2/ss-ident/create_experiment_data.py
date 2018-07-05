@@ -3,28 +3,51 @@ import pandas as pd
 import os.path
 from generate_expdata import generate_expdata
 from simulate_data import arrange_experimental_data
+from names_strings import true_parameter_values
+from run_sims import ModelSim
+import kotte_model
 
 
 def create_experiment_data(save_file_name, noise=0, kinetics=2, number_samples=1, noise_std=0.05):
     """run generate_expdata and store resulting experimental data as csv file from data frame"""
     # generate no-noise experimental data for testing identifiability
+    user_ode_opts = {'iter': 'Newton', 'discr': 'Adams', 'atol': 1e-10, 'rtol': 1e-10,
+                     'time_points': 200, 'display_progress': True, 'verbosity': 30}
+    # initial ss to begin all simulations from
     y0 = np.array([5, 1, 1])
-    # default parameter values
-    cvode_options = {'iter': 'Newton', 'discr': 'Adams', 'atol': 1e-10, 'rtol': 1e-10, 'time_points': 200}
-    ode_parameter_values = {"K1ac": np.array([.1]),
-                            "K3fdp": np.array([.1]),
-                            "L3fdp": np.array([4e6]),
-                            "K3pep": np.array([.1]),
-                            "K2pep": np.array([.3]),
-                            "vemax": np.array([1.1]),
-                            "Kefdp": np.array([.45]),
-                            "ne": np.array([2]),
-                            "d": np.array([.25]),
-                            "V4max": np.array([.2]),
-                            "k1cat": np.array([1]),
-                            "V3max": np.array([1]),
-                            "V2max": np.array([1]),
-                            "ac": np.array([.1])}
+    # get and set true parameter values, if available separately
+    default_parameters = true_parameter_values()
+
+    # create simulation object to simulate model with above parameters and initial conditions
+    model_1 = ModelSim(kotte_model.kotte_ck_ode, kotte_model.kotte_ck_flux, noise=noise, **{'kinetics': 2,
+                                                                                            'ode_opts': user_ode_opts,
+                                                                                            't_final': 200,
+                                                                                            'wt_y0': y0,
+                                                                                            'i_parameter':
+                                                                                                default_parameters,
+                                                                                            'sample_size':
+                                                                                                number_samples,
+                                                                                            'noise_std': noise_std})
+    # initial value determination for wt before perturbation
+    wt_ss, wt_dynamic = model_1.run_initial_sim([default_parameters], ['default_parameters'])
+
+    # all parameter perturbations
+    parameter_perturbation = [{"wt": 0}, {"ac": 1}, {"ac": 4}, {"ac": 9}, {"ac": -.1}, {"ac": -.5},
+                              {"k1cat": .1}, {"k1cat": .5}, {"k1cat": 1}, {"k1cat": -.1}, {"k1cat": -.5},
+                              {"V3max": .1}, {"V3max": .5}, {"V3max": 1}, {"V3max": -.1}, {"V3max": -.5},
+                              {"V2max": .1}, {"V2max": .5}, {"V2max": 1}, {"V2max": -.1}, {"V2max": -.5}]
+
+    experiment_id = ['experiment_{}'.format(parameter_id) for parameter_id, _ in enumerate(parameter_perturbation)]
+    experiment_details = model_1.change_parameter_values(parameter_perturbation)
+
+    # call model.simulate to get initial (WT) steady state for all parameter sets strating from same y0
+    model_1.sim_model(parameter=experiment_details, experiment_ids=experiment_id, initial_value=wt_ss['y'])
+
+    # create dictionary suitable for writing to df
+    import pdb; pdb.set_trace()
+    model_1.whatever(parameter_perturbation, experiment_details)
+
+
 
     # get experimental system steady state data without noise using Convenience Kinetics for v3 (kinetics = 2)
     experiment_df, multi_index_labels, dyn_df, dyn_labels = generate_expdata(y0, cvode_options, ode_parameter_values,
