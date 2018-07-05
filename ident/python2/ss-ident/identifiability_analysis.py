@@ -26,7 +26,7 @@ def call_truncate_method(ident_value_list, parameter_count, expression_count=3):
     """calculate truncate_values using map on list of values"""
     flux_ident_value = np.zeros((parameter_count, expression_count))
     for i, j in enumerate(ident_value_list):
-        trunc_value = map(truncate_values, j)
+        trunc_value = list(map(truncate_values, j))
         # trunc_value = map(float, trunc_value)
         flux_ident_value[i, :] = np.array(trunc_value)
     return flux_ident_value
