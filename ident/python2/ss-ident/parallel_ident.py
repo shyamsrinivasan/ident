@@ -44,7 +44,7 @@ class ParallelIdent(object):
         # but it can also be added later as more work become available
         #
         idx = pd.IndexSlice
-        all_df_indices = exp_df.index.tolist()
+        all_df_indices = exp_df.index.unique().tolist()
         # create tuple of indices
         import pdb;pdb.set_trace()
         for j_index, sample_data_set_id in enumerate(all_df_indices):
