@@ -132,7 +132,7 @@ class ModelIdent(object):
         self.ident_data = all_data
         return self
 
-    @staticmethod
+    # @staticmethod
     # def write_ident_info_file(all_data_dict, exp_df, file_name):
     #     """create data frame from identifiability data and write to csv file for future use"""
     #     # reset index of experimental data df
