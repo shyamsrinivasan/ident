@@ -58,9 +58,10 @@ class ModelIdent(object):
         sim_result = setup_parallel_ident(ident_fun=self.ident_fun, flux_id=self.flux_id, flux_choice=self.flux_choice,
                                           exp_data=reset_df)
         # collect, arrange and collate data
+        self._collect_ident_data(sim_result, [], [])
         return sim_result
 
-    def collect_ident_data(self, all_results, all_data_dict, empty_dict):
+    def _collect_ident_data(self, all_results, all_data_dict, empty_dict):
         """collect ident info for all data sets from all samples together"""
 
         # read experimental data from file (serially)
