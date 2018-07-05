@@ -18,7 +18,7 @@ def create_experiment_data(save_file_name, noise=0, kinetics=2, number_samples=1
     default_parameters = true_parameter_values()
 
     # create simulation object to simulate model with above parameters and initial conditions
-    model_1 = ModelSim(kotte_model.kotte_ck_ode, kotte_model.kotte_ck_flux, noise=noise, **{'kinetics': 2,
+    model_1 = ModelSim(kotte_model.kotte_ck_ode, kotte_model.kotte_ck_flux, noise=noise, **{'kinetics': kinetics,
                                                                                             'ode_opts': user_ode_opts,
                                                                                             't_final': 200,
                                                                                             'wt_y0': y0,
