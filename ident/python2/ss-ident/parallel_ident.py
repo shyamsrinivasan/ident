@@ -55,6 +55,7 @@ class ParallelIdent(object):
                                  sample_id=sample_data_set_id[0], data_set_id=sample_data_set_id[1])
 
         # Keeep starting slaves as long as there is work to do
+        import pdb;pdb.set_trace()
         all_boolean = []
         all_flux_id = []
         all_flux_choice = []
