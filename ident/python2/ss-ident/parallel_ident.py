@@ -54,11 +54,6 @@ class ParallelIdent(object):
                                  sample_id=sample_data_set_id[0], data_set_id=sample_data_set_id[1])
 
         # Keeep starting slaves as long as there is work to do
-        # all_boolean = []
-        # all_flux_id = []
-        # all_flux_choice = []
-        # all_data_set_id = []
-        # all_sample_id = []
         ident_results = []
         while not self.work_queue.done():
             # give more work to do to each idle slave (if any)
@@ -69,19 +64,11 @@ class ParallelIdent(object):
                 i_slave_result = {'done': complete, 'flux_id': flux_id, 'flux_choice': flux_choice, 'sample_id': sample_id,
                                   'data_set_id': data_set_id, 'ident_info': ident_info}
                 ident_results.append(i_slave_result)
-                # all_boolean.append(done)
-                # ident_results.append(ident_info)
-                # all_flux_id.append(slave_flux_id)
-                # all_flux_choice.append(slave_flux_choice)
-                # all_sample_id.append(sample_id)
-                # all_data_set_id.append(data_set_id)
 
                 if complete:
                     print('Master: slave finished its task returning: %s)' % str(data_set_id))
             # sleep some time
             # time.sleep(0.01)
-        # results = {'ident_info': ident_results, 'flux_id': all_flux_id, 'data_set_id': all_data_set_id,
-        #            'sample_id': all_sample_id, 'boolean': all_boolean}
         return ident_results
 
 
