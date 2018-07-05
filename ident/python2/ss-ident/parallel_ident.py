@@ -65,8 +65,8 @@ class ParallelIdent(object):
             self.work_queue.do_work()
             # reclaim returned data from completed slaves
             for slave_return_data in self.work_queue.get_completed_work():
-                done, ident_info, slave_flux_id, slave_flux_choice, sample_id, data_set_id = slave_return_data
-                i_slave_result = {'done': done, 'flux_id': flux_id, 'flux_choice': flux_choice, 'sample_id': sample_id,
+                complete, ident_info, slave_flux_id, slave_flux_choice, sample_id, data_set_id = slave_return_data
+                i_slave_result = {'done': complete, 'flux_id': flux_id, 'flux_choice': flux_choice, 'sample_id': sample_id,
                                   'data_set_id': data_set_id, 'ident_info': ident_info}
                 ident_results.append(i_slave_result)
                 # all_boolean.append(done)
@@ -76,10 +76,10 @@ class ParallelIdent(object):
                 # all_sample_id.append(sample_id)
                 # all_data_set_id.append(data_set_id)
 
-                if done:
+                if complete:
                     print('Master: slave finished its task returning: %s)' % str(data_set_id))
             # sleep some time
-            time.sleep(0.01)
+            # time.sleep(0.01)
         # results = {'ident_info': ident_results, 'flux_id': all_flux_id, 'data_set_id': all_data_set_id,
         #            'sample_id': all_sample_id, 'boolean': all_boolean}
         import pdb; pdb.set_trace()
@@ -112,21 +112,22 @@ class MySlave(Slave):
         flux_choice = data['flux_choice']
         sample_id = data['sample_id']
         data_set_id = data['data_set_id']
-        # try:
-        ident_info, _, _ = run_flux_ident(ident_fun, exp_data, flux_id, flux_choice)
-        #     done = True
-        # except TypeError:
-        #     done = False
+        try:
+            ident_info, _, _ = run_flux_ident(ident_fun, exp_data, flux_id, flux_choice)
+            complete = True
+        except TypeError:
+            ident_info = []
+            complete = False
 
         rank = MPI.COMM_WORLD.Get_rank()
         name = MPI.Get_processor_name()
 
         print('  Slave %s rank %d executing task (sample: %s, data set: %s)' % (name, rank, sample_id, data_set_id))
 
-        # if done:
-        return True, ident_info, flux_id, flux_choice, sample_id, data_set_id
-        # else:
-        #     return done, [], [], [], [], []
+        if complete:
+            return complete, ident_info, flux_id, flux_choice, sample_id, data_set_id
+        else:
+            return complete, [], [], [], [], []
 
 
 def setup_parallel_ident(ident_fun, flux_id, flux_choice, exp_data):
