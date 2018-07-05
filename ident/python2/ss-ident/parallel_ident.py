@@ -4,7 +4,7 @@ from mpi_master_slave import WorkQueue
 from identifiability_analysis import run_flux_ident
 import pandas as pd
 # import numpy as np
-# import time
+import time
 
 
 class ParallelIdent(object):
@@ -79,7 +79,7 @@ class ParallelIdent(object):
                 if done:
                     print('Master: slave finished its task returning: %s)' % str(data_set_id))
             # sleep some time
-            # time.sleep(0.3)
+            time.sleep(0.01)
         # results = {'ident_info': ident_results, 'flux_id': all_flux_id, 'data_set_id': all_data_set_id,
         #            'sample_id': all_sample_id, 'boolean': all_boolean}
         return ident_results
