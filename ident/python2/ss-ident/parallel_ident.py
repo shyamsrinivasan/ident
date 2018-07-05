@@ -123,7 +123,7 @@ class MySlave(Slave):
         print('  Slave %s rank %d executing task (sample: %s, data set: %s)' % (name, rank, sample_id, data_set_id))
 
         # if done:
-        return ident_info, flux_id, flux_choice, sample_id, data_set_id
+        return True, ident_info, flux_id, flux_choice, sample_id, data_set_id
         # else:
         #     return done, [], [], [], [], []
 
