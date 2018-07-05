@@ -45,7 +45,6 @@ class ParallelIdent(object):
         idx = pd.IndexSlice
         all_df_indices = exp_df.index.tolist()
         # create tuple of indices
-        import pdb; pdb.set_trace()
         for j_index, sample_data_set_id in enumerate(all_df_indices):
             j_exp_data_set = exp_df.loc[idx[sample_data_set_id],
                                         ['acetate', 'pep', 'fdp', 'E', 'v1', 'v2', 'v3', 'v5']].values.tolist()
@@ -60,6 +59,7 @@ class ParallelIdent(object):
         all_data_set_id = []
         all_sample_id = []
         ident_results = []
+        import pdb;        pdb.set_trace()
         while not self.work_queue.done():
             # give more work to do to each idle slave (if any)
             self.work_queue.do_work()
