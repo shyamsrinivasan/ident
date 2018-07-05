@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import os.path
-from generate_expdata import generate_expdata
 from simulate_data import arrange_experimental_data
 from names_strings import true_parameter_values
 from run_sims import ModelSim
@@ -50,12 +49,13 @@ def create_experiment_data(save_file_name, noise=0, kinetics=2, number_samples=1
 
 
     # get experimental system steady state data without noise using Convenience Kinetics for v3 (kinetics = 2)
-    experiment_df, multi_index_labels, dyn_df, dyn_labels = generate_expdata(y0, cvode_options, ode_parameter_values,
-                                                                             noise=noise, kinetics=kinetics,
-                                                                             dynamic_plot=0, perturbation_plot=0,
-                                                                             number_of_samples=number_samples, noise_std=noise_std)
+    # experiment_df, multi_index_labels, dyn_df, dyn_labels = generate_expdata(y0, cvode_options, ode_parameter_values,
+    #                                                                          noise=noise, kinetics=kinetics,
+    #                                                                          dynamic_plot=0, perturbation_plot=0,
+    #                                                                          number_of_samples=number_samples, noise_std=noise_std)
     # save data frame to csv file
-    experiment_df.to_csv(save_file_name, index_label=multi_index_labels)
+    # experiment_df.to_csv(save_file_name, index_label=multi_index_labels)
+    experiment_df = []
     # dyn_df.to_csv(save_dyn_file_name, index_label=dyn_labels)
     return experiment_df
 
