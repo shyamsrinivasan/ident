@@ -37,7 +37,7 @@ def run_flux_ident(ident_function, data, flux_id=(), flux_choice=()):
     ident_value = ident_function(data)
     # truncate results
     truncated_ident_value = call_truncate_method(ident_value, len(ident_value))
-    
+
     return truncated_ident_value, flux_id, flux_choice
 
 
