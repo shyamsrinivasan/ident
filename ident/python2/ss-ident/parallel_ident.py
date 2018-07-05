@@ -123,7 +123,7 @@ class MySlave(Slave):
         rank = MPI.COMM_WORLD.Get_rank()
         name = MPI.Get_processor_name()
 
-        print('  Slave %s rank %d executing task (sample: %d, data set: %d)' % (name, rank, sample_id, data_set_id))
+        print('  Slave %s rank %d executing task (sample: %s, data set: %s)' % (name, rank, sample_id, data_set_id))
 
         if done:
             return done, ident_info, all_flux_id, all_flux_choice, sample_id, data_set_id
