@@ -122,7 +122,6 @@ class ModelIdent(object):
                     temp_dict["identified"] = True
                 else:
                     temp_dict["identified"] = False
-                import pdb;pdb.set_trace()
                 for key, value in it.chain(empty_dict.items(), temp_dict.items()):
                     all_data[key].append(value)
         import pdb;pdb.set_trace()
