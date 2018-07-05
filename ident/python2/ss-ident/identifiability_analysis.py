@@ -32,34 +32,34 @@ def call_truncate_method(ident_value_list, parameter_count, expression_count=3):
     return flux_ident_value
 
 
-def run_flux_ident(ident_function_list, data, flux_id=(), flux_choice=()):
+def run_flux_ident(ident_function, data, flux_id=(), flux_choice=()):
     """test identifibaility using each function in function list for data set in set"""
-    ident_value_list = []
+    # ident_value_list = []
     # flux_id_list = []
     # flux_choice_list = []
-    iterator = 0
-    if not flux_id:
-        flux_id = range(1, len(ident_function_list)+1)
-        flux_choice = [0] * len(ident_function_list)
-    try:
-        for func, i_d in zip(ident_function_list, flux_id):
-            ident_value = func(data)
-            ident_value_list.append(ident_value)
+    # iterator = 0
+    # if not flux_id:
+    #     flux_id = range(1, len(ident_function_list)+1)
+    #     flux_choice = [0] * len(ident_function_list)
+    # try:
+    #     for func, i_d in zip(ident_function_list, flux_id):
+    #         ident_value = func(data)
+    #         ident_value_list.append(ident_value)
             # flux_id_list.append(i_d)
             # flux_choice_list.append(flux_choice[iterator])
-            iterator += 1
-    except TypeError:
-        ident_value = ident_function_list(data)
-        ident_value_list.append(ident_value)
+            # iterator += 1
+    # except TypeError:
+    ident_value = ident_function(data)
+    # ident_value_list.append(ident_value)
         # flux_id_list.append(flux_id)
         # flux_choice_list.append(flux_choice)
 
-    all_flux_ident = []
-    for iflux in ident_value_list:
-        truncated_ident_value = call_truncate_method(iflux, len(iflux))
-        ident_value_list = [np.array(i_parameter) for i_parameter in list(truncated_ident_value)]
-        all_flux_ident.append(ident_value_list)
-    return all_flux_ident, flux_id, flux_choice
+    # all_flux_ident = []
+    # for iflux in ident_value_list:
+    truncated_ident_value = call_truncate_method(ident_value, len(ident_value))
+    ident_value_list = [np.array(i_parameter) for i_parameter in list(truncated_ident_value)]
+    # all_flux_ident.append(ident_value_list)
+    return ident_value_list, flux_id, flux_choice
 
 
 def get_ident_value(ident_function_list, experimental_data_list, flux_ids, flux_choice):
@@ -136,6 +136,40 @@ def collect_ident_data(j_sample_name, j_sample_ident_data, flux_ids, flux_choice
                     all_data_dict[key].append(value)
 
     return all_data_dict
+
+#
+# def collate_ident_data(sample_id, data_set_id, ident_data, flux_id, flux_choice, all_data_dict, empty_dict):
+#     """collect and collate identifiability info from all samples and all data sets"""
+#
+#     temp_dict = {}
+#     for j_data_set, j_data_set_info in enumerate(ident_data):
+#         data_set_name = 'data_set_{}'.format(j_data_set)
+#         for j_flux, j_flux_data in enumerate(j_data_set_info):
+#             flux_name = 'flux{}'.format(flux_ids[j_flux])
+#             # all_parameter names
+#             all_parameter_names = [ident_parameter_name(j_parameter,
+#                                                         flux_name,
+#                                                         flux_choice[j_flux])
+#                                    for j_parameter in range(0, len(j_flux_data))]
+#             for i_parameter, i_parameter_info in enumerate(j_flux_data):
+#                 temp_dict["flux_name"] = flux_name
+#                 temp_dict["flux_choice"] = flux_choice[j_flux]
+#                 # replace with call to parameter name file
+#                 temp_dict["parameter_name"] = all_parameter_names[i_parameter]
+#                 i_parameter_nr, i_parameter_dr, i_parameter_value = i_parameter_info
+#                 temp_dict["parameter_nr"] = i_parameter_nr
+#                 temp_dict["parameter_dr"] = i_parameter_dr
+#                 temp_dict["parameter_value"] = i_parameter_value
+#                 temp_dict["data_set_id"] = data_set_name
+#                 temp_dict["sample_name"] = j_sample_name
+#                 if i_parameter_value > 0:
+#                     temp_dict["identified"] = True
+#                 else:
+#                     temp_dict["identified"] = False
+#                 for key, value in it.chain(empty_dict.items(), temp_dict.items()):
+#                     all_data_dict[key].append(value)
+#
+#     return all_data_dict
 
 
 def multi_sample_ident_fun(ident_fun_list, all_data_df, flux_ids, flux_choice):
