@@ -56,6 +56,7 @@ def run_flux_ident(ident_function, data, flux_id=(), flux_choice=()):
 
     # all_flux_ident = []
     # for iflux in ident_value_list:
+    import pdb;pdb.set_trace()
     truncated_ident_value = call_truncate_method(ident_value, len(ident_value))
     ident_value_list = [np.array(i_parameter) for i_parameter in list(truncated_ident_value)]
     # all_flux_ident.append(ident_value_list)
