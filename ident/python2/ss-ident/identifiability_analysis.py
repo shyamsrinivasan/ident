@@ -35,8 +35,8 @@ def call_truncate_method(ident_value_list, parameter_count, expression_count=3):
 def run_flux_ident(ident_function_list, data, flux_id=(), flux_choice=()):
     """test identifibaility using each function in function list for data set in set"""
     ident_value_list = []
-    flux_id_list = []
-    flux_choice_list = []
+    # flux_id_list = []
+    # flux_choice_list = []
     iterator = 0
     if not flux_id:
         flux_id = range(1, len(ident_function_list)+1)
@@ -45,21 +45,21 @@ def run_flux_ident(ident_function_list, data, flux_id=(), flux_choice=()):
         for func, i_d in zip(ident_function_list, flux_id):
             ident_value = func(data)
             ident_value_list.append(ident_value)
-            flux_id_list.append(i_d)
-            flux_choice_list.append(flux_choice[iterator])
+            # flux_id_list.append(i_d)
+            # flux_choice_list.append(flux_choice[iterator])
             iterator += 1
     except TypeError:
         ident_value = ident_function_list(data)
         ident_value_list.append(ident_value)
-        flux_id_list.append(flux_id)
-        flux_choice_list.append(flux_choice)
+        # flux_id_list.append(flux_id)
+        # flux_choice_list.append(flux_choice)
 
     all_flux_ident = []
     for iflux in ident_value_list:
         truncated_ident_value = call_truncate_method(iflux, len(iflux))
         ident_value_list = [np.array(i_parameter) for i_parameter in list(truncated_ident_value)]
         all_flux_ident.append(ident_value_list)
-    return all_flux_ident, flux_id_list, flux_choice_list
+    return all_flux_ident, flux_id, flux_choice
 
 
 def get_ident_value(ident_function_list, experimental_data_list, flux_ids, flux_choice):
