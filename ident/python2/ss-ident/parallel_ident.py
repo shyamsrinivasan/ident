@@ -111,21 +111,21 @@ class MySlave(Slave):
         flux_choice = data['flux_choice']
         sample_id = data['sample_id']
         data_set_id = data['data_set_id']
-        try:
-            ident_info, _, _ = run_flux_ident(ident_fun, exp_data, flux_id, flux_choice)
-            done = True
-        except TypeError:
-            done = False
+        # try:
+        ident_info, _, _ = run_flux_ident(ident_fun, exp_data, flux_id, flux_choice)
+        #     done = True
+        # except TypeError:
+        #     done = False
 
         rank = MPI.COMM_WORLD.Get_rank()
         name = MPI.Get_processor_name()
 
         print('  Slave %s rank %d executing task (sample: %s, data set: %s)' % (name, rank, sample_id, data_set_id))
 
-        if done:
-            return done, ident_info, flux_id, flux_choice, sample_id, data_set_id
-        else:
-            return done, [], [], [], [], []
+        # if done:
+        return ident_info, flux_id, flux_choice, sample_id, data_set_id
+        # else:
+        #     return done, [], [], [], [], []
 
 
 def setup_parallel_ident(ident_fun, flux_id, flux_choice, exp_data):
