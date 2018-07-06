@@ -50,8 +50,14 @@ class ModelIdent(object):
         experiment_df = pd.read_csv(self.arranged_data_file, index_col=self.arranged_index_label)
 
         if original_exp:
-            experiment_df = pd.read_csv(self.arranged_data_file, index_col=self.original_index_label)
+            experiment_df = pd.read_csv(self.original_exp_file, index_col=self.original_index_label)
         return experiment_df
+
+    def retrieve_ident_df_from_file(self):
+        """retrieve identifiability data from csv file to dataframe"""
+        # read dataframe from csv file
+        ident_df = pd.read_csv(self.ident_file, index_col=self.ident_index_label)
+        return ident_df
 
     def perform_ident(self):
         # read experimental data from file (serially)
