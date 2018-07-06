@@ -3,6 +3,7 @@ from names_strings import default_ident_parameter_name
 from collections import defaultdict
 import pandas as pd
 import itertools as it
+import numpy as np
 import os.path
 import kotte_model
 
@@ -43,20 +44,31 @@ class ModelIdent(object):
         self.unique_indices = []
         self.ident_data = []
         self.ident_index_label = []
+        self.processed_info = {}
 
     def retrieve_df_from_file(self, original_exp=0):
         """retrieve experimental data from csv file"""
         # read dataframe from csv file
         experiment_df = pd.read_csv(self.arranged_data_file, index_col=self.arranged_index_label)
 
+        # lexographic ordering of exp df indices
+        experiment_df.sort_index(level='sample_name', inplace=True)
+        experiment_df.sort_index(level='data_set_id', inplace=True)
+
         if original_exp:
             experiment_df = pd.read_csv(self.original_exp_file, index_col=self.original_index_label)
+
         return experiment_df
 
     def retrieve_ident_df_from_file(self):
         """retrieve identifiability data from csv file to dataframe"""
         # read dataframe from csv file
         ident_df = pd.read_csv(self.ident_file, index_col=self.ident_index_label)
+
+        # lexicographic sorting of indices in ident_df
+        ident_df.sort_index(level='sample_name', inplace=True)
+        ident_df.sort_index(level='data_set_id', inplace=True)
+
         return ident_df
 
     def perform_ident(self):
@@ -65,8 +77,8 @@ class ModelIdent(object):
 
         reset_df = arranged_df.reset_index('experiment_id')
         # lexographic ordering of df indices
-        reset_df.sort_index(level='data_set_id', inplace=True)
-        reset_df.sort_index(level='sample_name', inplace=True)
+        # reset_df.sort_index(level='data_set_id', inplace=True)
+        # reset_df.sort_index(level='sample_name', inplace=True)
 
         # run ident analysis in parallel
         sim_result = setup_parallel_ident(ident_fun=self.ident_fun, flux_id=self.flux_id, flux_choice=self.flux_choice,
@@ -86,8 +98,8 @@ class ModelIdent(object):
 
         reset_df = arranged_df.reset_index('experiment_id')
         # lexographic ordering of df indices
-        reset_df.sort_index(level='data_set_id', inplace=True)
-        reset_df.sort_index(level='sample_name', inplace=True)
+        # reset_df.sort_index(level='data_set_id', inplace=True)
+        # reset_df.sort_index(level='sample_name', inplace=True)
 
         # arrange results based on original experimental df
         all_df_indices = reset_df.index.unique().tolist()
@@ -104,8 +116,8 @@ class ModelIdent(object):
         # remove index experiment_id
         reset_df = arranged_df.reset_index('experiment_id')
         # lexographic ordering of remaining df indices
-        reset_df.sort_index(level='data_set_id', inplace=True)
-        reset_df.sort_index(level='sample_name', inplace=True)
+        # reset_df.sort_index(level='data_set_id', inplace=True)
+        # reset_df.sort_index(level='sample_name', inplace=True)
         temp_dict = {}
         all_data = defaultdict(list)
         empty_dict = {}
@@ -139,7 +151,7 @@ class ModelIdent(object):
 
         # reset index of experimental data df
         reset_exp_df = arranged_df.reset_index("sample_name")
-        reset_exp_df.sort_index(level='data_set_id', inplace=True)
+        # reset_exp_df.sort_index(level='data_set_id', inplace=True)
         reset_exp_df.reset_index("data_set_id", inplace=True)
 
         # create data frame
@@ -201,6 +213,222 @@ class ModelIdent(object):
         print('Identifiability Data written to given file\n')
         return ident_data_df
 
+    @staticmethod
+    def __parameter_ident_info(ident_df):
+        """returns info on identifiability and value of each parameter in df"""
+        # get parameter names
+        all_parameter_names = ident_df["parameter_name"].unique().tolist()
+
+        all_p_values = []
+        all_p_data_set_names = []
+        all_p_identifiability = []
+        total_data_sets = []
+        all_p_sample_names = []
+        for i_parameter_name in all_parameter_names:
+            # get all data sets identifying each parameter
+            identifying_df = ident_df[(ident_df["parameter_name"] == i_parameter_name) & (ident_df["identified"])]
+
+            # get data set names
+            all_p_data_set_names.append([i_value[1] for i_value in identifying_df.index.values])
+            all_p_identifiability.append(len(all_p_data_set_names[-1]))
+
+            # get parameter values
+            all_p_values.append([np.array(i_value) for i_value in identifying_df["parameter_value"].values])
+            total_data_sets.append(len(ident_df.index.levels[1]))
+            all_p_sample_names.append([i_value[0] for i_value in identifying_df.index.values])
+
+        all_p_info = {"parameter_names": all_parameter_names,
+                      "parameter_values": all_p_values,
+                      "identifiability": all_p_identifiability,
+                      "data_sets": all_p_data_set_names,
+                      "total_data_sets": total_data_sets,
+                      "identifiability_percentage": [np.array(float(i_nr) * 100 / float(i_dr)) for i_nr, i_dr in
+                                                     zip(all_p_identifiability, total_data_sets)],
+                      "sample_name": all_p_sample_names}
+        return all_p_info
+
+    @staticmethod
+    def __sample_ident_info(all_sample_info):
+        """return calculated mean identifiability and std in identifiability
+        from all samples for all parameters"""
+        # get common data sets identifying all parameters in all samples
+        number_parameters = len(all_sample_info[0]["parameter_names"])
+
+        all_identifiabilites = [i_sample_info["identifiability"] for i_sample_info in all_sample_info]
+        sample_mean_identifiability = np.mean(np.array(all_identifiabilites), axis=0)
+        sample_std_identifiability = np.std(np.array(all_identifiabilites), axis=0)
+
+        sample_mean_ident = [np.array(i_parameter_ident) for i_parameter_ident in sample_mean_identifiability]
+        sample_std_ident = [np.array(i_parameter_ident) for i_parameter_ident in sample_std_identifiability]
+
+        all_identifiabilites_percent = [i_sample_info["identifiability_percentage"]
+                                        for i_sample_info in all_sample_info]
+
+        sample_mean_identifiability_percent = np.mean(np.array(all_identifiabilites_percent), axis=0)
+        sample_std_identifiability_percent = np.std(np.array(all_identifiabilites_percent), axis=0)
+
+        sample_mean_ident_percent = [np.array(i_parameter_ident) for i_parameter_ident in
+                                     sample_mean_identifiability_percent]
+        sample_std_ident_percent = [np.array(i_parameter_ident) for i_parameter_ident in
+                                    sample_std_identifiability_percent]
+
+        all_sample_data_pair = [[i_p for i_sample in all_sample_info
+                                 for i_p in
+                                 zip(i_sample["sample_name"][i_parameter], i_sample["data_sets"][i_parameter])]
+                                for i_parameter in range(0, number_parameters)]
+        ident_dict = {"ident_mean": sample_mean_ident,
+                      "ident_std": sample_std_ident,
+                      "ident_percent_mean": sample_mean_ident_percent,
+                      "ident_percent_std": sample_std_ident_percent,
+                      "sample_data_set_id": all_sample_data_pair}
+        return ident_dict
+
+    @staticmethod
+    def __parameter_exp_info(ident_df, exp_df, parameter_ident_info):
+        """return experiment type information for each parameter"""
+        # get parameter names
+        all_parameter_names = ident_df["parameter_name"].unique().tolist()
+        number_experiments = len(all_parameter_names)
+        exp_column_ids = ['experiment_{}_parameter'.format(i_experiment) for i_experiment in
+                          range(0, number_experiments)]
+        exp_column_name = ['experiment_{}'.format(i_experiment) for i_experiment in range(0, number_experiments)]
+
+        # all possible ss perturbation experiment types classified on the basis of parameter perturbed
+        all_possible_perturbations = set.union(set(exp_df["parameter_name"].unique()),
+                                               {'wt', 'ac', 'k1cat', 'V2max', 'V3max'})
+        all_parameter_exp_info = []
+        for i_parameter, i_parameter_name in enumerate(all_parameter_names):
+            # get all data sets identifying each parameter
+            identifying_df = ident_df[(ident_df["parameter_name"] == i_parameter_name) & (ident_df["identified"])]
+            all_experiment_info = {}
+            # get frequency of each experiment
+            for i_experiment, i_experiment_pos in enumerate(exp_column_ids):
+                exp_frequency = identifying_df[i_experiment_pos].value_counts()
+                # get name value pairs
+                name_value_pair = [(j_name, np.array(float(j_value) * 100 / parameter_ident_info[i_parameter]))
+                                   for j_name, j_value in zip(exp_frequency.index.values, exp_frequency.values)]
+                # add missing experiment type with value = 0
+                missing_perturbation = all_possible_perturbations.difference(exp_frequency.index.values)
+                name_value_pair = name_value_pair + zip(missing_perturbation, [0.0] * len(missing_perturbation))
+                # names, values = map(list, zip(*name_value_pair))
+                # arrange name/values in desired order for every parameter
+                given_value = []
+                for i_given_name in all_possible_perturbations:
+                    given_value.append([i_obtained_value for i_obtained_name, i_obtained_value in name_value_pair
+                                        if i_given_name == i_obtained_name][0])
+                all_experiment_info.update({exp_column_name[i_experiment]: {"names": list(all_possible_perturbations),
+                                                                            "frequency": given_value}})
+            all_parameter_exp_info.append(all_experiment_info)
+
+        return all_parameter_exp_info
+
+    def process_ident(self, ident=1, exp_info=1):
+        """process ident data to create final data frame of results for plotting"""
+
+        # retrieve arranged experimental data from file
+        exp_df = self.retrieve_df_from_file()
+
+        # lexographic ordering of exp df indices
+        exp_df.sort_index(level='experiment_id', inplace=True)
+
+        # retrieve ident data from file
+        ident_df = self.retrieve_ident_df_from_file()
+
+        idx = pd.IndexSlice
+
+        # number of samples
+        import pdb;pdb.set_trace()
+        sample_names = ident_df.index.levels[0].values.tolist()
+        number_samples = len(sample_names)
+
+        if ident:
+            # parameter identifiability information for each sample
+            all_sample_info = []
+            for i_sample in sample_names:
+                j_sample_info = ident_df.loc[idx[i_sample, :], :]
+                # get all data sets identifying each parameter in each sample
+                all_p_info = self.__parameter_ident_info(j_sample_info)
+                all_sample_info.append(all_p_info)
+
+            ident_dict = self.__sample_ident_info(all_sample_info)
+        else:
+            ident_dict = {}
+
+        # parameter identifiability information for all samples along with mean and std between samples
+        import pdb;pdb.set_trace()
+        all_parameter_info = self.__parameter_ident_info(ident_df)
+        all_parameter_info.update(ident_dict)
+
+        # get experiment information for each parameter (only for noise-less data)
+        # number_experiments = len(all_parameter_info["names"])
+        if exp_info and number_samples == 1:
+            exp_info = self.__parameter_exp_info(ident_df, exp_df, all_parameter_info["ident_mean"])
+        else:
+            exp_info = []
+        import pdb; pdb.set_trace()
+        all_parameter_info.update({"exp_info": exp_info})
+
+        # get flux names
+        all_flux_names = ident_df["flux_name"].unique().tolist() * len(all_parameter_info["names"])
+        all_parameter_info.update({"flux_name": all_flux_names})
+
+        self.processed_info = all_parameter_info
+
+        import pdb; pdb.set_trace()
+        return self
+
+    # def parameter_values_plot(info_dict, original_values=(), violin=False, box=True, bins=[]):
+    #     """plot distribution of parameter values as a box plot, violin plot and/or histogram"""
+    #     number_parameters = len(info_dict["names"])
+    #     if box:
+    #         f1 = plt.figure(figsize=(10, 8), dpi=100, tight_layout=True)
+    #         plot_grid = gridspec.GridSpec(2, number_parameters)
+    #
+    #         # plot box plot
+    #         box_axis = f1.add_subplot(plot_grid[0, :])
+    #         if original_values:
+    #             plot_on_axis_object_box(box_axis, info_dict["values"],
+    #                                     mark_value=[original_values[i_name] for i_name in info_dict["names"]])
+    #         else:
+    #             plot_on_axis_object_box(box_axis, info_dict["values"],
+    #                                     mark_value=[])
+    #         box_axis.set_xticklabels(info_dict["names"])
+    #
+    #         # plot histogram
+    #         for i_parameter, (i_parameter_value, i_parameter_name) in enumerate(
+    #                 zip(info_dict["values"], info_dict["names"])):
+    #             # parameter_name = info_dict["names"][i_parameter]
+    #             hist_axis = f1.add_subplot(plot_grid[1, i_parameter])
+    #             if original_values:
+    #                 plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=original_values[i_parameter_name],
+    #                                          parameter_name=i_parameter_name, bins=bins)
+    #             else:
+    #                 plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=[],
+    #                                          parameter_name=i_parameter_name, bins=bins)
+    #
+    #     if violin:
+    #         f2 = plt.figure(figsize=(10, 8), dpi=100, tight_layout=True)
+    #         plot_grid = gridspec.GridSpec(2, number_parameters)
+    #
+    #         # plot box plot
+    #         violin_axis = f2.add_subplot(plot_grid[0, :])
+    #         plot_on_axis_object_violin(violin_axis, info_dict["values"])
+    #         violin_axis.set_xticks(np.arange(1, len(info_dict["names"]) + 1))
+    #         violin_axis.set_xticklabels(info_dict["names"])
+    #
+    #         # plot histogram
+    #         for i_parameter, (i_parameter_value, i_parameter_name) in enumerate(
+    #                 zip(info_dict["values"], info_dict["names"])):
+    #             # parameter_name = info_dict["names"][i_parameter]
+    #             hist_axis = f2.add_subplot(plot_grid[1, i_parameter])
+    #             if original_values:
+    #                 plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=original_values[i_parameter_name],
+    #                                          parameter_name=i_parameter_name)
+    #             else:
+    #                 plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=[],
+    #                                          parameter_name=i_parameter_name)
+    #     return None
+
 
 if __name__ == '__main__':
     # extract experimental data from file
@@ -214,6 +442,8 @@ if __name__ == '__main__':
     # test identifiability
     print('Practical Identifiability Analysis of v1 with 2 parameters: k1cat and K1ac\n')
     ident_data_df = v1_ident.perform_ident()
+
+    v1_ident.process_ident()
 
     # # test identifiability and store data to file
     # from kotte_model import flux_ident_2_data_combination
