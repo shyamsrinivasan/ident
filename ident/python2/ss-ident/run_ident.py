@@ -1,9 +1,12 @@
 from parallel_ident import setup_parallel_ident
-from names_strings import default_ident_parameter_name
+from names_strings import default_ident_parameter_name, true_parameter_values
 from collections import defaultdict
+from plot_ident_results import plot_on_axis_object_box, plot_on_axis_object_hist, plot_on_axis_object_violin
 import pandas as pd
 import itertools as it
 import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 import os.path
 import kotte_model
 
@@ -13,6 +16,7 @@ class ModelIdent(object):
         self.ident_fun = ident_fun
         self.arranged_data_file = arranged_data_file_name
         self.ident_file = ident_data_file_name
+
         try:
             self.original_exp_file = kwargs['original_exp_file']
         except KeyError:
@@ -40,6 +44,11 @@ class ModelIdent(object):
             self.original_index_label = kwargs['original_index_label']
         except KeyError:
             self.original_index_label = ['sample_name', 'experiment_id']
+
+        try:
+            self.ident_figure = kwargs['ident_figure']
+        except KeyError:
+            self.ident_figure = ''
 
         self.unique_indices = []
         self.ident_data = []
@@ -374,76 +383,83 @@ class ModelIdent(object):
 
         self.processed_info = all_parameter_info
 
-        import pdb; pdb.set_trace()
         return self
 
-    # def parameter_values_plot(info_dict, original_values=(), violin=False, box=True, bins=[]):
-    #     """plot distribution of parameter values as a box plot, violin plot and/or histogram"""
-    #     number_parameters = len(info_dict["names"])
-    #     if box:
-    #         f1 = plt.figure(figsize=(10, 8), dpi=100, tight_layout=True)
-    #         plot_grid = gridspec.GridSpec(2, number_parameters)
-    #
-    #         # plot box plot
-    #         box_axis = f1.add_subplot(plot_grid[0, :])
-    #         if original_values:
-    #             plot_on_axis_object_box(box_axis, info_dict["values"],
-    #                                     mark_value=[original_values[i_name] for i_name in info_dict["names"]])
-    #         else:
-    #             plot_on_axis_object_box(box_axis, info_dict["values"],
-    #                                     mark_value=[])
-    #         box_axis.set_xticklabels(info_dict["names"])
-    #
-    #         # plot histogram
-    #         for i_parameter, (i_parameter_value, i_parameter_name) in enumerate(
-    #                 zip(info_dict["values"], info_dict["names"])):
-    #             # parameter_name = info_dict["names"][i_parameter]
-    #             hist_axis = f1.add_subplot(plot_grid[1, i_parameter])
-    #             if original_values:
-    #                 plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=original_values[i_parameter_name],
-    #                                          parameter_name=i_parameter_name, bins=bins)
-    #             else:
-    #                 plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=[],
-    #                                          parameter_name=i_parameter_name, bins=bins)
-    #
-    #     if violin:
-    #         f2 = plt.figure(figsize=(10, 8), dpi=100, tight_layout=True)
-    #         plot_grid = gridspec.GridSpec(2, number_parameters)
-    #
-    #         # plot box plot
-    #         violin_axis = f2.add_subplot(plot_grid[0, :])
-    #         plot_on_axis_object_violin(violin_axis, info_dict["values"])
-    #         violin_axis.set_xticks(np.arange(1, len(info_dict["names"]) + 1))
-    #         violin_axis.set_xticklabels(info_dict["names"])
-    #
-    #         # plot histogram
-    #         for i_parameter, (i_parameter_value, i_parameter_name) in enumerate(
-    #                 zip(info_dict["values"], info_dict["names"])):
-    #             # parameter_name = info_dict["names"][i_parameter]
-    #             hist_axis = f2.add_subplot(plot_grid[1, i_parameter])
-    #             if original_values:
-    #                 plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=original_values[i_parameter_name],
-    #                                          parameter_name=i_parameter_name)
-    #             else:
-    #                 plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=[],
-    #                                          parameter_name=i_parameter_name)
-    #     return None
+    def parameter_values_plot(self, original_values=(), violin=False, box=True, bins=1):
+        """plot distribution of parameter values as a box plot, violin plot and/or histogram"""
+        number_parameters = len(self.processed_info["parameter_names"])
+        if box:
+            f1 = plt.figure(figsize=(10, 8), dpi=100, tight_layout=True)
+            plot_grid = gridspec.GridSpec(2, number_parameters)
+
+            # plot box plot
+            box_axis = f1.add_subplot(plot_grid[0, :])
+            if original_values:
+                plot_on_axis_object_box(box_axis, self.processed_info["parameter_values"],
+                                        mark_value=[original_values[i_name] for i_name in
+                                                    self.processed_info["parameter_names"]])
+            else:
+                plot_on_axis_object_box(box_axis, self.processed_info["parameter_values"],
+                                        mark_value=[])
+            box_axis.set_xticklabels(self.processed_info['parameter_names'])
+
+            # plot histogram
+            for i_parameter, (i_parameter_value, i_parameter_name) in enumerate(
+                    zip(self.processed_info["parameter_values"], self.processed_info['parameter_names'])):
+                # parameter_name = info_dict["names"][i_parameter]
+                hist_axis = f1.add_subplot(plot_grid[1, i_parameter])
+                if original_values:
+                    plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=original_values[i_parameter_name],
+                                             parameter_name=i_parameter_name, bins=bins)
+                else:
+                    plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=[],
+                                             parameter_name=i_parameter_name, bins=bins)
+
+        if violin:
+            f2 = plt.figure(figsize=(10, 8), dpi=100, tight_layout=True)
+            plot_grid = gridspec.GridSpec(2, number_parameters)
+
+            # plot box plot
+            violin_axis = f2.add_subplot(plot_grid[0, :])
+            plot_on_axis_object_violin(violin_axis, self.processed_info["parameter_values"])
+            violin_axis.set_xticks(np.arange(1, len(self.processed_info['parameter_names']) + 1))
+            violin_axis.set_xticklabels(self.processed_info['parameter_names'])
+
+            # plot histogram
+            for i_parameter, (i_parameter_value, i_parameter_name) in enumerate(
+                    zip(self.processed_info["parameter_values"], self.processed_info['parameter_names'])):
+                # parameter_name = info_dict["names"][i_parameter]
+                hist_axis = f2.add_subplot(plot_grid[1, i_parameter])
+                if original_values:
+                    plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=original_values[i_parameter_name],
+                                             parameter_name=i_parameter_name)
+                else:
+                    plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=[],
+                                             parameter_name=i_parameter_name)
+
+        plt.savefig(self.ident_figure, format='eps', dpi=1000)
+        return None
 
 
 if __name__ == '__main__':
     # extract experimental data from file
-    original_experiment_file = os.path.join(os.getcwd(), 'exp/experiments')
-    arranged_data_file = os.path.join(os.getcwd(), 'exp/exp_v1_2_experiments')
-    storage_file_name = os.path.join(os.getcwd(), 'ident/ident_v1_kcat')
+    exp_figure = os.path.join(os.getcwd(), 'results/v1_kcat_exp.eps')
+    default_parameter_values = true_parameter_values()
 
-    v1_ident = ModelIdent(ident_fun=kotte_model.flux_1_kcat_ident, arranged_data_file_name=arranged_data_file,
-                          ident_data_file_name=storage_file_name, **{'original_exp_file': original_experiment_file,
-                                                                     'flux_id': 1, 'flux_choice': 2})
+    v1_ident = ModelIdent(ident_fun=kotte_model.flux_1_kcat_ident,
+                          arranged_data_file_name=os.path.join(os.getcwd(), 'exp/exp_v1_2_experiments'),
+                          ident_data_file_name=os.path.join(os.getcwd(), 'ident/ident_v1_kcat'),
+                          **{'original_exp_file': os.path.join(os.getcwd(), 'exp/experiments'),
+                             'flux_id': 1, 'flux_choice': 2,
+                             'ident_figure': os.path.join(os.getcwd(), 'results/v1_kcat_ident.eps')})
     # test identifiability
     print('Practical Identifiability Analysis of v1 with 2 parameters: k1cat and K1ac\n')
     ident_data_df = v1_ident.perform_ident()
 
     v1_ident.process_ident()
+
+    # get parameter value plot
+    v1_ident.parameter_values_plot(default_parameter_values, violin=True, box=False, bins=1)
 
     # # test identifiability and store data to file
     # from kotte_model import flux_ident_2_data_combination
