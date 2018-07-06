@@ -3,8 +3,6 @@ from mpi_master_slave import Master, Slave
 from mpi_master_slave import WorkQueue
 from identifiability_analysis import run_flux_ident
 import pandas as pd
-# import numpy as np
-import time
 
 
 class ParallelIdent(object):
