@@ -42,6 +42,7 @@ class ModelIdent(object):
 
         self.unique_indices = []
         self.ident_data = []
+        self.ident_index_label = []
 
     def retrieve_df_from_file(self, original_exp=0):
         """retrieve experimental data from csv file"""
@@ -71,6 +72,8 @@ class ModelIdent(object):
         # collect, arrange and collate data
         ordered_info = self._order_ident_data(sim_result)
         self._create_dict_for_df(ordered_info)
+        import pdb;pdb.set_trace()
+        self.write_ident_info_file()
         import pdb;pdb.set_trace()
         return sim_result
 
@@ -128,70 +131,76 @@ class ModelIdent(object):
         return self
 
     # @staticmethod
-    # def write_ident_info_file(all_data_dict, exp_df, file_name):
-    #     """create data frame from identifiability data and write to csv file for future use"""
-    #     # reset index of experimental data df
-    #     reset_exp_df = exp_df.reset_index("sample_name")
-    #     reset_exp_df.sort_index(level='data_set_id', inplace=True)
-    #     reset_exp_df.reset_index("data_set_id", inplace=True)
-    #     # reset_exp_df = exp_df.reset_index('experiment_id')
-    #     # reset_exp_df.reset_index('sample_name', inplace=True)
-    #     # lexographic ordering of df indices    #
-    #     # reset_exp_df.sort_index(level='sample_name', inplace=True)
-    #
-    #     # create data frame
-    #     data_df = pd.DataFrame(all_data_dict, columns=all_data_dict.keys())
-    #
-    #     # number of occurrences of each data set id = number of experiments per data set in the first sample
-    #     number_samples = len(data_df["sample_name"].unique())
-    #     first_sample_rows = data_df[data_df["sample_name"] == 'sample_0']
-    #     data_set_id_frequency = int(max(first_sample_rows["data_set_id"].value_counts()))
-    #     # all experiment ids
-    #     experiment_pos_names = ['experiment_{}_id'.format(i_experiment) for i_experiment in
-    #                             range(0, data_set_id_frequency)]
-    #     experiment_pos_parameters = ['experiment_{}_parameter'.format(i_experiment)
-    #                                  for i_experiment in range(0, data_set_id_frequency)]
-    #
-    #     # extract experiment ids for each data set
-    #     # get all data set ids
-    #     data_set_ids = reset_exp_df["data_set_id"].unique()
-    #     # get experiments for each data set based on first sample only
-    #     all_data_set_experiments = [reset_exp_df[(reset_exp_df["sample_name"] == "sample_0") &
-    #                                              (reset_exp_df["data_set_id"] == j_data_set_id)]
-    #                                 ["parameter_name"].index.values.tolist() for j_data_set_id in data_set_ids]
-    #     all_data_set_exp_parameters = [reset_exp_df[(reset_exp_df["sample_name"] == "sample_0") &
-    #                                                 (reset_exp_df["data_set_id"] == j_data_set_id)]
-    #                                    ["parameter_name"].values.tolist() for j_data_set_id in data_set_ids]
-    #     all_pos_experiment_id = [[i_p for j_data_set in all_data_set_experiments
-    #                               for i_p in [j_data_set[j_position_exp]] * len(experiment_pos_names)] * number_samples
-    #                              for j_position_exp in range(0, len(experiment_pos_names))]
-    #     all_pos_exp_parameters = [[i_p for j_data_set in all_data_set_exp_parameters
-    #                                for i_p in
-    #                                [j_data_set[j_position_exp]] * len(experiment_pos_parameters)] * number_samples
-    #                               for j_position_exp in range(0, len(experiment_pos_parameters))]
-    #     experiment_pos_info_keys = experiment_pos_names + experiment_pos_parameters
-    #     experiment_pos_info_values = all_pos_experiment_id + all_pos_exp_parameters
-    #     exp_info_dict = dict(zip(experiment_pos_info_keys, experiment_pos_info_values))
-    #     all_data_dict.update(exp_info_dict)
-    #
-    #     # multi index tuples
-    #     ind_tuple = [(j_sample, j_data_set) for j_sample, j_data_set in
-    #                  zip(all_data_dict["sample_name"], all_data_dict["data_set_id"])]
-    #
-    #     # multi index index
-    #     index_label = ['sample_name', 'data_set_id']
-    #     index = pd.MultiIndex.from_tuples(ind_tuple, names=index_label)
-    #
-    #     # remove redundant columns
-    #     del all_data_dict["sample_name"]
-    #     del all_data_dict["data_set_id"]
-    #
-    #     # create multi index data frame
-    #     all_data_df = pd.DataFrame(all_data_dict, index=index, columns=all_data_dict.keys())
-    #
-    #     # save data frame to csv file
-    #     all_data_df.to_csv(file_name, index_label=index_label)
-    #     return all_data_df, index_label
+    def write_ident_info_file(self):
+        """create data frame from identifiability data and write to csv file for future use"""
+        # read experimental data from file (serially)
+        arranged_df = self.retrieve_df_from_file()
+
+        # reset index of experimental data df
+        reset_exp_df = arranged_df.reset_index("sample_name")
+        reset_exp_df.sort_index(level='data_set_id', inplace=True)
+        reset_exp_df.reset_index("data_set_id", inplace=True)
+
+        # create data frame
+        ident_df = pd.DataFrame(self.ident_data, columns=self.ident_data.keys())
+
+        import pdb;pdb.set_trace()
+        # number of occurrences of each data set id = number of experiments per data set in the first sample
+        number_samples = len(ident_df["sample_name"].unique())
+        first_sample_rows = ident_df[ident_df["sample_name"] == 'sample_0']
+        data_set_id_frequency = int(max(first_sample_rows["data_set_id"].value_counts()))
+
+        # all experiment ids
+        experiment_pos_names = ['experiment_{}_id'.format(i_experiment) for i_experiment in
+                                range(0, data_set_id_frequency)]
+        experiment_pos_parameters = ['experiment_{}_parameter'.format(i_experiment)
+                                     for i_experiment in range(0, data_set_id_frequency)]
+
+        # extract experiment ids for each data set
+        # get all data set ids
+        data_set_ids = reset_exp_df["data_set_id"].unique()
+
+        # get experiments for each data set based on first sample only
+        all_data_set_experiments = [reset_exp_df[(reset_exp_df["sample_name"] == "sample_0") &
+                                                 (reset_exp_df["data_set_id"] == j_data_set_id)]
+                                    ["parameter_name"].index.values.tolist() for j_data_set_id in data_set_ids]
+        import pdb;pdb.set_trace()
+        all_data_set_exp_parameters = [reset_exp_df[(reset_exp_df["sample_name"] == "sample_0") &
+                                                    (reset_exp_df["data_set_id"] == j_data_set_id)]
+                                       ["parameter_name"].values.tolist() for j_data_set_id in data_set_ids]
+        all_pos_experiment_id = [[i_p for j_data_set in all_data_set_experiments
+                                  for i_p in [j_data_set[j_position_exp]] * len(experiment_pos_names)] * number_samples
+                                 for j_position_exp in range(0, len(experiment_pos_names))]
+        all_pos_exp_parameters = [[i_p for j_data_set in all_data_set_exp_parameters
+                                   for i_p in
+                                   [j_data_set[j_position_exp]] * len(experiment_pos_parameters)] * number_samples
+                                  for j_position_exp in range(0, len(experiment_pos_parameters))]
+        experiment_pos_info_keys = experiment_pos_names + experiment_pos_parameters
+        experiment_pos_info_values = all_pos_experiment_id + all_pos_exp_parameters
+        exp_info_dict = dict(zip(experiment_pos_info_keys, experiment_pos_info_values))
+        import pdb;pdb.set_trace()
+        self.ident_data.update(exp_info_dict)
+
+        # multi index tuples
+        ind_tuple = [(j_sample, j_data_set) for j_sample, j_data_set in
+                     zip(self.ident_data["sample_name"], self.ident_data["data_set_id"])]
+
+        # multi index index
+        self.ident_index_label = ['sample_name', 'data_set_id']
+        index = pd.MultiIndex.from_tuples(ind_tuple, names=self.ident_index_label)
+
+        # remove redundant columns
+        temp_ident_data = self.ident_data
+        del temp_ident_data["sample_name"]
+        del temp_ident_data["data_set_id"]
+
+        # create multi index data frame
+        all_data_df = pd.DataFrame(temp_ident_data, index=index, columns=temp_ident_data.keys())
+
+        # save data frame to csv file
+        all_data_df.to_csv(self.ident_file, index_label=self.ident_index_label)
+        import pdb; pdb.set_trace()
+        return self
 
 
 if __name__ == '__main__':
