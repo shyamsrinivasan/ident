@@ -297,7 +297,6 @@ class ModelIdent(object):
         all_possible_perturbations = set.union(set(exp_df["parameter_name"].unique()),
                                                {'wt', 'ac', 'k1cat', 'V2max', 'V3max'})
         all_parameter_exp_info = []
-        import pdb;pdb.set_trace()
         for i_parameter, i_parameter_name in enumerate(all_parameter_names):
             # get all data sets identifying each parameter
             identifying_df = ident_df[(ident_df["parameter_name"] == i_parameter_name) & (ident_df["identified"])]
@@ -311,7 +310,7 @@ class ModelIdent(object):
                                    for j_name, j_value in zip(exp_frequency.index.values, exp_frequency.values)]
                 # add missing experiment type with value = 0
                 missing_perturbation = all_possible_perturbations.difference(exp_frequency.index.values)
-                name_value_pair = name_value_pair + zip(missing_perturbation, [0.0] * len(missing_perturbation))
+                name_value_pair = name_value_pair + list(zip(missing_perturbation, [0.0] * len(missing_perturbation)))
                 # names, values = map(list, zip(*name_value_pair))
                 # arrange name/values in desired order for every parameter
                 given_value = []
