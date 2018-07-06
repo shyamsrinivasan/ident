@@ -126,7 +126,6 @@ class ModelIdent(object):
         self.ident_data = all_data
         return self
 
-    # @staticmethod
     def __write_ident_info_file(self):
         """create data frame from identifiability data and write to csv file for future use"""
         # read experimental data from file (serially)
