@@ -68,9 +68,9 @@ class ModelIdent(object):
         # collect, arrange and collate data
         ordered_info = self.__order_ident_data(sim_result)
         self.__create_dict_for_df(ordered_info)
-        ident_data_df = self.__write_ident_info_file()
+        final_result_df = self.__write_ident_info_file()
 
-        return ident_data_df
+        return final_result_df
 
     def __order_ident_data(self, all_results):
         """collect ident info for all data sets from all samples together"""
