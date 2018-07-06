@@ -301,17 +301,19 @@ class ModelIdent(object):
             # get all data sets identifying each parameter
             identifying_df = ident_df[(ident_df["parameter_name"] == i_parameter_name) & (ident_df["identified"])]
             all_experiment_info = {}
+
             # get frequency of each experiment
             for i_experiment, i_experiment_pos in enumerate(exp_column_ids):
                 exp_frequency = identifying_df[i_experiment_pos].value_counts()
+
                 # get name value pairs
-                import pdb;pdb.set_trace()
                 name_value_pair = [(j_name, np.array(float(j_value) * 100 / parameter_ident_info[i_parameter]))
                                    for j_name, j_value in zip(exp_frequency.index.values, exp_frequency.values)]
+
                 # add missing experiment type with value = 0
                 missing_perturbation = all_possible_perturbations.difference(exp_frequency.index.values)
                 name_value_pair = name_value_pair + list(zip(missing_perturbation, [0.0] * len(missing_perturbation)))
-                # names, values = map(list, zip(*name_value_pair))
+
                 # arrange name/values in desired order for every parameter
                 given_value = []
                 for i_given_name in all_possible_perturbations:
