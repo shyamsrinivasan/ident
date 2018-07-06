@@ -414,6 +414,7 @@ class ModelIdent(object):
                 else:
                     plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=[],
                                              parameter_name=i_parameter_name, bins=bins)
+            f1.savefig(self.ident_figure, dpi=1000)
 
         if violin:
             f2 = plt.figure(figsize=(10, 8), dpi=100, tight_layout=True)
@@ -437,7 +438,7 @@ class ModelIdent(object):
                     plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=[],
                                              parameter_name=i_parameter_name)
 
-        plt.savefig(self.ident_figure, format='eps', dpi=1000)
+            f2.savefig(self.ident_figure, dpi=1000)
         return None
 
 
@@ -451,7 +452,7 @@ if __name__ == '__main__':
                           ident_data_file_name=os.path.join(os.getcwd(), 'ident/ident_v1_kcat'),
                           **{'original_exp_file': os.path.join(os.getcwd(), 'exp/experiments'),
                              'flux_id': 1, 'flux_choice': 2,
-                             'ident_figure': os.path.join(os.getcwd(), 'results/v1_kcat_ident')})
+                             'ident_figure': os.path.join(os.getcwd(), 'results/v1_kcat_ident.eps')})
     # test identifiability
     print('Practical Identifiability Analysis of v1 with 2 parameters: k1cat and K1ac\n')
     ident_data_df = v1_ident.perform_ident()
