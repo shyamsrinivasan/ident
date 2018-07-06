@@ -366,11 +366,10 @@ class ModelIdent(object):
             exp_info = self.__parameter_exp_info(ident_df, exp_df, all_parameter_info["ident_mean"])
         else:
             exp_info = []
-        import pdb; pdb.set_trace()
         all_parameter_info.update({"exp_info": exp_info})
 
         # get flux names
-        all_flux_names = ident_df["flux_name"].unique().tolist() * len(all_parameter_info["names"])
+        all_flux_names = ident_df["flux_name"].unique().tolist() * len(all_parameter_info["parameter_names"])
         all_parameter_info.update({"flux_name": all_flux_names})
 
         self.processed_info = all_parameter_info
