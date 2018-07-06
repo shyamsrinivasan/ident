@@ -297,6 +297,7 @@ class ModelIdent(object):
         all_possible_perturbations = set.union(set(exp_df["parameter_name"].unique()),
                                                {'wt', 'ac', 'k1cat', 'V2max', 'V3max'})
         all_parameter_exp_info = []
+        import pdb;pdb.set_trace()
         for i_parameter, i_parameter_name in enumerate(all_parameter_names):
             # get all data sets identifying each parameter
             identifying_df = ident_df[(ident_df["parameter_name"] == i_parameter_name) & (ident_df["identified"])]
@@ -305,6 +306,7 @@ class ModelIdent(object):
             for i_experiment, i_experiment_pos in enumerate(exp_column_ids):
                 exp_frequency = identifying_df[i_experiment_pos].value_counts()
                 # get name value pairs
+                import pdb;pdb.set_trace()
                 name_value_pair = [(j_name, np.array(float(j_value) * 100 / parameter_ident_info[i_parameter]))
                                    for j_name, j_value in zip(exp_frequency.index.values, exp_frequency.values)]
                 # add missing experiment type with value = 0
@@ -337,7 +339,6 @@ class ModelIdent(object):
         idx = pd.IndexSlice
 
         # number of samples
-        import pdb;pdb.set_trace()
         sample_names = ident_df.index.levels[0].values.tolist()
         number_samples = len(sample_names)
 
@@ -355,7 +356,6 @@ class ModelIdent(object):
             ident_dict = {}
 
         # parameter identifiability information for all samples along with mean and std between samples
-        import pdb;pdb.set_trace()
         all_parameter_info = self.__parameter_ident_info(ident_df)
         all_parameter_info.update(ident_dict)
 
