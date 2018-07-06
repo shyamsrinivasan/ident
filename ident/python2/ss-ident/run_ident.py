@@ -1,10 +1,10 @@
-import pandas as pd
 from parallel_ident import setup_parallel_ident
+from names_strings import default_ident_parameter_name
+from collections import defaultdict
+import pandas as pd
+import itertools as it
 import os.path
 import kotte_model
-from collections import defaultdict
-from names_strings import default_ident_parameter_name
-import itertools as it
 
 
 class ModelIdent(object):
@@ -53,10 +53,6 @@ class ModelIdent(object):
             experiment_df = pd.read_csv(self.arranged_data_file, index_col=self.original_index_label)
         return experiment_df
 
-    def arrange_ident_data(self):
-        pass
-        return self
-
     def perform_ident(self):
         # read experimental data from file (serially)
         arranged_df = self.retrieve_df_from_file()
@@ -70,14 +66,13 @@ class ModelIdent(object):
         sim_result = setup_parallel_ident(ident_fun=self.ident_fun, flux_id=self.flux_id, flux_choice=self.flux_choice,
                                           exp_data=reset_df)
         # collect, arrange and collate data
-        ordered_info = self._order_ident_data(sim_result)
-        self._create_dict_for_df(ordered_info)
-        import pdb;pdb.set_trace()
-        self.write_ident_info_file()
-        import pdb;pdb.set_trace()
-        return sim_result
+        ordered_info = self.__order_ident_data(sim_result)
+        self.__create_dict_for_df(ordered_info)
+        ident_data_df = self.__write_ident_info_file()
 
-    def _order_ident_data(self, all_results):
+        return ident_data_df
+
+    def __order_ident_data(self, all_results):
         """collect ident info for all data sets from all samples together"""
 
         # read experimental data from file (serially)
@@ -96,7 +91,8 @@ class ModelIdent(object):
 
         return ordered_info
 
-    def _create_dict_for_df(self, ident_results):
+    def __create_dict_for_df(self, ident_results):
+        """create dictionary of identifiability results for future writing to file"""
         # read experimental data from file (serially)
         arranged_df = self.retrieve_df_from_file()
         # remove index experiment_id
@@ -131,7 +127,7 @@ class ModelIdent(object):
         return self
 
     # @staticmethod
-    def write_ident_info_file(self):
+    def __write_ident_info_file(self):
         """create data frame from identifiability data and write to csv file for future use"""
         # read experimental data from file (serially)
         arranged_df = self.retrieve_df_from_file()
@@ -144,7 +140,6 @@ class ModelIdent(object):
         # create data frame
         ident_df = pd.DataFrame(self.ident_data, columns=self.ident_data.keys())
 
-        import pdb;pdb.set_trace()
         # number of occurrences of each data set id = number of experiments per data set in the first sample
         number_samples = len(ident_df["sample_name"].unique())
         first_sample_rows = ident_df[ident_df["sample_name"] == 'sample_0']
@@ -164,7 +159,6 @@ class ModelIdent(object):
         all_data_set_experiments = [reset_exp_df[(reset_exp_df["sample_name"] == "sample_0") &
                                                  (reset_exp_df["data_set_id"] == j_data_set_id)]
                                     ["parameter_name"].index.values.tolist() for j_data_set_id in data_set_ids]
-        import pdb;pdb.set_trace()
         all_data_set_exp_parameters = [reset_exp_df[(reset_exp_df["sample_name"] == "sample_0") &
                                                     (reset_exp_df["data_set_id"] == j_data_set_id)]
                                        ["parameter_name"].values.tolist() for j_data_set_id in data_set_ids]
@@ -178,7 +172,7 @@ class ModelIdent(object):
         experiment_pos_info_keys = experiment_pos_names + experiment_pos_parameters
         experiment_pos_info_values = all_pos_experiment_id + all_pos_exp_parameters
         exp_info_dict = dict(zip(experiment_pos_info_keys, experiment_pos_info_values))
-        import pdb;pdb.set_trace()
+
         self.ident_data.update(exp_info_dict)
 
         # multi index tuples
@@ -195,12 +189,12 @@ class ModelIdent(object):
         del temp_ident_data["data_set_id"]
 
         # create multi index data frame
-        all_data_df = pd.DataFrame(temp_ident_data, index=index, columns=temp_ident_data.keys())
+        ident_data_df = pd.DataFrame(temp_ident_data, index=index, columns=temp_ident_data.keys())
 
         # save data frame to csv file
-        all_data_df.to_csv(self.ident_file, index_label=self.ident_index_label)
-        import pdb; pdb.set_trace()
-        return self
+        ident_data_df.to_csv(self.ident_file, index_label=self.ident_index_label)
+        print('Identifiability Data written to given file\n')
+        return ident_data_df
 
 
 if __name__ == '__main__':
@@ -214,7 +208,7 @@ if __name__ == '__main__':
                                                                      'flux_id': 1, 'flux_choice': 2})
     # test identifiability
     print('Practical Identifiability Analysis of v1 with 2 parameters: k1cat and K1ac\n')
-    v1_ident.perform_ident()
+    ident_data_df = v1_ident.perform_ident()
 
     # # test identifiability and store data to file
     # from kotte_model import flux_ident_2_data_combination
