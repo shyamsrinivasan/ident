@@ -424,7 +424,7 @@ class ModelIdent(object):
             violin_axis.set_xticklabels(self.processed_info['parameter_names'])
             violin_axis.set_ylabel('Parameter values')
             # violin_axis.grid(b=False)
-            violin_axis.tick_params(axis='both', which='major', direction='in', length=3, width=0.5, color='black',
+            violin_axis.tick_params(axis='both', which='major', direction='in', length=3.5, width=0.5, color='black',
                                     bottom=True)
 
             # plot histogram
@@ -440,7 +440,7 @@ class ModelIdent(object):
                                              parameter_name=i_parameter_name)
                 hist_axis.set_xlabel('Parameter value')
                 # hist_axis.grid(b=False)
-                hist_axis.tick_params(axis='both', which='major', direction='in', length=3, width=0.5, color='black',
+                hist_axis.tick_params(axis='both', which='major', direction='in', length=3.5, width=0.5, color='black',
                                       bottom=True)
 
             f2.savefig(self.ident_figure, format=self.figure_format, transparent=True, frameon=True,
