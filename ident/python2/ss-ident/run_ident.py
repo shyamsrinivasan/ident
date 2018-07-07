@@ -409,8 +409,8 @@ class ModelIdent(object):
                                              parameter_name=i_parameter_name, bins=bins)
 
             # f1.savefig(self.ident_figure, dpi=300, format='pdf', facecolor='w', edgecolor='k', transparent=True)
-            f1.savefig(self.ident_figure, format=self.figure_format, facecolor='w', edgecolor='black',
-                       transparent=True, frameon=True, bbox_inches='tight')
+            f1.savefig(self.ident_figure, format=self.figure_format, transparent=True, frameon=True,
+                       bbox_inches='tight')
 
         if violin:
             f2 = plt.figure(figsize=(10, 8), dpi=100)
@@ -421,6 +421,7 @@ class ModelIdent(object):
             plot_on_axis_object_violin(violin_axis, self.processed_info["parameter_values"])
             violin_axis.set_xticks(np.arange(1, len(self.processed_info['parameter_names']) + 1))
             violin_axis.set_xticklabels(self.processed_info['parameter_names'])
+            violin_axis.set_ylabel('Parameter values')
 
             # plot histogram
             for i_parameter, (i_parameter_value, i_parameter_name) in enumerate(
@@ -433,10 +434,11 @@ class ModelIdent(object):
                 else:
                     plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=[],
                                              parameter_name=i_parameter_name)
+                hist_axis.set_xlabel('Parameter value')
 
             # f2.savefig(self.ident_figure, dpi=1000, format='pdf', facecolor='w', edgecolor='k', transparent=True)
-            f2.savefig(self.ident_figure, format=self.figure_format, facecolor='w', edgecolor='black',
-                       transparent=True, frameon=True, bbox_inches='tight')
+            f2.savefig(self.ident_figure, format=self.figure_format, transparent=True, frameon=True,
+                       bbox_inches='tight')
 
         import pdb;pdb.set_trace()
         return None
