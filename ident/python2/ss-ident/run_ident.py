@@ -443,6 +443,7 @@ class ModelIdent(object):
                                       bottom=True, grid_alpha=0)
 
             # f2.savefig(self.ident_figure, dpi=1000, format='pdf', facecolor='w', edgecolor='k', transparent=True)
+            import pdb; pdb.set_trace()
             f2.savefig(self.ident_figure, format=self.figure_format, transparent=False, frameon=True,
                        bbox_inches='tight')
 
