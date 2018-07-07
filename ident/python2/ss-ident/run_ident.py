@@ -438,7 +438,8 @@ class ModelIdent(object):
                 hist_axis.set_xlabel('Parameter value')
                 hist_axis.grid(b=False)
                 hist_axis.spines['bottom'].set_color('black')
-                hist_axis.tick_params(axis='x', bottom=True, top=False, colors='black')
+                hist_axis.tick_params(axis='both', which='major', direction='in', length=3, width=0.5, color='black',
+                                      bottom=True, grid_alpha=0)
 
             # f2.savefig(self.ident_figure, dpi=1000, format='pdf', facecolor='w', edgecolor='k', transparent=True)
             f2.savefig(self.ident_figure, format=self.figure_format, transparent=False, frameon=True,
