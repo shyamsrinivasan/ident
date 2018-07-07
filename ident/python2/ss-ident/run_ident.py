@@ -403,7 +403,8 @@ class ModelIdent(object):
                     plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=[],
                                              parameter_name=i_parameter_name, bins=bins)
 
-            f1.savefig(self.ident_figure, dpi=1000, format='pdf')
+            f1.savefig(self.ident_figure, dpi=1000, format='pdf', facecolor='w', transparent=True)
+            f1.savefig(self.ident_figure, dpi=1000, format='eps', facecolor='w', transparent=True)
 
         if violin:
             f2 = plt.figure(figsize=(10, 8), dpi=100, tight_layout=True)
@@ -427,7 +428,9 @@ class ModelIdent(object):
                     plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=[],
                                              parameter_name=i_parameter_name)
 
-            f2.savefig(self.ident_figure, dpi=1000, format='pdf')
+            f2.savefig(self.ident_figure, dpi=1000, format='pdf', facecolor='w', transparent=True)
+            f2.savefig(self.ident_figure, dpi=1000, format='eps', facecolor='w', transparent=True)
+
         return None
 
 
