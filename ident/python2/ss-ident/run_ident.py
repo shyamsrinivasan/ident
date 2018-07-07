@@ -440,7 +440,7 @@ class ModelIdent(object):
                 hist_axis.spines['bottom'].set_color('black')
                 import pdb;pdb.set_trace()
                 hist_axis.tick_params(axis='both', which='major', direction='in', length=3, width=0.5, color='black',
-                                      bottom=True, grid_alpha=0)
+                                      bottom=True)
 
             # f2.savefig(self.ident_figure, dpi=1000, format='pdf', facecolor='w', edgecolor='k', transparent=True)
             import pdb; pdb.set_trace()
