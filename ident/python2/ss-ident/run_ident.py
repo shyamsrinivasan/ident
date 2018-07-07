@@ -382,7 +382,7 @@ class ModelIdent(object):
         """plot distribution of parameter values as a box plot, violin plot and/or histogram"""
         number_parameters = len(self.processed_info["parameter_names"])
         if box:
-            f1 = plt.figure(figsize=(10, 8), dpi=100, tight_layout=True)
+            f1 = plt.figure(figsize=(10, 8), dpi=100)
             plot_grid = gridspec.GridSpec(2, number_parameters)
 
             # plot box plot
@@ -413,7 +413,7 @@ class ModelIdent(object):
                        transparent=True, frameon=False, bbox_inches='tight')
 
         if violin:
-            f2 = plt.figure(figsize=(10, 8), dpi=100, tight_layout=True)
+            f2 = plt.figure(figsize=(10, 8), dpi=100)
             plot_grid = gridspec.GridSpec(2, number_parameters)
 
             # plot box plot
