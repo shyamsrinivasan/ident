@@ -46,6 +46,11 @@ class ModelIdent(object):
             self.original_index_label = ['sample_name', 'experiment_id']
 
         try:
+            self.figure_format = kwargs['figure_format']
+        except KeyError:
+            self.figure_format = 'eps'
+
+        try:
             self.ident_figure = kwargs['ident_figure']
         except KeyError:
             self.ident_figure = ''
@@ -403,8 +408,9 @@ class ModelIdent(object):
                     plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=[],
                                              parameter_name=i_parameter_name, bins=bins)
 
-            f1.savefig(self.ident_figure, dpi=1000, format='pdf', facecolor='w', transparent=True)
-            f1.savefig(self.ident_figure, dpi=1000, format='eps', facecolor='w', transparent=True)
+            # f1.savefig(self.ident_figure, dpi=300, format='pdf', facecolor='w', edgecolor='k', transparent=True)
+            f1.savefig(self.ident_figure, dpi=300, format=self.figure_format, facecolor='w', edgecolor='k',
+                       transparent=True)
 
         if violin:
             f2 = plt.figure(figsize=(10, 8), dpi=100, tight_layout=True)
@@ -428,8 +434,9 @@ class ModelIdent(object):
                     plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=[],
                                              parameter_name=i_parameter_name)
 
-            f2.savefig(self.ident_figure, dpi=1000, format='pdf', facecolor='w', transparent=True)
-            f2.savefig(self.ident_figure, dpi=1000, format='eps', facecolor='w', transparent=True)
+            # f2.savefig(self.ident_figure, dpi=1000, format='pdf', facecolor='w', edgecolor='k', transparent=True)
+            f2.savefig(self.ident_figure, dpi=300, format=self.figure_format, facecolor='w', edgecolor='k',
+                       transparent=True)
 
         return None
 
@@ -444,7 +451,8 @@ if __name__ == '__main__':
                           ident_data_file_name=os.path.join(os.getcwd(), 'ident/ident_v1_kcat'),
                           **{'original_exp_file': os.path.join(os.getcwd(), 'exp/experiments'),
                              'flux_id': 1, 'flux_choice': 2,
-                             'ident_figure': os.path.join(os.getcwd(), 'results/v1_kcat_ident')})
+                             'ident_figure': os.path.join(os.getcwd(), 'results/v1_kcat_ident'),
+                             'figure_format': 'eps'})
     # test identifiability
     print('Practical Identifiability Analysis of v1 with 2 parameters: k1cat and K1ac\n')
     ident_data_df = v1_ident.perform_ident()
