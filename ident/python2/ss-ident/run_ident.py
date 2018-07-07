@@ -451,7 +451,7 @@ if __name__ == '__main__':
                           ident_data_file_name=os.path.join(os.getcwd(), 'ident/ident_v1_kcat'),
                           **{'original_exp_file': os.path.join(os.getcwd(), 'exp/experiments'),
                              'flux_id': 1, 'flux_choice': 2,
-                             'ident_figure': os.path.join(os.getcwd(), 'results/v1_kcat_ident'),
+                             'ident_figure': os.path.join(os.getcwd(), 'results/v1_kcat_ident.eps'),
                              'figure_format': 'eps'})
     # test identifiability
     print('Practical Identifiability Analysis of v1 with 2 parameters: k1cat and K1ac\n')
