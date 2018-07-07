@@ -7,6 +7,7 @@ import itertools as it
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
+import matplotlib as mpl
 import os.path
 import kotte_model
 
@@ -422,7 +423,9 @@ class ModelIdent(object):
             violin_axis.set_xticks(np.arange(1, len(self.processed_info['parameter_names']) + 1))
             violin_axis.set_xticklabels(self.processed_info['parameter_names'])
             violin_axis.set_ylabel('Parameter values')
-            violin_axis.grid(b=False)
+            # violin_axis.grid(b=False)
+            violin_axis.tick_params(axis='both', which='major', direction='in', length=3, width=0.5, color='black',
+                                    bottom=True)
 
             # plot histogram
             for i_parameter, (i_parameter_value, i_parameter_name) in enumerate(
@@ -436,15 +439,11 @@ class ModelIdent(object):
                     plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=[],
                                              parameter_name=i_parameter_name)
                 hist_axis.set_xlabel('Parameter value')
-                hist_axis.grid(b=False)
-                hist_axis.spines['bottom'].set_color('black')
-                import pdb;pdb.set_trace()
+                # hist_axis.grid(b=False)
                 hist_axis.tick_params(axis='both', which='major', direction='in', length=3, width=0.5, color='black',
                                       bottom=True)
 
-            # f2.savefig(self.ident_figure, dpi=1000, format='pdf', facecolor='w', edgecolor='k', transparent=True)
-            import pdb; pdb.set_trace()
-            f2.savefig(self.ident_figure, format=self.figure_format, transparent=False, frameon=True,
+            f2.savefig(self.ident_figure, format=self.figure_format, transparent=True, frameon=True,
                        bbox_inches='tight')
 
         import pdb;pdb.set_trace()
