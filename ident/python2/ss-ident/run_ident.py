@@ -441,7 +441,7 @@ class ModelIdent(object):
                 hist_axis.tick_params(axis='x', bottom=True, top=False, colors='black')
 
             # f2.savefig(self.ident_figure, dpi=1000, format='pdf', facecolor='w', edgecolor='k', transparent=True)
-            f2.savefig(self.ident_figure, format=self.figure_format, transparent=True, frameon=True,
+            f2.savefig(self.ident_figure, format=self.figure_format, transparent=False, frameon=True,
                        bbox_inches='tight')
 
         import pdb;pdb.set_trace()
