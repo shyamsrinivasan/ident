@@ -67,6 +67,8 @@ def plot_on_axis_object_hist(axis_object, distribution_data, mark_value=[], para
 
     if mark_value:
         axis_object.plot(np.repeat(mark_value, 2), new_ax.get_ylim(), color='black', linestyle='dashed', linewidth=0.8)
+
+    axis_object.tick_params(axis='x', bottom=True, top=False)
     return None
 
 
