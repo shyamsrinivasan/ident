@@ -409,8 +409,8 @@ class ModelIdent(object):
                                              parameter_name=i_parameter_name, bins=bins)
 
             # f1.savefig(self.ident_figure, dpi=300, format='pdf', facecolor='w', edgecolor='k', transparent=True)
-            f1.savefig(self.ident_figure, dpi=300, format=self.figure_format, facecolor='w', edgecolor='k',
-                       transparent=False, frameon=False, bbox_inches='tight')
+            f1.savefig(self.ident_figure, format=self.figure_format, facecolor='w', edgecolor='k',
+                       transparent=True, frameon=False, bbox_inches='tight')
 
         if violin:
             f2 = plt.figure(figsize=(10, 8), dpi=100, tight_layout=True)
@@ -435,9 +435,10 @@ class ModelIdent(object):
                                              parameter_name=i_parameter_name)
 
             # f2.savefig(self.ident_figure, dpi=1000, format='pdf', facecolor='w', edgecolor='k', transparent=True)
-            f2.savefig(self.ident_figure, dpi=300, format=self.figure_format, facecolor='w', edgecolor='k',
-                       transparent=False, frameon=False, bbox_inches='tight')
+            f2.savefig(self.ident_figure, format=self.figure_format, facecolor='w', edgecolor='k',
+                       transparent=True, frameon=False, bbox_inches='tight')
 
+        import pdb;pdb.set_trace()
         return None
 
 
