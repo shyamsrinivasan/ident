@@ -51,7 +51,7 @@ class ModelIdent(object):
             self.ident_figure = ''
 
         self.unique_indices = []
-        self.ident_data = []
+        self.ident_data = {}
         self.ident_index_label = []
         self.processed_info = {}
 
@@ -83,11 +83,7 @@ class ModelIdent(object):
     def perform_ident(self):
         # read experimental data from file (serially)
         arranged_df = self.retrieve_df_from_file()
-
         reset_df = arranged_df.reset_index('experiment_id')
-        # lexographic ordering of df indices
-        # reset_df.sort_index(level='data_set_id', inplace=True)
-        # reset_df.sort_index(level='sample_name', inplace=True)
 
         # run ident analysis in parallel
         sim_result = setup_parallel_ident(ident_fun=self.ident_fun, flux_id=self.flux_id, flux_choice=self.flux_choice,
@@ -104,11 +100,7 @@ class ModelIdent(object):
 
         # read experimental data from file (serially)
         arranged_df = self.retrieve_df_from_file()
-
         reset_df = arranged_df.reset_index('experiment_id')
-        # lexographic ordering of df indices
-        # reset_df.sort_index(level='data_set_id', inplace=True)
-        # reset_df.sort_index(level='sample_name', inplace=True)
 
         # arrange results based on original experimental df
         all_df_indices = reset_df.index.unique().tolist()
@@ -121,12 +113,9 @@ class ModelIdent(object):
     def __create_dict_for_df(self, ident_results):
         """create dictionary of identifiability results for future writing to file"""
         # read experimental data from file (serially)
-        arranged_df = self.retrieve_df_from_file()
+        # arranged_df = self.retrieve_df_from_file()
         # remove index experiment_id
-        reset_df = arranged_df.reset_index('experiment_id')
-        # lexographic ordering of remaining df indices
-        # reset_df.sort_index(level='data_set_id', inplace=True)
-        # reset_df.sort_index(level='sample_name', inplace=True)
+        # reset_df = arranged_df.reset_index('experiment_id')
         temp_dict = {}
         all_data = defaultdict(list)
         empty_dict = {}
@@ -160,7 +149,6 @@ class ModelIdent(object):
 
         # reset index of experimental data df
         reset_exp_df = arranged_df.reset_index("sample_name")
-        # reset_exp_df.sort_index(level='data_set_id', inplace=True)
         reset_exp_df.reset_index("data_set_id", inplace=True)
 
         # create data frame
