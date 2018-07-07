@@ -438,6 +438,7 @@ class ModelIdent(object):
                 hist_axis.set_xlabel('Parameter value')
                 hist_axis.grid(b=False)
                 hist_axis.spines['bottom'].set_color('black')
+                import pdb;pdb.set_trace()
                 hist_axis.tick_params(axis='both', which='major', direction='in', length=3, width=0.5, color='black',
                                       bottom=True, grid_alpha=0)
 
