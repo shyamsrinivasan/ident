@@ -497,7 +497,7 @@ class ModelIdent(object):
             number_of_rows = number_parameters / number_of_columns
         # figure = plt.figure(figsize=(6, 4))
         # inner_grid = gridspec.GridSpec(number_of_rows, number_of_columns, wspace=0.2, hspace=0.2)
-        f, ax = plt.subplots(number_of_rows, number_of_columns, subplot_kw=dict(projection='polar'),
+        f, ax = plt.subplots(int(number_of_rows), int(number_of_columns), subplot_kw=dict(projection='polar'),
                              figsize=(10, 8), dpi=100, gridspec_kw={"wspace": 0.2, "hspace": 0.2})
         all_max_y_data = []
         for i_parameter, i_parameter_info in enumerate(self.processed_info["exp_info"]):
