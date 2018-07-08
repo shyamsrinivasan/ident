@@ -63,6 +63,11 @@ class ModelIdent(object):
         except KeyError:
             self.ident_figure = ''
 
+        try:
+            self.exp_figure = kwargs['exp_figure']
+        except KeyError:
+            self.exp_figure = ''
+
         self.unique_indices = []
         self.ident_data = {}
         self.ident_index_label = []
@@ -485,7 +490,6 @@ class ModelIdent(object):
 
     def exp_info_plot(self):
         """plot experiment contribution frequency for each parameter in a polar plot"""
-        import pdb;pdb.set_trace()
         number_parameters = len(self.processed_info["parameter_names"])
         if number_parameters >= 3:
             number_of_columns = 3
@@ -522,13 +526,15 @@ class ModelIdent(object):
 
         # add legend
         plt.legend(loc='upper right', bbox_to_anchor=(0.1, 0.1))
-        import pdb;pdb.set_trace()
+
+        f.savefig(self.exp_figure, format=self.figure_format, transparent=True, frameon=True,
+                  bbox_inches='tight')
+
         return None
 
 
 if __name__ == '__main__':
     # extract experimental data from file
-    exp_figure = os.path.join(os.getcwd(), 'results/v1_kcat_exp.eps')
     default_parameter_values = true_parameter_values()
 
     v1_ident = ModelIdent(ident_fun=kotte_model.flux_1_kcat_ident,
@@ -538,6 +544,7 @@ if __name__ == '__main__':
                              'flux_id': 1, 'flux_choice': 2,
                              'values_figure': os.path.join(os.getcwd(), 'results/v1_kcat_parameter_values.eps'),
                              'ident_figure': os.path.join(os.getcwd(), 'results/v1_kcat_ident.eps'),
+                             'exp_figure': os.path.join(os.getcwd(), 'results/v1_kcat_exp.eps'),
                              'figure_format': 'eps'})
     # test identifiability
     print('Practical Identifiability Analysis of v1 with 2 parameters: k1cat and K1ac\n')
