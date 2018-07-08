@@ -401,6 +401,9 @@ class ModelIdent(object):
                 plot_on_axis_object_box(box_axis, self.processed_info["parameter_values"],
                                         mark_value=[])
             box_axis.set_xticklabels(self.processed_info['parameter_names'])
+            box_axis.set_ylabel('Parameter values')
+            box_axis.tick_params(axis='both', which='major', direction='in', length=3.5, width=0.5, color='black',
+                                 bottom=True)
 
             # plot histogram
             for i_parameter, (i_parameter_value, i_parameter_name) in enumerate(
@@ -413,9 +416,11 @@ class ModelIdent(object):
                 else:
                     plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=[],
                                              parameter_name=i_parameter_name, bins=bins)
-
+                hist_axis.set_xlabel('Parameter value')
+                hist_axis.tick_params(axis='both', which='major', direction='in', length=3.5, width=0.5, color='black',
+                                      bottom=True)
             # f1.savefig(self.ident_figure, dpi=300, format='pdf', facecolor='w', edgecolor='k', transparent=True)
-            f1.savefig(self.ident_figure, format=self.figure_format, transparent=True, frameon=True,
+            f1.savefig(self.values_figure, format=self.figure_format, transparent=True, frameon=True,
                        bbox_inches='tight')
 
         if violin:
