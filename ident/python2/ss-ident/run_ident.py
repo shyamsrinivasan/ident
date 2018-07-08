@@ -484,6 +484,7 @@ class ModelIdent(object):
         set_hbar_axis_properties(ax, y_add, y_tick_label=self.processed_info["parameter_names"], x_max=x_max,
                                  x_percent_mean=x_percent_mean, x_percent_std=x_percent_std, x_label=x_label,
                                  figure_title=self.processed_info["flux_name"][0] + ' parameters')
+        ax.set_axis_on()
         ax.tick_params(axis='both', which='major', direction='in', length=3.5, width=0.5, color='black', bottom=True)
         f.savefig(self.ident_figure, format=self.figure_format, transparent=True, frameon=True,
                   bbox_inches='tight')
@@ -491,7 +492,8 @@ class ModelIdent(object):
 
     def exp_info_plot(self):
         """plot experiment contribution frequency for each parameter in a polar plot"""
-        mpl.rc('lines', linewidth=2, color='r')
+        mpl.rcParams['lines.linewidth'] = 2
+        mpl.rcParams['lines.color'] = 'r'
         number_parameters = len(self.processed_info["parameter_names"])
         if number_parameters >= 3:
             number_of_columns = 3
@@ -517,6 +519,7 @@ class ModelIdent(object):
                 x_labels = i_pos_val["names"]
                 max_y_data = plot_on_axis_object_polar(ax[i_parameter], x_data=x_labels, y_data=y_data,
                                                        data_label=pos_labels[-1], fill_color=fill_colors[i_pos])
+                ax[i_parameter].set_axis_on()
                 all_max_y_data.append(max_y_data)
 
         # set axis limits for all polar plots on subplot
