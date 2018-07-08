@@ -3,11 +3,13 @@ from names_strings import default_ident_parameter_name, true_parameter_values
 from collections import defaultdict
 from plot_ident_results import plot_on_axis_object_box, plot_on_axis_object_hist, plot_on_axis_object_violin
 from plot_ident_results import plot_on_axis_object, set_hbar_axis_properties
+from plot_ident_results import plot_on_axis_object_polar, set_polar_axis_limits
 import pandas as pd
 import itertools as it
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
+import matplotlib.font_manager as fnt
 import os.path
 import kotte_model
 
@@ -479,7 +481,47 @@ class ModelIdent(object):
         ax.tick_params(axis='both', which='major', direction='in', length=3.5, width=0.5, color='black', bottom=True)
         f.savefig(self.ident_figure, format=self.figure_format, transparent=True, frameon=True,
                   bbox_inches='tight')
-        import pdb; pdb.set_trace()
+        return None
+
+    def exp_info_plot(self):
+        """plot experiment contribution frequency for each parameter in a polar plot"""
+        number_parameters = len(self.processed_info["parameter_names"])
+        if number_parameters >= 3:
+            number_of_columns = 3
+        else:
+            number_of_columns = 1
+        if number_parameters % number_of_columns != 0:
+            number_of_rows = (number_parameters + 1) / number_of_columns
+        else:
+            number_of_rows = number_parameters / number_of_columns
+        # figure = plt.figure(figsize=(6, 4))
+        # inner_grid = gridspec.GridSpec(number_of_rows, number_of_columns, wspace=0.2, hspace=0.2)
+        f, ax = plt.subplots(number_of_rows, number_of_columns, subplot_kw=dict(projection='polar'),
+                             figsize=(10, 8), dpi=100, gridspec_kw={"wspace": 0.2, "hspace": 0.2})
+        all_max_y_data = []
+        for i_parameter, i_parameter_info in enumerate(self.processed_info["exp_info"]):
+            # ax = plt.Subplot(figure, inner_grid[i_parameter])
+            fill_colors = ['b', 'g', 'y', 'r']
+            # plot data from all positions
+            pos_labels = []
+            for i_pos, (i_pos_key, i_pos_val) in enumerate(i_parameter_info.items()):
+                pos_labels.append(i_pos_key)
+                y_data = i_pos_val["frequency"]
+                x_labels = i_pos_val["names"]
+                max_y_data = plot_on_axis_object_polar(ax[i_parameter], x_data=x_labels, y_data=y_data,
+                                                       data_label=pos_labels[-1], fill_color=fill_colors[i_pos])
+                all_max_y_data.append(max_y_data)
+
+        # set axis limits for all polar plots on subplot
+        for i_parameter, (_, i_parameter_name) in enumerate(zip(self.processed_info["exp_info"],
+                                                                self.processed_info["parameter_names"])):
+            set_polar_axis_limits(ax[i_parameter], max(all_max_y_data))
+            f_p = fnt.FontProperties(size=14, weight='demibold')
+            ax[i_parameter].set_title(i_parameter_name, **{'font_properties': f_p})
+
+        # add legend
+        plt.legend(loc='upper right', bbox_to_anchor=(0.1, 0.1))
+        import pdb;pdb.set_trace()
         return None
 
 
@@ -506,6 +548,8 @@ if __name__ == '__main__':
     v1_ident.parameter_values_plot(default_parameter_values, violin=True, box=False, bins=1)
 
     v1_ident.identifiability_plot()
+
+    v1_ident.exp_info_plot()
 
     # # test identifiability and store data to file
     # from kotte_model import flux_ident_2_data_combination
