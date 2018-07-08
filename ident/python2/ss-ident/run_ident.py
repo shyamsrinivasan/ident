@@ -473,6 +473,7 @@ class ModelIdent(object):
                                  figure_title=self.processed_info["flux_name"][0] + ' parameters')
         f.savefig(self.ident_figure, format=self.figure_format, transparent=True, frameon=True,
                   bbox_inches='tight')
+        import pdb; pdb.set_trace()
         return None
 
 
