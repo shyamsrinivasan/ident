@@ -392,6 +392,41 @@ class ModelIdent(object):
 
         return self
 
+    def get_parameter_value(self):
+        """extract parameter values in a given flux to re-simulate model with newly determined parameters.
+        get parameter values from data sets that can detect all parameters"""
+
+        import pdb;pdb.set_trace()
+        # retrieve ident data from file
+        ident_df = self.retrieve_ident_df_from_file()
+
+        # get data sets identifying each parameter
+        identifying_data_sets = [set(i_parameter_data_set) for i_parameter_data_set in self.processed_info["sample_data_set_id"]]
+        size_of_data_sets = [len(i_parameter_set) for i_parameter_set in identifying_data_sets]
+        sort_index = np.argsort(size_of_data_sets)  # last position is the biggest data set
+        largest_set = identifying_data_sets[sort_index[-1]]
+        # del identifying_data_sets[sort_index[-1]]
+        for i_index in range(len(sort_index) - 2, -1, -1):
+            largest_set.intersection_update(identifying_data_sets[sort_index[i_index]])
+
+        # get parameter values from data sets in largest_set
+        idx = pd.IndexSlice
+        relevant_df = ident_df.loc[idx[list(largest_set)], ['parameter_name', 'parameter_value']]
+        all_parameter_values = []
+        all_parameter_names = []
+        all_parameter_data_sets = [list(largest_set) for _ in self.processed_info["parameter_names"]]
+        for i_parameter, i_parameter_name in enumerate(self.processed_info["parameter_names"]):
+            i_p_value = relevant_df[relevant_df["parameter_name"] == i_parameter_name]["parameter_value"].values
+            all_parameter_values.append(i_p_value)
+            all_parameter_names.append(i_parameter_name)
+        all_parameter_info = {"names": all_parameter_names, "values": all_parameter_values,
+                              "data_sets": all_parameter_data_sets,
+                              "total_data_sets": self.processed_info["total_data_sets"],
+                              "flux_name": self.processed_info["flux_name"]}
+
+        import pdb;pdb.set_trace()
+        return all_parameter_info
+
     def parameter_values_plot(self, original_values=(), violin=False, box=True, bins=1):
         """plot distribution of parameter values as a box plot, violin plot and/or histogram"""
         number_parameters = len(self.processed_info["parameter_names"])
@@ -555,6 +590,8 @@ if __name__ == '__main__':
     ident_data_df = v1_ident.perform_ident()
 
     v1_ident.process_ident()
+
+    v1_ident.get_parameter_value()
 
     # get parameter value plot
     v1_ident.parameter_values_plot(default_parameter_values, violin=True, box=False, bins=1)
