@@ -10,6 +10,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import matplotlib.font_manager as fnt
+import matplotlib as mpl
 import os.path
 import kotte_model
 
@@ -490,6 +491,7 @@ class ModelIdent(object):
 
     def exp_info_plot(self):
         """plot experiment contribution frequency for each parameter in a polar plot"""
+        mpl.rc('lines', linewidth=2, color='r')
         number_parameters = len(self.processed_info["parameter_names"])
         if number_parameters >= 3:
             number_of_columns = 3
