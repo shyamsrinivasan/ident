@@ -529,7 +529,6 @@ class ModelIdent(object):
 
         f.savefig(self.exp_figure, format=self.figure_format, transparent=True, frameon=True,
                   bbox_inches='tight')
-
         return None
 
 
@@ -557,8 +556,10 @@ if __name__ == '__main__':
 
     v1_ident.identifiability_plot()
 
-    import pdb;pdb.set_trace()
     v1_ident.exp_info_plot()
+
+    import pdb;pdb.set_trace()
+    print('Done\n')
 
     # # test identifiability and store data to file
     # from kotte_model import flux_ident_2_data_combination
