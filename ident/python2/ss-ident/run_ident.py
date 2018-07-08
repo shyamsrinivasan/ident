@@ -486,7 +486,7 @@ class ModelIdent(object):
                                  figure_title=self.processed_info["flux_name"][0] + ' parameters')
         ax.set_axis_on()
         ax.tick_params(axis='both', which='major', direction='in', length=3.5, width=0.5, color='black', bottom=True)
-        f.savefig(self.ident_figure, format=self.figure_format, transparent=True, frameon=True,
+        f.savefig(self.ident_figure, format=self.figure_format, transparent=False, frameon=True,
                   bbox_inches='tight')
         return None
 
