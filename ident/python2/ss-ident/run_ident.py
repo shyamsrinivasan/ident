@@ -485,6 +485,7 @@ class ModelIdent(object):
 
     def exp_info_plot(self):
         """plot experiment contribution frequency for each parameter in a polar plot"""
+        import pdb;pdb.set_trace()
         number_parameters = len(self.processed_info["parameter_names"])
         if number_parameters >= 3:
             number_of_columns = 3
@@ -549,6 +550,7 @@ if __name__ == '__main__':
 
     v1_ident.identifiability_plot()
 
+    import pdb;pdb.set_trace()
     v1_ident.exp_info_plot()
 
     # # test identifiability and store data to file
