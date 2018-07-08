@@ -476,6 +476,7 @@ class ModelIdent(object):
         set_hbar_axis_properties(ax, y_add, y_tick_label=self.processed_info["parameter_names"], x_max=x_max,
                                  x_percent_mean=x_percent_mean, x_percent_std=x_percent_std, x_label=x_label,
                                  figure_title=self.processed_info["flux_name"][0] + ' parameters')
+        ax.tick_params(axis='both', which='major', direction='in', length=3.5, width=0.5, color='black', bottom=True)
         f.savefig(self.ident_figure, format=self.figure_format, transparent=True, frameon=True,
                   bbox_inches='tight')
         import pdb; pdb.set_trace()
