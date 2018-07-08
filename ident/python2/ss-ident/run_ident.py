@@ -2,12 +2,12 @@ from parallel_ident import setup_parallel_ident
 from names_strings import default_ident_parameter_name, true_parameter_values
 from collections import defaultdict
 from plot_ident_results import plot_on_axis_object_box, plot_on_axis_object_hist, plot_on_axis_object_violin
+from plot_ident_results import plot_on_axis_object, set_hbar_axis_properties
 import pandas as pd
 import itertools as it
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
-import matplotlib as mpl
 import os.path
 import kotte_model
 
@@ -50,6 +50,11 @@ class ModelIdent(object):
             self.figure_format = kwargs['figure_format']
         except KeyError:
             self.figure_format = 'eps'
+
+        try:
+            self.values_figure = kwargs['values_figure']
+        except KeyError:
+            self.values_figure = ''
 
         try:
             self.ident_figure = kwargs['ident_figure']
@@ -443,10 +448,31 @@ class ModelIdent(object):
                 hist_axis.tick_params(axis='both', which='major', direction='in', length=3.5, width=0.5, color='black',
                                       bottom=True)
 
-            f2.savefig(self.ident_figure, format=self.figure_format, transparent=True, frameon=True,
+            f2.savefig(self.values_figure, format=self.figure_format, transparent=True, frameon=True,
                        bbox_inches='tight')
+        return None
 
-        import pdb;pdb.set_trace()
+    def identifiability_plot(self):
+        """plot identifiability (number and percentage of data sets identifying each parameter)
+        of every parameter in a given flux"""
+        number_of_parameters = len(self.processed_info["parameter_names"])
+        f, ax = plt.subplots(1, 1, figsize=(10, 8), dpi=100)
+        x_data = self.processed_info["ident_mean"]
+        y_data = range(0, number_of_parameters)
+        gap = 0.05
+        # y_add = [0, gap + 0.2, 2 * (gap + 0.2)]
+        y_add = [i_y_data * (gap + 0.2) for i_y_data in y_data]
+        x_error = self.processed_info["ident_std"]
+        x_percent_mean = self.processed_info["ident_percent_mean"]
+        x_percent_std = self.processed_info["ident_percent_std"]
+        x_max = max(self.processed_info["total_data_sets"])
+        x_label = ['Number of data combinations used for identification']
+        plot_on_axis_object(ax, x_data, y_add, x_error=x_error)
+        set_hbar_axis_properties(ax, y_add, y_tick_label=self.processed_info["parameter_names"], x_max=x_max,
+                                 x_percent_mean=x_percent_mean, x_percent_std=x_percent_std, x_label=x_label,
+                                 figure_title=self.processed_info["flux_name"][0] + ' parameters')
+        f.savefig(self.ident_figure, format=self.figure_format, transparent=True, frameon=True,
+                  bbox_inches='tight')
         return None
 
 
@@ -460,6 +486,7 @@ if __name__ == '__main__':
                           ident_data_file_name=os.path.join(os.getcwd(), 'ident/ident_v1_kcat'),
                           **{'original_exp_file': os.path.join(os.getcwd(), 'exp/experiments'),
                              'flux_id': 1, 'flux_choice': 2,
+                             'values_figure': os.path.join(os.getcwd(), 'results/v1_kcat_parameter_values.eps'),
                              'ident_figure': os.path.join(os.getcwd(), 'results/v1_kcat_ident.eps'),
                              'figure_format': 'eps'})
     # test identifiability
@@ -470,6 +497,8 @@ if __name__ == '__main__':
 
     # get parameter value plot
     v1_ident.parameter_values_plot(default_parameter_values, violin=True, box=False, bins=1)
+
+    v1_ident.identifiability_plot()
 
     # # test identifiability and store data to file
     # from kotte_model import flux_ident_2_data_combination
