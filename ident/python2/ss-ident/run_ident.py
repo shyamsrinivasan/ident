@@ -419,12 +419,16 @@ class ModelIdent(object):
 
         largest_set = list(largest_set)
         select_parameter_values = []
+        select_data_sets = []
         import pdb;pdb.set_trace()
         for i_parameter, i_parameter_name in enumerate(self.processed_info['parameter_names']):
             parameter_value = [self.processed_info['parameter_values'][i_parameter][j_value]
                                for j_value, i_data_set_id in enumerate(identifying_data_sets[i_parameter])
                                for j_set_member in largest_set if self.__compare_tuples(j_set_member, i_data_set_id)]
+            data_set_value = [i_data_set_id for j_value, i_data_set_id in enumerate(identifying_data_sets[i_parameter])
+                              for j_set_member in largest_set if self.__compare_tuples(j_set_member, i_data_set_id)]
             select_parameter_values.append(parameter_value)
+            select_data_sets.append(data_set_value)
 
         # get parameter values from data sets in largest_set
         idx = pd.IndexSlice
