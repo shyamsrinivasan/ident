@@ -442,9 +442,7 @@ class ModelIdent(object):
                               "total_data_sets": self.processed_info["total_data_sets"],
                               "flux_name": self.processed_info["flux_name"]}
         self.select_values = all_parameter_info
-
-        import pdb;pdb.set_trace()
-        return all_parameter_info
+        return self
 
     def parameter_values_plot(self, original_values=(), violin=False, box=True, bins=1):
         """plot distribution of parameter values as a box plot, violin plot and/or histogram"""
