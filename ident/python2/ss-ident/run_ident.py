@@ -417,6 +417,7 @@ class ModelIdent(object):
         for i_index in range(len(sort_index) - 2, -1, -1):
             largest_set.intersection_update(identifying_data_sets[sort_index[i_index]])
 
+        largest_set = list(largest_set)
         select_parameter_values = []
         import pdb;pdb.set_trace()
         for i_parameter, i_parameter_name in enumerate(self.processed_info['parameter_names']):
