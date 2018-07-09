@@ -421,9 +421,9 @@ class ModelIdent(object):
         import pdb;pdb.set_trace()
         for i_parameter, i_parameter_name in enumerate(self.processed_info['parameter_names']):
             # for j_set_member in largest_set:
-            parameter_value = [self.processed_info['parameter_values'][j_value] for j_set_member in largest_set
+            parameter_value = [self.processed_info['parameter_values'][j_value]
                                for j_value, i_data_set_id in enumerate(identifying_data_sets[i_parameter])
-                               if self.__compare_tuples(j_set_member, i_data_set_id)]
+                               for j_set_member in largest_set if self.__compare_tuples(j_set_member, i_data_set_id)]
             select_parameter_values.append(parameter_value)
 
         # get parameter values from data sets in largest_set
