@@ -1,5 +1,7 @@
 from names_strings import true_parameter_values
 from run_ident import ModelIdent
+from run_validation import create_parameter_list
+import numpy as np
 import kotte_model
 import os.path
 
@@ -24,6 +26,16 @@ v1_ident.process_ident()
 v1_ident.get_parameter_value()
 
 # validate estimated parameter values
+user_ode_opts = {'iter': 'Newton', 'discr': 'Adams', 'atol': 1e-10, 'rtol': 1e-10,
+                 'time_points': 200, 'display_progress': True, 'verbosity': 30}
+# initial ss to begin all simulations from
+y0 = np.array([5, 1, 1])
+# get and set true parameter values, if available separately
+default_parameters = true_parameter_values()
+
+validation_list = create_parameter_list(v1_ident.select_values, default_parameters, y0=y0, kinetics=2,
+                                        user_ode_opts=user_ode_opts, number_samples=1, noise_std=0.05)
+
 
 
 # get parameter value plot
