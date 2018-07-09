@@ -409,6 +409,14 @@ class ModelIdent(object):
         for i_index in range(len(sort_index) - 2, -1, -1):
             largest_set.intersection_update(identifying_data_sets[sort_index[i_index]])
 
+        select_parameter_values = []
+        import pdb;pdb.set_trace()
+        for i_parameter, i_parameter_name in enumerate(self.processed_info['parameter_names']):
+            parameter_value = [self.processed_info['parameter_value'][j_value] for j_set_member in largest_set
+                               for j_value, i_data_set_id in enumerate(identifying_data_sets[i_parameter])
+                               if j_set_member == i_data_set_id]
+            select_parameter_values.append(parameter_value)
+
         # get parameter values from data sets in largest_set
         idx = pd.IndexSlice
         relevant_df = ident_df.loc[idx[list(largest_set)], ['parameter_name', 'parameter_value']]
