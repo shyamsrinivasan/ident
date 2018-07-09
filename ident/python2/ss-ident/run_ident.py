@@ -391,6 +391,14 @@ class ModelIdent(object):
         self.processed_info = all_parameter_info
         return self
 
+    @staticmethod
+    def __compare_tuples(tuple_1, tuple_2):
+        """compare sample name and data set id in a tuple to another tuple"""
+        if tuple_1[0] == tuple_2[0] and tuple_1[1] == tuple_2[1]:
+            return True
+        else:
+            return False
+
     def get_parameter_value(self):
         """extract parameter values in a given flux to re-simulate model with newly determined parameters.
         get parameter values from data sets that can detect all parameters"""
@@ -415,7 +423,7 @@ class ModelIdent(object):
             for j_set_member in largest_set:
                 parameter_value = [self.processed_info['parameter_values'][j_value]
                                    for j_value, i_data_set_id in enumerate(identifying_data_sets[i_parameter])
-                                   if j_set_member == i_data_set_id]
+                                   if self.__compare_tuples(j_set_member, i_data_set_id)]
                 select_parameter_values.append(parameter_value)
 
         # get parameter values from data sets in largest_set
