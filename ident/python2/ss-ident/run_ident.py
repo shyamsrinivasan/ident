@@ -73,6 +73,7 @@ class ModelIdent(object):
         self.ident_data = {}
         self.ident_index_label = []
         self.processed_info = {}
+        self.select_values = {}
 
     def retrieve_df_from_file(self, original_exp=0):
         """retrieve experimental data from csv file"""
@@ -403,10 +404,6 @@ class ModelIdent(object):
         """extract parameter values in a given flux to re-simulate model with newly determined parameters.
         get parameter values from data sets that can detect all parameters"""
 
-        import pdb;pdb.set_trace()
-        # retrieve ident data from file
-        ident_df = self.retrieve_ident_df_from_file()
-
         # get data sets identifying each parameter
         identifying_data_sets = [set(i_parameter_data_set) for i_parameter_data_set in
                                  self.processed_info["sample_data_set_id"]]
@@ -419,31 +416,32 @@ class ModelIdent(object):
 
         largest_set = list(largest_set)
         select_parameter_values = []
-        select_data_sets = []
-        import pdb;pdb.set_trace()
+        # select_data_sets = []
         for i_parameter, i_parameter_name in enumerate(self.processed_info['parameter_names']):
             parameter_value = [self.processed_info['parameter_values'][i_parameter][j_value]
                                for j_value, i_data_set_id in enumerate(identifying_data_sets[i_parameter])
                                for j_set_member in largest_set if self.__compare_tuples(j_set_member, i_data_set_id)]
-            data_set_value = [i_data_set_id for j_value, i_data_set_id in enumerate(identifying_data_sets[i_parameter])
-                              for j_set_member in largest_set if self.__compare_tuples(j_set_member, i_data_set_id)]
+            # data_set_value = [i_data_set_id for j_value, i_data_set_id in enumerate(identifying_data_sets[i_parameter])
+            #                   for j_set_member in largest_set if self.__compare_tuples(j_set_member, i_data_set_id)]
             select_parameter_values.append(parameter_value)
-            select_data_sets.append(data_set_value)
+            # select_data_sets.append(data_set_value)
 
         # get parameter values from data sets in largest_set
-        idx = pd.IndexSlice
-        relevant_df = ident_df.loc[idx[list(largest_set)], ['parameter_name', 'parameter_value']]
-        all_parameter_values = []
-        all_parameter_names = []
-        all_parameter_data_sets = [list(largest_set) for _ in self.processed_info["parameter_names"]]
-        for i_parameter, i_parameter_name in enumerate(self.processed_info["parameter_names"]):
-            i_p_value = relevant_df[relevant_df["parameter_name"] == i_parameter_name]["parameter_value"].values
-            all_parameter_values.append(i_p_value)
-            all_parameter_names.append(i_parameter_name)
-        all_parameter_info = {"names": all_parameter_names, "values": all_parameter_values,
-                              "data_sets": all_parameter_data_sets,
+        # idx = pd.IndexSlice
+        # relevant_df = ident_df.loc[idx[list(largest_set)], ['parameter_name', 'parameter_value']]
+        # all_parameter_values = []
+        # all_parameter_names = []
+        # all_parameter_data_sets = [list(largest_set) for _ in self.processed_info["parameter_names"]]
+        # for i_parameter, i_parameter_name in enumerate(self.processed_info["parameter_names"]):
+        #     i_p_value = relevant_df[relevant_df["parameter_name"] == i_parameter_name]["parameter_value"].values
+        #     all_parameter_values.append(i_p_value)
+        #     all_parameter_names.append(i_parameter_name)
+        all_parameter_info = {"parameter_names": self.processed_info['parameter_names'],
+                              "parameter_values": select_parameter_values,
+                              "data_sets": largest_set,
                               "total_data_sets": self.processed_info["total_data_sets"],
                               "flux_name": self.processed_info["flux_name"]}
+        self.select_values = all_parameter_info
 
         import pdb;pdb.set_trace()
         return all_parameter_info
