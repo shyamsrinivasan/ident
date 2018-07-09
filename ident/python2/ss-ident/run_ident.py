@@ -389,7 +389,6 @@ class ModelIdent(object):
         all_parameter_info.update({"flux_name": all_flux_names})
 
         self.processed_info = all_parameter_info
-
         return self
 
     def get_parameter_value(self):
@@ -401,7 +400,8 @@ class ModelIdent(object):
         ident_df = self.retrieve_ident_df_from_file()
 
         # get data sets identifying each parameter
-        identifying_data_sets = [set(i_parameter_data_set) for i_parameter_data_set in self.processed_info["sample_data_set_id"]]
+        identifying_data_sets = [set(i_parameter_data_set) for i_parameter_data_set in
+                                 self.processed_info["sample_data_set_id"]]
         size_of_data_sets = [len(i_parameter_set) for i_parameter_set in identifying_data_sets]
         sort_index = np.argsort(size_of_data_sets)  # last position is the biggest data set
         largest_set = identifying_data_sets[sort_index[-1]]
