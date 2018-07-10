@@ -42,6 +42,7 @@ class ValidateSim(ModelSim):
 
         estimate_id = ['estimate_{}'.format(j_estimate) for j_estimate, _ in enumerate(parameter_list)]
 
+        import pdb; pdb.set_trace()
         return parameter_list, estimate_id
 
     def run_initial_sim(self, parameter, parameter_ids=(), **kwargs):
