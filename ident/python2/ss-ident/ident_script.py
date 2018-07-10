@@ -42,9 +42,9 @@ validate_obj = ValidateSim(kotte_model.kotte_ck_ode, kotte_model.kotte_ck_flux, 
                                                                                    'sample_size': 1,
                                                                                    'noise_std': 0.05})
 import pdb;pdb.set_trace()
-parameter_estimates, estimate_ids = validate_obj.create_parameter_list(v1_ident.select_values)
+parameter_estimates, estimate_info = validate_obj.create_parameter_list(v1_ident.select_values)
 
-validate_obj.validate_model(parameter_estimates, estimate_ids=estimate_ids)
+validate_obj.validate_model(parameter_estimates, estimate_info=estimate_info)
 
 # get parameter value plot
 v1_ident.parameter_values_plot(default_parameter_values, violin=True, box=False, bins=1)
