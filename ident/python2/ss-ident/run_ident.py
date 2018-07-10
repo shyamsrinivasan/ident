@@ -106,6 +106,7 @@ class ModelIdent(object):
         reset_df = arranged_df.reset_index('experiment_id')
 
         # run ident analysis in parallel
+        import pdb;pdb.set_trace()
         sim_result = setup_parallel_ident(ident_fun=self.ident_fun, flux_id=self.flux_id, flux_choice=self.flux_choice,
                                           exp_data=reset_df)
         # import pdb;pdb.set_trace()
