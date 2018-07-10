@@ -115,10 +115,10 @@ class MySlave(Slave):
             return complete, [], [], [], [], []
 
 
-def setup_parallel_ident(ident_fun, flux_id, flux_choice, exp_data):
-    name = MPI.Get_processor_name()
-    rank = MPI.COMM_WORLD.Get_rank()
-    size = MPI.COMM_WORLD.Get_size()
+def setup_parallel_ident(ident_fun, flux_id, flux_choice, exp_data, name, rank, size):
+    # name = MPI.Get_processor_name()
+    # rank = MPI.COMM_WORLD.Get_rank()
+    # size = MPI.COMM_WORLD.Get_size()
 
     sim_result = {}
     print('I am  %s rank %d (total %d)' % (name, rank, size))
