@@ -21,6 +21,7 @@ v1_ident = ModelIdent(ident_fun=kotte_model.flux_1_kcat_ident,
 # print('Practical Identifiability Analysis of v1 with 2 parameters: k1cat and K1ac\n')
 # ident_data_df = v1_ident.perform_ident()
 
+import pdb;pdb.set_trace()
 v1_ident.process_ident()
 
 v1_ident.get_parameter_value()
