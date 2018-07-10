@@ -27,8 +27,8 @@ def main():
                                  'exp_figure': os.path.join(os.getcwd(), 'results/v1_kcat_exp.eps'),
                                  'figure_format': 'eps'})
         # test identifiability
-        # print('Practical Identifiability Analysis of v1 with 2 parameters: k1cat and K1ac\n')
-        # ident_data_df = v1_ident.perform_ident()
+        print('Practical Identifiability Analysis of v1 with 2 parameters: k1cat and K1ac\n')
+        ident_data_df = v1_ident.perform_ident()
 
         import pdb;pdb.set_trace()
         v1_ident.process_ident()
