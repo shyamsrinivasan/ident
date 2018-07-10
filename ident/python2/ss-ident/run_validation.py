@@ -37,19 +37,19 @@ class ValidateSim(ModelSim):
         # create list of all parameter values of size n_p with each of the above estimated values
         parameter_list = [self.i_parameter for _ in parameter_name_value_pair]
         # data_set_id = []
-        estimate_info = []
+        estimate_data_set_info = []
         for i_index, i_value in enumerate(parameter_list):
             # data_set_id.append(estimate_info['data_sets'][i_index])
             # estimate_id.append('estimate_{}'.format(i_index))
-            estimate_info.append(('estimate_{}'.format(i_index), estimate_info['data_sets'][i_index][0],
-                                  estimate_info['data_sets'][i_index][1]))
+            estimate_data_set_info.append(('estimate_{}'.format(i_index), estimate_info['data_sets'][i_index][0],
+                                           estimate_info['data_sets'][i_index][1]))
             for i_key in parameter_name_value_pair[i_index].keys():
                 i_value[i_key] = parameter_name_value_pair[i_index][i_key]
 
         # estimate_id = ['estimate_{}'.format(j_estimate) for j_estimate, _ in enumerate(parameter_list)]
 
         import pdb; pdb.set_trace()
-        return parameter_list, estimate_info
+        return parameter_list, estimate_data_set_info
 
     def run_initial_sim(self, parameter, parameter_ids=(), **kwargs):
         wt_ss, wt_dynamics = super(ValidateSim, self).run_initial_sim(parameter, parameter_ids, **kwargs)
