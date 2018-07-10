@@ -1,6 +1,6 @@
 from names_strings import true_parameter_values
 from run_ident import ModelIdent
-from run_validation import create_parameter_list
+from run_validation import ValidateSim
 import numpy as np
 import kotte_model
 import os.path
@@ -33,10 +33,18 @@ y0 = np.array([5, 1, 1])
 # get and set true parameter values, if available separately
 default_parameters = true_parameter_values()
 
-validation_list = create_parameter_list(v1_ident.select_values, default_parameters, y0=y0, kinetics=2,
-                                        user_ode_opts=user_ode_opts, number_samples=1, noise_std=0.05)
+import pdb;pdb.set_trace()
+validate_obj = ValidateSim(kotte_model.kotte_ck_ode, kotte_model.kotte_ck_flux, **{'kinetics': 2,
+                                                                                   'ode_opts': user_ode_opts,
+                                                                                   't_final': 200,
+                                                                                   'wt_y0': y0,
+                                                                                   'i_parameter': default_parameters,
+                                                                                   'sample_size': 1,
+                                                                                   'noise_std': 0.05})
+import pdb;pdb.set_trace()
+parameter_estimates, estimate_ids = validate_obj.create_parameter_list(v1_ident.select_values)
 
-
+validate_obj.validate_model(parameter_estimates, estimate_ids=estimate_ids)
 
 # get parameter value plot
 v1_ident.parameter_values_plot(default_parameter_values, violin=True, box=False, bins=1)
