@@ -108,7 +108,7 @@ class ModelIdent(object):
         # run ident analysis in parallel
         sim_result = setup_parallel_ident(ident_fun=self.ident_fun, flux_id=self.flux_id, flux_choice=self.flux_choice,
                                           exp_data=reset_df)
-        import pdb;pdb.set_trace()
+        # import pdb;pdb.set_trace()
         # collect, arrange and collate data
         ordered_info = self.__order_ident_data(sim_result)
         self.__create_dict_for_df(ordered_info)
@@ -619,7 +619,7 @@ if __name__ == '__main__':
 
     v1_ident.exp_info_plot()
 
-    import pdb;pdb.set_trace()
+    # import pdb;pdb.set_trace()
     print('Done\n')
 
     # # test identifiability and store data to file
