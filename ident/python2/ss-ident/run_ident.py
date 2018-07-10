@@ -169,6 +169,7 @@ class ModelIdent(object):
         arranged_df = self.retrieve_df_from_file()
 
         # reset index of experimental data df
+        import pdb;pdb.set_trace()
         reset_exp_df = arranged_df.reset_index("sample_name")
         reset_exp_df.reset_index("data_set_id", inplace=True)
 
