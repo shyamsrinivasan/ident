@@ -33,7 +33,6 @@ y0 = np.array([5, 1, 1])
 # get and set true parameter values, if available separately
 default_parameters = true_parameter_values()
 
-import pdb;pdb.set_trace()
 validate_obj = ValidateSim(kotte_model.kotte_ck_ode, kotte_model.kotte_ck_flux, **{'kinetics': 2,
                                                                                    'ode_opts': user_ode_opts,
                                                                                    't_final': 200,
@@ -41,9 +40,10 @@ validate_obj = ValidateSim(kotte_model.kotte_ck_ode, kotte_model.kotte_ck_flux, 
                                                                                    'i_parameter': default_parameters,
                                                                                    'sample_size': 1,
                                                                                    'noise_std': 0.05})
-import pdb;pdb.set_trace()
+
 parameter_estimates, estimate_info = validate_obj.create_parameter_list(v1_ident.select_values)
 
+import pdb;pdb.set_trace()
 validate_obj.validate_model(parameter_estimates, estimate_info=estimate_info)
 
 # get parameter value plot

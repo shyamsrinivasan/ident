@@ -46,12 +46,10 @@ class ValidateSim(ModelSim):
             for i_key in parameter_name_value_pair[i_index].keys():
                 i_value[i_key] = parameter_name_value_pair[i_index][i_key]
 
-        # estimate_id = ['estimate_{}'.format(j_estimate) for j_estimate, _ in enumerate(parameter_list)]
-
-        import pdb; pdb.set_trace()
         return parameter_list, estimate_data_set_info
 
     def run_initial_sim(self, parameter, parameter_ids=(), **kwargs):
+        import pdb;pdb.set_trace()
         wt_ss, wt_dynamics = super(ValidateSim, self).run_initial_sim(parameter, parameter_ids, **kwargs)
         return wt_ss, wt_dynamics
 
