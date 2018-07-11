@@ -164,7 +164,7 @@ def v1_ident():
     else:
         ProcessSlave().run()
 
-    return v1_obj
+    return None
 
 
 def v2_ident():
@@ -213,13 +213,13 @@ def v2_ident():
     else:
         ProcessSlave().run()
 
-    return v2_obj
+    return None
 
 
 if __name__ == '__main__':
 
-    # v1_object = v1_ident()
-    
-    v2_object = v2_ident()
+    # v1_ident()
+
+    v2_ident()
     import pdb;pdb.set_trace()
     print('Done\n')
