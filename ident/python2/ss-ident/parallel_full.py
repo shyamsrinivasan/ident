@@ -569,5 +569,7 @@ if __name__ == '__main__':
         v1_ident.create_dict_for_df(ordered_info)
         import pdb;pdb.set_trace()
         final_result_df = v1_ident.write_ident_info_file()
+
+        job.terminate_slaves()
     else:
         ProcessSlave().run()
