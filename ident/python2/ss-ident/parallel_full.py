@@ -587,7 +587,7 @@ class ParallelProcess(object):
             estimate_id = kwargs['estimate_info']
             sim_obj = kwargs['sim_obj']
             for j_index, (j_estimate, j_estimate_id) in enumerate(zip(estimates, estimate_id)):
-                self.__add_next_task(task=task, **{'ode_rhs_fun': sim_obj.ode_rhs_fun,
+                self.__add_next_task(task=task, **{'ode_rhs_fun': sim_obj.rhs_fun,
                                                    'flux_fun': sim_obj.flux_fun, 't_final': sim_obj.t_final,
                                                    'parameters': j_estimate, 'ode_opts': sim_obj.ode_opts,
                                                    'initial_value': sim_obj.wt_y0, 'estimate_id': j_estimate_id})
@@ -597,6 +597,7 @@ class ParallelProcess(object):
 
         # Keeep starting slaves as long as there is work to do
         results = []
+        import pdb;pdb.set_trace()
         while not self.work_queue.done():
             # give more work to do to each idle slave (if any)
             self.work_queue.do_work()
