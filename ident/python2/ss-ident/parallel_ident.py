@@ -219,6 +219,7 @@ def v2_ident():
 if __name__ == '__main__':
 
     v1_object = v1_ident()
+    import pdb;pdb.set_trace()
     v2_object = v2_ident()
     import pdb;pdb.set_trace()
     print('Done\n')
