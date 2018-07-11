@@ -587,9 +587,9 @@ class ParallelProcess(object):
             estimate_id = kwargs['estimate_info']
             sim_obj = kwargs['sim_obj']
             for j_index, (j_estimate, j_estimate_id) in enumerate(zip(estimates, estimate_id)):
-                self.__add_next_task(task=task, **{'ode_rhs_fun': sim_obj.rhs_fun,
+                self.__add_next_task(task=task, **{'rhs_fun': sim_obj.rhs_fun,
                                                    'flux_fun': sim_obj.flux_fun, 't_final': sim_obj.t_final,
-                                                   'parameters': j_estimate, 'ode_opts': sim_obj.ode_opts,
+                                                   'ode_sys_opts': j_estimate, 'ode_opts': sim_obj.ode_opts,
                                                    'initial_value': sim_obj.wt_y0, 'estimate_id': j_estimate_id})
 
         elif task == 'validate_sim':
@@ -789,7 +789,7 @@ class ProcessSlave(Slave):
 
         elif data['task'] == 'initial_sim':
             # define explicit assimulo problem
-            rhs_fun = data['ode_fun']
+            rhs_fun = data['rhs_fun']
             y_initial = data['y0']
             estimate_id = data['estimate_id']
             ode_opts = data['ode_opts']
