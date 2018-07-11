@@ -597,7 +597,6 @@ class ParallelProcess(object):
 
         # Keeep starting slaves as long as there is work to do
         results = []
-        import pdb;pdb.set_trace()
         while not self.work_queue.done():
             # give more work to do to each idle slave (if any)
             self.work_queue.do_work()
@@ -797,9 +796,10 @@ class ProcessSlave(Slave):
             t_final = data['t_final']
             all_options = [ode_opts, ode_sys_opts]
 
-            print('  Slave %s rank %d executing ident for estimate: %s sample: %s, data set: %s' %
+            print('  Slave %s rank %d executing initial_sim for estimate: %s sample: %s, data set: %s' %
                   (name, rank, estimate_id[0], estimate_id[1], estimate_id[2]))
             time_course, y_result, _, _ = simulate_ode(rhs_fun, y_initial, tf=t_final, opts=all_options)
+            print(' ode simulation complete ')
 
             # calculate flux
             flux_fun = data['flux_fun']
