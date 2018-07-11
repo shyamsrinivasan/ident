@@ -868,11 +868,11 @@ if __name__ == '__main__':
                                                                                                    default_parameters})
         parameter_estimates, estimate_info = model_1.create_parameter_list(v1_ident.select_values)
 
-        # job_2 = ParallelProcess(slaves=range(1, size))
+        job_2 = ParallelProcess(slaves=range(1, size))
         import pdb; pdb.set_trace()
-        initial_sim_result = job.run_all(task='initial_sim', **{'parameters': parameter_estimates,
+        initial_sim_result = job_2.run_all(task='initial_sim', **{'parameters': parameter_estimates,
                                                                 'estimate_info': estimate_info, 'sim_obj': model_1})
         import pdb;pdb.set_trace()
-        job.terminate_slaves()
+        job_2.terminate_slaves()
     else:
         ProcessSlave().run()
