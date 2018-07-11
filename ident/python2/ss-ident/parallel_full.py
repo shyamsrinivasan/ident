@@ -541,13 +541,13 @@ class ParallelProcess(object):
                     'data_set_id': kwargs['data_set_id'], 'exp_data': kwargs['exp_data'], 'task': task}
 
         elif task == 'initial_sim':
-            data = {'ode_fun': kwargs['ode_rhs_fun'], 'y0': kwargs['initial_value'], 'id': kwargs['estimate_id'],
+            data = {'ode_fun': kwargs['rhs_fun'], 'y0': kwargs['initial_value'], 'id': kwargs['estimate_id'],
                     'ode_sys_opts': kwargs['ode_sys_opts'], 'ode_opts': kwargs['ode_opts'],
                     't_final': kwargs['t_final'], 'flux_fun': kwargs['flux_fun'], 'task': task}
 
         elif task == 'validate':
             # set ode rhs function, initial condition and parameters
-            data = {'ode_fun': kwargs['ode_rhs_fun'], 'y0': kwargs['initial_value'], 'id': kwargs['estimate_id'],
+            data = {'ode_fun': kwargs['rhs_fun'], 'y0': kwargs['initial_value'], 'id': kwargs['estimate_id'],
                     'ode_sys_opts': kwargs['ode_sys_opts'], 'ode_opts': kwargs['ode_opts'],
                     't_final': kwargs['t_final'], 'flux_fun': kwargs['flux_fun'],
                     'perturbations': kwargs['perturbations'], 'task': task}
