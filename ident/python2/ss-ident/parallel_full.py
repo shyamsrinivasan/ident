@@ -212,6 +212,308 @@ class ModelIdent(object):
         print('Identifiability Data written to given file\n')
         return ident_data_df
 
+    @staticmethod
+    def __parameter_ident_info(ident_df):
+        """returns info on identifiability and value of each parameter in df"""
+        # get parameter names
+        all_parameter_names = ident_df["parameter_name"].unique().tolist()
+
+        all_p_values = []
+        all_p_data_set_names = []
+        all_p_identifiability = []
+        total_data_sets = []
+        all_p_sample_names = []
+        for i_parameter_name in all_parameter_names:
+            # get all data sets identifying each parameter
+            identifying_df = ident_df[(ident_df["parameter_name"] == i_parameter_name) & (ident_df["identified"])]
+
+            # get data set names
+            all_p_data_set_names.append([i_value[1] for i_value in identifying_df.index.values])
+            all_p_identifiability.append(len(all_p_data_set_names[-1]))
+
+            # get parameter values
+            all_p_values.append([np.array(i_value) for i_value in identifying_df["parameter_value"].values])
+            total_data_sets.append(len(ident_df.index.levels[1]))
+            all_p_sample_names.append([i_value[0] for i_value in identifying_df.index.values])
+
+        all_p_info = {"parameter_names": all_parameter_names,
+                      "parameter_values": all_p_values,
+                      "identifiability": all_p_identifiability,
+                      "data_sets": all_p_data_set_names,
+                      "total_data_sets": total_data_sets,
+                      "identifiability_percentage": [np.array(float(i_nr) * 100 / float(i_dr)) for i_nr, i_dr in
+                                                     zip(all_p_identifiability, total_data_sets)],
+                      "sample_name": all_p_sample_names}
+        return all_p_info
+
+    @staticmethod
+    def __sample_ident_info(all_sample_info):
+        """return calculated mean identifiability and std in identifiability
+        from all samples for all parameters"""
+        # get common data sets identifying all parameters in all samples
+        number_parameters = len(all_sample_info[0]["parameter_names"])
+
+        all_identifiabilites = [i_sample_info["identifiability"] for i_sample_info in all_sample_info]
+        sample_mean_identifiability = np.mean(np.array(all_identifiabilites), axis=0)
+        sample_std_identifiability = np.std(np.array(all_identifiabilites), axis=0)
+
+        sample_mean_ident = [np.array(i_parameter_ident) for i_parameter_ident in sample_mean_identifiability]
+        sample_std_ident = [np.array(i_parameter_ident) for i_parameter_ident in sample_std_identifiability]
+
+        all_identifiabilites_percent = [i_sample_info["identifiability_percentage"]
+                                        for i_sample_info in all_sample_info]
+
+        sample_mean_identifiability_percent = np.mean(np.array(all_identifiabilites_percent), axis=0)
+        sample_std_identifiability_percent = np.std(np.array(all_identifiabilites_percent), axis=0)
+
+        sample_mean_ident_percent = [np.array(i_parameter_ident) for i_parameter_ident in
+                                     sample_mean_identifiability_percent]
+        sample_std_ident_percent = [np.array(i_parameter_ident) for i_parameter_ident in
+                                    sample_std_identifiability_percent]
+
+        all_sample_data_pair = [[i_p for i_sample in all_sample_info
+                                 for i_p in
+                                 zip(i_sample["sample_name"][i_parameter], i_sample["data_sets"][i_parameter])]
+                                for i_parameter in range(0, number_parameters)]
+        ident_dict = {"ident_mean": sample_mean_ident,
+                      "ident_std": sample_std_ident,
+                      "ident_percent_mean": sample_mean_ident_percent,
+                      "ident_percent_std": sample_std_ident_percent,
+                      "sample_data_set_id": all_sample_data_pair}
+        return ident_dict
+
+    @staticmethod
+    def __parameter_exp_info(ident_df, exp_df, parameter_ident_info):
+        """return experiment type information for each parameter"""
+        # get parameter names
+        all_parameter_names = ident_df["parameter_name"].unique().tolist()
+        number_experiments = len(all_parameter_names)
+        exp_column_ids = ['experiment_{}_parameter'.format(i_experiment) for i_experiment in
+                          range(0, number_experiments)]
+        exp_column_name = ['experiment_{}'.format(i_experiment) for i_experiment in range(0, number_experiments)]
+
+        # all possible ss perturbation experiment types classified on the basis of parameter perturbed
+        all_possible_perturbations = set.union(set(exp_df["parameter_name"].unique()),
+                                               {'wt', 'ac', 'k1cat', 'V2max', 'V3max'})
+        all_parameter_exp_info = []
+        for i_parameter, i_parameter_name in enumerate(all_parameter_names):
+            # get all data sets identifying each parameter
+            identifying_df = ident_df[(ident_df["parameter_name"] == i_parameter_name) & (ident_df["identified"])]
+            all_experiment_info = {}
+
+            # get frequency of each experiment
+            for i_experiment, i_experiment_pos in enumerate(exp_column_ids):
+                exp_frequency = identifying_df[i_experiment_pos].value_counts()
+
+                # get name value pairs
+                name_value_pair = [(j_name, np.array(float(j_value) * 100 / parameter_ident_info[i_parameter]))
+                                   for j_name, j_value in zip(exp_frequency.index.values, exp_frequency.values)]
+
+                # add missing experiment type with value = 0
+                missing_perturbation = all_possible_perturbations.difference(exp_frequency.index.values)
+                name_value_pair = name_value_pair + list(zip(missing_perturbation, [0.0] * len(missing_perturbation)))
+
+                # arrange name/values in desired order for every parameter
+                given_value = []
+                for i_given_name in all_possible_perturbations:
+                    given_value.append([i_obtained_value for i_obtained_name, i_obtained_value in name_value_pair
+                                        if i_given_name == i_obtained_name][0])
+                all_experiment_info.update({exp_column_name[i_experiment]: {"names": list(all_possible_perturbations),
+                                                                            "frequency": given_value}})
+            all_parameter_exp_info.append(all_experiment_info)
+
+        return all_parameter_exp_info
+
+    def process_ident(self, ident=1, exp_info=1):
+        """process ident data to create final data frame of results for plotting"""
+
+        # retrieve arranged experimental data from file
+        exp_df = self.retrieve_df_from_file()
+
+        # lexographic ordering of exp df indices
+        exp_df.sort_index(level='experiment_id', inplace=True)
+
+        # retrieve ident data from file
+        ident_df = self.retrieve_ident_df_from_file()
+
+        idx = pd.IndexSlice
+
+        # number of samples
+        sample_names = ident_df.index.levels[0].values.tolist()
+        number_samples = len(sample_names)
+
+        if ident:
+            # parameter identifiability information for each sample
+            all_sample_info = []
+            for i_sample in sample_names:
+                j_sample_info = ident_df.loc[idx[i_sample, :], :]
+                # get all data sets identifying each parameter in each sample
+                all_p_info = self.__parameter_ident_info(j_sample_info)
+                all_sample_info.append(all_p_info)
+
+            ident_dict = self.__sample_ident_info(all_sample_info)
+        else:
+            ident_dict = {}
+
+        # parameter identifiability information for all samples along with mean and std between samples
+        all_parameter_info = self.__parameter_ident_info(ident_df)
+        all_parameter_info.update(ident_dict)
+
+        # get experiment information for each parameter (only for noise-less data)
+        # number_experiments = len(all_parameter_info["names"])
+        if exp_info and number_samples == 1:
+            exp_info = self.__parameter_exp_info(ident_df, exp_df, all_parameter_info["ident_mean"])
+        else:
+            exp_info = []
+        all_parameter_info.update({"exp_info": exp_info})
+
+        # get flux names
+        all_flux_names = ident_df["flux_name"].unique().tolist() * len(all_parameter_info["parameter_names"])
+        all_parameter_info.update({"flux_name": all_flux_names})
+
+        self.processed_info = all_parameter_info
+        return None
+
+    @staticmethod
+    def __compare_tuples(tuple_1, tuple_2):
+        """compare sample name and data set id in a tuple to another tuple"""
+        if tuple_1[0] == tuple_2[0] and tuple_1[1] == tuple_2[1]:
+            return True
+        else:
+            return False
+
+    def get_parameter_value(self):
+        """extract parameter values in a given flux to re-simulate model with newly determined parameters.
+        get parameter values from data sets that can detect all parameters"""
+
+        # get data sets identifying each parameter
+        identifying_data_sets = [set(i_parameter_data_set) for i_parameter_data_set in
+                                 self.processed_info["sample_data_set_id"]]
+        size_of_data_sets = [len(i_parameter_set) for i_parameter_set in identifying_data_sets]
+        sort_index = np.argsort(size_of_data_sets)  # last position is the biggest data set
+        largest_set = identifying_data_sets[sort_index[-1]]
+        # del identifying_data_sets[sort_index[-1]]
+        for i_index in range(len(sort_index) - 2, -1, -1):
+            largest_set.intersection_update(identifying_data_sets[sort_index[i_index]])
+
+        largest_set = list(largest_set)
+        select_parameter_values = []
+        # select_data_sets = []
+        for i_parameter, i_parameter_name in enumerate(self.processed_info['parameter_names']):
+            parameter_value = [self.processed_info['parameter_values'][i_parameter][j_value]
+                               for j_value, i_data_set_id in enumerate(identifying_data_sets[i_parameter])
+                               for j_set_member in largest_set if self.__compare_tuples(j_set_member, i_data_set_id)]
+            # data_set_value = [i_data_set_id for j_value, i_data_set_id in enumerate(identifying_data_sets[i_parameter])
+            #                   for j_set_member in largest_set if self.__compare_tuples(j_set_member, i_data_set_id)]
+            select_parameter_values.append(parameter_value)
+            # select_data_sets.append(data_set_value)
+
+        # get parameter values from data sets in largest_set
+        all_parameter_info = {"parameter_names": self.processed_info['parameter_names'],
+                              "parameter_values": select_parameter_values,
+                              "data_sets": largest_set,
+                              "total_data_sets": self.processed_info["total_data_sets"],
+                              "flux_name": self.processed_info["flux_name"]}
+        self.select_values = all_parameter_info
+        return None
+
+
+class ModelSim(object):
+    def __init__(self, rhs_fun, flux_fun, noise=0, **kwargs):
+        self.rhs_fun = rhs_fun
+        self.flux_fun = flux_fun
+        self.noise = noise
+        try:
+            self.sample_size = kwargs['sample_size']
+        except KeyError:
+            self.sample_size = 1
+
+        try:
+            self.noise_std = kwargs['noise_std']
+        except KeyError:
+            self.noise_std = 0.05
+
+        # kinetics
+        try:
+            self.kinetics = kwargs['kinetics']
+        except KeyError:
+            self.kinetics = 2
+        # ode solver options
+        try:
+            self.ode_opts = kwargs['ode_opts']
+        except KeyError:
+            self.ode_opts = {'iter': 'Newton', 'discr': 'Adams', 'atol': 1e-10, 'rtol': 1e-10,
+                             'time_points': 200, 'display_progress': True, 'verbosity': 30}
+
+        # number of samples (applicable when noise=1)
+        try:
+            self.samples = kwargs['samples']
+        except KeyError:
+            self.sample = 1
+        # simulation time horizon (for all sims)
+        try:
+            self.t_final = kwargs['t_final']
+        except KeyError:
+            self.t_final = 500
+        # set wt initial value (to run all simulations)
+        try:
+            self.wt_y0 = kwargs['wt_y0']
+        except KeyError:
+            self.wt_y0 = []
+        # default/initial parameter list
+        try:
+            self.i_parameter = kwargs['i_parameter']
+        except KeyError:
+            self.i_parameter = {}
+
+        self.wt_ss = []
+        self.wt_dynamic = []
+        self.dynamic_info = []
+        self.ss_info = []
+        self.noisy_dynamic_info = []
+        self.noisy_ss_info = []
+        self.df_info = []
+        self.df_fields = []
+
+
+class ValidateSim(ModelSim):
+    def __init__(self, rhs_fun, flux_fun, noise=0, **kwargs):
+        super(ValidateSim, self).__init__(rhs_fun, flux_fun, noise, **kwargs)
+
+        # all parameter perturbations to be tested
+        try:
+            self.test_perturbations = kwargs['test_perturbations']
+        except KeyError:
+            self.test_perturbations = [{"wt": 0}, {"ac": 1}, {"ac": 4}, {"ac": 9}, {"ac": -.1}, {"ac": -.5},
+                                       {"k1cat": .1}, {"k1cat": .5}, {"k1cat": 1}, {"k1cat": -.1}, {"k1cat": -.5},
+                                       {"V3max": .1}, {"V3max": .5}, {"V3max": 1}, {"V3max": -.1}, {"V3max": -.5},
+                                       {"V2max": .1}, {"V2max": .5}, {"V2max": 1}, {"V2max": -.1}, {"V2max": -.5}]
+        self.estimated_parameters = []
+        self.estimate_ids = []
+
+    def create_parameter_list(self, estimate_info):
+        """create name value pairs of estimated parameters followed by list of all parameters for use in validation"""
+        # create dictionary (of length n_p) of parameters
+        number_estimates = len(estimate_info['data_sets'])
+        parameter_name_value_pair = [dict(zip(estimate_info['parameter_names'],
+                                              [estimate_info['parameter_values'][i_parameter][i_estimate]
+                                               for i_parameter, _ in enumerate(estimate_info['parameter_names'])]))
+                                     for i_estimate in range(0, number_estimates)]
+
+        # create list of all parameter values of size n_p with each of the above estimated values
+        parameter_list = [self.i_parameter for _ in parameter_name_value_pair]
+        # data_set_id = []
+        estimate_data_set_info = []
+        for i_index, i_value in enumerate(parameter_list):
+            # data_set_id.append(estimate_info['data_sets'][i_index])
+            # estimate_id.append('estimate_{}'.format(i_index))
+            estimate_data_set_info.append(('estimate_{}'.format(i_index), estimate_info['data_sets'][i_index][0],
+                                           estimate_info['data_sets'][i_index][1]))
+            for i_key in parameter_name_value_pair[i_index].keys():
+                i_value[i_key] = parameter_name_value_pair[i_index][i_key]
+
+        return parameter_list, estimate_data_set_info
+
 
 class ParallelProcess(object):
     """Class running multiple ode simulations by assigning jobs to different slaves
@@ -237,7 +539,6 @@ class ParallelProcess(object):
             data = {'ident_fun': kwargs['ident_fun'], 'flux_id': kwargs['flux_id'],
                     'flux_choice': kwargs['flux_choice'], 'sample_id': kwargs['sample_id'],
                     'data_set_id': kwargs['data_set_id'], 'exp_data': kwargs['exp_data'], 'task': task}
-            # data = [ident_fun, ident_args]
 
         elif task == 'initial_sim':
             data = {'ode_fun': kwargs['ode_rhs_fun'], 'y0': kwargs['initial_value'], 'id': kwargs['estimate_id'],
@@ -281,6 +582,7 @@ class ParallelProcess(object):
                                                        sample_data_set_id[0], 'data_set_id': sample_data_set_id[1]})
 
         elif task == 'initial_sim':
+            import pdb; pdb.set_trace()
             estimates = kwargs['parameters']
             estimate_id = kwargs['estimate_info']
             sim_obj = kwargs['sim_obj']
@@ -288,7 +590,7 @@ class ParallelProcess(object):
                 self.__add_next_task(task=task, **{'ode_rhs_fun': sim_obj.ode_rhs_fun,
                                                    'flux_fun': sim_obj.flux_fun, 't_final': sim_obj.t_final,
                                                    'parameters': j_estimate, 'ode_opts': sim_obj.ode_opts,
-                                                   'initial_value': sim_obj.y0, 'estimate_id': j_estimate_id})
+                                                   'initial_value': sim_obj.wt_y0, 'estimate_id': j_estimate_id})
 
         elif task == 'validate_sim':
             pass
@@ -510,39 +812,7 @@ class ProcessSlave(Slave):
             return data['task'], ([], [], [], [], [])
 
 
-# def setup_parallel_ident(ident_fun, flux_id, flux_choice, exp_data, name, rank, size):
-#     # name = MPI.Get_processor_name()
-#     # rank = MPI.COMM_WORLD.Get_rank()
-#     # size = MPI.COMM_WORLD.Get_size()
-#
-#     sim_result = {}
-#     print('I am  %s rank %d (total %d)' % (name, rank, size))
-#     if rank == 0:  # Master
-#         ident_job = ParallelProcess(slaves=range(1, size))
-#         # import pdb;pdb.set_trace()
-#         sim_result = ident_job.run_all(exp_data, ident_fun=ident_fun, flux_id=flux_id, flux_choice=flux_choice)
-#
-#         ident_job.terminate_slaves()
-#     else:  # Any slave
-#         MySlave().run()
-#
-#     return sim_result
-
-
 if __name__ == '__main__':
-    # user_ode_opts = {'iter': 'Newton', 'discr': 'Adams', 'atol': 1e-10, 'rtol': 1e-10,
-    #                  'time_points': 200, 'display_progress': True, 'verbosity': 30}
-    # # initial ss to begin all simulations from
-    # y0 = np.array([5, 1, 1])
-    # # get and set true parameter values, if available separately
-    # default_parameters = true_parameter_values()
-    # # create simulation object to simulate model with above parameters and initial conditions
-    # model_1 = ModelSim(kotte_model.kotte_ck_ode, kotte_model.kotte_ck_flux, noise=0, **{'kinetics': 2,
-    #                                                                                     'ode_opts': user_ode_opts,
-    #                                                                                     't_final': 200,
-    #                                                                                     'wt_y0': y0,
-    #                                                                                     'i_parameter':
-    #                                                                                         default_parameters})
     name = MPI.Get_processor_name()
     rank = MPI.COMM_WORLD.Get_rank()
     size = MPI.COMM_WORLD.Get_size()
@@ -560,16 +830,48 @@ if __name__ == '__main__':
         exp_df = v1_ident.retrieve_df_from_file()
 
         job = ParallelProcess(slaves=range(1, size))
-        import pdb;pdb.set_trace()
+
         ident_result = job.run_all(task='ident', **{'exp_df': exp_df, 'ident_fun': v1_ident.ident_fun,
                                                     'flux_id': v1_ident.flux_id, 'flux_choice': v1_ident.flux_choice})
+
+        job.terminate_slaves()
+
         # collect, arrange and collate data
-        import pdb;pdb.set_trace()
         ordered_info = v1_ident.order_ident_data(ident_result)
         v1_ident.create_dict_for_df(ordered_info)
-        import pdb;pdb.set_trace()
+
+        # write all ident data to file
         final_result_df = v1_ident.write_ident_info_file()
 
+        # process ident info for further analysis
+        v1_ident.process_ident()
+
+        # extract parameter va;ues for model validation
+        v1_ident.get_parameter_value()
+
+        # ident parameter validation through parallel simulation
+        user_ode_opts = {'iter': 'Newton', 'discr': 'Adams', 'atol': 1e-10, 'rtol': 1e-10,
+                         'time_points': 200, 'display_progress': True, 'verbosity': 30}
+        # initial ss to begin all simulations from
+        y0 = np.array([5, 1, 1])
+        # get and set true parameter values, if available separately
+        default_parameters = true_parameter_values()
+
+        # create simulation object to simulate model with above parameters and initial conditions
+        model_1 = ValidateSim(kotte_model.kotte_ck_ode, kotte_model.kotte_ck_flux, noise=0, **{'kinetics': 2,
+                                                                                               'ode_opts':
+                                                                                                   user_ode_opts,
+                                                                                               't_final': 200,
+                                                                                               'wt_y0': y0,
+                                                                                               'i_parameter':
+                                                                                                   default_parameters})
+        parameter_estimates, estimate_info = model_1.create_parameter_list(v1_ident.select_values)
+
+        # job_2 = ParallelProcess(slaves=range(1, size))
+        import pdb; pdb.set_trace()
+        initial_sim_result = job.run_all(task='initial_sim', **{'parameters': parameter_estimates,
+                                                                'estimate_info': estimate_info, 'sim_obj': model_1})
+        import pdb;pdb.set_trace()
         job.terminate_slaves()
     else:
         ProcessSlave().run()
