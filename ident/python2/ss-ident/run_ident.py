@@ -1,18 +1,15 @@
-from parallel_ident import setup_parallel_ident
-from names_strings import default_ident_parameter_name, true_parameter_values
-from collections import defaultdict
+from names_strings import default_ident_parameter_name
 from plot_ident_results import plot_on_axis_object_box, plot_on_axis_object_hist, plot_on_axis_object_violin
 from plot_ident_results import plot_on_axis_object, set_hbar_axis_properties
 from plot_ident_results import plot_on_axis_object_polar, set_polar_axis_limits
+from collections import defaultdict
 import pandas as pd
-import itertools as it
 import numpy as np
+import itertools as it
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import matplotlib.font_manager as fnt
 import matplotlib as mpl
-import os.path
-import kotte_model
 
 
 class ModelIdent(object):
@@ -100,24 +97,7 @@ class ModelIdent(object):
 
         return ident_df
 
-    def perform_ident(self, name, rank, size):
-        # read experimental data from file (serially)
-        arranged_df = self.retrieve_df_from_file()
-        reset_df = arranged_df.reset_index('experiment_id')
-
-        # run ident analysis in parallel
-        import pdb;pdb.set_trace()
-        sim_result = setup_parallel_ident(ident_fun=self.ident_fun, flux_id=self.flux_id, flux_choice=self.flux_choice,
-                                          exp_data=reset_df, name=name, rank=rank, size=size)
-        # import pdb;pdb.set_trace()
-        # collect, arrange and collate data
-        ordered_info = self.__order_ident_data(sim_result)
-        self.__create_dict_for_df(ordered_info)
-        final_result_df = self.__write_ident_info_file()
-
-        return final_result_df
-
-    def __order_ident_data(self, all_results):
+    def order_ident_data(self, all_results):
         """collect ident info for all data sets from all samples together"""
 
         # read experimental data from file (serially)
@@ -132,7 +112,7 @@ class ModelIdent(object):
 
         return ordered_info
 
-    def __create_dict_for_df(self, ident_results):
+    def create_dict_for_df(self, ident_results):
         """create dictionary of identifiability results for future writing to file"""
         # read experimental data from file (serially)
         # arranged_df = self.retrieve_df_from_file()
@@ -164,13 +144,12 @@ class ModelIdent(object):
         self.ident_data = all_data
         return self
 
-    def __write_ident_info_file(self):
+    def write_ident_info_file(self):
         """create data frame from identifiability data and write to csv file for future use"""
         # read experimental data from file (serially)
         arranged_df = self.retrieve_df_from_file()
 
         # reset index of experimental data df
-        import pdb;pdb.set_trace()
         reset_exp_df = arranged_df.reset_index("sample_name")
         reset_exp_df.reset_index("data_set_id", inplace=True)
 
@@ -393,7 +372,7 @@ class ModelIdent(object):
         all_parameter_info.update({"flux_name": all_flux_names})
 
         self.processed_info = all_parameter_info
-        return self
+        return None
 
     @staticmethod
     def __compare_tuples(tuple_1, tuple_2):
@@ -430,22 +409,13 @@ class ModelIdent(object):
             # select_data_sets.append(data_set_value)
 
         # get parameter values from data sets in largest_set
-        # idx = pd.IndexSlice
-        # relevant_df = ident_df.loc[idx[list(largest_set)], ['parameter_name', 'parameter_value']]
-        # all_parameter_values = []
-        # all_parameter_names = []
-        # all_parameter_data_sets = [list(largest_set) for _ in self.processed_info["parameter_names"]]
-        # for i_parameter, i_parameter_name in enumerate(self.processed_info["parameter_names"]):
-        #     i_p_value = relevant_df[relevant_df["parameter_name"] == i_parameter_name]["parameter_value"].values
-        #     all_parameter_values.append(i_p_value)
-        #     all_parameter_names.append(i_parameter_name)
         all_parameter_info = {"parameter_names": self.processed_info['parameter_names'],
                               "parameter_values": select_parameter_values,
                               "data_sets": largest_set,
                               "total_data_sets": self.processed_info["total_data_sets"],
                               "flux_name": self.processed_info["flux_name"]}
         self.select_values = all_parameter_info
-        return self
+        return None
 
     def parameter_values_plot(self, original_values=(), violin=False, box=True, bins=1):
         """plot distribution of parameter values as a box plot, violin plot and/or histogram"""
@@ -592,38 +562,3 @@ class ModelIdent(object):
         return None
 
 
-if __name__ == '__main__':
-    # extract experimental data from file
-    default_parameter_values = true_parameter_values()
-
-    v1_ident = ModelIdent(ident_fun=kotte_model.flux_1_kcat_ident,
-                          arranged_data_file_name=os.path.join(os.getcwd(), 'exp/exp_v1_2_experiments'),
-                          ident_data_file_name=os.path.join(os.getcwd(), 'ident/ident_v1_kcat'),
-                          **{'original_exp_file': os.path.join(os.getcwd(), 'exp/experiments'),
-                             'flux_id': 1, 'flux_choice': 2,
-                             'values_figure': os.path.join(os.getcwd(), 'results/v1_kcat_parameter_values.eps'),
-                             'ident_figure': os.path.join(os.getcwd(), 'results/v1_kcat_ident.eps'),
-                             'exp_figure': os.path.join(os.getcwd(), 'results/v1_kcat_exp.eps'),
-                             'figure_format': 'eps'})
-    # test identifiability
-    print('Practical Identifiability Analysis of v1 with 2 parameters: k1cat and K1ac\n')
-    ident_data_df = v1_ident.perform_ident()
-
-    v1_ident.process_ident()
-
-    v1_ident.get_parameter_value()
-
-    # get parameter value plot
-    v1_ident.parameter_values_plot(default_parameter_values, violin=True, box=False, bins=1)
-
-    v1_ident.identifiability_plot()
-
-    v1_ident.exp_info_plot()
-
-    # import pdb;pdb.set_trace()
-    print('Done\n')
-
-    # # test identifiability and store data to file
-    # from kotte_model import flux_ident_2_data_combination
-    # flux_ident_2_data_combination(arranged_data_df, flux_ids=[1], flux_choice=[2],
-    #                               ident_fun_choice=ident_fun_choice, file_name=storage_file_name)
