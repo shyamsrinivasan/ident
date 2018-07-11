@@ -143,17 +143,20 @@ class ParallelProcess(object):
         """parallel application core"""
         if task == 'ident':
             import pdb;pdb.set_trace()
-            exp_df = kwargs['exp_df']
+            original_df = kwargs['exp_df']
+
+            # remove experiment_id as index
+            reset_df = original_df.reset_index('experiment_id')
             ident_fun = kwargs['ident_fun']
             flux_id = kwargs['flux_id']
             flux_choice = kwargs['flux_choice']
 
             idx = pd.IndexSlice
-            all_df_indices = exp_df.index.unique().tolist()
+            all_df_indices = reset_df.index.unique().tolist()
             # create tuple of indices
             import pdb; pdb.set_trace()
             for j_index, sample_data_set_id in enumerate(all_df_indices):
-                j_exp_data_set = exp_df.loc[idx[sample_data_set_id],
+                j_exp_data_set = reset_df.loc[idx[sample_data_set_id],
                                             ['acetate', 'pep', 'fdp', 'E', 'v1', 'v2', 'v3', 'v5']].values.tolist()
                 flat_data_list = [i_element for i_data in j_exp_data_set for i_element in i_data]
                 self.__add_next_task(task=task, **{'exp_data': flat_data_list, 'ident_fun': ident_fun,
@@ -348,7 +351,7 @@ class ProcessSlave(Slave):
         name = MPI.Get_processor_name()
 
         print('  Slave %s rank %d executing task %s' % (name, rank, data['task']))
-        
+
         if data['task'] == 'ident':
             ident_fun = data['ident_fun']
             exp_data = data['exp_data']
