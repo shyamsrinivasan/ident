@@ -4,10 +4,17 @@ from mpi_master_slave import WorkQueue
 from identifiability_analysis import run_flux_ident
 from simulate_ode import simulate_ode
 from names_strings import default_ident_parameter_name, true_parameter_values
+from plot_ident_results import plot_on_axis_object_box, plot_on_axis_object_hist, plot_on_axis_object_violin
+from plot_ident_results import plot_on_axis_object, set_hbar_axis_properties
+from plot_ident_results import plot_on_axis_object_polar, set_polar_axis_limits
 from collections import defaultdict
 import pandas as pd
 import numpy as np
 import itertools as it
+import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
+import matplotlib.font_manager as fnt
+import matplotlib as mpl
 import kotte_model
 import os.path
 
@@ -415,6 +422,150 @@ class ModelIdent(object):
                               "total_data_sets": self.processed_info["total_data_sets"],
                               "flux_name": self.processed_info["flux_name"]}
         self.select_values = all_parameter_info
+        return None
+
+    def parameter_values_plot(self, original_values=(), violin=False, box=True, bins=1):
+        """plot distribution of parameter values as a box plot, violin plot and/or histogram"""
+        number_parameters = len(self.processed_info["parameter_names"])
+        if box:
+            f1 = plt.figure(figsize=(10, 8), dpi=100)
+            plot_grid = gridspec.GridSpec(2, number_parameters)
+
+            # plot box plot
+            box_axis = f1.add_subplot(plot_grid[0, :])
+            if original_values:
+                plot_on_axis_object_box(box_axis, self.processed_info["parameter_values"],
+                                        mark_value=[original_values[i_name] for i_name in
+                                                    self.processed_info["parameter_names"]])
+            else:
+                plot_on_axis_object_box(box_axis, self.processed_info["parameter_values"],
+                                        mark_value=[])
+            box_axis.set_xticklabels(self.processed_info['parameter_names'])
+            box_axis.set_ylabel('Parameter values')
+            box_axis.tick_params(axis='both', which='major', direction='in', length=3.5, width=0.5, color='black',
+                                 bottom=True)
+
+            # plot histogram
+            for i_parameter, (i_parameter_value, i_parameter_name) in enumerate(
+                    zip(self.processed_info["parameter_values"], self.processed_info['parameter_names'])):
+                # parameter_name = info_dict["names"][i_parameter]
+                hist_axis = f1.add_subplot(plot_grid[1, i_parameter])
+                if original_values:
+                    plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=original_values[i_parameter_name],
+                                             parameter_name=i_parameter_name, bins=bins)
+                else:
+                    plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=[],
+                                             parameter_name=i_parameter_name, bins=bins)
+                hist_axis.set_xlabel('Parameter value')
+                hist_axis.tick_params(axis='both', which='major', direction='in', length=3.5, width=0.5, color='black',
+                                      bottom=True)
+            # f1.savefig(self.ident_figure, dpi=300, format='pdf', facecolor='w', edgecolor='k', transparent=True)
+            f1.savefig(self.values_figure, format=self.figure_format, transparent=True, frameon=True,
+                       bbox_inches='tight')
+
+        if violin:
+            f2 = plt.figure(figsize=(10, 8), dpi=100)
+            plot_grid = gridspec.GridSpec(2, number_parameters)
+
+            # plot box plot
+            violin_axis = f2.add_subplot(plot_grid[0, :])
+            plot_on_axis_object_violin(violin_axis, self.processed_info["parameter_values"])
+            violin_axis.set_xticks(np.arange(1, len(self.processed_info['parameter_names']) + 1))
+            violin_axis.set_xticklabels(self.processed_info['parameter_names'])
+            violin_axis.set_ylabel('Parameter values')
+            # violin_axis.grid(b=False)
+            violin_axis.tick_params(axis='both', which='major', direction='in', length=3.5, width=0.5, color='black',
+                                    bottom=True)
+
+            # plot histogram
+            for i_parameter, (i_parameter_value, i_parameter_name) in enumerate(
+                    zip(self.processed_info["parameter_values"], self.processed_info['parameter_names'])):
+                # parameter_name = info_dict["names"][i_parameter]
+                hist_axis = f2.add_subplot(plot_grid[1, i_parameter])
+                if original_values:
+                    plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=original_values[i_parameter_name],
+                                             parameter_name=i_parameter_name)
+                else:
+                    plot_on_axis_object_hist(hist_axis, i_parameter_value, mark_value=[],
+                                             parameter_name=i_parameter_name)
+                hist_axis.set_xlabel('Parameter value')
+                # hist_axis.grid(b=False)
+                hist_axis.tick_params(axis='both', which='major', direction='in', length=3.5, width=0.5, color='black',
+                                      bottom=True)
+
+            f2.savefig(self.values_figure, format=self.figure_format, transparent=True, frameon=True,
+                       bbox_inches='tight')
+        return None
+
+    def identifiability_plot(self):
+        """plot identifiability (number and percentage of data sets identifying each parameter)
+        of every parameter in a given flux"""
+        number_of_parameters = len(self.processed_info["parameter_names"])
+        f, ax = plt.subplots(1, 1, figsize=(10, 8), dpi=100)
+        x_data = self.processed_info["ident_mean"]
+        y_data = range(0, number_of_parameters)
+        gap = 0.05
+        # y_add = [0, gap + 0.2, 2 * (gap + 0.2)]
+        y_add = [i_y_data * (gap + 0.2) for i_y_data in y_data]
+        x_error = self.processed_info["ident_std"]
+        x_percent_mean = self.processed_info["ident_percent_mean"]
+        x_percent_std = self.processed_info["ident_percent_std"]
+        x_max = max(self.processed_info["total_data_sets"])
+        x_label = ['Number of data combinations used for identification']
+        plot_on_axis_object(ax, x_data, y_add, x_error=x_error)
+        set_hbar_axis_properties(ax, y_add, y_tick_label=self.processed_info["parameter_names"], x_max=x_max,
+                                 x_percent_mean=x_percent_mean, x_percent_std=x_percent_std, x_label=x_label,
+                                 figure_title=self.processed_info["flux_name"][0] + ' parameters')
+        ax.set_axis_on()
+        ax.tick_params(axis='both', which='major', direction='in', length=3.5, width=0.5, color='black', bottom=True)
+        f.savefig(self.ident_figure, format=self.figure_format, transparent=False, frameon=True,
+                  bbox_inches='tight')
+        return None
+
+    def exp_info_plot(self):
+        """plot experiment contribution frequency for each parameter in a polar plot"""
+        mpl.rcParams['lines.linewidth'] = 2
+        mpl.rcParams['lines.color'] = 'r'
+        number_parameters = len(self.processed_info["parameter_names"])
+        if number_parameters >= 3:
+            number_of_columns = 3
+        else:
+            number_of_columns = 1
+        if number_parameters % number_of_columns != 0:
+            number_of_rows = (number_parameters + 1) / number_of_columns
+        else:
+            number_of_rows = number_parameters / number_of_columns
+        # figure = plt.figure(figsize=(6, 4))
+        # inner_grid = gridspec.GridSpec(number_of_rows, number_of_columns, wspace=0.2, hspace=0.2)
+        f, ax = plt.subplots(int(number_of_rows), int(number_of_columns), subplot_kw=dict(projection='polar'),
+                             figsize=(10, 8), dpi=100, gridspec_kw={"wspace": 0.2, "hspace": 0.2})
+        all_max_y_data = []
+        for i_parameter, i_parameter_info in enumerate(self.processed_info["exp_info"]):
+            # ax = plt.Subplot(figure, inner_grid[i_parameter])
+            fill_colors = ['b', 'g', 'y', 'r']
+            # plot data from all positions
+            pos_labels = []
+            for i_pos, (i_pos_key, i_pos_val) in enumerate(i_parameter_info.items()):
+                pos_labels.append(i_pos_key)
+                y_data = i_pos_val["frequency"]
+                x_labels = i_pos_val["names"]
+                max_y_data = plot_on_axis_object_polar(ax[i_parameter], x_data=x_labels, y_data=y_data,
+                                                       data_label=pos_labels[-1], fill_color=fill_colors[i_pos])
+                ax[i_parameter].set_axis_on()
+                all_max_y_data.append(max_y_data)
+
+        # set axis limits for all polar plots on subplot
+        for i_parameter, (_, i_parameter_name) in enumerate(zip(self.processed_info["exp_info"],
+                                                                self.processed_info["parameter_names"])):
+            set_polar_axis_limits(ax[i_parameter], max(all_max_y_data))
+            f_p = fnt.FontProperties(size=14, weight='demibold')
+            ax[i_parameter].set_title(i_parameter_name, **{'font_properties': f_p})
+
+        # add legend
+        plt.legend(loc='upper right', bbox_to_anchor=(0.1, 0.1))
+
+        f.savefig(self.exp_figure, format=self.figure_format, transparent=True, frameon=True,
+                  bbox_inches='tight')
         return None
 
 
@@ -850,29 +1001,39 @@ if __name__ == '__main__':
         # extract parameter va;ues for model validation
         v1_ident.get_parameter_value()
 
-        # ident parameter validation through parallel simulation
-        user_ode_opts = {'iter': 'Newton', 'discr': 'Adams', 'atol': 1e-10, 'rtol': 1e-10,
-                         'time_points': 200, 'display_progress': True, 'verbosity': 30}
-        # initial ss to begin all simulations from
-        y0 = np.array([5, 1, 1])
-        # get and set true parameter values, if available separately
-        default_parameters = true_parameter_values()
+        default_parameter_values = true_parameter_values()
+        v1_ident.parameter_values_plot(default_parameter_values, violin=True, box=False, bins=1)
 
-        # create simulation object to simulate model with above parameters and initial conditions
-        model_1 = ValidateSim(kotte_model.kotte_ck_ode, kotte_model.kotte_ck_flux, noise=0, **{'kinetics': 2,
-                                                                                               'ode_opts':
-                                                                                                   user_ode_opts,
-                                                                                               't_final': 200,
-                                                                                               'wt_y0': y0,
-                                                                                               'i_parameter':
-                                                                                                   default_parameters})
-        parameter_estimates, estimate_info = model_1.create_parameter_list(v1_ident.select_values)
+        v1_ident.identifiability_plot()
 
-        job_2 = ParallelProcess(slaves=range(1, size))
-        import pdb; pdb.set_trace()
-        initial_sim_result = job_2.run_all(task='initial_sim', **{'parameters': parameter_estimates,
-                                                                'estimate_info': estimate_info, 'sim_obj': model_1})
+        v1_ident.exp_info_plot()
+
         import pdb;pdb.set_trace()
-        job_2.terminate_slaves()
+        print('Done\n')
+
+        # # ident parameter validation through parallel simulation
+        # user_ode_opts = {'iter': 'Newton', 'discr': 'Adams', 'atol': 1e-10, 'rtol': 1e-10,
+        #                  'time_points': 200, 'display_progress': True, 'verbosity': 30}
+        # # initial ss to begin all simulations from
+        # y0 = np.array([5, 1, 1])
+        # # get and set true parameter values, if available separately
+        # default_parameters = true_parameter_values()
+        #
+        # # create simulation object to simulate model with above parameters and initial conditions
+        # model_1 = ValidateSim(kotte_model.kotte_ck_ode, kotte_model.kotte_ck_flux, noise=0, **{'kinetics': 2,
+        #                                                                                        'ode_opts':
+        #                                                                                            user_ode_opts,
+        #                                                                                        't_final': 200,
+        #                                                                                        'wt_y0': y0,
+        #                                                                                        'i_parameter':
+        #                                                                                            default_parameters})
+        # parameter_estimates, estimate_info = model_1.create_parameter_list(v1_ident.select_values)
+        #
+        # job_2 = ParallelProcess(slaves=range(1, size))
+        # import pdb; pdb.set_trace()
+        # initial_sim_result = job_2.run_all(task='initial_sim', **{'parameters': parameter_estimates,
+        #                                                         'estimate_info': estimate_info, 'sim_obj': model_1})
+        # import pdb;pdb.set_trace()
+        # job_2.terminate_slaves()
     else:
         ProcessSlave().run()
