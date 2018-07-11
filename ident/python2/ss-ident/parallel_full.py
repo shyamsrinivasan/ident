@@ -4,8 +4,10 @@ from mpi_master_slave import WorkQueue
 from identifiability_analysis import run_flux_ident
 from simulate_ode import simulate_ode
 from names_strings import default_ident_parameter_name, true_parameter_values
+from collections import defaultdict
 import pandas as pd
 import numpy as np
+import itertools as it
 import kotte_model
 import os.path
 
@@ -95,6 +97,121 @@ class ModelIdent(object):
 
         return ident_df
 
+    def order_ident_data(self, all_results):
+        """collect ident info for all data sets from all samples together"""
+
+        # read experimental data from file (serially)
+        arranged_df = self.retrieve_df_from_file()
+        reset_df = arranged_df.reset_index('experiment_id')
+
+        # arrange results based on original experimental df
+        all_df_indices = reset_df.index.unique().tolist()
+        self.unique_indices = all_df_indices
+        ordered_info = [j_result for i_data_id in self.unique_indices for j_result in all_results
+                        if (j_result['sample_id'] == i_data_id[0] and j_result['data_set_id'] == i_data_id[1])]
+
+        return ordered_info
+
+    def create_dict_for_df(self, ident_results):
+        """create dictionary of identifiability results for future writing to file"""
+        # read experimental data from file (serially)
+        # arranged_df = self.retrieve_df_from_file()
+        # remove index experiment_id
+        # reset_df = arranged_df.reset_index('experiment_id')
+        temp_dict = {}
+        all_data = defaultdict(list)
+        empty_dict = {}
+
+        for i_data_set in ident_results:
+            data_set_id = i_data_set['data_set_id']
+            sample_id = i_data_set['sample_id']
+            for i_parameter, i_parameter_info in enumerate(i_data_set['ident_info']):
+                temp_dict["flux_name"] = self.flux_name
+                temp_dict["flux_choice"] = self.flux_choice
+                temp_dict["parameter_name"] = self.parameter_name[i_parameter]
+                i_parameter_nr, i_parameter_dr, i_parameter_value = i_parameter_info
+                temp_dict["parameter_nr"] = i_parameter_nr
+                temp_dict["parameter_dr"] = i_parameter_dr
+                temp_dict["parameter_value"] = i_parameter_value
+                temp_dict["data_set_id"] = data_set_id
+                temp_dict["sample_name"] = sample_id
+                if i_parameter_value > 0:
+                    temp_dict["identified"] = True
+                else:
+                    temp_dict["identified"] = False
+                for key, value in it.chain(empty_dict.items(), temp_dict.items()):
+                    all_data[key].append(value)
+        self.ident_data = all_data
+        return self
+
+    def write_ident_info_file(self):
+        """create data frame from identifiability data and write to csv file for future use"""
+        # read experimental data from file (serially)
+        arranged_df = self.retrieve_df_from_file()
+
+        # reset index of experimental data df
+        reset_exp_df = arranged_df.reset_index("sample_name")
+        reset_exp_df.reset_index("data_set_id", inplace=True)
+
+        # create data frame
+        ident_df = pd.DataFrame(self.ident_data, columns=self.ident_data.keys())
+
+        # number of occurrences of each data set id = number of experiments per data set in the first sample
+        number_samples = len(ident_df["sample_name"].unique())
+        first_sample_rows = ident_df[ident_df["sample_name"] == 'sample_0']
+        data_set_id_frequency = int(max(first_sample_rows["data_set_id"].value_counts()))
+
+        # all experiment ids
+        experiment_pos_names = ['experiment_{}_id'.format(i_experiment) for i_experiment in
+                                range(0, data_set_id_frequency)]
+        experiment_pos_parameters = ['experiment_{}_parameter'.format(i_experiment)
+                                     for i_experiment in range(0, data_set_id_frequency)]
+
+        # extract experiment ids for each data set
+        # get all data set ids
+        data_set_ids = reset_exp_df["data_set_id"].unique()
+
+        # get experiments for each data set based on first sample only
+        all_data_set_experiments = [reset_exp_df[(reset_exp_df["sample_name"] == "sample_0") &
+                                                 (reset_exp_df["data_set_id"] == j_data_set_id)]
+                                    ["parameter_name"].index.values.tolist() for j_data_set_id in data_set_ids]
+        all_data_set_exp_parameters = [reset_exp_df[(reset_exp_df["sample_name"] == "sample_0") &
+                                                    (reset_exp_df["data_set_id"] == j_data_set_id)]
+                                       ["parameter_name"].values.tolist() for j_data_set_id in data_set_ids]
+        all_pos_experiment_id = [[i_p for j_data_set in all_data_set_experiments
+                                  for i_p in [j_data_set[j_position_exp]] * len(experiment_pos_names)] * number_samples
+                                 for j_position_exp in range(0, len(experiment_pos_names))]
+        all_pos_exp_parameters = [[i_p for j_data_set in all_data_set_exp_parameters
+                                   for i_p in
+                                   [j_data_set[j_position_exp]] * len(experiment_pos_parameters)] * number_samples
+                                  for j_position_exp in range(0, len(experiment_pos_parameters))]
+        experiment_pos_info_keys = experiment_pos_names + experiment_pos_parameters
+        experiment_pos_info_values = all_pos_experiment_id + all_pos_exp_parameters
+        exp_info_dict = dict(zip(experiment_pos_info_keys, experiment_pos_info_values))
+
+        self.ident_data.update(exp_info_dict)
+
+        # multi index tuples
+        ind_tuple = [(j_sample, j_data_set) for j_sample, j_data_set in
+                     zip(self.ident_data["sample_name"], self.ident_data["data_set_id"])]
+
+        # multi index index
+        self.ident_index_label = ['sample_name', 'data_set_id']
+        index = pd.MultiIndex.from_tuples(ind_tuple, names=self.ident_index_label)
+
+        # remove redundant columns
+        temp_ident_data = self.ident_data
+        del temp_ident_data["sample_name"]
+        del temp_ident_data["data_set_id"]
+
+        # create multi index data frame
+        ident_data_df = pd.DataFrame(temp_ident_data, index=index, columns=temp_ident_data.keys())
+
+        # save data frame to csv file
+        ident_data_df.to_csv(self.ident_file, index_label=self.ident_index_label)
+        print('Identifiability Data written to given file\n')
+        return ident_data_df
+
 
 class ParallelProcess(object):
     """Class running multiple ode simulations by assigning jobs to different slaves
@@ -141,8 +258,8 @@ class ParallelProcess(object):
 
     def run_all(self, task, **kwargs):
         """parallel application core"""
+
         if task == 'ident':
-            import pdb;pdb.set_trace()
             original_df = kwargs['exp_df']
 
             # remove experiment_id as index
@@ -154,10 +271,10 @@ class ParallelProcess(object):
             idx = pd.IndexSlice
             all_df_indices = reset_df.index.unique().tolist()
             # create tuple of indices
-            import pdb; pdb.set_trace()
+            # import pdb; pdb.set_trace()
             for j_index, sample_data_set_id in enumerate(all_df_indices):
                 j_exp_data_set = reset_df.loc[idx[sample_data_set_id],
-                                            ['acetate', 'pep', 'fdp', 'E', 'v1', 'v2', 'v3', 'v5']].values.tolist()
+                                              ['acetate', 'pep', 'fdp', 'E', 'v1', 'v2', 'v3', 'v5']].values.tolist()
                 flat_data_list = [i_element for i_data in j_exp_data_set for i_element in i_data]
                 self.__add_next_task(task=task, **{'exp_data': flat_data_list, 'ident_fun': ident_fun,
                                                    'flux_id': flux_id, 'flux_choice': flux_choice, 'sample_id':
@@ -431,7 +548,6 @@ if __name__ == '__main__':
     size = MPI.COMM_WORLD.Get_size()
 
     if rank == 0:  # master
-        import pdb;pdb.set_trace()
         v1_ident = ModelIdent(ident_fun=kotte_model.flux_1_kcat_ident,
                               arranged_data_file_name=os.path.join(os.getcwd(), 'exp/exp_v1_2_experiments'),
                               ident_data_file_name=os.path.join(os.getcwd(), 'ident/ident_v1_kcat'),
@@ -443,10 +559,15 @@ if __name__ == '__main__':
                                  'figure_format': 'eps'})
         exp_df = v1_ident.retrieve_df_from_file()
 
-        import pdb;pdb.set_trace()
         job = ParallelProcess(slaves=range(1, size))
         import pdb;pdb.set_trace()
         ident_result = job.run_all(task='ident', **{'exp_df': exp_df, 'ident_fun': v1_ident.ident_fun,
                                                     'flux_id': v1_ident.flux_id, 'flux_choice': v1_ident.flux_choice})
+        # collect, arrange and collate data
+        import pdb;pdb.set_trace()
+        ordered_info = v1_ident.order_ident_data(ident_result)
+        v1_ident.create_dict_for_df(ordered_info)
+        import pdb;pdb.set_trace()
+        final_result_df = v1_ident.write_ident_info_file()
     else:
         ProcessSlave().run()
