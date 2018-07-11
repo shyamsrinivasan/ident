@@ -142,6 +142,7 @@ class ParallelProcess(object):
     def run_all(self, task, **kwargs):
         """parallel application core"""
         if task == 'ident':
+            import pdb;pdb.set_trace()
             exp_df = kwargs['exp_df']
             ident_fun = kwargs['ident_fun']
             flux_id = kwargs['flux_id']
@@ -150,7 +151,7 @@ class ParallelProcess(object):
             idx = pd.IndexSlice
             all_df_indices = exp_df.index.unique().tolist()
             # create tuple of indices
-            # import pdb; pdb.set_trace()
+            import pdb; pdb.set_trace()
             for j_index, sample_data_set_id in enumerate(all_df_indices):
                 j_exp_data_set = exp_df.loc[idx[sample_data_set_id],
                                             ['acetate', 'pep', 'fdp', 'E', 'v1', 'v2', 'v3', 'v5']].values.tolist()
@@ -347,6 +348,7 @@ class ProcessSlave(Slave):
         name = MPI.Get_processor_name()
 
         print('  Slave %s rank %d executing task %s' % (name, rank, data['task']))
+        
         if data['task'] == 'ident':
             ident_fun = data['ident_fun']
             exp_data = data['exp_data']
@@ -426,6 +428,7 @@ if __name__ == '__main__':
     size = MPI.COMM_WORLD.Get_size()
 
     if rank == 0:  # master
+        import pdb;pdb.set_trace()
         v1_ident = ModelIdent(ident_fun=kotte_model.flux_1_kcat_ident,
                               arranged_data_file_name=os.path.join(os.getcwd(), 'exp/exp_v1_2_experiments'),
                               ident_data_file_name=os.path.join(os.getcwd(), 'ident/ident_v1_kcat'),
@@ -437,8 +440,10 @@ if __name__ == '__main__':
                                  'figure_format': 'eps'})
         exp_df = v1_ident.retrieve_df_from_file()
 
+        import pdb;pdb.set_trace()
         job = ParallelProcess(slaves=range(1, size))
+        import pdb;pdb.set_trace()
         ident_result = job.run_all(task='ident', **{'exp_df': exp_df, 'ident_fun': v1_ident.ident_fun,
                                                     'flux_id': v1_ident.flux_id, 'flux_choice': v1_ident.flux_choice})
     else:
-        ProcessSlave.run()
+        ProcessSlave().run()
