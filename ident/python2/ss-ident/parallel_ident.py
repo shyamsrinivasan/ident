@@ -180,7 +180,7 @@ def v2_ident():
                             arranged_data_file_name=os.path.join(os.getcwd(), 'exp/exp_v2_2_experiments'),
                             ident_data_file_name=os.path.join(os.getcwd(), 'ident/ident_v2'),
                             **{'original_exp_file': os.path.join(os.getcwd(), 'exp/experiments'),
-                               'flux_id': 1, 'flux_choice': 1,
+                               'flux_id': 2, 'flux_choice': 0,
                                'values_figure': os.path.join(os.getcwd(), 'results/v2_parameter_values.eps'),
                                'ident_figure': os.path.join(os.getcwd(), 'results/v2_ident.eps'),
                                'exp_figure': os.path.join(os.getcwd(), 'results/v2_exp.eps'),
