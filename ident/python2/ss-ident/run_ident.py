@@ -66,9 +66,13 @@ class ModelIdent(object):
         except KeyError:
             self.exp_figure = ''
 
+        try:
+            self.ident_index_label = kwargs['ident_index_label']
+        except KeyError:
+            self.ident_index_label = []
+
         self.unique_indices = []
         self.ident_data = {}
-        self.ident_index_label = []
         self.processed_info = {}
         self.select_values = {}
 
