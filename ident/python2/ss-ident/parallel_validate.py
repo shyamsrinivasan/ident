@@ -222,7 +222,8 @@ def v1_validate():
                                  'values_figure': os.path.join(os.getcwd(), 'results/v1_kcat_parameter_values.eps'),
                                  'ident_figure': os.path.join(os.getcwd(), 'results/v1_kcat_ident.eps'),
                                  'exp_figure': os.path.join(os.getcwd(), 'results/v1_kcat_exp.eps'),
-                                 'figure_format': 'eps'})
+                                 'figure_format': 'eps',
+                                 'ident_index_label': ['sample_name', 'data_set_id']})
 
         # retrieve identifiability data and process it for validation
         v1_ident.validation_info()
