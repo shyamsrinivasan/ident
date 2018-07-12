@@ -332,7 +332,6 @@ class ModelIdent(object):
         """process ident data to create final data frame of results for plotting"""
 
         # retrieve arranged experimental data from file
-        import pdb;pdb.set_trace()
         exp_df = self.retrieve_df_from_file()
 
         # lexographic ordering of exp df indices
