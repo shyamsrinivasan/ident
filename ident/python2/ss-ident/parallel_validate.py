@@ -8,7 +8,6 @@ from run_ident import ModelIdent
 import numpy as np
 import kotte_model
 import os.path
-from copy import deepcopy
 
 
 class ParallelValidate(object):
