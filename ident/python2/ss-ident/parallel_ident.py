@@ -229,7 +229,7 @@ def v3_ident():
 
     if rank == 0:  # master
         print('I am %s Master with rank %s of %s' % (name, str(rank), str(size)))
-        v3_obj = ModelIdent(ident_fun=kotte_model.flux_2_ident_expression,
+        v3_obj = ModelIdent(ident_fun=kotte_model.flux_3_value1_ident,
                             arranged_data_file_name=os.path.join(os.getcwd(), 'exp/exp_v3_3_experiments'),
                             ident_data_file_name=os.path.join(os.getcwd(), 'ident/ident_v3'),
                             **{'original_exp_file': os.path.join(os.getcwd(), 'exp/experiments'),
