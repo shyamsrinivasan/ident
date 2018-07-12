@@ -94,7 +94,6 @@ class ParallelValidate(object):
                                                                          'y0': j_slave_y[-1, :]})
 
                 elif task == 'perturbation_sim':
-                    import pdb; pdb.set_trace()
                     j_slave_t, j_slave_y, j_slave_f, estimate_id, sample_id, data_set_id, perturbation_id = output
                     j_slave_dyn = {'t': j_slave_t, 'y': j_slave_y, 'flux': j_slave_f, 'estimate_id': estimate_id,
                                    'sample_id': sample_id, 'data_set_id': data_set_id, 'perturbation_id':
@@ -109,6 +108,7 @@ class ParallelValidate(object):
                     # append perturbation results
                     results.append(i_slave_result)
 
+        import pdb;pdb.set_trace()
         return results
 
 
