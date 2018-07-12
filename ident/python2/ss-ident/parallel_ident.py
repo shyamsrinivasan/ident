@@ -225,6 +225,7 @@ if __name__ == '__main__':
     name = MPI.Get_processor_name()
     rank = MPI.COMM_WORLD.Get_rank()
     size = MPI.COMM_WORLD.Get_size()
+    import pdb;pdb.set_trace()
 
     if rank == 0:
         v1_ident()
