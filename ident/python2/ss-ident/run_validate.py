@@ -1,4 +1,5 @@
 from run_sims import ModelSim
+from names_strings import variable_name
 
 
 class ValidateSim(ModelSim):
@@ -76,6 +77,41 @@ class ValidateSim(ModelSim):
 
         return ss_info, dynamic_info
 
+    @staticmethod
+    def collect_estimate_ss(ss_info):
+        """collect all estimate ids, get unique estimate ids and
+        segregate data based on estimate ids"""
+
+        # collect all estimate ids
+        return None
+
+    @staticmethod
+    def create_ss_dict(ss_info, variable_type, noise=0):
+        """create dictionary of ss values (concentration/fluxes)"""
+        number_variables = len(ss_info[0])
+        variable_name_info = [variable_name(variable_type, j_variable) for j_variable in range(0, number_variables)]
+
+        variable_value_info = []
+
+        for j_variable in range(0, number_variables):
+            j_variable_info = []
+            for i_experiment_id, i_experiment_info in enumerate(ss_info):
+                j_variable_info.append(i_experiment_info[j_variable])
+            variable_value_info.append(j_variable_info)
+
+        return variable_name_info, variable_value_info
+
+    def convert_to_ss_dict_for_df(self, ss_info):
+        """convert ss information to dictionary for creating df and writing to file"""
+
+        # create dict of perturbation_ss values for writing to df and file
+        y_names, y_values = self.create_ss_dict(ss_info=[i_ss['y'] for i_ss in ss_info],
+                                                variable_type='metabolite', noise=self.noise)
+        f_names, f_values = self.create_ss_dict(ss_info=[i_ss['flux'] for i_ss in ss_info],
+                                                variable_type='flux', noise=self.noise)
+
+        return None
+
     def create_ss_perturbation_dict(self, all_results):
 
         # separate initial simulation values from perturbation simulation values
@@ -87,7 +123,8 @@ class ValidateSim(ModelSim):
         # get perturbation ss values only
         perturbation_ss, _ = self.separate_ss_dyn(perturbation_sims)
 
-        # create dict of perturbation_ss values for writing to df and file
+
+
         import pdb;pdb.set_trace()
         print('What to do next?\n')
 
