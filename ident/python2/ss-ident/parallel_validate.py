@@ -35,6 +35,11 @@ class ParallelValidate(object):
         if task == 'initial_sim':
             data = {'sim_obj': kwargs['sim_obj'], 'ode_sys_opts': kwargs['ode_sys_opts'],
                     'id': kwargs['estimate_id'], 'y0': kwargs['y0'], 'task': task}
+
+        elif task == 'perturbation_sim':
+            data = {'sim_obj': kwargs['sim_obj'], 'ode_sys_opts': kwargs['ode_sys_opts'],
+                    'id': kwargs['estimate_id'], 'y0': kwargs['y0'], 'perturbation_id': kwargs['perturbation_id'],
+                    'task': task}
             # 'ode_fun': kwargs['rhs_fun'],
             # 'ode_opts': kwargs['ode_opts'],
             # 't_final': kwargs['t_final'], 'flux_fun': kwargs['flux_fun'], }
@@ -52,9 +57,6 @@ class ParallelValidate(object):
             for j_index, (j_estimate, j_estimate_id) in enumerate(zip(estimates, estimate_id)):
                 self.__add_next_task(task=task, **{'sim_obj': sim_obj, 'ode_sys_opts': j_estimate,
                                                    'estimate_id': j_estimate_id, 'y0': sim_obj.wt_y0})
-                                                   # 'rhs_fun': sim_obj.rhs_fun,
-                                                   # 'flux_fun': sim_obj.flux_fun, 't_final': sim_obj.t_final,
-                                                   #  'ode_opts': sim_obj.ode_opts})
 
         # Keeep starting slaves as long as there is work to do
         results = []
@@ -65,15 +67,47 @@ class ParallelValidate(object):
             # reclaim returned data from completed slaves
             for slave_return_data in self.work_queue.get_completed_work():
                 task, output = slave_return_data
+
                 if task == 'initial_sim':
-                    j_slave_t, j_slave_y, j_slave_f, estimate_id, sample_id, data_set_id = output
+                    j_slave_t, j_slave_y, j_slave_f, estimate_id, sample_id, data_set_id, sim_obj, ode_sys_opts = output
                     j_slave_dyn = {'t': j_slave_t, 'y': j_slave_y, 'flux': j_slave_f, 'estimate_id': estimate_id,
                                    'sample_id': sample_id, 'data_set_id': data_set_id}
 
                     # get ss values
                     j_slave_ss = {'y': j_slave_y[-1, :], 'flux': j_slave_f[-1, :], 'estimate_id': estimate_id,
                                   'sample_id': sample_id, 'data_set_id': data_set_id}
-                    i_slave_result = {'dynamic': j_slave_dyn, 'ss': j_slave_ss}
+                    i_slave_result = {'dynamic': j_slave_dyn, 'ss': j_slave_ss, 'initial': True, 'perturbation': False}
+
+                    # append initial sim results
+                    results.append(i_slave_result)
+
+                    # create list of perturbated parameter for given parameter estimate in ode_sys_opts
+                    perturbed_parameter_list = sim_obj.change_parameter_values(sim_obj.test_perturbations, ode_sys_opts)
+
+                    # add perturbation jobs to back of jobs queue
+                    experiment_id = ['experiment_{}'.format(parameter_id) for parameter_id, _ in
+                                     enumerate(perturbed_parameter_list)]
+                    for j_experiment_id, j_perturbation in zip(experiment_id, perturbed_parameter_list):
+                        self.__add_next_task(task='perturbation_sim', **{'sim_obj': sim_obj,
+                                                                         'ode_sys_opts': j_perturbation, 'estimate_id':
+                                                                             (estimate_id, sample_id, data_set_id),
+                                                                         'perturbation_id': j_experiment_id,
+                                                                         'y0': j_slave_y[-1, :]})
+
+                elif task == 'perturbation_sim':
+                    import pdb; pdb.set_trace()
+                    j_slave_t, j_slave_y, j_slave_f, estimate_id, sample_id, data_set_id, perturbation_id = output
+                    j_slave_dyn = {'t': j_slave_t, 'y': j_slave_y, 'flux': j_slave_f, 'estimate_id': estimate_id,
+                                   'sample_id': sample_id, 'data_set_id': data_set_id, 'perturbation_id':
+                                       perturbation_id}
+
+                    # get ss values
+                    j_slave_ss = {'y': j_slave_y[-1, :], 'flux': j_slave_f[-1, :], 'estimate_id': estimate_id,
+                                  'sample_id': sample_id, 'data_set_id': data_set_id, 'perturbation_id':
+                                      perturbation_id}
+                    i_slave_result = {'dynamic': j_slave_dyn, 'ss': j_slave_ss, 'initial': False, 'perturbation': True}
+
+                    # append perturbation results
                     results.append(i_slave_result)
 
         return results
@@ -121,87 +155,35 @@ class ValidateSlave(Slave):
             flux_fun = sim_obj.flux_fun  # data['flux_fun']
             slave_flux = np.array(list(map(lambda x: flux_fun(x, ode_sys_opts), slave_yout)))
 
-            return data['task'], (slave_tout, slave_yout, slave_flux, estimate_id[0], estimate_id[1], estimate_id[2])
+            result = (slave_tout, slave_yout, slave_flux, estimate_id[0], estimate_id[1], estimate_id[2], sim_obj,
+                      ode_sys_opts)
 
+        elif data['task'] == 'perturbation_sim':
 
-# class MySlave(Slave):
-#     """
-#     A slave process extends Slave class, overrides the 'do_work' method
-#     and calls 'Slave.run'. The Master will do the rest
-#     In this example we have different tasks but instead of creating a Slave for
-#     each type of taks we create only one class that can handle any type of work.
-#     This avoids having idle processes if, at certain times of the execution, there
-#     is only a particular type of work to do but the Master doesn't have the right
-#     slave for that task.
-#     """
-#
-#     def __init__(self):
-#         super(MySlave, self).__init__()
-#
-#     @staticmethod
-#     def change_parameter_values(changed_parameter, default_parameter):
-#         """change default parameter by value metnioned in one of changed parameter"""
-#         # if not default_parameter:
-#         #     default_parameter = self.i_parameter
-#
-#         new_parameter_list = []
-#         for i_parameter_change in changed_parameter:
-#             new_parameter = deepcopy(default_parameter)
-#             parameter_name = list(i_parameter_change.keys())[0]
-#             parameter_change = np.array(list(i_parameter_change.values())[0])
-#             if parameter_name == 'wt':
-#                 new_parameter['ac'] = new_parameter['ac'] * (1 + parameter_change)
-#             else:
-#                 new_parameter[parameter_name] = new_parameter[parameter_name] * (1 + parameter_change)
-#             new_parameter_list.append(new_parameter)
-#         return new_parameter_list
-#
-#     def do_work(self, data):
-#         """do work method overrides Slave.do_work() and defines work
-#         to be done by every slave"""
-#
-#         dyn_results = []
-#         ss_results = []
-#
-#         # do initial simulation run
-#         rhs_fun = data['ode_fun']
-#         y_initial = data['y0']
-#         estimate_id = data['id']
-#         ode_opts = data['ode_opts']
-#         ode_sys_opts = data['ode_sys_opts']
-#         t_final = data['t_final']
-#         all_options = [ode_opts, ode_sys_opts]
-#         tout_i, yout_i, _, _ = simulate_ode(rhs_fun, y_initial, tf=t_final, opts=all_options)
-#
-#         # calculate flux
-#         flux_fun = data['flux_fun']
-#         fout_i = np.array(list(map(lambda x: flux_fun(x, ode_sys_opts), yout_i)))
-#
-#         # get ss values
-#         ss_results.append({'y': yout_i[-1, :], 'flux': fout_i[-1, :], 'id': 'initial_ss'})
-#         dyn_results.append({'y': yout_i, 'flux': fout_i, 't': tout_i, 'id': 'initial_ss'})
-#
-#         # create list of perturbed parameters
-#         new_parameter_list = self.change_parameter_values(changed_parameter=data['perturbations'],
-#                                                           default_parameter=ode_sys_opts)
-#
-#         # do perturbation simulation run
-#         for exp_id, i_parameter in enumerate(new_parameter_list):
-#             print(' Perturbation %d \n' % exp_id)
-#             all_options = [ode_opts, i_parameter]
-#             tout_p, yout_p, _, _ = simulate_ode(rhs_fun, yout_i[-1, :], tf=t_final, opts=all_options)
-#             fout_p = np.array(list(map(lambda x: flux_fun(x, i_parameter), yout_p)))
-#
-#             # collect results
-#             ss_results.append({'y': yout_p[-1, :], 'flux': fout_p[-1, :], 'id': 'experiment_{}'.format(exp_id)})
-#             dyn_results.append({'y': yout_p, 'flux': fout_p, 't': tout_p, 'id': 'experiment_{}'.format(exp_id)})
-#
-#         rank = MPI.COMM_WORLD.Get_rank()
-#         name = MPI.Get_processor_name()
-#
-#         print('  Slave %s rank %d executing task %s' % (name, rank, estimate_id))
-#
-#         return estimate_id, ss_results, dyn_results
+            sim_obj = data['sim_obj']
+            rhs_fun = sim_obj.rhs_fun  # data['rhs_fun']
+            y_initial = data['y0']
+            estimate_id = data['id']
+            perturbation_id = data['perturbation_id']
+            ode_opts = sim_obj.ode_opts  # data['ode_opts']
+            ode_sys_opts = data['ode_sys_opts']
+            t_final = sim_obj.t_final  # data['t_final']
+            all_options = [ode_opts, ode_sys_opts]
+
+            print('  Slave %s rank %d executing initial_sim for estimate: %s sample: %s, data set: %s '
+                  'perturbation: %s' %
+                  (name, rank, estimate_id[0], estimate_id[1], estimate_id[2], perturbation_id))
+            slave_tout, slave_yout, _, _ = simulate_ode(rhs_fun, y_initial, tf=t_final, opts=all_options)
+            print(' ode perturbation simulation complete ')
+
+            # calculate flux
+            flux_fun = sim_obj.flux_fun  # data['flux_fun']
+            slave_flux = np.array(list(map(lambda x: flux_fun(x, ode_sys_opts), slave_yout)))
+
+            result = (slave_tout, slave_yout, slave_flux, estimate_id[0], estimate_id[1], estimate_id[2],
+                      perturbation_id)
+
+        return data['task'], result
 
 
 def v1_validate():
@@ -249,6 +231,7 @@ def v1_validate():
 
         job = ParallelValidate(slaves=range(1, size))
 
+        import pdb; pdb.set_trace()
         ident_result = job.run_all(task='initial_sim', **{'parameters': parameter_estimates,
                                                           'estimate_info': estimate_info, 'sim_obj': v1_validate})
         import pdb;pdb.set_trace()
