@@ -561,4 +561,14 @@ class ModelIdent(object):
                   bbox_inches='tight')
         return None
 
+    def validation_info(self):
+        """retrieve identified parameter values for validation"""
+        # process ident data
+        self.process_ident()
+
+        # retrieve parameter values
+        self.get_parameter_value()
+
+        return None
+
 
