@@ -222,13 +222,8 @@ def v2_ident():
 
 
 if __name__ == '__main__':
-    name = MPI.Get_processor_name()
-    rank = MPI.COMM_WORLD.Get_rank()
-    size = MPI.COMM_WORLD.Get_size()
+    v1_ident()
     import pdb;pdb.set_trace()
-
-    if rank == 0:
-        v1_ident()
-        v2_ident()
-        import pdb;pdb.set_trace()
-        print('Done\n')
+    v2_ident()
+    import pdb;pdb.set_trace()
+    print('Done\n')
