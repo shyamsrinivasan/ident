@@ -47,6 +47,55 @@ class ValidateSim(ModelSim):
 
         return parameter_list, estimate_data_set_info
 
+    @staticmethod
+    def separate_initial_perturbation(all_sim_results):
+        """separate initial ss simulations from perturbation simulation
+        for further processing of perturbation sims"""
+
+        initial_sims = []
+        perturbation_sims = []
+
+        for j_result in all_sim_results:
+            if j_result['initial']:
+                initial_sims.append(j_result)
+            elif j_result['perturbation']:
+                perturbation_sims.append(j_result)
+
+        return initial_sims, perturbation_sims
+
+    @staticmethod
+    def separate_ss_dyn(all_results):
+        """get ss and dynamic information separately"""
+
+        ss_info = []
+        dynamic_info = []
+
+        for j_result in all_results:
+            ss_info.append(j_result['ss'])
+            dynamic_info.append(j_result['dynamic'])
+
+        return ss_info, dynamic_info
+
+    def create_ss_perturbation_dict(self, all_results):
+
+        # separate initial simulation values from perturbation simulation values
+        initial_sims, perturbation_sims = self.separate_initial_perturbation(all_results)
+
+        # get initial ss values only
+        initial_ss, _ = self.separate_ss_dyn(initial_sims)
+
+        # get perturbation ss values only
+        perturbation_ss, _ = self.separate_ss_dyn(perturbation_sims)
+
+        # create dict of perturbation_ss values for writing to df and file
+        import pdb;pdb.set_trace()
+        print('What to do next?\n')
+
+
+
+
+
+
     # def run_initial_sim(self, parameter, parameter_ids=(), **kwargs):
     #     import pdb;pdb.set_trace()
     #     wt_ss, wt_dynamics = super(ValidateSim, self).run_initial_sim(parameter, parameter_ids, **kwargs)
