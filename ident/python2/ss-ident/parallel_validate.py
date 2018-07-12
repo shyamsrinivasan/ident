@@ -106,7 +106,7 @@ class ValidateSlave(Slave):
             sim_obj = data['sim_obj']
             rhs_fun = sim_obj.rhs_fun  # data['rhs_fun']
             y_initial = data['y0']
-            estimate_id = data['estimate_id']
+            estimate_id = data['id']
             ode_opts = sim_obj.ode_opts  # data['ode_opts']
             ode_sys_opts = data['ode_sys_opts']
             t_final = sim_obj.t_final  # data['t_final']
