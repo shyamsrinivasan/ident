@@ -124,6 +124,7 @@ def v1_ident():
     size = MPI.COMM_WORLD.Get_size()
 
     if rank == 0:  # master
+        print('I am %s Master with rank %s of %s' % (name, str(rank), str(size)))
         v1_obj = ModelIdent(ident_fun=kotte_model.flux_1_kcat_ident,
                             arranged_data_file_name=os.path.join(os.getcwd(), 'exp/exp_v1_2_experiments'),
                             ident_data_file_name=os.path.join(os.getcwd(), 'ident/ident_v1_kcat'),
@@ -162,6 +163,7 @@ def v1_ident():
 
         v1_obj.exp_info_plot()
     else:
+        print('I am %s Slave with rank %s of %s' % (name, str(rank), str(size)))
         ProcessSlave().run()
 
     return None
@@ -173,6 +175,7 @@ def v2_ident():
     size = MPI.COMM_WORLD.Get_size()
 
     if rank == 0:  # master
+        print('I am %s Master with rank %s of %s' % (name, str(rank), str(size)))
         v2_obj = ModelIdent(ident_fun=kotte_model.flux_2_ident_expression,
                             arranged_data_file_name=os.path.join(os.getcwd(), 'exp/exp_v2_2_experiments'),
                             ident_data_file_name=os.path.join(os.getcwd(), 'ident/ident_v2'),
@@ -210,16 +213,21 @@ def v2_ident():
         v2_obj.identifiability_plot()
 
         v2_obj.exp_info_plot()
+
     else:
+        print('I am %s Slave with rank %s of %s' % (name, str(rank), str(size)))
         ProcessSlave().run()
 
     return None
 
 
 if __name__ == '__main__':
+    name = MPI.Get_processor_name()
+    rank = MPI.COMM_WORLD.Get_rank()
+    size = MPI.COMM_WORLD.Get_size()
 
-    # v1_ident()
-
-    v2_ident()
-    import pdb;pdb.set_trace()
-    print('Done\n')
+    if rank == 0:
+        v1_ident()
+        v2_ident()
+        import pdb;pdb.set_trace()
+        print('Done\n')
