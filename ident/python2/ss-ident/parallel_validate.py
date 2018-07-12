@@ -39,9 +39,6 @@ class ParallelValidate(object):
             data = {'sim_obj': kwargs['sim_obj'], 'ode_sys_opts': kwargs['ode_sys_opts'],
                     'id': kwargs['estimate_id'], 'y0': kwargs['y0'], 'perturbation_id': kwargs['perturbation_id'],
                     'task': task}
-            # 'ode_fun': kwargs['rhs_fun'],
-            # 'ode_opts': kwargs['ode_opts'],
-            # 't_final': kwargs['t_final'], 'flux_fun': kwargs['flux_fun'], }
 
         self.work_queue.add_work(data)
 
@@ -72,9 +69,17 @@ class ParallelValidate(object):
                     j_slave_dyn = {'t': j_slave_t, 'y': j_slave_y, 'flux': j_slave_f, 'estimate_id': estimate_id,
                                    'sample_id': sample_id, 'data_set_id': data_set_id}
 
+                    # info on bistability
+                    if j_slave_y[-1, 0] > j_slave_y[-1, 1]:
+                        stability_id = 1
+                    elif j_slave_y[-1, 0] < j_slave_y[-1, 1]:
+                        stability_id = 2
+                    else:
+                        stability_id = 0
+
                     # get ss values
                     j_slave_ss = {'y': j_slave_y[-1, :], 'flux': j_slave_f[-1, :], 'estimate_id': estimate_id,
-                                  'sample_id': sample_id, 'data_set_id': data_set_id}
+                                  'sample_id': sample_id, 'data_set_id': data_set_id, 'ssid': stability_id}
                     i_slave_result = {'dynamic': j_slave_dyn, 'ss': j_slave_ss, 'initial': True, 'perturbation': False}
 
                     # append initial sim results
@@ -99,16 +104,23 @@ class ParallelValidate(object):
                                    'sample_id': sample_id, 'data_set_id': data_set_id, 'perturbation_id':
                                        perturbation_id}
 
+                    # info on bistability
+                    if j_slave_y[-1, 0] > j_slave_y[-1, 1]:
+                        stability_id = 1
+                    elif j_slave_y[-1, 0] < j_slave_y[-1, 1]:
+                        stability_id = 2
+                    else:
+                        stability_id = 0
+
                     # get ss values
                     j_slave_ss = {'y': j_slave_y[-1, :], 'flux': j_slave_f[-1, :], 'estimate_id': estimate_id,
                                   'sample_id': sample_id, 'data_set_id': data_set_id, 'perturbation_id':
-                                      perturbation_id}
+                                      perturbation_id, 'ssid': stability_id}
                     i_slave_result = {'dynamic': j_slave_dyn, 'ss': j_slave_ss, 'initial': False, 'perturbation': True}
 
                     # append perturbation results
                     results.append(i_slave_result)
 
-        import pdb;pdb.set_trace()
         return results
 
 
@@ -216,7 +228,6 @@ def v1_validate():
         # get and set true parameter values, if available separately
         default_parameters = true_parameter_values()
 
-        import pdb;pdb.set_trace()
         v1_validate = ValidateSim(kotte_model.kotte_ck_ode, kotte_model.kotte_ck_flux, **{'kinetics': 2,
                                                                                           'ode_opts': user_ode_opts,
                                                                                           't_final': 200,
@@ -230,11 +241,16 @@ def v1_validate():
 
         job = ParallelValidate(slaves=range(1, size))
 
-        import pdb; pdb.set_trace()
-        ident_result = job.run_all(task='initial_sim', **{'parameters': parameter_estimates,
-                                                          'estimate_info': estimate_info, 'sim_obj': v1_validate})
+        validate_results = job.run_all(task='initial_sim', **{'parameters': parameter_estimates,
+                                                              'estimate_info': estimate_info, 'sim_obj': v1_validate})
         import pdb;pdb.set_trace()
         job.terminate_slaves()
+
+        # separate initial sims data from perturbation sims data
+        import pdb;pdb.set_trace()
+        v1_validate.create_ss_perturbation_dict(validate_results)
+
+        # write results to file
 
     else:
 
