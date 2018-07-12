@@ -213,6 +213,7 @@ def v1_validate():
 
     if rank == 0:
         # create ident object first
+        import pdb;pdb.set_trace()
         v1_ident = ModelIdent(ident_fun=kotte_model.flux_1_kcat_ident,
                               arranged_data_file_name=os.path.join(os.getcwd(), 'exp/exp_v1_2_experiments'),
                               ident_data_file_name=os.path.join(os.getcwd(), 'ident/ident_v1_kcat'),
@@ -233,6 +234,7 @@ def v1_validate():
         # get and set true parameter values, if available separately
         default_parameters = true_parameter_values()
 
+        import pdb;pdb.set_trace()
         v1_validate = ValidateSim(kotte_model.kotte_ck_ode, kotte_model.kotte_ck_flux, **{'kinetics': 2,
                                                                                           'ode_opts': user_ode_opts,
                                                                                           't_final': 200,
@@ -248,31 +250,40 @@ def v1_validate():
 
         ident_result = job.run_all(task='initial_sim', **{'parameters': parameter_estimates,
                                                           'estimate_info': estimate_info, 'sim_obj': v1_validate})
+        import pdb;pdb.set_trace()
         job.terminate_slaves()
 
     else:
+
         print('I am %s Slave with rank %s of %s' % (name, str(rank), str(size)))
         ValidateSlave().run()
 
+    return None
 
 
-def setup_parallel_validate(validate_sim_objects, perturbations):
+if __name__ == '__main__':
+    v1_validate()
+    import pdb;pdb.set_trace()
+    print('Done\n')
 
-    name = MPI.Get_processor_name()
-    rank = MPI.COMM_WORLD.Get_rank()
-    size = MPI.COMM_WORLD.Get_size()
 
-    sim_result = {}
-    print('I am  %s rank %d (total %d)' % (name, rank, size))
-    if rank == 0:  # Master
-        validate_job = ParallelValidate(slaves=range(1, size))
-        # import pdb;pdb.set_trace()
-        sim_result = validate_job.run_i_value(validate_sim_objects, perturbations)
-
-        validate_job.terminate_slaves()
-    else:  # Any slave
-        MySlave().run()
-
-    # rearrange results based on order of parameters/initial values
-    # import pdb;pdb.set_trace()
-    return sim_result
+# def setup_parallel_validate(validate_sim_objects, perturbations):
+#
+#     name = MPI.Get_processor_name()
+#     rank = MPI.COMM_WORLD.Get_rank()
+#     size = MPI.COMM_WORLD.Get_size()
+#
+#     sim_result = {}
+#     print('I am  %s rank %d (total %d)' % (name, rank, size))
+#     if rank == 0:  # Master
+#         validate_job = ParallelValidate(slaves=range(1, size))
+#         # import pdb;pdb.set_trace()
+#         sim_result = validate_job.run_i_value(validate_sim_objects, perturbations)
+#
+#         validate_job.terminate_slaves()
+#     else:  # Any slave
+#         MySlave().run()
+#
+#     # rearrange results based on order of parameters/initial values
+#     # import pdb;pdb.set_trace()
+#     return sim_result
