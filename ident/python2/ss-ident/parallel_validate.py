@@ -244,9 +244,9 @@ def v1_validate():
         import pdb;pdb.set_trace()
         job.terminate_slaves()
 
-        # separate initial sims data from perturbation sims data
+        # separate initial sims data from perturbation sims data and create validation df from dict
         import pdb;pdb.set_trace()
-        v1_validate.create_ss_perturbation_dict(validate_results)
+        validate_df, multi_index_labels = v1_validate.create_df(validate_results)
 
         # write results to file
 
