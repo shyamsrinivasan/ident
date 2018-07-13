@@ -46,7 +46,6 @@ class ParallelValidate(object):
         """parallel application core"""
 
         if task == 'initial_sim':
-            import pdb; pdb.set_trace()
             estimates = kwargs['parameters']
             estimate_id = kwargs['estimate_info']
             sim_obj = kwargs['sim_obj']
@@ -206,7 +205,6 @@ def v1_validate():
 
     if rank == 0:
         # create ident object first
-        import pdb;pdb.set_trace()
         v1_ident = ModelIdent(ident_fun=kotte_model.flux_1_kcat_ident,
                               arranged_data_file_name=os.path.join(os.getcwd(), 'exp/exp_v1_2_experiments'),
                               ident_data_file_name=os.path.join(os.getcwd(), 'ident/ident_v1_kcat'),
