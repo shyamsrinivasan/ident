@@ -1,5 +1,6 @@
 from run_sims import ModelSim
 from names_strings import variable_name
+import pandas as pd
 
 
 class ValidateSim(ModelSim):
@@ -125,7 +126,7 @@ class ValidateSim(ModelSim):
         perturbation_id = [j_ss_info['perturbation_id'] for j_ss_info in ss_info]
 
         # collate into single dict
-        details_dict = dict(zip(['estimate_id', 'sample_id', 'data_set_id', 'perturbation_id'],
+        details_dict = dict(zip(['estimate_id', 'sample_name', 'data_set_id', 'perturbation_id'],
                                 [estimate_id, sample_id, data_set_id, perturbation_id]))
 
         # get everything into single dictionary
@@ -168,8 +169,35 @@ class ValidateSim(ModelSim):
         self.__convert_to_ss_dict_for_df(perturbation_ss)
 
         # add ss_id information for initial_ss
-        import pdb;pdb.set_trace()
         self.__add_initial_ss_id(initial_ss)
+
+        return None
+
+    def create_df(self, all_results, dummy_arg=[]):
+        """create df from validation data information in all results"""
+        self.create_ss_perturbation_dict(all_results)
+
+        # convert info to multi index data frame for storage and retrieval
+        ss_info = self.perturbation_ss
+        df_index_tuple = [(i_estimate, i_sample, i_data_set, i_perturbation)
+                          for i_estimate, i_sample, i_data_set, i_perturbation in
+                          zip(ss_info['estimate_id'], ss_info['sample_name'], ss_info['data_set_id'],
+                              ss_info['experiment_id'])]
+        # df_index_tuples = [(i_value_sample, i_value_exp) for i_value_sample, i_value_exp in
+        #                    zip(self.perturbation_ss["sample_name"], self.perturbation_ss["experiment_id"])]
+        multi_index_labels = ['estimate_id', 'sample_name', 'data_set_id', 'experiment_id']
+        index = pd.MultiIndex.from_tuples(df_index_tuple, names=multi_index_labels)
+
+        # remove unused column headings from dictionary
+        del self.perturbation_ss["estimate_id"]
+        del self.perturbation_ss["sample_name"]
+        del self.perturbation_ss["data_set_id"]
+        del self.perturbation_ss["experiment_id"]
+
+        # create data frame
+        all_ss_df = pd.DataFrame(self.perturbation_ss, index=index, columns=self.perturbation_ss.keys())
 
         import pdb;pdb.set_trace()
         print('What to do next?\n')
+
+        return all_ss_df, multi_index_labels
