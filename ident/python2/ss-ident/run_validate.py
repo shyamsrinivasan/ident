@@ -201,7 +201,7 @@ class ValidateSim(ModelSim):
         all_ss_df.sort_index(level='estimate_id', inplace=True)
         all_ss_df.sort_index(level='sample_name', inplace=True)
         all_ss_df.sort_index(level='data_set_id', inplace=True)
-        all_ss_df.sort_index(level='perturbation_id', inplace=True)
+        all_ss_df.sort_index(level='experiment_id', inplace=True)
 
         import pdb;pdb.set_trace()
         print('What to do next?\n')
