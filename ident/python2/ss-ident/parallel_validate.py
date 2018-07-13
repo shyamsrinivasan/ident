@@ -238,7 +238,7 @@ def v1_validate():
         job = ParallelValidate(slaves=range(1, size))
 
         validate_results = job.run_all(task='initial_sim', **{'parameters': parameter_estimates,
-                                                              'estimate_info': estimate_info, 'sim_obj': v1_validate})
+                                                              'estimate_info': estimate_info, 'sim_obj': v1_valid_obj})
         import pdb;pdb.set_trace()
         job.terminate_slaves()
 
