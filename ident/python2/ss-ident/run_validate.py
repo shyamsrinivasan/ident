@@ -36,6 +36,16 @@ class ValidateSim(ModelSim):
         except KeyError:
             self.validate_file = []
 
+        try:
+            self.original_exp_file = kwargs['original_exp_file']
+        except KeyError:
+            self.original_exp_file = []
+
+        try:
+            self.original_index_label = kwargs['original_exp_label']
+        except KeyError:
+            self.original_index_label = ['sample_name', 'experiment_id']
+
     def get_name_value_parameter_pairs(self, estimate_info):
         """get estimated parameter values as name value pairs"""
         number_estimates = len(estimate_info['data_sets'])
@@ -240,4 +250,54 @@ class ValidateSim(ModelSim):
         # all_ss_df.sort_index(level='experiment_id', inplace=True)
 
         return validate_df
+
+    def retrieve_exp_df_from_file(self):
+        """retrieve experimental data from csv file"""
+        # read dataframe from csv file
+        experiment_df = pd.read_csv(self.original_exp_file, index_col=self.original_index_label)
+
+        # lexographic ordering of exp df indices
+        experiment_df.sort_index(level='sample_name', inplace=True)
+        experiment_df.sort_index(level='data_set_id', inplace=True)
+
+        return experiment_df
+
+    def process_validate(self):
+        """process validation data for plotting"""
+
+        # retrieve df from file and lex sort by index
+        validate_df = self.retrieve_validate_df_from_file()
+
+        # gather all/select concentrations
+        import pdb;pdb.set_trace()
+        y_names, y_values = self.gather_all_data(validate_df, variable_type='metabolite')
+
+        # gather all/select fluxes
+        import pdb;pdb.set_trace()
+        f_names, f_values = self.gather_all_data(validate_df, variable_type='flux')
+
+        # retrieve original set of experiments from file
+        experiment_df = self.retrieve_exp_df_from_file()
+
+        # get steady state concentrations from original experimental data
+
+        return None
+
+    @staticmethod
+    def gather_all_data(df, variable_type, select_values=[]):
+        """gather requested data from input df for all conditions (different simulations) for further processing"""
+
+        # get variable name
+        var_names = variable_name(variable_type)
+
+        # get variable values from df
+        # idx = pd.IndexSlice
+        import pdb;pdb.set_trace()
+        if select_values:
+            var_values = [df.loc[:, i_variable].values() for i_variable in var_names if i_variable in select_values]
+        else:
+            var_values = [df.loc[:, i_variable].values() for i_variable in var_names]
+
+        import pdb;pdb.set_trace()
+        return var_names, var_values
 
