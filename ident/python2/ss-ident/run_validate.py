@@ -257,8 +257,9 @@ class ValidateSim(ModelSim):
         experiment_df = pd.read_csv(self.original_exp_file, index_col=self.original_index_label)
 
         # lexographic ordering of exp df indices
+        import pdb;pdb.set_trace()
         experiment_df.sort_index(level='sample_name', inplace=True)
-        experiment_df.sort_index(level='data_set_id', inplace=True)
+        # experiment_df.sort_index(level='data_set_id', inplace=True)
 
         return experiment_df
 
@@ -269,11 +270,9 @@ class ValidateSim(ModelSim):
         validate_df = self.retrieve_validate_df_from_file()
 
         # gather all/select concentrations
-        import pdb;pdb.set_trace()
         y_names, y_values = self.gather_all_data(validate_df, variable_type='metabolite')
 
         # gather all/select fluxes
-        import pdb;pdb.set_trace()
         f_names, f_values = self.gather_all_data(validate_df, variable_type='flux')
 
         # retrieve original set of experiments from file
@@ -291,14 +290,11 @@ class ValidateSim(ModelSim):
         var_names = variable_name(variable_type)
 
         # get variable values from df
-        # idx = pd.IndexSlice
-        import pdb;pdb.set_trace()
         if select_values:
             var_values = [[i_value for i_value in df.loc[:, i_variable].values]
                           for i_variable in var_names if i_variable in select_values]
         else:
             var_values = [[i_value for i_value in df.loc[:, i_variable].values] for i_variable in var_names]
 
-        import pdb;pdb.set_trace()
         return var_names, var_values
 
