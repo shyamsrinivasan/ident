@@ -226,14 +226,10 @@ def v1_validate():
         # get and set true parameter values, if available separately
         default_parameters = true_parameter_values()
 
-        v1_validate = ValidateSim(kotte_model.kotte_ck_ode, kotte_model.kotte_ck_flux, **{'kinetics': 2,
-                                                                                          'ode_opts': user_ode_opts,
-                                                                                          't_final': 200,
-                                                                                          'wt_y0': y0,
-                                                                                          'i_parameter':
-                                                                                              default_parameters,
-                                                                                          'sample_size': 1,
-                                                                                          'noise_std': 0.05})
+        v1_validate = ValidateSim(kotte_model.kotte_ck_ode, kotte_model.kotte_ck_flux,
+                                  validate_file_name=os.path.join(os.getcwd(), 'results/v1_kcat_validate'),
+                                  **{'kinetics': 2, 'ode_opts': user_ode_opts, 't_final': 200, 'wt_y0': y0,
+                                     'i_parameter': default_parameters, 'sample_size': 1, 'noise_std': 0.05})
 
         parameter_estimates, estimate_info = v1_validate.create_parameter_list(v1_ident.select_values)
 
@@ -248,7 +244,7 @@ def v1_validate():
         import pdb;pdb.set_trace()
         validate_df, multi_index_labels = v1_validate.create_df(validate_results)
 
-        # write results to file
+
 
     else:
 
