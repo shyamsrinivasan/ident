@@ -163,7 +163,7 @@ class ValidateSim(ModelSim):
 
         # get ss_id information for initial_ss
         wt_ss_id = [j_ss_info['ssid'] for j_ss_info in initial_ss]
-        wt_ss_dict = dict(zip(['initial_ss'], wt_ss_id))
+        wt_ss_dict = {'initial_ss': wt_ss_id}
 
         import pdb;pdb.set_trace()
         self.perturbation_ss.update(wt_ss_dict)
