@@ -148,6 +148,21 @@ class ValidateSim(ModelSim):
         import pdb;pdb.set_trace()
         return None
 
+    def add_initial_ss_id(self, initial_ss):
+
+        wt_ss_id = [j_ss_info['ssid'] for j_data in self.perturbation_ss['estimate_id']
+                    for j_ss_info in initial_ss if j_data == j_ss_info['estimate_id']]
+
+        # get ss_id information for initial_ss
+        # wt_ss_id = [j_ss_info['ssid'] for j_ss_info in initial_ss]
+        import pdb;pdb.set_trace()
+        wt_ss_dict = {'initial_ss': wt_ss_id}
+
+        self.perturbation_ss.update(wt_ss_dict)
+
+        return None
+
+
     def create_ss_perturbation_dict(self, all_results):
 
         # separate initial simulation values from perturbation simulation values
@@ -161,12 +176,9 @@ class ValidateSim(ModelSim):
 
         self.convert_to_ss_dict_for_df(perturbation_ss)
 
-        # get ss_id information for initial_ss
-        wt_ss_id = [j_ss_info['ssid'] for j_ss_info in initial_ss]
-        wt_ss_dict = {'initial_ss': wt_ss_id}
-
+        # add ss_id information for initial_ss
         import pdb;pdb.set_trace()
-        self.perturbation_ss.update(wt_ss_dict)
+        self.add_initial_ss_id(initial_ss)
 
         import pdb;pdb.set_trace()
         print('What to do next?\n')
