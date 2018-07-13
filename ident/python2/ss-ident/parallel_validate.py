@@ -231,7 +231,8 @@ def v1_validate():
                                       'i_parameter': default_parameters, 'sample_size': 1, 'noise_std': 0.05,
                                       'validate_index_label': ['estimate_id', 'sample_name', 'data_set_id',
                                                                'experiment_id'],
-                                      'validate_file_name': os.path.join(os.getcwd(), 'validate/v1_kcat_validate')})
+                                      'validate_file_name': os.path.join(os.getcwd(), 'validate/v1_kcat_validate'),
+                                      'original_exp_file': v1_ident.original_exp_file})
 
         parameter_estimates, estimate_info = v1_valid_obj.create_parameter_list(v1_ident.select_values)
 
@@ -239,12 +240,15 @@ def v1_validate():
 
         validate_results = job.run_all(task='initial_sim', **{'parameters': parameter_estimates,
                                                               'estimate_info': estimate_info, 'sim_obj': v1_valid_obj})
-        import pdb;pdb.set_trace()
         job.terminate_slaves()
 
         # separate initial sims data from perturbation sims data and create validation df from dict
+        v1_valid_obj.create_df(validate_results)
+
+        # process validation info for plotting
+        v1_valid_obj.process_validate()
+
         import pdb;pdb.set_trace()
-        validate_df, multi_index_labels = v1_valid_obj.create_df(validate_results)
 
     else:
 
