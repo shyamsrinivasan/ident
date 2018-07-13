@@ -33,17 +33,28 @@ class ValidateSim(ModelSim):
 
         self.validate_file = validate_file_name
 
-    def create_parameter_list(self, estimate_info):
-        """create name value pairs of estimated parameters followed by list of all parameters for use in validation"""
-        # create dictionary (of length n_p) of parameters
+    def get_name_value_parameter_pairs(self, estimate_info):
+        """get estimated parameter values as name value pairs"""
         number_estimates = len(estimate_info['data_sets'])
         parameter_name_value_pair = [dict(zip(estimate_info['parameter_names'],
                                               [estimate_info['parameter_values'][i_parameter][i_estimate]
                                                for i_parameter, _ in enumerate(estimate_info['parameter_names'])]))
                                      for i_estimate in range(0, number_estimates)]
+        self.estimated_parameters = parameter_name_value_pair
+        return None
+
+    def create_parameter_list(self, estimate_info):
+        """create name value pairs of estimated parameters followed by list of all parameters for use in validation"""
+        # create dictionary (of length n_p) of parameters
+        self.get_name_value_parameter_pairs(estimate_info)
+        # number_estimates = len(estimate_info['data_sets'])
+        # parameter_name_value_pair = [dict(zip(estimate_info['parameter_names'],
+        #                                       [estimate_info['parameter_values'][i_parameter][i_estimate]
+        #                                        for i_parameter, _ in enumerate(estimate_info['parameter_names'])]))
+        #                              for i_estimate in range(0, number_estimates)]
 
         # create list of all parameter values of size n_p with each of the above estimated values
-        parameter_list = [self.i_parameter for _ in parameter_name_value_pair]
+        parameter_list = [self.i_parameter for _ in self.estimated_parameters]
         # data_set_id = []
         estimate_data_set_info = []
         for i_index, i_value in enumerate(parameter_list):
@@ -51,8 +62,8 @@ class ValidateSim(ModelSim):
             # estimate_id.append('estimate_{}'.format(i_index))
             estimate_data_set_info.append(('estimate_{}'.format(i_index), estimate_info['data_sets'][i_index][0],
                                            estimate_info['data_sets'][i_index][1]))
-            for i_key in parameter_name_value_pair[i_index].keys():
-                i_value[i_key] = parameter_name_value_pair[i_index][i_key]
+            for i_key in self.estimated_parameters[i_index].keys():
+                i_value[i_key] = self.estimated_parameters[i_index][i_key]
 
         return parameter_list, estimate_data_set_info
 
