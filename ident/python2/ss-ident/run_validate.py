@@ -4,7 +4,7 @@ import pandas as pd
 
 
 class ValidateSim(ModelSim):
-    def __init__(self, rhs_fun, flux_fun, noise=0, **kwargs):
+    def __init__(self, rhs_fun, flux_fun, noise=0, validate_file_name=[], **kwargs):
         super(ValidateSim, self).__init__(rhs_fun, flux_fun, noise, **kwargs)
         # self.rhs_fun = rhs_fun
         # self.flux_fun = flux_fun
@@ -25,6 +25,9 @@ class ValidateSim(ModelSim):
         # self.perturbation_dynamic = []
         self.estimated_parameters = []
         self.estimate_ids = []
+        self.validate_index_labels = []
+
+        self.validate_file = validate_file_name
 
     def create_parameter_list(self, estimate_info):
         """create name value pairs of estimated parameters followed by list of all parameters for use in validation"""
@@ -204,7 +207,14 @@ class ValidateSim(ModelSim):
         # all_ss_df.sort_index(level='experiment_id', inplace=True)
 
         # level depth sorting correction
-        all_ss_df.sort_index(level=['estimate_id', 'sample_name', 'data_set_id', 'experiment_id'], inplace=True)
+        all_ss_df.sort_index(level=['estimate_id', 'sample_name', 'data_set_id', 'experiment_id'], inplace=True)\
+
+        self.validate_index_labels = multi_index_labels
+
+        # write results to file
+        if self.validate_file:
+            all_ss_df.to_csv(self.validate_file, index_label=multi_index_labels)
+            print('\n  Validation Data written to file \n')
 
         import pdb;pdb.set_trace()
         print('What to do next?\n')
