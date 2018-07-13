@@ -117,7 +117,7 @@ class ValidateSim(ModelSim):
 
         # get stable ss information
         final_ss_id = [j_ss_info['ssid'] for j_ss_info in ss_info]
-        final_ss_dict = dict(zip(['final_ss'], final_ss_id))
+        final_ss_dict = {'final_ss': final_ss_id}
 
         # get data set details
         # get estimate id
