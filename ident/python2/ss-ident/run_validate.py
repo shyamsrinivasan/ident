@@ -294,11 +294,10 @@ class ValidateSim(ModelSim):
         # idx = pd.IndexSlice
         import pdb;pdb.set_trace()
         if select_values:
-            var_values = [i_value for i_variable in var_names if i_variable in select_values
-                          for i_value in df.loc[:, i_variable].values]
+            var_values = [[i_value for i_value in df.loc[:, i_variable].values]
+                          for i_variable in var_names if i_variable in select_values]
         else:
-            var_values = [i_value for i_variable in var_names
-                          for i_value in df.loc[:, i_variable].values]
+            var_values = [[i_value for i_value in df.loc[:, i_variable].values] for i_variable in var_names]
 
         import pdb;pdb.set_trace()
         return var_names, var_values
