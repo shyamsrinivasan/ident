@@ -25,7 +25,11 @@ class ValidateSim(ModelSim):
         # self.perturbation_dynamic = []
         self.estimated_parameters = []
         self.estimate_ids = []
-        self.validate_index_labels = []
+
+        try:
+            self.validate_index_label = kwargs['validate_index_label']
+        except KeyError:
+            self.validate_index_label = []
 
         self.validate_file = validate_file_name
 
@@ -209,7 +213,7 @@ class ValidateSim(ModelSim):
         # level depth sorting correction
         all_ss_df.sort_index(level=['estimate_id', 'sample_name', 'data_set_id', 'experiment_id'], inplace=True)\
 
-        self.validate_index_labels = multi_index_labels
+        self.validate_index_label = multi_index_labels
 
         # write results to file
         if self.validate_file:
