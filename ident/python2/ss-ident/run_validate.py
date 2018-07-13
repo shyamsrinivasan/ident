@@ -256,10 +256,10 @@ class ValidateSim(ModelSim):
         # read dataframe from csv file
         experiment_df = pd.read_csv(self.original_exp_file, index_col=self.original_index_label)
 
-        # lexographic ordering of exp df indices
-        import pdb;pdb.set_trace()
-        experiment_df.sort_index(level='sample_name', inplace=True)
-        # experiment_df.sort_index(level='data_set_id', inplace=True)
+        # lexographic depth-based ordering of exp df indices
+        experiment_df.sort_index(level=['sample_name', 'experiment_id'], inplace=True)
+        # experiment_df.sort_index(level='sample_name', inplace=True)
+        # experiment_df.sort_index(level='experiment_id', inplace=True)
 
         return experiment_df
 
@@ -279,8 +279,31 @@ class ValidateSim(ModelSim):
         experiment_df = self.retrieve_exp_df_from_file()
 
         # get steady state concentrations from original experimental data
+        y_exp_name, y_exp_values = self.gather_all_data(experiment_df, variable_type='metabolite')
+
+        # repeat experimental data as many times as y_values
+        [for i_y_exp_name, i_y_exp_value in zip(y_exp_name, y_exp_values) for j_y_name, j_y_value in zip(y_names, y_values) if i_y_exp_name == j_y_name]
+
+        # get steady state flux from original experimental data
+        f_exp_name, f_exp_values = self.gather_all_data(experiment_df, variable_type='flux')
 
         return None
+
+    @staticmethod
+    def collect_experiment_data(validation_data, exp_data):
+        """repeat exp_data for each experiment (sample size x size of data sets) number of times"""
+        for i_e_name, i_e_data in exp_data.items():
+            for i_v_name, i_v_data in validation_data.items():
+                if i_e_name == i_v_name:
+                    number_experiments = len(i_e_data)
+                    number_data = len(i_v_data)
+        return None
+
+    @staticmethod
+    def ordered_data_collection(df, variable_type, select_values=[]):
+        """collect concentration/fluxes for each estimate for each experiment"""
+
+
 
     @staticmethod
     def gather_all_data(df, variable_type, select_values=[]):
