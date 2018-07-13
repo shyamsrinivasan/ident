@@ -255,6 +255,7 @@ def v1_validate():
         print('I am %s Slave with rank %s of %s' % (name, str(rank), str(size)))
         ValidateSlave().run()
 
+    import pdb;pdb.set_trace()
     return None
 
 
