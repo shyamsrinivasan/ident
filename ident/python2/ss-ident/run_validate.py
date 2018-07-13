@@ -182,7 +182,7 @@ class ValidateSim(ModelSim):
         df_index_tuple = [(i_estimate, i_sample, i_data_set, i_perturbation)
                           for i_estimate, i_sample, i_data_set, i_perturbation in
                           zip(ss_info['estimate_id'], ss_info['sample_name'], ss_info['data_set_id'],
-                              ss_info['experiment_id'])]
+                              ss_info['perturbation_id'])]
         # df_index_tuples = [(i_value_sample, i_value_exp) for i_value_sample, i_value_exp in
         #                    zip(self.perturbation_ss["sample_name"], self.perturbation_ss["experiment_id"])]
         multi_index_labels = ['estimate_id', 'sample_name', 'data_set_id', 'experiment_id']
@@ -192,7 +192,7 @@ class ValidateSim(ModelSim):
         del self.perturbation_ss["estimate_id"]
         del self.perturbation_ss["sample_name"]
         del self.perturbation_ss["data_set_id"]
-        del self.perturbation_ss["experiment_id"]
+        del self.perturbation_ss["perturbation_id"]
 
         # create data frame
         all_ss_df = pd.DataFrame(self.perturbation_ss, index=index, columns=self.perturbation_ss.keys())
