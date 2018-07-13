@@ -213,12 +213,6 @@ class ValidateSim(ModelSim):
         # create data frame
         all_ss_df = pd.DataFrame(self.perturbation_ss, index=index, columns=self.perturbation_ss.keys())
 
-        # lexicographic sorting of indices in all_ss_df
-        # all_ss_df.sort_index(level='estimate_id', inplace=True)
-        # all_ss_df.sort_index(level='sample_name', inplace=True)
-        # all_ss_df.sort_index(level='data_set_id', inplace=True)
-        # all_ss_df.sort_index(level='experiment_id', inplace=True)
-
         # level depth sorting correction
         all_ss_df.sort_index(level=['estimate_id', 'sample_name', 'data_set_id', 'experiment_id'], inplace=True)\
 
@@ -230,3 +224,20 @@ class ValidateSim(ModelSim):
             print('\n  Validation Data written to file \n')
 
         return all_ss_df, multi_index_labels
+
+    def retrieve_validate_df_from_file(self):
+        """retrieve validate df from saved file"""
+        # read dataframe from csv file
+        validate_df = pd.read_csv(self.validate_file, index_col=self.validate_index_label)
+
+        # level depth sorting correction
+        validate_df.sort_index(level=['estimate_id', 'sample_name', 'data_set_id', 'experiment_id'], inplace=True)
+
+        # lexicographic sorting of indices in all_ss_df
+        # all_ss_df.sort_index(level='estimate_id', inplace=True)
+        # all_ss_df.sort_index(level='sample_name', inplace=True)
+        # all_ss_df.sort_index(level='data_set_id', inplace=True)
+        # all_ss_df.sort_index(level='experiment_id', inplace=True)
+
+        return validate_df
+
