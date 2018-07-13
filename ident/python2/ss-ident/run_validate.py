@@ -4,7 +4,7 @@ import pandas as pd
 
 
 class ValidateSim(ModelSim):
-    def __init__(self, rhs_fun, flux_fun, noise=0, validate_file_name=[], **kwargs):
+    def __init__(self, rhs_fun, flux_fun, noise=0, **kwargs):
         super(ValidateSim, self).__init__(rhs_fun, flux_fun, noise, **kwargs)
         # self.rhs_fun = rhs_fun
         # self.flux_fun = flux_fun
@@ -31,7 +31,10 @@ class ValidateSim(ModelSim):
         except KeyError:
             self.validate_index_label = []
 
-        self.validate_file = validate_file_name
+        try:
+            self.validate_file = kwargs['validate_file_name']
+        except KeyError:
+            self.validate_file = []
 
     def get_name_value_parameter_pairs(self, estimate_info):
         """get estimated parameter values as name value pairs"""

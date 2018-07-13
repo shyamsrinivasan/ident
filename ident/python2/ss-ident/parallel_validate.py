@@ -227,11 +227,11 @@ def v1_validate():
         default_parameters = true_parameter_values()
 
         v1_valid_obj = ValidateSim(kotte_model.kotte_ck_ode, kotte_model.kotte_ck_flux,
-                                   validate_file_name=os.path.join(os.getcwd(), 'results/v1_kcat_validate'),
                                    **{'kinetics': 2, 'ode_opts': user_ode_opts, 't_final': 200, 'wt_y0': y0,
                                       'i_parameter': default_parameters, 'sample_size': 1, 'noise_std': 0.05,
                                       'validate_index_label': ['estimate_id', 'sample_name', 'data_set_id',
-                                                               'experiment_id']})
+                                                               'experiment_id'],
+                                      'validate_file_name': os.path.join(os.getcwd(), 'results/v1_kcat_validate')})
 
         parameter_estimates, estimate_info = v1_valid_obj.create_parameter_list(v1_ident.select_values)
 
