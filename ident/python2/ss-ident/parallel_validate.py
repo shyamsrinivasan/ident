@@ -226,12 +226,14 @@ def v1_validate():
         # get and set true parameter values, if available separately
         default_parameters = true_parameter_values()
 
-        v1_validate = ValidateSim(kotte_model.kotte_ck_ode, kotte_model.kotte_ck_flux,
-                                  validate_file_name=os.path.join(os.getcwd(), 'results/v1_kcat_validate'),
-                                  **{'kinetics': 2, 'ode_opts': user_ode_opts, 't_final': 200, 'wt_y0': y0,
-                                     'i_parameter': default_parameters, 'sample_size': 1, 'noise_std': 0.05})
+        v1_valid_obj = ValidateSim(kotte_model.kotte_ck_ode, kotte_model.kotte_ck_flux,
+                                   validate_file_name=os.path.join(os.getcwd(), 'results/v1_kcat_validate'),
+                                   **{'kinetics': 2, 'ode_opts': user_ode_opts, 't_final': 200, 'wt_y0': y0,
+                                      'i_parameter': default_parameters, 'sample_size': 1, 'noise_std': 0.05,
+                                      'validate_index_label': ['estimate_id', 'sample_name', 'data_set_id',
+                                                               'experiment_id']})
 
-        parameter_estimates, estimate_info = v1_validate.create_parameter_list(v1_ident.select_values)
+        parameter_estimates, estimate_info = v1_valid_obj.create_parameter_list(v1_ident.select_values)
 
         job = ParallelValidate(slaves=range(1, size))
 
@@ -242,9 +244,7 @@ def v1_validate():
 
         # separate initial sims data from perturbation sims data and create validation df from dict
         import pdb;pdb.set_trace()
-        validate_df, multi_index_labels = v1_validate.create_df(validate_results)
-
-
+        validate_df, multi_index_labels = v1_valid_obj.create_df(validate_results)
 
     else:
 
