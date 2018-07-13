@@ -109,7 +109,7 @@ class ValidateSim(ModelSim):
                                                 variable_type='metabolite', noise=self.noise)
         f_names, f_values = self.create_ss_dict(ss_info=[i_ss['flux'] for i_ss in ss_info],
                                                 variable_type='flux', noise=self.noise)
-
+        import pdb;pdb.set_trace()
         return None
 
     def create_ss_perturbation_dict(self, all_results):
@@ -123,7 +123,7 @@ class ValidateSim(ModelSim):
         # get perturbation ss values only
         perturbation_ss, _ = self.separate_ss_dyn(perturbation_sims)
 
-
+        self.convert_to_ss_dict_for_df(perturbation_ss)
 
         import pdb;pdb.set_trace()
         print('What to do next?\n')
