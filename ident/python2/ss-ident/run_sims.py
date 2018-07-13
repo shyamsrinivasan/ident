@@ -62,7 +62,7 @@ class ModelSim(object):
         self.ss_info = []
         self.noisy_dynamic_info = []
         self.noisy_ss_info = []
-        self.df_info = []
+        self.df_info = {}
         self.df_fields = []
 
     def run_initial_sim(self, parameter, parameter_ids=(), **kwargs):
@@ -258,17 +258,6 @@ class ModelSim(object):
 
         # create data frame
         all_ss_df = pd.DataFrame(self.df_info, index=index, columns=self.df_info.keys())
-
-        # create data frame
-        # all_ss_df = pd.DataFrame(perturbation_info, index=index, columns=perturbation_info.keys())
-        #
-        # dyn_df_index_tuples = zip(dynamic_info['sample_name'], dynamic_info['experiment_id'],
-        #                           dynamic_info['data_point'])
-        # dyn_index_labels = ['sample_name', 'experiment_id', 'data_point']
-        # dyn_index = pd.MultiIndex.from_tuples(dyn_df_index_tuples, names=dyn_index_labels)
-        # del dynamic_info['sample_name']
-        # del dynamic_info['experiment_id']
-        # del dynamic_info['data_point']
 
         # dyn_df = pd.DataFrame(dynamic_info, index=dyn_index, columns=dynamic_info.keys())
         return all_ss_df, multi_index_labels
