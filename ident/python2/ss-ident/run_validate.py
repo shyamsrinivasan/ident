@@ -198,10 +198,13 @@ class ValidateSim(ModelSim):
         all_ss_df = pd.DataFrame(self.perturbation_ss, index=index, columns=self.perturbation_ss.keys())
 
         # lexicographic sorting of indices in all_ss_df
-        all_ss_df.sort_index(level='estimate_id', inplace=True)
-        all_ss_df.sort_index(level='sample_name', inplace=True)
-        all_ss_df.sort_index(level='data_set_id', inplace=True)
-        all_ss_df.sort_index(level='experiment_id', inplace=True)
+        # all_ss_df.sort_index(level='estimate_id', inplace=True)
+        # all_ss_df.sort_index(level='sample_name', inplace=True)
+        # all_ss_df.sort_index(level='data_set_id', inplace=True)
+        # all_ss_df.sort_index(level='experiment_id', inplace=True)
+
+        # level depth sorting correction
+        all_ss_df.sort_index(level=['estimate_id', 'sample_name', 'data_set_id', 'experiment_id'], inplace=True)
 
         import pdb;pdb.set_trace()
         print('What to do next?\n')
