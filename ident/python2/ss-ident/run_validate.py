@@ -50,11 +50,6 @@ class ValidateSim(ModelSim):
         """create name value pairs of estimated parameters followed by list of all parameters for use in validation"""
         # create dictionary (of length n_p) of parameters
         self.get_name_value_parameter_pairs(estimate_info)
-        # number_estimates = len(estimate_info['data_sets'])
-        # parameter_name_value_pair = [dict(zip(estimate_info['parameter_names'],
-        #                                       [estimate_info['parameter_values'][i_parameter][i_estimate]
-        #                                        for i_parameter, _ in enumerate(estimate_info['parameter_names'])]))
-        #                              for i_estimate in range(0, number_estimates)]
 
         # create list of all parameter values of size n_p with each of the above estimated values
         parameter_list = [self.i_parameter for _ in self.estimated_parameters]
@@ -233,8 +228,5 @@ class ValidateSim(ModelSim):
         if self.validate_file:
             all_ss_df.to_csv(self.validate_file, index_label=multi_index_labels)
             print('\n  Validation Data written to file \n')
-
-        import pdb;pdb.set_trace()
-        print('What to do next?\n')
 
         return all_ss_df, multi_index_labels
