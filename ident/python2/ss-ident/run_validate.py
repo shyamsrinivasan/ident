@@ -78,15 +78,7 @@ class ValidateSim(ModelSim):
         return ss_info, dynamic_info
 
     @staticmethod
-    def collect_estimate_ss(ss_info):
-        """collect all estimate ids, get unique estimate ids and
-        segregate data based on estimate ids"""
-
-        # collect all estimate ids
-        return None
-
-    @staticmethod
-    def create_ss_dict(ss_info, variable_type, noise=0):
+    def __create_ss_dict(ss_info, variable_type, noise=0):
         """create dictionary of ss values (concentration/fluxes)"""
         number_variables = len(ss_info[0])
         variable_name_info = [variable_name(variable_type, j_variable) for j_variable in range(0, number_variables)]
@@ -101,18 +93,18 @@ class ValidateSim(ModelSim):
 
         return variable_name_info, variable_value_info
 
-    def convert_to_ss_dict_for_df(self, ss_info):
+    def __convert_to_ss_dict_for_df(self, ss_info):
         """convert ss information to dictionary for creating df and writing to file"""
 
         # create dict of perturbation_ss values for writing to df and file
         # concentrations
-        y_names, y_values = self.create_ss_dict(ss_info=[i_ss['y'] for i_ss in ss_info],
-                                                variable_type='metabolite', noise=self.noise)
+        y_names, y_values = self.__create_ss_dict(ss_info=[i_ss['y'] for i_ss in ss_info],
+                                                  variable_type='metabolite', noise=self.noise)
         y_dict = dict(zip(y_names, y_values))
 
         # fluxes
-        f_names, f_values = self.create_ss_dict(ss_info=[i_ss['flux'] for i_ss in ss_info],
-                                                variable_type='flux', noise=self.noise)
+        f_names, f_values = self.__create_ss_dict(ss_info=[i_ss['flux'] for i_ss in ss_info],
+                                                  variable_type='flux', noise=self.noise)
         f_dict = dict(zip(f_names, f_values))
 
         # get stable ss information
@@ -145,25 +137,24 @@ class ValidateSim(ModelSim):
 
         self.perturbation_ss = ss_info_dict
 
-        import pdb;pdb.set_trace()
         return None
 
-    def add_initial_ss_id(self, initial_ss):
+    def __add_initial_ss_id(self, initial_ss):
+        """add ss_id from initial wt sims to data dict"""
 
         wt_ss_id = [j_ss_info['ssid'] for j_data in self.perturbation_ss['estimate_id']
                     for j_ss_info in initial_ss if j_data == j_ss_info['estimate_id']]
 
         # get ss_id information for initial_ss
         # wt_ss_id = [j_ss_info['ssid'] for j_ss_info in initial_ss]
-        import pdb;pdb.set_trace()
         wt_ss_dict = {'initial_ss': wt_ss_id}
 
         self.perturbation_ss.update(wt_ss_dict)
 
         return None
 
-
     def create_ss_perturbation_dict(self, all_results):
+        """create complete dictionary of details to be converted to df for writing to file"""
 
         # separate initial simulation values from perturbation simulation values
         initial_sims, perturbation_sims = self.separate_initial_perturbation(all_results)
@@ -174,37 +165,11 @@ class ValidateSim(ModelSim):
         # get perturbation ss values only
         perturbation_ss, _ = self.separate_ss_dyn(perturbation_sims)
 
-        self.convert_to_ss_dict_for_df(perturbation_ss)
+        self.__convert_to_ss_dict_for_df(perturbation_ss)
 
         # add ss_id information for initial_ss
         import pdb;pdb.set_trace()
-        self.add_initial_ss_id(initial_ss)
+        self.__add_initial_ss_id(initial_ss)
 
         import pdb;pdb.set_trace()
         print('What to do next?\n')
-
-
-
-
-
-
-    # def run_initial_sim(self, parameter, parameter_ids=(), **kwargs):
-    #     import pdb;pdb.set_trace()
-    #     wt_ss, wt_dynamics = super(ValidateSim, self).run_initial_sim(parameter, parameter_ids, **kwargs)
-    #     return wt_ss, wt_dynamics
-    #
-    # def validate_model(self, parameter_estimates, estimate_info):
-    #     """run parallel validation method"""
-    #     # run parallel initial sim (based on setup parallel ode for multiple parameter sets)
-    #     import pdb;pdb.set_trace()
-    #     estimate_ids = [j_value[0] for j_value in estimate_info]
-    #     initial_ss, initial_dynamics = self.run_initial_sim(parameter_estimates, estimate_ids)
-    #
-    #     import pdb;pdb.set_trace()
-    #     sim_result = setup_parallel_ode(ode_rhs_fun=self.rhs_fun, flux_fun=self.flux_fun,
-    #                                     parameters=parameter_estimates, y0=self.wt_y0, t_final=self.t_final,
-    #                                     experiment_id=estimate_ids, ode_opts=self.ode_opts, i_value_opt=0,
-    #                                     parameter_opt=1)
-    #     # run parallel perturbation sim for each parameter estimate
-    #     import pdb;pdb.set_trace()
-    #     return sim_result
