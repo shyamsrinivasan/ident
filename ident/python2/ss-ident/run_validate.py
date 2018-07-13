@@ -20,7 +20,7 @@ class ValidateSim(ModelSim):
 
         # self.wt_ss = []
         # self.wt_dynamic = []
-        # self.perturbation_ss = []
+        self.perturbation_ss = {}
         # self.perturbation_dynamic = []
         self.estimated_parameters = []
         self.estimate_ids = []
@@ -105,10 +105,46 @@ class ValidateSim(ModelSim):
         """convert ss information to dictionary for creating df and writing to file"""
 
         # create dict of perturbation_ss values for writing to df and file
+        # concentrations
         y_names, y_values = self.create_ss_dict(ss_info=[i_ss['y'] for i_ss in ss_info],
                                                 variable_type='metabolite', noise=self.noise)
+        y_dict = dict(zip(y_names, y_values))
+
+        # fluxes
         f_names, f_values = self.create_ss_dict(ss_info=[i_ss['flux'] for i_ss in ss_info],
                                                 variable_type='flux', noise=self.noise)
+        f_dict = dict(zip(f_names, f_values))
+
+        # get stable ss information
+        final_ss_id = [j_ss_info['ssid'] for j_ss_info in ss_info]
+        final_ss_dict = dict(zip(['final_ss'], final_ss_id))
+
+        # get data set details
+        # get estimate id
+        estimate_id = [j_ss_info['estimate_id'] for j_ss_info in ss_info]
+
+        # get sample id
+        sample_id = [j_ss_info['sample_id'] for j_ss_info in ss_info]
+
+        # get data set id
+        data_set_id = [j_ss_info['data_set_id'] for j_ss_info in ss_info]
+
+        # get perturbation id
+        perturbation_id = [j_ss_info['perturbation_id'] for j_ss_info in ss_info]
+
+        # collate into single dict
+        details_dict = dict(zip(['estimate_id', 'sample_id', 'data_set_id', 'perturbation_id'],
+                                [estimate_id, sample_id, data_set_id, perturbation_id]))
+
+        # get everything into single dictionary
+        ss_info_dict = {}
+        ss_info_dict.update(y_dict)
+        ss_info_dict.update(f_dict)
+        ss_info_dict.update(final_ss_dict)
+        ss_info_dict.update(details_dict)
+
+        self.perturbation_ss = ss_info_dict
+
         import pdb;pdb.set_trace()
         return None
 
@@ -124,6 +160,13 @@ class ValidateSim(ModelSim):
         perturbation_ss, _ = self.separate_ss_dyn(perturbation_sims)
 
         self.convert_to_ss_dict_for_df(perturbation_ss)
+
+        # get ss_id information for initial_ss
+        wt_ss_id = [j_ss_info['ssid'] for j_ss_info in initial_ss]
+        wt_ss_dict = dict(zip(['initial_ss'], wt_ss_id))
+
+        import pdb;pdb.set_trace()
+        self.perturbation_ss.update(wt_ss_dict)
 
         import pdb;pdb.set_trace()
         print('What to do next?\n')
