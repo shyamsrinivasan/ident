@@ -264,25 +264,3 @@ if __name__ == '__main__':
     v1_validate()
     import pdb;pdb.set_trace()
     print('Done\n')
-
-
-# def setup_parallel_validate(validate_sim_objects, perturbations):
-#
-#     name = MPI.Get_processor_name()
-#     rank = MPI.COMM_WORLD.Get_rank()
-#     size = MPI.COMM_WORLD.Get_size()
-#
-#     sim_result = {}
-#     print('I am  %s rank %d (total %d)' % (name, rank, size))
-#     if rank == 0:  # Master
-#         validate_job = ParallelValidate(slaves=range(1, size))
-#         # import pdb;pdb.set_trace()
-#         sim_result = validate_job.run_i_value(validate_sim_objects, perturbations)
-#
-#         validate_job.terminate_slaves()
-#     else:  # Any slave
-#         MySlave().run()
-#
-#     # rearrange results based on order of parameters/initial values
-#     # import pdb;pdb.set_trace()
-#     return sim_result
