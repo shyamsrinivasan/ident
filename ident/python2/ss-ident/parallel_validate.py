@@ -240,9 +240,11 @@ def v1_validate():
 
         validate_results = job.run_all(task='initial_sim', **{'parameters': parameter_estimates,
                                                               'estimate_info': estimate_info, 'sim_obj': v1_valid_obj})
+        import pdb;pdb.set_trace()
         job.terminate_slaves()
 
         # separate initial sims data from perturbation sims data and create validation df from dict
+        import pdb;pdb.set_trace()
         v1_valid_obj.create_df(validate_results)
 
         # process validation info for plotting
