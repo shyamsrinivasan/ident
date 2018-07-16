@@ -349,4 +349,3 @@ class ValidateSim(ModelSim):
                                     for i_value in exp_df.loc[idx[i_sample, :], i_variable].values] * number_data_sets)
 
         return var_names, df_values, desired_exp
-n
