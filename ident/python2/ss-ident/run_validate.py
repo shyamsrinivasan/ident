@@ -324,7 +324,7 @@ class ValidateSim(ModelSim):
         var_names = variable_name(variable_type)
 
         # validate_df levels: level[0] - level[3] - estimate, sample, dataset, experiment
-        sample_names = df.index.levels[1].unique()
+        sample_names = list(df.index.levels[1].unique())
         all_data_sets = df.index.levels[2].unique()
         number_samples = len(sample_names)
         number_data_sets = len(all_data_sets)
