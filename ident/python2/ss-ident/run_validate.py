@@ -467,7 +467,7 @@ class ValidateSim(ModelSim):
                 # elif not flux_id:
                 violin_axis = f1.add_subplot(plot_grid[0, i_plot])
                 plot_on_axis_object_violin(violin_axis, info["values"][i_variable])
-                violin_axis.set_xticks(np.arange(1, len(info["values"]) + 1))
+                violin_axis.set_xticks(np.arange(1, len(info["experiment_id"]) + 1))
                 violin_axis.set_xticklabels(info["experiment_id"])
                 for tick in violin_axis.get_xticklabels():
                     tick.set_rotation(90)
