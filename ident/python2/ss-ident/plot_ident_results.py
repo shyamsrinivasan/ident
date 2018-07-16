@@ -346,7 +346,7 @@ def validation_scatter(info_dict, grid_objects, figure_object):
         # line plot of experimental vs experimental
         scatter_axis.plot(info_dict["experiment_values"][i_variable],
                           info_dict["experiment_values"][i_variable],
-                          **{'color': 'black', 'linestyle': 'dashdot', 'linewidth': 1.5})
+                          **{'color': 'black', 'linestyle': 'dashdot', 'linewidth': 0.5})
         # set scatter axis ticks
         set_scatter_axis_limits(scatter_axis, x_data=info_dict["experiment_values"][i_variable],
                                 y_data=info_dict["values"][i_variable])
