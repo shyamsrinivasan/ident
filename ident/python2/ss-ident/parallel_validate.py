@@ -382,8 +382,8 @@ def v3_validate():
 
 
 if __name__ == '__main__':
-    v1_validate()
-    v2_validate()
+    # v1_validate()
+    # v2_validate()
     v3_validate()
     import pdb;pdb.set_trace()
     print('Done\n')
