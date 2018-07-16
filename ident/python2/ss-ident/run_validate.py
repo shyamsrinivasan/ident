@@ -269,26 +269,34 @@ class ValidateSim(ModelSim):
         # retrieve df from file and lex sort by index
         validate_df = self.retrieve_validate_df_from_file()
 
-        # gather all/select concentrations
-        y_names, y_values = self.gather_all_data(validate_df, variable_type='metabolite')
-
-        # gather all/select fluxes
-        import pdb;pdb.set_trace()
-        f_names, f_values = self.gather_all_data(validate_df, variable_type='flux')
-
         # retrieve original set of experiments from file
         experiment_df = self.retrieve_exp_df_from_file()
 
+        self.gather_validation_data(validate_df, experiment_df, 'metabolite')
+
+        # experiment_df levels: level[0] - level[1] - sample, experiment
+        # all_experiments = experiment_df.index.levels[1].unique()
+        # number_experiments = len(all_experiments)
+
+        # gather all/select concentrations
+        # y_names, y_values = self.gather_all_data(validate_df, variable_type='metabolite')
+
+        # gather all/select fluxes
+        # import pdb;pdb.set_trace()
+        # f_names, f_values = self.gather_all_data(validate_df, variable_type='flux')
+
+
+
         # get steady state concentrations from original experimental data
-        import pdb;pdb.set_trace()
-        y_exp_name, y_exp_values = self.gather_all_data(experiment_df, variable_type='metabolite')
+        # import pdb;pdb.set_trace()
+        # y_exp_name, y_exp_values = self.gather_all_data(experiment_df, variable_type='metabolite')
 
         # repeat experimental data as many times as y_values
         import pdb;pdb.set_trace()
         # repeat_values = [for i_y_exp_name, i_y_exp_value in zip(y_exp_name, y_exp_values) for j_y_name, j_y_value in zip(y_names, y_values) if i_y_exp_name == j_y_name]
 
         # get steady state flux from original experimental data
-        f_exp_name, f_exp_values = self.gather_all_data(experiment_df, variable_type='flux')
+        # f_exp_name, f_exp_values = self.gather_all_data(experiment_df, variable_type='flux')
 
         return None
 
@@ -305,7 +313,34 @@ class ValidateSim(ModelSim):
     @staticmethod
     def ordered_data_collection(df, variable_type, select_values=[]):
         """collect concentration/fluxes for each estimate for each experiment"""
+        return None
 
+    @staticmethod
+    def gather_validation_data(df, exp_df, variable_type, select_value=[]):
+        """gather validation data in orderly fashion for further processing"""
+
+        # get variable name
+        import pdb;pdb.set_trace()
+        var_names = variable_name(variable_type)
+
+        # validate_df levels: level[0] - level[3] - estimate, sample, dataset, experiment
+        sample_names = df.index.levels[1].unique()
+        all_data_sets = df.index.levels[2].unique()
+        number_samples = len(sample_names)
+        number_data_sets = len(all_data_sets)
+
+        exp_sample_names = exp_df.index.levels[0].unique()
+        number_exp_samples = len(exp_sample_names)
+
+        import pdb;pdb.set_trace()
+        idx = pd.IndexSlice
+        for i_variable in var_names:
+            for i_sample in sample_names:
+                df_values = df.loc[idx[:, i_sample, :, :], i_variable].values
+                exp_df_values = exp_df.loc[idx[i_sample, :], i_variable].values
+
+        import pdb;pdb.set_trace()
+        return None
 
 
     @staticmethod
