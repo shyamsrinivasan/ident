@@ -353,7 +353,7 @@ def v3_validate():
                                       'i_parameter': default_parameters, 'sample_size': 1, 'noise_std': 0.05,
                                       'validate_index_label': ['estimate_id', 'sample_name', 'data_set_id',
                                                                'experiment_id'],
-                                      'validate_file_name': os.path.join(os.getcwd(), 'validate/v2_validate'),
+                                      'validate_file_name': os.path.join(os.getcwd(), 'validate/v3_validate'),
                                       'original_exp_file': v3_ident.original_exp_file})
 
         parameter_estimates, estimate_info = v3_valid_obj.create_parameter_list(v3_ident.select_values)
