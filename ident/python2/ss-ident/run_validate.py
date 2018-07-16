@@ -285,7 +285,7 @@ class ValidateSim(ModelSim):
 
         # repeat experimental data as many times as y_values
         import pdb;pdb.set_trace()
-        repeat_values = [for i_y_exp_name, i_y_exp_value in zip(y_exp_name, y_exp_values) for j_y_name, j_y_value in zip(y_names, y_values) if i_y_exp_name == j_y_name]
+        # repeat_values = [for i_y_exp_name, i_y_exp_value in zip(y_exp_name, y_exp_values) for j_y_name, j_y_value in zip(y_names, y_values) if i_y_exp_name == j_y_name]
 
         # get steady state flux from original experimental data
         f_exp_name, f_exp_values = self.gather_all_data(experiment_df, variable_type='flux')
