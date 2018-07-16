@@ -334,10 +334,13 @@ class ValidateSim(ModelSim):
 
         import pdb;pdb.set_trace()
         idx = pd.IndexSlice
-        for i_variable in var_names:
-            for i_sample in sample_names:
-                df_values = df.loc[idx[:, i_sample, :, :], i_variable].values
-                exp_df_values = exp_df.loc[idx[i_sample, :], i_variable].values
+        df_values = [[i_value for i_sample in sample_names
+                      for i_value in df.loc[idx[:, i_sample, :, :], i_variable].values] for i_variable in var_names]
+        import pdb; pdb.set_trace()
+        exp_df_values = [[i_value for i_sample in sample_names
+                          for i_value in exp_df.loc[idx[i_sample, :], i_variable].values] for i_variable in var_names]
+        # for i_variable in var_names:
+        #     for i_sample in sample_names:
 
         import pdb;pdb.set_trace()
         return None
