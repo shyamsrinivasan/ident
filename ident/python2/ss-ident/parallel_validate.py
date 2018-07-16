@@ -246,6 +246,7 @@ def v1_validate():
         v1_valid_obj.create_df(validate_results)
 
         # process validation info for plotting
+        import pdb;pdb.set_trace()
         v1_valid_obj.process_validate()
 
         import pdb;pdb.set_trace()
