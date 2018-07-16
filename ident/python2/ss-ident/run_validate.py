@@ -293,12 +293,14 @@ class ValidateSim(ModelSim):
         """collect concentration/fluxes for each estimate for each experiment"""
 
         # get variable name
+        import pdb;pdb.set_trace()
         var_names = variable_name(variable_type)
 
         # validate_df levels: level[0] - level[3] - estimate, sample, dataset, experiment
         experiment_names = list(df.index.levels[3].unique())
         number_experiments = len(experiment_names)
 
+        import pdb;pdb.set_trace()
         idx = pd.IndexSlice
         df_values = []
         for i_variable in var_names:
@@ -307,6 +309,7 @@ class ValidateSim(ModelSim):
                 j_variable_values.append([i_value for i_value in df.loc[idx[:, :, :, i_experiment], i_variable].values])
             df_values.append(j_variable_values)
 
+        import pdb;pdb.set_trace()
         return None
 
     @staticmethod
