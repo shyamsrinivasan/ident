@@ -339,6 +339,11 @@ class ValidateSim(ModelSim):
         import pdb; pdb.set_trace()
         exp_df_values = [[i_value for i_sample in sample_names
                           for i_value in exp_df.loc[idx[i_sample, :], i_variable].values] for i_variable in var_names]
+        import pdb;pdb.set_trace()
+        desired_exp = []
+        for i_variable in var_names:
+            desired_exp.append([i_value for i_sample in sample_names for i_value in exp_df.loc[idx[i_sample, :], i_variable].values] * number_data_sets)
+
         # for i_variable in var_names:
         #     for i_sample in sample_names:
 
