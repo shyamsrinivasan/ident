@@ -273,16 +273,19 @@ class ValidateSim(ModelSim):
         y_names, y_values = self.gather_all_data(validate_df, variable_type='metabolite')
 
         # gather all/select fluxes
+        import pdb;pdb.set_trace()
         f_names, f_values = self.gather_all_data(validate_df, variable_type='flux')
 
         # retrieve original set of experiments from file
         experiment_df = self.retrieve_exp_df_from_file()
 
         # get steady state concentrations from original experimental data
+        import pdb;pdb.set_trace()
         y_exp_name, y_exp_values = self.gather_all_data(experiment_df, variable_type='metabolite')
 
         # repeat experimental data as many times as y_values
-        [for i_y_exp_name, i_y_exp_value in zip(y_exp_name, y_exp_values) for j_y_name, j_y_value in zip(y_names, y_values) if i_y_exp_name == j_y_name]
+        import pdb;pdb.set_trace()
+        repeat_values = [for i_y_exp_name, i_y_exp_value in zip(y_exp_name, y_exp_values) for j_y_name, j_y_value in zip(y_names, y_values) if i_y_exp_name == j_y_name]
 
         # get steady state flux from original experimental data
         f_exp_name, f_exp_values = self.gather_all_data(experiment_df, variable_type='flux')
