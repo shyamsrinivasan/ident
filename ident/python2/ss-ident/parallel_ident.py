@@ -204,6 +204,7 @@ def v1_vmax_ident():
         job.terminate_slaves()
 
         # process ident data
+        import pdb;pdb.set_trace()
         ident_processing(v1_obj, ident_result)
 
     else:
@@ -562,6 +563,7 @@ def v5_mwc_ident():
 if __name__ == '__main__':
     v1_kcat_ident()
     v1_vmax_ident()
+    import pdb;pdb.set_trace()
     v2_ident()
     v3_ident()
     v3_var_1_ident()
