@@ -253,9 +253,10 @@ def v1_validate():
 
         # process experiment-based data for plotting
         import pdb;pdb.set_trace()
-        c_exp_data, f_exp_data = v1_valid_obj.process_experiment_based_data()
+        v1_valid_obj.experiment_validation_plot(box=False, violin=True)
 
         import pdb;pdb.set_trace()
+        c_exp_data, f_exp_data = v1_valid_obj.process_experiment_based_data()
 
     else:
 
