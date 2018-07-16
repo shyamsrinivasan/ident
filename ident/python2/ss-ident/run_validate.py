@@ -363,20 +363,3 @@ class ValidateSim(ModelSim):
                                     for i_value in exp_df.loc[idx[i_sample, :], i_variable].values] * number_data_sets)
 
         return var_names, df_values, desired_exp
-
-    @staticmethod
-    def gather_all_data(df, variable_type, select_values=[]):
-        """gather requested data from input df for all conditions (different simulations) for further processing"""
-
-        # get variable name
-        var_names = variable_name(variable_type)
-
-        # get variable values from df
-        if select_values:
-            var_values = [[i_value for i_value in df.loc[:, i_variable].values]
-                          for i_variable in var_names if i_variable in select_values]
-        else:
-            var_values = [[i_value for i_value in df.loc[:, i_variable].values] for i_variable in var_names]
-
-        return var_names, var_values
-
