@@ -118,7 +118,7 @@ class ProcessSlave(Slave):
             return data['task'], (ident_info, flux_id, flux_choice, sample_id, data_set_id)
 
 
-def v1_ident():
+def v1_kcat_ident():
     name = MPI.Get_processor_name()
     rank = MPI.COMM_WORLD.Get_rank()
     size = MPI.COMM_WORLD.Get_size()
@@ -133,6 +133,58 @@ def v1_ident():
                                'values_figure': os.path.join(os.getcwd(), 'results/v1_kcat_parameter_values.eps'),
                                'ident_figure': os.path.join(os.getcwd(), 'results/v1_kcat_ident.eps'),
                                'exp_figure': os.path.join(os.getcwd(), 'results/v1_kcat_exp.eps'),
+                               'figure_format': 'eps'})
+        exp_df = v1_obj.retrieve_df_from_file()
+
+        job = ParallelProcess(slaves=range(1, size))
+
+        ident_result = job.run_all(task='ident', **{'exp_df': exp_df, 'ident_fun': v1_obj.ident_fun,
+                                                    'flux_id': v1_obj.flux_id, 'flux_choice': v1_obj.flux_choice})
+
+        job.terminate_slaves()
+
+        # collect, arrange and collate data
+        ordered_info = v1_obj.order_ident_data(ident_result)
+        v1_obj.create_dict_for_df(ordered_info)
+
+        # write all ident data to file
+        v1_obj.write_ident_info_file()
+
+        # process ident info for further analysis
+        v1_obj.process_ident()
+
+        # extract parameter va;ues for model validation
+        v1_obj.get_parameter_value()
+
+        default_parameter_values = true_parameter_values()
+        v1_obj.parameter_values_plot(default_parameter_values, violin=True, box=False, bins=1)
+
+        v1_obj.identifiability_plot()
+
+        v1_obj.exp_info_plot()
+
+    else:
+        print('I am %s Slave with rank %s of %s' % (name, str(rank), str(size)))
+        ProcessSlave().run()
+
+    return None
+
+
+def v1_vmax_ident():
+    name = MPI.Get_processor_name()
+    rank = MPI.COMM_WORLD.Get_rank()
+    size = MPI.COMM_WORLD.Get_size()
+
+    if rank == 0:  # master
+        print('I am %s Master with rank %s of %s' % (name, str(rank), str(size)))
+        v1_obj = ModelIdent(ident_fun=kotte_model.flux_1_kcat_ident,
+                            arranged_data_file_name=os.path.join(os.getcwd(), 'exp/exp_v1_2_experiments'),
+                            ident_data_file_name=os.path.join(os.getcwd(), 'ident/ident_v1_vmax'),
+                            **{'original_exp_file': os.path.join(os.getcwd(), 'exp/experiments'),
+                               'flux_id': 1, 'flux_choice': 1,
+                               'values_figure': os.path.join(os.getcwd(), 'results/v1_vmax_parameter_values.eps'),
+                               'ident_figure': os.path.join(os.getcwd(), 'results/v1_vmax_ident.eps'),
+                               'exp_figure': os.path.join(os.getcwd(), 'results/v1_vmax_exp.eps'),
                                'figure_format': 'eps'})
         exp_df = v1_obj.retrieve_df_from_file()
 
@@ -275,7 +327,8 @@ def v3_ident():
 
 
 if __name__ == '__main__':
-    v1_ident()
+    v1_kcat_ident()
+    v1_vmax_ident()
     v2_ident()
     v3_ident()
     import pdb;pdb.set_trace()
