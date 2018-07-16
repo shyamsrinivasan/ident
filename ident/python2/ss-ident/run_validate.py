@@ -276,9 +276,11 @@ class ValidateSim(ModelSim):
         y_names, y_values, y_exp_values = self.gather_validation_data(validate_df, experiment_df, 'metabolite')
 
         # gather fluxes
+        import pdb;pdb.set_trace()
         f_names, f_values, f_exp_values = self.gather_validation_data(validate_df, experiment_df, 'flux')
 
         # gather experiment-based validation data
+        import pdb;pdb.set_trace()
         self.ordered_data_collection(validate_df, experiment_df, 'metabolite')
 
         # experiment_df levels: level[0] - level[1] - sample, experiment
