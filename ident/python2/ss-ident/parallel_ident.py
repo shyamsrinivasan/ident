@@ -177,7 +177,7 @@ def v1_vmax_ident():
 
     if rank == 0:  # master
         print('I am %s Master with rank %s of %s' % (name, str(rank), str(size)))
-        v1_obj = ModelIdent(ident_fun=kotte_model.flux_1_kcat_ident,
+        v1_obj = ModelIdent(ident_fun=kotte_model.flux_1_Vmax_ident,
                             arranged_data_file_name=os.path.join(os.getcwd(), 'exp/exp_v1_2_experiments'),
                             ident_data_file_name=os.path.join(os.getcwd(), 'ident/ident_v1_vmax'),
                             **{'original_exp_file': os.path.join(os.getcwd(), 'exp/experiments'),
