@@ -325,7 +325,6 @@ class ValidateSim(ModelSim):
 
         return concentration_data, flux_data
 
-
     @staticmethod
     def ordered_data_collection(df, variable_type, select_values=[]):
         """collect concentration/fluxes for each estimate for each experiment"""
@@ -349,7 +348,8 @@ class ValidateSim(ModelSim):
             else:
                 j_variable_values = []
                 for i_experiment in experiment_names:
-                    j_variable_values.append([i_value for i_value in df.loc[idx[:, :, :, i_experiment], i_variable].values])
+                    j_variable_values.append([i_value
+                                              for i_value in df.loc[idx[:, :, :, i_experiment], i_variable].values])
                 df_values.append(j_variable_values)
 
         return var_names, experiment_names, df_values
