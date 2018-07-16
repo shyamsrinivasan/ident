@@ -431,39 +431,4 @@ class ValidateSim(ModelSim):
         # plot validated fluxes
         self.validation_plots(self.flux_validation, scatter=scatter, box=box, violin=violin)
 
-
-        # number_variables = len(info_dict["names"])
-        # if scatter:
-        #     f1 = plt.figure(figsize=(10, 8), dpi=100, tight_layout=True)
-        #     plot_grid = gridspec.GridSpec(3, number_variables)
-        # else:
-        #     f1 = plt.figure(figsize=(10, 8), dpi=100, tight_layout=True)
-        #     plot_grid = gridspec.GridSpec(2, number_variables)
-        #
-        # # box plot
-        # if box:
-        #     box_axis = f1.add_subplot(plot_grid[0, :])
-        #     plot_on_axis_object_box(box_axis, info_dict["values"])
-        #     box_axis.set_xticklabels(info_dict["names"])
-        #
-        #     # plot histogram
-        #     validation_hist(info_dict["values"], info_dict["names"], figure_object=f1, grid_objects=plot_grid)
-        #
-        #     # scatter plot
-        #     if scatter:
-        #         validation_scatter(info_dict, figure_object=f1, grid_objects=plot_grid)
-        #
-        # # violin plot
-        # if violin:
-        #     violin_axis = f1.add_subplot(plot_grid[0, :])
-        #     plot_on_axis_object_violin(violin_axis, info_dict["values"])
-        #     violin_axis.set_xticks(np.arange(1, len(info_dict["names"]) + 1))
-        #     violin_axis.set_xticklabels(info_dict["names"])
-        #
-        #     # plot histogram
-        #     validation_hist(info_dict["values"], info_dict["names"], figure_object=f1, grid_objects=plot_grid)
-        #
-        #     # scatter plot
-        #     if scatter:
-        #         validation_scatter(info_dict, figure_object=f1, grid_objects=plot_grid)
         return None
