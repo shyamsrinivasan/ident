@@ -389,22 +389,173 @@ def v3_var_2_ident():
 
 
 def v1_kcat_mwc_ident():
+    name = MPI.Get_processor_name()
+    rank = MPI.COMM_WORLD.Get_rank()
+    size = MPI.COMM_WORLD.Get_size()
+
+    if rank == 0:  # master
+        print('I am %s Master with rank %s of %s' % (name, str(rank), str(size)))
+        v1_obj = ModelIdent(ident_fun=kotte_model.flux_1_kcat_ident,
+                            arranged_data_file_name=os.path.join(os.getcwd(), 'exp/exp_v1_2_experiments_mwc'),
+                            ident_data_file_name=os.path.join(os.getcwd(), 'ident/ident_v1_kcat_mwc'),
+                            **{'original_exp_file': os.path.join(os.getcwd(), 'exp/experiments_mwc'),
+                               'flux_id': 1, 'flux_choice': 2,
+                               'values_figure': os.path.join(os.getcwd(), 'results/v1_kcat_mwc_parameter_values.eps'),
+                               'ident_figure': os.path.join(os.getcwd(), 'results/v1_kcat_mwc_ident.eps'),
+                               'exp_figure': os.path.join(os.getcwd(), 'results/v1_kcat_mwc_exp.eps'),
+                               'figure_format': 'eps'})
+        exp_df = v1_obj.retrieve_df_from_file()
+
+        job = ParallelProcess(slaves=range(1, size))
+
+        ident_result = job.run_all(task='ident', **{'exp_df': exp_df, 'ident_fun': v1_obj.ident_fun,
+                                                    'flux_id': v1_obj.flux_id, 'flux_choice': v1_obj.flux_choice})
+
+        job.terminate_slaves()
+
+        # process ident data
+        ident_processing(v1_obj, ident_result)
+
+    else:
+        print('I am %s Slave with rank %s of %s' % (name, str(rank), str(size)))
+        ProcessSlave().run()
+
     return None
 
 
 def v1_vmax_mwc_ident():
+    name = MPI.Get_processor_name()
+    rank = MPI.COMM_WORLD.Get_rank()
+    size = MPI.COMM_WORLD.Get_size()
+
+    if rank == 0:  # master
+        print('I am %s Master with rank %s of %s' % (name, str(rank), str(size)))
+        v1_obj = ModelIdent(ident_fun=kotte_model.flux_1_Vmax_ident,
+                            arranged_data_file_name=os.path.join(os.getcwd(), 'exp/exp_v1_2_experiments_mwc'),
+                            ident_data_file_name=os.path.join(os.getcwd(), 'ident/ident_v1_vmax_mwc'),
+                            **{'original_exp_file': os.path.join(os.getcwd(), 'exp/experiments_mwc'),
+                               'flux_id': 1, 'flux_choice': 1,
+                               'values_figure': os.path.join(os.getcwd(), 'results/v1_vmax_mwc_parameter_values.eps'),
+                               'ident_figure': os.path.join(os.getcwd(), 'results/v1_vmax_mwc_ident.eps'),
+                               'exp_figure': os.path.join(os.getcwd(), 'results/v1_vmax_mwc_exp.eps'),
+                               'figure_format': 'eps'})
+        exp_df = v1_obj.retrieve_df_from_file()
+
+        job = ParallelProcess(slaves=range(1, size))
+
+        ident_result = job.run_all(task='ident', **{'exp_df': exp_df, 'ident_fun': v1_obj.ident_fun,
+                                                    'flux_id': v1_obj.flux_id, 'flux_choice': v1_obj.flux_choice})
+
+        job.terminate_slaves()
+
+        # process ident data
+        ident_processing(v1_obj, ident_result)
+
+    else:
+        print('I am %s Slave with rank %s of %s' % (name, str(rank), str(size)))
+        ProcessSlave().run()
     return None
 
 
 def v2_mwc_ident():
+    name = MPI.Get_processor_name()
+    rank = MPI.COMM_WORLD.Get_rank()
+    size = MPI.COMM_WORLD.Get_size()
+
+    if rank == 0:  # master
+        print('I am %s Master with rank %s of %s' % (name, str(rank), str(size)))
+        v2_obj = ModelIdent(ident_fun=kotte_model.flux_2_ident_expression,
+                            arranged_data_file_name=os.path.join(os.getcwd(), 'exp/exp_v2_2_experiments_mwc'),
+                            ident_data_file_name=os.path.join(os.getcwd(), 'ident/ident_v2_mwc'),
+                            **{'original_exp_file': os.path.join(os.getcwd(), 'exp/experiments_mwc'),
+                               'flux_id': 2, 'flux_choice': 0,
+                               'values_figure': os.path.join(os.getcwd(), 'results/v2_mwc_parameter_values.eps'),
+                               'ident_figure': os.path.join(os.getcwd(), 'results/v2_mwc_ident.eps'),
+                               'exp_figure': os.path.join(os.getcwd(), 'results/v2_mwc_exp.eps'),
+                               'figure_format': 'eps'})
+        exp_df = v2_obj.retrieve_df_from_file()
+
+        job = ParallelProcess(slaves=range(1, size))
+
+        ident_result = job.run_all(task='ident', **{'exp_df': exp_df, 'ident_fun': v2_obj.ident_fun,
+                                                    'flux_id': v2_obj.flux_id, 'flux_choice': v2_obj.flux_choice})
+
+        job.terminate_slaves()
+
+        # process ident data
+        ident_processing(v2_obj, ident_result)
+
+    else:
+        print('I am %s Slave with rank %s of %s' % (name, str(rank), str(size)))
+        ProcessSlave().run()
     return None
 
 
 def v3_mwc_ident():
+    name = MPI.Get_processor_name()
+    rank = MPI.COMM_WORLD.Get_rank()
+    size = MPI.COMM_WORLD.Get_size()
+
+    if rank == 0:  # master
+        print('I am %s Master with rank %s of %s' % (name, str(rank), str(size)))
+        v3_obj = ModelIdent(ident_fun=kotte_model.flux_3_value1_ident,
+                            arranged_data_file_name=os.path.join(os.getcwd(), 'exp/exp_v3_3_experiments_mwc'),
+                            ident_data_file_name=os.path.join(os.getcwd(), 'ident/ident_v3_mwc'),
+                            **{'original_exp_file': os.path.join(os.getcwd(), 'exp/experiments_mwc'),
+                               'flux_id': 3, 'flux_choice': 1,
+                               'values_figure': os.path.join(os.getcwd(), 'results/v3_mwc_parameter_values.eps'),
+                               'ident_figure': os.path.join(os.getcwd(), 'results/v3_mwc_ident.eps'),
+                               'exp_figure': os.path.join(os.getcwd(), 'results/v3_mwc_exp.eps'),
+                               'figure_format': 'eps'})
+        exp_df = v3_obj.retrieve_df_from_file()
+
+        job = ParallelProcess(slaves=range(1, size))
+
+        ident_result = job.run_all(task='ident', **{'exp_df': exp_df, 'ident_fun': v3_obj.ident_fun,
+                                                    'flux_id': v3_obj.flux_id, 'flux_choice': v3_obj.flux_choice})
+
+        job.terminate_slaves()
+
+        # process ident data
+        ident_processing(v3_obj, ident_result)
+
+    else:
+        print('I am %s Slave with rank %s of %s' % (name, str(rank), str(size)))
+        ProcessSlave().run()
     return None
 
 
 def v5_mwc_ident():
+    name = MPI.Get_processor_name()
+    rank = MPI.COMM_WORLD.Get_rank()
+    size = MPI.COMM_WORLD.Get_size()
+
+    if rank == 0:  # master
+        print('I am %s Master with rank %s of %s' % (name, str(rank), str(size)))
+        v5_obj = ModelIdent(ident_fun=kotte_model.flux_5_value2_ident,
+                            arranged_data_file_name=os.path.join(os.getcwd(), 'exp/exp_v5_2_experiments_mwc'),
+                            ident_data_file_name=os.path.join(os.getcwd(), 'ident/ident_v5_mwc'),
+                            **{'original_exp_file': os.path.join(os.getcwd(), 'exp/experiments_mwc'),
+                               'flux_id': 5, 'flux_choice': 2,
+                               'values_figure': os.path.join(os.getcwd(), 'results/v5_mwc_parameter_values.eps'),
+                               'ident_figure': os.path.join(os.getcwd(), 'results/v5_mwc_ident.eps'),
+                               'exp_figure': os.path.join(os.getcwd(), 'results/v5_mwc_exp.eps'),
+                               'figure_format': 'eps'})
+        exp_df = v5_obj.retrieve_df_from_file()
+
+        job = ParallelProcess(slaves=range(1, size))
+
+        ident_result = job.run_all(task='ident', **{'exp_df': exp_df, 'ident_fun': v5_obj.ident_fun,
+                                                    'flux_id': v5_obj.flux_id, 'flux_choice': v5_obj.flux_choice})
+
+        job.terminate_slaves()
+
+        # process ident data
+        ident_processing(v5_obj, ident_result)
+
+    else:
+        print('I am %s Slave with rank %s of %s' % (name, str(rank), str(size)))
+        ProcessSlave().run()
     return None
 
 
