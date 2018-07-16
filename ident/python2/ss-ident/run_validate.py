@@ -272,7 +272,14 @@ class ValidateSim(ModelSim):
         # retrieve original set of experiments from file
         experiment_df = self.retrieve_exp_df_from_file()
 
-        self.gather_validation_data(validate_df, experiment_df, 'metabolite')
+        # gather concentrations
+        y_names, y_values, y_exp_values = self.gather_validation_data(validate_df, experiment_df, 'metabolite')
+
+        # gather fluxes
+        f_names, f_values, f_exp_values = self.gather_validation_data(validate_df, experiment_df, 'flux')
+
+        # gather experiment-based validation data
+        self.ordered_data_collection(validate_df, experiment_df, 'metabolite')
 
         # experiment_df levels: level[0] - level[1] - sample, experiment
         # all_experiments = experiment_df.index.levels[1].unique()
@@ -301,18 +308,24 @@ class ValidateSim(ModelSim):
         return None
 
     @staticmethod
-    def collect_experiment_data(validation_data, exp_data):
-        """repeat exp_data for each experiment (sample size x size of data sets) number of times"""
-        for i_e_name, i_e_data in exp_data.items():
-            for i_v_name, i_v_data in validation_data.items():
-                if i_e_name == i_v_name:
-                    number_experiments = len(i_e_data)
-                    number_data = len(i_v_data)
-        return None
-
-    @staticmethod
-    def ordered_data_collection(df, variable_type, select_values=[]):
+    def ordered_data_collection(df, exp_df, variable_type, select_values=[]):
         """collect concentration/fluxes for each estimate for each experiment"""
+
+        # get variable name
+        var_names = variable_name(variable_type)
+
+        # validate_df levels: level[0] - level[3] - estimate, sample, dataset, experiment
+        experiment_names = list(df.index.levels[3].unique())
+        number_experiments = len(experiment_names)
+
+        idx = pd.IndexSlice
+        df_values = []
+        for i_variable in var_names:
+            j_variable_values = []
+            for i_experiment in experiment_names:
+                j_variable_values.append([i_value for i_value in df.loc[idx[:, :, :, i_experiment], i_variable].values])
+            df_values.append(j_variable_values)
+
         return None
 
     @staticmethod
@@ -320,36 +333,36 @@ class ValidateSim(ModelSim):
         """gather validation data in orderly fashion for further processing"""
 
         # get variable name
-        import pdb;pdb.set_trace()
         var_names = variable_name(variable_type)
 
         # validate_df levels: level[0] - level[3] - estimate, sample, dataset, experiment
         sample_names = list(df.index.levels[1].unique())
         all_data_sets = df.index.levels[2].unique()
-        number_samples = len(sample_names)
+        # number_samples = len(sample_names)
         number_data_sets = len(all_data_sets)
 
-        exp_sample_names = exp_df.index.levels[0].unique()
-        number_exp_samples = len(exp_sample_names)
+        # exp_sample_names = exp_df.index.levels[0].unique()
+        # number_exp_samples = len(exp_sample_names)
 
-        import pdb;pdb.set_trace()
         idx = pd.IndexSlice
-        df_values = [[i_value for i_sample in sample_names
-                      for i_value in df.loc[idx[:, i_sample, :, :], i_variable].values] for i_variable in var_names]
-        import pdb; pdb.set_trace()
-        exp_df_values = [[i_value for i_sample in sample_names
-                          for i_value in exp_df.loc[idx[i_sample, :], i_variable].values] for i_variable in var_names]
-        import pdb;pdb.set_trace()
+        if select_value:
+            df_values = [[i_value for i_sample in sample_names
+                          for i_value in df.loc[idx[:, i_sample, :, :], i_variable].values] for i_variable in var_names
+                         if i_variable in select_value]
+        else:
+            df_values = [[i_value for i_sample in sample_names
+                          for i_value in df.loc[idx[:, i_sample, :, :], i_variable].values] for i_variable in var_names]
+
         desired_exp = []
         for i_variable in var_names:
-            desired_exp.append([i_value for i_sample in sample_names for i_value in exp_df.loc[idx[i_sample, :], i_variable].values] * number_data_sets)
+            if select_value and i_variable in select_value:
+                desired_exp.append([i_value for i_sample in sample_names
+                                    for i_value in exp_df.loc[idx[i_sample, :], i_variable].values] * number_data_sets)
+            else:
+                desired_exp.append([i_value for i_sample in sample_names
+                                    for i_value in exp_df.loc[idx[i_sample, :], i_variable].values] * number_data_sets)
 
-        # for i_variable in var_names:
-        #     for i_sample in sample_names:
-
-        import pdb;pdb.set_trace()
-        return None
-
+        return var_names, df_values, desired_exp
 
     @staticmethod
     def gather_all_data(df, variable_type, select_values=[]):
