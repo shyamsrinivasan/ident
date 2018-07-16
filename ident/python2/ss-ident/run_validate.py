@@ -1,6 +1,10 @@
 from run_sims import ModelSim
 from names_strings import variable_name
+from plot_ident_results import plot_on_axis_object_box, plot_on_axis_object_violin, validation_hist
 import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
+import numpy as np
 
 
 class ValidateSim(ModelSim):
@@ -45,6 +49,9 @@ class ValidateSim(ModelSim):
             self.original_index_label = kwargs['original_exp_label']
         except KeyError:
             self.original_index_label = ['sample_name', 'experiment_id']
+
+        self.concentration_validation = {}
+        self.flux_validation = {}
 
     def get_name_value_parameter_pairs(self, estimate_info):
         """get estimated parameter values as name value pairs"""
@@ -306,6 +313,9 @@ class ValidateSim(ModelSim):
         concentration_data = {'names': y_names, 'values': y_values, 'experiment_values': y_exp_values}
         flux_data = {'names': f_names, 'values': f_values, 'experiment_values': f_exp_values}
 
+        self.concentration_validation = concentration_data
+        self.flux_validation = flux_data
+
         return concentration_data, flux_data
 
     def process_experiment_based_data(self):
@@ -390,3 +400,85 @@ class ValidateSim(ModelSim):
                                     for i_value in exp_df.loc[idx[i_sample, :], i_variable].values] * number_data_sets)
 
         return var_names, df_values, desired_exp
+
+    @staticmethod
+    def validation_plots(info, scatter=True, box=False, violin=True):
+        """validation plots for concentrations/fluxes in info"""
+
+        number_variables = len(info["names"])
+        if scatter:
+            f1 = plt.figure(figsize=(10, 8), dpi=100, tight_layout=True)
+            plot_grid = gridspec.GridSpec(3, number_variables)
+        else:
+            f1 = plt.figure(figsize=(10, 8), dpi=100, tight_layout=True)
+            plot_grid = gridspec.GridSpec(2, number_variables)
+
+        # box plot
+        if box:
+            box_axis = f1.add_subplot(plot_grid[0, :])
+            plot_on_axis_object_box(box_axis, info["values"])
+            box_axis.set_xticklabels(info["names"])
+
+            # plot histogram
+            validation_hist(info["values"], info["names"], figure_object=f1, grid_objects=plot_grid)
+
+        # violin plot
+        if violin:
+            violin_axis = f1.add_subplot(plot_grid[0, :])
+            plot_on_axis_object_violin(violin_axis, info["values"])
+            violin_axis.set_xticks(np.arange(1, len(info["names"]) + 1))
+            violin_axis.set_xticklabels(info["names"])
+
+            # plot histogram
+            validation_hist(info["values"], info["names"], figure_object=f1, grid_objects=plot_grid)
+
+        return None
+
+    def separate_validation_plot(self, scatter=True, box=False, violin=True):
+        """plot scatter, hist and box/violin plot for concentration/fluxes determined
+        through validation simulations"""
+
+        self.process_validation_data()
+
+        # plot validated concentrations
+        self.validation_plots(self.concentration_validation, scatter=scatter, box=box, violin=violin)
+
+        # plot validated fluxes
+        self.validation_plots(self.flux_validation, scatter=scatter, box=box, violin=violin)
+
+
+        # number_variables = len(info_dict["names"])
+        # if scatter:
+        #     f1 = plt.figure(figsize=(10, 8), dpi=100, tight_layout=True)
+        #     plot_grid = gridspec.GridSpec(3, number_variables)
+        # else:
+        #     f1 = plt.figure(figsize=(10, 8), dpi=100, tight_layout=True)
+        #     plot_grid = gridspec.GridSpec(2, number_variables)
+        #
+        # # box plot
+        # if box:
+        #     box_axis = f1.add_subplot(plot_grid[0, :])
+        #     plot_on_axis_object_box(box_axis, info_dict["values"])
+        #     box_axis.set_xticklabels(info_dict["names"])
+        #
+        #     # plot histogram
+        #     validation_hist(info_dict["values"], info_dict["names"], figure_object=f1, grid_objects=plot_grid)
+        #
+        #     # scatter plot
+        #     if scatter:
+        #         validation_scatter(info_dict, figure_object=f1, grid_objects=plot_grid)
+        #
+        # # violin plot
+        # if violin:
+        #     violin_axis = f1.add_subplot(plot_grid[0, :])
+        #     plot_on_axis_object_violin(violin_axis, info_dict["values"])
+        #     violin_axis.set_xticks(np.arange(1, len(info_dict["names"]) + 1))
+        #     violin_axis.set_xticklabels(info_dict["names"])
+        #
+        #     # plot histogram
+        #     validation_hist(info_dict["values"], info_dict["names"], figure_object=f1, grid_objects=plot_grid)
+        #
+        #     # scatter plot
+        #     if scatter:
+        #         validation_scatter(info_dict, figure_object=f1, grid_objects=plot_grid)
+        return None
