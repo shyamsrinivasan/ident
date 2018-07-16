@@ -270,30 +270,6 @@ class ValidateSim(ModelSim):
 
         return experiment_df
 
-    def process_validate(self):
-        """process validation data for plotting"""
-
-        # retrieve df from file and lex sort by index
-        validate_df = self.retrieve_validate_df_from_file()
-
-        # retrieve original set of experiments from file
-        experiment_df = self.retrieve_exp_df_from_file()
-
-        # gather concentrations
-        y_names, y_values, y_exp_values = self.gather_validation_data(validate_df, experiment_df, 'metabolite')
-
-        # gather fluxes
-        f_names, f_values, f_exp_values = self.gather_validation_data(validate_df, experiment_df, 'flux')
-
-        # gather experiment-based validation data
-        y_o_names, exp_names, y_o_values = self.ordered_data_collection(validate_df, 'metabolite')
-
-        # gather experiment-based validation data on concentrations
-        f_o_names, _, f_o_values = self.ordered_data_collection(validate_df, 'flux')
-
-        import pdb;pdb.set_trace()
-        return None
-
     def process_validation_data(self):
         """get concentration and flux and compare them between original experimental data
         and that obtained from estimated parameter simulations"""
