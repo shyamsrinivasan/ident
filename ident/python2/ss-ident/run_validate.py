@@ -276,43 +276,83 @@ class ValidateSim(ModelSim):
         y_names, y_values, y_exp_values = self.gather_validation_data(validate_df, experiment_df, 'metabolite')
 
         # gather fluxes
-        import pdb;pdb.set_trace()
         f_names, f_values, f_exp_values = self.gather_validation_data(validate_df, experiment_df, 'flux')
 
         # gather experiment-based validation data
-        import pdb;pdb.set_trace()
-        self.ordered_data_collection(validate_df, experiment_df, 'metabolite')
+        y_o_names, exp_names, y_o_values = self.ordered_data_collection(validate_df, 'metabolite')
 
-        # experiment_df levels: level[0] - level[1] - sample, experiment
-        # all_experiments = experiment_df.index.levels[1].unique()
-        # number_experiments = len(all_experiments)
+        # gather experiment-based validation data on concentrations
+        f_o_names, _, f_o_values = self.ordered_data_collection(validate_df, 'flux')
 
         import pdb;pdb.set_trace()
         return None
 
+    def process_validation_data(self):
+        """get concentration and flux and compare them between original experimental data
+        and that obtained from estimated parameter simulations"""
+
+        # retrieve df from file and lex sort by index
+        validate_df = self.retrieve_validate_df_from_file()
+
+        # retrieve original set of experiments from file
+        experiment_df = self.retrieve_exp_df_from_file()
+
+        # gather concentrations
+        y_names, y_values, y_exp_values = self.gather_validation_data(validate_df, experiment_df, 'metabolite')
+
+        # gather fluxes
+        f_names, f_values, f_exp_values = self.gather_validation_data(validate_df, experiment_df, 'flux')
+
+        concentration_data = {'names': y_names, 'values': y_values, 'experiment_values': y_exp_values}
+        flux_data = {'names': f_names, 'values': f_values, 'experiment_values': f_exp_values}
+
+        return concentration_data, flux_data
+
+    def process_experiment_based_data(self):
+        """get concentrations/fluxes for each experiment in each estimate and compare their distributions"""
+
+        # retrieve df from file and lex sort by index
+        validate_df = self.retrieve_validate_df_from_file()
+
+        # gather experiment-based validation data
+        y_o_names, exp_names, y_o_values = self.ordered_data_collection(validate_df, 'metabolite')
+
+        # gather experiment-based validation data on concentrations
+        f_o_names, f_exp_names, f_o_values = self.ordered_data_collection(validate_df, 'flux')
+
+        concentration_data = {'names': y_o_names, 'values': y_o_values, 'experiment_id': exp_names}
+        flux_data = {'names': f_o_names, 'values': f_o_values, 'experiment_id': f_exp_names}
+
+        return concentration_data, flux_data
+
+
     @staticmethod
-    def ordered_data_collection(df, exp_df, variable_type, select_values=[]):
+    def ordered_data_collection(df, variable_type, select_values=[]):
         """collect concentration/fluxes for each estimate for each experiment"""
 
         # get variable name
-        import pdb;pdb.set_trace()
         var_names = variable_name(variable_type)
 
         # validate_df levels: level[0] - level[3] - estimate, sample, dataset, experiment
         experiment_names = list(df.index.levels[3].unique())
-        number_experiments = len(experiment_names)
+        # number_experiments = len(experiment_names)
 
-        import pdb;pdb.set_trace()
         idx = pd.IndexSlice
         df_values = []
         for i_variable in var_names:
-            j_variable_values = []
-            for i_experiment in experiment_names:
-                j_variable_values.append([i_value for i_value in df.loc[idx[:, :, :, i_experiment], i_variable].values])
-            df_values.append(j_variable_values)
+            if select_values and i_variable in select_values:
+                j_variable_values = []
+                for i_experiment in experiment_names:
+                    j_variable_values.append(
+                        [i_value for i_value in df.loc[idx[:, :, :, i_experiment], i_variable].values])
+                df_values.append(j_variable_values)
+            else:
+                j_variable_values = []
+                for i_experiment in experiment_names:
+                    j_variable_values.append([i_value for i_value in df.loc[idx[:, :, :, i_experiment], i_variable].values])
+                df_values.append(j_variable_values)
 
-        import pdb;pdb.set_trace()
-        return None
+        return var_names, experiment_names, df_values
 
     @staticmethod
     def gather_validation_data(df, exp_df, variable_type, select_value=[]):
@@ -327,6 +367,7 @@ class ValidateSim(ModelSim):
         # number_samples = len(sample_names)
         number_data_sets = len(all_data_sets)
 
+        # experiment_df levels: level[0] - level[1] - sample, experiment
         # exp_sample_names = exp_df.index.levels[0].unique()
         # number_exp_samples = len(exp_sample_names)
 
