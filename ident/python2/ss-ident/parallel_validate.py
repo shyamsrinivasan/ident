@@ -266,7 +266,7 @@ def v2_validate():
 
     if rank == 0:
         # create ident object first
-        v2_ident = ModelIdent(ident_fun=kotte_model.flux_1_kcat_ident,
+        v2_ident = ModelIdent(ident_fun=kotte_model.flux_2_ident_expression,
                               arranged_data_file_name=os.path.join(os.getcwd(), 'exp/exp_v2_2_experiments'),
                               ident_data_file_name=os.path.join(os.getcwd(), 'ident/ident_v2'),
                               **{'original_exp_file': os.path.join(os.getcwd(), 'exp/experiments'),
@@ -327,7 +327,7 @@ def v3_validate():
 
     if rank == 0:
         # create ident object first
-        v3_ident = ModelIdent(ident_fun=kotte_model.flux_1_kcat_ident,
+        v3_ident = ModelIdent(ident_fun=kotte_model.flux_3_value1_ident,
                               arranged_data_file_name=os.path.join(os.getcwd(), 'exp/exp_v3_3_experiments'),
                               ident_data_file_name=os.path.join(os.getcwd(), 'ident/ident_v3'),
                               **{'original_exp_file': os.path.join(os.getcwd(), 'exp/experiments'),
