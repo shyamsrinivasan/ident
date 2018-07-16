@@ -118,6 +118,31 @@ class ProcessSlave(Slave):
             return data['task'], (ident_info, flux_id, flux_choice, sample_id, data_set_id)
 
 
+def ident_processing(ident_object, ident_result):
+    """call all required functions to process identifiability information"""
+    # collect, arrange and collate data
+    ordered_info = ident_object.order_ident_data(ident_result)
+    ident_object.create_dict_for_df(ordered_info)
+
+    # write all ident data to file
+    ident_object.write_ident_info_file()
+
+    # process ident info for further analysis
+    ident_object.process_ident()
+
+    # extract parameter va;ues for model validation
+    ident_object.get_parameter_value()
+
+    default_parameter_values = true_parameter_values()
+    ident_object.parameter_values_plot(default_parameter_values, violin=True, box=False, bins=1)
+
+    ident_object.identifiability_plot()
+
+    ident_object.exp_info_plot()
+
+    return None
+
+
 def v1_kcat_ident():
     name = MPI.Get_processor_name()
     rank = MPI.COMM_WORLD.Get_rank()
@@ -143,25 +168,8 @@ def v1_kcat_ident():
 
         job.terminate_slaves()
 
-        # collect, arrange and collate data
-        ordered_info = v1_obj.order_ident_data(ident_result)
-        v1_obj.create_dict_for_df(ordered_info)
-
-        # write all ident data to file
-        v1_obj.write_ident_info_file()
-
-        # process ident info for further analysis
-        v1_obj.process_ident()
-
-        # extract parameter va;ues for model validation
-        v1_obj.get_parameter_value()
-
-        default_parameter_values = true_parameter_values()
-        v1_obj.parameter_values_plot(default_parameter_values, violin=True, box=False, bins=1)
-
-        v1_obj.identifiability_plot()
-
-        v1_obj.exp_info_plot()
+        # process ident data
+        ident_processing(v1_obj, ident_result)
 
     else:
         print('I am %s Slave with rank %s of %s' % (name, str(rank), str(size)))
@@ -195,25 +203,8 @@ def v1_vmax_ident():
 
         job.terminate_slaves()
 
-        # collect, arrange and collate data
-        ordered_info = v1_obj.order_ident_data(ident_result)
-        v1_obj.create_dict_for_df(ordered_info)
-
-        # write all ident data to file
-        v1_obj.write_ident_info_file()
-
-        # process ident info for further analysis
-        v1_obj.process_ident()
-
-        # extract parameter va;ues for model validation
-        v1_obj.get_parameter_value()
-
-        default_parameter_values = true_parameter_values()
-        v1_obj.parameter_values_plot(default_parameter_values, violin=True, box=False, bins=1)
-
-        v1_obj.identifiability_plot()
-
-        v1_obj.exp_info_plot()
+        # process ident data
+        ident_processing(v1_obj, ident_result)
 
     else:
         print('I am %s Slave with rank %s of %s' % (name, str(rank), str(size)))
@@ -247,25 +238,8 @@ def v2_ident():
 
         job.terminate_slaves()
 
-        # collect, arrange and collate data
-        ordered_info = v2_obj.order_ident_data(ident_result)
-        v2_obj.create_dict_for_df(ordered_info)
-
-        # write all ident data to file
-        v2_obj.write_ident_info_file()
-
-        # process ident info for further analysis
-        v2_obj.process_ident()
-
-        # extract parameter va;ues for model validation
-        v2_obj.get_parameter_value()
-
-        default_parameter_values = true_parameter_values()
-        v2_obj.parameter_values_plot(default_parameter_values, violin=True, box=False, bins=1)
-
-        v2_obj.identifiability_plot()
-
-        v2_obj.exp_info_plot()
+        # process ident data
+        ident_processing(v2_obj, ident_result)
 
     else:
         print('I am %s Slave with rank %s of %s' % (name, str(rank), str(size)))
@@ -299,25 +273,8 @@ def v3_ident():
 
         job.terminate_slaves()
 
-        # collect, arrange and collate data
-        ordered_info = v3_obj.order_ident_data(ident_result)
-        v3_obj.create_dict_for_df(ordered_info)
-
-        # write all ident data to file
-        v3_obj.write_ident_info_file()
-
-        # process ident info for further analysis
-        v3_obj.process_ident()
-
-        # extract parameter va;ues for model validation
-        v3_obj.get_parameter_value()
-
-        default_parameter_values = true_parameter_values()
-        v3_obj.parameter_values_plot(default_parameter_values, violin=True, box=False, bins=1)
-
-        v3_obj.identifiability_plot()
-
-        v3_obj.exp_info_plot()
+        # process ident data
+        ident_processing(v3_obj, ident_result)
 
     else:
         print('I am %s Slave with rank %s of %s' % (name, str(rank), str(size)))
@@ -351,25 +308,8 @@ def v5_ident():
 
         job.terminate_slaves()
 
-        # collect, arrange and collate data
-        ordered_info = v5_obj.order_ident_data(ident_result)
-        v5_obj.create_dict_for_df(ordered_info)
-
-        # write all ident data to file
-        v5_obj.write_ident_info_file()
-
-        # process ident info for further analysis
-        v5_obj.process_ident()
-
-        # extract parameter va;ues for model validation
-        v5_obj.get_parameter_value()
-
-        default_parameter_values = true_parameter_values()
-        v5_obj.parameter_values_plot(default_parameter_values, violin=True, box=False, bins=1)
-
-        v5_obj.identifiability_plot()
-
-        v5_obj.exp_info_plot()
+        # process ident data
+        ident_processing(v5_obj, ident_result)
 
     else:
         print('I am %s Slave with rank %s of %s' % (name, str(rank), str(size)))
@@ -403,25 +343,8 @@ def v3_var_1_ident():
 
         job.terminate_slaves()
 
-        # collect, arrange and collate data
-        ordered_info = v3_obj.order_ident_data(ident_result)
-        v3_obj.create_dict_for_df(ordered_info)
-
-        # write all ident data to file
-        v3_obj.write_ident_info_file()
-
-        # process ident info for further analysis
-        v3_obj.process_ident()
-
-        # extract parameter va;ues for model validation
-        v3_obj.get_parameter_value()
-
-        default_parameter_values = true_parameter_values()
-        v3_obj.parameter_values_plot(default_parameter_values, violin=True, box=False, bins=1)
-
-        v3_obj.identifiability_plot()
-
-        v3_obj.exp_info_plot()
+        # process ident data
+        ident_processing(v3_obj, ident_result)
 
     else:
         print('I am %s Slave with rank %s of %s' % (name, str(rank), str(size)))
@@ -455,30 +378,33 @@ def v3_var_2_ident():
 
         job.terminate_slaves()
 
-        # collect, arrange and collate data
-        ordered_info = v3_obj.order_ident_data(ident_result)
-        v3_obj.create_dict_for_df(ordered_info)
-
-        # write all ident data to file
-        v3_obj.write_ident_info_file()
-
-        # process ident info for further analysis
-        v3_obj.process_ident()
-
-        # extract parameter va;ues for model validation
-        v3_obj.get_parameter_value()
-
-        default_parameter_values = true_parameter_values()
-        v3_obj.parameter_values_plot(default_parameter_values, violin=True, box=False, bins=1)
-
-        v3_obj.identifiability_plot()
-
-        v3_obj.exp_info_plot()
+        # process ident data
+        ident_processing(v3_obj, ident_result)
 
     else:
         print('I am %s Slave with rank %s of %s' % (name, str(rank), str(size)))
         ProcessSlave().run()
 
+    return None
+
+
+def v1_kcat_mwc_ident():
+    return None
+
+
+def v1_vmax_mwc_ident():
+    return None
+
+
+def v2_mwc_ident():
+    return None
+
+
+def v3_mwc_ident():
+    return None
+
+
+def v5_mwc_ident():
     return None
 
 
