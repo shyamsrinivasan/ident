@@ -53,6 +53,8 @@ class ValidateSim(ModelSim):
 
         self.concentration_validation = {}
         self.flux_validation = {}
+        self.concentration_experiment_validation = {}
+        self.flux_experiment_validation = {}
 
     def get_name_value_parameter_pairs(self, estimate_info):
         """get estimated parameter values as name value pairs"""
@@ -310,6 +312,9 @@ class ValidateSim(ModelSim):
         concentration_data = {'names': y_o_names, 'values': y_o_values, 'experiment_id': exp_names}
         flux_data = {'names': f_o_names, 'values': f_o_values, 'experiment_id': f_exp_names}
 
+        self.concentration_experiment_validation = concentration_data
+        self.flux_experiment_validation = flux_data
+
         return concentration_data, flux_data
 
     @staticmethod
@@ -430,5 +435,58 @@ class ValidateSim(ModelSim):
 
         # plot validated fluxes
         self.validation_plots(self.flux_validation, scatter=scatter, box=box, violin=violin)
+
+        return None
+
+    @staticmethod
+    def validation_experiment_distribution_plots(info, box=False, violin=True):
+        """plot concentrations for different experiment separately to
+            look at distribution within each experiments"""
+        # if flux_id:
+        #     number_variables = len(flux_id)
+        # else:
+        number_variables = len(info["names"])
+        f1 = plt.figure(figsize=(10, 8), dpi=100, tight_layout=True)
+        plot_grid = gridspec.GridSpec(1, number_variables)
+        if box:
+            pass
+
+        if violin:
+            import pdb;pdb.set_trace()
+            i_plot = 0
+            for i_variable, i_var_name in enumerate(info["names"]):
+                # if flux_id and (i_var_name in flux_id):
+                #     violin_axis = f1.add_subplot(plot_grid[0, i_plot])
+                #     plot_on_axis_object_violin(violin_axis, info_dict["experiment_id_dist"][i_variable])
+                #     violin_axis.set_xticks(np.arange(1, len(info_dict["experiment_id"]) + 1))
+                #     violin_axis.set_xticklabels(info_dict["experiment_id"])
+                #     for tick in violin_axis.get_xticklabels():
+                #         tick.set_rotation(90)
+                #     violin_axis.set_title(i_var_name)
+                #     i_plot += 1
+                # elif not flux_id:
+                violin_axis = f1.add_subplot(plot_grid[0, i_plot])
+                plot_on_axis_object_violin(violin_axis, info["values"][i_variable])
+                violin_axis.set_xticks(np.arange(1, len(info["values"]) + 1))
+                violin_axis.set_xticklabels(info["experiment_id"])
+                for tick in violin_axis.get_xticklabels():
+                    tick.set_rotation(90)
+                violin_axis.set_title(i_var_name)
+                i_plot += 1
+            plt.show()
+        return None
+
+    def experiment_validation_plot(self, box=False, violin=True):
+        """plot experiment-based distriibution of validation data"""
+
+        self.process_experiment_based_data()
+
+        # plot concentrations
+        import pdb;pdb.set_trace()
+        self.validation_experiment_distribution_plots(self.concentration_experiment_validation, box=box, violin=violin)
+
+        # plot fluxes
+        import pdb;pdb.set_trace()
+        self.validation_experiment_distribution_plots(self.flux_experiment_validation, box=box, violin=violin)
 
         return None
