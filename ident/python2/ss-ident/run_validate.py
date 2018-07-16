@@ -452,7 +452,6 @@ class ValidateSim(ModelSim):
             pass
 
         if violin:
-            import pdb;pdb.set_trace()
             i_plot = 0
             for i_variable, i_var_name in enumerate(info["names"]):
                 # if flux_id and (i_var_name in flux_id):
@@ -471,7 +470,6 @@ class ValidateSim(ModelSim):
                 violin_axis.set_xticklabels(info["experiment_id"])
                 for tick in violin_axis.get_xticklabels():
                     tick.set_rotation(90)
-                import pdb;pdb.set_trace()
                 violin_axis.set_title(i_var_name)
                 i_plot += 1
             plt.show()
@@ -483,11 +481,9 @@ class ValidateSim(ModelSim):
         self.process_experiment_based_data()
 
         # plot concentrations
-        import pdb;pdb.set_trace()
         self.validation_experiment_distribution_plots(self.concentration_experiment_validation, box=box, violin=violin)
 
         # plot fluxes
-        import pdb;pdb.set_trace()
         self.validation_experiment_distribution_plots(self.flux_experiment_validation, box=box, violin=violin)
 
         return None
