@@ -249,9 +249,10 @@ def v1_validate():
 
         # process validation info for plotting
         import pdb;pdb.set_trace()
-        c_data, f_data = v1_valid_obj.process_validation_data()
+        v1_valid_obj.separate_validation_plot(scatter=True, violin=True)
 
         # process experiment-based data for plotting
+        import pdb;pdb.set_trace()
         c_exp_data, f_exp_data = v1_valid_obj.process_experiment_based_data()
 
         import pdb;pdb.set_trace()
