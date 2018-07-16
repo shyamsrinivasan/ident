@@ -1,6 +1,7 @@
 from run_sims import ModelSim
 from names_strings import variable_name
-from plot_ident_results import plot_on_axis_object_box, plot_on_axis_object_violin, validation_hist
+from plot_ident_results import plot_on_axis_object_box, plot_on_axis_object_violin
+from plot_ident_results import validation_hist, validation_scatter
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
@@ -398,6 +399,10 @@ class ValidateSim(ModelSim):
             # plot histogram
             validation_hist(info["values"], info["names"], figure_object=f1, grid_objects=plot_grid)
 
+            # scatter plot
+            if scatter:
+                validation_scatter(info, figure_object=f1, grid_objects=plot_grid)
+
         # violin plot
         if violin:
             violin_axis = f1.add_subplot(plot_grid[0, :])
@@ -407,6 +412,10 @@ class ValidateSim(ModelSim):
 
             # plot histogram
             validation_hist(info["values"], info["names"], figure_object=f1, grid_objects=plot_grid)
+
+            # scatter plot
+            if scatter:
+                validation_scatter(info, figure_object=f1, grid_objects=plot_grid)
 
         return None
 
