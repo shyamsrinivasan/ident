@@ -112,7 +112,7 @@ def true_parameter_values(flux_based=0, flux_name=(), flux_choice_id=0, paramete
                                    "K3pep": np.array([.1]), "K2pep": np.array([.3]), "vemax": np.array([1.1]),
                                    "Kefdp": np.array([.45]), "ne": np.array([2]), "d": np.array([.25]),
                                    "V4max": np.array([.2]), "k1cat": np.array([1]), "V3max": np.array([1]),
-                                   "V2max": np.array([1]), "ac": np.array([.1])}
+                                   "V2max": np.array([1]), "ac": np.array([.1]), 'V1max': np.array([1.0])}
         return default_parameter_value
 
 
