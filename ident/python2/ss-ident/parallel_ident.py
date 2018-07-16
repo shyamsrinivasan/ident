@@ -133,7 +133,9 @@ def ident_processing(ident_object, ident_result):
     # extract parameter va;ues for model validation
     ident_object.get_parameter_value()
 
+    import pdb;pdb.set_trace()
     default_parameter_values = true_parameter_values()
+    import pdb;pdb.set_trace()
     ident_object.parameter_values_plot(default_parameter_values, violin=True, box=False, bins=1)
 
     ident_object.identifiability_plot()
