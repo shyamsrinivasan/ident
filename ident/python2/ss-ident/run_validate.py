@@ -471,6 +471,7 @@ class ValidateSim(ModelSim):
                 violin_axis.set_xticklabels(info["experiment_id"])
                 for tick in violin_axis.get_xticklabels():
                     tick.set_rotation(90)
+                import pdb;pdb.set_trace()
                 violin_axis.set_title(i_var_name)
                 i_plot += 1
             plt.show()
