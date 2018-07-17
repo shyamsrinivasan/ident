@@ -1,3 +1,5 @@
+import matplotlib
+matplotlib.use('agg')
 from run_sims import ModelSim
 from names_strings import variable_name
 from plot_ident_results import plot_on_axis_object_box, plot_on_axis_object_violin
