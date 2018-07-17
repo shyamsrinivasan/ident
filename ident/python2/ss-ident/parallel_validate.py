@@ -756,13 +756,13 @@ def v3_mwc_validate():
 
 
 if __name__ == '__main__':
-    # v1_kcat_validate()
-    # v2_validate()
-    v3_validate()
+    v1_kcat_validate()
+    v2_validate()
+    # v3_validate()
     # v3_var_1_validate()
     # v3_var_2_validate()
     # v5_validate()
-    v1_kcat_mwc_validate()
-    v2_mwc_validate()
-    v3_mwc_validate()
+    # v1_kcat_mwc_validate()
+    # v2_mwc_validate()
+    # v3_mwc_validate()
     print('Done\n')
