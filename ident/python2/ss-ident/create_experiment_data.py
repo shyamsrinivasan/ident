@@ -350,11 +350,11 @@ def create_data_for_flux(flux_id, noise, number_samples=1, kinetics=2):
 
 
 if __name__ == "__main__":
-    # file_name = os.path.join(os.getcwd(), 'exp/experiments')
-    # experiment_info_df = create_experiment_data(file_name, noise=0, kinetics=2)
+    file_name = os.path.join(os.getcwd(), 'exp/experiments')
+    experiment_info_df = create_experiment_data(file_name, noise=0, kinetics=2)
 
-    file_name = os.path.join(os.getcwd(), 'exp/experiments_mwc')
-    experiment_info_df = create_experiment_data(file_name, noise=0, kinetics=1)
+    # file_name = os.path.join(os.getcwd(), 'exp/experiments_mwc')
+    # experiment_info_df = create_experiment_data(file_name, noise=0, kinetics=1)
 
     # file_name = os.path.join(os.getcwd(), 'exp/experiments_noise_5_samples')
     # experiment_info_df = create_experiment_data(file_name, noise=1, kinetics=2, number_samples=5, noise_std=0.05)
