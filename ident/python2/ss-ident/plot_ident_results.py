@@ -602,8 +602,8 @@ def plot_exp_details(df, color_bar=False, set_palette=True):
                     cbar=color_bar)
         for item in ax[i_exp].get_xticklabels():
             item.set_rotation(90)
-        # for item in ax[i_exp].get_yticklabels():
-        #     item.set_rotation(90)
+        for item in ax[i_exp].get_yticklabels():
+            item.set_rotation(90)
 
     # remove axis labels for shared x-axis
     for axis in range(0, len(df.columns.levels[0]) - 1):
