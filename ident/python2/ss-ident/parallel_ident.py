@@ -572,5 +572,4 @@ if __name__ == '__main__':
     v2_mwc_ident()
     v3_mwc_ident()
     v5_mwc_ident()
-    import pdb;pdb.set_trace()
     print('Done\n')
