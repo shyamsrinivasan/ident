@@ -7,6 +7,8 @@ from names_strings import true_parameter_values
 import pandas as pd
 import os.path
 import kotte_model
+import matplotlib
+matplotlib.use('Agg')
 
 
 class ParallelProcess(object):

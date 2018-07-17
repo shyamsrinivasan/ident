@@ -8,6 +8,8 @@ from run_ident import ModelIdent
 import numpy as np
 import kotte_model
 import os.path
+import matplotlib
+matplotlib.use('Agg')
 
 
 class ParallelValidate(object):
