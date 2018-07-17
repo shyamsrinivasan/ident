@@ -84,11 +84,12 @@ def exp_design_info(list_of_files, original_experiment_file, write_to_file_name,
                                   parameter_names=all_parameter_names)
     all_frequency = [i_parameter["frequency"] for i_parameter in all_parameter_info]
     col_ind_tuple = zip(all_parameter_info[0]['experiment_pos_id'], all_parameter_info[0]['experiment_id'])
-    col_ind = pd.MultiIndex.from_tuples(col_ind_tuple, names=['experiment_pos_id', 'experiment_id'])
+    col_ind = pd.MultiIndex.from_tuples(list(col_ind_tuple), names=['experiment_pos_id', 'experiment_id'])
     flux_tuple = zip(all_parameter_flux, all_parameter_names)
-    row_ind = pd.MultiIndex.from_tuples(flux_tuple, names=['flux_name', 'parameter_name'])
+    row_ind = pd.MultiIndex.from_tuples(list(flux_tuple), names=['flux_name', 'parameter_name'])
     df = pd.DataFrame(all_frequency, index=row_ind, columns=col_ind)
     df.to_csv(write_to_file_name, index_label=['flux_name', 'parameter_name'])
+    import pdb;pdb.set_trace()
     return df
 
 

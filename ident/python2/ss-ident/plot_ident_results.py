@@ -1,7 +1,10 @@
 import numpy as np
+import matplotlib
+matplotlib.use('agg')
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import matplotlib.font_manager as fnt
+from matplotlib.colors import ListedColormap
 import pandas as pd
 import seaborn as sns
 from names_strings import variable_name
@@ -67,6 +70,7 @@ def plot_on_axis_object_hist(axis_object, distribution_data, mark_value=[], para
 
     if mark_value:
         axis_object.plot(np.repeat(mark_value, 2), new_ax.get_ylim(), color='black', linestyle='dashed', linewidth=0.8)
+
     return None
 
 
@@ -345,7 +349,7 @@ def validation_scatter(info_dict, grid_objects, figure_object):
         # line plot of experimental vs experimental
         scatter_axis.plot(info_dict["experiment_values"][i_variable],
                           info_dict["experiment_values"][i_variable],
-                          **{'color': 'black', 'linestyle': 'dashdot', 'linewidth': 1.5})
+                          **{'color': 'black', 'linestyle': 'dashdot', 'linewidth': 0.25})
         # set scatter axis ticks
         set_scatter_axis_limits(scatter_axis, x_data=info_dict["experiment_values"][i_variable],
                                 y_data=info_dict["values"][i_variable])
@@ -596,11 +600,12 @@ def plot_exp_details(df, max_number_experiments=3, color_bar=False, set_palette=
     for i_exp, i_exp_pos in enumerate(df.columns.levels[0]):
         i_exp_pos_df = df.loc[:, idx[i_exp_pos, :]]
         i_exp_pos_df.columns = i_exp_pos_df.columns.droplevel(level=0)
-        sns.heatmap(i_exp_pos_df, square=True, linewidth=0.5, cmap=c_pal, ax=ax[i_exp], cbar=color_bar)
+        sns.heatmap(i_exp_pos_df, square=True, linewidth=0.5, cmap=ListedColormap(c_pal.as_hex()), ax=ax[i_exp],
+                    cbar=color_bar)
         for item in ax[i_exp].get_xticklabels():
             item.set_rotation(90)
-        # for item in ax[i_exp].get_yticklabels():
-        #     item.set_rotation(90)
+        for item in ax[i_exp].get_yticklabels():
+            item.set_rotation(0)
 
     # remove axis labels for shared x-axis
     for axis in range(0, len(df.columns.levels[0]) - 1):

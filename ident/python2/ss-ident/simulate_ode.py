@@ -22,10 +22,8 @@ def simulate_ode(fun, y_initial, tf, opts):
     except KeyError:
         verbosity = 10
 
-    ode_function = lambda t, x : fun(t,x,ode_system_options)
-
     # define explicit assimulo problem
-    prob = Explicit_Problem(ode_function, y0=y_initial)
+    prob = Explicit_Problem(lambda t, x: fun(t, x, ode_system_options), y0=y_initial)
 
     # create solver instance
     solver = CVode(prob)
@@ -38,6 +36,13 @@ def simulate_ode(fun, y_initial, tf, opts):
     time_course, y_result = solver.simulate(tf, time_points)
 
     return time_course, y_result, prob, solver
+
+
+def setup_serial_ode(ode_fun, y_initial, t_final, opts):
+    """run ode code on single processor as a serial process"""
+    time_points, y_dynamic, prob, solver = simulate_ode(ode_fun, y_initial, t_final, opts)
+    sim_result = [{'time': time_points, 'y': y_dynamic}]
+    return sim_result
 
 
 def run_ode_sims(fun, y_initial, opts, t_final=500, args_1=False):

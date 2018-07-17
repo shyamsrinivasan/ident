@@ -39,6 +39,31 @@ def ident_parameter_name(parameter_id, flux_name=(), flux_choice_id=0):
     return parameter_name
 
 
+def default_ident_parameter_name(flux_name, flux_choice):
+    name_list = {"flux1": [['V1max', 'K1ac', 'k1cat', 'K1ac'],
+                            ['V1max', 'K1ac'],
+                            ['k1cat', 'K1ac'],
+                            ['V1max', 'K1ac (no enz)', 'k1cat (exp 1)', 'k1cat (exp 2)']],
+                  "flux2": [['V2max', 'K2pep']],
+                  "flux3": [['V3max (1)', 'K3fdp (1)', 'K3pep (1)', 'V3max (2)', 'K3fdp (2)', 'K3pep (2)'],
+                            ['V3max', 'K3fdp', 'K3pep'],
+                            ['V3max', 'K3fdp', 'K3pep'],
+                            ['V3max', 'K3fdp', 'K3pep'],
+                            ['V3max', 'K3fdp', 'K3pep', 'L3fdp']],
+                  "flux4": [],
+                  "flux5": [['vemax (1)', 'Kefdp (1)', 'vemax (1)', 'Kefdp (2)'],
+                            ['vemax', 'Kefdp'],
+                            ['vemax', 'Kefdp']],
+                  "flux6": [['V3max (1)', 'K3fdp', 'V3max (2)', 'K3pep'],
+                            ['V3max', 'K3fdp'],
+                            ['V3max', 'K3pep']]}
+    try:
+        select_parameter_name = [name_list[name][choice] for name, choice in zip(flux_name, flux_choice)]
+    except TypeError:
+        select_parameter_name = name_list[flux_name][flux_choice]
+    return select_parameter_name
+
+
 def parameter_name(parameter_id):
     parameter_list = ['K1ac', 'K3fdp', 'L3fdp', 'K3pep',
                       'K2pep', 'vemax', 'Kefdp', 'ne', 'd',
@@ -87,7 +112,7 @@ def true_parameter_values(flux_based=0, flux_name=(), flux_choice_id=0, paramete
                                    "K3pep": np.array([.1]), "K2pep": np.array([.3]), "vemax": np.array([1.1]),
                                    "Kefdp": np.array([.45]), "ne": np.array([2]), "d": np.array([.25]),
                                    "V4max": np.array([.2]), "k1cat": np.array([1]), "V3max": np.array([1]),
-                                   "V2max": np.array([1]), "ac": np.array([.1])}
+                                   "V2max": np.array([1]), "ac": np.array([.1]), 'V1max': np.array([1.0])}
         return default_parameter_value
 
 
