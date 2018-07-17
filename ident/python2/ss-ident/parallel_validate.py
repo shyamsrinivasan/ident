@@ -245,7 +245,12 @@ def v1_kcat_validate():
                                       'validate_index_label': ['estimate_id', 'sample_name', 'data_set_id',
                                                                'experiment_id'],
                                       'validate_file_name': os.path.join(os.getcwd(), 'validate/v1_kcat_validate'),
-                                      'original_exp_file': v1_ident.original_exp_file})
+                                      'original_exp_file': v1_ident.original_exp_file,
+                                      'c_validate_file': os.path.join(os.getcwd(), 'results/v1_kcat_c_validate.eps'),
+                                      'f_validate_file': os.path.join(os.getcwd(), 'results/v1_kcat_f_validate.eps'),
+                                      'c_exp_file': os.path.join(os.getcwd(), 'results/v1_kcat_c_exp.eps'),
+                                      'v_exp_file': os.path.join(os.getcwd(), 'results/v1_kcat_f_exp.eps'),
+                                      'format': v1_ident.figure_format})
 
         parameter_estimates, estimate_info = v1_valid_obj.create_parameter_list(v1_ident.select_values)
 
@@ -300,7 +305,12 @@ def v2_validate():
                                       'validate_index_label': ['estimate_id', 'sample_name', 'data_set_id',
                                                                'experiment_id'],
                                       'validate_file_name': os.path.join(os.getcwd(), 'validate/v2_validate'),
-                                      'original_exp_file': v2_ident.original_exp_file})
+                                      'original_exp_file': v2_ident.original_exp_file,
+                                      'c_validate_file': os.path.join(os.getcwd(), 'results/v2_c_validate.eps'),
+                                      'f_validate_file': os.path.join(os.getcwd(), 'results/v2_f_validate.eps'),
+                                      'c_exp_file': os.path.join(os.getcwd(), 'results/v2_c_exp.eps'),
+                                      'v_exp_file': os.path.join(os.getcwd(), 'results/v2_f_exp.eps'),
+                                      'format': v2_ident.figure_format})
 
         parameter_estimates, estimate_info = v2_valid_obj.create_parameter_list(v2_ident.select_values)
 
@@ -355,7 +365,12 @@ def v3_validate():
                                       'validate_index_label': ['estimate_id', 'sample_name', 'data_set_id',
                                                                'experiment_id'],
                                       'validate_file_name': os.path.join(os.getcwd(), 'validate/v3_validate'),
-                                      'original_exp_file': v3_ident.original_exp_file})
+                                      'original_exp_file': v3_ident.original_exp_file,
+                                      'c_validate_file': os.path.join(os.getcwd(), 'results/v3_c_validate.eps'),
+                                      'f_validate_file': os.path.join(os.getcwd(), 'results/v3_f_validate.eps'),
+                                      'c_exp_file': os.path.join(os.getcwd(), 'results/v3_c_exp.eps'),
+                                      'v_exp_file': os.path.join(os.getcwd(), 'results/v3_f_exp.eps'),
+                                      'format': v3_ident.figure_format})
 
         parameter_estimates, estimate_info = v3_valid_obj.create_parameter_list(v3_ident.select_values)
 
@@ -410,7 +425,13 @@ def v3_var_1_validate():
                                       'validate_index_label': ['estimate_id', 'sample_name', 'data_set_id',
                                                                'experiment_id'],
                                       'validate_file_name': os.path.join(os.getcwd(), 'validate/v3_k3fdp_validate'),
-                                      'original_exp_file': v3_ident.original_exp_file})
+                                      'original_exp_file': v3_ident.original_exp_file,
+                                      'c_validate_file': os.path.join(os.getcwd(), 'results/v3_k3fdp_c_validate.eps'),
+                                      'f_validate_file': os.path.join(os.getcwd(), 'results/v3_k3fdp_f_validate.eps'),
+                                      'c_exp_file': os.path.join(os.getcwd(), 'results/v3_k3fdp_c_exp.eps'),
+                                      'v_exp_file': os.path.join(os.getcwd(), 'results/v3_k3fdp_f_exp.eps'),
+                                      'format': v3_ident.figure_format
+                                      })
 
         parameter_estimates, estimate_info = v3_valid_obj.create_parameter_list(v3_ident.select_values)
 
@@ -465,7 +486,13 @@ def v3_var_2_validate():
                                       'validate_index_label': ['estimate_id', 'sample_name', 'data_set_id',
                                                                'experiment_id'],
                                       'validate_file_name': os.path.join(os.getcwd(), 'validate/v3_k3pep_validate'),
-                                      'original_exp_file': v3_ident.original_exp_file})
+                                      'original_exp_file': v3_ident.original_exp_file,
+                                      'c_validate_file': os.path.join(os.getcwd(), 'results/v3_k3pep_c_validate.eps'),
+                                      'f_validate_file': os.path.join(os.getcwd(), 'results/v3_k3pep_f_validate.eps'),
+                                      'c_exp_file': os.path.join(os.getcwd(), 'results/v3_k3pep_c_exp.eps'),
+                                      'v_exp_file': os.path.join(os.getcwd(), 'results/v3_k3pep_f_exp.eps'),
+                                      'format': v3_ident.figure_format
+                                      })
 
         parameter_estimates, estimate_info = v3_valid_obj.create_parameter_list(v3_ident.select_values)
 
@@ -520,7 +547,13 @@ def v5_validate():
                                       'validate_index_label': ['estimate_id', 'sample_name', 'data_set_id',
                                                                'experiment_id'],
                                       'validate_file_name': os.path.join(os.getcwd(), 'validate/v5_validate'),
-                                      'original_exp_file': v5_ident.original_exp_file})
+                                      'original_exp_file': v5_ident.original_exp_file,
+                                      'c_validate_file': os.path.join(os.getcwd(), 'results/v5_c_validate.eps'),
+                                      'f_validate_file': os.path.join(os.getcwd(), 'results/v5_f_validate.eps'),
+                                      'c_exp_file': os.path.join(os.getcwd(), 'results/v5_c_exp.eps'),
+                                      'v_exp_file': os.path.join(os.getcwd(), 'results/v5_f_exp.eps'),
+                                      'format': v5_ident.figure_format
+                                      })
 
         parameter_estimates, estimate_info = v5_valid_obj.create_parameter_list(v5_ident.select_values)
 
@@ -575,7 +608,15 @@ def v1_kcat_mwc_validate():
                                       'validate_index_label': ['estimate_id', 'sample_name', 'data_set_id',
                                                                'experiment_id'],
                                       'validate_file_name': os.path.join(os.getcwd(), 'validate/v1_kcat_mwc_validate'),
-                                      'original_exp_file': v1_ident.original_exp_file})
+                                      'original_exp_file': v1_ident.original_exp_file,
+                                      'c_validate_file': os.path.join(os.getcwd(),
+                                                                      'results/v1_kcat_mwc_c_validate.eps'),
+                                      'f_validate_file': os.path.join(os.getcwd(),
+                                                                      'results/v1_kcat_mwc_f_validate.eps'),
+                                      'c_exp_file': os.path.join(os.getcwd(), 'results/v1_kcat_mwc_c_exp.eps'),
+                                      'v_exp_file': os.path.join(os.getcwd(), 'results/v1_kcat_mwc_f_exp.eps'),
+                                      'format': v1_ident.figure_format
+                                      })
 
         parameter_estimates, estimate_info = v1_valid_obj.create_parameter_list(v1_ident.select_values)
 
@@ -630,7 +671,12 @@ def v2_mwc_validate():
                                       'validate_index_label': ['estimate_id', 'sample_name', 'data_set_id',
                                                                'experiment_id'],
                                       'validate_file_name': os.path.join(os.getcwd(), 'validate/v2_mwc_validate'),
-                                      'original_exp_file': v2_ident.original_exp_file})
+                                      'original_exp_file': v2_ident.original_exp_file,
+                                      'c_validate_file': os.path.join(os.getcwd(), 'results/v2_mwc_c_validate.eps'),
+                                      'f_validate_file': os.path.join(os.getcwd(), 'results/v2_mwc_f_validate.eps'),
+                                      'c_exp_file': os.path.join(os.getcwd(), 'results/v2_mwc_c_exp.eps'),
+                                      'v_exp_file': os.path.join(os.getcwd(), 'results/v2_mwc_f_exp.eps'),
+                                      'format': v2_ident.figure_format})
 
         parameter_estimates, estimate_info = v2_valid_obj.create_parameter_list(v2_ident.select_values)
 
@@ -684,7 +730,12 @@ def v3_mwc_validate():
                                       'validate_index_label': ['estimate_id', 'sample_name', 'data_set_id',
                                                                'experiment_id'],
                                       'validate_file_name': os.path.join(os.getcwd(), 'validate/v3_mwc_validate'),
-                                      'original_exp_file': v3_ident.original_exp_file})
+                                      'original_exp_file': v3_ident.original_exp_file,
+                                      'c_validate_file': os.path.join(os.getcwd(), 'results/v3_mwc_c_validate.eps'),
+                                      'f_validate_file': os.path.join(os.getcwd(), 'results/v3_mwc_f_validate.eps'),
+                                      'c_exp_file': os.path.join(os.getcwd(), 'results/v3_mwc_c_exp.eps'),
+                                      'v_exp_file': os.path.join(os.getcwd(), 'results/v3_mwc_f_exp.eps'),
+                                      'format': v3_ident.figure_format})
 
         parameter_estimates, estimate_info = v3_valid_obj.create_parameter_list(v3_ident.select_values)
 
