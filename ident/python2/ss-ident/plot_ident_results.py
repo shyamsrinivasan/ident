@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 import matplotlib.font_manager as fnt
+from matplotlib.colors import ListedColormap
 import pandas as pd
 import seaborn as sns
 from names_strings import variable_name
@@ -597,7 +598,8 @@ def plot_exp_details(df, color_bar=False, set_palette=True):
     for i_exp, i_exp_pos in enumerate(df.columns.levels[0]):
         i_exp_pos_df = df.loc[:, idx[i_exp_pos, :]]
         i_exp_pos_df.columns = i_exp_pos_df.columns.droplevel(level=0)
-        sns.heatmap(i_exp_pos_df, square=True, linewidth=0.5, cmap=c_pal, ax=ax[i_exp], cbar=color_bar)
+        sns.heatmap(i_exp_pos_df, square=True, linewidth=0.5, cmap=ListedColormap(c_pal.as_hex()), ax=ax[i_exp],
+                    cbar=color_bar)
         for item in ax[i_exp].get_xticklabels():
             item.set_rotation(90)
         # for item in ax[i_exp].get_yticklabels():
