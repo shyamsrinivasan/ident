@@ -4,6 +4,7 @@ import os.path
 from simulate_data import arrange_experimental_data
 from names_strings import true_parameter_values
 from run_sims import ModelSim
+from mpi4py import MPI
 import kotte_model
 
 
@@ -348,14 +349,19 @@ def create_data_for_flux(flux_id, noise, number_samples=1, kinetics=2):
 
 
 if __name__ == "__main__":
-    file_name = os.path.join(os.getcwd(), 'exp/experiments')
-    experiment_info_df = create_experiment_data(file_name, noise=0, kinetics=2)
+    name = MPI.Get_processor_name()
+    rank = MPI.COMM_WORLD.Get_rank()
+    size = MPI.COMM_WORLD.Get_size()
+    if rank == 0:
+        print('Master: I am %s rank %s' % (name, rank))
+        file_name = os.path.join(os.getcwd(), 'exp/experiments')
+        experiment_info_df = create_experiment_data(file_name, noise=0, kinetics=2)
 
-    # file_name = os.path.join(os.getcwd(), 'exp/experiments_mwc')
-    # experiment_info_df = create_experiment_data(file_name, noise=0, kinetics=1)
+        # file_name = os.path.join(os.getcwd(), 'exp/experiments_mwc')
+        # experiment_info_df = create_experiment_data(file_name, noise=0, kinetics=1)
 
-    # file_name = os.path.join(os.getcwd(), 'exp/experiments_noise_5_samples')
-    # experiment_info_df = create_experiment_data(file_name, noise=1, kinetics=2, number_samples=5, noise_std=0.05)
+        # file_name = os.path.join(os.getcwd(), 'exp/experiments_noise_5_samples')
+        # experiment_info_df = create_experiment_data(file_name, noise=1, kinetics=2, number_samples=5, noise_std=0.05)
 
-    # file_name = os.path.join(os.getcwd(), 'exp/experiments_noise_500_samples')
-    # experiment_info_df = create_experiment_data(file_name, noise=1, kinetics=2, number_samples=500, noise_std=0.05)
+        # file_name = os.path.join(os.getcwd(), 'exp/experiments_noise_500_samples')
+        # experiment_info_df = create_experiment_data(file_name, noise=1, kinetics=2, number_samples=500, noise_std=0.05)
