@@ -1,8 +1,0 @@
-Enzymes	Enzyme Name	 equation	Compensated Species	delta G (pH 7.2)	delGlb	delGub	Keq	kcat+(1/s)	kcat-(1/s)	Etot Conc	Vmax	"vss (Gur = -10, O2ur = -1000)"	EC	Substrate Km (mM)	Activators	Inhibitors	Regulator Km (mM)	Metab	Mclow (mM)	Mchigh (mM)
-GLCpts		glc[e] + pep[c] --> g6p[c] + pyr[c]		-9.1	-50.4	0.9		250				20.00	0					glc[e]	0.0556	0.0556
-ENO		[c] : 2pg <==> h2o + pep		-0.9	-22.9	14.7		355.79				24.29	4.2.1.11					pyr[c]	2.67	2.67
-PYK		[c] : atp + pyr <==> adp + h + pep		-31.12	-10.8	65.3			10.17		0.97	-8.51	2.7.1.40					ru5p-D	0.111	0.111
-PPS		[c] : atp + h2o + pyr --> amp + 2 h + pep + pi	"h2o,h,pi"	-1.2	-50.9	24.4		1				0.00	2.7.9.2					xu5p-D	0.138	0.138
-PPC		[c] : h + oaa + pi <==> co2 + h2o + pep	pi	6.8	-7.1	55.6			540		18.2	5.42	4.1.1.31							
-PPCK		[c] : atp + oaa --> adp + co2 + pep	co2	0.2	-44.4	30.9		1				0.00	4.1.1.49							
-EC_biomass		[c] : 1.496 3pg + 3.7478 accoa + 59.8100 atp + 0.3610 e4p + 0.0709 f6p + 0.1290 g3p + 0.2050 g6p + 59.8100 h2o + 3.5470 nad + 13.0279 nadph + 1.7867 oaa + 0.5191 pep + 2.8328 pyr + 0.8977 r5p --> 59.8100 adp + 4.1182 akg + 3.7478 coa + 59.8100 h + 3.5470 nadh + 13.0279 nadp + 59.8100 pi		0								2.32								

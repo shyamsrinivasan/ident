@@ -1,8 +1,0 @@
-Reaction	Positive Effectors	Negative Effectors
-M1 ---> M2		
-M1 ---> M3		
-M2 ---> M3		
-M2 ---> M1		
-M3 ---> M1		
-M3 ---> M2		
-0.5 M3 ---> M4		

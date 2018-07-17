@@ -1,7 +1,0 @@
-Reaction	Positive Effectors	Negative Effectors
-S1 + S3 ---> S5		
-S5 ---> S1 + S3		
-S5 ---> S1 + S4		
-S2 + S4 ---> S6		
-S6 ---> S2 + S4		
-S6 ---> S2 + S3		

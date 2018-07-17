@@ -1,9 +1,0 @@
-Enzymes	Etot Conc	kcat (1/s)	Vmax	Keq	SGFE (kJ/mol)	"Vss,net"	Reaction	Activators	Inhibitors	Rxn Mechanism	Substrate Km (mM)	Regulator Km (mM)	Metab	Mlow	Mhigh
-Protein1	0	0			-0.5	10	M1xt <==> M1						M1	0.01	100
-Protein2	0	0			-0.5	5	M1 ---> M2						M2	0.01	100
-Protein3	0	0			-0.5	5	M1 <==> M3						M3	0.01	100
-Protein4	0	0			-0.5	7.5	M2 <==>								
-Protein5	0	0			-0.5	2.5	M2 ---> M3								
-Protein6	0	0			-0.5	1	M1xt <==>								
-Protein7	0	0			-0.5	-0.5	---> M2xt								
-Protein8	0	0			-0.5	2.5	0.5 M3 ---> Biomass								

@@ -1,8 +1,0 @@
-Reaction	Positive Effectors	Negative Effectors
----> A		
-A ---> D	A	
-B ---> Pr	B	
-C ---> B	B	
-C + D ---> Pr + E	"C, D"	
-Pr --->	Pr	
-E --->	E	

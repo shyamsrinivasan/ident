@@ -1,5 +1,0 @@
-Reaction	Positive Effectors	Negative Effectors
-S + E ---> X	"S, E"	
-X ---> S + E	X	
-X ---> St + E	X	
-St + E ---> X	"E, St"	

@@ -1,5 +1,0 @@
-Reaction	Positive Effectors FWD	Negative Effectors FWD	Positive Effectors REV	Negative Effectors REV
-S + E ---> X	"S, E"			
-X ---> S + E	X			
-St + E ---> X	"St, E"			
-X ---> St + E	X			
