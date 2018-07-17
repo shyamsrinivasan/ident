@@ -9,7 +9,7 @@ import numpy as np
 import kotte_model
 import os.path
 import matplotlib
-matplotlib.use('Agg')
+matplotlib.use('agg')
 
 
 class ParallelValidate(object):
