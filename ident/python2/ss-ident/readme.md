@@ -1,11 +1,18 @@
 # Identifiability Analysis and Experimental Design:
 ###### Generating *in silico* data for identifiability analysis:
+- run `create_experiment_data` with desired options active to generate initial set of experimental data
+`mpirun -np 4 python create_experiment_data.py`
+- all generated data files are stored in *exp* subdirectory
+
 - run `ident_exp_data` with desired options to generate data needed for identifiability analysis
+`python ident_exp_data.py`
+- all generated data files are stored in *exp* subdirectory
 
 ###### Perform identifiability analysis:
 - run `parallel_ident` with desired functions to perform identifiability analysis on the small network
 - run the script with `mpi` to enable multithreaded operation
 - e.g., `mpirun -np 4 python parallel_ident.py`
+- all generated data files are stored in *ident* subdirectory
 - all generated figures are stored in the *results* subdirectory
 
 ###### Validate estimated parameters:
