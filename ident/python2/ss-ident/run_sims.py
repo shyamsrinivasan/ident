@@ -259,6 +259,9 @@ class ModelSim(object):
         # create data frame
         all_ss_df = pd.DataFrame(self.df_info, index=index, columns=self.df_info.keys())
 
+        # lexsort df before writing to file
+        all_ss_df.sort_index(level=['sample_name', 'experiment_id'], inplace=True)
+
         # dyn_df = pd.DataFrame(dynamic_info, index=dyn_index, columns=dynamic_info.keys())
         return all_ss_df, multi_index_labels
 
