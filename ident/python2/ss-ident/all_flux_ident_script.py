@@ -12,21 +12,32 @@ v1_file_name = os.path.join(os.getcwd(), 'ident/ident_v1_kcat')
 v2_file_name = os.path.join(os.getcwd(), 'ident/ident_v2')
 v3_file_name = os.path.join(os.getcwd(), 'ident/ident_v3')
 v5_file_name = os.path.join(os.getcwd(), 'ident/ident_v5')
-file_name_list = [v1_file_name, v2_file_name, v3_file_name, v5_file_name]
+exp_2_file_name_list = [v1_file_name, v2_file_name, v5_file_name]
 
-write_to_file_name = os.path.join(os.getcwd(), 'ident/ident_experiments')
+write_to_file_name = os.path.join(os.getcwd(), 'ident/ident_2_experiments')
 
-df = exp_design_info(list_of_files=file_name_list, original_experiment_file=original_experiment_file,
-                     write_to_file_name=write_to_file_name, max_number_experiments=3)
+df_2 = exp_design_info(list_of_files=exp_2_file_name_list, original_experiment_file=original_experiment_file,
+                       write_to_file_name=write_to_file_name, max_number_experiments=2)
+plot_exp_details(df_2, max_number_experiments=2, color_bar=True, set_palette=False)
+
+# plot only logical only (experiment is involved/not involved)
+logical_df = df_2.applymap(logical_values)
+plot_exp_details(logical_df, max_number_experiments=2)
+
 
 # idx = pd.IndexSlice
 # new_df = df.loc[idx[:, :], idx['experiment_0_id', :]]
 # iris = sns.load_dataset('iris')
 
+exp_3_file_name_list = [v3_file_name]
+write_to_file_name = os.path.join(os.getcwd(), 'ident/ident_3_experiments')
+df_3 = exp_design_info(list_of_files=exp_3_file_name_list, original_experiment_file=original_experiment_file,
+                       write_to_file_name=write_to_file_name, max_number_experiments=3)
+plot_exp_details(df_3, max_number_experiments=3, color_bar=True, set_palette=False)
 
-logical_df = df.applymap(logical_values)
-plot_exp_details(logical_df)
-plot_exp_details(df, color_bar=True, set_palette=False)
+# plot only logical only (experiment is involved/not involved)
+logical_df = df_3.applymap(logical_values)
+plot_exp_details(logical_df, max_number_experiments=3)
 
 import pdb;pdb.set_trace()
 print('Run Complete\n')
