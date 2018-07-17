@@ -1,7 +1,7 @@
 from create_experiment_data import create_data_for_flux
 
 
-# create data for identifiability analysis
+# create data for identifiability analysis (w/o noise)
 # v1 - kcat and vmax with ck model
 create_data_for_flux(flux_id='v1', noise=0, number_samples=1)
 
