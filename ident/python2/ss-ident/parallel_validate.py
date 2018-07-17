@@ -196,6 +196,19 @@ class ValidateSlave(Slave):
         return data['task'], result
 
 
+def validate_processing(validate_object, results):
+    # separate initial sims data from perturbation sims data and create validation df from dict
+    validate_object.create_df(results)
+
+    # process validation info for plotting
+    validate_object.separate_validation_plot(scatter=True, violin=True)
+
+    # process experiment-based data for plotting
+    validate_object.experiment_validation_plot(box=False, violin=True)
+
+    return None
+
+
 def v1_kcat_validate():
     """validate estimated parameter values"""
 
@@ -242,14 +255,8 @@ def v1_kcat_validate():
                                                               'estimate_info': estimate_info, 'sim_obj': v1_valid_obj})
         job.terminate_slaves()
 
-        # separate initial sims data from perturbation sims data and create validation df from dict
-        v1_valid_obj.create_df(validate_results)
-
-        # process validation info for plotting
-        v1_valid_obj.separate_validation_plot(scatter=True, violin=True)
-
-        # process experiment-based data for plotting
-        v1_valid_obj.experiment_validation_plot(box=False, violin=True)
+        # process validation data for plots
+        validate_processing(v1_valid_obj, validate_results)
 
     else:
 
@@ -303,14 +310,8 @@ def v2_validate():
                                                               'estimate_info': estimate_info, 'sim_obj': v2_valid_obj})
         job.terminate_slaves()
 
-        # separate initial sims data from perturbation sims data and create validation df from dict
-        v2_valid_obj.create_df(validate_results)
-
-        # process validation info for plotting
-        v2_valid_obj.separate_validation_plot(scatter=True, violin=True)
-
-        # process experiment-based data for plotting
-        v2_valid_obj.experiment_validation_plot(box=False, violin=True)
+        # process validation data for plots
+        validate_processing(v2_valid_obj, validate_results)
 
     else:
 
@@ -364,14 +365,8 @@ def v3_validate():
                                                               'estimate_info': estimate_info, 'sim_obj': v3_valid_obj})
         job.terminate_slaves()
 
-        # separate initial sims data from perturbation sims data and create validation df from dict
-        v3_valid_obj.create_df(validate_results)
-
-        # process validation info for plotting
-        v3_valid_obj.separate_validation_plot(scatter=True, violin=True)
-
-        # process experiment-based data for plotting
-        v3_valid_obj.experiment_validation_plot(box=False, violin=True)
+        # process validation data for plots
+        validate_processing(v3_valid_obj, validate_results)
 
     else:
 
@@ -425,14 +420,8 @@ def v3_var_1_validate():
                                                               'estimate_info': estimate_info, 'sim_obj': v3_valid_obj})
         job.terminate_slaves()
 
-        # separate initial sims data from perturbation sims data and create validation df from dict
-        v3_valid_obj.create_df(validate_results)
-
-        # process validation info for plotting
-        v3_valid_obj.separate_validation_plot(scatter=True, violin=True)
-
-        # process experiment-based data for plotting
-        v3_valid_obj.experiment_validation_plot(box=False, violin=True)
+        # process validation data for plots
+        validate_processing(v3_valid_obj, validate_results)
 
     else:
 
@@ -486,14 +475,8 @@ def v3_var_2_validate():
                                                               'estimate_info': estimate_info, 'sim_obj': v3_valid_obj})
         job.terminate_slaves()
 
-        # separate initial sims data from perturbation sims data and create validation df from dict
-        v3_valid_obj.create_df(validate_results)
-
-        # process validation info for plotting
-        v3_valid_obj.separate_validation_plot(scatter=True, violin=True)
-
-        # process experiment-based data for plotting
-        v3_valid_obj.experiment_validation_plot(box=False, violin=True)
+        # process validation data for plots
+        validate_processing(v3_valid_obj, validate_results)
 
     else:
 
@@ -547,20 +530,177 @@ def v5_validate():
                                                               'estimate_info': estimate_info, 'sim_obj': v5_valid_obj})
         job.terminate_slaves()
 
-        # separate initial sims data from perturbation sims data and create validation df from dict
-        v5_valid_obj.create_df(validate_results)
-
-        # process validation info for plotting
-        v5_valid_obj.separate_validation_plot(scatter=True, violin=True)
-
-        # process experiment-based data for plotting
-        v5_valid_obj.experiment_validation_plot(box=False, violin=True)
+        # process validation data for plots
+        validate_processing(v5_valid_obj, validate_results)
 
     else:
 
         print('I am %s Slave with rank %s of %s' % (name, str(rank), str(size)))
         ValidateSlave().run()
 
+    return None
+
+
+def v1_kcat_mwc_validate():
+    name = MPI.Get_processor_name()
+    rank = MPI.COMM_WORLD.Get_rank()
+    size = MPI.COMM_WORLD.Get_size()
+
+    if rank == 0:
+        # create ident object first
+        v1_ident = ModelIdent(ident_fun=kotte_model.flux_1_kcat_ident,
+                              arranged_data_file_name=os.path.join(os.getcwd(), 'exp/exp_v1_2_experiments_mwc'),
+                              ident_data_file_name=os.path.join(os.getcwd(), 'ident/ident_v1_kcat_mwc'),
+                              **{'original_exp_file': os.path.join(os.getcwd(), 'exp/experiments_mwc'),
+                                 'flux_id': 1, 'flux_choice': 2,
+                                 'values_figure': os.path.join(os.getcwd(), 'results/v1_kcat_mwc_parameter_values.eps'),
+                                 'ident_figure': os.path.join(os.getcwd(), 'results/v1_kcat_mwc_ident.eps'),
+                                 'exp_figure': os.path.join(os.getcwd(), 'results/v1_kcat_mwc_exp.eps'),
+                                 'figure_format': 'eps',
+                                 'ident_index_label': ['sample_name', 'data_set_id']})
+
+        # retrieve identifiability data and process it for validation
+        v1_ident.validation_info()
+
+        user_ode_opts = {'iter': 'Newton', 'discr': 'Adams', 'atol': 1e-10, 'rtol': 1e-10,
+                         'time_points': 200, 'display_progress': True, 'verbosity': 30}
+        # initial ss to begin all simulations from
+        y0 = np.array([5, 1, 1])
+        # get and set true parameter values, if available separately
+        default_parameters = true_parameter_values()
+
+        v1_valid_obj = ValidateSim(kotte_model.kotte_ode, kotte_model.kotte_flux,
+                                   **{'kinetics': 1, 'ode_opts': user_ode_opts, 't_final': 200, 'wt_y0': y0,
+                                      'i_parameter': default_parameters, 'sample_size': 1, 'noise_std': 0.05,
+                                      'validate_index_label': ['estimate_id', 'sample_name', 'data_set_id',
+                                                               'experiment_id'],
+                                      'validate_file_name': os.path.join(os.getcwd(), 'validate/v1_kcat_mwc_validate'),
+                                      'original_exp_file': v1_ident.original_exp_file})
+
+        parameter_estimates, estimate_info = v1_valid_obj.create_parameter_list(v1_ident.select_values)
+
+        job = ParallelValidate(slaves=range(1, size))
+
+        validate_results = job.run_all(task='initial_sim', **{'parameters': parameter_estimates,
+                                                              'estimate_info': estimate_info, 'sim_obj': v1_valid_obj})
+        job.terminate_slaves()
+
+        # process validation data for plots
+        validate_processing(v1_valid_obj, validate_results)
+
+    else:
+
+        print('I am %s Slave with rank %s of %s' % (name, str(rank), str(size)))
+        ValidateSlave().run()
+
+    return None
+
+
+def v2_mwc_validate():
+    name = MPI.Get_processor_name()
+    rank = MPI.COMM_WORLD.Get_rank()
+    size = MPI.COMM_WORLD.Get_size()
+
+    if rank == 0:
+        # create ident object first
+        v2_ident = ModelIdent(ident_fun=kotte_model.flux_2_ident_expression,
+                              arranged_data_file_name=os.path.join(os.getcwd(), 'exp/exp_v2_2_experiments_mwc'),
+                              ident_data_file_name=os.path.join(os.getcwd(), 'ident/ident_v2_mwc'),
+                              **{'original_exp_file': os.path.join(os.getcwd(), 'exp/experiments_mwc'),
+                                 'flux_id': 2, 'flux_choice': 0,
+                                 'values_figure': os.path.join(os.getcwd(), 'results/v2_mwc_parameter_values.eps'),
+                                 'ident_figure': os.path.join(os.getcwd(), 'results/v2_mwc_ident.eps'),
+                                 'exp_figure': os.path.join(os.getcwd(), 'results/v2_mwc_exp.eps'),
+                                 'figure_format': 'eps',
+                                 'ident_index_label': ['sample_name', 'data_set_id']})
+
+        # retrieve identifiability data and process it for validation
+        v2_ident.validation_info()
+
+        user_ode_opts = {'iter': 'Newton', 'discr': 'Adams', 'atol': 1e-10, 'rtol': 1e-10,
+                         'time_points': 200, 'display_progress': True, 'verbosity': 30}
+        # initial ss to begin all simulations from
+        y0 = np.array([5, 1, 1])
+        # get and set true parameter values, if available separately
+        default_parameters = true_parameter_values()
+
+        v2_valid_obj = ValidateSim(kotte_model.kotte_ode, kotte_model.kotte_flux,
+                                   **{'kinetics': 1, 'ode_opts': user_ode_opts, 't_final': 200, 'wt_y0': y0,
+                                      'i_parameter': default_parameters, 'sample_size': 1, 'noise_std': 0.05,
+                                      'validate_index_label': ['estimate_id', 'sample_name', 'data_set_id',
+                                                               'experiment_id'],
+                                      'validate_file_name': os.path.join(os.getcwd(), 'validate/v2_mwc_validate'),
+                                      'original_exp_file': v2_ident.original_exp_file})
+
+        parameter_estimates, estimate_info = v2_valid_obj.create_parameter_list(v2_ident.select_values)
+
+        job = ParallelValidate(slaves=range(1, size))
+
+        validate_results = job.run_all(task='initial_sim', **{'parameters': parameter_estimates,
+                                                              'estimate_info': estimate_info, 'sim_obj': v2_valid_obj})
+        job.terminate_slaves()
+
+        # process validation data for plots
+        validate_processing(v2_valid_obj, validate_results)
+
+    else:
+
+        print('I am %s Slave with rank %s of %s' % (name, str(rank), str(size)))
+        ValidateSlave().run()
+    return None
+
+
+def v3_mwc_validate():
+    name = MPI.Get_processor_name()
+    rank = MPI.COMM_WORLD.Get_rank()
+    size = MPI.COMM_WORLD.Get_size()
+
+    if rank == 0:
+        # create ident object first
+        v3_ident = ModelIdent(ident_fun=kotte_model.flux_3_value1_ident,
+                              arranged_data_file_name=os.path.join(os.getcwd(), 'exp/exp_v3_3_experiments_mwc'),
+                              ident_data_file_name=os.path.join(os.getcwd(), 'ident/ident_v3_mwc'),
+                              **{'original_exp_file': os.path.join(os.getcwd(), 'exp/experiments_mwc'),
+                                 'flux_id': 3, 'flux_choice': 1,
+                                 'values_figure': os.path.join(os.getcwd(), 'results/v3_mwc_parameter_values.eps'),
+                                 'ident_figure': os.path.join(os.getcwd(), 'results/v3_mwc_ident.eps'),
+                                 'exp_figure': os.path.join(os.getcwd(), 'results/v3_mwc_exp.eps'),
+                                 'figure_format': 'eps',
+                                 'ident_index_label': ['sample_name', 'data_set_id']})
+
+        # retrieve identifiability data and process it for validation
+        v3_ident.validation_info()
+
+        user_ode_opts = {'iter': 'Newton', 'discr': 'Adams', 'atol': 1e-10, 'rtol': 1e-10,
+                         'time_points': 200, 'display_progress': True, 'verbosity': 30}
+        # initial ss to begin all simulations from
+        y0 = np.array([5, 1, 1])
+        # get and set true parameter values, if available separately
+        default_parameters = true_parameter_values()
+
+        v3_valid_obj = ValidateSim(kotte_model.kotte_ode, kotte_model.kotte_flux,
+                                   **{'kinetics': 1, 'ode_opts': user_ode_opts, 't_final': 200, 'wt_y0': y0,
+                                      'i_parameter': default_parameters, 'sample_size': 1, 'noise_std': 0.05,
+                                      'validate_index_label': ['estimate_id', 'sample_name', 'data_set_id',
+                                                               'experiment_id'],
+                                      'validate_file_name': os.path.join(os.getcwd(), 'validate/v3_mwc_validate'),
+                                      'original_exp_file': v3_ident.original_exp_file})
+
+        parameter_estimates, estimate_info = v3_valid_obj.create_parameter_list(v3_ident.select_values)
+
+        job = ParallelValidate(slaves=range(1, size))
+
+        validate_results = job.run_all(task='initial_sim', **{'parameters': parameter_estimates,
+                                                              'estimate_info': estimate_info, 'sim_obj': v3_valid_obj})
+        job.terminate_slaves()
+
+        # process validation data for plots
+        validate_processing(v3_valid_obj, validate_results)
+
+    else:
+
+        print('I am %s Slave with rank %s of %s' % (name, str(rank), str(size)))
+        ValidateSlave().run()
     return None
 
 
@@ -571,5 +711,7 @@ if __name__ == '__main__':
     # v3_var_1_validate()
     # v3_var_2_validate()
     # v5_validate()
-    import pdb;pdb.set_trace()
+    v1_kcat_mwc_validate()
+    v2_mwc_validate()
+    v3_mwc_validate()
     print('Done\n')
