@@ -51,6 +51,31 @@ class ValidateSim(ModelSim):
         except KeyError:
             self.original_index_label = ['sample_name', 'experiment_id']
 
+        try:
+            self.c_v_file = kwargs['c_validate_file']
+        except KeyError:
+            self.c_v_file = []
+
+        try:
+            self.f_v_file = kwargs['f_validate_file']
+        except KeyError:
+            self.f_v_file = []
+
+        try:
+            self.c_exp_file = kwargs['c_exp_file']
+        except KeyError:
+            self.c_exp_file = []
+
+        try:
+            self.f_exp_file = kwargs['f_exp_file']
+        except KeyError:
+            self.f_exp_file = []
+
+        try:
+            self.format = kwargs['format']
+        except KeyError:
+            self.format = 'eps'
+
         self.concentration_validation = {}
         self.flux_validation = {}
         self.concentration_experiment_validation = {}
@@ -384,7 +409,7 @@ class ValidateSim(ModelSim):
         return var_names, df_values, desired_exp
 
     @staticmethod
-    def validation_plots(info, scatter=True, box=False, violin=True):
+    def validation_plots(info, file_name, figure_format, scatter=True, box=False, violin=True):
         """validation plots for concentrations/fluxes in info"""
 
         number_variables = len(info["names"])
@@ -422,6 +447,10 @@ class ValidateSim(ModelSim):
             if scatter:
                 validation_scatter(info, figure_object=f1, grid_objects=plot_grid)
 
+        if file_name:
+            f1.savefig(file_name, format=figure_format, transparent=True, frameon=True,
+                       bbox_inches='tight')
+
         return None
 
     def separate_validation_plot(self, scatter=True, box=False, violin=True):
@@ -431,15 +460,17 @@ class ValidateSim(ModelSim):
         self.process_validation_data()
 
         # plot validated concentrations
-        self.validation_plots(self.concentration_validation, scatter=scatter, box=box, violin=violin)
+        self.validation_plots(self.concentration_validation, self.c_v_file, self.format, scatter=scatter, box=box,
+                              violin=violin)
 
         # plot validated fluxes
-        self.validation_plots(self.flux_validation, scatter=scatter, box=box, violin=violin)
+        self.validation_plots(self.flux_validation, self.f_v_file, self.format, scatter=scatter, box=box,
+                              violin=violin)
 
         return None
 
     @staticmethod
-    def validation_experiment_distribution_plots(info, box=False, violin=True):
+    def validation_experiment_distribution_plots(info, file_name, figure_format, box=False, violin=True):
         """plot concentrations for different experiment separately to
             look at distribution within each experiments"""
         # if flux_id:
@@ -473,6 +504,11 @@ class ValidateSim(ModelSim):
                 violin_axis.set_title(i_var_name)
                 i_plot += 1
             plt.show()
+
+        if file_name:
+            f1.savefig(file_name, format=figure_format, transparent=True, frameon=True,
+                       bbox_inches='tight')
+
         return None
 
     def experiment_validation_plot(self, box=False, violin=True):
@@ -481,9 +517,11 @@ class ValidateSim(ModelSim):
         self.process_experiment_based_data()
 
         # plot concentrations
-        self.validation_experiment_distribution_plots(self.concentration_experiment_validation, box=box, violin=violin)
+        self.validation_experiment_distribution_plots(self.concentration_experiment_validation, self.c_exp_file,
+                                                      self.format, box=box, violin=violin)
 
         # plot fluxes
-        self.validation_experiment_distribution_plots(self.flux_experiment_validation, box=box, violin=violin)
+        self.validation_experiment_distribution_plots(self.flux_experiment_validation, self.f_exp_file,
+                                                      self.format, box=box, violin=violin)
 
         return None
