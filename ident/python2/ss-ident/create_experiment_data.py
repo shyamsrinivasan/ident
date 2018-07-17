@@ -43,7 +43,6 @@ def create_experiment_data(save_file_name, noise=0, kinetics=2, number_samples=1
     model_1.sim_model(parameter=experiment_details, experiment_ids=experiment_id, initial_value=[wt_ss[0]['y']])
 
     # create dictionary suitable for writing to df
-    import pdb; pdb.set_trace()
     experiment_df, multi_index_labels = model_1.create_df(parameter_perturbation, experiment_details)
 
     # get experimental system steady state data without noise using Convenience Kinetics for v3 (kinetics = 2)
@@ -55,6 +54,8 @@ def create_experiment_data(save_file_name, noise=0, kinetics=2, number_samples=1
     # save data frame to csv file
     experiment_df.to_csv(save_file_name, index_label=multi_index_labels)
     # dyn_df.to_csv(save_dyn_file_name, index_label=dyn_labels)
+    print(' Experiment Data written to file \n')
+
     return experiment_df
 
 
