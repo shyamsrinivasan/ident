@@ -28,4 +28,5 @@ logical_df = df.applymap(logical_values)
 plot_exp_details(logical_df)
 plot_exp_details(df, color_bar=True, set_palette=False)
 
+import pdb;pdb.set_trace()
 print('Run Complete\n')
