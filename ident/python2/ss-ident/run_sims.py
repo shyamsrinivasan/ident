@@ -100,7 +100,7 @@ class ModelSim(object):
     @staticmethod
     def collate_results(results, external_info, experiment_id, parameter_opt=1, i_value_opt=0):
         """collate results from all parallel simulations"""
-        # import pdb; pdb.set_trace()
+        import pdb; pdb.set_trace()
 
         collated_info = [{'info': i_value, 'id': j_value, 'y': results['y'][j_id],
                           'time': results['time'][j_id], 'flux': results['flux'][j_id]}
