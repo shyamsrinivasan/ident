@@ -35,21 +35,37 @@ def get_data_combinations(experiment_id, experiments_per_set, experiment_choice,
     return data_combinations, data_combination_boolean, combination_choice
 
 
-def data_for_each_sample(exp_df, sample_name, data_combinations, all_data_dict, empty_dict):
+def data_for_each_sample(exp_df, sample_name, data_combinations, arranged_df=[]):
     """get simulated experimental data for each noisy sample supplied as input argument"""
+
     for i_combination_number, i_combination in enumerate(data_combinations):
-        chosen_df = exp_df.loc(axis=0)[sample_name, i_combination]
-        chosen_df = chosen_df.reset_index(level='experiment_id')
-        # add new column for data set value
         data_set_name = 'data_set_{}'.format(i_combination_number)
-        chosen_df['data_set_id'] = pd.Series([data_set_name] * len(chosen_df.index.values),
-                                             index=chosen_df.index)
-        chosen_df = chosen_df.reset_index(level='sample_name')
-        temp_dict = chosen_df.to_dict('records')
-        for i_dict in temp_dict:
-            for k, v in it.chain(empty_dict.items(), i_dict.items()):
-                all_data_dict[k].append(v)
-    return all_data_dict
+        chosen_series = []
+        for i_exp in i_combination:
+            get_series = exp_df[exp_df['experiment_id'] == i_exp].loc[sample_name]
+            get_series['data_set_id'] = data_set_name
+            chosen_series.append(get_series)
+        chosen_df = pd.concat(chosen_series, axis=1)
+        arranged_df.append(chosen_df.T)
+
+    return arranged_df
+
+
+# def data_for_each_sample(exp_df, sample_name, data_combinations, all_data_dict, empty_dict):
+#     """get simulated experimental data for each noisy sample supplied as input argument"""
+#     for i_combination_number, i_combination in enumerate(data_combinations):
+#         chosen_df = exp_df.loc(axis=0)[sample_name, i_combination]
+#         chosen_df = chosen_df.reset_index(level='experiment_id')
+#         # add new column for data set value
+#         data_set_name = 'data_set_{}'.format(i_combination_number)
+#         chosen_df['data_set_id'] = pd.Series([data_set_name] * len(chosen_df.index.values),
+#                                              index=chosen_df.index)
+#         chosen_df = chosen_df.reset_index(level='sample_name')
+#         temp_dict = chosen_df.to_dict('records')
+#         for i_dict in temp_dict:
+#             for k, v in it.chain(empty_dict.items(), i_dict.items()):
+#                 all_data_dict[k].append(v)
+#     return all_data_dict
 
 
 def arrange_experimental_data(exp_df, experiments_per_set, combination_choice=(), experiment_choice=()):
@@ -67,16 +83,27 @@ def arrange_experimental_data(exp_df, experiments_per_set, combination_choice=()
         get_data_combinations(experiment_ids, experiments_per_set, experiment_choice, combination_choice)
 
     # get values for each combination determined from above permutation
-    all_data = defaultdict(list)
-    empty_dict = {}
+    # all_data = defaultdict(list)
+    # empty_dict = {}
 
+    data_df = []
     for i_sample_id, i_sample in enumerate(sample_ids):
-        all_data = data_for_each_sample(exp_df, i_sample, data_combinations, all_data, empty_dict)
+        data_df = data_for_each_sample(exp_df, i_sample, data_combinations, data_df)
 
-    # labels for multi index tuples
-    index_labels = ['sample_name', 'data_set_id', 'experiment_id']
+    df = pd.concat(data_df)
 
-    return all_data, index_labels, experiment_choice
+    # rename and reset existing index
+    df.index.rename('sample_name', inplace=True)
+    df.reset_index(inplace=True)
+
+    # set new index with sample name and data set id
+    index_labels = ['sample_name', 'data_set_id']
+    df.set_index(index_labels, inplace=True)
+
+    # sort indices
+    df.sort_index(level=index_labels, inplace=True)
+
+    return df, index_labels
 
 
 def data_for_each_sample_numerical(perturbation_details, experiments_per_set,

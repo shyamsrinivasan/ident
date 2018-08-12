@@ -78,27 +78,12 @@ def create_data_for_analysis(experimental_data_df, experiment_choice_index, expe
     experiment_index_choice = [all_experiment_indices[j_choice] for j_choice in experiment_choice_index]
 
     # get combinations of experimental datasets
-    complete_data_dict, index_labels, experiment_choice = \
-        arrange_experimental_data(experimental_data_df, experiments_per_set=experiments_per_set,
-                                  experiment_choice=experiment_index_choice)
-    # create data frame from data
-    # same data frame to file
-    df_tuples = [(j_sample, j_data_set, j_experiment) for j_sample, j_data_set, j_experiment in
-                 zip(complete_data_dict["sample_name"], complete_data_dict["data_set_id"],
-                     complete_data_dict["experiment_id"])]
-
-    # create multi index
-    index = pd.MultiIndex.from_tuples(df_tuples, names=index_labels)
-    # remove redundant columns
-    del complete_data_dict["sample_name"]
-    del complete_data_dict["data_set_id"]
-    del complete_data_dict["experiment_id"]
-
-    # create data frame
-    data_df = pd.DataFrame(complete_data_dict, index=index, columns=complete_data_dict.keys())
+    data_df, index_labels = arrange_experimental_data(experimental_data_df, experiments_per_set=experiments_per_set,
+                                                      experiment_choice=experiment_index_choice)
 
     # save data frame to csv file
     data_df.to_csv(new_data_file_name, index_label=index_labels)
+
     return data_df
 
 
