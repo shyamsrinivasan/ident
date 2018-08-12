@@ -92,8 +92,12 @@ def extract_and_create_data_for_analysis(original_data_file_name, original_index
     """extract existing information from given file and create new file for future analysis"""
     experimental_df = retrieve_experimental_data_from_file(data_file_name=original_data_file_name,
                                                            multi_index_label=original_index_labels)
+    # remove experiment_id as index
+    experimental_df.reset_index(level='experiment_id', inplace=True)
+
     # lexsort df
-    experimental_df.sort_index(level=['sample_name', 'experiment_id'], inplace=True)
+    experimental_df.sort_index(level='sample_name', inplace=True)
+    
     create_data_for_analysis(experimental_df, experiment_choice_index, experiments_per_set, new_data_file_name)
 
     return None
