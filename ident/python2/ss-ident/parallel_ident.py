@@ -8,7 +8,6 @@ import pandas as pd
 import os.path
 import kotte_model
 import matplotlib
-matplotlib.use('Agg')
 
 
 class ParallelProcess(object):
