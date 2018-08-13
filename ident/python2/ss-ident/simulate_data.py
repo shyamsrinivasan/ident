@@ -75,9 +75,10 @@ def arrange_experimental_data(exp_df, experiments_per_set, combination_choice=()
     parameters:
     combination_choice - indices of combinations to choose from
     experiment_choice - indices of experiments to choose from to form combinations"""
-    sample_ids = list(exp_df.index.levels[0])
-    # number_samples = len(sample_ids)
-    experiment_ids = list(exp_df.index.levels[1])
+
+    sample_ids = exp_df.index.unique()
+    experiment_ids = exp_df['experiment_id'].unique()
+
     # get combinations just based on number of experiments in each sample
     data_combinations, data_combination_boolean, combination_choice = \
         get_data_combinations(experiment_ids, experiments_per_set, experiment_choice, combination_choice)
