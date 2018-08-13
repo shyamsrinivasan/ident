@@ -1,11 +1,10 @@
 import kotte_model
-from names_strings import true_parameter_values
+from names_strings import true_parameter_values, variable_name
 from parallel_ode import setup_parallel_ode
 from simulate_ode import setup_serial_ode
 import numpy as np
 from copy import deepcopy
 from add_noise import add_noise
-from names_strings import variable_name
 import pandas as pd
 
 
@@ -100,7 +99,7 @@ class ModelSim(object):
     @staticmethod
     def collate_results(results, external_info, experiment_id, parameter_opt=1, i_value_opt=0):
         """collate results from all parallel simulations"""
-        import pdb; pdb.set_trace()
+        # import pdb; pdb.set_trace()
 
         collated_info = [{'info': i_value, 'id': j_value, 'y': results['y'][j_id],
                           'time': results['time'][j_id], 'flux': results['flux'][j_id]}
