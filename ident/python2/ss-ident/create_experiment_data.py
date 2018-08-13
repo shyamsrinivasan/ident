@@ -97,7 +97,6 @@ def extract_and_create_data_for_analysis(original_data_file_name, original_index
 
     # lexsort df
     experimental_df.sort_index(level='sample_name', inplace=True)
-    
     create_data_for_analysis(experimental_df, experiment_choice_index, experiments_per_set, new_data_file_name)
 
     return None
