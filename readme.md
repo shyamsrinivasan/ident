@@ -1,4 +1,7 @@
 # Identifiability Analysis and Experimental Design:
+
+Srinivasan, S., Cluett, W. R., Mahadevan, R., A scalable method for parameter identification in kinetic models of metabolism using steady state data, Bioinformatics, 2019.
+
 ###### Generating *in silico* data for identifiability analysis:
 - run `create_experiment_data` with desired options active to generate initial set of experimental data with `mpirun -np 4 python create_experiment_data.py`
 - all generated data files are stored in *exp* subdirectory
